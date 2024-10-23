@@ -7,8 +7,7 @@ import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 
 class Utils {
-  static void showToast(String text,
-      {bool isSuccess = false, bool isInfo = false, bool long = false}) {
+  static void showToast(String text, {bool isSuccess = false, bool isInfo = false, bool long = false}) {
     Color color = Colors.red;
     if (isInfo) {
       color = Colors.orangeAccent;
@@ -16,10 +15,7 @@ class Utils {
       color = Colors.green;
     }
     Fluttertoast.showToast(
-        msg: text,
-        backgroundColor: color,
-        fontSize: 16.sp,
-        toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String formatSecretEmail(String email) {
@@ -27,8 +23,7 @@ class Utils {
     final lastPart = email.split("@").last;
     var secretFormatted = "";
     for (int i = 0; i < firstPart.length; i++) {
-      secretFormatted +=
-          (i == 0 || i == firstPart.length - 1) ? firstPart[i] : "*";
+      secretFormatted += (i == 0 || i == firstPart.length - 1) ? firstPart[i] : "*";
     }
     return "$secretFormatted@$lastPart";
   }
@@ -68,7 +63,6 @@ class Utils {
     return text[0].toUpperCase() + text.substring(1);
   }
 
-
   static String convertFeetToFeetInches(double feet) {
     int feetPart = feet.floor();
     double inchesPart = (feet - feetPart) * 12.0;
@@ -103,6 +97,7 @@ class Utils {
       return DateTime.now().toString().split(" ")[0];
     }
   }
+
   static String getPageNameFromEnum(String type) {
     switch (type) {
       case AppConstants.roleViewInvoice:
@@ -148,6 +143,7 @@ class Utils {
     }
     return "error";
   }
+
   static String getRoleNameFromEnum(String type) {
     switch (type) {
       case AppConstants.roleUserRead:
@@ -163,6 +159,7 @@ class Utils {
     }
     return "error";
   }
+
   static String generateId(RecordType recordType) {
     var epoch = DateTime.now().microsecondsSinceEpoch.toString();
     switch (recordType) {
@@ -205,5 +202,39 @@ class Utils {
       case RecordType.undefined:
         return epoch;
     }
+  }
+
+  static String getStoreNameFromId(id) {
+    if (id != null && id != " " && id != "") {
+      //  return Get.find<StoreController>().storeMap[id]!.stName!;
+      return "";
+    } else {
+      return "";
+    }
+  }
+
+  static String getAccountNameFromId(id) {
+    if (id != null && id != " " && id != "") {
+//      return Get.find<AccountController>().accountList[id]?.accName ?? "$id";
+      return "";
+    } else {
+      return "";
+    }
+  }
+
+  static String getInvTypeFromEnum(String type) {
+    switch (type) {
+      case AppConstants.invoiceTypeSales:
+        return "بيع";
+      case AppConstants.invoiceTypeBuy:
+        return "شراء";
+      case AppConstants.invoiceTypeAdd:
+        return "إدخال";
+      case AppConstants.invoiceTypeChange:
+        return "مناقلة";
+      case AppConstants.invoiceTypeSalesWithPartner:
+        return "مبيعات مع نسبة شريك";
+    }
+    return type;
   }
 }

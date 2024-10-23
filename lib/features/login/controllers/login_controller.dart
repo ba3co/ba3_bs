@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
+
+import '../../../core/widgets/app_spacer.dart';
 
 class LoginController extends GetxController with WindowListener {
   RxBool isWindowClosePrevented = false.obs;
@@ -25,77 +28,116 @@ class LoginController extends GetxController with WindowListener {
     isWindowClosePrevented.value = true;
   }
 
-  Future<bool> showMacOSExitConfirmationDialog() async {
+  Future<bool> _showMacOSExitConfirmationDialog() async {
     return await showDialog<bool>(
           context: Get.context!,
           builder: (BuildContext context) {
-            return SizedBox(
-              child: Dialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16), // Rounded corners
+            return Dialog(
+              backgroundColor: const Color(0xFF2C2C2E),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Color(0xFF2C2C2E), strokeAlign: BorderSide.strokeAlignOutside),
+              ),
+              child: Container(
+                width: 200,
+                height: 200,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF6C6D6F)),
                 ),
-                elevation: 16,
-                backgroundColor: Colors.white, // Set background color
-                child: SizedBox(
-                  width: 50,
-                  height: 240,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0), // Padding around the dialog
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 75,
+                      height: 75,
+                      child: FlutterLogo(),
+                    ),
+                    const VerticalSpace(16),
+                    const Text(
+                      '?Do you really want to quit',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const FlutterLogo(size: 50), // Flutter logo at the top
-                        const SizedBox(height: 16), // Spacing
-                        const Text(
-                          'Are you sure you want to close this window?',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), // Bold title
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8), // Spacing
-                        const Text(
-                          'Any unsaved changes will be lost.',
-                          style: TextStyle(color: Colors.grey, fontSize: 14), // Subtext in grey
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24), // Spacing
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Get.back(result: true); // Close confirmed
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue, // Blue button color
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8), // Rounded button
-                                ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.back(result: true);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF007AFF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Text('Close'),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Get.back(result: false); // Close canceled
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey, // Grey button color
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8), // Rounded button
-                                ),
+                            child: const Text(
+                              'Close',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        const HorizontalSpace(),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Get.back(result: false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF6C6D6F),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Text('Cancel'),
                             ),
-                          ],
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
               ),
             );
           },
         ) ??
-        false; // Return false if dialog is dismissed
+        false; // Default return if dismissed
+  }
+
+  Future<bool> _showDefaultExitDialog() async {
+    bool? shouldExit = await Get.defaultDialog(
+      content: const Text('Do you really want to quit?'),
+      confirm: ElevatedButton(
+        onPressed: () {
+          Get.back(result: true);
+        },
+        child: const Text('Close'),
+      ),
+      cancel: ElevatedButton(
+        onPressed: () {
+          Get.back(result: false);
+        },
+        child: const Text('Cancel'),
+      ),
+    );
+    return shouldExit ?? false;
+  }
+
+  Future<bool> showExitConfirmationDialog() async {
+    if (Platform.isMacOS) {
+      return _showMacOSExitConfirmationDialog();
+    } else {
+      return _showDefaultExitDialog();
+    }
   }
 
   @override
@@ -103,8 +145,8 @@ class LoginController extends GetxController with WindowListener {
     bool isPreventClose = await windowManager.isPreventClose();
 
     if (isPreventClose) {
-      // Show the custom macOS-like exit confirmation dialog
-      bool shouldClose = await showMacOSExitConfirmationDialog();
+      // Show the macOS-like exit confirmation dialog
+      bool shouldClose = await showExitConfirmationDialog();
 
       if (shouldClose) {
         await windowManager.destroy(); // Close the window

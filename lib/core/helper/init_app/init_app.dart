@@ -7,14 +7,14 @@ import '../../../firebase_options.dart';
 Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await initWindow();
+  await initializeWindowSettings();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 }
 
-Future<void> initWindow() async {
+Future<void> initializeWindowSettings() async {
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     size: Size(800, 600),
