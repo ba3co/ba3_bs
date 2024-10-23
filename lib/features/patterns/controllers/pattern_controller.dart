@@ -31,7 +31,7 @@ class PatternController extends GetxController {
   }
 
   initPage(String key) {
-    editPatternModel = PatternModel.fromJson(patternModel[key]?.toJson());
+    editPatternModel = PatternModel.fromJson(patternModel[key]!.toJson());
     nameController.text = editPatternModel?.patName ?? "";
     fullNameController.text = editPatternModel?.patFullName ?? "";
     codeController.text = editPatternModel?.patCode ?? "";

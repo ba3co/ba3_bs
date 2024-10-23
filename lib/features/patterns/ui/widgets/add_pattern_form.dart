@@ -86,7 +86,7 @@ class AddPatternForm extends StatelessWidget {
         width: Get.width * 0.45,
         child: Row(
           children: [
-            const SizedBox(width: 100, child: Text("المواد")),
+            const SizedBox(width: 100, child: Text('المواد')),
             Expanded(
               child: CustomTextFieldWithIcon(
                 controller: patternController.secondaryController,
@@ -108,7 +108,7 @@ class AddPatternForm extends StatelessWidget {
         width: Get.width * 0.45,
         child: Row(
           children: [
-            const SizedBox(width: 100, child: Text("الحسميات")),
+            const SizedBox(width: 100, child: Text('الحسميات')),
             Expanded(
               child: CustomTextFieldWithIcon(
                 controller: patternController.secondaryController,
@@ -130,7 +130,7 @@ class AddPatternForm extends StatelessWidget {
         width: Get.width * 0.45,
         child: Row(
           children: [
-            const SizedBox(width: 100, child: Text("الاضافات")),
+            const SizedBox(width: 100, child: Text('الاضافات')),
             Expanded(
               child: CustomTextFieldWithIcon(
                 controller: patternController.secondaryController,
@@ -152,7 +152,7 @@ class AddPatternForm extends StatelessWidget {
         width: Get.width * 0.45,
         child: Row(
           children: [
-            const SizedBox(width: 100, child: Text("النقديات")),
+            const SizedBox(width: 100, child: Text('النقديات')),
             Expanded(
               child: CustomTextFieldWithIcon(
                 controller: patternController.secondaryController,
@@ -188,67 +188,12 @@ class AddPatternForm extends StatelessWidget {
           ],
         ),
       ),
-      if (patternController.editPatternModel?.patType != AppConstants.invoiceTypeChange) ...[
-        SizedBox(
-          width: Get.width * 0.45,
-          child: IgnorePointer(
-            ignoring: patternController.typeController.text == AppConstants.invoiceTypeAdd,
-            child: Row(
-              children: [
-                const SizedBox(width: 100, child: Text("الدائن")),
-                Expanded(
-                  child: Container(
-                    foregroundDecoration: patternController.typeController.text == AppConstants.invoiceTypeAdd
-                        ? BoxDecoration(color: Colors.grey.withOpacity(0.5))
-                        : null,
-                    child: CustomTextFieldWithIcon(
-                      controller: patternController.primaryController,
-                      onSubmitted: (text) async {
-                        // var account = await getAccountComplete(text);
-                        // patternController.update();
-                        // if (account.isNotEmpty) {
-                        //   patternController.editPatternModel?.patPrimary = account;
-                        //   patternController.primaryController.text = account;
-                        //   patternController.update();
-                        // }
-                      },
-                      onChanged: (_) {},
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          width: Get.width * 0.45,
-          child: Row(
-            children: [
-              const SizedBox(width: 100, child: Text("المدين")),
-              Expanded(
-                child: CustomTextFieldWithIcon(
-                  controller: patternController.secondaryController,
-                  onSubmitted: (text) async {
-                    // var account = await getAccountComplete(text);
-                    // patternController.update();
-                    // if (account.isNotEmpty) {
-                    //   patternController.editPatternModel?.patSecondary = account;
-                    //   patternController.secondaryController.text = account;
-                    //   patternController.update();
-                    // }
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
       if (patternController.editPatternModel?.patType == AppConstants.invoiceTypeChange)
         SizedBox(
           width: Get.width * 0.45,
           child: Row(
             children: [
-              const SizedBox(width: 100, child: Text("المستودع الجديد:")),
+              const SizedBox(width: 100, child: Text('المستودع الجديد')),
               Expanded(
                 child: CustomTextFieldWithIcon(
                   controller: patternController.storeNewController,
@@ -316,7 +261,7 @@ class AddPatternForm extends StatelessWidget {
         width: Get.width * 0.45,
         child: Row(
           children: [
-            const SizedBox(width: 100, child: Text("المستودع :")),
+            const SizedBox(width: 100, child: Text('المستودع')),
             Expanded(
               child: CustomTextFieldWithIcon(
                 controller: patternController.storeEditController,
@@ -339,7 +284,7 @@ class AddPatternForm extends StatelessWidget {
           width: (Get.width * 0.45),
           child: Row(
             children: [
-              const SizedBox(width: 100, child: Text("حساب مرابح الشريك :")),
+              const SizedBox(width: 100, child: Text('حساب مرابح الشريك')),
               Expanded(
                 child: CustomTextFieldWithIcon(
                   controller: patternController.patPartnerAccountFee,

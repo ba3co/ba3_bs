@@ -34,38 +34,37 @@ class PatternType extends StatelessWidget {
                 underline: const SizedBox(),
                 isExpanded: true,
                 value: patternController.typeController.text.isEmpty
-                    ? AppConstants.invoiceTypeSales
+                    ? AppConstants.invoiceTypeBuy
                     : patternController.typeController.text,
                 items: const [
                   DropdownMenuItem(
-                    value: AppConstants.invoiceTypeSales,
-                    child: Center(
-                      child: Text(
-                        "مبيع",
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ),
-                  ),
-                  DropdownMenuItem(
                     value: AppConstants.invoiceTypeBuy,
                     child: Center(child: Text("شراء", textDirection: TextDirection.rtl)),
+                  ),
+                  DropdownMenuItem(
+                    value: AppConstants.invoiceTypeSales,
+                    child: Center(child: Text("مبيع", textDirection: TextDirection.rtl)),
+                  ),
+                  DropdownMenuItem(
+                    value: AppConstants.invoiceTypeBuyReturn, // Changed to a unique value
+                    child: Center(child: Text("مرتجع شراء", textDirection: TextDirection.rtl)),
+                  ),
+                  DropdownMenuItem(
+                    value: AppConstants.invoiceTypeSalesReturn, // Changed to a unique value
+                    child: Center(child: Text("مرتجع بيع", textDirection: TextDirection.rtl)),
                   ),
                   DropdownMenuItem(
                     value: AppConstants.invoiceTypeAdd,
                     child: Center(child: Text("إدخال", textDirection: TextDirection.rtl)),
                   ),
                   DropdownMenuItem(
-                    value: AppConstants.invoiceTypeChange,
-                    child: Center(child: Text("تبديل مستودعي", textDirection: TextDirection.rtl)),
-                  ),
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeSalesWithPartner,
-                    child: Center(child: Text("مبيعات مع شريك", textDirection: TextDirection.rtl)),
+                    value: AppConstants.invoiceTypeRemove, // Changed to a unique value
+                    child: Center(child: Text("إخراج", textDirection: TextDirection.rtl)),
                   ),
                 ],
-                onChanged: (_) {
-                  patternController.typeController.text = _!;
-                  patternController.editPatternModel?.patType = _;
+                onChanged: (selectedType) {
+                  patternController.typeController.text = selectedType!;
+                  patternController.editPatternModel?.patType = selectedType;
                   if (patternController.typeController.text == AppConstants.invoiceTypeAdd) {
                     patternController.editPatternModel?.patPrimary = null;
                     patternController.primaryController.clear();

@@ -1,4 +1,3 @@
-
 import '../helper/enums/enums.dart';
 
 abstract class AppConstants {
@@ -101,9 +100,12 @@ abstract class AppConstants {
 
   ////////////--------------------------------------------------
   static const invoiceTypeSales = "invoiceTypeSales";
+  static const invoiceTypeBuyReturn = "invoiceTypeBuyReturn";
+  static const invoiceTypeSalesReturn = "invoiceTypeSalesReturn";
   static const invoiceTypeSalesWithPartner = "invoiceTypeSalesWithPartner";
   static const invoiceTypeBuy = 'invoiceTypeBuy';
   static const invoiceTypeAdd = "invoiceTypeAdd";
+  static const invoiceTypeRemove = "invoiceTypeRemove";
   static const invoiceTypeChange = "invoiceTypeChange";
   static const tabbySales = "م Tabby";
   static const stripSales = "م Strip";
@@ -232,6 +234,7 @@ abstract class AppConstants {
   /////////////---------------------------------------------------
   static const mainVATCategory = "SR-التصنيف الأساسي";
   static const withoutVAT = "EX-معفى";
+
   // static String vatAccountId = getAccountIdFromText("ضريبة القيمة المضافة رأس الخيمة");
   // static String returnVatAccountId = getAccountIdFromText("استرداد ضريبة القيمة المضافة رأس الخيمة");
 
@@ -264,7 +267,11 @@ abstract class AppConstants {
     AppConstants.roleViewCard,
     AppConstants.roleViewHome
   ];
-  static const accountTypeList = [AppConstants.accountTypeDefault, AppConstants.accountTypeFinalAccount, AppConstants.accountTypeAggregateAccount];
+  static const accountTypeList = [
+    AppConstants.accountTypeDefault,
+    AppConstants.accountTypeFinalAccount,
+    AppConstants.accountTypeAggregateAccount
+  ];
 
   static const userName = "ali";
 

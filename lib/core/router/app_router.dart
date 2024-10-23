@@ -2,7 +2,6 @@ import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:get/get.dart';
 
 import '../../features/login/ui/screens/login_screen.dart';
-import '../../features/login/ui/screens/splash_screen.dart';
 import 'app_routes.dart';
 
 List<GetPage<dynamic>>? appRouter = [

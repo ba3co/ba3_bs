@@ -12,7 +12,6 @@ class AddPatternPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PatternController patternController = Get.find<PatternController>();
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Column(
