@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       fontSizeResolver: FontSizeResolvers.height,
       child: GetMaterialApp(
-        initialBinding: GetBinding(),
+        initialBinding: AppBindings(),
         debugShowCheckedModeBanner: false,
         scrollBehavior: AppScrollBehavior(),
         locale: const Locale("ar"),

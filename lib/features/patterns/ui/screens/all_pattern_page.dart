@@ -15,7 +15,6 @@ class AllPatternPage extends StatelessWidget {
         title: "أنماط البيع",
         onLoaded: (e) {},
         onSelected: (p0) {
-          Get.find<PatternController>().initPattern(p0.row?.cells["id"]?.value);
           Get.to(const AddPatternPage());
         },
         modelList: controller.patternModel.values.toList(),

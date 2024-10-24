@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/controllers/window_close_controller.dart';
 import '../../../../core/widgets/app_menu_item.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import 'add_pattern_page.dart';
@@ -12,6 +13,7 @@ class PatternLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(WindowCloseController());
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(

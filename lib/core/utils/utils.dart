@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../constants/app_constants.dart';
@@ -236,5 +237,23 @@ class Utils {
         return "مبيعات مع نسبة شريك";
     }
     return type;
+  }
+
+  static Widget showLoadingIndicator({
+    double width = 20,
+    double height = 20,
+    Color? color = Colors.white,
+  }) =>
+      Center(
+        child: SizedBox(
+            width: width,
+            height: height,
+            child: CircularProgressIndicator(
+              color: color,
+            )),
+      );
+
+  static showSnackBar(String title, String message) {
+    Get.snackbar(title, message);
   }
 }

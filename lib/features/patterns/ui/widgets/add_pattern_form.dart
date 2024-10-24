@@ -1,9 +1,6 @@
-import 'package:ba3_bs/features/patterns/ui/widgets/partner_ratio_commission.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../controllers/pattern_controller.dart';
@@ -16,202 +13,170 @@ class AddPatternForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(spacing: 20, alignment: WrapAlignment.spaceBetween, runSpacing: 10, children: [
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('الاختصار')),
-            Expanded(
-              child: CustomTextFieldWithoutIcon(
-                controller: patternController.nameController,
-                onChanged: (value) {
-                  patternController.editPatternModel?.patName = value;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('الاسم')),
-            Expanded(
-              child: CustomTextFieldWithoutIcon(
-                controller: patternController.fullNameController,
-                onChanged: (value) {
-                  patternController.editPatternModel?.patFullName = value;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('اختصار لاتيني')),
-            Expanded(
-              child: CustomTextFieldWithoutIcon(
-                controller: patternController.nameController,
-                onChanged: (value) {
-                  patternController.editPatternModel?.patName = value;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('الاسم لاتيني')),
-            Expanded(
-              child: CustomTextFieldWithoutIcon(
-                controller: patternController.fullNameController,
-                onChanged: (value) {
-                  patternController.editPatternModel?.patFullName = value;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      PatternType(patternController: patternController),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('المواد')),
-            Expanded(
-              child: CustomTextFieldWithIcon(
-                controller: patternController.secondaryController,
-                onSubmitted: (text) async {
-                  // var account = await getAccountComplete(text);
-                  // patternController.update();
-                  // if (account.isNotEmpty) {
-                  //   patternController.editPatternModel?.patSecondary = account;
-                  //   patternController.secondaryController.text = account;
-                  //   patternController.update();
-                  // }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('الحسميات')),
-            Expanded(
-              child: CustomTextFieldWithIcon(
-                controller: patternController.secondaryController,
-                onSubmitted: (text) async {
-                  // var account = await getAccountComplete(text);
-                  // patternController.update();
-                  // if (account.isNotEmpty) {
-                  //   patternController.editPatternModel?.patSecondary = account;
-                  //   patternController.secondaryController.text = account;
-                  //   patternController.update();
-                  // }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('الاضافات')),
-            Expanded(
-              child: CustomTextFieldWithIcon(
-                controller: patternController.secondaryController,
-                onSubmitted: (text) async {
-                  // var account = await getAccountComplete(text);
-                  // patternController.update();
-                  // if (account.isNotEmpty) {
-                  //   patternController.editPatternModel?.patSecondary = account;
-                  //   patternController.secondaryController.text = account;
-                  //   patternController.update();
-                  // }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('النقديات')),
-            Expanded(
-              child: CustomTextFieldWithIcon(
-                controller: patternController.secondaryController,
-                onSubmitted: (text) async {
-                  // var account = await getAccountComplete(text);
-                  // patternController.update();
-                  // if (account.isNotEmpty) {
-                  //   patternController.editPatternModel?.patSecondary = account;
-                  //   patternController.secondaryController.text = account;
-                  //   patternController.update();
-                  // }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('الرقم')),
-            Expanded(
-              child: CustomTextFieldWithoutIcon(
-                controller: patternController.codeController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onChanged: (value) {
-                  patternController.editPatternModel?.patCode = value;
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      if (patternController.editPatternModel?.patType == AppConstants.invoiceTypeChange)
+    return Form(
+      key: patternController.formKey,
+      child: Wrap(spacing: 20, alignment: WrapAlignment.spaceBetween, runSpacing: 10, children: [
         SizedBox(
           width: Get.width * 0.45,
           child: Row(
             children: [
-              const SizedBox(width: 100, child: Text('المستودع الجديد')),
+              const SizedBox(width: 100, child: Text('الاختصار')),
               Expanded(
-                child: CustomTextFieldWithIcon(
-                  controller: patternController.storeNewController,
-                  onSubmitted: (text) async {
-                    // var store = await patternController.getStoreComplete(text);
-                    // if (store.isNotEmpty) {
-                    //   patternController.editPatternModel?.patNewStore = store;
-                    //   patternController.storeNewController.text = store;
-                    //   patternController.update();
-                    // }
+                child: CustomTextFieldWithoutIcon(
+                  controller: patternController.shortNameController,
+                  validator: (shortName) => patternController.validator(shortName, 'الاختصار'),
+                  onChanged: (value) {
+                    // patternController.editPatternModel?.copyWith(patName: value);
                   },
-                  onChanged: (_) {},
                 ),
               ),
             ],
           ),
         ),
-      if (patternController.editPatternModel?.patType != AppConstants.invoiceTypeChange) ...[
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('الاسم')),
+              Expanded(
+                child: CustomTextFieldWithoutIcon(
+                  controller: patternController.fullNameController,
+                  validator: (fullName) => patternController.validator(fullName, 'الاسم'),
+                  onChanged: (value) {
+                    // patternController.editPatternModel?.copyWith(patFullName: value);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('اختصار لاتيني')),
+              Expanded(
+                child: CustomTextFieldWithoutIcon(
+                  controller: patternController.latinShortNameController,
+                  validator: (latinShortName) => patternController.validator(latinShortName, 'اختصار لاتيني'),
+                  onChanged: (value) {
+                    //    patternController.editPatternModel?.copyWith(patName: value);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('الاسم لاتيني')),
+              Expanded(
+                child: CustomTextFieldWithoutIcon(
+                  controller: patternController.latinFullNameController,
+                  validator: (latinFullName) => patternController.validator(latinFullName, 'الاسم لاتيني'),
+                  onChanged: (value) {
+                    //   patternController.editPatternModel?.copyWith(patFullName: value);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        PatternType(patternController: patternController),
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('المواد')),
+              Expanded(
+                child: CustomTextFieldWithIcon(
+                  controller: patternController.materialsController,
+                  validator: (materials) => patternController.validator(materials, 'المواد'),
+                  onSubmitted: (text) async {
+                    // var account = await getAccountComplete(text);
+                    // patternController.update();
+                    // if (account.isNotEmpty) {
+                    //   patternController.editPatternModel?.patSecondary = account;
+                    //   patternController.secondaryController.text = account;
+                    //   patternController.update();
+                    // }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('الحسميات')),
+              Expanded(
+                child: CustomTextFieldWithIcon(
+                  controller: patternController.discountsController,
+                  validator: (discounts) => patternController.validator(discounts, 'الحسميات'),
+                  onSubmitted: (text) async {
+                    // var account = await getAccountComplete(text);
+                    // patternController.update();
+                    // if (account.isNotEmpty) {
+                    //   patternController.editPatternModel?.patSecondary = account;
+                    //   patternController.secondaryController.text = account;
+                    //   patternController.update();
+                    // }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('الاضافات')),
+              Expanded(
+                child: CustomTextFieldWithIcon(
+                  controller: patternController.additionsController,
+                  validator: (additions) => patternController.validator(additions, 'الاضافات'),
+                  onSubmitted: (text) async {
+                    // var account = await getAccountComplete(text);
+                    // patternController.update();
+                    // if (account.isNotEmpty) {
+                    //   patternController.editPatternModel?.patSecondary = account;
+                    //   patternController.secondaryController.text = account;
+                    //   patternController.update();
+                    // }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: Get.width * 0.45,
+          child: Row(
+            children: [
+              const SizedBox(width: 100, child: Text('النقديات')),
+              Expanded(
+                child: CustomTextFieldWithIcon(
+                  controller: patternController.cachesController,
+                  validator: (cashes) => patternController.validator(cashes, 'النقديات'),
+                  onSubmitted: (text) async {
+                    // var account = await getAccountComplete(text);
+                    // patternController.update();
+                    // if (account.isNotEmpty) {
+                    //   patternController.editPatternModel?.patSecondary = account;
+                    //   patternController.secondaryController.text = account;
+                    //   patternController.update();
+                    // }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
         SizedBox(
           width: Get.width * 0.45,
           child: Row(
@@ -219,7 +184,8 @@ class AddPatternForm extends StatelessWidget {
               const SizedBox(width: 100, child: Text('الهدايا')),
               Expanded(
                 child: CustomTextFieldWithIcon(
-                  controller: patternController.giftAccountController,
+                  controller: patternController.giftsController,
+                  validator: (gifts) => patternController.validator(gifts, 'الهدايا'),
                   onSubmitted: (text) async {
                     //   var a = await getAccountComplete(text);
                     //   patternController.update();
@@ -241,7 +207,8 @@ class AddPatternForm extends StatelessWidget {
               const SizedBox(width: 100, child: Text('مقابل الهدايا')),
               Expanded(
                 child: CustomTextFieldWithIcon(
-                  controller: patternController.secgiftAccountController,
+                  controller: patternController.exchangeForGiftsController,
+                  validator: (exchangeForGifts) => patternController.validator(exchangeForGifts, 'مقابل الهدايا'),
                   onSubmitted: (text) async {
                     // var a = await getAccountComplete(text);
                     // patternController.update();
@@ -256,55 +223,30 @@ class AddPatternForm extends StatelessWidget {
             ],
           ),
         ),
-      ],
-      SizedBox(
-        width: Get.width * 0.45,
-        child: Row(
-          children: [
-            const SizedBox(width: 100, child: Text('المستودع')),
-            Expanded(
-              child: CustomTextFieldWithIcon(
-                controller: patternController.storeEditController,
-                onSubmitted: (text) async {
-                  // var a = await patternController.getStoreComplete(text);
-                  // if (a.isNotEmpty) {
-                  //   patternController.editPatternModel?.patStore = a;
-                  //   patternController.storeEditController.text = a;
-                  //   patternController.update();
-                  // }
-                },
-                onChanged: (_) {},
-              ),
-            ),
-          ],
-        ),
-      ),
-      if (patternController.editPatternModel?.patType == AppConstants.invoiceTypeSalesWithPartner) ...[
         SizedBox(
-          width: (Get.width * 0.45),
+          width: Get.width * 0.45,
           child: Row(
             children: [
-              const SizedBox(width: 100, child: Text('حساب مرابح الشريك')),
+              const SizedBox(width: 100, child: Text('المستودع')),
               Expanded(
                 child: CustomTextFieldWithIcon(
-                  controller: patternController.patPartnerAccountFee,
+                  controller: patternController.storeController,
+                  validator: (store) => patternController.validator(store, 'المستودع'),
                   onSubmitted: (text) async {
-                    // var a = await Utils.getAccountComplete(text);
-                    //
-                    // patternController.update();
+                    // var a = await patternController.getStoreComplete(text);
                     // if (a.isNotEmpty) {
-                    //   patternController.editPatternModel?.patPartnerFeeAccount = a;
-                    //   patternController.patPartnerAccountFee.text = a;
+                    //   patternController.editPatternModel?.patStore = a;
+                    //   patternController.storeEditController.text = a;
                     //   patternController.update();
                     // }
                   },
+                  onChanged: (_) {},
                 ),
               ),
             ],
           ),
         ),
-        PartnerRatioCommission(patternController: patternController),
-      ],
-    ]);
+      ]),
+    );
   }
 }

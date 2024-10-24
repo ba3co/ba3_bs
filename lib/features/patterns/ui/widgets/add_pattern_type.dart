@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../controllers/pattern_controller.dart';
 
 class PatternType extends StatelessWidget {
@@ -20,58 +21,30 @@ class PatternType extends StatelessWidget {
         children: [
           const SizedBox(width: 100, child: Text('نوع الفاتورة')),
           Container(
-            width: (Get.width * 0.45) - 100,
-            height: AppConstants.constHeightTextField,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
-            child: DropdownButton(
+              width: (Get.width * 0.45) - 100,
+              height: AppConstants.constHeightTextField,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.white,
+              ),
+              child: DropdownButton(
                 dropdownColor: Colors.white,
                 focusColor: Colors.white,
                 alignment: Alignment.center,
                 underline: const SizedBox(),
                 isExpanded: true,
-                value: patternController.typeController.text.isEmpty
-                    ? AppConstants.invoiceTypeBuy
-                    : patternController.typeController.text,
-                items: const [
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeBuy,
-                    child: Center(child: Text("شراء", textDirection: TextDirection.rtl)),
-                  ),
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeSales,
-                    child: Center(child: Text("مبيع", textDirection: TextDirection.rtl)),
-                  ),
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeBuyReturn, // Changed to a unique value
-                    child: Center(child: Text("مرتجع شراء", textDirection: TextDirection.rtl)),
-                  ),
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeSalesReturn, // Changed to a unique value
-                    child: Center(child: Text("مرتجع بيع", textDirection: TextDirection.rtl)),
-                  ),
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeAdd,
-                    child: Center(child: Text("إدخال", textDirection: TextDirection.rtl)),
-                  ),
-                  DropdownMenuItem(
-                    value: AppConstants.invoiceTypeRemove, // Changed to a unique value
-                    child: Center(child: Text("إخراج", textDirection: TextDirection.rtl)),
-                  ),
-                ],
-                onChanged: (selectedType) {
-                  patternController.typeController.text = selectedType!;
-                  patternController.editPatternModel?.patType = selectedType;
-                  if (patternController.typeController.text == AppConstants.invoiceTypeAdd) {
-                    patternController.editPatternModel?.patPrimary = null;
-                    patternController.primaryController.clear();
-                  }
-                  patternController.update();
-                }),
-          ),
+                value: patternController.selectedBillType,
+                items: InvoiceType.values.map((InvoiceType type) {
+                  return DropdownMenuItem<InvoiceType>(
+                    value: type,
+                    child: Center(
+                      child: Text(type.label, textDirection: TextDirection.rtl),
+                    ),
+                  );
+                }).toList(),
+                onChanged: patternController.onSelectedTypeChanged,
+              )),
         ],
       ),
     );

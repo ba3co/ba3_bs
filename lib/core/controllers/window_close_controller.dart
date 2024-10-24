@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../../../core/widgets/app_spacer.dart';
+import '../widgets/app_spacer.dart';
 
-class LoginController extends GetxController with WindowListener {
+class WindowCloseController extends GetxController with WindowListener {
   RxBool isWindowClosePrevented = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     windowManager.addListener(this);
-    _initWindowSettings();
+    _configureWindowSettings();
   }
 
   @override
@@ -23,7 +23,7 @@ class LoginController extends GetxController with WindowListener {
     super.onClose();
   }
 
-  Future<void> _initWindowSettings() async {
+  Future<void> _configureWindowSettings() async {
     await windowManager.setPreventClose(true);
     isWindowClosePrevented.value = true;
   }

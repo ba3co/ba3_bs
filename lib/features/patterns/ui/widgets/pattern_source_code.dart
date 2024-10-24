@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../data/models/pattern_model.dart';
+import '../../data/models/bill_type_model.dart';
 
 class PatternRecordDataSource extends DataGridSource {
   List<DataGridRow> dataGridRows = [];
   dynamic newCellValue;
   TextEditingController editingController = TextEditingController();
 
-  PatternRecordDataSource({required Map<String, PatternModel> patternRecordModel}) {
+  PatternRecordDataSource({required Map<String, BillTypeModel> billTypeRecords}) {
     dataGridRows.clear();
-    dataGridRows = patternRecordModel.values
-        .map<DataGridRow>((e) => DataGridRow(cells: [
-              DataGridCell<String>(columnName: "patId", value: e.patId),
-              DataGridCell<String>(columnName: AppConstants.patCode, value: e.patCode),
+    dataGridRows = billTypeRecords.values
+        .map<DataGridRow>((billType) => DataGridRow(cells: [
+              DataGridCell<String>(columnName: "patId", value: billType.id),
+              DataGridCell<String>(columnName: AppConstants.patCode, value: billType.id),
               //  DataGridCell<String>(columnName: Const.patPrimary, value: getAccountNameFromId(e.patPrimary)),
-              DataGridCell<String>(columnName: AppConstants.patName, value: e.patName),
-              DataGridCell<String>(columnName: AppConstants.patType, value: Utils.getInvTypeFromEnum(e.patType!)),
+              DataGridCell<String>(columnName: AppConstants.patName, value: billType.id),
+              DataGridCell<String>(columnName: AppConstants.patType, value: Utils.getInvTypeFromEnum(billType.id!)),
             ]))
         .toList();
   }

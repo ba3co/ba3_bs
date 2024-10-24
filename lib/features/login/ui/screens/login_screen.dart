@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/app_spacer.dart';
-import '../../controllers/login_controller.dart';
 import '../../controllers/nfc_cards_controller.dart';
 import '../../controllers/user_management_controller.dart';
 import '../widgets/loading_indicator.dart';
@@ -15,7 +14,6 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(LoginController());
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

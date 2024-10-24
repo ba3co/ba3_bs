@@ -1,7 +1,7 @@
 mixin AppValidator {
   String? isFieldValid(String? value, String fieldName) {
     if (value == null || value.trim().isEmpty) {
-      return '$fieldName is required!';
+      return 'ادخل $fieldName!';
     }
     return null;
   }
@@ -120,8 +120,7 @@ mixin AppValidator {
   }
 
   static bool isValidUuid(String uuid) {
-    final uuidRegExp =
-        RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
+    final uuidRegExp = RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
     return uuidRegExp.hasMatch(uuid);
   }
 }

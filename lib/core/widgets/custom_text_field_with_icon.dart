@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../core/constants/app_constants.dart';
-
 class CustomTextFieldWithIcon extends StatefulWidget {
   const CustomTextFieldWithIcon({
     super.key,
     required this.controller,
     required this.onSubmitted,
+    this.validator,
     this.keyboardType,
     this.onIconPressed,
     this.onChanged,
@@ -17,6 +16,7 @@ class CustomTextFieldWithIcon extends StatefulWidget {
 
   final TextEditingController controller;
   final void Function(String) onSubmitted;
+  final String? Function(String?)? validator;
   final Function()? onIconPressed;
   final void Function(String _)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
@@ -59,57 +59,55 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: AppConstants.constHeightTextField,
-      child: TextFormField(
-        // validator: validator,
-        onFieldSubmitted: widget.onSubmitted,
-        onChanged: widget.onChanged,
-        cursorHeight: 15,
-        // onSubmitted: onSubmitted,
-        controller: widget.controller,
-        inputFormatters: widget.inputFormatters,
-        onTap: () =>
-            widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
+    return TextFormField(
+      // validator: validator,
+      onFieldSubmitted: widget.onSubmitted,
+      validator: widget.validator,
+      onChanged: widget.onChanged,
+      cursorHeight: 15,
+      // onSubmitted: onSubmitted,
+      controller: widget.controller,
+      inputFormatters: widget.inputFormatters,
+      onTap: () =>
+          widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
 
-        // onTapOutside: onTapOutside,
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          disabledBorder: UnderlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.white, // Change the border color
-              width: 2.0, // Change the border width
-            ),
-            borderRadius: BorderRadius.circular(5.0), // Adjust border radius
+      // onTapOutside: onTapOutside,
+      decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        disabledBorder: UnderlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.white, // Change the border color
+            width: 2.0, // Change the border width
           ),
-          border: UnderlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.black, // Change the border color
-              width: 2.0, // Change the border width
-            ),
-            borderRadius: BorderRadius.circular(5.0), // Adjust border radius
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.blue, // Change the border color when focused
-              width: 2.0,
-            ),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          suffixIcon: IconButton(
-            onPressed: widget.onIconPressed,
-            focusNode: FocusNode(skipTraversal: true),
-            icon: const Icon(Icons.search),
-          ),
-          // Add an icon as a prefix
-
-          contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
-          // Center the text vertically
+          borderRadius: BorderRadius.circular(5.0), // Adjust border radius
         ),
-        textAlign: TextAlign.center,
-        // Center the text horizontally
+        border: UnderlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.black, // Change the border color
+            width: 2.0, // Change the border width
+          ),
+          borderRadius: BorderRadius.circular(5.0), // Adjust border radius
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.blue, // Change the border color when focused
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        suffixIcon: IconButton(
+          onPressed: widget.onIconPressed,
+          focusNode: FocusNode(skipTraversal: true),
+          icon: const Icon(Icons.search),
+        ),
+        // Add an icon as a prefix
+
+        contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
+        // Center the text vertically
       ),
+      textAlign: TextAlign.center,
+      // Center the text horizontally
     );
   }
 }

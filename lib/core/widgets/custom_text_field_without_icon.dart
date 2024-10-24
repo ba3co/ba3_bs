@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../constants/app_constants.dart';
-
 class CustomTextFieldWithoutIcon extends StatefulWidget {
   const CustomTextFieldWithoutIcon({
     super.key,
     required this.controller,
     this.onSubmitted,
+    this.validator,
     this.keyboardType,
     this.onIconPressed,
     this.onChanged,
@@ -23,6 +22,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final bool isNumeric, enabled;
+  final String? Function(String?)? validator;
 
   @override
   State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
@@ -60,42 +60,39 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: AppConstants.constHeightTextField,
-      child: TextFormField(
-        onChanged: widget.onChanged,
-        enabled: widget.enabled,
-        onFieldSubmitted: widget.onSubmitted,
-        controller: widget.controller,
-        keyboardType: widget.keyboardType,
-        scrollPadding: EdgeInsets.zero,
-
-        cursorHeight: 15,
-        onTap: () =>
-            widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
-        inputFormatters: widget.inputFormatters,
-        decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          border: UnderlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.black, // Change the border color
-              width: 2.0, // Change the border width
-            ),
-            borderRadius: BorderRadius.circular(5.0), // Adjust border radius
+    return TextFormField(
+      onChanged: widget.onChanged,
+      validator: widget.validator,
+      enabled: widget.enabled,
+      onFieldSubmitted: widget.onSubmitted,
+      controller: widget.controller,
+      keyboardType: widget.keyboardType,
+      scrollPadding: EdgeInsets.zero,
+      cursorHeight: 15,
+      onTap: () =>
+          widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
+      inputFormatters: widget.inputFormatters,
+      decoration: InputDecoration(
+        fillColor: Colors.white,
+        filled: true,
+        border: UnderlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.black, // Change the border color
+            width: 2.0, // Change the border width
           ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.blue, // Change the border color when focused
-              width: 2.0,
-            ),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0), // Center the text vertically
+          borderRadius: BorderRadius.circular(5.0), // Adjust border radius
         ),
-        textAlign: TextAlign.center,
-        // Center the text horizontally
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Colors.blue, // Change the border color when focused
+            width: 2.0,
+          ),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 0), // Center the text vertically
       ),
+      textAlign: TextAlign.center,
+      // Center the text horizontally
     );
   }
 }
