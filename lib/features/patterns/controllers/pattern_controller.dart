@@ -34,6 +34,8 @@ class PatternController extends GetxController with AppValidator {
 
   List<BillTypeModel> billsTypes = [];
 
+  bool isLoading = true;
+
   void onMainColorChanged(int? newColorValue) {
     if (newColorValue != null) {
       selectedColorValue = newColorValue;
@@ -56,9 +58,12 @@ class PatternController extends GetxController with AppValidator {
         Utils.showSnackBar('خطأ', failure.message);
       },
       (fetchedBillTypes) {
+        debugPrint('fetchedBillTypes ${fetchedBillTypes.length}');
         billsTypes.assignAll(fetchedBillTypes);
       },
     );
+    isLoading = false;
+    update();
   }
 
   addNewPattern() async {

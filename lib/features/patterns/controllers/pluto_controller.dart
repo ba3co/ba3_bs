@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -5,14 +7,13 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoController extends GetxController {
   GlobalKey plutoKey = GlobalKey();
 
-  List<PlutoColumn> getColumns(List<dynamic> modelList, {String? type}) {
+  List<PlutoColumn> getColumns(List<dynamic> dataList, {String? type}) {
+    log('getColumns ${dataList.map((e) => e.toJson())}');
     List<PlutoColumn> columns = [];
-    if (modelList.isEmpty) {
+    if (dataList.isEmpty) {
       return columns;
     } else {
-      Map<String, dynamic> sampleData = type != null
-          ? modelList.first?.toMap(type: type)
-          : modelList.first?.toMap();
+      Map<String, dynamic> sampleData = type != null ? dataList.first?.toMap(type: type) : dataList.first?.toMap();
       columns = sampleData.keys.map((key) {
         return PlutoColumn(
           title: key,
@@ -37,8 +38,7 @@ class PlutoController extends GetxController {
       return rows;
     } else {
       rows = modelList.map((model) {
-        Map<String, dynamic> rowData =
-            type != null ? model!.toMap(type: type) : model!.toMap();
+        Map<String, dynamic> rowData = type != null ? model!.toMap(type: type) : model!.toMap();
 
         Map<String, PlutoCell> cells = {};
 
