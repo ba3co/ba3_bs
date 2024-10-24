@@ -1,6 +1,4 @@
-import '../../../../core/base_classes/base_model.dart';
-
-class BillTypeModel implements BaseModel {
+class BillTypeModel {
   final String? id;
   final String? shortName;
   final String? fullName;
@@ -50,7 +48,6 @@ class BillTypeModel implements BaseModel {
         store: json['store'],
       );
 
-  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

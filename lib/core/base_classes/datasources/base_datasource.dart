@@ -1,4 +1,4 @@
-abstract class IDataSource<T, U> {
+abstract class BaseDatasource<T, U> {
   Future<List<T>> fetchAll();
 
   Future<T> fetchById(String id);

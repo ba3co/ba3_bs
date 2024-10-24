@@ -17,7 +17,7 @@ class AllPatternPage extends StatelessWidget {
         onSelected: (p0) {
           Get.to(const AddPatternPage());
         },
-        modelList: controller.patternModel.values.toList(),
+        modelList: controller.billsTypes,
       );
     });
   }

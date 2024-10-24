@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 
-import '../network/error/failure.dart';
+import '../../network/error/failure.dart';
 
-abstract class IRepository<T> {
+abstract class BaseRepository<T> {
   Future<Either<Failure, List<T>>> getAll();
 
   Future<Either<Failure, T?>> getById(String id);

@@ -4,19 +4,12 @@ import '../constants/app_constants.dart';
 import '../utils/utils.dart';
 
 class AppButton extends StatelessWidget {
-  const AppButton(
-      {super.key,
-      required this.title,
-      required this.onPressed,
-      required this.iconData,
-      this.color,
-      this.isLoading = false});
+  const AppButton({super.key, required this.title, required this.onPressed, required this.iconData, this.color});
 
   final String title;
   final Color? color;
   final IconData iconData;
   final VoidCallback onPressed;
-  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -29,28 +22,26 @@ class AppButton extends StatelessWidget {
         child: SizedBox(
           width: 100,
           height: AppConstants.constHeightTextField,
-          child: isLoading
-              ? Utils.showLoadingIndicator()
-              : Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      // const Spacer(),
-                      Icon(
-                        iconData,
-                        size: 22,
-                      ),
-                    ],
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
+                // const Spacer(),
+                Icon(
+                  iconData,
+                  size: 22,
+                ),
+              ],
+            ),
+          ),
         ));
   }
 }

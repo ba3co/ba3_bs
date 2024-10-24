@@ -9,9 +9,9 @@ import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/controllers/pluto_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
-import '../base_classes/interface_data_source.dart';
-import '../base_classes/interface_repository.dart';
-import '../base_classes/interface_repository_impl.dart';
+import '../base_classes/datasources/base_datasource.dart';
+import '../base_classes/repositories/base_repo.dart';
+import '../base_classes/repositories/base_repo_impl.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -23,10 +23,10 @@ class AppBindings extends Bindings {
     final userManagementRepo = UserManagementRepository(UserManagementService());
 
     // Instantiate PatternsDataSource and PatternsRepository
-    final IDataSource patternsDataSource = PatternsDataSource(firestore);
+    final BaseDatasource patternsDataSource = PatternsDataSource(firestore);
 
-    final IRepository<BillTypeModel> patternsRepo =
-        InterfaceRepositoryImpl<BillTypeModel>(patternsDataSource, (json) => BillTypeModel.fromJson(json));
+    final BaseRepository<BillTypeModel> patternsRepo =
+        BaseRepositoryImpl<BillTypeModel>(patternsDataSource, (json) => BillTypeModel.fromJson(json));
 
     // Lazy load controllers
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);

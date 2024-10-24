@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/widgets/app_button.dart';
 import '../../controllers/pattern_controller.dart';
@@ -20,15 +19,12 @@ class AddPatternBottomButtons extends StatelessWidget {
               //      patternController.clearController();
             },
             iconData: Icons.open_in_new_outlined),
-        Obx(
-          () => AppButton(
-            title: "اضافة",
-            isLoading: patternController.isLoading.value,
-            onPressed: () {
-              patternController.addNewPattern();
-            },
-            iconData: Icons.add,
-          ),
+        AppButton(
+          title: "اضافة",
+          onPressed: () {
+            patternController.addNewPattern();
+          },
+          iconData: Icons.add,
         ),
       ],
     );

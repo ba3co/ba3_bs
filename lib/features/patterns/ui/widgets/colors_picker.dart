@@ -16,7 +16,7 @@ class ColorsPicker extends StatelessWidget {
           onMainColorChange: (ColorSwatch? color) {
             patternController.onMainColorChanged(color?.value);
           },
-          selectedColor: Color(patternController.selectedColorValue ?? 4294198070)),
+          selectedColor: Color(patternController.selectedColorValue)),
     );
   }
 }

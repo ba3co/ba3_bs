@@ -4,15 +4,14 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../../../core/base_classes/interface_data_source.dart';
-import '../../../../core/base_classes/interface_repository.dart';
-import 'base_model.dart';
+import '../datasources/base_datasource.dart';
+import 'base_repo.dart';
 
-class InterfaceRepositoryImpl<T extends BaseModel> implements IRepository<T> {
-  final IDataSource _dataSource;
-  final T Function(Map) fromJsonFactory;
+class BaseRepositoryImpl<T> implements BaseRepository<T> {
+  final BaseDatasource _dataSource;
+  final T Function(Map) fromJson;
 
-  InterfaceRepositoryImpl(this._dataSource, this.fromJsonFactory);
+  BaseRepositoryImpl(this._dataSource, this.fromJson);
 
   @override
   Future<Either<Failure, Unit>> delete(String id) async {
@@ -28,7 +27,7 @@ class InterfaceRepositoryImpl<T extends BaseModel> implements IRepository<T> {
   Future<Either<Failure, List<T>>> getAll() async {
     try {
       final rawItems = await _dataSource.fetchAll();
-      final items = rawItems.map((doc) => fromJsonFactory(doc.data() as Map)).toList();
+      final items = rawItems.map((doc) => fromJson(doc.data() as Map)).toList();
       return Right(items); // Return list of items
     } catch (e) {
       return Left(ErrorHandler(e).failure); // Return error
@@ -39,7 +38,7 @@ class InterfaceRepositoryImpl<T extends BaseModel> implements IRepository<T> {
   Future<Either<Failure, T>> getById(String id) async {
     try {
       final rawItem = await _dataSource.fetchById(id);
-      final item = fromJsonFactory(rawItem.data() as Map);
+      final item = fromJson(rawItem.data() as Map);
       return Right(item); // Return the found item
     } catch (e) {
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure

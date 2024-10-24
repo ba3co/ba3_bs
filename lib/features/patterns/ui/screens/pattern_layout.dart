@@ -1,12 +1,10 @@
+import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/features/patterns/controllers/pattern_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/controllers/window_close_controller.dart';
 import '../../../../core/widgets/app_menu_item.dart';
-import '../../../login/controllers/user_management_controller.dart';
-import 'add_pattern_page.dart';
-import 'all_pattern_page.dart';
 
 class PatternLayout extends StatelessWidget {
   const PatternLayout({super.key});
@@ -26,15 +24,17 @@ class PatternLayout extends StatelessWidget {
               text: "إضافة نمط",
               onTap: () {
                 //   Get.find<PatternController>().initPattern();
-                Get.to(() => const AddPatternPage());
+                Get.toNamed(AppRoutes.addPatternsScreen);
               },
             ),
             AppMenuItem(
               text: "معاينة الانماط",
               onTap: () {
-                hasPermissionForOperation(AppConstants.roleUserRead, AppConstants.roleViewPattern).then((value) {
-                  if (value) Get.to(() => const AllPatternPage());
-                });
+                Get.find<PatternController>().getAllBillTypes();
+                Get.toNamed(AppRoutes.showAllPatternsScreen);
+                // hasPermissionForOperation(AppConstants.roleUserRead, AppConstants.roleViewPattern).then((value) {
+                //   if (value) Get.to(() => const AllPatternPage());
+                // });
               },
             ),
           ],
