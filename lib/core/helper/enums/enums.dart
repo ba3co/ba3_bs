@@ -25,12 +25,12 @@ enum RecordType {
 }
 
 enum InvoiceType {
-  buy("شراء"),
-  sales("مبيع"),
-  buyReturn("مرتجع شراء"),
-  salesReturn("مرتجع بيع"),
-  add("إدخال"),
-  remove("إخراج");
+  buy('شراء'),
+  sales('مبيع'),
+  buyReturn('مرتجع شراء'),
+  salesReturn('مرتجع بيع'),
+  add('إدخال'),
+  remove('إخراج');
 
   final String label;
 
@@ -38,3 +38,28 @@ enum InvoiceType {
 }
 
 enum RequestState { initial, loading, error, success }
+
+enum InvPayType {
+  cash('نقدي'),
+  due('اجل');
+
+  // Custom value for each enum case
+  final String label;
+
+  const InvPayType(this.label);
+}
+
+enum BillType {
+  sales('invoiceTypeSales'),
+  buy('invoiceTypeBuy'),
+  salesReturn('salesReturn'),
+  buyReturn('buyReturn'),
+  inputSettlement('inputSettlement'),
+  outputSettlement('outputSettlement'),
+  salesWithPartner('invoiceTypeSalesWithPartner'),
+  salesWithoutReceipt('salesWithoutReceipt');
+
+  final String label;
+
+  const BillType(this.label);
+}

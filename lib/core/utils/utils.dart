@@ -256,4 +256,10 @@ class Utils {
   static showSnackBar(String title, String message) {
     Get.snackbar(title, message);
   }
+
+  static String replaceArabicNumbersWithEnglish(String input) {
+    return input.replaceAllMapped(RegExp(r'[٠-٩]'), (Match match) {
+      return String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
+    });
+  }
 }

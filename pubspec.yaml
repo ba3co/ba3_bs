@@ -28,7 +28,10 @@ dependencies:
   native_dialog_plus: ^1.0.7
   flutter_platform_alert: ^0.6.1
   syncfusion_flutter_datagrid: ^27.1.55
+  syncfusion_flutter_datepicker: ^27.1.56
   flutter_material_color_picker: ^1.2.0
+  tab_container: ^3.5.3
+
 
 dev_dependencies:
   flutter_test:
