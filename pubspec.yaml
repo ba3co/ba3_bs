@@ -31,7 +31,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^27.1.56
   flutter_material_color_picker: ^1.2.0
   tab_container: ^3.5.3
-
+  math_expressions: ^2.6.0
 
 dev_dependencies:
   flutter_test:

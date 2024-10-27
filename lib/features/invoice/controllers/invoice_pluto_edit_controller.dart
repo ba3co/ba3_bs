@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../core/utils/utils.dart';
@@ -128,5 +129,27 @@ class InvoicePlutoController extends GetxController {
     double total = (subtotal + vat) * quantity;
 
     updateCellValue("invRecTotal", total.toStringAsFixed(2));
+  }
+
+  void updateInvoiceValues(double subTotal, int quantity) {
+    double vat = subTotal * 0.05;
+    double total = subTotal * quantity;
+    updateCellValue("invRecVat", vat.toStringAsFixed(2));
+    updateCellValue("invRecSubTotal", (subTotal - vat).toStringAsFixed(2));
+    updateCellValue("invRecTotal", total.toStringAsFixed(2));
+    updateCellValue("invRecQuantity", quantity);
+  }
+
+  void updateInvoiceValuesByTotal(double total, int quantity) {
+    double subTotal = (total / quantity) - ((total * 0.05) / quantity);
+    double vat = ((total / quantity) - subTotal);
+
+    updateCellValue("invRecVat", vat.toStringAsFixed(2));
+    updateCellValue("invRecSubTotal", subTotal.toStringAsFixed(2));
+    updateCellValue("invRecTotal", total.toStringAsFixed(2));
+  }
+
+  double parseExpression(String expression) {
+    return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
   }
 }
