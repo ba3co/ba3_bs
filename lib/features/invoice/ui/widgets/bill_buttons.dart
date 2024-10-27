@@ -47,9 +47,10 @@ class BillButtons extends StatelessWidget {
               title: 'السند',
               onPressed: () async {
                 Get.find<BondController>().createBond(
+                  vat: invoicePlutoController.computeWithVatTotal() - invoicePlutoController.computeWithoutVatTotal(),
                   billType: BillType.fromLabel(billTypeLabel),
                   customerAccount: invoiceController.customerAccount,
-                  total: invoicePlutoController.computeWithVatTotal(),
+                  total: invoicePlutoController.computeWithoutVatTotal(),
                   discount: invoicePlutoController.computeDiscounts(),
                   gifts: invoicePlutoController.computeGifts(),
                 );

@@ -21,6 +21,7 @@ class BillBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var plutoController = Get.find<InvoicePlutoController>();
     return Expanded(
       child: Column(
         children: [
@@ -77,8 +78,12 @@ class BillBody extends StatelessWidget {
                   flex: 1,
                   child: BillGridWidget(
                     rowColor: Colors.grey,
-                    columns: Get.find<InvoicePlutoController>().billAdditionsDiscountsColumns,
-                    rows: Get.find<InvoicePlutoController>().billAdditionsDiscountsRows,
+                    columns: plutoController.billAdditionsDiscountsColumns,
+                    rows: plutoController.billAdditionsDiscountsRows,
+                    onChanged: plutoController.onAdditionsDiscountsChanged,
+                    onLoaded: (PlutoGridOnLoadedEvent event) {
+                      plutoController.billAdditionsDiscountsStateManager = event.stateManager;
+                    },
                   ),
                 ),
               ],

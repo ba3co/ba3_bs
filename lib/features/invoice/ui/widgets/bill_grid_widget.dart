@@ -7,12 +7,16 @@ class BillGridWidget extends StatelessWidget {
   final Color rowColor;
   final List<PlutoRow> rows;
   final List<PlutoColumn> columns;
+  final Function(PlutoGridOnChangedEvent)? onChanged;
+  final Function(PlutoGridOnLoadedEvent)? onLoaded;
 
   const BillGridWidget({
     super.key,
     required this.rowColor,
     required this.rows,
     required this.columns,
+    required this.onChanged,
+    required this.onLoaded,
   });
 
   @override
@@ -20,6 +24,7 @@ class BillGridWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: PlutoGrid(
+        onLoaded: onLoaded,
         configuration: PlutoGridConfiguration(
           shortcut: const PlutoGridShortcut(),
           style: buildGridStyleConfig(evenRowColor: rowColor),
@@ -27,6 +32,7 @@ class BillGridWidget extends StatelessWidget {
         ),
         columns: columns,
         rows: rows,
+        onChanged: onChanged,
       ),
     );
   }

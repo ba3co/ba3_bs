@@ -13,8 +13,12 @@ class InvoicePlutoController extends GetxController {
 
   List<PlutoRow> rows = [];
 
+// State manager for the main grid
   late PlutoGridStateManager stateManager =
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
+
+  // State manager for the additions and discounts grid
+  late PlutoGridStateManager billAdditionsDiscountsStateManager;
 
   List<PlutoColumn> columns = [];
 
@@ -207,6 +211,41 @@ class InvoicePlutoController extends GetxController {
 
   double parseExpression(String expression) {
     return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
+  }
+
+  // Function to handle changes in the additions and discounts table
+  void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) async {
+    // Only handle changes to the 'discountRatioId' field
+    if (event.column.field == 'discountRatioId') {
+      String? discountRatioStr = event.value;
+
+      // Parse the discount ratio as a double
+      double discountRatio = double.tryParse(discountRatioStr ?? '') ?? 0.0;
+
+      // Calculate the discount based on the total and discount ratio
+      double totalWithVat = computeWithVatTotal();
+      double discountAmount = totalWithVat * (discountRatio / 100);
+
+      // Update the 'discountId' cell with the calculated discount
+      billAdditionsDiscountsStateManager.changeCellValue(
+        event.row.cells['discountId']!,
+        discountAmount.toStringAsFixed(2),
+      );
+
+      // Refresh the UI to show the updated value
+      update();
+    }
+  }
+
+  // Initialize the state managers in an appropriate setup method
+  void initializeStateManagers() {
+    // Additions and discounts grid state manager setup
+    billAdditionsDiscountsStateManager = PlutoGridStateManager(
+      columns: billAdditionsDiscountsColumns,
+      rows: billAdditionsDiscountsRows,
+      gridFocusNode: FocusNode(),
+      scroll: PlutoGridScrollController(),
+    );
   }
 
   List<PlutoColumn> billAdditionsDiscountsColumns = [

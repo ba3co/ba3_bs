@@ -86,6 +86,7 @@ enum BondItemType {
 enum SalesAccounts implements SalesAccount {
   sales('مبيعات'),
   cashBox('الصندوق'),
+  vat('الضريبة'),
   grantedDiscount('حسم ممنوح'),
   settlements('تسويات'),
   salesGifts('هدايا مبيع');

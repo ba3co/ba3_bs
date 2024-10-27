@@ -17,11 +17,12 @@ class BondController extends GetxController {
       {required BillType billType,
       required CustomerAccount customerAccount,
       required double total,
+      required double vat,
       required double discount,
       required double gifts}) {
     switch (billType) {
       case BillType.sales:
-        handleSales(customerAccount, total, discount, gifts);
+        handleSales(customerAccount, total, vat, discount, gifts);
         break;
       case BillType.buy:
         handleBuy(total, discount, gifts);
@@ -33,13 +34,13 @@ class BondController extends GetxController {
   }
 
   // Handle sales for cash payment type
-  void handleSales(CustomerAccount customerAccount, double totalCash, double discount, double gifts) {
+  void handleSales(CustomerAccount customerAccount, double totalCash, double vat, double discount, double gifts) {
     Map<SalesAccount, List<BondItemModel>> bonds = {};
 
     bonds[SalesAccounts.sales] = [BondItemModel(bondItemType: BondItemType.creditor, amount: totalCash)];
 
-    bonds[customerAccount] = _createCashBoxBonds(totalCash, discount);
-    _addOptionalBonds(bonds, discount, gifts);
+    bonds[customerAccount] = _createCashBoxBonds(totalCash, discount, vat);
+    _addOptionalBonds(bonds, discount, gifts, vat);
 
     bondModel = BondModel(bonds: bonds);
   }
@@ -57,23 +58,20 @@ class BondController extends GetxController {
   }
 
   // Create bonds for the cash box based on cash sales
-  List<BondItemModel> _createCashBoxBonds(double totalCash, double discount) {
+  List<BondItemModel> _createCashBoxBonds(double totalCash, double discount, double vat) {
     return [
       if (discount > 0) BondItemModel(bondItemType: BondItemType.creditor, amount: discount),
+      if (vat > 0) BondItemModel(bondItemType: BondItemType.debtor, amount: vat),
       BondItemModel(bondItemType: BondItemType.debtor, amount: totalCash),
     ];
   }
 
-  // Create bonds for the customer based on due sales
-  List<BondItemModel> _createCustomerBonds(double totalDue, double discount) {
-    return [
-      if (discount > 0) BondItemModel(bondItemType: BondItemType.creditor, amount: discount),
-      BondItemModel(bondItemType: BondItemType.debtor, amount: totalDue),
-    ];
-  }
-
   // Add optional bonds for discounts and gifts
-  void _addOptionalBonds(Map<SalesAccount, List<BondItemModel>> bonds, double discount, double gifts) {
+  void _addOptionalBonds(Map<SalesAccount, List<BondItemModel>> bonds, double discount, double gifts, double vat) {
+    if (vat > 0) {
+      bonds[SalesAccounts.vat] = [BondItemModel(bondItemType: BondItemType.creditor, amount: vat)];
+    }
+
     if (discount > 0) {
       bonds[SalesAccounts.grantedDiscount] = [
         BondItemModel(bondItemType: BondItemType.debtor, amount: discount),
