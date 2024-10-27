@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/widgets/app_spacer.dart';
 import '../../../../core/widgets/custom_pluto_short_cut.dart';
 import '../../../../core/widgets/custom_pluto_with_edite.dart';
 import '../../../../core/widgets/get_product_enter_short_cut.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
-import '../../controllers/invoice_pluto_edit_controller.dart';
+import '../../controllers/invoice_pluto_controller.dart';
 import 'bill_grid_widget.dart';
 
 class BillBody extends StatelessWidget {
@@ -78,8 +77,8 @@ class BillBody extends StatelessWidget {
                   flex: 1,
                   child: BillGridWidget(
                     rowColor: Colors.grey,
-                    columns: billGridColumns,
-                    rows: billGridRows,
+                    columns: Get.find<InvoicePlutoController>().billAdditionsDiscountsColumns,
+                    rows: Get.find<InvoicePlutoController>().billAdditionsDiscountsRows,
                   ),
                 ),
               ],

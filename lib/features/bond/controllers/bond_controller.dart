@@ -13,14 +13,18 @@ class BondController extends GetxController {
   late EntryBondRecordDataSource recordDataSource;
 
   // Method to create a sales bond based on payment type
-  void createSalesBond(
-      {required InvPayType payType, required double total, required double discount, required double gifts}) {
-    switch (payType) {
-      case InvPayType.cash:
-        handleSalesCash(total, discount, gifts);
+  void createBond(
+      {required BillType billType,
+      required CustomerAccount customerAccount,
+      required double total,
+      required double discount,
+      required double gifts}) {
+    switch (billType) {
+      case BillType.sales:
+        handleSales(customerAccount, total, discount, gifts);
         break;
-      case InvPayType.due:
-        handleSalesDue(total, discount, gifts);
+      case BillType.buy:
+        handleBuy(total, discount, gifts);
         break;
       default:
         throw Exception('Invalid payment type'); // Handle unexpected pay types
@@ -29,27 +33,27 @@ class BondController extends GetxController {
   }
 
   // Handle sales for cash payment type
-  void handleSalesCash(double totalCash, double discount, double gifts) {
-    Map<SalesCashAccounts, List<BondItemModel>> bonds = {};
+  void handleSales(CustomerAccount customerAccount, double totalCash, double discount, double gifts) {
+    Map<SalesAccount, List<BondItemModel>> bonds = {};
 
-    bonds[SalesCashAccounts.sales] = [BondItemModel(bondItemType: BondItemType.creditor, amount: totalCash)];
+    bonds[SalesAccounts.sales] = [BondItemModel(bondItemType: BondItemType.creditor, amount: totalCash)];
 
-    bonds[SalesCashAccounts.cashBox] = _createCashBoxBonds(totalCash, discount);
+    bonds[customerAccount] = _createCashBoxBonds(totalCash, discount);
     _addOptionalBonds(bonds, discount, gifts);
 
     bondModel = BondModel(bonds: bonds);
   }
 
   // Handle sales for due payment type
-  void handleSalesDue(double totalDue, double discount, double gifts) {
-    Map<SalesDueAccounts, List<BondItemModel>> bonds = {};
-
-    bonds[SalesDueAccounts.sales] = [BondItemModel(bondItemType: BondItemType.creditor, amount: totalDue)];
-
-    bonds[SalesDueAccounts.customer] = _createCustomerBonds(totalDue, discount);
-    _addOptionalBonds(bonds, discount, gifts);
-
-    bondModel = BondModel(bonds: bonds);
+  void handleBuy(double totalDue, double discount, double gifts) {
+    // Map<SalesDueAccounts, List<BondItemModel>> bonds = {};
+    //
+    // bonds[SalesDueAccounts.sales] = [BondItemModel(bondItemType: BondItemType.creditor, amount: totalDue)];
+    //
+    // bonds[SalesDueAccounts.customer] = _createCustomerBonds(totalDue, discount);
+    // _addOptionalBonds(bonds, discount, gifts);
+    //
+    // bondModel = BondModel(bonds: bonds);
   }
 
   // Create bonds for the cash box based on cash sales
@@ -71,16 +75,16 @@ class BondController extends GetxController {
   // Add optional bonds for discounts and gifts
   void _addOptionalBonds(Map<SalesAccount, List<BondItemModel>> bonds, double discount, double gifts) {
     if (discount > 0) {
-      bonds[SalesCashAccounts.grantedDiscount] = [
+      bonds[SalesAccounts.grantedDiscount] = [
         BondItemModel(bondItemType: BondItemType.debtor, amount: discount),
       ];
     }
 
     if (gifts > 0) {
-      bonds[SalesCashAccounts.salesGifts] = [
+      bonds[SalesAccounts.salesGifts] = [
         BondItemModel(bondItemType: BondItemType.debtor, amount: gifts),
       ];
-      bonds[SalesCashAccounts.settlements] = [
+      bonds[SalesAccounts.settlements] = [
         BondItemModel(bondItemType: BondItemType.creditor, amount: gifts),
       ];
     }

@@ -64,6 +64,14 @@ enum BillType {
   final String label;
 
   const BillType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory BillType.fromLabel(String label) {
+    return BillType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching BillType for label: $label'),
+    );
+  }
 }
 
 enum BondItemType {
@@ -75,7 +83,7 @@ enum BondItemType {
   const BondItemType(this.label);
 }
 
-enum SalesCashAccounts implements SalesAccount {
+enum SalesAccounts implements SalesAccount {
   sales('مبيعات'),
   cashBox('الصندوق'),
   grantedDiscount('حسم ممنوح'),
@@ -85,10 +93,10 @@ enum SalesCashAccounts implements SalesAccount {
   @override
   final String label;
 
-  const SalesCashAccounts(this.label);
+  const SalesAccounts(this.label);
 }
 
-enum SalesDueAccounts implements SalesAccount {
+enum BuyAccounts implements SalesAccount {
   sales('مبيعات'),
   customer('الزبون'),
   grantedDiscount('حسم ممنوح'),
@@ -98,5 +106,15 @@ enum SalesDueAccounts implements SalesAccount {
   @override
   final String label;
 
-  const SalesDueAccounts(this.label);
+  const BuyAccounts(this.label);
+}
+
+enum CustomerAccount implements SalesAccount {
+  cashBox('الصندوق'),
+  cashCustomer('زبون كاش');
+
+  @override
+  final String label;
+
+  const CustomerAccount(this.label);
 }

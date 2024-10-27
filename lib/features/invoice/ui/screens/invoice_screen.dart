@@ -34,7 +34,7 @@ class InvoiceScreen extends StatelessWidget {
             const VerticalSpace(20),
             BillBody(billTypeModel: billTypeModel),
             const Divider(),
-            BillButtons(invoiceController: invoiceController),
+            BillButtons(invoiceController: invoiceController, billTypeLabel: billTypeModel.billType!),
           ],
         ),
       );

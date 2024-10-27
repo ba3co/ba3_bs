@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../features/invoice/controllers/invoice_pluto_controller.dart';
 import 'custom_pluto_grid_style_config.dart';
 
 class CustomPlutoWithEdite extends StatelessWidget {
@@ -13,7 +14,7 @@ class CustomPlutoWithEdite extends StatelessWidget {
     this.evenRowColor = Colors.blueAccent,
   });
 
-  final dynamic controller;
+  final InvoicePlutoController controller;
   final PlutoGridShortcut? shortCut;
   final Function(PlutoGridOnChangedEvent)? onChanged;
   final Function(PlutoGridOnRowSecondaryTapEvent) onRowSecondaryTap;
@@ -39,7 +40,7 @@ class CustomPlutoWithEdite extends StatelessWidget {
           controller.stateManager.appendRows(newRows);
 
           if (controller.stateManager.rows.isNotEmpty && controller.stateManager.rows.first.cells.length > 1) {
-            final secondCell = controller.stateManager.rows.first.cells.entries.elementAt(1).label;
+            final secondCell = controller.stateManager.rows.first.cells.entries.elementAt(1).value;
             controller.stateManager.setCurrentCell(secondCell, 0);
 
             FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -11,18 +12,21 @@ import '../../../../core/widgets/option_text_widget.dart';
 import '../../../bond/ui/screens/entry_bond_details_view.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../controllers/invoice_controller.dart';
-import '../../controllers/invoice_pluto_edit_controller.dart';
+import '../../controllers/invoice_pluto_controller.dart';
 
 class BillButtons extends StatelessWidget {
   const BillButtons({
     super.key,
     required this.invoiceController,
+    required this.billTypeLabel,
   });
 
   final InvoiceController invoiceController;
+  final String billTypeLabel;
 
   @override
   Widget build(BuildContext context) {
+    var invoicePlutoController = Get.find<InvoicePlutoController>();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Wrap(
@@ -42,11 +46,12 @@ class BillButtons extends StatelessWidget {
           AppButton(
               title: 'السند',
               onPressed: () async {
-                Get.find<BondController>().createSalesBond(
-                  payType: invoiceController.selectedPayType,
-                  total: Get.find<InvoicePlutoController>().computeWithVatTotal(),
-                  discount: 150,
-                  gifts: 500,
+                Get.find<BondController>().createBond(
+                  billType: BillType.fromLabel(billTypeLabel),
+                  customerAccount: invoiceController.customerAccount,
+                  total: invoicePlutoController.computeWithVatTotal(),
+                  discount: invoicePlutoController.computeDiscounts(),
+                  gifts: invoicePlutoController.computeGifts(),
                 );
                 Get.to(() => const EntryBondDetailsView());
               },

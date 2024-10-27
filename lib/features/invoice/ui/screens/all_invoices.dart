@@ -5,7 +5,7 @@
 // import '../../../../core/widgets/new_pluto.dart';
 // import '../../controllers/discount_pluto_edit_controller.dart';
 // import '../../controllers/invoice_controller.dart';
-// import '../../controllers/invoice_pluto_edit_controller.dart';
+// import '../../controllers/invoice_pluto_controller.dart';
 // import 'invoice_screen.dart';
 //
 // class AllInvoice extends StatelessWidget {
