@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,8 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => NfcCardsController(), fenix: true);
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => PatternController(patternsRepo), fenix: true);
+    Get.lazyPut(() => BondController(), fenix: true);
+
     Get.put(InvoiceController(patternsRepo));
   }
 }

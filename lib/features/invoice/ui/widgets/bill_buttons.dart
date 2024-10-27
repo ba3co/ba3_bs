@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,8 +8,10 @@ import '../../../../core/utils/utils.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../core/widgets/option_text_widget.dart';
+import '../../../bond/ui/screens/entry_bond_details_view.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../controllers/invoice_controller.dart';
+import '../../controllers/invoice_pluto_edit_controller.dart';
 
 class BillButtons extends StatelessWidget {
   const BillButtons({
@@ -36,7 +39,18 @@ class BillButtons extends StatelessWidget {
               },
               iconData: Icons.create_new_folder_outlined),
           AppButton(title: "إضافة", onPressed: () async {}, iconData: Icons.add_chart_outlined),
-          AppButton(title: 'السند', onPressed: () async {}, iconData: Icons.file_open_outlined),
+          AppButton(
+              title: 'السند',
+              onPressed: () async {
+                Get.find<BondController>().createSalesBond(
+                  payType: invoiceController.selectedPayType,
+                  total: Get.find<InvoicePlutoController>().computeWithVatTotal(),
+                  discount: 150,
+                  gifts: 500,
+                );
+                Get.to(() => const EntryBondDetailsView());
+              },
+              iconData: Icons.file_open_outlined),
           AppButton(
             title: 'موافقة',
             onPressed: () async {},

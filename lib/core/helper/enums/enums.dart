@@ -1,3 +1,5 @@
+import '../../base_classes/sales_account.dart';
+
 enum EnvType { debug, release }
 
 enum UserManagementStatus { first, login, block, auth }
@@ -62,4 +64,39 @@ enum BillType {
   final String label;
 
   const BillType(this.label);
+}
+
+enum BondItemType {
+  creditor('الدائن'),
+  debtor('مدين');
+
+  final String label;
+
+  const BondItemType(this.label);
+}
+
+enum SalesCashAccounts implements SalesAccount {
+  sales('مبيعات'),
+  cashBox('الصندوق'),
+  grantedDiscount('حسم ممنوح'),
+  settlements('تسويات'),
+  salesGifts('هدايا مبيع');
+
+  @override
+  final String label;
+
+  const SalesCashAccounts(this.label);
+}
+
+enum SalesDueAccounts implements SalesAccount {
+  sales('مبيعات'),
+  customer('الزبون'),
+  grantedDiscount('حسم ممنوح'),
+  settlements('تسويات'),
+  salesGifts('هدايا مبيع');
+
+  @override
+  final String label;
+
+  const SalesDueAccounts(this.label);
 }

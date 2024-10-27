@@ -59,9 +59,6 @@ class BillBody extends StatelessWidget {
                             if (event.column.field == "invRecTotal") {
                               controller.updateInvoiceValuesByTotal(total, quantity);
                             }
-                            // if (event.column.field == "invRecDis" && quantity > 0) {
-                            //   controller.updateInvoiceValuesByDiscount(total, quantity, double.parse(dis));
-                            // }
                             if (event.column.field == "invRecQuantity" && quantity > 0) {
                               controller.updateInvoiceValuesByQuantity(quantity, subTotal, double.parse(vat));
                             }
