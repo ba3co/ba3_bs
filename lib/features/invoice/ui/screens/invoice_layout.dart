@@ -51,18 +51,14 @@ class InvoiceLayout extends StatelessWidget {
                     children: invoiceController.billsTypes.map((bill) {
                       return InkWell(
                         onTap: () {
+                          Get.find<InvoiceController>().updateBillType(bill.billTypeLabel!);
                           SystemChrome.setPreferredOrientations([
                             DeviceOrientation.landscapeLeft,
                           ]);
                           Get.to(
-                            () => InvoiceScreen(
-                              billId: '1',
-                              patternId: bill.id!,
-                              billTypeModel: bill,
-                            ),
+                            () => InvoiceScreen(billModel: bill),
                             binding: BindingsBuilder(() {
                               Get.lazyPut(() => InvoicePlutoController());
-                              // Get.lazyPut(() => DiscountPlutoViewModel());
                             }),
                           );
                         },

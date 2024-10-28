@@ -1,3 +1,5 @@
+import 'package:pluto_grid/pluto_grid.dart';
+
 import '../helper/enums/enums.dart';
 
 abstract class AppConstants {
@@ -290,4 +292,53 @@ abstract class AppConstants {
   static const String cancelError = 'cancel_error';
   static const String cacheError = 'cache_error';
   static const String noInternetError = 'no_internet_error';
+
+  static final List<PlutoColumn> billAdditionsDiscountsColumns = [
+    PlutoColumn(
+      title: 'الحساب',
+      field: 'accountId',
+      type: PlutoColumnType.text(),
+    ),
+    PlutoColumn(
+      title: 'الحسم',
+      field: 'discountId',
+      type: PlutoColumnType.text(),
+    ),
+    PlutoColumn(
+      title: 'نسبه الحسم',
+      field: 'discountRatioId',
+      type: PlutoColumnType.text(),
+    ),
+    PlutoColumn(
+      title: 'الاضافه',
+      field: 'additionId',
+      type: PlutoColumnType.text(),
+    ),
+    PlutoColumn(
+      title: 'نسبه الاضافه',
+      field: 'additionRatioId',
+      type: PlutoColumnType.text(),
+    ),
+  ];
+
+  static final List<PlutoRow> billAdditionsDiscountsRows = [
+    PlutoRow(
+      cells: {
+        'accountId': PlutoCell(value: 'الحسم الممنوح'),
+        'discountId': PlutoCell(value: ''),
+        'discountRatioId': PlutoCell(value: ''),
+        'additionId': PlutoCell(value: ''),
+        'additionRatioId': PlutoCell(value: ''),
+      },
+    ),
+    PlutoRow(
+      cells: {
+        'accountId': PlutoCell(value: 'الاضافات'),
+        'discountId': PlutoCell(value: ''),
+        'discountRatioId': PlutoCell(value: ''),
+        'additionId': PlutoCell(value: ''),
+        'additionRatioId': PlutoCell(value: ''),
+      },
+    ),
+  ];
 }

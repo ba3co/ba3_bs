@@ -4,7 +4,7 @@ class BillTypeModel {
   final String? fullName;
   final String? latinShortName;
   final String? latinFullName;
-  final String? billType;
+  final String? billTypeLabel;
   final String? materialAccount; // المواد
   final String? discountsAccount; // الحسميات
   final String? additionsAccount; //الاضافات
@@ -20,7 +20,7 @@ class BillTypeModel {
     this.fullName,
     this.latinShortName,
     this.latinFullName,
-    this.billType,
+    this.billTypeLabel,
     this.materialAccount,
     this.discountsAccount,
     this.additionsAccount,
@@ -37,7 +37,7 @@ class BillTypeModel {
         fullName: json['fullName'],
         latinShortName: json['latinShortName'],
         latinFullName: json['latinFullName'],
-        billType: json['billType'],
+        billTypeLabel: json['billType'],
         materialAccount: json['materialAccount'],
         discountsAccount: json['discountsAccount'],
         additionsAccount: json['additionsAccount'],
@@ -55,7 +55,7 @@ class BillTypeModel {
       'fullName': fullName,
       'latinShortName': latinShortName,
       'latinFullName': latinFullName,
-      'billType': billType,
+      'billType': billTypeLabel,
       'materialAccount': materialAccount,
       'discountsAccount': discountsAccount,
       'additionsAccount': additionsAccount,
@@ -75,7 +75,7 @@ class BillTypeModel {
       'Full Arabic Name': fullName,
       'Short Latin Name': latinShortName,
       'Full Latin Name': latinFullName,
-      'Bill Type': billType,
+      'Bill Type': billTypeLabel,
       'Material Account': materialAccount,
       'Discounts Account': discountsAccount,
       'Additions Account': additionsAccount,
@@ -94,7 +94,7 @@ class BillTypeModel {
     String? fullName,
     String? latinShortName,
     String? latinFullName,
-    String? billType,
+    String? billTypeLabel,
     String? materialAccount,
     String? discountsAccount,
     String? additionsAccount,
@@ -110,7 +110,7 @@ class BillTypeModel {
       fullName: fullName ?? this.fullName,
       latinShortName: latinShortName ?? this.latinShortName,
       latinFullName: latinFullName ?? this.latinFullName,
-      billType: billType ?? this.billType,
+      billTypeLabel: billTypeLabel ?? this.billTypeLabel,
       materialAccount: materialAccount ?? this.materialAccount,
       discountsAccount: discountsAccount ?? this.discountsAccount,
       additionsAccount: additionsAccount ?? this.additionsAccount,

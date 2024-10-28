@@ -15,9 +15,10 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
+  DateTime? date;
+
   @override
   Widget build(BuildContext context) {
-    DateTime? date;
     return Container(
       height: AppConstants.constHeightTextField,
       decoration: BoxDecoration(
@@ -43,8 +44,7 @@ class _DatePickerState extends State<DatePicker> {
                     showNavigationArrow: true,
                     navigationMode: DateRangePickerNavigationMode.scroll,
                     onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                      DateTime _ = dateRangePickerSelectionChangedArgs.value as DateTime;
-                      date = _;
+                      date = dateRangePickerSelectionChangedArgs.value as DateTime;
                     },
                   ),
                 ),
@@ -72,11 +72,7 @@ class _DatePickerState extends State<DatePicker> {
               children: [
                 const Spacer(),
                 Text(
-                  widget.initDate != null
-                      ? widget.initDate.toString().split(" ").first
-                      : date == null
-                          ? "اختر يوم"
-                          : date.toString().split(" ").first,
+                  date == null ? widget.initDate.toString().split(" ").first : date.toString().split(" ").first,
                   style: const TextStyle(fontSize: 17),
                 ),
                 const Spacer(),

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -79,8 +80,8 @@ class BillBody extends StatelessWidget {
                   flex: 1,
                   child: BillGridWidget(
                     rowColor: Colors.grey,
-                    columns: plutoController.billAdditionsDiscountsColumns,
-                    rows: plutoController.billAdditionsDiscountsRows,
+                    columns: AppConstants.billAdditionsDiscountsColumns,
+                    rows: AppConstants.billAdditionsDiscountsRows,
                     onChanged: plutoController.onAdditionsDiscountsChanged,
                     onLoaded: (PlutoGridOnLoadedEvent event) {
                       plutoController.billAdditionsDiscountsStateManager = event.stateManager;

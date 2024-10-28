@@ -51,8 +51,9 @@ class BillButtons extends StatelessWidget {
                   billType: BillType.fromLabel(billTypeLabel),
                   customerAccount: invoiceController.customerAccount,
                   total: invoicePlutoController.computeWithoutVatTotal(),
-                  discount: invoicePlutoController.computeDiscounts(),
                   gifts: invoicePlutoController.computeGifts(),
+                  discount: invoicePlutoController.computeDiscounts(),
+                  addition: invoicePlutoController.computeAdditions(),
                 );
                 Get.to(() => const EntryBondDetailsView());
               },

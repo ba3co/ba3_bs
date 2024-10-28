@@ -82,7 +82,7 @@ class PatternController extends GetxController with AppValidator {
         latinShortName: latinShortNameController.text,
         fullName: fullNameController.text,
         latinFullName: latinFullNameController.text,
-        billType: selectedBillType.label,
+        billTypeLabel: selectedBillType.value,
         materialAccount: materialsController.text,
         discountsAccount: discountsController.text,
         additionsAccount: additionsController.text,

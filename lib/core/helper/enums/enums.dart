@@ -1,5 +1,3 @@
-import '../../base_classes/sales_account.dart';
-
 enum EnvType { debug, release }
 
 enum UserManagementStatus { first, login, block, auth }
@@ -27,16 +25,20 @@ enum RecordType {
 }
 
 enum InvoiceType {
-  buy('شراء'),
-  sales('مبيع'),
-  buyReturn('مرتجع شراء'),
-  salesReturn('مرتجع بيع'),
-  add('إدخال'),
-  remove('إخراج');
+  buy(label: 'شراء', value: 'invoiceTypeBuy'),
+  sales(label: 'مبيع', value: 'invoiceTypeSales'),
+  buyReturn(label: 'مرتجع شراء', value: 'buyReturn'),
+  salesReturn(label: 'مرتجع بيع', value: 'salesReturn'),
+  add(label: 'إدخال', value: 'inputSettlement'),
+  remove(label: 'إخراج', value: 'outputSettlement');
 
   final String label;
+  final String value;
 
-  const InvoiceType(this.label);
+  const InvoiceType({
+    required this.label,
+    required this.value,
+  });
 }
 
 enum RequestState { initial, loading, error, success }
@@ -83,11 +85,16 @@ enum BondItemType {
   const BondItemType(this.label);
 }
 
-enum SalesAccounts implements SalesAccount {
+abstract class Account {
+  String get label;
+}
+
+enum SalesAccounts implements Account {
   sales('مبيعات'),
   cashBox('الصندوق'),
   vat('الضريبة'),
   grantedDiscount('حسم ممنوح'),
+  differentRevenues('ايرادات مختلفه'),
   settlements('تسويات'),
   salesGifts('هدايا مبيع');
 
@@ -97,12 +104,14 @@ enum SalesAccounts implements SalesAccount {
   const SalesAccounts(this.label);
 }
 
-enum BuyAccounts implements SalesAccount {
-  sales('مبيعات'),
-  customer('الزبون'),
-  grantedDiscount('حسم ممنوح'),
+enum BuyAccounts implements Account {
+  purchases('مشتريات'),
+  cashBox('الصندوق'),
+  vat('الضريبة'),
+  earnedDiscount('حسم مكتسب'),
+  differentExpenses('مصاريف مختلفه'),
   settlements('تسويات'),
-  salesGifts('هدايا مبيع');
+  purchaseGifts('هدايا شراء');
 
   @override
   final String label;
@@ -110,9 +119,10 @@ enum BuyAccounts implements SalesAccount {
   const BuyAccounts(this.label);
 }
 
-enum CustomerAccount implements SalesAccount {
+enum CustomerAccount implements Account {
   cashBox('الصندوق'),
-  cashCustomer('زبون كاش');
+  cashCustomer('زبون كاش'),
+  provider('المورد');
 
   @override
   final String label;

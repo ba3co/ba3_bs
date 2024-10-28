@@ -1,4 +1,3 @@
-import '../../../../core/base_classes/sales_account.dart';
 import '../../../../core/helper/enums/enums.dart';
 
 class BondItemModel {
@@ -13,7 +12,7 @@ class BondItemModel {
 }
 
 class BondModel {
-  final Map<SalesAccount, List<BondItemModel>> bonds;
+  final Map<Account, List<BondItemModel>> bonds;
 
   BondModel({
     required this.bonds,

@@ -8,10 +8,10 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../controllers/invoice_controller.dart';
 
-AppBar buildAppBar(InvoiceController invoiceController, BillTypeModel billTypeModel) {
+AppBar buildAppBar(InvoiceController invoiceController, BillTypeModel billModel) {
   return AppBar(
     leadingWidth: 100,
-    title: Text(' فاتورة ${billTypeModel.fullName}'),
+    title: Text(' فاتورة ${billModel.fullName}'),
     actions: [
       SizedBox(
         height: AppConstants.constHeightTextField,
@@ -41,7 +41,7 @@ AppBar buildAppBar(InvoiceController invoiceController, BillTypeModel billTypeMo
                           underline: const SizedBox(),
                           value: invoiceController.selectedPayType,
                           isExpanded: true,
-                          onChanged: invoiceController.onPayTypeChanged,
+                          onChanged: (payType) => invoiceController.onPayTypeChanged(payType),
                           items: InvPayType.values
                               .map((InvPayType type) => DropdownMenuItem<InvPayType>(
                                     value: type,

@@ -11,36 +11,26 @@ import '../widgets/bill_calculations.dart';
 import '../widgets/bill_header.dart';
 
 class InvoiceScreen extends StatelessWidget {
-  const InvoiceScreen(
-      {super.key,
-      required this.billId,
-      required this.patternId,
-      this.recentScreen = false,
-      required this.billTypeModel});
+  const InvoiceScreen({super.key, required this.billModel});
 
-  final String billId;
-  final String patternId;
-  final bool recentScreen;
-  final BillTypeModel billTypeModel;
+  final BillTypeModel billModel;
 
   @override
-  Widget build(BuildContext context) {
-    return GetBuilder<InvoiceController>(builder: (invoiceController) {
-      return Scaffold(
-        appBar: buildAppBar(invoiceController, billTypeModel),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            BillHeader(invoiceController: invoiceController),
-            const VerticalSpace(20),
-            BillBody(billTypeModel: billTypeModel),
-            const VerticalSpace(10),
-            const BillCalculations(),
-            const Divider(),
-            BillButtons(invoiceController: invoiceController, billTypeLabel: billTypeModel.billType!),
-          ],
-        ),
-      );
-    });
-  }
+  Widget build(BuildContext context) => GetBuilder<InvoiceController>(builder: (invoiceController) {
+        return Scaffold(
+          appBar: buildAppBar(invoiceController, billModel),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BillHeader(invoiceController: invoiceController),
+              const VerticalSpace(20),
+              BillBody(billTypeModel: billModel),
+              const VerticalSpace(10),
+              const BillCalculations(),
+              const Divider(),
+              BillButtons(invoiceController: invoiceController, billTypeLabel: billModel.billTypeLabel!),
+            ],
+          ),
+        );
+      });
 }

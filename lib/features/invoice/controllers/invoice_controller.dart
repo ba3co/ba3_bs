@@ -25,6 +25,7 @@ class InvoiceController extends GetxController {
   List<BillTypeModel> billsTypes = [];
   CustomerAccount customerAccount = CustomerAccount.cashBox;
   InvPayType selectedPayType = InvPayType.cash;
+  BillType billType = BillType.sales;
 
   @override
   void onInit() {
@@ -34,10 +35,14 @@ class InvoiceController extends GetxController {
     invCustomerAccountController.text = customerAccount.label;
   }
 
-  onPayTypeChanged(InvPayType? newType) {
-    if (newType != null) {
-      selectedPayType = newType;
-      updateCustomerAccount(newType);
+  updateBillType(String billTypeLabel) {
+    billType = BillType.fromLabel(billTypeLabel);
+  }
+
+  onPayTypeChanged(InvPayType? payType) {
+    if (payType != null) {
+      selectedPayType = payType;
+      updateCustomerAccount(payType);
       update();
     }
   }
@@ -49,7 +54,7 @@ class InvoiceController extends GetxController {
         invCustomerAccountController.text = customerAccount.label;
         break;
       case InvPayType.due:
-        customerAccount = CustomerAccount.cashCustomer;
+        customerAccount = billType == BillType.sales ? CustomerAccount.cashCustomer : CustomerAccount.provider;
         invCustomerAccountController.text = customerAccount.label;
         break;
     }

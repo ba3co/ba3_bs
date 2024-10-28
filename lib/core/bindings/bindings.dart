@@ -36,7 +36,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => PatternController(patternsRepo), fenix: true);
     Get.lazyPut(() => BondController(), fenix: true);
-
-    Get.put(InvoiceController(patternsRepo));
+    Get.lazyPut(() => InvoiceController(patternsRepo), fenix: true);
   }
 }

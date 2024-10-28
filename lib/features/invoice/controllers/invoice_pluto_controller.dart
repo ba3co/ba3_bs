@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:math_expressions/math_expressions.dart';
@@ -154,10 +155,6 @@ class InvoicePlutoController extends GetxController {
     return total;
   }
 
-  double computeTotalAfterDiscount() {
-    return computeWithVatTotal() - computeDiscounts();
-  }
-
   double computeGifts() {
     double total = 0.0;
     for (var record in stateManager.rows) {
@@ -168,22 +165,6 @@ class InvoicePlutoController extends GetxController {
     stateManager.setShowLoading(false);
 
     return total;
-  }
-
-  double computeDiscounts() {
-    debugPrint('computeDiscounts');
-    double discount = 0;
-
-    // Fetch the discount ratio from billAdditionsDiscountsRows
-    for (var row in billAdditionsDiscountsRows) {
-      if (row.cells['discountRatioId']?.value != null && row.cells['discountRatioId']?.value != '') {
-        // Parse the discount ratio and calculate the discount
-        double discountRatio = double.tryParse(row.cells['discountRatioId']!.value) ?? 0;
-        discount += computeWithVatTotal() * (discountRatio / 100); // Assuming discountRatio is a percentage
-      }
-    }
-
-    return discount;
   }
 
   void updateCellValue(String field, dynamic value) {
@@ -224,106 +205,117 @@ class InvoicePlutoController extends GetxController {
     return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
   }
 
+  double computeDiscounts() {
+    debugPrint('computeDiscounts');
+    double discount = 0;
+
+    // Fetch the discount ratio from billAdditionsDiscountsRows
+    for (var row in AppConstants.billAdditionsDiscountsRows) {
+      if (row.cells['discountRatioId']?.value != null && row.cells['discountRatioId']?.value != '') {
+        // Parse the discount ratio and calculate the discount
+        double discountRatio = double.tryParse(row.cells['discountRatioId']!.value) ?? 0;
+        discount += computeWithVatTotal() * (discountRatio / 100); // Assuming discountRatio is a percentage
+      }
+    }
+
+    return discount;
+  }
+
   // Function to handle changes in the additions and discounts table
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) async {
     billAdditionsOnChangedEvent = event;
 
     // Only handle changes to the 'discountRatioId' field
     if (event.column.field == 'discountRatioId') {
-      _updateDiscountAmount(event);
+      // Calculate and update the discount amount based on the event
+      double discountAmount =
+          _calculateDiscountAmount(event.row.cells['discountRatioId']?.value, computeWithVatTotal());
+
+      // Update the 'discountId' cell with the calculated discount
+      billAdditionsDiscountsStateManager.changeCellValue(
+        event.row.cells['discountId']!,
+        discountAmount.toStringAsFixed(2),
+      );
+
+      debugPrint('onAdditionsDiscountsChanged');
+      update();
+    } else if (event.column.field == 'additionRatioId') {
+      // Calculate and update the discount amount based on the event
+      double additionAmount =
+          _calculateAdditionAmount(event.row.cells['additionRatioId']?.value, computeWithVatTotal());
+
+      // Update the 'discountId' cell with the calculated discount
+      billAdditionsDiscountsStateManager.changeCellValue(
+        event.row.cells['additionId']!,
+        additionAmount.toStringAsFixed(2),
+      );
+
+      debugPrint('onAdditionsDiscountsChanged');
+      update();
     }
   }
 
-  void _updateDiscountAmount(PlutoGridOnChangedEvent event) {
-    // Parse the discount ratio as a double
-    String? discountRatioStr = event.row.cells['discountRatioId']?.value;
-    double discountRatio = double.tryParse(discountRatioStr ?? '') ?? 0.0;
+  void updateAdditionDiscountCell(double total) {
+    if (total != 0 && billAdditionsOnChangedEvent != null) {
+      updateDiscountCell(total);
+      updateAdditionCell(total);
+    }
+  }
 
-    // Calculate the discount based on the total and discount ratio
-    double totalWithVat = computeWithVatTotal();
-    double discountAmount = totalWithVat * (discountRatio / 100);
+  void updateDiscountCell(double total) {
+    double discountAmount = _calculateDiscountAmount(
+      billAdditionsOnChangedEvent!.row.cells['discountRatioId']?.value,
+      total,
+    );
 
-    // Update the 'discountId' cell with the calculated discount
     billAdditionsDiscountsStateManager.changeCellValue(
-      event.row.cells['discountId']!,
+      billAdditionsOnChangedEvent!.row.cells['discountId']!,
       discountAmount.toStringAsFixed(2),
     );
 
-    debugPrint('onAdditionsDiscountsChanged');
-    update();
+    debugPrint('onAdditionsDiscountsChanged on updateDiscountCell');
   }
 
-  updateDiscountCell(double total) {
-    if (total != 0 && billAdditionsOnChangedEvent != null) {
-      String? discountRatioStr = billAdditionsOnChangedEvent!.row.cells['discountRatioId']?.value;
-      double discountRatio = double.tryParse(discountRatioStr ?? '') ?? 0.0;
-
-      double discountAmount = total * (discountRatio / 100);
-
-      billAdditionsDiscountsStateManager.changeCellValue(
-          billAdditionsOnChangedEvent!.row.cells['discountId']!, discountAmount.toStringAsFixed(2));
-
-      debugPrint('onAdditionsDiscountsChanged on updateDiscountCell');
-    }
-  }
-
-  // Initialize the state managers in an appropriate setup method
-  void initializeStateManagers() {
-    // Additions and discounts grid state manager setup
-    billAdditionsDiscountsStateManager = PlutoGridStateManager(
-      columns: billAdditionsDiscountsColumns,
-      rows: billAdditionsDiscountsRows,
-      gridFocusNode: FocusNode(),
-      scroll: PlutoGridScrollController(),
+  void updateAdditionCell(double total) {
+    double additionAmount = _calculateAdditionAmount(
+      billAdditionsOnChangedEvent!.row.cells['additionRatioId']?.value,
+      total,
     );
+
+    billAdditionsDiscountsStateManager.changeCellValue(
+      billAdditionsOnChangedEvent!.row.cells['additionId']!,
+      additionAmount.toStringAsFixed(2),
+    );
+
+    debugPrint('onAdditionsDiscountsChanged on updateAdditionCell');
   }
 
-  List<PlutoColumn> billAdditionsDiscountsColumns = [
-    PlutoColumn(
-      title: 'الحساب',
-      field: 'accountId',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'الحسم',
-      field: 'discountId',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'نسبه الحسم',
-      field: 'discountRatioId',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'الاضافه',
-      field: 'additionId',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'نسبه الاضافه',
-      field: 'additionRatioId',
-      type: PlutoColumnType.text(),
-    ),
-  ];
+  double _calculateDiscountAmount(String? discountRatioStr, double total) {
+    double discountRatio = double.tryParse(discountRatioStr ?? '') ?? 0.0;
+    return total * (discountRatio / 100);
+  }
 
-  List<PlutoRow> billAdditionsDiscountsRows = [
-    PlutoRow(
-      cells: {
-        'accountId': PlutoCell(value: 'الحسم الممنوح'),
-        'discountId': PlutoCell(value: ''),
-        'discountRatioId': PlutoCell(value: ''),
-        'additionId': PlutoCell(value: ''),
-        'additionRatioId': PlutoCell(value: ''),
-      },
-    ),
-    PlutoRow(
-      cells: {
-        'accountId': PlutoCell(value: 'الاضافات'),
-        'discountId': PlutoCell(value: ''),
-        'discountRatioId': PlutoCell(value: ''),
-        'additionId': PlutoCell(value: ''),
-        'additionRatioId': PlutoCell(value: ''),
-      },
-    ),
-  ];
+  double _calculateAdditionAmount(String? additionRatioStr, double total) {
+    double additionRatio = double.tryParse(additionRatioStr ?? '') ?? 0.0;
+    return total * (additionRatio / 100);
+  }
+
+  double computeAdditions() {
+    double addition = 0;
+    for (var row in AppConstants.billAdditionsDiscountsRows) {
+      if (row.cells['additionRatioId']?.value != null && row.cells['additionRatioId']?.value != '') {
+        double additionRatio = double.tryParse(row.cells['additionRatioId']!.value) ?? 0;
+        addition += computeWithVatTotal() * (additionRatio / 100);
+      }
+    }
+    return addition;
+  }
+
+  double calculateFinalTotal() {
+    double totalIncludingVAT = computeWithVatTotal();
+    double totalDiscount = computeDiscounts();
+    double totalAdditions = computeAdditions();
+
+    return totalIncludingVAT - totalDiscount + totalAdditions;
+  }
 }
