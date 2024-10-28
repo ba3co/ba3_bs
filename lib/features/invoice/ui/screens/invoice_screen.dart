@@ -7,6 +7,7 @@ import '../../controllers/invoice_controller.dart';
 import '../widgets/bill_app_bar.dart';
 import '../widgets/bill_body.dart';
 import '../widgets/bill_buttons.dart';
+import '../widgets/bill_calculations.dart';
 import '../widgets/bill_header.dart';
 
 class InvoiceScreen extends StatelessWidget {
@@ -33,6 +34,8 @@ class InvoiceScreen extends StatelessWidget {
             BillHeader(invoiceController: invoiceController),
             const VerticalSpace(20),
             BillBody(billTypeModel: billTypeModel),
+            const VerticalSpace(10),
+            const BillCalculations(),
             const Divider(),
             BillButtons(invoiceController: invoiceController, billTypeLabel: billTypeModel.billType!),
           ],

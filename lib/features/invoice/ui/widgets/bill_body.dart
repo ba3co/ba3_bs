@@ -62,6 +62,7 @@ class BillBody extends StatelessWidget {
                             if (event.column.field == "invRecQuantity" && quantity > 0) {
                               controller.updateInvoiceValuesByQuantity(quantity, subTotal, double.parse(vat));
                             }
+
                             WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
                               (value) {
                                 controller.update();
@@ -89,84 +90,6 @@ class BillBody extends StatelessWidget {
               ],
             ),
           ),
-          Column(children: [
-            const VerticalSpace(10),
-            GetBuilder<InvoicePlutoController>(builder: (controller) {
-              return SizedBox(
-                width: Get.width,
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.end,
-                  alignment: WrapAlignment.end,
-                  children: [
-                    Container(
-                      color: Colors.blueGrey.shade400,
-                      width: 150,
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        children: [
-                          Text(
-                            (controller.computeWithVatTotal() - controller.computeWithoutVatTotal()).toStringAsFixed(2),
-                            style: const TextStyle(fontSize: 30, color: Colors.white),
-                          ),
-                          const Text(
-                            "القيمة المضافة",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      color: Colors.grey.shade600,
-                      width: 150,
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        children: [
-                          Text(
-                            controller.computeWithoutVatTotal().toStringAsFixed(2),
-                            style: const TextStyle(fontSize: 30, color: Colors.white),
-                          ),
-                          const Text(
-                            "المجموع",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      color: Colors.blue,
-                      width: 300,
-                      padding: const EdgeInsets.all(8),
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: Text(
-                              (controller.computeWithVatTotal()).toStringAsFixed(2),
-                              style: const TextStyle(
-                                fontSize: 30,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Text(
-                              "النهائي",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ]),
         ],
       ),
     );

@@ -21,6 +21,12 @@ class InvoicePlutoController extends GetxController {
   late PlutoGridStateManager billAdditionsDiscountsStateManager;
 
   List<PlutoColumn> columns = [];
+  String typeBile = '';
+  String customerName = '';
+
+  ValueNotifier<double> vatTotalNotifier = ValueNotifier<double>(0.0);
+
+  PlutoGridOnChangedEvent? billAdditionsOnChangedEvent;
 
   getColumns() {
     Map<PlutoColumn, dynamic> sampleData = InvoiceRecordModel().toEditedMap();
@@ -36,9 +42,6 @@ class InvoicePlutoController extends GetxController {
     Get.back();
     update();
   }
-
-  String typeBile = '';
-  String customerName = '';
 
   getRows(List<InvoiceRecordModel> modelList) {
     stateManager.removeAllRows();
@@ -143,9 +146,16 @@ class InvoicePlutoController extends GetxController {
         total += double.tryParse(record.toJson()["invRecTotal"].toString()) ?? 0;
       }
     }
+
+    vatTotalNotifier.value = total; // Update the ValueNotifier
+
     stateManager.setShowLoading(false);
 
     return total;
+  }
+
+  double computeTotalAfterDiscount() {
+    return computeWithVatTotal() - computeDiscounts();
   }
 
   double computeGifts() {
@@ -161,6 +171,7 @@ class InvoicePlutoController extends GetxController {
   }
 
   double computeDiscounts() {
+    debugPrint('computeDiscounts');
     double discount = 0;
 
     // Fetch the discount ratio from billAdditionsDiscountsRows
@@ -215,25 +226,44 @@ class InvoicePlutoController extends GetxController {
 
   // Function to handle changes in the additions and discounts table
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) async {
+    billAdditionsOnChangedEvent = event;
+
     // Only handle changes to the 'discountRatioId' field
     if (event.column.field == 'discountRatioId') {
-      String? discountRatioStr = event.value;
+      _updateDiscountAmount(event);
+    }
+  }
 
-      // Parse the discount ratio as a double
+  void _updateDiscountAmount(PlutoGridOnChangedEvent event) {
+    // Parse the discount ratio as a double
+    String? discountRatioStr = event.row.cells['discountRatioId']?.value;
+    double discountRatio = double.tryParse(discountRatioStr ?? '') ?? 0.0;
+
+    // Calculate the discount based on the total and discount ratio
+    double totalWithVat = computeWithVatTotal();
+    double discountAmount = totalWithVat * (discountRatio / 100);
+
+    // Update the 'discountId' cell with the calculated discount
+    billAdditionsDiscountsStateManager.changeCellValue(
+      event.row.cells['discountId']!,
+      discountAmount.toStringAsFixed(2),
+    );
+
+    debugPrint('onAdditionsDiscountsChanged');
+    update();
+  }
+
+  updateDiscountCell(double total) {
+    if (total != 0 && billAdditionsOnChangedEvent != null) {
+      String? discountRatioStr = billAdditionsOnChangedEvent!.row.cells['discountRatioId']?.value;
       double discountRatio = double.tryParse(discountRatioStr ?? '') ?? 0.0;
 
-      // Calculate the discount based on the total and discount ratio
-      double totalWithVat = computeWithVatTotal();
-      double discountAmount = totalWithVat * (discountRatio / 100);
+      double discountAmount = total * (discountRatio / 100);
 
-      // Update the 'discountId' cell with the calculated discount
       billAdditionsDiscountsStateManager.changeCellValue(
-        event.row.cells['discountId']!,
-        discountAmount.toStringAsFixed(2),
-      );
+          billAdditionsOnChangedEvent!.row.cells['discountId']!, discountAmount.toStringAsFixed(2));
 
-      // Refresh the UI to show the updated value
-      update();
+      debugPrint('onAdditionsDiscountsChanged on updateDiscountCell');
     }
   }
 
