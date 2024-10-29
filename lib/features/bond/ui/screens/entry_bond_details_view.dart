@@ -5,14 +5,10 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/widgets/grid_column_item.dart';
 import '../../controllers/bond_controller.dart';
+import '../widgets/bond_record_data_source.dart';
 
 class EntryBondDetailsView extends StatelessWidget {
-  const EntryBondDetailsView({
-    super.key,
-    this.oldId,
-  });
-
-  final String? oldId;
+  const EntryBondDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +25,7 @@ class EntryBondDetailsView extends StatelessWidget {
                   return SfDataGrid(
                     horizontalScrollPhysics: const NeverScrollableScrollPhysics(),
                     verticalScrollPhysics: const BouncingScrollPhysics(),
-                    source: controller.recordDataSource,
+                    source: BondDataGridSource(),
                     allowEditing: false,
                     selectionMode: SelectionMode.singleDeselect,
                     editingGestureType: EditingGestureType.tap,

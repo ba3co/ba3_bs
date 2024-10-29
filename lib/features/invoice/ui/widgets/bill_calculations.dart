@@ -20,13 +20,13 @@ class BillCalculations extends StatelessWidget {
               CalculationCard(
                 width: 150,
                 color: Colors.blueGrey.shade400,
-                value: (controller.computeWithVatTotal() - controller.computeWithoutVatTotal()).toStringAsFixed(2),
+                value: controller.computeTotalVat.toStringAsFixed(2),
                 label: 'القيمة المضافة',
               ),
               CalculationCard(
                 width: 150,
                 color: Colors.blueGrey.shade400,
-                value: controller.computeWithoutVatTotal().toStringAsFixed(2),
+                value: controller.computeWithoutVatTotal.toStringAsFixed(2),
                 label: 'المجموع قبل الضريبة',
               ),
               VatTotalCard(width: 300, controller: controller),

@@ -293,7 +293,7 @@ abstract class AppConstants {
   static const String cacheError = 'cache_error';
   static const String noInternetError = 'no_internet_error';
 
-  static final List<PlutoColumn> billAdditionsDiscountsColumns = [
+  static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(
       title: 'الحساب',
       field: 'accountId',
@@ -321,19 +321,10 @@ abstract class AppConstants {
     ),
   ];
 
-  static final List<PlutoRow> billAdditionsDiscountsRows = [
+  static final List<PlutoRow> additionsDiscountsRows = [
     PlutoRow(
       cells: {
-        'accountId': PlutoCell(value: 'الحسم الممنوح'),
-        'discountId': PlutoCell(value: ''),
-        'discountRatioId': PlutoCell(value: ''),
-        'additionId': PlutoCell(value: ''),
-        'additionRatioId': PlutoCell(value: ''),
-      },
-    ),
-    PlutoRow(
-      cells: {
-        'accountId': PlutoCell(value: 'الاضافات'),
+        'accountId': PlutoCell(value: 'القيمة'),
         'discountId': PlutoCell(value: ''),
         'discountRatioId': PlutoCell(value: ''),
         'additionId': PlutoCell(value: ''),

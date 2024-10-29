@@ -5,4 +5,5 @@ class AppRoutes {
   static const String patternsScreen = '/patternsScreen';
   static const String addPatternsScreen = '/addPatternsScreen';
   static const String showAllPatternsScreen = '/showAllPatternsScreen';
+  static const String entryBondDetailsView = '/entryBondDetailsView';
 }

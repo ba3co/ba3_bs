@@ -5,12 +5,12 @@ class BillTypeModel {
   final String? latinShortName;
   final String? latinFullName;
   final String? billTypeLabel;
-  final String? materialAccount; // المواد
-  final String? discountsAccount; // الحسميات
-  final String? additionsAccount; //الاضافات
-  final String? cashesAccount; // النقديات
-  final String? giftsAccount; // الهدايا
-  final String? exchangeForGiftsAccount; // مقابل الهدايا
+  final String? materialAccount;
+  final String? discountsAccount;
+  final String? additionsAccount;
+  final String? cashesAccount;
+  final String? giftsAccount;
+  final String? exchangeForGiftsAccount;
   final int? color;
   final String? store;
 
@@ -31,61 +31,41 @@ class BillTypeModel {
     this.store,
   });
 
-  factory BillTypeModel.fromJson(Map json) => BillTypeModel(
-        id: json['id'],
-        shortName: json['shortName'],
-        fullName: json['fullName'],
-        latinShortName: json['latinShortName'],
-        latinFullName: json['latinFullName'],
-        billTypeLabel: json['billType'],
-        materialAccount: json['materialAccount'],
-        discountsAccount: json['discountsAccount'],
-        additionsAccount: json['additionsAccount'],
-        cashesAccount: json['cashesAccount'],
-        giftsAccount: json['giftsAccount'],
-        exchangeForGiftsAccount: json['exchangeForGiftsAccount'],
-        color: json['color'],
-        store: json['store'],
-      );
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'shortName': shortName,
-      'fullName': fullName,
-      'latinShortName': latinShortName,
-      'latinFullName': latinFullName,
-      'billType': billTypeLabel,
-      'materialAccount': materialAccount,
-      'discountsAccount': discountsAccount,
-      'additionsAccount': additionsAccount,
-      'cashesAccount': cashesAccount,
-      'giftsAccount': giftsAccount,
-      'exchangeForGiftsAccount': exchangeForGiftsAccount,
-      'color': color,
-      'store': store,
-    };
+  factory BillTypeModel.fromJson(Map<String, dynamic> json) {
+    return BillTypeModel(
+      id: json['id'],
+      shortName: json['shortName'],
+      fullName: json['fullName'],
+      latinShortName: json['latinShortName'],
+      latinFullName: json['latinFullName'],
+      billTypeLabel: json['billType'],
+      materialAccount: json['materialAccount'],
+      discountsAccount: json['discountsAccount'],
+      additionsAccount: json['additionsAccount'],
+      cashesAccount: json['cashesAccount'],
+      giftsAccount: json['giftsAccount'],
+      exchangeForGiftsAccount: json['exchangeForGiftsAccount'],
+      color: json['color'],
+      store: json['store'],
+    );
   }
 
-  // Convert the object into a map
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'Short Arabic Name': shortName,
-      'Full Arabic Name': fullName,
-      'Short Latin Name': latinShortName,
-      'Full Latin Name': latinFullName,
-      'Bill Type': billTypeLabel,
-      'Material Account': materialAccount,
-      'Discounts Account': discountsAccount,
-      'Additions Account': additionsAccount,
-      'Cash Account': cashesAccount,
-      'Gifts Account': giftsAccount,
-      'Exchange for Gifts Account': exchangeForGiftsAccount,
-      'Color': color,
-      'Store': store,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'shortName': shortName,
+        'fullName': fullName,
+        'latinShortName': latinShortName,
+        'latinFullName': latinFullName,
+        'billType': billTypeLabel,
+        'materialAccount': materialAccount,
+        'discountsAccount': discountsAccount,
+        'additionsAccount': additionsAccount,
+        'cashesAccount': cashesAccount,
+        'giftsAccount': giftsAccount,
+        'exchangeForGiftsAccount': exchangeForGiftsAccount,
+        'color': color,
+        'store': store,
+      };
 
   // Copy with method for creating a new instance with some modified fields
   BillTypeModel copyWith({
@@ -103,22 +83,21 @@ class BillTypeModel {
     String? exchangeForGiftsAccount,
     int? color,
     String? store,
-  }) {
-    return BillTypeModel(
-      id: id ?? this.id,
-      shortName: shortName ?? this.shortName,
-      fullName: fullName ?? this.fullName,
-      latinShortName: latinShortName ?? this.latinShortName,
-      latinFullName: latinFullName ?? this.latinFullName,
-      billTypeLabel: billTypeLabel ?? this.billTypeLabel,
-      materialAccount: materialAccount ?? this.materialAccount,
-      discountsAccount: discountsAccount ?? this.discountsAccount,
-      additionsAccount: additionsAccount ?? this.additionsAccount,
-      cashesAccount: cashesAccount ?? this.cashesAccount,
-      giftsAccount: giftsAccount ?? this.giftsAccount,
-      exchangeForGiftsAccount: exchangeForGiftsAccount ?? this.exchangeForGiftsAccount,
-      color: color ?? this.color,
-      store: store ?? this.store,
-    );
-  }
+  }) =>
+      BillTypeModel(
+        id: id ?? this.id,
+        shortName: shortName ?? this.shortName,
+        fullName: fullName ?? this.fullName,
+        latinShortName: latinShortName ?? this.latinShortName,
+        latinFullName: latinFullName ?? this.latinFullName,
+        billTypeLabel: billTypeLabel ?? this.billTypeLabel,
+        materialAccount: materialAccount ?? this.materialAccount,
+        discountsAccount: discountsAccount ?? this.discountsAccount,
+        additionsAccount: additionsAccount ?? this.additionsAccount,
+        cashesAccount: cashesAccount ?? this.cashesAccount,
+        giftsAccount: giftsAccount ?? this.giftsAccount,
+        exchangeForGiftsAccount: exchangeForGiftsAccount ?? this.exchangeForGiftsAccount,
+        color: color ?? this.color,
+        store: store ?? this.store,
+      );
 }

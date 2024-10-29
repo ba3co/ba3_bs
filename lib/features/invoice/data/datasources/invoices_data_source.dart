@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/classes/datasources/firebase_datasource_base.dart';
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
-import '../models/bill_type_model.dart';
+import '../models/invoice_model.dart';
 
 class PatternsDataSource implements FirebaseDatasourceBase<DocumentSnapshot<Map<String, dynamic>>> {
   final FirebaseFirestore _firestore;
@@ -28,17 +28,16 @@ class PatternsDataSource implements FirebaseDatasourceBase<DocumentSnapshot<Map<
   }
 
   @override
-  Future<void> save(Map<String, dynamic> billTypeData) async {
+  Future<void> save(Map<String, dynamic> invoiceData) async {
     final collection = _firestore.collection(_collection);
-    final billType = BillTypeModel.fromJson(billTypeData); // Deserialize if necessary
-
-    if (billType.id == null) {
+    final invoice = InvoiceModel.fromJson(invoiceData); // Deserialize if needed
+    if (invoice.id == null) {
       // Create a new document and set its ID in the model
       final newDocRefId = collection.doc().id;
-      await collection.doc(newDocRefId).set(billType.copyWith(id: newDocRefId).toJson());
+      await collection.doc(newDocRefId).set(invoice.copyWith(id: newDocRefId).toJson());
     } else {
       // Update the existing document
-      await collection.doc(billType.id).set(billType.toJson());
+      await collection.doc(invoice.id).set(invoice.toJson());
     }
   }
 

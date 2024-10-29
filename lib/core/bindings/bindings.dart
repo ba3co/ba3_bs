@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/classes/repositories/firebase_repo_concrete.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,9 +12,8 @@ import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/controllers/pluto_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
-import '../base_classes/datasources/base_datasource.dart';
-import '../base_classes/repositories/base_repo.dart';
-import '../base_classes/repositories/base_repo_impl.dart';
+import '../classes/datasources/firebase_datasource_base.dart';
+import '../classes/repositories/firebase_repo_base.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -25,10 +25,10 @@ class AppBindings extends Bindings {
     final userManagementRepo = UserManagementRepository(UserManagementService());
 
     // Instantiate PatternsDataSource and PatternsRepository
-    final BaseDatasource patternsDataSource = PatternsDataSource(firestore);
+    final FirebaseDatasourceBase patternsDataSource = PatternsDataSource(firestore);
 
-    final BaseRepository<BillTypeModel> patternsRepo =
-        BaseRepositoryImpl<BillTypeModel>(patternsDataSource, (json) => BillTypeModel.fromJson(json));
+    final FirebaseRepositoryBase<BillTypeModel> patternsRepo =
+        FirebaseRepositoryConcrete<BillTypeModel>(patternsDataSource);
 
     // Lazy load controllers
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);

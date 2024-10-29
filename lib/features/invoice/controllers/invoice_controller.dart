@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../core/base_classes/repositories/base_repo.dart';
+import '../../../core/classes/repositories/firebase_repo_base.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/utils.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 
 class InvoiceController extends GetxController {
-  final BaseRepository<BillTypeModel> _repository;
+  final FirebaseRepositoryBase<BillTypeModel> _repository;
 
   InvoiceController(this._repository);
 
@@ -68,7 +68,6 @@ class InvoiceController extends GetxController {
         Utils.showSnackBar('خطأ', failure.message);
       },
       (fetchedBillTypes) {
-        debugPrint('fetchedBillTypes ${fetchedBillTypes.length}');
         billsTypes.assignAll(fetchedBillTypes);
       },
     );

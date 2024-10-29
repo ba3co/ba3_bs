@@ -12,16 +12,16 @@ class InvoicePlutoController extends GetxController {
     getColumns();
   }
 
-  List<PlutoRow> rows = [];
-
 // State manager for the main grid
-  late PlutoGridStateManager stateManager =
+  late PlutoGridStateManager mainTableStateManager =
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   // State manager for the additions and discounts grid
-  late PlutoGridStateManager billAdditionsDiscountsStateManager;
+  late PlutoGridStateManager additionsDiscountsStateManager;
 
   List<PlutoColumn> columns = [];
+  List<PlutoRow> rows = [];
+
   String typeBile = '';
   String customerName = '';
 
@@ -33,95 +33,90 @@ class InvoicePlutoController extends GetxController {
     Map<PlutoColumn, dynamic> sampleData = InvoiceRecordModel().toEditedMap();
     columns = sampleData.keys.toList();
     update();
-    return columns;
   }
 
   clearRowIndex(int rowIdx) {
-    final rowToRemove = stateManager.rows[rowIdx];
+    final rowToRemove = mainTableStateManager.rows[rowIdx];
 
-    stateManager.removeRows([rowToRemove]);
+    mainTableStateManager.removeRows([rowToRemove]);
     Get.back();
     update();
   }
 
-  getRows(List<InvoiceRecordModel> modelList) {
-    stateManager.removeAllRows();
-    final newRows = stateManager.getNewRows(count: 30);
-
-    if (modelList.isEmpty) {
-      stateManager.appendRows(newRows);
-      return rows;
-    } else {
-      rows = modelList.map((model) {
-        Map<PlutoColumn, dynamic> rowData = model.toEditedMap();
-
-        Map<String, PlutoCell> cells = {};
-
-        rowData.forEach((key, value) {
-          cells[key.field] = PlutoCell(value: value?.toString() ?? '');
-        });
-
-        return PlutoRow(cells: cells);
-      }).toList();
-    }
-
-    stateManager.appendRows(rows);
-    stateManager.appendRows(newRows);
-    // print(rows.length);
-    return rows;
-  }
-
-  double computeWithoutVatTotal() {
-    int invRecQuantity = 0;
-    double subtotals = 0.0;
-    double total = 0.0;
-
-    stateManager.setShowLoading(true);
-    for (var record in stateManager.rows) {
-      if (record.toJson()["invRecQuantity"] != '' &&
-          record.toJson()["invRecSubTotal"] != '' &&
-          (record.toJson()["invRecGift"] == '' || (int.tryParse(record.toJson()["invRecGift"] ?? "0") ?? 0) >= 0)) {
-        invRecQuantity =
-            int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecQuantity"].toString())) ?? 0;
-        subtotals =
-            double.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecSubTotal"].toString())) ?? 0;
-
-        total += invRecQuantity * (subtotals);
+  double get computeWithVatTotal {
+    double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
+      if (record.toJson()["invRecQuantity"] != '' && record.toJson()["invRecSubTotal"] != '') {
+        return sum + (double.tryParse(record.toJson()["invRecTotal"].toString()) ?? 0);
       }
-    }
+      return sum;
+    });
 
-    stateManager.setShowLoading(false);
-    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
-      (value) {
-        // update();
-      },
-    );
+    vatTotalNotifier.value = total; // Update the ValueNotifier
+    mainTableStateManager.setShowLoading(false);
+
     return total;
   }
 
-  int computeGiftsTotal() {
-    int total = 0;
+  double get computeWithoutVatTotal {
+    mainTableStateManager.setShowLoading(true);
 
-    stateManager.setShowLoading(true);
-    for (var record in stateManager.rows) {
-      if (record.toJson()["invRecGift"] != null && record.toJson()["invRecGift"] != '') {
-        total = int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecQuantity"].toString())) ?? 0;
+    double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
+      String quantityStr = record.toJson()["invRecQuantity"].toString();
+      String subTotalStr = record.toJson()["invRecSubTotal"].toString();
+      String giftStr = record.toJson()["invRecGift"].toString();
+
+      // Check conditions
+      if (quantityStr.isNotEmpty && subTotalStr.isNotEmpty && (giftStr.isEmpty || (int.tryParse(giftStr) ?? 0) >= 0)) {
+        int invRecQuantity = int.tryParse(Utils.replaceArabicNumbersWithEnglish(quantityStr)) ?? 0;
+        double subTotal = double.tryParse(Utils.replaceArabicNumbersWithEnglish(subTotalStr)) ?? 0;
+        return sum + (invRecQuantity * subTotal);
       }
-    }
-    stateManager.setShowLoading(false);
 
+      return sum;
+    });
+
+    mainTableStateManager.setShowLoading(false);
+    return total;
+  }
+
+  double get computeTotalVat => mainTableStateManager.rows.fold(
+        0.0,
+        (previousValue, record) {
+          double vatAmount =
+              double.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecVat"].toString())) ?? 0.0;
+          int quantity =
+              int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecQuantity"].toString())) ?? 1;
+
+          return previousValue + (vatAmount * quantity);
+        },
+      );
+
+  int get computeGiftsTotal {
+    mainTableStateManager.setShowLoading(true);
+
+    int total = mainTableStateManager.rows.fold(0, (sum, record) {
+      String giftValue = record.toJson()["invRecGift"] ?? '';
+      if (giftValue.isNotEmpty) {
+        int quantity =
+            int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecQuantity"].toString())) ?? 0;
+        return sum + quantity;
+      }
+      return sum;
+    });
+
+    mainTableStateManager.setShowLoading(false);
     return total;
   }
 
   int computeRecordGiftsNumber(record) {
     int gifts = 0;
 
-    stateManager.setShowLoading(true);
+    mainTableStateManager.setShowLoading(true);
 
     if (record.toJson()["invRecGift"] != null && record.toJson()["invRecGift"] != '') {
       gifts = int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecGift"].toString())) ?? 0;
     }
-    stateManager.setShowLoading(false);
+    mainTableStateManager.setShowLoading(false);
 
     return gifts;
   }
@@ -140,36 +135,20 @@ class InvoicePlutoController extends GetxController {
     return recordGiftsNumber * giftPrice;
   }
 
-  double computeWithVatTotal() {
-    double total = 0.0;
-    for (var record in stateManager.rows) {
-      if (record.toJson()["invRecQuantity"] != '' && record.toJson()["invRecSubTotal"] != '') {
-        total += double.tryParse(record.toJson()["invRecTotal"].toString()) ?? 0;
-      }
-    }
-
-    vatTotalNotifier.value = total; // Update the ValueNotifier
-
-    stateManager.setShowLoading(false);
-
-    return total;
-  }
-
-  double computeGifts() {
-    double total = 0.0;
-    for (var record in stateManager.rows) {
+  double get computeGifts {
+    double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
       if (record.toJson()["invRecSubTotal"] != '' && record.toJson()["invRecGift"] != '') {
-        total += computeRecordGiftsTotal(record);
+        return sum + computeRecordGiftsTotal(record);
       }
-    }
-    stateManager.setShowLoading(false);
+      return sum;
+    });
 
     return total;
   }
 
   void updateCellValue(String field, dynamic value) {
-    stateManager.changeCellValue(
-      stateManager.currentRow!.cells[field]!,
+    mainTableStateManager.changeCellValue(
+      mainTableStateManager.currentRow!.cells[field]!,
       value,
       callOnChangedEvent: false,
       notify: true,
@@ -205,57 +184,53 @@ class InvoicePlutoController extends GetxController {
     return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
   }
 
-  double computeDiscounts() {
-    debugPrint('computeDiscounts');
-    double discount = 0;
+  double get computeDiscounts {
+    return AppConstants.additionsDiscountsRows.fold<double>(0, (discount, row) {
+      final discountRatioValue = row.cells['discountRatioId']?.value;
 
-    // Fetch the discount ratio from billAdditionsDiscountsRows
-    for (var row in AppConstants.billAdditionsDiscountsRows) {
-      if (row.cells['discountRatioId']?.value != null && row.cells['discountRatioId']?.value != '') {
-        // Parse the discount ratio and calculate the discount
-        double discountRatio = double.tryParse(row.cells['discountRatioId']!.value) ?? 0;
-        discount += computeWithVatTotal() * (discountRatio / 100); // Assuming discountRatio is a percentage
+      if (discountRatioValue != null && discountRatioValue.isNotEmpty) {
+        final double discountRatio = double.tryParse(discountRatioValue) ?? 0;
+        return discount + (computeWithVatTotal * (discountRatio / 100));
       }
-    }
-
-    return discount;
+      return discount; // Return the accumulated discount if the condition is not met
+    });
   }
 
   // Function to handle changes in the additions and discounts table
-  void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) async {
+  void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
     billAdditionsOnChangedEvent = event;
+
+    debugPrint('onAdditionsDiscountsChanged');
 
     // Only handle changes to the 'discountRatioId' field
     if (event.column.field == 'discountRatioId') {
       // Calculate and update the discount amount based on the event
-      double discountAmount =
-          _calculateDiscountAmount(event.row.cells['discountRatioId']?.value, computeWithVatTotal());
+      double discountAmount = _calculateDiscountAmount(event.row.cells['discountRatioId']?.value, computeWithVatTotal);
 
       // Update the 'discountId' cell with the calculated discount
-      billAdditionsDiscountsStateManager.changeCellValue(
+      additionsDiscountsStateManager.changeCellValue(
         event.row.cells['discountId']!,
         discountAmount.toStringAsFixed(2),
       );
 
-      debugPrint('onAdditionsDiscountsChanged');
-      update();
+      updateIfFirstFrameRendered();
     } else if (event.column.field == 'additionRatioId') {
       // Calculate and update the discount amount based on the event
-      double additionAmount =
-          _calculateAdditionAmount(event.row.cells['additionRatioId']?.value, computeWithVatTotal());
+      double additionAmount = _calculateAdditionAmount(event.row.cells['additionRatioId']?.value, computeWithVatTotal);
 
       // Update the 'discountId' cell with the calculated discount
-      billAdditionsDiscountsStateManager.changeCellValue(
+      additionsDiscountsStateManager.changeCellValue(
         event.row.cells['additionId']!,
         additionAmount.toStringAsFixed(2),
       );
 
-      debugPrint('onAdditionsDiscountsChanged');
-      update();
+      updateIfFirstFrameRendered();
     }
   }
 
   void updateAdditionDiscountCell(double total) {
+    debugPrint(
+        'updateAdditionDiscountCell total: ${total}, billAdditionsOnChangedEvent: ${billAdditionsOnChangedEvent}');
     if (total != 0 && billAdditionsOnChangedEvent != null) {
       updateDiscountCell(total);
       updateAdditionCell(total);
@@ -263,12 +238,13 @@ class InvoicePlutoController extends GetxController {
   }
 
   void updateDiscountCell(double total) {
-    double discountAmount = _calculateDiscountAmount(
-      billAdditionsOnChangedEvent!.row.cells['discountRatioId']?.value,
-      total,
-    );
+    String? discountRatioStr = billAdditionsOnChangedEvent!.row.cells['discountRatioId']?.value;
+    if (discountRatioStr == null || discountRatioStr.isEmpty) {
+      return;
+    }
+    double discountAmount = _calculateDiscountAmount(discountRatioStr, total);
 
-    billAdditionsDiscountsStateManager.changeCellValue(
+    additionsDiscountsStateManager.changeCellValue(
       billAdditionsOnChangedEvent!.row.cells['discountId']!,
       discountAmount.toStringAsFixed(2),
     );
@@ -277,12 +253,16 @@ class InvoicePlutoController extends GetxController {
   }
 
   void updateAdditionCell(double total) {
+    String? additionRatioStr = billAdditionsOnChangedEvent!.row.cells['additionRatioId']?.value;
+    if (additionRatioStr == null || additionRatioStr.isEmpty) {
+      return;
+    }
     double additionAmount = _calculateAdditionAmount(
       billAdditionsOnChangedEvent!.row.cells['additionRatioId']?.value,
       total,
     );
 
-    billAdditionsDiscountsStateManager.changeCellValue(
+    additionsDiscountsStateManager.changeCellValue(
       billAdditionsOnChangedEvent!.row.cells['additionId']!,
       additionAmount.toStringAsFixed(2),
     );
@@ -300,22 +280,44 @@ class InvoicePlutoController extends GetxController {
     return total * (additionRatio / 100);
   }
 
-  double computeAdditions() {
-    double addition = 0;
-    for (var row in AppConstants.billAdditionsDiscountsRows) {
-      if (row.cells['additionRatioId']?.value != null && row.cells['additionRatioId']?.value != '') {
-        double additionRatio = double.tryParse(row.cells['additionRatioId']!.value) ?? 0;
-        addition += computeWithVatTotal() * (additionRatio / 100);
+  double get computeAdditions {
+    return AppConstants.additionsDiscountsRows.fold<double>(0, (addition, row) {
+      final additionRatioValue = row.cells['additionRatioId']?.value;
+
+      if (additionRatioValue != null && additionRatioValue.isNotEmpty) {
+        final double additionRatio = double.tryParse(additionRatioValue) ?? 0;
+        return addition + (computeWithVatTotal * (additionRatio / 100));
       }
-    }
-    return addition;
+      return addition; // Return the accumulated addition if the condition is not met
+    });
   }
 
   double calculateFinalTotal() {
-    double totalIncludingVAT = computeWithVatTotal();
-    double totalDiscount = computeDiscounts();
-    double totalAdditions = computeAdditions();
+    double totalIncludingVAT = computeWithVatTotal;
+    double totalDiscount = computeDiscounts;
+    double totalAdditions = computeAdditions;
 
     return totalIncludingVAT - totalDiscount + totalAdditions;
+  }
+
+  // Method to clear cell values of additions and discounts rows
+  void clearAdditionsDiscountsCells() {
+    for (var row in AppConstants.additionsDiscountsRows) {
+      for (var cell in row.cells.values) {
+        cell.value = ''; // Reset cell value to empty
+      }
+    }
+  }
+
+  void updateIfFirstFrameRendered() {
+    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
+      update();
+    });
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    clearAdditionsDiscountsCells(); // Clear cell values when the controller is closed
   }
 }

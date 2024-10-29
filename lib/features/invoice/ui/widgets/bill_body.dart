@@ -30,7 +30,7 @@ class BillBody extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: GetBuilder<InvoicePlutoController>(builder: (controller) {
@@ -42,14 +42,16 @@ class BillBody extends StatelessWidget {
                           shortCut: customPlutoShortcut(GetProductEnterPlutoGridAction(controller, "invRecProduct")),
                           onRowSecondaryTap: (event) {},
                           onChanged: (PlutoGridOnChangedEvent event) async {
-                            String quantityNum = Utils.extractNumbersAndCalculate(
-                                controller.stateManager.currentRow!.cells["invRecQuantity"]?.value?.toString() ?? '');
+                            String quantityNum = Utils.extractNumbersAndCalculate(controller
+                                    .mainTableStateManager.currentRow!.cells["invRecQuantity"]?.value
+                                    ?.toString() ??
+                                '');
                             String? subTotalStr = Utils.extractNumbersAndCalculate(
-                                controller.stateManager.currentRow!.cells["invRecSubTotal"]?.value);
+                                controller.mainTableStateManager.currentRow!.cells["invRecSubTotal"]?.value);
                             String? totalStr = Utils.extractNumbersAndCalculate(
-                                controller.stateManager.currentRow!.cells["invRecTotal"]?.value);
+                                controller.mainTableStateManager.currentRow!.cells["invRecTotal"]?.value);
                             String? vat = Utils.extractNumbersAndCalculate(
-                                controller.stateManager.currentRow!.cells["invRecVat"]?.value ?? "0");
+                                controller.mainTableStateManager.currentRow!.cells["invRecVat"]?.value ?? "0");
 
                             double subTotal = controller.parseExpression(subTotalStr);
                             double total = controller.parseExpression(totalStr);
@@ -80,11 +82,11 @@ class BillBody extends StatelessWidget {
                   flex: 1,
                   child: BillGridWidget(
                     rowColor: Colors.grey,
-                    columns: AppConstants.billAdditionsDiscountsColumns,
-                    rows: AppConstants.billAdditionsDiscountsRows,
+                    columns: AppConstants.additionsDiscountsColumns,
+                    rows: AppConstants.additionsDiscountsRows,
                     onChanged: plutoController.onAdditionsDiscountsChanged,
                     onLoaded: (PlutoGridOnLoadedEvent event) {
-                      plutoController.billAdditionsDiscountsStateManager = event.stateManager;
+                      plutoController.additionsDiscountsStateManager = event.stateManager;
                     },
                   ),
                 ),

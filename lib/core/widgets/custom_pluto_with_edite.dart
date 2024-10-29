@@ -35,13 +35,14 @@ class CustomPlutoWithEdite extends StatelessWidget {
           localeText: const PlutoGridLocaleText.arabic(),
         ),
         onLoaded: (PlutoGridOnLoadedEvent event) {
-          controller.stateManager = event.stateManager;
-          final newRows = controller.stateManager.getNewRows(count: 30);
-          controller.stateManager.appendRows(newRows);
+          controller.mainTableStateManager = event.stateManager;
+          final newRows = controller.mainTableStateManager.getNewRows(count: 30);
+          controller.mainTableStateManager.appendRows(newRows);
 
-          if (controller.stateManager.rows.isNotEmpty && controller.stateManager.rows.first.cells.length > 1) {
-            final secondCell = controller.stateManager.rows.first.cells.entries.elementAt(1).value;
-            controller.stateManager.setCurrentCell(secondCell, 0);
+          if (controller.mainTableStateManager.rows.isNotEmpty &&
+              controller.mainTableStateManager.rows.first.cells.length > 1) {
+            final secondCell = controller.mainTableStateManager.rows.first.cells.entries.elementAt(1).value;
+            controller.mainTableStateManager.setCurrentCell(secondCell, 0);
 
             FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
           }

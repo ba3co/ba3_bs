@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class EntryBondRecordDataSource extends DataGridSource {
-  // Constructor
-  EntryBondRecordDataSource() {
+class BondDataGridSource extends DataGridSource {
+  BondDataGridSource() {
     // Initialize data rows when creating the data source
-    _dataGridRows = Get.find<BondController>().buildRowInit();
+    _dataGridRows = Get.find<BondController>().buildBondDataGridRows();
   }
 
   List<DataGridRow> _dataGridRows = [];
@@ -37,8 +36,8 @@ class EntryBondRecordDataSource extends DataGridSource {
   }
 
   @override
-  Widget? buildTableSummaryCellWidget(GridTableSummaryRow summaryRow, GridSummaryColumn? summaryColumn,
-      RowColumnIndex rowColumnIndex, String summaryValue) {
+  Widget? buildTableSummaryCellWidget(
+      GridTableSummaryRow summaryRow, GridSummaryColumn? summaryColumn, RowColumnIndex rowColumnIndex, String summaryValue) {
     return Container(
       padding: const EdgeInsets.all(15.0),
       child: Text(summaryValue),

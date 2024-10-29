@@ -2,13 +2,13 @@ import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/base_classes/repositories/base_repo.dart';
+import '../../../core/classes/repositories/firebase_repo_base.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../data/models/bill_type_model.dart';
 
 class PatternController extends GetxController with AppValidator {
-  final BaseRepository<BillTypeModel> _repository;
+  final FirebaseRepositoryBase<BillTypeModel> _repository;
 
   PatternController(this._repository);
 
@@ -58,7 +58,6 @@ class PatternController extends GetxController with AppValidator {
         Utils.showSnackBar('خطأ', failure.message);
       },
       (fetchedBillTypes) {
-        debugPrint('fetchedBillTypes ${fetchedBillTypes.length}');
         billsTypes.assignAll(fetchedBillTypes);
       },
     );

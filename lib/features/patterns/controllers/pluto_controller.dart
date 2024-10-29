@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -7,13 +6,12 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoController extends GetxController {
   GlobalKey plutoKey = GlobalKey();
 
-  List<PlutoColumn> getColumns(List<dynamic> dataList, {String? type}) {
-    log('getColumns ${dataList.map((e) => e.toJson())}');
+  List<PlutoColumn> getColumns(List<BillTypeModel> billsTypes) {
     List<PlutoColumn> columns = [];
-    if (dataList.isEmpty) {
+    if (billsTypes.isEmpty) {
       return columns;
     } else {
-      Map<String, dynamic> sampleData = type != null ? dataList.first?.toMap(type: type) : dataList.first?.toMap();
+      Map<String, dynamic> sampleData = billsTypes.first.toJson();
       columns = sampleData.keys.map((key) {
         return PlutoColumn(
           title: key,
@@ -32,13 +30,13 @@ class PlutoController extends GetxController {
 
   List<PlutoRow> rows = [];
 
-  List<PlutoRow> getRows(List<dynamic> modelList, {String? type}) {
+  List<PlutoRow> getRows(List<BillTypeModel> billsTypes) {
     List<PlutoRow> rows = [];
-    if (modelList.isEmpty) {
+    if (billsTypes.isEmpty) {
       return rows;
     } else {
-      rows = modelList.map((model) {
-        Map<String, dynamic> rowData = type != null ? model!.toMap(type: type) : model!.toMap();
+      rows = billsTypes.map((billType) {
+        Map<String, dynamic> rowData = billType.toJson();
 
         Map<String, PlutoCell> cells = {};
 

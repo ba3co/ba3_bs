@@ -9,7 +9,6 @@ import '../../../../core/utils/utils.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../core/widgets/option_text_widget.dart';
-import '../../../bond/ui/screens/entry_bond_details_view.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../controllers/invoice_controller.dart';
 import '../../controllers/invoice_pluto_controller.dart';
@@ -47,15 +46,14 @@ class BillButtons extends StatelessWidget {
               title: 'السند',
               onPressed: () async {
                 Get.find<BondController>().createBond(
-                  vat: invoicePlutoController.computeWithVatTotal() - invoicePlutoController.computeWithoutVatTotal(),
+                  vat: invoicePlutoController.computeTotalVat,
                   billType: BillType.fromLabel(billTypeLabel),
                   customerAccount: invoiceController.customerAccount,
-                  total: invoicePlutoController.computeWithoutVatTotal(),
-                  gifts: invoicePlutoController.computeGifts(),
-                  discount: invoicePlutoController.computeDiscounts(),
-                  addition: invoicePlutoController.computeAdditions(),
+                  total: invoicePlutoController.computeWithoutVatTotal,
+                  gifts: invoicePlutoController.computeGifts,
+                  discount: invoicePlutoController.computeDiscounts,
+                  addition: invoicePlutoController.computeAdditions,
                 );
-                Get.to(() => const EntryBondDetailsView());
               },
               iconData: Icons.file_open_outlined),
           AppButton(

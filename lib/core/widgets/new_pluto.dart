@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/features/patterns/controllers/pattern_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,7 +12,6 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
       required this.onSelected,
       this.onRowDoubleTap,
       required this.title,
-      this.type,
       this.isLoading = false});
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -23,14 +20,12 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
   final Function(PlutoGridOnSelectedEvent) onSelected;
 
   final String title;
-  final String? type;
 
   final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     var patternController = Get.find<PatternController>();
-    log('lengtf ${patternController.billsTypes.length}');
     return Column(
       children: [
         Expanded(
@@ -52,12 +47,11 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
                       : PlutoGrid(
                           key: controller.plutoKey,
                           onLoaded: (event) {
-                            log('onLoaded');
                             event.stateManager.setShowColumnFilter(true);
                           },
                           onSelected: onSelected,
-                          columns: controller.getColumns(patternController.billsTypes, type: type),
-                          rows: controller.getRows(patternController.billsTypes, type: type),
+                          columns: controller.getColumns(patternController.billsTypes),
+                          rows: controller.getRows(patternController.billsTypes),
                           mode: PlutoGridMode.selectWithOneTap,
                           configuration: PlutoGridConfiguration(
                             shortcut: const PlutoGridShortcut(),
