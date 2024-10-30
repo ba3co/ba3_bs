@@ -1,4 +1,4 @@
-import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
+import 'package:ba3_bs/core/classes/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -6,57 +6,12 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoController extends GetxController {
   GlobalKey plutoKey = GlobalKey();
 
-  List<PlutoColumn> getColumns(List<BillTypeModel> billsTypes) {
-    List<PlutoColumn> columns = [];
-    if (billsTypes.isEmpty) {
-      return columns;
-    } else {
-      Map<String, dynamic> sampleData = billsTypes.first.toJson();
-      columns = sampleData.keys.map((key) {
-        return PlutoColumn(
-          title: key,
-          field: key,
-          type: PlutoColumnType.text(),
-          enableAutoEditing: false,
-          enableColumnDrag: false,
-          enableEditingMode: false,
-          hide: sampleData.keys.first == key,
-        );
-      }).toList();
-    }
+  /// Generates a list of PlutoColumns based on the first model in the provided list.
+  List<PlutoColumn> generateColumns(List<PlutoAdaptable> adaptableModels) {
+    if (adaptableModels.isEmpty) return [];
 
-    return columns;
-  }
-
-  List<PlutoRow> rows = [];
-
-  List<PlutoRow> getRows(List<BillTypeModel> billsTypes) {
-    List<PlutoRow> rows = [];
-    if (billsTypes.isEmpty) {
-      return rows;
-    } else {
-      rows = billsTypes.map((billType) {
-        Map<String, dynamic> rowData = billType.toJson();
-
-        Map<String, PlutoCell> cells = {};
-
-        rowData.forEach((key, value) {
-          cells[key] = PlutoCell(value: value?.toString() ?? '');
-        });
-
-        return PlutoRow(cells: cells);
-      }).toList();
-      plutoKey = GlobalKey();
-    }
-    return rows;
-  }
-
-/* generateColumnsAndRows(List<dynamic> modelList) {
-    columns = [];
-    rows = [];
-    if (modelList.isEmpty) return;
-    Map<String, dynamic> sampleData = modelList.first?.toMap();
-    columns = sampleData.keys.map((key) {
+    final firstModelData = adaptableModels.first.toPlutoGridFormat();
+    return firstModelData.keys.map((key) {
       return PlutoColumn(
         title: key,
         field: key,
@@ -64,21 +19,23 @@ class PlutoController extends GetxController {
         enableAutoEditing: false,
         enableColumnDrag: false,
         enableEditingMode: false,
-        hide: sampleData.keys.first == key,
+        //  hide: key == firstModelData.keys.first,
       );
     }).toList();
-    // إنشاء الصفوف
-    rows = modelList.map((model) {
-      Map<String, dynamic> rowData = model!.toMap();
-      Map<String, PlutoCell> cells = {};
+  }
 
-      rowData.forEach((key, value) {
-        cells[key] = PlutoCell(value: value?.toString() ?? '');
-      });
-
-      return PlutoRow(cells: cells);
-    }).toList();
+  /// Generates a list of PlutoRows by mapping each model to its respective cells.
+  List<PlutoRow> generateRows(List<PlutoAdaptable> adaptableModels) {
+    if (adaptableModels.isEmpty) return [];
     plutoKey = GlobalKey();
-    update();
-  }*/
+    return adaptableModels.map(_mapModelToRow).toList();
+  }
+
+  /// Converts a PlutoAdaptable model to a PlutoRow.
+  PlutoRow _mapModelToRow(PlutoAdaptable model) {
+    final cells = model.toPlutoGridFormat().map<String, PlutoCell>((key, value) {
+      return MapEntry(key, PlutoCell(value: value?.toString() ?? ''));
+    });
+    return PlutoRow(cells: cells);
+  }
 }

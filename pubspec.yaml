@@ -32,7 +32,7 @@ dependencies:
   flutter_material_color_picker: ^1.2.0
   tab_container: ^3.5.3
   math_expressions: ^2.6.0
-  get_it: ^8.0.1
+
 
 dev_dependencies:
   flutter_test:

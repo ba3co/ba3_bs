@@ -161,7 +161,7 @@ abstract class AppConstants {
   static const roleViewBond = "roleViewBond";
   static const roleViewAccount = "roleViewAccount";
   static const roleViewInvoice = "roleViewInvoice";
-  static const roleViewProduct = "roleViewProduct";
+  static const roleViewMaterial = "roleViewMaterial";
   static const roleViewStore = "roleViewStore";
   static const roleViewPattern = "roleViewPattern";
   static const roleViewCheques = "roleViewCheques";
@@ -251,7 +251,7 @@ abstract class AppConstants {
     AppConstants.roleViewBond,
     AppConstants.roleViewAccount,
     AppConstants.roleViewInvoice,
-    AppConstants.roleViewProduct,
+    AppConstants.roleViewMaterial,
     AppConstants.roleViewStore,
     AppConstants.roleViewPattern,
     AppConstants.roleViewCheques,

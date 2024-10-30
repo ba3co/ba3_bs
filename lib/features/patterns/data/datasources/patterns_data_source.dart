@@ -5,32 +5,33 @@ import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
 import '../models/bill_type_model.dart';
 
-class PatternsDataSource implements FirebaseDatasourceBase<DocumentSnapshot<Map<String, dynamic>>> {
+class PatternsDataSource implements FirebaseDatasourceBase<BillTypeModel> {
   final FirebaseFirestore _firestore;
   final String _collection = 'bill_types'; // Collection name in Firestore
 
   PatternsDataSource(this._firestore);
 
   @override
-  Future<List<DocumentSnapshot<Map<String, dynamic>>>> fetchAll() async {
+  Future<List<BillTypeModel>> fetchAll() async {
     final snapshot = await _firestore.collection(_collection).get();
-    return snapshot.docs;
+    final billTypes = snapshot.docs.map((doc) => BillTypeModel.fromJson(doc.data())).toList();
+    return billTypes;
   }
 
   @override
-  Future<DocumentSnapshot<Map<String, dynamic>>> fetchById(String id) async {
+  Future<BillTypeModel> fetchById(String id) async {
     final doc = await _firestore.collection(_collection).doc(id).get();
     if (doc.exists) {
-      return doc;
+      final billType = BillTypeModel.fromJson(doc.data() as Map<String, dynamic>);
+      return billType;
     } else {
       throw Failure(ResponseCode.NOT_FOUND, 'Bill type not found');
     }
   }
 
   @override
-  Future<void> save(Map<String, dynamic> billTypeData) async {
+  Future<void> save(BillTypeModel billType) async {
     final collection = _firestore.collection(_collection);
-    final billType = BillTypeModel.fromJson(billTypeData); // Deserialize if necessary
 
     if (billType.id == null) {
       // Create a new document and set its ID in the model

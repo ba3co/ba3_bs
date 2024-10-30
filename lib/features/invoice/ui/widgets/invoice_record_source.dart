@@ -9,11 +9,11 @@
 // import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 //
 // import '../../../Const/app_constants.dart';
-// import '../../../Dialogs/Search_Product_Text_Dialog.dart';
+// import '../../../Dialogs/search_product_text_dialog.dart';
 // import '../../../controller/invoice_controller.dart';
 // import '../../../controller/product_controller.dart';
 // import '../../../model/invoice_record_model.dart';
-// import '../../../model/product_model.dart';
+// import '../../../model/material_model.dart';
 // import 'package:math_expressions/math_expressions.dart';
 //
 // class InvoiceRecordSource extends DataGridSource {

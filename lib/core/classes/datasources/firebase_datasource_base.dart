@@ -3,7 +3,7 @@ abstract class FirebaseDatasourceBase<T> {
 
   Future<T> fetchById(String id);
 
-  Future<void> save(Map<String, dynamic> item);
+  Future<void> save(T item);
 
   Future<void> delete(String id);
 }

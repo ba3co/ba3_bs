@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../../firebase_options.dart';
-import '../../bindings/model_deserialization_registry.dart';
 
 Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,8 +10,6 @@ Future<void> initializeApp() async {
   await initializeWindowSettings();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  setupModelDeserializationRegistry();
 }
 
 Future<void> initializeWindowSettings() async {

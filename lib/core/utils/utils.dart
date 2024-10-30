@@ -107,7 +107,7 @@ class Utils {
         return "السندات";
       case AppConstants.roleViewAccount:
         return "الحسابات";
-      case AppConstants.roleViewProduct:
+      case AppConstants.roleViewMaterial:
         return "المواد";
       case AppConstants.roleViewStore:
         return "المستودعات";

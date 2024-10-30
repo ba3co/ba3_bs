@@ -23,7 +23,6 @@ class PatternLayout extends StatelessWidget {
             AppMenuItem(
               text: "إضافة نمط",
               onTap: () {
-                //   Get.find<PatternController>().initPattern();
                 Get.toNamed(AppRoutes.addPatternsScreen);
               },
             ),
@@ -32,9 +31,6 @@ class PatternLayout extends StatelessWidget {
               onTap: () {
                 Get.find<PatternController>().getAllBillTypes();
                 Get.toNamed(AppRoutes.showAllPatternsScreen);
-                // hasPermissionForOperation(AppConstants.roleUserRead, AppConstants.roleViewPattern).then((value) {
-                //   if (value) Get.to(() => const AllPatternPage());
-                // });
               },
             ),
           ],

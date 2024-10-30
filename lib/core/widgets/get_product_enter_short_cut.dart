@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../constants/app_constants.dart';
+import '../dialogs/search_product_text_dialog.dart';
 
 class GetProductEnterPlutoGridAction extends PlutoGridShortcutAction {
   const GetProductEnterPlutoGridAction(this.controller, this.fieldTitle);
@@ -58,7 +58,7 @@ class GetProductEnterPlutoGridAction extends PlutoGridShortcutAction {
 
   getProduct(PlutoGridStateManager stateManager, dynamic controller, fieldTitle) async {
     if (stateManager.currentColumn?.field == "invRecProduct") {
-      String? newValue;
+      String? newValue = await searchProductTextDialog(stateManager.currentCell?.value);
       if (newValue != null) {
         stateManager.changeCellValue(
           stateManager.currentRow!.cells[stateManager.currentColumn?.field]!,
@@ -67,8 +67,8 @@ class GetProductEnterPlutoGridAction extends PlutoGridShortcutAction {
           callOnChangedEvent: true,
           notify: true,
         );
-        controller.updateInvoiceValues(
-            controller.getPrice(prodName: newValue, type: AppConstants.invoiceChoosePriceMethodeCustomerPrice), 1);
+        // controller.updateInvoiceValues(
+        //     controller.getPrice(prodName: newValue, type: AppConstants.invoiceChoosePriceMethodeCustomerPrice), 1);
       } else {
         stateManager.changeCellValue(
           stateManager.currentRow!.cells["invRecProduct"]!,

@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../invoice/ui/screens/invoice_layout.dart';
 import '../../../login/controllers/user_management_controller.dart';
+import '../../../materials/ui/screens/materials_layout.dart';
 import '../../../patterns/ui/screens/pattern_layout.dart';
 import '../widgets/drawer_list_tile.dart';
 
@@ -17,8 +18,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   List<({String name, Widget layout, String role})> appLayouts = [
-    (name: "الفواتير", layout: const InvoiceLayout(), role: AppConstants.roleViewInvoice),
-    (name: "أنماط البيع", layout: const PatternLayout(), role: AppConstants.roleViewPattern),
+    (name: 'الفواتير', layout: const InvoiceLayout(), role: AppConstants.roleViewInvoice),
+    (name: 'أنماط البيع', layout: const PatternLayout(), role: AppConstants.roleViewPattern),
+    (name: "المواد", layout: const MaterialLayout(), role: AppConstants.roleViewMaterial),
   ];
   List<({String name, Widget layout, String role})> allData = [];
   late PageController pageController;

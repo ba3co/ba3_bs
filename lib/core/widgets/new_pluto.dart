@@ -1,4 +1,4 @@
-import 'package:ba3_bs/features/patterns/controllers/pattern_controller.dart';
+import 'package:ba3_bs/core/classes/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -12,7 +12,8 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
       required this.onSelected,
       this.onRowDoubleTap,
       required this.title,
-      this.isLoading = false});
+      this.isLoading = false,
+      required this.tableSourceModels});
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
 
@@ -20,12 +21,11 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
   final Function(PlutoGridOnSelectedEvent) onSelected;
 
   final String title;
-
+  final List<PlutoAdaptable> tableSourceModels;
   final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    var patternController = Get.find<PatternController>();
     return Column(
       children: [
         Expanded(
@@ -39,7 +39,7 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
                     actions: [
                       Padding(
                           padding: const EdgeInsets.all(8),
-                          child: Text('عدد العناصر المتأثرة: ${patternController.billsTypes.length}')),
+                          child: Text('عدد العناصر المتأثرة: ${tableSourceModels.length}')),
                     ],
                   ),
                   body: isLoading
@@ -50,8 +50,8 @@ class CustomPlutoGridWithAppBar extends StatelessWidget {
                             event.stateManager.setShowColumnFilter(true);
                           },
                           onSelected: onSelected,
-                          columns: controller.getColumns(patternController.billsTypes),
-                          rows: controller.getRows(patternController.billsTypes),
+                          columns: controller.generateColumns(tableSourceModels),
+                          rows: controller.generateRows(tableSourceModels),
                           mode: PlutoGridMode.selectWithOneTap,
                           configuration: PlutoGridConfiguration(
                             shortcut: const PlutoGridShortcut(),

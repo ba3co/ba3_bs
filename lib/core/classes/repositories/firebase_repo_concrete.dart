@@ -4,25 +4,18 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../bindings/model_deserialization_registry.dart';
 import '../datasources/firebase_datasource_base.dart';
 import 'firebase_repo_base.dart';
 
 class FirebaseRepositoryConcrete<T> implements FirebaseRepositoryBase<T> {
-  final FirebaseDatasourceBase _dataSource;
+  final FirebaseDatasourceBase<T> _dataSource;
 
   FirebaseRepositoryConcrete(this._dataSource);
-
-  // Retrieves the registered fromJson factory function for the specific model
-  T Function(Map<String, dynamic>) get fromJson => getIt<T Function(Map<String, dynamic>)>();
-
-  Map<String, dynamic> Function(T) get toJson => getIt<Map<String, dynamic> Function(T)>();
 
   @override
   Future<Either<Failure, List<T>>> getAll() async {
     try {
-      final rawItems = await _dataSource.fetchAll();
-      final items = rawItems.map((doc) => fromJson(doc.data() as Map<String, dynamic>)).toList();
+      final items = await _dataSource.fetchAll();
       return Right(items); // Return list of items
     } catch (e) {
       log('Error: $e');
@@ -33,8 +26,7 @@ class FirebaseRepositoryConcrete<T> implements FirebaseRepositoryBase<T> {
   @override
   Future<Either<Failure, T>> getById(String id) async {
     try {
-      final rawItem = await _dataSource.fetchById(id);
-      final item = fromJson(rawItem.data() as Map<String, dynamic>);
+      final item = await _dataSource.fetchById(id);
       return Right(item); // Return the found item
     } catch (e) {
       log('Error: $e');
@@ -56,8 +48,7 @@ class FirebaseRepositoryConcrete<T> implements FirebaseRepositoryBase<T> {
   @override
   Future<Either<Failure, Unit>> save(T item) async {
     try {
-      final itemData = toJson(item);
-      await _dataSource.save(itemData); // Pass `toJson(item)` to save method
+      await _dataSource.save(item);
       return const Right(unit); // Return success
     } catch (e) {
       log('Error in save: $e');

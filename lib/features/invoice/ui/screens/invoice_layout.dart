@@ -85,8 +85,6 @@ class InvoiceLayout extends StatelessWidget {
                           ),
                         ),
                       );
-
-                      return Container(); // Return an empty container for other elements
                     }).toList()),
               ),
             ],

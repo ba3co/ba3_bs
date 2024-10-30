@@ -13,8 +13,9 @@ class AllPatternPage extends StatelessWidget {
     return GetBuilder<PatternController>(
         builder: (controller) => CustomPlutoGridWithAppBar(
               title: "أنماط البيع",
-              onLoaded: (e) {},
               isLoading: controller.isLoading,
+              tableSourceModels: controller.billsTypes,
+              onLoaded: (e) {},
               onSelected: (p0) {
                 Get.to(const AddPatternPage());
               },

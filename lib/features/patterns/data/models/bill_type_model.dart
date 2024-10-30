@@ -1,4 +1,6 @@
-class BillTypeModel {
+import '../../../../core/classes/models/pluto_adaptable.dart';
+
+class BillTypeModel implements PlutoAdaptable {
   final String? id;
   final String? shortName;
   final String? fullName;
@@ -100,4 +102,22 @@ class BillTypeModel {
         color: color ?? this.color,
         store: store ?? this.store,
       );
+
+  @override
+  Map<String, dynamic> toPlutoGridFormat() => {
+        'id': id,
+        'shortName': shortName,
+        'fullName': fullName,
+        'latinShortName': latinShortName,
+        'latinFullName': latinFullName,
+        'billType': billTypeLabel,
+        'materialAccount': materialAccount,
+        'discountsAccount': discountsAccount,
+        'additionsAccount': additionsAccount,
+        'cashesAccount': cashesAccount,
+        'giftsAccount': giftsAccount,
+        'exchangeForGiftsAccount': exchangeForGiftsAccount,
+        'color': color,
+        'store': store,
+      };
 }
