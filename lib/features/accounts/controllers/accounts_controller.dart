@@ -4,6 +4,8 @@ import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
+import '../../../core/utils/utils.dart';
+import '../../patterns/ui/widgets/account_selection_dialog.dart';
 import '../data/models/account_model.dart';
 import '../data/repositories/accounts_repository.dart';
 
@@ -38,15 +40,17 @@ class AccountsController extends GetxController {
     Get.toNamed(AppRoutes.showAllAccountsScreen);
   }
 
-  List<AccountModel> searchAccountsByName(text) {
+  List<AccountModel> searchAccountsByNameOrCode(text) {
     if (accounts.isEmpty) {
       log('Accounts isEmpty');
       fetchAccounts();
     }
-    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase())).toList();
+    return accounts
+        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
+        .toList();
   }
 
-  List<String> getAccountsNames(query) => searchAccountsByName(query).map((account) => account.accName!).toList();
+  List<String> getAccountsNames(query) => searchAccountsByNameOrCode(query).map((account) => account.accName!).toList();
 
   String getAccountNameById(String? accountId) {
     if (accountId == null || accountId.isEmpty) return '';
@@ -57,5 +61,25 @@ class AccountsController extends GetxController {
     if (accountId == null || accountId.isEmpty) return [];
 
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
+  }
+
+  Future<String?> openAccountSelectionDialog(String query, [TextEditingController? controller]) async {
+    List<String> accountNames = Get.find<AccountsController>().getAccountsNames(query);
+
+    if (accountNames.isNotEmpty) {
+      String? selectedAccountName = await Get.defaultDialog<String>(
+        title: 'Choose Account',
+        content: AccountSelectionDialog(accountNames: accountNames),
+      );
+
+      if (selectedAccountName != null && controller != null) {
+        controller.text = selectedAccountName;
+        update();
+      }
+      return selectedAccountName;
+    } else {
+      Utils.showSnackBar('فحص الحسابات', 'هذا الحساب غير موجود');
+      return null;
+    }
   }
 }

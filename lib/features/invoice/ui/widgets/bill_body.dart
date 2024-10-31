@@ -7,7 +7,8 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/widgets/app_spacer.dart';
 import '../../../../core/widgets/custom_pluto_short_cut.dart';
 import '../../../../core/widgets/custom_pluto_with_edite.dart';
-import '../../../../core/widgets/get_product_enter_short_cut.dart';
+import '../../../../core/widgets/get_accounts_by_enter_action.dart';
+import '../../../../core/widgets/get_products_by_enter_action.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/invoice_pluto_controller.dart';
 import 'bill_grid_widget.dart';
@@ -30,7 +31,7 @@ class BillBody extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  flex: 4,
+                  flex: 3,
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: GetBuilder<InvoicePlutoController>(builder: (controller) {
@@ -39,7 +40,7 @@ class BillBody extends StatelessWidget {
                         child: CustomPlutoWithEdite(
                           evenRowColor: Color(billTypeModel.color!),
                           controller: controller,
-                          shortCut: customPlutoShortcut(GetProductEnterPlutoGridAction(controller, "invRecProduct")),
+                          shortCut: customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, "invRecProduct")),
                           onRowSecondaryTap: (event) {},
                           onChanged: (PlutoGridOnChangedEvent event) async {
                             String quantityNum = Utils.extractNumbersAndCalculate(controller
@@ -78,18 +79,21 @@ class BillBody extends StatelessWidget {
                   ),
                 ),
                 const VerticalSpace(),
-                Expanded(
-                  flex: 1,
-                  child: BillGridWidget(
-                    rowColor: Colors.grey,
-                    columns: AppConstants.additionsDiscountsColumns,
-                    rows: AppConstants.additionsDiscountsRows,
-                    onChanged: plutoController.onAdditionsDiscountsChanged,
-                    onLoaded: (PlutoGridOnLoadedEvent event) {
-                      plutoController.additionsDiscountsStateManager = event.stateManager;
-                    },
-                  ),
-                ),
+                GetBuilder<InvoicePlutoController>(builder: (controller) {
+                  return Expanded(
+                    flex: 1,
+                    child: BillGridWidget(
+                      rowColor: Colors.grey,
+                      columns: AppConstants.additionsDiscountsColumns,
+                      shortCut: customPlutoShortcut(GetAccountsByEnterAction(controller, "accountId")),
+                      rows: AppConstants.additionsDiscountsRows,
+                      onChanged: plutoController.onAdditionsDiscountsChanged,
+                      onLoaded: (PlutoGridOnLoadedEvent event) {
+                        plutoController.additionsDiscountsStateManager = event.stateManager;
+                      },
+                    ),
+                  );
+                }),
               ],
             ),
           ),

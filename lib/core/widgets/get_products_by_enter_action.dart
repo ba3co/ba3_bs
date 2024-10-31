@@ -1,12 +1,13 @@
+import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../dialogs/search_product_text_dialog.dart';
 
-class GetProductEnterPlutoGridAction extends PlutoGridShortcutAction {
-  const GetProductEnterPlutoGridAction(this.controller, this.fieldTitle);
+class GetProductByPlutoGridEnterAction extends PlutoGridShortcutAction {
+  const GetProductByPlutoGridEnterAction(this.controller, this.fieldTitle);
 
-  final dynamic controller;
+  final InvoicePlutoController controller;
   final String fieldTitle;
 
   @override
@@ -56,7 +57,7 @@ class GetProductEnterPlutoGridAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  getProduct(PlutoGridStateManager stateManager, dynamic controller, fieldTitle) async {
+  getProduct(PlutoGridStateManager stateManager, InvoicePlutoController controller, fieldTitle) async {
     if (stateManager.currentColumn?.field == "invRecProduct") {
       String? newValue = await searchProductTextDialog(stateManager.currentCell?.value);
       if (newValue != null) {

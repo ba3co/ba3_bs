@@ -1,8 +1,8 @@
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/widgets/custom_text_field_with_icon.dart';
-import '../../controllers/pattern_controller.dart';
 
 class SearchableAccountField extends StatelessWidget {
   final String label;
@@ -25,8 +25,7 @@ class SearchableAccountField extends StatelessWidget {
             child: CustomTextFieldWithIcon(
               controller: controller,
               onSubmitted: (text) {
-                final patternController = Get.find<PatternController>();
-                patternController.openAccountSelectionDialog(text, controller);
+                Get.find<AccountsController>().openAccountSelectionDialog(text, controller);
               },
             ),
           ),

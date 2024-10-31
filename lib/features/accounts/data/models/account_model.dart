@@ -176,7 +176,7 @@ class AccountModel implements PlutoAdaptable {
         'اسم الحساب': accName,
         'الاسم الاتيني': accLatinName,
         'نوع الحساب': Utils.getAccountType(accType),
-        'AccDebitOrCredit': Utils.getAccountAccDebitOrCredit(accDebitOrCredit),
+        'Debit Or Credit': Utils.getAccountAccDebitOrCredit(accDebitOrCredit),
         'حساب الاب': Get.find<AccountsController>().getAccountNameById(accParentGuid),
         'الاولاد': Get.find<AccountsController>().getAccountChildren(id).join(' , '),
       };

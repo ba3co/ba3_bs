@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../core/widgets/date_picker.dart';
+import '../../../patterns/ui/widgets/searchable_account_field.dart';
 import '../../controllers/invoice_controller.dart';
 import 'bill_header_field.dart';
 
@@ -44,21 +45,9 @@ class BillHeader extends StatelessWidget {
                   controller: invoiceController.mobileNumberController,
                 ),
               ),
-              BillHeaderField(
-                label: 'حساب العميل :',
-                child: CustomTextFieldWithIcon(
-                  controller: invoiceController.invCustomerAccountController,
-                  onSubmitted: (text) async {},
-                  onIconPressed: () {},
-                ),
-              ),
-              BillHeaderField(
-                label: 'البائع :',
-                child: CustomTextFieldWithIcon(
-                  controller: invoiceController.sellerController,
-                  onSubmitted: (text) async {},
-                ),
-              ),
+              SearchableAccountField(
+                  label: 'حساب العميل :', controller: invoiceController.invCustomerAccountController),
+              SearchableAccountField(label: 'البائع :', controller: invoiceController.sellerController),
               BillHeaderField(
                 label: 'البيان',
                 child: CustomTextFieldWithoutIcon(

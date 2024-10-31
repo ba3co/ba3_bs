@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/utils/utils.dart';
-import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,7 +6,6 @@ import '../../../core/classes/repositories/firebase_repo_base.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../data/models/bill_type_model.dart';
-import '../ui/widgets/account_selection_dialog.dart';
 
 class PatternController extends GetxController with AppValidator {
   final FirebaseRepositoryBase<BillTypeModel> _repository;
@@ -37,6 +35,12 @@ class PatternController extends GetxController with AppValidator {
   List<BillTypeModel> billsTypes = [];
 
   bool isLoading = true;
+
+  @override
+  void onInit() {
+    super.onInit();
+    autoFillControllers(InvoiceType.buy);
+  }
 
   void onMainColorChanged(int? newColorValue) {
     if (newColorValue != null) {
@@ -228,22 +232,4 @@ class PatternController extends GetxController with AppValidator {
       );
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
-
-  Future<void> openAccountSelectionDialog(String query, TextEditingController controller) async {
-    List<String> accountNames = Get.find<AccountsController>().getAccountsNames(query);
-
-    if (accountNames.isNotEmpty) {
-      String? selectedAccountName = await Get.defaultDialog<String>(
-        title: 'Choose Account',
-        content: AccountSelectionDialog(accountNames: accountNames),
-      );
-
-      if (selectedAccountName != null) {
-        controller.text = selectedAccountName;
-        update();
-      }
-    } else {
-      Utils.showSnackBar('فحص الحسابات', 'هذا الحساب غير موجود');
-    }
-  }
 }

@@ -9,6 +9,7 @@ class BillGridWidget extends StatelessWidget {
   final List<PlutoColumn> columns;
   final Function(PlutoGridOnChangedEvent)? onChanged;
   final Function(PlutoGridOnLoadedEvent)? onLoaded;
+  final PlutoGridShortcut? shortCut;
 
   const BillGridWidget({
     super.key,
@@ -17,6 +18,7 @@ class BillGridWidget extends StatelessWidget {
     required this.columns,
     required this.onChanged,
     required this.onLoaded,
+    this.shortCut,
   });
 
   @override
@@ -26,7 +28,7 @@ class BillGridWidget extends StatelessWidget {
       child: PlutoGrid(
         onLoaded: onLoaded,
         configuration: PlutoGridConfiguration(
-          shortcut: const PlutoGridShortcut(),
+          shortcut: shortCut ?? const PlutoGridShortcut(),
           style: buildGridStyleConfig(evenRowColor: rowColor),
           localeText: const PlutoGridLocaleText.arabic(),
         ),

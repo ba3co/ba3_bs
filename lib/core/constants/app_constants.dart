@@ -321,10 +321,19 @@ abstract class AppConstants {
     ),
   ];
 
-  static final List<PlutoRow> additionsDiscountsRows = [
+  static List<PlutoRow> additionsDiscountsRows = [
     PlutoRow(
       cells: {
-        'accountId': PlutoCell(value: 'القيمة'),
+        'accountId': PlutoCell(value: 'الحسم الممنوح'),
+        'discountId': PlutoCell(value: ''),
+        'discountRatioId': PlutoCell(value: ''),
+        'additionId': PlutoCell(value: ''),
+        'additionRatioId': PlutoCell(value: ''),
+      },
+    ),
+    PlutoRow(
+      cells: {
+        'accountId': PlutoCell(value: 'الاضافات'),
         'discountId': PlutoCell(value: ''),
         'discountRatioId': PlutoCell(value: ''),
         'additionId': PlutoCell(value: ''),

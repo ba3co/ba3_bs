@@ -302,9 +302,12 @@ class InvoicePlutoController extends GetxController {
 
   // Method to clear cell values of additions and discounts rows
   void clearAdditionsDiscountsCells() {
-    for (var row in AppConstants.additionsDiscountsRows) {
-      for (var cell in row.cells.values) {
-        cell.value = ''; // Reset cell value to empty
+    // Iterate only over the rows and clear non-accountId cells in one pass
+    for (PlutoRow row in AppConstants.additionsDiscountsRows) {
+      for (MapEntry<String, PlutoCell> entry in row.cells.entries) {
+        if (entry.key != 'accountId') {
+          entry.value.value = '';
+        }
       }
     }
   }
