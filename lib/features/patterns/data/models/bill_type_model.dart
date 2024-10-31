@@ -1,4 +1,4 @@
-import '../../../../core/classes/models/pluto_adaptable.dart';
+import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class BillTypeModel implements PlutoAdaptable {
   final String? id;

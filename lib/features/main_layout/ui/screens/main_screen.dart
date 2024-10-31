@@ -3,6 +3,7 @@ import 'package:tab_container/tab_container.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/styling/app_colors.dart';
+import '../../../accounts/ui/screens/account_layout.dart';
 import '../../../invoice/ui/screens/invoice_layout.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../../materials/ui/screens/materials_layout.dart';
@@ -21,6 +22,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     (name: 'الفواتير', layout: const InvoiceLayout(), role: AppConstants.roleViewInvoice),
     (name: 'أنماط البيع', layout: const PatternLayout(), role: AppConstants.roleViewPattern),
     (name: "المواد", layout: const MaterialLayout(), role: AppConstants.roleViewMaterial),
+    (name: 'الحسابات', layout: const AccountLayout(), role: AppConstants.roleViewAccount),
   ];
   List<({String name, Widget layout, String role})> allData = [];
   late PageController pageController;

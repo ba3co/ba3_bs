@@ -2,7 +2,7 @@
 // import 'dart:io';
 //
 // import 'package:ba3_business_solutions/controller/product/product_controller.dart';
-// import 'package:ba3_business_solutions/data/model/product/material_model.dart';
+// import 'package:ba3_business_solutions/data/model/product/account_model.dart';
 // import 'package:ba3_business_solutions/view/products/pages/add_product_page.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';

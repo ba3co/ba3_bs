@@ -1,9 +1,9 @@
-import 'package:ba3_bs/core/classes/models/pluto_adaptable.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../features/patterns/controllers/pluto_controller.dart';
+import '../../features/pluto/controllers/pluto_controller.dart';
 
 class CustomPlutoGridWithAppBar extends StatelessWidget {
   const CustomPlutoGridWithAppBar(

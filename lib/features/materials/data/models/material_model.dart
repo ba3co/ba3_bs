@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/classes/models/pluto_adaptable.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 
 class MaterialModel implements PlutoAdaptable {
   final String? id;

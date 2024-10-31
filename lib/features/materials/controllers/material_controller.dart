@@ -69,11 +69,8 @@ class MaterialController extends GetxController {
   }
 
   String getProductNameFromId(String? id) {
-    if (id != null && id.isNotEmpty) {
-      return materials.firstWhere((material) => material.id == id).matName ?? '';
-    } else {
-      return "";
-    }
+    if (id == null || id.isEmpty) return '';
+    return materials.firstWhere((material) => material.id == id).matName ?? '';
   }
 
   String replaceArabicNumbersWithEnglish(String input) {

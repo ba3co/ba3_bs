@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_screen.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_page.dart';
@@ -17,4 +18,5 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.showAllPatternsScreen, page: () => const AllPatternPage()),
   GetPage(name: AppRoutes.entryBondDetailsView, page: () => const EntryBondDetailsView()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
+  GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
 ];

@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/utils/utils.dart';
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,6 +7,7 @@ import '../../../core/classes/repositories/firebase_repo_base.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../data/models/bill_type_model.dart';
+import '../ui/widgets/account_selection_dialog.dart';
 
 class PatternController extends GetxController with AppValidator {
   final FirebaseRepositoryBase<BillTypeModel> _repository;
@@ -46,8 +48,141 @@ class PatternController extends GetxController with AppValidator {
   void onSelectedTypeChanged(InvoiceType? newType) {
     if (newType != null) {
       selectedBillType = newType;
+      autoFillControllers(newType);
       update();
     }
+  }
+
+  void autoFillControllers(InvoiceType newType) {
+    // Clear previous values
+    clearControllers();
+
+    switch (newType) {
+      case InvoiceType.sales:
+        fillControllers(
+            materials: SalesAccounts.sales.label,
+            caches: SalesAccounts.cashBox.label,
+            exchangeForGifts: SalesAccounts.settlements.label,
+            gifts: SalesAccounts.salesGifts.label,
+            discounts: SalesAccounts.grantedDiscount.label,
+            additions: SalesAccounts.differentRevenues.label,
+            shortName: 'مبيعات',
+            fullName: 'فاتورة مبيعات',
+            latinShortName: 'Sales',
+            latinFullName: 'Sales Invoice');
+        break;
+
+      case InvoiceType.buy:
+        fillControllers(
+            materials: BuyAccounts.purchases.label,
+            caches: BuyAccounts.cashBox.label,
+            exchangeForGifts: BuyAccounts.settlements.label,
+            gifts: BuyAccounts.purchaseGifts.label,
+            discounts: BuyAccounts.earnedDiscount.label,
+            additions: BuyAccounts.differentExpenses.label,
+            shortName: 'شراء',
+            fullName: 'فاتورة مشتريات',
+            latinShortName: 'Buy',
+            latinFullName: 'Purchase Invoice');
+        break;
+
+      case InvoiceType.add:
+        fillControllers(
+            materials: BuyAccounts.purchases.label,
+            caches: BuyAccounts.cashBox.label,
+            exchangeForGifts: BuyAccounts.settlements.label,
+            gifts: BuyAccounts.purchaseGifts.label,
+            discounts: BuyAccounts.earnedDiscount.label,
+            additions: BuyAccounts.differentExpenses.label,
+            shortName: 'إضافة',
+            fullName: 'فاتورة إضافة',
+            latinShortName: 'Add',
+            latinFullName: 'Addition Invoice');
+        break;
+
+      case InvoiceType.remove:
+        fillControllers(
+            materials: SalesAccounts.sales.label,
+            caches: SalesAccounts.cashBox.label,
+            exchangeForGifts: SalesAccounts.settlements.label,
+            gifts: SalesAccounts.salesGifts.label,
+            discounts: SalesAccounts.grantedDiscount.label,
+            additions: SalesAccounts.differentRevenues.label,
+            shortName: 'سحب',
+            fullName: 'فاتورة سحب',
+            latinShortName: 'Remove',
+            latinFullName: 'Removal Invoice');
+        break;
+
+      case InvoiceType.buyReturn:
+        fillControllers(
+            materials: SalesAccounts.sales.label,
+            caches: SalesAccounts.cashBox.label,
+            exchangeForGifts: 'تسويات',
+            gifts: SalesAccounts.salesGifts.label,
+            discounts: SalesAccounts.grantedDiscount.label,
+            additions: SalesAccounts.differentRevenues.label,
+            shortName: 'مرتجع شراء',
+            fullName: 'فاتورة مرتجع مشتريات',
+            latinShortName: 'Return Buy',
+            latinFullName: 'Purchase Return Invoice');
+        break;
+
+      case InvoiceType.salesReturn:
+        fillControllers(
+            materials: BuyAccounts.purchases.label,
+            caches: BuyAccounts.cashBox.label,
+            exchangeForGifts: BuyAccounts.settlements.label,
+            gifts: BuyAccounts.purchaseGifts.label,
+            discounts: BuyAccounts.earnedDiscount.label,
+            additions: BuyAccounts.differentExpenses.label,
+            shortName: 'مرتجع مبيعات',
+            fullName: 'فاتورة مرتجع مبيعات',
+            latinShortName: 'Return Sales',
+            latinFullName: 'Sales Return Invoice');
+        break;
+    }
+  }
+
+  void fillControllers({
+    required String materials,
+    required String caches,
+    required String exchangeForGifts,
+    required String gifts,
+    required String discounts,
+    required String additions,
+    required String shortName,
+    required String fullName,
+    required String latinShortName,
+    required String latinFullName,
+  }) {
+    materialsController.text = materials;
+    cachesController.text = caches;
+    discountsController.text = discounts;
+    additionsController.text = additions;
+    giftsController.text = gifts;
+    exchangeForGiftsController.text = exchangeForGifts;
+
+    shortNameController.text = shortName;
+    fullNameController.text = fullName;
+    latinShortNameController.text = latinShortName;
+    latinFullNameController.text = latinFullName;
+
+    update();
+  }
+
+  void clearControllers() {
+    materialsController.clear();
+    cachesController.clear();
+    discountsController.clear();
+    additionsController.clear();
+    giftsController.clear();
+    exchangeForGiftsController.clear();
+
+    shortNameController.clear();
+    fullNameController.clear();
+    latinShortNameController.clear();
+    latinFullNameController.clear();
   }
 
   Future<void> getAllBillTypes() async {
@@ -65,7 +200,7 @@ class PatternController extends GetxController with AppValidator {
     update();
   }
 
-  addNewPattern() async {
+  Future<void> addNewPattern() async {
     if (!validateForm()) return;
 
     final billTypeModel = _createBillTypeModel();
@@ -93,4 +228,22 @@ class PatternController extends GetxController with AppValidator {
       );
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+
+  Future<void> openAccountSelectionDialog(String query, TextEditingController controller) async {
+    List<String> accountNames = Get.find<AccountsController>().getAccountsNames(query);
+
+    if (accountNames.isNotEmpty) {
+      String? selectedAccountName = await Get.defaultDialog<String>(
+        title: 'Choose Account',
+        content: AccountSelectionDialog(accountNames: accountNames),
+      );
+
+      if (selectedAccountName != null) {
+        controller.text = selectedAccountName;
+        update();
+      }
+    } else {
+      Utils.showSnackBar('فحص الحسابات', 'هذا الحساب غير موجود');
+    }
+  }
 }

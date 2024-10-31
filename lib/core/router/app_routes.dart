@@ -7,4 +7,5 @@ class AppRoutes {
   static const String showAllPatternsScreen = '/showAllPatternsScreen';
   static const String entryBondDetailsView = '/entryBondDetailsView';
   static const String showAllMaterialsScreen = '/showAllMaterialsScreen';
+  static const String showAllAccountsScreen = '/showAllAccountsScreen';
 }

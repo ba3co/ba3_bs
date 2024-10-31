@@ -324,4 +324,28 @@ class Utils {
       return numbers.isNotEmpty ? numbers.first.toString() : "0.0";
     }
   }
+
+  static String getAccountType(int? type) {
+    switch (type) {
+      case 0:
+        return 'حساب عادي';
+      case 1:
+        return 'حساب ختامي';
+      case 2:
+        return 'حساب تجميعي';
+      default:
+        return 'حساب عادي';
+    }
+  }
+
+  static String getAccountAccDebitOrCredit(int? type) {
+    switch (type) {
+      case 0:
+        return 'Debit';
+      case 1:
+        return 'Credit';
+      default:
+        return 'Debit';
+    }
+  }
 }
