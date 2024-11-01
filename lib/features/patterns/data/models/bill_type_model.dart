@@ -1,3 +1,5 @@
+import '../../../../core/helper/enums/enums.dart';
+import '../../../accounts/data/models/account_model.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class BillTypeModel implements PlutoAdaptable {
@@ -7,14 +9,10 @@ class BillTypeModel implements PlutoAdaptable {
   final String? latinShortName;
   final String? latinFullName;
   final String? billTypeLabel;
-  final String? materialAccount;
-  final String? discountsAccount;
-  final String? additionsAccount;
-  final String? cashesAccount;
-  final String? giftsAccount;
-  final String? exchangeForGiftsAccount;
   final int? color;
-  final String? store;
+
+  // Using a map to store accounts with Account as the key and AccountModel as the value
+  final Map<Account, AccountModel>? accounts;
 
   BillTypeModel({
     this.id,
@@ -23,14 +21,8 @@ class BillTypeModel implements PlutoAdaptable {
     this.latinShortName,
     this.latinFullName,
     this.billTypeLabel,
-    this.materialAccount,
-    this.discountsAccount,
-    this.additionsAccount,
-    this.cashesAccount,
-    this.giftsAccount,
-    this.exchangeForGiftsAccount,
     this.color,
-    this.store,
+    this.accounts,
   });
 
   factory BillTypeModel.fromJson(Map<String, dynamic> json) {
@@ -41,14 +33,13 @@ class BillTypeModel implements PlutoAdaptable {
       latinShortName: json['latinShortName'],
       latinFullName: json['latinFullName'],
       billTypeLabel: json['billType'],
-      materialAccount: json['materialAccount'],
-      discountsAccount: json['discountsAccount'],
-      additionsAccount: json['additionsAccount'],
-      cashesAccount: json['cashesAccount'],
-      giftsAccount: json['giftsAccount'],
-      exchangeForGiftsAccount: json['exchangeForGiftsAccount'],
       color: json['color'],
-      store: json['store'],
+      // Deserialize accounts map
+      accounts: (json['accounts'] as Map<String, dynamic>?)?.map((key, value) {
+        Account accountKey = getAccountFromString(key);
+        AccountModel accountModel = AccountModel.fromMap(value);
+        return MapEntry(accountKey, accountModel);
+      }),
     );
   }
 
@@ -59,17 +50,11 @@ class BillTypeModel implements PlutoAdaptable {
         'latinShortName': latinShortName,
         'latinFullName': latinFullName,
         'billType': billTypeLabel,
-        'materialAccount': materialAccount,
-        'discountsAccount': discountsAccount,
-        'additionsAccount': additionsAccount,
-        'cashesAccount': cashesAccount,
-        'giftsAccount': giftsAccount,
-        'exchangeForGiftsAccount': exchangeForGiftsAccount,
         'color': color,
-        'store': store,
+        // Serialize accounts map
+        'accounts': accounts?.map((key, value) => MapEntry(key.label, value.toMap())),
       };
 
-  // Copy with method for creating a new instance with some modified fields
   BillTypeModel copyWith({
     String? id,
     String? shortName,
@@ -77,14 +62,9 @@ class BillTypeModel implements PlutoAdaptable {
     String? latinShortName,
     String? latinFullName,
     String? billTypeLabel,
-    String? materialAccount,
-    String? discountsAccount,
-    String? additionsAccount,
-    String? cashesAccount,
-    String? giftsAccount,
-    String? exchangeForGiftsAccount,
     int? color,
     String? store,
+    Map<Account, AccountModel>? accounts,
   }) =>
       BillTypeModel(
         id: id ?? this.id,
@@ -93,14 +73,8 @@ class BillTypeModel implements PlutoAdaptable {
         latinShortName: latinShortName ?? this.latinShortName,
         latinFullName: latinFullName ?? this.latinFullName,
         billTypeLabel: billTypeLabel ?? this.billTypeLabel,
-        materialAccount: materialAccount ?? this.materialAccount,
-        discountsAccount: discountsAccount ?? this.discountsAccount,
-        additionsAccount: additionsAccount ?? this.additionsAccount,
-        cashesAccount: cashesAccount ?? this.cashesAccount,
-        giftsAccount: giftsAccount ?? this.giftsAccount,
-        exchangeForGiftsAccount: exchangeForGiftsAccount ?? this.exchangeForGiftsAccount,
         color: color ?? this.color,
-        store: store ?? this.store,
+        accounts: accounts ?? this.accounts,
       );
 
   @override
@@ -111,13 +85,10 @@ class BillTypeModel implements PlutoAdaptable {
         'latinShortName': latinShortName,
         'latinFullName': latinFullName,
         'billType': billTypeLabel,
-        'materialAccount': materialAccount,
-        'discountsAccount': discountsAccount,
-        'additionsAccount': additionsAccount,
-        'cashesAccount': cashesAccount,
-        'giftsAccount': giftsAccount,
-        'exchangeForGiftsAccount': exchangeForGiftsAccount,
         'color': color,
-        'store': store,
+        'accounts': accounts?.map((key, value) => MapEntry(key.label, value.toPlutoGridFormat())),
       };
 }
+
+// Utility function to get an Account object from a string
+Account getAccountFromString(String label) => BillTypeAccounts.fromLabel(label);

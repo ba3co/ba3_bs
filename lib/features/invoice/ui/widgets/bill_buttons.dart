@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +13,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../core/widgets/option_text_widget.dart';
 import '../../../login/controllers/user_management_controller.dart';
+import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/invoice_controller.dart';
 import '../../controllers/invoice_pluto_controller.dart';
 
@@ -17,11 +21,11 @@ class BillButtons extends StatelessWidget {
   const BillButtons({
     super.key,
     required this.invoiceController,
-    required this.billTypeLabel,
+    required this.billTypeModel,
   });
 
   final InvoiceController invoiceController;
-  final String billTypeLabel;
+  final BillTypeModel billTypeModel;
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +49,12 @@ class BillButtons extends StatelessWidget {
           AppButton(
               title: 'السند',
               onPressed: () async {
+                log('selectedCustomerAccount ${Get.find<AccountsController>().selectedCustomerAccount?.accName}');
                 Get.find<BondController>().createBond(
+                  billTypeModelAccounts: billTypeModel.accounts ?? {},
                   vat: invoicePlutoController.computeTotalVat,
-                  billType: BillType.fromLabel(billTypeLabel),
-                  customerAccount: invoiceController.customerAccount,
+                  billType: BillType.fromLabel(billTypeModel.billTypeLabel!),
+                  customerAccount: Get.find<AccountsController>().selectedCustomerAccount,
                   total: invoicePlutoController.computeWithoutVatTotal,
                   gifts: invoicePlutoController.computeGifts,
                   discount: invoicePlutoController.computeDiscounts,

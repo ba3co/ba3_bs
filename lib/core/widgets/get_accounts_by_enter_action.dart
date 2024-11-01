@@ -60,8 +60,10 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
 
   getAccounts(PlutoGridStateManager stateManager, InvoicePlutoController controller, fieldTitle) async {
     if (stateManager.currentColumn?.field == "accountId") {
-      String? newValue =
-          await Get.find<AccountsController>().openAccountSelectionDialog(stateManager.currentCell?.value);
+      String? newValue = await Get.find<AccountsController>().openAccountSelectionDialog(
+        query: stateManager.currentCell?.value,
+      );
+
       if (newValue != null) {
         stateManager.changeCellValue(
           stateManager.currentRow!.cells[stateManager.currentColumn?.field]!,

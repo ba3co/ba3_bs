@@ -6,13 +6,16 @@ import '../../../../core/widgets/custom_text_field_with_icon.dart';
 
 class SearchableAccountField extends StatelessWidget {
   final String label;
-  final TextEditingController controller;
+  final TextEditingController textEditingController;
+  final Function(String text)? onSubmitted;
+  final bool isCustomerAccount; // Add this parameter to indicate customer account field
 
-  const SearchableAccountField({
-    super.key,
-    required this.label,
-    required this.controller,
-  });
+  const SearchableAccountField(
+      {super.key,
+      required this.label,
+      required this.textEditingController,
+      this.onSubmitted,
+      this.isCustomerAccount = false});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +26,15 @@ class SearchableAccountField extends StatelessWidget {
           SizedBox(width: 100, child: Text(label)),
           Expanded(
             child: CustomTextFieldWithIcon(
-              controller: controller,
-              onSubmitted: (text) {
-                Get.find<AccountsController>().openAccountSelectionDialog(text, controller);
-              },
+              controller: textEditingController,
+              onSubmitted: onSubmitted ??
+                  (text) {
+                    Get.find<AccountsController>().openAccountSelectionDialog(
+                      query: text,
+                      textEditingController: textEditingController,
+                      isCustomerAccount: isCustomerAccount,
+                    );
+                  },
             ),
           ),
         ],

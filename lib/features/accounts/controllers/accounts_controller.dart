@@ -4,7 +4,9 @@ import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/utils.dart';
+import '../../patterns/controllers/pattern_controller.dart';
 import '../../patterns/ui/widgets/account_selection_dialog.dart';
 import '../data/models/account_model.dart';
 import '../data/repositories/accounts_repository.dart';
@@ -17,6 +19,10 @@ class AccountsController extends GetxController {
   List<AccountModel> accounts = [];
 
   bool isLoading = true;
+
+  Map<Account, AccountModel> selectedAccounts = {};
+
+  AccountModel? selectedCustomerAccount;
 
   @override
   void onInit() {
@@ -50,7 +56,16 @@ class AccountsController extends GetxController {
         .toList();
   }
 
-  List<String> getAccountsNames(query) => searchAccountsByNameOrCode(query).map((account) => account.accName!).toList();
+  Map<String, AccountModel> mapAccountsByName(String query) {
+    final resultMap = <String, AccountModel>{};
+    for (var account in searchAccountsByNameOrCode(query)) {
+      resultMap[account.accName!] = AccountModel(
+        id: account.id,
+        accName: account.accName,
+      );
+    }
+    return resultMap;
+  }
 
   String getAccountNameById(String? accountId) {
     if (accountId == null || accountId.isEmpty) return '';
@@ -63,17 +78,38 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
-  Future<String?> openAccountSelectionDialog(String query, [TextEditingController? controller]) async {
-    List<String> accountNames = Get.find<AccountsController>().getAccountsNames(query);
+  Future<String?> openAccountSelectionDialog({
+    required String query,
+    TextEditingController? textEditingController,
+    bool isCustomerAccount = false,
+  }) async {
+    Map<String, AccountModel> searchedAccounts = mapAccountsByName(query);
 
-    if (accountNames.isNotEmpty) {
+    if (searchedAccounts.isNotEmpty) {
+      List<String> accountsNames = searchedAccounts.keys.toList();
+
       String? selectedAccountName = await Get.defaultDialog<String>(
         title: 'Choose Account',
-        content: AccountSelectionDialog(accountNames: accountNames),
+        content: AccountSelectionDialog(accountNames: accountsNames),
       );
 
-      if (selectedAccountName != null && controller != null) {
-        controller.text = selectedAccountName;
+      if (selectedAccountName != null && textEditingController != null) {
+        final AccountModel selectedAccountModel = searchedAccounts[selectedAccountName]!;
+
+        // Infer `billTypeAccounts` from the controller
+        final BillTypeAccounts? billTypeAccounts =
+            Get.find<PatternController>().controllerToBillTypeMap[textEditingController];
+
+        if (billTypeAccounts != null) {
+          selectedAccounts[billTypeAccounts] = selectedAccountModel;
+        }
+
+        // Assign selectedCustomerAccount only if the controller matches invCustomerAccountController
+        if (isCustomerAccount) {
+          selectedCustomerAccount = selectedAccountModel;
+        }
+
+        textEditingController.text = selectedAccountName;
         update();
       }
       return selectedAccountName;

@@ -1,14 +1,14 @@
 import 'dart:convert';
 
+import 'package:ba3_bs/features/sellers/data/datasources/sellers_json.dart';
 import 'package:flutter/foundation.dart';
 
-import '../datasources/materials_json.dart';
-import '../models/material_model.dart';
+import '../models/seller_model.dart';
 
-class MaterialRepository {
-  List<MaterialModel> getAllMaterials() {
+class SellersRepository {
+  List<SellerModel> getAllSellers() {
     try {
-      return materialsJsonMapper();
+      return sellersJsonMapper();
     } on FormatException catch (e) {
       debugPrint("JSON format error: $e");
       rethrow;
@@ -18,15 +18,15 @@ class MaterialRepository {
   }
 
   // Parse JSON string to a list of MaterialModel objects
-  List<MaterialModel> materialsJsonMapper() {
+  List<SellerModel> sellersJsonMapper() {
     // Sanitize the JSON string to handle special characters
     // String sanitizedJson = sanitizeJsonString(jsonString);
-    Map<String, dynamic> jsonMap = jsonDecode(mateialsJson);
+    Map<String, dynamic> jsonMap = jsonDecode(sellersJson);
 
-    List<MaterialModel> materials =
-        (jsonMap['Materials']['M'] as List).map((materialJson) => MaterialModel.fromJson(materialJson)).toList();
+    List<SellerModel> sellers =
+        (jsonMap['Cost1']['Q'] as List).map((sellerJson) => SellerModel.fromJson(sellerJson)).toList();
 
-    return materials;
+    return sellers;
   }
 
   // Function to sanitize JSON string by escaping problematic characters

@@ -4,6 +4,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
+import '../../accounts/data/models/account_model.dart';
 import '../data/models/bond_record_model.dart';
 
 class BondController extends GetxController {
@@ -11,25 +12,27 @@ class BondController extends GetxController {
 
   // Method to create a bond based on bill type
   void createBond(
-      {required BillType billType,
-      required CustomerAccount customerAccount,
+      {required Map<Account, AccountModel> billTypeModelAccounts,
+      required BillType billType,
+      AccountModel? customerAccount,
       required double total,
       required double vat,
       required double gifts,
       required double discount,
       required double addition}) {
-    _initializeBond(billType, customerAccount, total, vat, gifts, discount, addition);
+    _initializeBond(billTypeModelAccounts, billType, customerAccount, total, vat, gifts, discount, addition);
 
     Get.toNamed(AppRoutes.entryBondDetailsView);
   }
 
-  void _initializeBond(BillType billType, CustomerAccount customerAccount, double total, double vat, double gifts, double discount, double addition) {
+  void _initializeBond(Map<Account, AccountModel> billTypeModelAccounts, BillType billType,
+      AccountModel? customerAccount, double total, double vat, double gifts, double discount, double addition) {
     switch (billType) {
       case BillType.sales:
-        handleSales(customerAccount, total, vat, gifts, discount, addition);
+        handleSales(billTypeModelAccounts, customerAccount, total, vat, gifts, discount, addition);
         break;
       case BillType.buy:
-        handleBuy(customerAccount, total, vat, gifts, discount, addition);
+        handleBuy(billTypeModelAccounts, customerAccount, total, vat, gifts, discount, addition);
         break;
       default:
         throw Exception('Invalid bill type');
@@ -37,35 +40,45 @@ class BondController extends GetxController {
   }
 
   // Handle sales invoice creation
-  void handleSales(CustomerAccount customerAccount, double total, double vat, double gifts, double discount, double addition) {
-    Map<Account, List<BondItemModel>> bonds = {};
+  void handleSales(Map<Account, AccountModel> billTypeModelAccounts, AccountModel? customerAccount, double total,
+      double vat, double gifts, double discount, double addition) {
+    Map<AccountModel, List<BondItemModel>> bonds = {};
 
     // Create a main sales bond
-    bonds[SalesAccounts.sales] = [BondItemModel(bondItemType: BondItemType.creditor, amount: total)];
+    if (billTypeModelAccounts.containsKey(BillTypeAccounts.materials)) {
+      AccountModel materialsAccount = billTypeModelAccounts[BillTypeAccounts.materials]!;
+
+      bonds[materialsAccount] = [BondItemModel(bondItemType: BondItemType.creditor, amount: total)];
+    }
 
     // Create bonds for cash box if applicable
-    bonds[customerAccount] = _createCashBoxSalesBonds(total, vat, discount, addition);
+    if (billTypeModelAccounts.containsKey(BillTypeAccounts.caches)) {
+      AccountModel cachesAccount = billTypeModelAccounts[BillTypeAccounts.caches]!;
+
+      bonds[customerAccount ?? cachesAccount] = _createCashBoxSalesBonds(total, vat, discount, addition);
+    }
 
     // Add optional bonds for sales
-    _addOptionalBonds(bonds, gifts, vat, discount, addition, isSales: true);
+    _addOptionalBonds(billTypeModelAccounts, bonds, gifts, vat, discount, addition, isSales: true);
 
     bondModel = BondModel(bonds: bonds);
   }
 
   // Handle buy invoice creation
-  void handleBuy(CustomerAccount customerAccount, double total, double vat, double gifts, double discount, double addition) {
-    Map<Account, List<BondItemModel>> bonds = {};
-
-    // Create a main purchase bond
-    bonds[BuyAccounts.purchases] = [BondItemModel(bondItemType: BondItemType.debtor, amount: total)];
-
-    // Create bonds for cash box if applicable
-    bonds[customerAccount] = _createCashBoxBuysBonds(total, vat, discount, addition);
-
-    // Add optional bonds for buys
-    _addOptionalBonds(bonds, gifts, vat, discount, addition, isSales: false);
-
-    bondModel = BondModel(bonds: bonds);
+  void handleBuy(Map<Account, AccountModel> billTypeModelAccounts, AccountModel? customerAccount, double total,
+      double vat, double gifts, double discount, double addition) {
+    // Map<Account, List<BondItemModel>> bonds = {};
+    //
+    // // Create a main purchase bond
+    // bonds[BuyAccounts.purchases] = [BondItemModel(bondItemType: BondItemType.debtor, amount: total)];
+    //
+    // // Create bonds for cash box if applicable
+    // bonds[customerAccount] = _createCashBoxBuysBonds(total, vat, discount, addition);
+    //
+    // // Add optional bonds for buys
+    // _addOptionalBonds(billTypeModelAccounts, bonds, gifts, vat, discount, addition, isSales: false);
+    //
+    // bondModel = BondModel(bonds: bonds);
   }
 
   // Create bonds for the cash box for sales
@@ -89,41 +102,50 @@ class BondController extends GetxController {
   }
 
   // Combined method for adding optional bonds
-  void _addOptionalBonds(Map<Account, List<BondItemModel>> bonds, double gifts, double vat, double discount, double addition,
+  void _addOptionalBonds(Map<Account, AccountModel> billTypeModelAccounts, Map<AccountModel, List<BondItemModel>> bonds,
+      double gifts, double vat, double discount, double addition,
       {required bool isSales}) {
-    final Account vatAccount = isSales ? SalesAccounts.vat : BuyAccounts.vat;
-    final Account giftsAccount = isSales ? SalesAccounts.salesGifts : BuyAccounts.purchaseGifts;
-    final Account settlementAccount = isSales ? SalesAccounts.settlements : BuyAccounts.settlements;
-    final Account discountAccount = isSales ? SalesAccounts.grantedDiscount : BuyAccounts.earnedDiscount;
-    final Account additionAccount = isSales ? SalesAccounts.differentRevenues : BuyAccounts.differentExpenses;
-
     if (vat > 0) {
-      bonds[vatAccount] = [BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: vat)];
+      bonds[AccountModel(id: 'a5c04527-63e8-4373-92e8-68d8f88bdb16', accName: 'ضريبة القيمة المضافة')] = [
+        BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: vat)
+      ];
     }
 
-    if (gifts > 0) {
-      bonds[giftsAccount] = [BondItemModel(bondItemType: isSales ? BondItemType.debtor : BondItemType.creditor, amount: gifts)];
-      bonds[settlementAccount] = [BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: gifts)];
+    if (gifts > 0 &&
+        billTypeModelAccounts.containsKey(BillTypeAccounts.gifts) &&
+        billTypeModelAccounts.containsKey(BillTypeAccounts.exchangeForGifts)) {
+      AccountModel giftsAccount = billTypeModelAccounts[BillTypeAccounts.gifts]!;
+      AccountModel settlementAccount = billTypeModelAccounts[BillTypeAccounts.exchangeForGifts]!;
+      bonds[giftsAccount] = [
+        BondItemModel(bondItemType: isSales ? BondItemType.debtor : BondItemType.creditor, amount: gifts)
+      ];
+      bonds[settlementAccount] = [
+        BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: gifts)
+      ];
     }
 
-    if (discount > 0) {
-      bonds[discountAccount] = [BondItemModel(bondItemType: BondItemType.creditor, amount: discount)];
+    if (discount > 0 && billTypeModelAccounts.containsKey(BillTypeAccounts.discounts)) {
+      AccountModel discountsAccount = billTypeModelAccounts[BillTypeAccounts.discounts]!;
+      bonds[discountsAccount] = [BondItemModel(bondItemType: BondItemType.debtor, amount: discount)];
     }
 
-    if (addition > 0) {
-      bonds[additionAccount] = [BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: addition)];
+    if (addition > 0 && billTypeModelAccounts.containsKey(BillTypeAccounts.additions)) {
+      AccountModel additionsAccount = billTypeModelAccounts[BillTypeAccounts.additions]!;
+      bonds[additionsAccount] = [
+        BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: addition)
+      ];
     }
   }
 
 // Build DataGrid rows based on bond model
   List<DataGridRow> buildBondDataGridRows() {
     return bondModel.bonds.entries.expand<DataGridRow>((entry) {
-      Account account = entry.key;
+      AccountModel account = entry.key;
       List<BondItemModel> bondItems = entry.value;
 
       return bondItems.map<DataGridRow>((bondItem) {
         return DataGridRow(cells: [
-          DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: account.label),
+          DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: account.accName),
           DataGridCell<double>(
             columnName: AppConstants.rowBondDebitAmount,
             value: bondItem.bondItemType == BondItemType.debtor ? bondItem.amount : 0.0,

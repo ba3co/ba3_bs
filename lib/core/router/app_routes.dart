@@ -8,4 +8,5 @@ class AppRoutes {
   static const String entryBondDetailsView = '/entryBondDetailsView';
   static const String showAllMaterialsScreen = '/showAllMaterialsScreen';
   static const String showAllAccountsScreen = '/showAllAccountsScreen';
+  static const String showAllSellersScreen = '/showAllSellersScreen';
 }

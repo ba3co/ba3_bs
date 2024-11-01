@@ -89,6 +89,29 @@ abstract class Account {
   String get label;
 }
 
+enum BillTypeAccounts implements Account {
+  materials('المواد'),
+  discounts('الحسميات'),
+  additions('الاضافات'),
+  caches('النقديات'),
+  gifts('الهدايا'),
+  exchangeForGifts('مقابل الهدايا'),
+  store('المستودع');
+
+  @override
+  final String label;
+
+  const BillTypeAccounts(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory BillTypeAccounts.fromLabel(String label) {
+    return BillTypeAccounts.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching BillType for label: $label'),
+    );
+  }
+}
+
 enum SalesAccounts implements Account {
   sales('مبيعات'),
   cashBox('الصندوق'),

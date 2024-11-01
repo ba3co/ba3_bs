@@ -23,7 +23,9 @@ class InvoiceController extends GetxController {
 
   String? billDate;
   List<BillTypeModel> billsTypes = [];
-  CustomerAccount customerAccount = CustomerAccount.cashBox;
+
+  //AccountModel? customerAccount;
+
   InvPayType selectedPayType = InvPayType.cash;
   BillType billType = BillType.sales;
 
@@ -32,7 +34,6 @@ class InvoiceController extends GetxController {
     super.onInit();
     getAllBillTypes();
     billDate = DateTime.now().toString().split(".")[0];
-    invCustomerAccountController.text = customerAccount.label;
   }
 
   updateBillType(String billTypeLabel) {
@@ -42,23 +43,24 @@ class InvoiceController extends GetxController {
   onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
       selectedPayType = payType;
-      updateCustomerAccount(payType);
+      // updateCustomerAccount(payType);
       update();
     }
   }
 
-  updateCustomerAccount(InvPayType payType) {
-    switch (payType) {
-      case InvPayType.cash:
-        customerAccount = CustomerAccount.cashBox;
-        invCustomerAccountController.text = customerAccount.label;
-        break;
-      case InvPayType.due:
-        customerAccount = billType == BillType.sales ? CustomerAccount.cashCustomer : CustomerAccount.provider;
-        invCustomerAccountController.text = customerAccount.label;
-        break;
-    }
-  }
+  // updateCustomerAccount(InvPayType payType) {
+  //   switch (payType) {
+  //     case InvPayType.cash:
+  //       final String customerAccountName = invCustomerAccountController.text;
+  //       Get.find<AccountsController>().customerAccount = AccountModel();
+  //
+  //       break;
+  //     case InvPayType.due:
+  //       customerAccount = billType == BillType.sales ? CustomerAccount.cashCustomer : CustomerAccount.provider;
+  //       invCustomerAccountController.text = customerAccount.label;
+  //       break;
+  //   }
+  // }
 
   Future<void> getAllBillTypes() async {
     final result = await _repository.getAll();

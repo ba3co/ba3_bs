@@ -11,7 +11,7 @@ import '../../controllers/invoice_controller.dart';
 AppBar buildAppBar(InvoiceController invoiceController, BillTypeModel billModel) {
   return AppBar(
     leadingWidth: 100,
-    title: Text(' فاتورة ${billModel.fullName}'),
+    title: Text('${billModel.fullName}'),
     actions: [
       SizedBox(
         height: AppConstants.constHeightTextField,

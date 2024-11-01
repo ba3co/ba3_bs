@@ -4,6 +4,8 @@ import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.d
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
@@ -40,5 +42,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => InvoiceController(patternsRepo), fenix: true);
     Get.lazyPut(() => MaterialController(MaterialRepository()), fenix: true);
     Get.lazyPut(() => AccountsController(AccountsRepository()), fenix: true);
+    Get.lazyPut(() => SellerController(SellersRepository()), fenix: true);
   }
 }

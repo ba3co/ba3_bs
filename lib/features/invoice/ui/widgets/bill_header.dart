@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -46,8 +47,18 @@ class BillHeader extends StatelessWidget {
                 ),
               ),
               SearchableAccountField(
-                  label: 'حساب العميل :', controller: invoiceController.invCustomerAccountController),
-              SearchableAccountField(label: 'البائع :', controller: invoiceController.sellerController),
+                label: 'حساب العميل :',
+                textEditingController: invoiceController.invCustomerAccountController,
+                isCustomerAccount: true,
+              ),
+              SearchableAccountField(
+                label: 'البائع :',
+                textEditingController: invoiceController.sellerController,
+                onSubmitted: (text) {
+                  Get.find<SellerController>().openSellerSelectionDialog(
+                      query: text, textEditingController: invoiceController.sellerController);
+                },
+              ),
               BillHeaderField(
                 label: 'البيان',
                 child: CustomTextFieldWithoutIcon(
