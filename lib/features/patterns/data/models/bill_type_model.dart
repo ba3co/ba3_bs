@@ -35,10 +35,10 @@ class BillTypeModel implements PlutoAdaptable {
       billTypeLabel: json['billType'],
       color: json['color'],
       // Deserialize accounts map
-      accounts: (json['accounts'] as Map<String, dynamic>?)?.map((key, value) {
-        Account accountKey = getAccountFromString(key);
-        AccountModel accountModel = AccountModel.fromMap(value);
-        return MapEntry(accountKey, accountModel);
+      accounts: (json['accounts'] as Map<String, dynamic>?)?.map((billAccountLabel, accountModelJson) {
+        Account billAccount = getBillAccountFromLabel(billAccountLabel);
+        AccountModel accountModel = AccountModel.fromMap(accountModelJson);
+        return MapEntry(billAccount, accountModel);
       }),
     );
   }
@@ -52,7 +52,7 @@ class BillTypeModel implements PlutoAdaptable {
         'billType': billTypeLabel,
         'color': color,
         // Serialize accounts map
-        'accounts': accounts?.map((key, value) => MapEntry(key.label, value.toMap())),
+        'accounts': accounts?.map((billAccounts, accountModel) => MapEntry(billAccounts.label, accountModel.toMap())),
       };
 
   BillTypeModel copyWith({
@@ -91,4 +91,4 @@ class BillTypeModel implements PlutoAdaptable {
 }
 
 // Utility function to get an Account object from a string
-Account getAccountFromString(String label) => BillTypeAccounts.fromLabel(label);
+Account getBillAccountFromLabel(String label) => BillAccounts.fromLabel(label);

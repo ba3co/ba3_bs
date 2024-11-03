@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/utils/utils.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -51,9 +50,8 @@ class BillButtons extends StatelessWidget {
               onPressed: () async {
                 log('selectedCustomerAccount ${Get.find<AccountsController>().selectedCustomerAccount?.accName}');
                 Get.find<BondController>().createBond(
-                  billTypeModelAccounts: billTypeModel.accounts ?? {},
+                  billTypeModel: billTypeModel,
                   vat: invoicePlutoController.computeTotalVat,
-                  billType: BillType.fromLabel(billTypeModel.billTypeLabel!),
                   customerAccount: Get.find<AccountsController>().selectedCustomerAccount,
                   total: invoicePlutoController.computeWithoutVatTotal,
                   gifts: invoicePlutoController.computeGifts,

@@ -97,11 +97,11 @@ class AccountsController extends GetxController {
         final AccountModel selectedAccountModel = searchedAccounts[selectedAccountName]!;
 
         // Infer `billTypeAccounts` from the controller
-        final BillTypeAccounts? billTypeAccounts =
-            Get.find<PatternController>().controllerToBillTypeMap[textEditingController];
+        final BillAccounts? billAccounts =
+            Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
 
-        if (billTypeAccounts != null) {
-          selectedAccounts[billTypeAccounts] = selectedAccountModel;
+        if (billAccounts != null) {
+          selectedAccounts[billAccounts] = selectedAccountModel;
         }
 
         // Assign selectedCustomerAccount only if the controller matches invCustomerAccountController

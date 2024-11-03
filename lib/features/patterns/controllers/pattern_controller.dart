@@ -38,7 +38,7 @@ class PatternController extends GetxController with AppValidator {
 
   bool isLoading = true;
 
-  final Map<TextEditingController, BillTypeAccounts> controllerToBillTypeMap = {};
+  final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
 
   Map<Account, AccountModel> selectedAccounts = {};
 
@@ -48,14 +48,14 @@ class PatternController extends GetxController with AppValidator {
 
     autoFillControllers(InvoiceType.buy);
 
-    controllerToBillTypeMap.addAll({
-      giftsController: BillTypeAccounts.gifts,
-      exchangeForGiftsController: BillTypeAccounts.exchangeForGifts,
-      discountsController: BillTypeAccounts.discounts,
-      materialsController: BillTypeAccounts.materials,
-      additionsController: BillTypeAccounts.additions,
-      cachesController: BillTypeAccounts.caches,
-      storeController: BillTypeAccounts.store,
+    controllerToBillAccountsMap.addAll({
+      giftsController: BillAccounts.gifts,
+      exchangeForGiftsController: BillAccounts.exchangeForGifts,
+      discountsController: BillAccounts.discounts,
+      materialsController: BillAccounts.materials,
+      additionsController: BillAccounts.additions,
+      cachesController: BillAccounts.caches,
+      storeController: BillAccounts.store,
     });
   }
 

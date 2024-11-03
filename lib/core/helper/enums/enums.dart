@@ -89,7 +89,7 @@ abstract class Account {
   String get label;
 }
 
-enum BillTypeAccounts implements Account {
+enum BillAccounts implements Account {
   materials('المواد'),
   discounts('الحسميات'),
   additions('الاضافات'),
@@ -101,11 +101,11 @@ enum BillTypeAccounts implements Account {
   @override
   final String label;
 
-  const BillTypeAccounts(this.label);
+  const BillAccounts(this.label);
 
   // Factory constructor with error handling for unmatched labels
-  factory BillTypeAccounts.fromLabel(String label) {
-    return BillTypeAccounts.values.firstWhere(
+  factory BillAccounts.fromLabel(String label) {
+    return BillAccounts.values.firstWhere(
       (type) => type.label == label,
       orElse: () => throw ArgumentError('No matching BillType for label: $label'),
     );
