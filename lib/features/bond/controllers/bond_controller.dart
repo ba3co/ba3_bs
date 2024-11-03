@@ -16,7 +16,7 @@ class BondController extends GetxController {
   // Method to create a bond based on bill type
   void createBond(
       {required BillTypeModel billTypeModel,
-      AccountModel? customerAccount,
+      required AccountModel customerAccount,
       required double total,
       required double vat,
       required double gifts,
@@ -27,7 +27,7 @@ class BondController extends GetxController {
     Get.toNamed(AppRoutes.entryBondDetailsView);
   }
 
-  void _initializeBond(BillTypeModel billTypeModel, AccountModel? customerAccount, double total, double vat,
+  void _initializeBond(BillTypeModel billTypeModel, AccountModel customerAccount, double total, double vat,
       double gifts, double discount, double addition) {
     if (billTypeModel.accounts == null) return;
 
@@ -46,8 +46,8 @@ class BondController extends GetxController {
   }
 
   // Handle sales invoice creation
-  void handleSales(Map<Account, AccountModel> billModelAccounts, AccountModel? customerAccount, double total,
-      double vat, double gifts, double discount, double addition) {
+  void handleSales(Map<Account, AccountModel> billModelAccounts, AccountModel customerAccount, double total, double vat,
+      double gifts, double discount, double addition) {
     Map<AccountModel, List<BondItemModel>> bonds = {};
 
     // Create a main sales bond
@@ -61,7 +61,7 @@ class BondController extends GetxController {
     if (billModelAccounts.containsKey(BillAccounts.caches)) {
       AccountModel cachesAccount = billModelAccounts[BillAccounts.caches]!;
 
-      bonds[customerAccount ?? cachesAccount] = _createCashBoxSalesBonds(total, vat, discount, addition);
+      bonds[customerAccount] = _createCashBoxSalesBonds(total, vat, discount, addition);
     }
 
     // Add optional bonds for sales
@@ -71,7 +71,7 @@ class BondController extends GetxController {
   }
 
   // Handle buy invoice creation
-  void handleBuy(Map<Account, AccountModel> billModelAccounts, AccountModel? customerAccount, double total, double vat,
+  void handleBuy(Map<Account, AccountModel> billModelAccounts, AccountModel customerAccount, double total, double vat,
       double gifts, double discount, double addition) {
     log('handleBuy');
     Map<AccountModel, List<BondItemModel>> bonds = {};
@@ -87,7 +87,7 @@ class BondController extends GetxController {
     if (billModelAccounts.containsKey(BillAccounts.caches)) {
       AccountModel cachesAccount = billModelAccounts[BillAccounts.caches]!;
 
-      bonds[customerAccount ?? cachesAccount] = _createCashBoxBuysBonds(total, vat, discount, addition);
+      bonds[customerAccount] = _createCashBoxBuysBonds(total, vat, discount, addition);
     }
 
     // Add optional bonds for sales

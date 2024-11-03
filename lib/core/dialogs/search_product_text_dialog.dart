@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
@@ -25,7 +23,6 @@ Future<String?> searchProductTextDialog(String productText) async {
         context: Get.context!,
         builder: (BuildContext context) => Dialog(
               child: GetBuilder<MaterialController>(builder: (materialController) {
-                log('materialController build');
                 return Directionality(
                   textDirection: TextDirection.rtl,
                   child: Column(
@@ -39,14 +36,14 @@ Future<String?> searchProductTextDialog(String productText) async {
                             clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(15),
                             child: CustomPlutoGridWithAppBar(
+                              title: 'اختيار مادة',
+                              tableSourceModels: searchedMaterials,
+                              onLoaded: (p0) {},
                               onSelected: (selected) {
                                 productTextController.text = materialController
                                     .getProductNameFromId(selected.row?.cells['الرقم التعريفي']!.value);
                                 Get.back();
                               },
-                              title: "اختيار مادة",
-                              tableSourceModels: searchedMaterials,
-                              onLoaded: (p0) {},
                             ),
                           )),
                       Padding(

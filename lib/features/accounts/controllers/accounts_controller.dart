@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/utils.dart';
+import '../../invoice/controllers/invoice_controller.dart';
 import '../../patterns/controllers/pattern_controller.dart';
 import '../../patterns/ui/widgets/account_selection_dialog.dart';
 import '../data/models/account_model.dart';
@@ -21,8 +22,6 @@ class AccountsController extends GetxController {
   bool isLoading = true;
 
   Map<Account, AccountModel> selectedAccounts = {};
-
-  AccountModel? selectedCustomerAccount;
 
   @override
   void onInit() {
@@ -106,7 +105,7 @@ class AccountsController extends GetxController {
 
         // Assign selectedCustomerAccount only if the controller matches invCustomerAccountController
         if (isCustomerAccount) {
-          selectedCustomerAccount = selectedAccountModel;
+          Get.find<InvoiceController>().updateCustomerAccount(selectedAccountModel);
         }
 
         textEditingController.text = selectedAccountName;

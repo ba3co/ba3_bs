@@ -7,14 +7,16 @@ import '../../../../core/widgets/custom_text_field_with_icon.dart';
 class SearchableAccountField extends StatelessWidget {
   final String label;
   final TextEditingController textEditingController;
-  final Function(String text)? onSubmitted;
   final bool isCustomerAccount; // Add this parameter to indicate customer account field
+  final Function(String text)? onSubmitted;
+  final String? Function(String?)? validator;
 
   const SearchableAccountField(
       {super.key,
       required this.label,
       required this.textEditingController,
       this.onSubmitted,
+      this.validator,
       this.isCustomerAccount = false});
 
   @override
@@ -27,6 +29,7 @@ class SearchableAccountField extends StatelessWidget {
           Expanded(
             child: CustomTextFieldWithIcon(
               controller: textEditingController,
+              validator: validator,
               onSubmitted: onSubmitted ??
                   (text) {
                     Get.find<AccountsController>().openAccountSelectionDialog(

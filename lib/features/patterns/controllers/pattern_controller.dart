@@ -32,8 +32,6 @@ class PatternController extends GetxController with AppValidator {
 
   int selectedColorValue = Colors.red.value;
 
-  bool validateForm() => formKey.currentState!.validate();
-
   List<BillTypeModel> billsTypes = [];
 
   bool isLoading = true;
@@ -58,6 +56,8 @@ class PatternController extends GetxController with AppValidator {
       storeController: BillAccounts.store,
     });
   }
+
+  bool validateForm() => formKey.currentState!.validate();
 
   void onMainColorChanged(int? newColorValue) {
     if (newColorValue != null) {

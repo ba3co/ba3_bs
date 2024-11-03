@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,11 +45,12 @@ class BillButtons extends StatelessWidget {
           AppButton(
               title: 'السند',
               onPressed: () async {
-                log('selectedCustomerAccount ${Get.find<AccountsController>().selectedCustomerAccount?.accName}');
+                if (!Get.find<InvoiceController>().validateForm()) return;
+
                 Get.find<BondController>().createBond(
                   billTypeModel: billTypeModel,
                   vat: invoicePlutoController.computeTotalVat,
-                  customerAccount: Get.find<AccountsController>().selectedCustomerAccount,
+                  customerAccount: invoiceController.selectedCustomerAccount!,
                   total: invoicePlutoController.computeWithoutVatTotal,
                   gifts: invoicePlutoController.computeGifts,
                   discount: invoicePlutoController.computeDiscounts,

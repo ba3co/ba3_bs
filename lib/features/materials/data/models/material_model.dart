@@ -207,8 +207,8 @@ class MaterialModel implements PlutoAdaptable {
   Map<String, dynamic> toPlutoGridFormat() {
     return {
       'الرقم التعريفي': id,
-      'رمز المادة': matCode,
       'اسم المادة': matName,
+      'رمز المادة': matCode,
       'الباركود': matBarCode,
     };
   }

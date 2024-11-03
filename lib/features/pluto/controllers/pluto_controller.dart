@@ -19,7 +19,7 @@ class PlutoController extends GetxController {
         enableAutoEditing: false,
         enableColumnDrag: false,
         enableEditingMode: false,
-        //  hide: key == firstModelData.keys.first,
+        hide: key == firstModelData.keys.first,
       );
     }).toList();
   }

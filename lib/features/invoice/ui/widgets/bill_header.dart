@@ -20,52 +20,57 @@ class BillHeader extends StatelessWidget {
       children: [
         SizedBox(
           width: Get.width - 20,
-          child: Wrap(
-            spacing: 20,
-            alignment: WrapAlignment.spaceBetween,
-            runSpacing: 10,
-            children: [
-              BillHeaderField(
-                label: 'تاريخ الفاتورة :',
-                child: DatePicker(
-                  initDate: invoiceController.billDate,
-                  onSubmit: (_) {},
+          child: Form(
+            key: invoiceController.formKey,
+            child: Wrap(
+              spacing: 20,
+              alignment: WrapAlignment.spaceBetween,
+              runSpacing: 10,
+              children: [
+                BillHeaderField(
+                  label: 'تاريخ الفاتورة :',
+                  child: DatePicker(
+                    initDate: invoiceController.billDate,
+                    onSubmit: (_) {},
+                  ),
                 ),
-              ),
-              BillHeaderField(
-                label: 'المستودع :',
-                child: CustomTextFieldWithIcon(
-                  controller: invoiceController.storeController,
-                  onSubmitted: (text) {},
-                  onIconPressed: () {},
+                BillHeaderField(
+                  label: 'المستودع :',
+                  child: CustomTextFieldWithIcon(
+                    controller: invoiceController.storeController,
+                    onSubmitted: (text) {},
+                    onIconPressed: () {},
+                  ),
                 ),
-              ),
-              BillHeaderField(
-                label: 'رقم الجوال :',
-                child: CustomTextFieldWithoutIcon(
-                  controller: invoiceController.mobileNumberController,
+                BillHeaderField(
+                  label: 'رقم الجوال :',
+                  child: CustomTextFieldWithoutIcon(
+                    controller: invoiceController.mobileNumberController,
+                  ),
                 ),
-              ),
-              SearchableAccountField(
-                label: 'حساب العميل :',
-                textEditingController: invoiceController.invCustomerAccountController,
-                isCustomerAccount: true,
-              ),
-              SearchableAccountField(
-                label: 'البائع :',
-                textEditingController: invoiceController.sellerController,
-                onSubmitted: (text) {
-                  Get.find<SellerController>().openSellerSelectionDialog(
-                      query: text, textEditingController: invoiceController.sellerController);
-                },
-              ),
-              BillHeaderField(
-                label: 'البيان',
-                child: CustomTextFieldWithoutIcon(
-                  controller: invoiceController.noteController,
+                SearchableAccountField(
+                  label: 'حساب العميل :',
+                  textEditingController: invoiceController.invCustomerAccountController,
+                  validator: (value) => invoiceController.validator(value, 'حساب العميل'),
+                  isCustomerAccount: true,
                 ),
-              ),
-            ],
+                SearchableAccountField(
+                  label: 'البائع :',
+                  textEditingController: invoiceController.sellerController,
+                  validator: (value) => invoiceController.validator(value, 'البائع'),
+                  onSubmitted: (text) {
+                    Get.find<SellerController>().openSellerSelectionDialog(
+                        query: text, textEditingController: invoiceController.sellerController);
+                  },
+                ),
+                BillHeaderField(
+                  label: 'البيان',
+                  child: CustomTextFieldWithoutIcon(
+                    controller: invoiceController.noteController,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

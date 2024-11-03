@@ -7,6 +7,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../controllers/invoice_pluto_controller.dart';
+import '../widgets/bill_item_widget.dart';
 import 'invoice_screen.dart';
 
 class InvoiceLayout extends StatelessWidget {
@@ -39,57 +40,33 @@ class InvoiceLayout extends StatelessWidget {
                 icon: const Icon(Icons.logout, color: Colors.red))
           ],
         ),
-        body: GetBuilder<InvoiceController>(builder: (invoiceController) {
-          return ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 10.0,
-                    runSpacing: 2.0,
-                    children: invoiceController.billsTypes.map((bill) {
-                      return InkWell(
-                        onTap: () {
-                          Get.find<InvoiceController>().updateBillType(bill.billTypeLabel!);
-                          SystemChrome.setPreferredOrientations([
-                            DeviceOrientation.landscapeLeft,
-                          ]);
-                          Get.to(
-                            () => InvoiceScreen(billModel: bill),
-                            binding: BindingsBuilder(() {
-                              Get.lazyPut(() => InvoicePlutoController());
-                            }),
-                          );
-                        },
-                        child: Container(
-                          width: Get.width / 5.2,
-                          margin: const EdgeInsets.all(2),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Color(bill.color!).withOpacity(0.5),
-                              width: 1.0,
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(30.0),
-                          child: Center(
-                            child: Text(
-                              bill.fullName ?? "error",
-                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                              textDirection: TextDirection.rtl,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList()),
-              ),
-            ],
-          );
-        }),
+        body: GetBuilder<InvoiceController>(
+            builder: (invoiceController) => ListView(
+                  padding: const EdgeInsets.all(15.0),
+                  children: [
+                    Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 10.0,
+                      runSpacing: 2.0,
+                      children: invoiceController.billsTypes
+                          .map((bill) => BillItemWidget(
+                                bill: bill,
+                                invoiceController: invoiceController,
+                                onPressed: () {
+                                  invoiceController.initCustomerAccount(bill.accounts?[BillAccounts.caches]);
+                                  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+                                  Get.to(
+                                    () => InvoiceScreen(billModel: bill),
+                                    binding: BindingsBuilder(() {
+                                      Get.lazyPut(() => InvoicePlutoController());
+                                    }),
+                                  );
+                                },
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                )),
       ),
     );
   }
