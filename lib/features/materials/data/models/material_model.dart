@@ -48,6 +48,9 @@ class MaterialModel implements PlutoAdaptable {
   final String? matCompositionName;
   final String? matCompositionLatinName;
   final int? movedComposite;
+  final String? wholesalePrice;
+  final String? retailPrice;
+  final String? endUserPrice;
 
   MaterialModel({
     this.id,
@@ -97,6 +100,9 @@ class MaterialModel implements PlutoAdaptable {
     this.matCompositionName,
     this.matCompositionLatinName,
     this.movedComposite,
+    this.wholesalePrice,
+    this.retailPrice,
+    this.endUserPrice,
   });
 
   // Factory constructor to create an instance from JSON
@@ -149,6 +155,9 @@ class MaterialModel implements PlutoAdaptable {
       matCompositionName: json['MatCompositionName'].toString(),
       matCompositionLatinName: json['MatCompositionLatinName'].toString(),
       movedComposite: json['MovedComposite'],
+      wholesalePrice: json['Whole2'].toString(),
+      retailPrice: json['retail2'].toString(),
+      endUserPrice: json['EndUser2'].toString(),
     );
   }
 
@@ -201,6 +210,9 @@ class MaterialModel implements PlutoAdaptable {
         'MatCompositionName': matCompositionName,
         'MatCompositionLatinName': matCompositionLatinName,
         'MovedComposite': movedComposite,
+        'Whole2': wholesalePrice,
+        'retail2': retailPrice,
+        'EndUser2': endUserPrice,
       };
 
   @override
@@ -214,55 +226,57 @@ class MaterialModel implements PlutoAdaptable {
   }
 
   // CopyWith method
-  MaterialModel copyWith({
-    String? id,
-    int? matCode,
-    String? matName,
-    String? matBarCode,
-    String? matGroupGuid,
-    String? matUnity,
-    int? matPriceType,
-    int? matBonus,
-    int? matBonusOne,
-    String? matCurrencyGuid,
-    double? matCurrencyVal,
-    String? matPictureGuid,
-    int? matType,
-    int? matSecurity,
-    int? matFlag,
-    int? matExpireFlag,
-    int? matProdFlag,
-    int? matUnit2FactFlag,
-    int? matUnit3FactFlag,
-    int? matSNFlag,
-    int? matForceInSN,
-    int? matForceOutSN,
-    int? matVAT,
-    int? matDefUnit,
-    int? matBranchMask,
-    int? matAss,
-    String? matOldGUID,
-    String? matNewGUID,
-    int? matCalPriceFromDetail,
-    int? matForceInExpire,
-    int? matForceOutExpire,
-    DateTime? matCreateDate,
-    int? matIsIntegerQuantity,
-    int? matClassFlag,
-    int? matForceInClass,
-    int? matForceOutClass,
-    int? matDisableLastPrice,
-    double? matLastPriceCurVal,
-    String? matPrevQty,
-    DateTime? matFirstCostDate,
-    int? matHasSegments,
-    String? matParent,
-    int? matIsCompositionUpdated,
-    int? matInheritsParentSpecs,
-    String? matCompositionName,
-    String? matCompositionLatinName,
-    int? movedComposite,
-  }) {
+  MaterialModel copyWith(
+      {String? id,
+      int? matCode,
+      String? matName,
+      String? matBarCode,
+      String? matGroupGuid,
+      String? matUnity,
+      int? matPriceType,
+      int? matBonus,
+      int? matBonusOne,
+      String? matCurrencyGuid,
+      double? matCurrencyVal,
+      String? matPictureGuid,
+      int? matType,
+      int? matSecurity,
+      int? matFlag,
+      int? matExpireFlag,
+      int? matProdFlag,
+      int? matUnit2FactFlag,
+      int? matUnit3FactFlag,
+      int? matSNFlag,
+      int? matForceInSN,
+      int? matForceOutSN,
+      int? matVAT,
+      int? matDefUnit,
+      int? matBranchMask,
+      int? matAss,
+      String? matOldGUID,
+      String? matNewGUID,
+      int? matCalPriceFromDetail,
+      int? matForceInExpire,
+      int? matForceOutExpire,
+      DateTime? matCreateDate,
+      int? matIsIntegerQuantity,
+      int? matClassFlag,
+      int? matForceInClass,
+      int? matForceOutClass,
+      int? matDisableLastPrice,
+      double? matLastPriceCurVal,
+      String? matPrevQty,
+      DateTime? matFirstCostDate,
+      int? matHasSegments,
+      String? matParent,
+      int? matIsCompositionUpdated,
+      int? matInheritsParentSpecs,
+      String? matCompositionName,
+      String? matCompositionLatinName,
+      int? movedComposite,
+      String? wholesalePrice,
+      String? retailPrice,
+      String? endUserPrice}) {
     return MaterialModel(
       id: id ?? this.id,
       matCode: matCode ?? this.matCode,
@@ -311,6 +325,9 @@ class MaterialModel implements PlutoAdaptable {
       matCompositionName: matCompositionName ?? this.matCompositionName,
       matCompositionLatinName: matCompositionLatinName ?? this.matCompositionLatinName,
       movedComposite: movedComposite ?? this.movedComposite,
+      wholesalePrice: wholesalePrice ?? this.wholesalePrice,
+      retailPrice: retailPrice ?? this.retailPrice,
+      endUserPrice: endUserPrice ?? this.endUserPrice,
     );
   }
 }

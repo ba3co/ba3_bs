@@ -1,5 +1,6 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -41,38 +42,8 @@ class BillBody extends StatelessWidget {
                           evenRowColor: Color(billTypeModel.color!),
                           controller: controller,
                           shortCut: customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, "invRecProduct")),
-                          onRowSecondaryTap: (event) {},
-                          onChanged: (PlutoGridOnChangedEvent event) async {
-                            String quantityNum = Utils.extractNumbersAndCalculate(controller
-                                    .mainTableStateManager.currentRow!.cells["invRecQuantity"]?.value
-                                    ?.toString() ??
-                                '');
-                            String? subTotalStr = Utils.extractNumbersAndCalculate(
-                                controller.mainTableStateManager.currentRow!.cells["invRecSubTotal"]?.value);
-                            String? totalStr = Utils.extractNumbersAndCalculate(
-                                controller.mainTableStateManager.currentRow!.cells["invRecTotal"]?.value);
-                            String? vat = Utils.extractNumbersAndCalculate(
-                                controller.mainTableStateManager.currentRow!.cells["invRecVat"]?.value ?? "0");
-
-                            double subTotal = controller.parseExpression(subTotalStr);
-                            double total = controller.parseExpression(totalStr);
-                            int quantity = double.parse(quantityNum).toInt();
-                            if (event.column.field == "invRecSubTotal") {
-                              controller.updateInvoiceValues(subTotal, quantity);
-                            }
-                            if (event.column.field == "invRecTotal") {
-                              controller.updateInvoiceValuesByTotal(total, quantity);
-                            }
-                            if (event.column.field == "invRecQuantity" && quantity > 0) {
-                              controller.updateInvoiceValuesByQuantity(quantity, subTotal, double.parse(vat));
-                            }
-
-                            WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
-                              (value) {
-                                controller.update();
-                              },
-                            );
-                          },
+                          onRowSecondaryTap: plutoController.onMainTableRowSecondaryTap,
+                          onChanged: plutoController.onMainTableStateManagerChanged,
                         ),
                       );
                     }),

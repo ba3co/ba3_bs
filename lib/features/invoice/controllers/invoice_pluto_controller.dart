@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:math_expressions/math_expressions.dart';
@@ -163,17 +167,20 @@ class InvoicePlutoController extends GetxController {
   }
 
   void updateInvoiceValues(double subTotal, int quantity) {
+    log('subTotal $subTotal ,quantity $quantity');
+
     double vat = subTotal * 0.05;
-    double total = subTotal * quantity;
+    double total = (subTotal + vat) * quantity;
+
     updateCellValue("invRecVat", vat.toStringAsFixed(2));
-    updateCellValue("invRecSubTotal", (subTotal - vat).toStringAsFixed(2));
+    updateCellValue("invRecSubTotal", subTotal.toStringAsFixed(2));
     updateCellValue("invRecTotal", total.toStringAsFixed(2));
     updateCellValue("invRecQuantity", quantity);
   }
 
   void updateInvoiceValuesByTotal(double total, int quantity) {
-    double subTotal = (total / quantity) - ((total * 0.05) / quantity);
-    double vat = ((total / quantity) - subTotal);
+    double subTotal = total / (quantity * 1.05);
+    double vat = subTotal * 0.05;
 
     updateCellValue("invRecVat", vat.toStringAsFixed(2));
     updateCellValue("invRecSubTotal", subTotal.toStringAsFixed(2));
@@ -194,6 +201,116 @@ class InvoicePlutoController extends GetxController {
       }
       return discount; // Return the accumulated discount if the condition is not met
     });
+  }
+
+  void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
+    String quantityNum = Utils.extractNumbersAndCalculate(
+        mainTableStateManager.currentRow!.cells["invRecQuantity"]?.value?.toString() ?? '');
+    String? subTotalStr =
+        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells["invRecSubTotal"]?.value);
+    String? totalStr = Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells["invRecTotal"]?.value);
+    String? vat = Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells["invRecVat"]?.value ?? "0");
+
+    double subTotal = parseExpression(subTotalStr);
+    double total = parseExpression(totalStr);
+    int quantity = double.parse(quantityNum).toInt();
+
+    if (event.column.field == "invRecSubTotal") {
+      updateInvoiceValues(subTotal, quantity);
+    }
+    if (event.column.field == "invRecTotal") {
+      updateInvoiceValuesByTotal(total, quantity);
+    }
+    if (event.column.field == "invRecQuantity" && quantity > 0) {
+      updateInvoiceValuesByQuantity(quantity, subTotal, double.parse(vat));
+    }
+
+    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
+      (value) {
+        update();
+      },
+    );
+  }
+
+  void onMainTableRowSecondaryTap(event) {
+    var materialName = mainTableStateManager.currentRow?.cells['invRecProduct']?.value;
+    log('invRecId $materialName');
+    MaterialModel? materialModel = Get.find<MaterialController>().getMaterialFromName(materialName);
+    if (materialModel != null) {
+      if (event.cell.column.field == "invRecSubTotal") {
+        showContextMenuSubTotal(index: event.rowIdx, materialModel: materialModel, tapPosition: event.offset);
+      }
+    }
+  }
+
+  void showContextMenuSubTotal({
+    required Offset tapPosition,
+    required MaterialModel materialModel,
+    required int index,
+  }) {
+    final menuItems = [
+      {'label': 'سعر المستهلك', 'method': AppConstants.invoiceChoosePriceMethodeCustomerPrice},
+      {'label': 'سعر الجملة', 'method': AppConstants.invoiceChoosePriceMethodeWholePrice},
+      {'label': 'سعر المفرق', 'method': AppConstants.invoiceChoosePriceMethodeRetailPrice},
+    ];
+
+    showMenu(
+      context: Get.context!,
+      position: RelativeRect.fromLTRB(
+        tapPosition.dx,
+        tapPosition.dy,
+        tapPosition.dx + 1.0,
+        tapPosition.dy + 1.0,
+      ),
+      items: menuItems.map((menuItem) {
+        return showContextMenuItem(
+          index,
+          materialModel,
+          menuItem['label']!,
+          menuItem['method']!,
+        );
+      }).toList(),
+    );
+  }
+
+  PopupMenuItem showContextMenuItem(int index, MaterialModel materialModel, String text, String method) {
+    return PopupMenuItem(
+      enabled: true,
+      child: ListTile(
+        title: Text(
+          "$text: ${getPrice(type: method, materialModel: materialModel).toStringAsFixed(2)}",
+          textDirection: TextDirection.rtl,
+        ),
+      ),
+      onTap: () {
+        updateInvoiceValues(
+          getPrice(materialModel: materialModel, type: method),
+          int.tryParse(mainTableStateManager.rows[index].cells["invRecQuantity"]?.value.toString() ?? "1") ?? 1,
+        );
+        update();
+      },
+    );
+  }
+
+  double getPrice({required MaterialModel materialModel, required String type}) {
+    double price = 0;
+
+    switch (type) {
+      case AppConstants.invoiceChoosePriceMethodeCustomerPrice:
+        price = double.parse(materialModel.endUserPrice ?? "0");
+        break;
+      case AppConstants.invoiceChoosePriceMethodeWholePrice:
+        price = double.parse(materialModel.wholesalePrice ?? "0");
+        break;
+      case AppConstants.invoiceChoosePriceMethodeRetailPrice:
+        price = double.parse(materialModel.retailPrice ?? "0");
+        break;
+
+      default:
+        throw ArgumentError("Unknown price method: $type");
+    }
+
+    return price;
   }
 
   // Function to handle changes in the additions and discounts table

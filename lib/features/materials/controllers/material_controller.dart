@@ -68,9 +68,20 @@ class MaterialController extends GetxController {
     return searchedMaterials;
   }
 
-  String getProductNameFromId(String? id) {
+  String getMaterialNameFromId(String? id) {
     if (id == null || id.isEmpty) return '';
     return materials.firstWhere((material) => material.id == id).matName ?? '';
+  }
+
+  MaterialModel getMaterialFromId(String id) {
+    return materials.firstWhere((material) => material.id == id);
+  }
+
+  MaterialModel? getMaterialFromName(name) {
+    if (name != null && name != " " && name != "") {
+      return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
+    }
+    return null;
   }
 
   String replaceArabicNumbersWithEnglish(String input) {

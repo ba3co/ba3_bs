@@ -7,15 +7,17 @@ import 'package:get/get.dart';
 import '../../features/invoice/ui/widgets/custom_Text_field.dart';
 import '../widgets/new_pluto.dart';
 
-Future<String?> searchProductTextDialog(String productText) async {
+Future<MaterialModel?> searchProductTextDialog(String productText) async {
   TextEditingController productTextController = TextEditingController()..text = productText;
 
   List<MaterialModel> searchedMaterials;
 
   searchedMaterials = Get.find<MaterialController>().searchOfProductByText(productTextController.text);
 
+  MaterialModel? selectedMaterial;
+
   if (searchedMaterials.length == 1) {
-    return searchedMaterials.first.matName!;
+    return searchedMaterials.first;
   } else if (searchedMaterials.isEmpty) {
     return null;
   } else {
@@ -40,8 +42,8 @@ Future<String?> searchProductTextDialog(String productText) async {
                               tableSourceModels: searchedMaterials,
                               onLoaded: (p0) {},
                               onSelected: (selected) {
-                                productTextController.text = materialController
-                                    .getProductNameFromId(selected.row?.cells['الرقم التعريفي']!.value);
+                                selectedMaterial =
+                                    materialController.getMaterialFromId(selected.row?.cells['الرقم التعريفي']!.value);
                                 Get.back();
                               },
                             ),
@@ -63,6 +65,6 @@ Future<String?> searchProductTextDialog(String productText) async {
               }),
             ));
 
-    return productTextController.text;
+    return selectedMaterial;
   }
 }
