@@ -435,6 +435,29 @@ class InvoicePlutoController extends GetxController {
     });
   }
 
+  List<InvoiceRecordModel> handleSaveAllMaterials() {
+    mainTableStateManager.setShowLoading(true);
+    MaterialModel? materialModel;
+    List<InvoiceRecordModel> invRecord = [];
+    MaterialController materialController = Get.find<MaterialController>();
+
+    invRecord = mainTableStateManager.rows.where((element) {
+      materialModel = materialController.getMaterialFromName(element.cells['invRecProduct']!.value);
+
+      return materialModel != null && element.cells['invRecQuantity']!.value != null;
+    }).map(
+      (plutoRow) {
+        return InvoiceRecordModel.fromJsonPluto(
+          materialModel!.id!,
+          plutoRow.toJson(),
+        );
+      },
+    ).toList();
+
+    mainTableStateManager.setShowLoading(false);
+    return invRecord;
+  }
+
   @override
   void onClose() {
     super.onClose();

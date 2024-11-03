@@ -75,6 +75,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
       decoration: InputDecoration(
         fillColor: Colors.white,
         filled: true,
+        errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
         disabledBorder: UnderlineInputBorder(
           borderSide: const BorderSide(
             color: Colors.white, // Change the border color

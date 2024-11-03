@@ -41,11 +41,19 @@ class BillButtons extends StatelessWidget {
                 });
               },
               iconData: Icons.create_new_folder_outlined),
-          AppButton(title: "إضافة", onPressed: () async {}, iconData: Icons.add_chart_outlined),
+          AppButton(
+              title: "إضافة",
+              onPressed: () async {
+                invoiceController.addNewInvoice(
+                  billTypeModel: billTypeModel,
+                  invoiceRecords: invoicePlutoController.handleSaveAllMaterials(),
+                );
+              },
+              iconData: Icons.add_chart_outlined),
           AppButton(
               title: 'السند',
               onPressed: () async {
-                if (!Get.find<InvoiceController>().validateForm()) return;
+                if (!invoiceController.validateForm()) return;
 
                 Get.find<BondController>().createBond(
                   billTypeModel: billTypeModel,

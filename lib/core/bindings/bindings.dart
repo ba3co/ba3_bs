@@ -9,6 +9,8 @@ import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dar
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
+import '../../features/invoice/data/datasources/invoices_data_source.dart';
+import '../../features/invoice/data/models/bill_model.dart';
 import '../../features/login/controllers/nfc_cards_controller.dart';
 import '../../features/login/controllers/user_management_controller.dart';
 import '../../features/login/data/datasources/user_management_service.dart';
@@ -33,13 +35,15 @@ class AppBindings extends Bindings {
     final FirebaseRepositoryBase<BillTypeModel> patternsRepo =
         FirebaseRepositoryConcrete(PatternsDataSource(firestore));
 
+    final FirebaseRepositoryBase<BillModel> billsRepo = FirebaseRepositoryConcrete(InvoicesDataSource(firestore));
+
     // Lazy load controllers
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
     Get.lazyPut(() => NfcCardsController(), fenix: true);
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => PatternController(patternsRepo), fenix: true);
     Get.lazyPut(() => BondController(), fenix: true);
-    Get.lazyPut(() => InvoiceController(patternsRepo), fenix: true);
+    Get.lazyPut(() => InvoiceController(patternsRepo, billsRepo), fenix: true);
     Get.lazyPut(() => MaterialController(MaterialRepository()), fenix: true);
     Get.lazyPut(() => AccountsController(AccountsRepository()), fenix: true);
     Get.lazyPut(() => SellerController(SellersRepository()), fenix: true);

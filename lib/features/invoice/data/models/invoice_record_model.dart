@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -44,6 +45,18 @@ class InvoiceRecordModel {
       'invRecGift': invRecGift,
       'invRecGiftTotal': invRecGiftTotal,
     };
+  }
+
+  InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map) {
+    invRecId = matId;
+    invRecProduct = map['invRecProduct'];
+    invRecQuantity = int.tryParse(Utils.replaceArabicNumbersWithEnglish(map['invRecQuantity'].toString()));
+    invRecSubTotal = double.tryParse(Utils.replaceArabicNumbersWithEnglish(map['invRecSubTotal'].toString()));
+    invRecTotal = double.tryParse(map['invRecTotal'].toString());
+    invRecVat = double.tryParse((map['invRecVat']).toString());
+    invRecIsLocal = map['invRecIsLocal'];
+    invRecGift = int.tryParse(Utils.replaceArabicNumbersWithEnglish(map['invRecGift'].toString()));
+    invRecGiftTotal = map['invRecGiftTotal'];
   }
 
   @override

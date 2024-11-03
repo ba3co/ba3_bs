@@ -1,4 +1,4 @@
-class InvoiceModel {
+class BillModel {
   final String? id;
   final String? invName;
   final String? invTotal;
@@ -10,7 +10,7 @@ class InvoiceModel {
   final String? invType;
   final List<String>? invRecords;
 
-  InvoiceModel({
+  BillModel({
     this.id,
     this.invName,
     this.invTotal,
@@ -23,7 +23,7 @@ class InvoiceModel {
     this.invRecords,
   });
 
-  factory InvoiceModel.fromJson(Map json) => InvoiceModel(
+  factory BillModel.fromJson(Map json) => BillModel(
         id: json['invId'],
         invName: json['invName'],
         invTotal: json['invTotal'],
@@ -49,7 +49,7 @@ class InvoiceModel {
         'invRecords': invRecords,
       };
 
-  InvoiceModel copyWith({
+  BillModel copyWith({
     String? id,
     String? invName,
     String? invTotal,
@@ -61,7 +61,7 @@ class InvoiceModel {
     String? invType,
     List<String>? invRecords,
   }) {
-    return InvoiceModel(
+    return BillModel(
       id: id ?? this.id,
       invName: invName ?? this.invName,
       invTotal: invTotal ?? this.invTotal,

@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
+import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -7,11 +8,13 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/utils.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
+import '../data/models/invoice_record_model.dart';
 
 class InvoiceController extends GetxController with AppValidator {
-  final FirebaseRepositoryBase<BillTypeModel> _repository;
+  final FirebaseRepositoryBase<BillTypeModel> _patternsRepo;
+  final FirebaseRepositoryBase<BillModel> _billsRepo;
 
-  InvoiceController(this._repository);
+  InvoiceController(this._patternsRepo, this._billsRepo);
 
   final TextEditingController invCodeController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
@@ -86,7 +89,7 @@ class InvoiceController extends GetxController with AppValidator {
   }
 
   Future<void> getAllBillTypes() async {
-    final result = await _repository.getAll();
+    final result = await _patternsRepo.getAll();
 
     result.fold(
       (failure) {
@@ -100,4 +103,36 @@ class InvoiceController extends GetxController with AppValidator {
   }
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+
+  Future<void> addNewInvoice({
+    required BillTypeModel billTypeModel,
+    required List<InvoiceRecordModel> invoiceRecords,
+  }) async {
+    if (!validateForm()) return;
+
+    final billModel = _createBillModel(billTypeModel: billTypeModel, invoiceRecords: invoiceRecords);
+
+    final result = await _billsRepo.save(billModel);
+
+    result.fold((failure) => Utils.showSnackBar('خطأ', failure.message),
+        (success) => Utils.showSnackBar('نجاح', 'تم حفظ الفاتورة بنجاح!'));
+  }
+
+  BillModel _createBillModel({
+    required BillTypeModel billTypeModel,
+    required List<InvoiceRecordModel> invoiceRecords,
+  }) {
+    return BillModel(
+      billTypeModel: billTypeModel,
+      items: Items(
+          itemList: invoiceRecords
+              .map((invoiceRecordModel) => Item(
+                    itemGuid: invoiceRecordModel.invRecId!,
+                    itemName: invoiceRecordModel.invRecProduct!,
+                    itemQuantity: invoiceRecordModel.invRecQuantity!,
+                    itemPrice: invoiceRecordModel.invRecTotal.toString(),
+                  ))
+              .toList()),
+    );
+  }
 }

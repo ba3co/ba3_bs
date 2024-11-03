@@ -3,26 +3,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/classes/datasources/firebase_datasource_base.dart';
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
-import '../models/invoice_model.dart';
+import '../models/bill_model.dart';
 
-class PatternsDataSource implements FirebaseDatasourceBase<InvoiceModel> {
+class InvoicesDataSource implements FirebaseDatasourceBase<BillModel> {
   final FirebaseFirestore _firestore;
-  final String _collection = 'bill_types'; // Collection name in Firestore
+  final String _collection = 'bills'; // Collection name in Firestore
 
-  PatternsDataSource(this._firestore);
+  InvoicesDataSource(this._firestore);
 
   @override
-  Future<List<InvoiceModel>> fetchAll() async {
+  Future<List<BillModel>> fetchAll() async {
     final snapshot = await _firestore.collection(_collection).get();
-    final invoices = snapshot.docs.map((doc) => InvoiceModel.fromJson(doc.data())).toList();
+    final invoices = snapshot.docs.map((doc) => BillModel.fromJson(doc.data())).toList();
     return invoices;
   }
 
   @override
-  Future<InvoiceModel> fetchById(String id) async {
+  Future<BillModel> fetchById(String id) async {
     final doc = await _firestore.collection(_collection).doc(id).get();
     if (doc.exists) {
-      final invoice = InvoiceModel.fromJson(doc.data() as Map<String, dynamic>);
+      final invoice = BillModel.fromJson(doc.data() as Map<String, dynamic>);
       return invoice;
     } else {
       throw Failure(ResponseCode.NOT_FOUND, 'Bill not found');
@@ -30,15 +30,15 @@ class PatternsDataSource implements FirebaseDatasourceBase<InvoiceModel> {
   }
 
   @override
-  Future<void> save(InvoiceModel invoice) async {
+  Future<void> save(BillModel bill) async {
     final collection = _firestore.collection(_collection);
-    if (invoice.id == null) {
+    if (bill.id == null) {
       // Create a new document and set its ID in the model
       final newDocRefId = collection.doc().id;
-      await collection.doc(newDocRefId).set(invoice.copyWith(id: newDocRefId).toJson());
+      await collection.doc(newDocRefId).set(bill.copyWith(id: newDocRefId).toJson());
     } else {
       // Update the existing document
-      await collection.doc(invoice.id).set(invoice.toJson());
+      await collection.doc(bill.id).set(bill.toJson());
     }
   }
 
