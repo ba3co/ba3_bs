@@ -3,7 +3,7 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class BillTypeModel implements PlutoAdaptable {
-  final String? id;
+  final String? billTypeId;
   final String? shortName;
   final String? fullName;
   final String? latinShortName;
@@ -15,7 +15,7 @@ class BillTypeModel implements PlutoAdaptable {
   final Map<Account, AccountModel>? accounts;
 
   BillTypeModel({
-    this.id,
+    this.billTypeId,
     this.shortName,
     this.fullName,
     this.latinShortName,
@@ -27,7 +27,7 @@ class BillTypeModel implements PlutoAdaptable {
 
   factory BillTypeModel.fromJson(Map<String, dynamic> json) {
     return BillTypeModel(
-      id: json['id'],
+      billTypeId: json['billTypeId'],
       shortName: json['shortName'],
       fullName: json['fullName'],
       latinShortName: json['latinShortName'],
@@ -44,7 +44,7 @@ class BillTypeModel implements PlutoAdaptable {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        'billTypeId': billTypeId,
         'shortName': shortName,
         'fullName': fullName,
         'latinShortName': latinShortName,
@@ -56,7 +56,7 @@ class BillTypeModel implements PlutoAdaptable {
       };
 
   BillTypeModel copyWith({
-    String? id,
+    String? billTypeId,
     String? shortName,
     String? fullName,
     String? latinShortName,
@@ -67,7 +67,7 @@ class BillTypeModel implements PlutoAdaptable {
     Map<Account, AccountModel>? accounts,
   }) =>
       BillTypeModel(
-        id: id ?? this.id,
+        billTypeId: billTypeId ?? this.billTypeId,
         shortName: shortName ?? this.shortName,
         fullName: fullName ?? this.fullName,
         latinShortName: latinShortName ?? this.latinShortName,
@@ -79,7 +79,7 @@ class BillTypeModel implements PlutoAdaptable {
 
   @override
   Map<String, dynamic> toPlutoGridFormat() => {
-        'id': id,
+        'billTypeId': billTypeId,
         'shortName': shortName,
         'fullName': fullName,
         'latinShortName': latinShortName,

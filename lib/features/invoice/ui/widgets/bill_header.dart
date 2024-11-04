@@ -31,7 +31,7 @@ class BillHeader extends StatelessWidget {
                   label: 'تاريخ الفاتورة :',
                   child: DatePicker(
                     initDate: invoiceController.billDate,
-                    onSubmit: (_) {},
+                    onDateSelected: invoiceController.setBillDate,
                   ),
                 ),
                 BillHeaderField(

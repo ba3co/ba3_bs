@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -60,14 +61,14 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
 
   getAccounts(PlutoGridStateManager stateManager, InvoicePlutoController controller, fieldTitle) async {
     if (stateManager.currentColumn?.field == "accountId") {
-      String? newValue = await Get.find<AccountsController>().openAccountSelectionDialog(
+      AccountModel? accountModel = await Get.find<AccountsController>().openAccountSelectionDialog(
         query: stateManager.currentCell?.value,
       );
 
-      if (newValue != null) {
+      if (accountModel != null) {
         stateManager.changeCellValue(
           stateManager.currentRow!.cells[stateManager.currentColumn?.field]!,
-          newValue,
+          accountModel.accName,
           force: true,
           callOnChangedEvent: true,
           notify: true,

@@ -71,30 +71,28 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.id == accountId).firstOrNull?.accName ?? '';
   }
 
+  List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);
+
   List<String> getAccountChildren(String? accountId) {
     if (accountId == null || accountId.isEmpty) return [];
 
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
-  Future<String?> openAccountSelectionDialog({
+  Future<AccountModel?> openAccountSelectionDialog({
     required String query,
     TextEditingController? textEditingController,
     bool isCustomerAccount = false,
   }) async {
-    Map<String, AccountModel> searchedAccounts = mapAccountsByName(query);
+    List<AccountModel> searchedAccounts = getAccounts(query);
 
     if (searchedAccounts.isNotEmpty) {
-      List<String> accountsNames = searchedAccounts.keys.toList();
-
-      String? selectedAccountName = await Get.defaultDialog<String>(
+      AccountModel? selectedAccountModel = await Get.defaultDialog<AccountModel>(
         title: 'Choose Account',
-        content: AccountSelectionDialog(accountNames: accountsNames),
+        content: AccountSelectionDialog(accounts: searchedAccounts),
       );
 
-      if (selectedAccountName != null && textEditingController != null) {
-        final AccountModel selectedAccountModel = searchedAccounts[selectedAccountName]!;
-
+      if (selectedAccountModel != null && textEditingController != null) {
         // Infer `billTypeAccounts` from the controller
         final BillAccounts? billAccounts =
             Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
@@ -108,10 +106,10 @@ class AccountsController extends GetxController {
           Get.find<InvoiceController>().updateCustomerAccount(selectedAccountModel);
         }
 
-        textEditingController.text = selectedAccountName;
+        textEditingController.text = selectedAccountModel.accName!;
         update();
       }
-      return selectedAccountName;
+      return selectedAccountModel;
     } else {
       Utils.showSnackBar('فحص الحسابات', 'هذا الحساب غير موجود');
       return null;

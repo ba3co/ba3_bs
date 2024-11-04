@@ -3,9 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 class InvoiceRecordModel {
-  String? invRecId, invRecProduct, prodChoosePriceMethod;
-  int? invRecQuantity, invRecGift;
-  double? invRecSubTotal, invRecTotal, invRecVat, invRecGiftTotal;
+  String? invRecId;
+  String? invRecProduct;
+  String? prodChoosePriceMethod;
+  int? invRecQuantity;
+  int? invRecGift;
+  double? invRecSubTotal;
+  double? invRecTotal;
+  double? invRecVat;
+  double? invRecGiftTotal;
   bool? invRecIsLocal;
 
   InvoiceRecordModel({
@@ -48,15 +54,42 @@ class InvoiceRecordModel {
   }
 
   InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map) {
+    String? prodName = map['invRecProduct'];
+    int? giftsNumber = _parseInteger(map['invRecGift']);
+    int? quantity = _parseInteger(map['invRecQuantity']);
+    double? subTotal = _parseDouble(map['invRecSubTotal']);
+    double? total = _parseDouble(map['invRecTotal']);
+    double? vat = _parseDouble(map['invRecVat']);
+
     invRecId = matId;
-    invRecProduct = map['invRecProduct'];
-    invRecQuantity = int.tryParse(Utils.replaceArabicNumbersWithEnglish(map['invRecQuantity'].toString()));
-    invRecSubTotal = double.tryParse(Utils.replaceArabicNumbersWithEnglish(map['invRecSubTotal'].toString()));
-    invRecTotal = double.tryParse(map['invRecTotal'].toString());
-    invRecVat = double.tryParse((map['invRecVat']).toString());
+    invRecProduct = prodName;
+    invRecQuantity = quantity;
+    invRecSubTotal = subTotal;
+    invRecTotal = total;
+    invRecVat = vat;
     invRecIsLocal = map['invRecIsLocal'];
-    invRecGift = int.tryParse(Utils.replaceArabicNumbersWithEnglish(map['invRecGift'].toString()));
-    invRecGiftTotal = map['invRecGiftTotal'];
+    invRecGift = giftsNumber;
+
+    final effectiveVat = vat ?? 0;
+    final effectiveSubTotal = subTotal ?? 0;
+
+    if (giftsNumber == null) {
+      invRecGiftTotal = null;
+    } else {
+      invRecGiftTotal = giftsNumber * (effectiveVat + effectiveSubTotal);
+    }
+  }
+
+// Helper method to parse integers, handling Arabic numerals
+  int? _parseInteger(dynamic value) {
+    if (value == null) return null;
+    return int.tryParse(Utils.replaceArabicNumbersWithEnglish(value.toString()));
+  }
+
+// Helper method to parse doubles, handling Arabic numerals
+  double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    return double.tryParse(Utils.replaceArabicNumbersWithEnglish(value.toString()));
   }
 
   @override

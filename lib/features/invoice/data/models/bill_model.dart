@@ -1,288 +1,159 @@
 import '../../../patterns/data/models/bill_type_model.dart';
 
 class BillModel {
-  final String? id;
+  final String? billId;
   final BillTypeModel billTypeModel;
-  final String? disc;
-  final Items items;
+
+  final BillItems items;
+  final BillDetails billDetails;
 
   BillModel({
-    this.id,
+    this.billId,
     required this.billTypeModel,
-    this.disc,
     required this.items,
+    required this.billDetails,
   });
 
   BillModel copyWith({
-    final String? id,
+    final String? billId,
     final BillTypeModel? billTypeModel,
-    final String? disc,
-    final Items? items,
+    final BillItems? items,
+    final BillDetails? billDetails,
   }) {
     return BillModel(
-      id: id ?? this.id,
+      billId: billId ?? this.billId,
       billTypeModel: billTypeModel ?? this.billTypeModel,
-      disc: disc ?? this.disc,
       items: items ?? this.items,
+      billDetails: billDetails ?? this.billDetails,
     );
   }
 
   factory BillModel.fromJson(Map<String, dynamic> json) {
     return BillModel(
-      id: json['id'],
+      billId: json['billId'],
       billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
-      disc: json['disc'] as String,
-      items: Items.fromJson(json['items']),
+      billDetails: BillDetails.fromJson(json['billDetails']),
+      items: BillItems.fromJson(json['items']),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
+        'billId': billId,
         'billTypeModel': billTypeModel.toJson(),
-        'disc': disc,
+        'billDetails': billDetails.toJson(),
         'items': items.toJson(),
       };
 }
 
 class BillDetails {
-  final String? billTypeGuid;
   final String? billGuid;
-  final String? billBranch;
   final int? billPayType;
-  final String? billCheckTypeGuid;
   final int? billNumber;
-  final String? billCustPtr;
-  final String? billCustName;
-  final String? billCurrencyGuid;
-  final double? billCurrencyVal;
   final String? billDate;
-  final String? billStoreGuid;
   final String? note;
-  final String? billCustAcc;
-  final String? billMatAccGuid;
-  final String? billCostGuid;
-  final String? billVendorSalesMan;
-  final double? billFirstPay;
-  final String? billFPayAccGuid;
-  final int? billSecurity;
-  final String? billTransferGuid;
-  final String? billFld1;
-  final String? billFld2;
-  final String? billFld3;
-  final String? billFld4;
-  final String? itemsDiscAcc;
-  final String? itemsExtraAccGUID;
-  final String? costAccGUID;
-  final String? stockAccGUID;
-  final String? bonusAccGUID;
-  final String? bonusContraAccGUID;
-  final String? vatAccGUID;
-  final String? discCard;
-  final String? billAddressGUID;
+  final String? billSellerId;
+  final String? billCustomerId;
+  final double? billTotal;
+  final double? billVatTotal;
+  final double? billGiftsTotal;
+  final double? billDiscountsTotal;
+  final double? billAdditionsTotal;
 
   BillDetails({
-    this.billTypeGuid,
     this.billGuid,
-    this.billBranch,
     this.billPayType,
-    this.billCheckTypeGuid,
     this.billNumber,
-    this.billCustPtr,
-    this.billCustName,
-    this.billCurrencyGuid,
-    this.billCurrencyVal,
     this.billDate,
-    this.billStoreGuid,
     this.note,
-    this.billCustAcc,
-    this.billMatAccGuid,
-    this.billCostGuid,
-    this.billVendorSalesMan,
-    this.billFirstPay,
-    this.billFPayAccGuid,
-    this.billSecurity,
-    this.billTransferGuid,
-    this.billFld1,
-    this.billFld2,
-    this.billFld3,
-    this.billFld4,
-    this.itemsDiscAcc,
-    this.itemsExtraAccGUID,
-    this.costAccGUID,
-    this.stockAccGUID,
-    this.bonusAccGUID,
-    this.bonusContraAccGUID,
-    this.vatAccGUID,
-    this.discCard,
-    this.billAddressGUID,
+    this.billCustomerId,
+    this.billTotal,
+    this.billSellerId,
+    this.billVatTotal,
+    this.billGiftsTotal,
+    this.billDiscountsTotal,
+    this.billAdditionsTotal,
   });
 
   BillDetails copyWith({
-    String? billTypeGuid,
-    String? billGuid,
-    String? billBranch,
-    int? billPayType,
-    String? billCheckTypeGuid,
-    int? billNumber,
-    String? billCustPtr,
-    String? billCustName,
-    String? billCurrencyGuid,
-    double? billCurrencyVal,
-    String? billDate,
-    String? billStoreGuid,
-    String? note,
-    String? billCustAcc,
-    String? billMatAccGuid,
-    String? billCostGuid,
-    String? billVendorSalesMan,
-    double? billFirstPay,
-    String? billFPayAccGuid,
-    int? billSecurity,
-    String? billTransferGuid,
-    String? billFld1,
-    String? billFld2,
-    String? billFld3,
-    String? billFld4,
-    String? itemsDiscAcc,
-    String? itemsExtraAccGUID,
-    String? costAccGUID,
-    String? stockAccGUID,
-    String? bonusAccGUID,
-    String? bonusContraAccGUID,
-    String? vatAccGUID,
-    String? discCard,
-    String? billAddressGUID,
+    final String? billGuid,
+    final int? billPayType,
+    final int? billNumber,
+    final String? billDate,
+    final String? note,
+    final String? billCustomerId,
+    final String? billSellerId,
+    final double? billTotal,
+    final double? billVatTotal,
+    final double? billGiftsTotal,
+    final double? billDiscountsTotal,
+    final double? billAdditionsTotal,
   }) {
     return BillDetails(
-      billTypeGuid: billTypeGuid ?? this.billTypeGuid,
       billGuid: billGuid ?? this.billGuid,
-      billBranch: billBranch ?? this.billBranch,
       billPayType: billPayType ?? this.billPayType,
-      billCheckTypeGuid: billCheckTypeGuid ?? this.billCheckTypeGuid,
       billNumber: billNumber ?? this.billNumber,
-      billCustPtr: billCustPtr ?? this.billCustPtr,
-      billCustName: billCustName ?? this.billCustName,
-      billCurrencyGuid: billCurrencyGuid ?? this.billCurrencyGuid,
-      billCurrencyVal: billCurrencyVal ?? this.billCurrencyVal,
       billDate: billDate ?? this.billDate,
-      billStoreGuid: billStoreGuid ?? this.billStoreGuid,
       note: note ?? this.note,
-      billCustAcc: billCustAcc ?? this.billCustAcc,
-      billMatAccGuid: billMatAccGuid ?? this.billMatAccGuid,
-      billCostGuid: billCostGuid ?? this.billCostGuid,
-      billVendorSalesMan: billVendorSalesMan ?? this.billVendorSalesMan,
-      billFirstPay: billFirstPay ?? this.billFirstPay,
-      billFPayAccGuid: billFPayAccGuid ?? this.billFPayAccGuid,
-      billSecurity: billSecurity ?? this.billSecurity,
-      billTransferGuid: billTransferGuid ?? this.billTransferGuid,
-      billFld1: billFld1 ?? this.billFld1,
-      billFld2: billFld2 ?? this.billFld2,
-      billFld3: billFld3 ?? this.billFld3,
-      billFld4: billFld4 ?? this.billFld4,
-      itemsDiscAcc: itemsDiscAcc ?? this.itemsDiscAcc,
-      itemsExtraAccGUID: itemsExtraAccGUID ?? this.itemsExtraAccGUID,
-      costAccGUID: costAccGUID ?? this.costAccGUID,
-      stockAccGUID: stockAccGUID ?? this.stockAccGUID,
-      bonusAccGUID: bonusAccGUID ?? this.bonusAccGUID,
-      bonusContraAccGUID: bonusContraAccGUID ?? this.bonusContraAccGUID,
-      vatAccGUID: vatAccGUID ?? this.vatAccGUID,
-      discCard: discCard ?? this.discCard,
-      billAddressGUID: billAddressGUID ?? this.billAddressGUID,
+      billTotal: billTotal ?? this.billTotal,
+      billCustomerId: billCustomerId ?? this.billCustomerId,
+      billSellerId: billSellerId ?? this.billSellerId,
+      billVatTotal: billVatTotal ?? this.billVatTotal,
+      billDiscountsTotal: billDiscountsTotal ?? this.billDiscountsTotal,
+      billGiftsTotal: billGiftsTotal ?? this.billGiftsTotal,
+      billAdditionsTotal: billAdditionsTotal ?? this.billAdditionsTotal,
     );
   }
 
   factory BillDetails.fromJson(Map<String, dynamic> json) {
     return BillDetails(
-      billTypeGuid: json['BillTypeGuid'],
-      billGuid: json['BillGuid'],
-      billBranch: json['BillBranch'],
-      billPayType: json['BillPayType'],
-      billCheckTypeGuid: json['BillCheckTypeGuid'],
-      billNumber: json['BillNumber'],
-      billCustPtr: json['BillCustPtr'],
-      billCustName: json['BillCustName'],
-      billCurrencyGuid: json['BillCurrencyGuid'],
-      billCurrencyVal: json['BillCurrencyVal'].toDouble(),
-      billDate: json['BillDate'],
-      billStoreGuid: json['BillStoreGuid'],
-      note: json['Note'],
-      billCustAcc: json['BillCustAcc'],
-      billMatAccGuid: json['BillMatAccGuid'],
-      billCostGuid: json['BillCostGuid'],
-      billVendorSalesMan: json['BillVendorSalesMan'],
-      billFirstPay: json['BillFirstPay'].toDouble(),
-      billFPayAccGuid: json['BillFPayAccGuid'],
-      billSecurity: json['BillSecurity'],
-      billTransferGuid: json['BillTransferGuid'],
-      billFld1: json['BillFld1'],
-      billFld2: json['BillFld2'],
-      billFld3: json['BillFld3'],
-      billFld4: json['BillFld4'],
-      itemsDiscAcc: json['ItemsDiscAcc'],
-      itemsExtraAccGUID: json['ItemsExtraAccGUID'],
-      costAccGUID: json['CostAccGUID'],
-      stockAccGUID: json['StockAccGUID'],
-      bonusAccGUID: json['BonusAccGUID'],
-      bonusContraAccGUID: json['BonusContraAccGUID'],
-      vatAccGUID: json['VATAccGUID'],
-      discCard: json['DIscCard'],
-      billAddressGUID: json['BillAddressGUID'],
+      billGuid: json['billGuid'],
+      billPayType: json['billPayType'],
+      billNumber: json['billNumber'],
+      billDate: json['billDate'],
+      note: json['note'],
+      billCustomerId: json['billCustomerId'],
+      billTotal: json['billTotal'],
+      billSellerId: json['billSellerId'],
+      billVatTotal: json['billVatTotal'],
+      billGiftsTotal: json['billGiftsTotal'],
+      billDiscountsTotal: json['billDiscountsTotal'],
+      billAdditionsTotal: json['billAdditionsTotal'],
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'BillTypeGuid': billTypeGuid,
-        'BillGuid': billGuid,
-        'BillBranch': billBranch,
-        'BillPayType': billPayType,
-        'BillCheckTypeGuid': billCheckTypeGuid,
-        'BillNumber': billNumber,
-        'BillCustPtr': billCustPtr,
-        'BillCustName': billCustName,
-        'BillCurrencyGuid': billCurrencyGuid,
-        'BillCurrencyVal': billCurrencyVal,
-        'BillDate': billDate,
-        'BillStoreGuid': billStoreGuid,
-        'Note': note,
-        'BillCustAcc': billCustAcc,
-        'BillMatAccGuid': billMatAccGuid,
-        'BillCostGuid': billCostGuid,
-        'BillVendorSalesMan': billVendorSalesMan,
-        'BillFirstPay': billFirstPay,
-        'BillFPayAccGuid': billFPayAccGuid,
-        'BillSecurity': billSecurity,
-        'BillTransferGuid': billTransferGuid,
-        'BillFld1': billFld1,
-        'BillFld2': billFld2,
-        'BillFld3': billFld3,
-        'BillFld4': billFld4,
-        'ItemsDiscAcc': itemsDiscAcc,
-        'ItemsExtraAccGUID': itemsExtraAccGUID,
-        'CostAccGUID': costAccGUID,
-        'StockAccGUID': stockAccGUID,
-        'BonusAccGUID': bonusAccGUID,
-        'BonusContraAccGUID': bonusContraAccGUID,
-        'VATAccGUID': vatAccGUID,
-        'DIscCard': discCard,
-        'BillAddressGUID': billAddressGUID,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'billGuid': billGuid,
+      'billPayType': billPayType,
+      'billNumber': billNumber,
+      'billDate': billDate,
+      'note': note,
+      'billCustomerId': billCustomerId,
+      'billTotal': billTotal,
+      'billSellerId': billSellerId,
+      'billVatTotal': billVatTotal,
+      'billGiftsTotal': billGiftsTotal,
+      'billDiscountsTotal': billDiscountsTotal,
+      'billAdditionsTotal': billAdditionsTotal,
+    };
+  }
 }
 
-class Items {
-  final List<Item> itemList;
+class BillItems {
+  final List<BillItem> itemList;
 
-  Items({required this.itemList});
+  BillItems({required this.itemList});
 
-  Items copyWith({List<Item>? itemList}) {
-    return Items(
+  BillItems copyWith({List<BillItem>? itemList}) {
+    return BillItems(
       itemList: itemList ?? this.itemList,
     );
   }
 
-  factory Items.fromJson(Map<String, dynamic> json) {
+  factory BillItems.fromJson(Map<String, dynamic> json) {
     var itemsJson = json['Item'] as List<dynamic>;
-    List<Item> itemList = itemsJson.map((item) => Item.fromJson(item)).toList();
-    return Items(itemList: itemList);
+    List<BillItem> itemList = itemsJson.map((item) => BillItem.fromJson(item)).toList();
+    return BillItems(itemList: itemList);
   }
 
   Map<String, dynamic> toJson() => {
@@ -290,39 +161,59 @@ class Items {
       };
 }
 
-class Item {
+class BillItem {
   final String itemGuid;
   final String itemName;
   final int itemQuantity;
-  final String itemPrice;
+  final String itemTotalPrice;
+  final double? itemSubTotalPrice;
+  final double? itemVatPrice;
+  final int? itemGiftsNumber;
+  final double? itemGiftsPrice;
 
-  Item({
+  BillItem({
     required this.itemGuid,
     required this.itemName,
     required this.itemQuantity,
-    required this.itemPrice,
+    required this.itemTotalPrice,
+    this.itemSubTotalPrice,
+    this.itemVatPrice,
+    this.itemGiftsNumber,
+    this.itemGiftsPrice,
   });
 
-  Item copyWith({
-    String? itemGuid,
-    String? itemName,
-    int? itemQuantity,
-    String? itemPrice,
+  BillItem copyWith({
+    final String? itemGuid,
+    final String? itemName,
+    final int? itemQuantity,
+    final String? itemTotalPrice,
+    final double? itemSubTotalPrice,
+    final double? itemVatPrice,
+    final int? itemGiftsNumber,
+    final double? itemGiftsPrice,
   }) {
-    return Item(
+    return BillItem(
       itemGuid: itemGuid ?? this.itemGuid,
       itemName: itemName ?? this.itemName,
       itemQuantity: itemQuantity ?? this.itemQuantity,
-      itemPrice: itemPrice ?? this.itemPrice,
+      itemTotalPrice: itemTotalPrice ?? this.itemTotalPrice,
+      itemSubTotalPrice: itemSubTotalPrice ?? this.itemSubTotalPrice,
+      itemVatPrice: itemVatPrice ?? this.itemVatPrice,
+      itemGiftsNumber: itemGiftsNumber ?? this.itemGiftsNumber,
+      itemGiftsPrice: itemGiftsPrice ?? this.itemGiftsPrice,
     );
   }
 
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
+  factory BillItem.fromJson(Map<String, dynamic> json) {
+    return BillItem(
       itemGuid: json['ItemGuid'],
       itemName: json['ItemName'],
       itemQuantity: json['ItemQuantity'],
-      itemPrice: json['ItemPrice'],
+      itemTotalPrice: json['itemTotalPrice'],
+      itemSubTotalPrice: json['itemSubTotalPrice'],
+      itemVatPrice: json['itemVatPrice'],
+      itemGiftsNumber: json['itemGiftsNumber'],
+      itemGiftsPrice: json['itemGiftsPrice'],
     );
   }
 
@@ -330,6 +221,10 @@ class Item {
         'ItemGuid': itemGuid,
         'ItemName': itemName,
         'ItemQuantity': itemQuantity,
-        'ItemPrice': itemPrice,
+        'itemTotalPrice': itemTotalPrice,
+        'itemSubTotalPrice': itemSubTotalPrice,
+        'itemVatPrice': itemVatPrice,
+        'itemGiftsNumber': itemGiftsNumber,
+        'itemGiftsPrice': itemGiftsPrice,
       };
 }

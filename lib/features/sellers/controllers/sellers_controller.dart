@@ -17,6 +17,8 @@ class SellerController extends GetxController {
   List<SellerModel> sellers = [];
   bool isLoading = true;
 
+  SellerModel? selectedSellerAccount;
+
   @override
   void onInit() {
     super.onInit();
@@ -42,7 +44,7 @@ class SellerController extends GetxController {
 
   // Search for sellers by text query
 
-  List<SellerModel> searchAccountsByNameOrCode(text) {
+  List<SellerModel> searchSellersByNameOrCode(text) {
     if (sellers.isEmpty) {
       log('Accounts isEmpty');
       fetchSellers();
@@ -54,8 +56,10 @@ class SellerController extends GetxController {
   }
 
   List<String> getSellersNames(String query) {
-    return searchAccountsByNameOrCode(query).map((seller) => seller.costName!).toList();
+    return searchSellersByNameOrCode(query).map((seller) => seller.costName!).toList();
   }
+
+  List<SellerModel> getSellersAccounts(String query) => searchSellersByNameOrCode(query);
 
   // Get seller name by ID
   String getSellerNameFromId(String? id) {
@@ -72,16 +76,18 @@ class SellerController extends GetxController {
 
   Future<void> openSellerSelectionDialog(
       {required String query, required TextEditingController textEditingController}) async {
-    List<String> searchedSellersNames = getSellersNames(query);
+    List<SellerModel> searchedSellersAccounts = getSellersAccounts(query);
 
-    if (searchedSellersNames.isNotEmpty) {
-      String? selectedSellerName = await Get.defaultDialog<String>(
+    if (searchedSellersAccounts.isNotEmpty) {
+      SellerModel? selectedSeller = await Get.defaultDialog<SellerModel>(
         title: 'Choose Account',
-        content: AccountSelectionDialog(accountNames: searchedSellersNames),
+        content: SellerSelectionDialog(sellers: searchedSellersAccounts),
       );
 
-      if (selectedSellerName != null) {
-        textEditingController.text = selectedSellerName;
+      if (selectedSeller != null) {
+        textEditingController.text = selectedSeller.costName!;
+
+        selectedSellerAccount = selectedSeller;
         update();
       }
     } else {

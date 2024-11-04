@@ -409,7 +409,7 @@ class InvoicePlutoController extends GetxController {
     });
   }
 
-  double calculateFinalTotal() {
+  double get calculateFinalTotal {
     double totalIncludingVAT = computeWithVatTotal;
     double totalDiscount = computeDiscounts;
     double totalAdditions = computeAdditions;
@@ -437,25 +437,30 @@ class InvoicePlutoController extends GetxController {
 
   List<InvoiceRecordModel> handleSaveAllMaterials() {
     mainTableStateManager.setShowLoading(true);
-    MaterialModel? materialModel;
-    List<InvoiceRecordModel> invRecord = [];
-    MaterialController materialController = Get.find<MaterialController>();
 
-    invRecord = mainTableStateManager.rows.where((element) {
-      materialModel = materialController.getMaterialFromName(element.cells['invRecProduct']!.value);
+    final materialController = Get.find<MaterialController>();
 
-      return materialModel != null && element.cells['invRecQuantity']!.value != null;
-    }).map(
-      (plutoRow) {
-        return InvoiceRecordModel.fromJsonPluto(
-          materialModel!.id!,
-          plutoRow.toJson(),
-        );
-      },
-    ).toList();
+    final invoiceRecords = mainTableStateManager.rows
+        .map((row) {
+          final materialModel = materialController.getMaterialFromName(row.cells['invRecProduct']!.value);
+          return _isRowValid(row, materialModel) ? _createInvoiceRecord(row, materialModel!.id!) : null;
+        })
+        .whereType<InvoiceRecordModel>()
+        .toList();
 
     mainTableStateManager.setShowLoading(false);
-    return invRecord;
+    return invoiceRecords;
+  }
+
+// Helper method to validate each row
+  bool _isRowValid(PlutoRow row, MaterialModel? materialModel) {
+    final quantity = row.cells['invRecQuantity']?.value;
+    return materialModel != null && quantity != null;
+  }
+
+// Helper method to create an InvoiceRecordModel from a row
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) {
+    return InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
   }
 
   @override

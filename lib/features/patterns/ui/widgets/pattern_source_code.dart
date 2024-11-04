@@ -14,11 +14,12 @@ class PatternRecordDataSource extends DataGridSource {
     dataGridRows.clear();
     dataGridRows = billTypeRecords.values
         .map<DataGridRow>((billType) => DataGridRow(cells: [
-              DataGridCell<String>(columnName: "patId", value: billType.id),
-              DataGridCell<String>(columnName: AppConstants.patCode, value: billType.id),
+              DataGridCell<String>(columnName: "patId", value: billType.billTypeId),
+              DataGridCell<String>(columnName: AppConstants.patCode, value: billType.billTypeId),
               //  DataGridCell<String>(columnName: Const.patPrimary, value: getAccountNameFromId(e.patPrimary)),
-              DataGridCell<String>(columnName: AppConstants.patName, value: billType.id),
-              DataGridCell<String>(columnName: AppConstants.patType, value: Utils.getInvTypeFromEnum(billType.id!)),
+              DataGridCell<String>(columnName: AppConstants.patName, value: billType.billTypeId),
+              DataGridCell<String>(
+                  columnName: AppConstants.patType, value: Utils.getInvTypeFromEnum(billType.billTypeId!)),
             ]))
         .toList();
   }

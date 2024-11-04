@@ -46,7 +46,12 @@ class BillButtons extends StatelessWidget {
               onPressed: () async {
                 invoiceController.addNewInvoice(
                   billTypeModel: billTypeModel,
-                  invoiceRecords: invoicePlutoController.handleSaveAllMaterials(),
+                  billTotal: invoicePlutoController.calculateFinalTotal,
+                  billVatTotal: invoicePlutoController.computeTotalVat,
+                  billGiftsTotal: invoicePlutoController.computeGifts,
+                  billDiscountsTotal: invoicePlutoController.computeDiscounts,
+                  billAdditionsTotal: invoicePlutoController.computeAdditions,
+                  billItems: invoicePlutoController.handleSaveAllMaterials(),
                 );
               },
               iconData: Icons.add_chart_outlined),
@@ -83,7 +88,9 @@ class BillButtons extends StatelessWidget {
             AppButton(
               iconData: Icons.print_outlined,
               title: 'طباعة',
-              onPressed: () async {},
+              onPressed: () async {
+                invoiceController.printInvoice(invoicePlutoController.handleSaveAllMaterials());
+              },
             ),
             AppButton(title: "E-Invoice", onPressed: () {}, iconData: Icons.link),
             AppButton(

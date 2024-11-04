@@ -33,13 +33,13 @@ class PatternsDataSource implements FirebaseDatasourceBase<BillTypeModel> {
   Future<void> save(BillTypeModel billType) async {
     final collection = _firestore.collection(_collection);
 
-    if (billType.id == null) {
+    if (billType.billTypeId == null) {
       // Create a new document and set its ID in the model
       final newDocRefId = collection.doc().id;
-      await collection.doc(newDocRefId).set(billType.copyWith(id: newDocRefId).toJson());
+      await collection.doc(newDocRefId).set(billType.copyWith(billTypeId: newDocRefId).toJson());
     } else {
       // Update the existing document
-      await collection.doc(billType.id).set(billType.toJson());
+      await collection.doc(billType.billTypeId).set(billType.toJson());
     }
   }
 

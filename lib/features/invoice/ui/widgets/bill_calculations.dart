@@ -33,7 +33,7 @@ class BillCalculations extends StatelessWidget {
               CalculationCard(
                 width: 300,
                 color: Colors.blue,
-                value: controller.calculateFinalTotal().toStringAsFixed(2),
+                value: controller.calculateFinalTotal.toStringAsFixed(2),
                 label: 'النهائي',
               ),
             ],
