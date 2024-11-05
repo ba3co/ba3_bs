@@ -10,7 +10,7 @@ import '../../../core/utils/generate_id.dart';
 import '../../../core/utils/utils.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
-import '../../print/print_controller.dart';
+import '../../print/controller/print_controller.dart';
 import '../data/models/invoice_record_model.dart';
 
 class InvoiceController extends GetxController with AppValidator {
@@ -190,9 +190,9 @@ class InvoiceController extends GetxController with AppValidator {
   }
 
   Future<void> printInvoice(List<InvoiceRecordModel> invRecords) async {
-    PrintController printViewModel = Get.find<PrintController>();
+    PrintingController printController = Get.find<PrintingController>();
 
-    await printViewModel.printFunction(invRecords: invRecords, invId: invId, invDate: billDate!);
+    await printController.startPrinting(invRecords: invRecords, invId: invId, invDate: billDate!);
   }
 
   String get invId => generateId(RecordType.invoice);
