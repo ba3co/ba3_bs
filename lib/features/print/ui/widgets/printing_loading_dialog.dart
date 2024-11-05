@@ -9,6 +9,7 @@ class PrintingLoadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Obx(() {
           // Observe dots and update text dynamically

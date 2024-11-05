@@ -11,13 +11,16 @@ import '../../../core/utils/utils.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../../print/controller/print_controller.dart';
+import '../../print/data/repositories/translation_repository.dart';
 import '../data/models/invoice_record_model.dart';
 
 class InvoiceController extends GetxController with AppValidator {
   final FirebaseRepositoryBase<BillTypeModel> _patternsRepo;
   final FirebaseRepositoryBase<BillModel> _billsRepo;
 
-  InvoiceController(this._patternsRepo, this._billsRepo);
+  final TranslationRepository _translationRepository;
+
+  InvoiceController(this._patternsRepo, this._billsRepo, this._translationRepository);
 
   final TextEditingController invCodeController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
