@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../patterns/data/models/bill_type_model.dart';
-import '../../controllers/invoice_controller.dart';
+import '../../../../patterns/data/models/bill_type_model.dart';
+import '../../../controllers/invoice_controller.dart';
 
 class BillItemWidget extends StatelessWidget {
   final BillTypeModel bill;
@@ -21,6 +21,7 @@ class BillItemWidget extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
+        elevation: 3,
         foregroundColor: Colors.black,
         overlayColor: Colors.grey,
         padding: const EdgeInsets.all(30.0),

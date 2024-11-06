@@ -3,12 +3,12 @@ import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/widgets/custom_text_field_without_icon.dart';
-import '../../controllers/invoice_controller.dart';
+import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/widgets/custom_text_field_without_icon.dart';
+import '../../../controllers/invoice_controller.dart';
 
-AppBar buildAppBar(InvoiceController invoiceController, BillTypeModel billModel) {
+AppBar billDetailsAppBar(InvoiceController invoiceController, BillTypeModel billModel) {
   return AppBar(
     leadingWidth: 100,
     title: Text('${billModel.fullName}'),

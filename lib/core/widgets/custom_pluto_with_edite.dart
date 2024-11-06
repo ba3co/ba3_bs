@@ -26,7 +26,7 @@ class CustomPlutoWithEdite extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: PlutoGrid(
         columns: controller.columns,
-        rows: controller.rows,
+        rows: controller.mainTableRows,
         onRowSecondaryTap: onRowSecondaryTap,
         onChanged: onChanged,
         configuration: PlutoGridConfiguration(

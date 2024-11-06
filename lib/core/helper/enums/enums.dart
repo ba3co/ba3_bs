@@ -51,21 +51,33 @@ enum InvPayType {
   final String label;
 
   const InvPayType(this.label);
+
+  factory InvPayType.fromIndex(int index) {
+    return InvPayType.values.firstWhere(
+      (type) => type.index == index,
+      orElse: () => throw ArgumentError('No matching BillType for label: $index'),
+    );
+  }
 }
 
 enum BillType {
-  sales('invoiceTypeSales'),
-  buy('invoiceTypeBuy'),
-  salesReturn('salesReturn'),
-  buyReturn('buyReturn'),
-  inputSettlement('inputSettlement'),
-  outputSettlement('outputSettlement'),
-  salesWithPartner('invoiceTypeSalesWithPartner'),
-  salesWithoutReceipt('salesWithoutReceipt');
+  sales(label: 'invoiceTypeSales', value: 'قاتورة مبيعات'),
+  buy(label: 'invoiceTypeBuy', value: 'قاتورة مشتريات'),
+  salesReturn(label: 'salesReturn', value: 'قاتورة مرتجع مبيع'),
+  buyReturn(label: 'buyReturn', value: 'قاتورة مرتجع شراء'),
+  inputSettlement(label: 'inputSettlement', value: 'قاتورة تسوية ادخال'),
+  outputSettlement(label: 'outputSettlement', value: 'قاتورة تسوية اخراج'),
+  salesWithPartner(label: 'invoiceTypeSalesWithPartner', value: 'قاتورة مبيعات مع شريك'),
+  salesWithoutReceipt(label: 'salesWithoutReceipt', value: 'قاتورة مبيعات بدون اصل');
 
   final String label;
 
-  const BillType(this.label);
+  final String value;
+
+  const BillType({
+    required this.label,
+    required this.value,
+  });
 
   // Factory constructor with error handling for unmatched labels
   factory BillType.fromLabel(String label) {

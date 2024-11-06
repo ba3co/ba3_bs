@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../features/invoice/ui/widgets/custom_Text_field.dart';
+import '../../features/invoice/ui/widgets/invoice_screen/custom_Text_field.dart';
 
 class OptionTextWidget extends StatelessWidget {
   const OptionTextWidget({required this.title, super.key, required this.controller, required this.onSubmitted});

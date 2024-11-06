@@ -1,17 +1,15 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/widgets/app_spacer.dart';
-import '../../../../core/widgets/custom_pluto_short_cut.dart';
-import '../../../../core/widgets/custom_pluto_with_edite.dart';
-import '../../../../core/widgets/get_accounts_by_enter_action.dart';
-import '../../../../core/widgets/get_products_by_enter_action.dart';
-import '../../../patterns/data/models/bill_type_model.dart';
-import '../../controllers/invoice_pluto_controller.dart';
+import '../../../../../core/widgets/app_spacer.dart';
+import '../../../../../core/widgets/custom_pluto_short_cut.dart';
+import '../../../../../core/widgets/custom_pluto_with_edite.dart';
+import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
+import '../../../../../core/widgets/get_products_by_enter_action.dart';
+import '../../../../patterns/data/models/bill_type_model.dart';
+import '../../../controllers/invoice_pluto_controller.dart';
 import 'bill_grid_widget.dart';
 
 class BillBody extends StatelessWidget {

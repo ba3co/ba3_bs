@@ -6,21 +6,20 @@ import 'package:get/get.dart';
 
 import '../../../core/classes/repositories/firebase_repo_base.dart';
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/utils/generate_id.dart';
 import '../../../core/utils/utils.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../../print/controller/print_controller.dart';
-import '../../print/data/repositories/translation_repository.dart';
 import '../data/models/invoice_record_model.dart';
+import 'invoice_pluto_controller.dart';
 
 class InvoiceController extends GetxController with AppValidator {
   final FirebaseRepositoryBase<BillTypeModel> _patternsRepo;
   final FirebaseRepositoryBase<BillModel> _billsRepo;
 
-  final TranslationRepository _translationRepository;
-
-  InvoiceController(this._patternsRepo, this._billsRepo, this._translationRepository);
+  InvoiceController(this._patternsRepo, this._billsRepo);
 
   final TextEditingController invCodeController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
@@ -35,6 +34,7 @@ class InvoiceController extends GetxController with AppValidator {
   final formKey = GlobalKey<FormState>();
 
   String? billDate;
+
   List<BillTypeModel> billsTypes = [];
 
   AccountModel? selectedCustomerAccount;
@@ -42,11 +42,13 @@ class InvoiceController extends GetxController with AppValidator {
   InvPayType selectedPayType = InvPayType.cash;
   BillType billType = BillType.sales;
 
+  List<BillModel> bills = [];
+
+  bool isLoading = true;
+
   @override
   void onInit() {
     super.onInit();
-
-    // selectedCustomerAccount = AccountModel(id: '5b36c82d-9105-4177-a5c3-0f90e5857e3c', accName: 'الصندوق');
 
     getAllBillTypes();
 
@@ -67,24 +69,9 @@ class InvoiceController extends GetxController with AppValidator {
   onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
       selectedPayType = payType;
-      // updateCustomerAccount(payType);
       update();
     }
   }
-
-  // updateCustomerAccount(InvPayType payType) {
-  //   switch (payType) {
-  //     case InvPayType.cash:
-  //       final String customerAccountName = invCustomerAccountController.text;
-  //       Get.find<AccountsController>().customerAccount = AccountModel();
-  //
-  //       break;
-  //     case InvPayType.due:
-  //       customerAccount = billType == BillType.sales ? CustomerAccount.cashCustomer : CustomerAccount.provider;
-  //       invCustomerAccountController.text = customerAccount.label;
-  //       break;
-  //   }
-  // }
 
   updateCustomerAccount(AccountModel? newAccount) {
     if (newAccount != null) {
@@ -97,6 +84,98 @@ class InvoiceController extends GetxController with AppValidator {
       selectedCustomerAccount = account;
       invCustomerAccountController.text = account.accName!;
     }
+  }
+
+  Future<void> fetchBills() async {
+    final result = await _billsRepo.getAll();
+
+    result.fold(
+      (failure) {
+        Utils.showSnackBar('خطأ', failure.message);
+      },
+      (fetchedBills) {
+        bills.assignAll(fetchedBills);
+      },
+    );
+    isLoading = false;
+    update();
+  }
+
+  Future<void> deleteInvoice(String billId) async {
+    final result = await _billsRepo.delete(billId);
+
+    result.fold((failure) => Utils.showSnackBar('خطأ', failure.message),
+        (success) => Utils.showSnackBar('نجاح', 'تم حذف الفاتورة بنجاح!'));
+
+    Get.offAllNamed(AppRoutes.mainLayout);
+  }
+
+  void navigateToAllBillsScreen() {
+    Get.toNamed(AppRoutes.showAllBillsScreen);
+  }
+
+  void navigateToBillDetailsScreen(
+      {required String billId, required String customerAccName, required String sellerAccName}) {
+    Get.lazyPut(() => InvoicePlutoController());
+    BillModel billModel = getBillFromId(billId);
+
+    // Convert list of BillItem to list of InvoiceRecordModel
+    List<InvoiceRecordModel> invRecords = InvoiceRecordModel.fromBillItemList(billModel.items.itemList);
+
+    // Load the rows in the InvoicePlutoController and navigate to the Bill Details screen
+    Get.find<InvoicePlutoController>().loadMainPlutoTableRowsFromInvRecords(invRecords);
+
+    AccountModel customerAcc = billModel.billTypeModel.accounts![BillAccounts.caches]!;
+
+    Get.find<InvoicePlutoController>()
+        .loadAdditionsDiscountsPlutoTableRowsFromInvRecords(getAdditionsDiscountsRecords(billModel.billDetails));
+    initCustomerAccount(customerAcc);
+    Get.toNamed(AppRoutes.billDetailsScreen, arguments: {
+      'billModel': billModel,
+      'customerAcc': customerAcc,
+      'sellerAccName': sellerAccName,
+    });
+  }
+
+  List<Map<String, String>> getAdditionsDiscountsRecords(BillDetails billDetails) {
+    double billTotal = billDetails.billTotal ?? 0;
+
+    String billAdditionsTotalStr = (billDetails.billAdditionsTotal != null && billDetails.billAdditionsTotal != 0)
+        ? billDetails.billAdditionsTotal.toString()
+        : '';
+
+    String billDiscountsTotalStr = (billDetails.billDiscountsTotal != null && billDetails.billDiscountsTotal != 0)
+        ? billDetails.billDiscountsTotal.toString()
+        : '';
+
+    // Helper function for ratio calculation
+    double calculateRatio(double value, double total) => total != 0 ? (value / total) * 100 : 0;
+
+    // Calculate ratios
+    double billAdditionsRatio = calculateRatio(billDetails.billAdditionsTotal ?? 0, billTotal);
+    double billDiscountsRatio = calculateRatio(billDetails.billDiscountsTotal ?? 0, billTotal);
+
+    // Construct and return the list of records
+    return [
+      {
+        'accountId': 'الحسم الممنوح',
+        'discountId': billDiscountsTotalStr,
+        'discountRatioId': billDiscountsRatio.toStringAsFixed(0),
+        'additionId': '',
+        'additionRatioId': '',
+      },
+      {
+        'accountId': 'الاضافات',
+        'discountId': '',
+        'discountRatioId': '',
+        'additionId': billAdditionsTotalStr,
+        'additionRatioId': billAdditionsRatio.toStringAsFixed(0),
+      }
+    ];
+  }
+
+  BillModel getBillFromId(String billId) {
+    return bills.firstWhere((bill) => bill.billId == billId);
   }
 
   Future<void> getAllBillTypes() async {

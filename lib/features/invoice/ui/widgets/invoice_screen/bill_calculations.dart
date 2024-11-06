@@ -1,8 +1,8 @@
-import 'package:ba3_bs/features/invoice/ui/widgets/vat_total_card.dart';
+import 'package:ba3_bs/features/invoice/ui/widgets/invoice_screen/vat_total_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../controllers/invoice_pluto_controller.dart';
+import '../../../controllers/invoice_pluto_controller.dart';
 import 'calculation_card.dart';
 
 class BillCalculations extends StatelessWidget {

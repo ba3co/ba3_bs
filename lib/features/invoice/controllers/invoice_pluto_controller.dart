@@ -17,14 +17,18 @@ class InvoicePlutoController extends GetxController {
   }
 
 // State manager for the main grid
-  late PlutoGridStateManager mainTableStateManager =
+  PlutoGridStateManager mainTableStateManager =
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   // State manager for the additions and discounts grid
-  late PlutoGridStateManager additionsDiscountsStateManager;
+  PlutoGridStateManager additionsDiscountsStateManager =
+      PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   List<PlutoColumn> columns = [];
-  List<PlutoRow> rows = [];
+
+  List<PlutoRow> mainTableRows = [];
+
+  List<PlutoRow> additionsDiscountsRows = AppConstants.additionsDiscountsRows;
 
   String typeBile = '';
   String customerName = '';
@@ -461,6 +465,57 @@ class InvoicePlutoController extends GetxController {
 // Helper method to create an InvoiceRecordModel from a row
   InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) {
     return InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
+  }
+
+  loadMainPlutoTableRowsFromInvRecords(List<InvoiceRecordModel> invRecords) {
+    mainTableStateManager.removeAllRows();
+    final newRows = mainTableStateManager.getNewRows(count: 30);
+
+    if (invRecords.isEmpty) {
+      mainTableStateManager.appendRows(newRows);
+    } else {
+      mainTableRows = invRecords.map((record) {
+        Map<PlutoColumn, dynamic> rowData = record.toEditedMap();
+
+        Map<String, PlutoCell> cells = {};
+
+        rowData.forEach((key, value) {
+          cells[key.field] = PlutoCell(value: value?.toString() ?? '');
+        });
+
+        return PlutoRow(cells: cells);
+      }).toList();
+
+      mainTableStateManager.appendRows(mainTableRows);
+      mainTableStateManager.appendRows(newRows);
+    }
+  }
+
+  loadAdditionsDiscountsPlutoTableRowsFromInvRecords(List<Map<String, String>> additionsDiscountsRecords) {
+    // Clear all existing rows in the state manager
+    additionsDiscountsStateManager.removeAllRows();
+
+    // If the records list is empty, append the new empty rows and return
+    if (additionsDiscountsRecords.isEmpty) {
+      additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
+    } else {
+      // List to hold the newly created PlutoRows
+      additionsDiscountsRows = additionsDiscountsRecords.map((record) {
+        // Create a map for PlutoCells with default empty strings
+        Map<String, PlutoCell> cells = {
+          'accountId': PlutoCell(value: record['accountId'] ?? ''),
+          'discountId': PlutoCell(value: record['discountId'] ?? ''),
+          'discountRatioId': PlutoCell(value: record['discountRatioId'] ?? ''),
+          'additionId': PlutoCell(value: record['additionId'] ?? ''),
+          'additionRatioId': PlutoCell(value: record['additionRatioId'] ?? ''),
+        };
+
+        return PlutoRow(cells: cells);
+      }).toList();
+
+      // Append the transformed rows to the state manager
+      additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
+    }
   }
 
   @override

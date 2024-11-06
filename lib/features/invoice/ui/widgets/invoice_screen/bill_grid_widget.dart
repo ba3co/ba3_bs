@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/widgets/custom_pluto_grid_style_config.dart';
+import '../../../../../core/widgets/custom_pluto_grid_style_config.dart';
 
 class BillGridWidget extends StatelessWidget {
   final Color rowColor;

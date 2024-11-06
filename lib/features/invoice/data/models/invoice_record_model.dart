@@ -2,6 +2,8 @@ import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import 'bill_model.dart';
+
 class InvoiceRecordModel {
   String? invRecId;
   String? invRecProduct;
@@ -26,6 +28,23 @@ class InvoiceRecordModel {
     this.invRecGift,
     this.invRecGiftTotal,
   });
+
+  /// Factory method to create an InvoiceRecordModel from a BillItem.
+  factory InvoiceRecordModel.fromBillItem(BillItem billItem) => InvoiceRecordModel(
+        invRecId: billItem.itemGuid,
+        invRecProduct: billItem.itemName,
+        invRecQuantity: billItem.itemQuantity,
+        invRecSubTotal: billItem.itemSubTotalPrice,
+        invRecTotal: double.tryParse(billItem.itemTotalPrice),
+        invRecVat: billItem.itemVatPrice,
+        invRecGift: billItem.itemGiftsNumber,
+        invRecGiftTotal: billItem.itemGiftsPrice,
+      );
+
+  /// Static method to convert a list of BillItem objects to a list of InvoiceRecordModel objects.
+  static List<InvoiceRecordModel> fromBillItemList(List<BillItem> billItems) {
+    return billItems.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
+  }
 
   InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) {
     invRecId = map['invRecId'];

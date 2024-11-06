@@ -69,7 +69,7 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
     Get.lazyPut(() => PatternController(patternsRepo), fenix: true);
-    Get.lazyPut(() => InvoiceController(patternsRepo, billsRepo, translationRepo), fenix: true);
+    Get.lazyPut(() => InvoiceController(patternsRepo, billsRepo), fenix: true);
 
     Get.lazyPut(() => MaterialController(MaterialRepository()), fenix: true);
     Get.lazyPut(() => AccountsController(AccountsRepository()), fenix: true);

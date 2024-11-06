@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
+import '../../../core/styling/printer_text_styles.dart';
 import '../../invoice/data/models/invoice_record_model.dart';
 import '../../materials/data/models/material_model.dart';
 import '../data/repositories/translation_repository.dart';
@@ -38,11 +39,8 @@ class PrintingController extends GetxController {
     });
   }
 
-  Future<void> startPrinting({
-    required List<InvoiceRecordModel> invRecords,
-    required String invId,
-    required String invDate,
-  }) async {
+  Future<void> startPrinting(
+      {required List<InvoiceRecordModel> invRecords, required String invId, required String invDate}) async {
     Get.defaultDialog(
       title: '',
       content: const PrintingLoadingDialog(),
@@ -120,7 +118,7 @@ class PrintingController extends GetxController {
     List<int> bytes = generator.reset();
 
     // Header
-    bytes += generator.text('Tax Invoice', styles: centeredStyle, linesAfter: 1);
+    bytes += generator.text('Tax Invoice', styles: PrinterTextStyles.centered, linesAfter: 1);
     bytes += await _generateLogo(generator);
     bytes += _generateHeader(generator, invoiceDate, invoiceId);
 
@@ -143,6 +141,7 @@ class PrintingController extends GetxController {
     double netAmount = 0;
     double vatAmount = 0;
     List<int> itemBytes = [];
+
     final materialController = Get.find<MaterialController>();
 
     for (var record in invoiceRecords) {
@@ -183,12 +182,12 @@ class PrintingController extends GetxController {
     final translatedName = await _translationRepository.translateText(itemName);
 
     return [
-      ...generator.text(translatedName, styles: leftStyle),
-      ...generator.text(material.matBarCode ?? '', styles: leftStyle),
+      ...generator.text(translatedName, styles: PrinterTextStyles.left),
+      ...generator.text(material.matBarCode ?? '', styles: PrinterTextStyles.left),
       ...generator.text(
         '${record.invRecQuantity} x ${totals['unitPriceWithVat']!.toStringAsFixed(2)} -> '
         'Total: ${totals['lineTotal']!.toStringAsFixed(2)}',
-        styles: leftStyle,
+        styles: PrinterTextStyles.left,
         linesAfter: 1,
       ),
     ];
@@ -216,41 +215,31 @@ class PrintingController extends GetxController {
   List<int> _generateHeader(Generator generator, String date, String invoiceId) {
     return [
       ...generator.emptyLines(2),
-      ...generator.text('Burj AlArab Mobile Phone', styles: boldCenteredStyle),
+      ...generator.text('Burj AlArab Mobile Phone', styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(1),
-      ...generator.text('Date: $date', styles: leftStyle),
-      ...generator.text('IN NO: $invoiceId', styles: leftStyle),
-      ...generator.text('TRN: 10036 93114 00003', styles: leftStyle, linesAfter: 1),
+      ...generator.text('Date: $date', styles: PrinterTextStyles.left),
+      ...generator.text('IN NO: $invoiceId', styles: PrinterTextStyles.left),
+      ...generator.text('TRN: 10036 93114 00003', styles: PrinterTextStyles.left, linesAfter: 1),
     ];
   }
 
   List<int> _generateTotalSummary(Generator generator, double netTotal, double vatTotal) {
     return [
-      ...generator.text('Total VAT: ${vatTotal.toStringAsFixed(2)}', styles: centeredStyle),
-      ...generator.text('-' * 30, styles: rightStyle),
-      ...generator.text('Sub: ${netTotal.toStringAsFixed(2)} AED', styles: rightBoldStyle),
-      ...generator.text('VAT: ${vatTotal.toStringAsFixed(2)} AED', styles: rightBoldStyle),
-      ...generator.text('Total: ${(netTotal + vatTotal).toStringAsFixed(2)} AED', styles: rightBoldStyle),
+      ...generator.text('Total VAT: ${vatTotal.toStringAsFixed(2)}', styles: PrinterTextStyles.centered),
+      ...generator.text('-' * 30, styles: PrinterTextStyles.right),
+      ...generator.text('Sub: ${netTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
+      ...generator.text('VAT: ${vatTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
+      ...generator.text('Total: ${(netTotal + vatTotal).toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
       ...generator.emptyLines(1),
     ];
   }
 
   List<int> _generateFooter(Generator generator) {
     return [
-      ...generator.text('UAE, Rak, Sadaf Roundabout', styles: centeredStyle),
-      ...generator.text('+971568666411', styles: centeredStyle),
-      ...generator.text('Thanks For Visiting BA3', styles: boldCenteredStyle),
+      ...generator.text('UAE, Rak, Sadaf Roundabout', styles: PrinterTextStyles.centered),
+      ...generator.text('+971568666411', styles: PrinterTextStyles.centered),
+      ...generator.text('Thanks For Visiting BA3', styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(2),
     ];
   }
-
-  PosStyles get centeredStyle => const PosStyles(align: PosAlign.center);
-
-  PosStyles get leftStyle => const PosStyles(align: PosAlign.left);
-
-  PosStyles get rightStyle => const PosStyles(align: PosAlign.right);
-
-  PosStyles get boldCenteredStyle => const PosStyles(align: PosAlign.center, bold: true);
-
-  PosStyles get rightBoldStyle => const PosStyles(align: PosAlign.right, bold: true);
 }

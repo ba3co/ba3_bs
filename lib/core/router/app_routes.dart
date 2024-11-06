@@ -1,5 +1,6 @@
 class AppRoutes {
   static const String splashScreen = '/';
+  static const String mainLayout = '/mainLayout';
   static const String warrantyInvoiceView = '/warrantyInvoiceView';
   static const String loginScreen = '/loginScreen';
   static const String patternsScreen = '/patternsScreen';
@@ -9,4 +10,6 @@ class AppRoutes {
   static const String showAllMaterialsScreen = '/showAllMaterialsScreen';
   static const String showAllAccountsScreen = '/showAllAccountsScreen';
   static const String showAllSellersScreen = '/showAllSellersScreen';
+  static const String showAllBillsScreen = '/showAllBillsScreen';
+  static const String billDetailsScreen = '/billDetailsScreen';
 }

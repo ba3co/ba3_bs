@@ -30,7 +30,7 @@ class GoogleTranslationDataSource implements TranslationDataSourceBase {
 
       return response['data']['translations'][0]['translatedText'];
     } catch (e) {
-      throw Exception('Failed to translate text: $e');
+      rethrow;
     }
   }
 }

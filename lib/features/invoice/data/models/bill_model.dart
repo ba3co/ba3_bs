@@ -1,6 +1,11 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:get/get.dart';
+
 import '../../../patterns/data/models/bill_type_model.dart';
 
-class BillModel {
+class BillModel implements PlutoAdaptable {
   final String? billId;
   final BillTypeModel billTypeModel;
 
@@ -42,6 +47,23 @@ class BillModel {
         'billTypeModel': billTypeModel.toJson(),
         'billDetails': billDetails.toJson(),
         'items': items.toJson(),
+      };
+
+  @override
+  Map<String, dynamic> toPlutoGridFormat() => {
+        'billId': billId ?? '',
+        'التاريخ': billDetails.billDate ?? '',
+        'المجموع الكلي': billDetails.billTotal ?? 0,
+        'مجموع الضريبة': double.tryParse(billDetails.billVatTotal?.toStringAsFixed(2) ?? '0') ?? 0,
+        'مجموع الحسم': billDetails.billDiscountsTotal ?? 0,
+        'مجموع الهدايا': billDetails.billGiftsTotal ?? 0,
+        'مجموع الاضافات': billDetails.billAdditionsTotal ?? 0,
+        "نوع الفاتورة": BillType.fromLabel(billTypeModel.billTypeLabel ?? "").value,
+        'نوع الدفع': InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
+        'حساب العميل': billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
+        'حساب البائع': Get.find<SellerController>().getSellerNameFromId(billDetails.billSellerId),
+        'المستودع': billTypeModel.accounts?[BillAccounts.store] ?? '',
+        'وصف': billDetails.note ?? '',
       };
 }
 
