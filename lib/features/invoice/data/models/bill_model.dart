@@ -4,6 +4,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../patterns/data/models/bill_type_model.dart';
+import 'invoice_record_model.dart';
 
 class BillModel implements PlutoAdaptable {
   final String? billId;
@@ -41,6 +42,39 @@ class BillModel implements PlutoAdaptable {
       items: BillItems.fromJson(json['items']),
     );
   }
+
+  factory BillModel.fromInvoiceData({
+    required double billVatTotal,
+    required double billGiftsTotal,
+    required double billDiscountsTotal,
+    required double billAdditionsTotal,
+    required double billTotal,
+    required BillTypeModel billTypeModel,
+    required List<InvoiceRecordModel> billItems,
+  }) =>
+      BillModel(
+        billTypeModel: billTypeModel,
+        billDetails: BillDetails(
+          billTotal: billTotal,
+          billVatTotal: billVatTotal,
+          billGiftsTotal: billGiftsTotal,
+          billDiscountsTotal: billDiscountsTotal,
+          billAdditionsTotal: billAdditionsTotal,
+        ),
+        items: BillItems(
+            itemList: billItems
+                .map((invoiceRecordModel) => BillItem(
+                      itemGuid: invoiceRecordModel.invRecId!,
+                      itemName: invoiceRecordModel.invRecProduct!,
+                      itemQuantity: invoiceRecordModel.invRecQuantity!,
+                      itemTotalPrice: invoiceRecordModel.invRecTotal.toString(),
+                      itemSubTotalPrice: invoiceRecordModel.invRecSubTotal,
+                      itemVatPrice: invoiceRecordModel.invRecVat,
+                      itemGiftsPrice: invoiceRecordModel.invRecGiftTotal,
+                      itemGiftsNumber: invoiceRecordModel.invRecGift,
+                    ))
+                .toList()),
+      );
 
   Map<String, dynamic> toJson() => {
         'billId': billId,
@@ -159,6 +193,40 @@ class BillDetails {
       'billAdditionsTotal': billAdditionsTotal,
     };
   }
+
+  Map<String, String> _createRecordRow({
+    required String accountId,
+    String discountId = '',
+    String discountRatioId = '',
+    String additionId = '',
+    String additionRatioId = '',
+  }) =>
+      {
+        'accountId': accountId,
+        'discountId': discountId,
+        'discountRatioId': discountRatioId,
+        'additionId': additionId,
+        'additionRatioId': additionRatioId,
+      };
+
+  List<Map<String, String>> get additionsDiscountsRecords {
+    final double total = billTotal ?? 0;
+
+    return [
+      _createRecordRow(
+        accountId: 'الحسم الممنوح',
+        discountId: (billDiscountsTotal ?? 0).toString(),
+        discountRatioId: _calculateRatio(billDiscountsTotal ?? 0, total),
+      ),
+      _createRecordRow(
+        accountId: 'الاضافات',
+        additionId: (billAdditionsTotal ?? 0).toString(),
+        additionRatioId: _calculateRatio(billAdditionsTotal ?? 0, total),
+      ),
+    ];
+  }
+
+  String _calculateRatio(double value, double total) => total != 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
 }
 
 class BillItems {
@@ -181,6 +249,9 @@ class BillItems {
   Map<String, dynamic> toJson() => {
         'Item': itemList.map((item) => item.toJson()).toList(),
       };
+
+  List<InvoiceRecordModel> get materialRecords =>
+      itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
 }
 
 class BillItem {

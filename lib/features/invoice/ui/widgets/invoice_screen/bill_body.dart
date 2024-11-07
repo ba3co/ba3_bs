@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -53,12 +52,12 @@ class BillBody extends StatelessWidget {
                     flex: 1,
                     child: BillGridWidget(
                       rowColor: Colors.grey,
-                      columns: AppConstants.additionsDiscountsColumns,
+                      columns: plutoController.additionsDiscountsColumns,
+                      rows: plutoController.additionsDiscountsRows,
                       shortCut: customPlutoShortcut(GetAccountsByEnterAction(controller, "accountId")),
-                      rows: AppConstants.additionsDiscountsRows,
                       onChanged: plutoController.onAdditionsDiscountsChanged,
                       onLoaded: (PlutoGridOnLoadedEvent event) {
-                        plutoController.additionsDiscountsStateManager = event.stateManager;
+                        plutoController.updateAdditionsDiscountsStateManager(event.stateManager);
                       },
                     ),
                   );

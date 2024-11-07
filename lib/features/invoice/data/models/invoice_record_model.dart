@@ -41,11 +41,6 @@ class InvoiceRecordModel {
         invRecGiftTotal: billItem.itemGiftsPrice,
       );
 
-  /// Static method to convert a list of BillItem objects to a list of InvoiceRecordModel objects.
-  static List<InvoiceRecordModel> fromBillItemList(List<BillItem> billItems) {
-    return billItems.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
-  }
-
   InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) {
     invRecId = map['invRecId'];
     invRecProduct = map['invRecProduct'];

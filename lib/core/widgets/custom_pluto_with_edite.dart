@@ -25,7 +25,7 @@ class CustomPlutoWithEdite extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: PlutoGrid(
-        columns: controller.columns,
+        columns: controller.mainTableColumns,
         rows: controller.mainTableRows,
         onRowSecondaryTap: onRowSecondaryTap,
         onChanged: onChanged,
@@ -35,7 +35,7 @@ class CustomPlutoWithEdite extends StatelessWidget {
           localeText: const PlutoGridLocaleText.arabic(),
         ),
         onLoaded: (PlutoGridOnLoadedEvent event) {
-          controller.mainTableStateManager = event.stateManager;
+          controller.updateMainTableStateManager(event.stateManager);
           final newRows = controller.mainTableStateManager.getNewRows(count: 30);
           controller.mainTableStateManager.appendRows(newRows);
 

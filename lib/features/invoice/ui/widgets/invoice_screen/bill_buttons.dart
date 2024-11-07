@@ -1,4 +1,5 @@
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
+import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -44,7 +45,7 @@ class BillButtons extends StatelessWidget {
           AppButton(
               title: "إضافة",
               onPressed: () async {
-                invoiceController.addNewInvoice(
+                final billModel = BillModel.fromInvoiceData(
                   billTypeModel: billTypeModel,
                   billTotal: invoicePlutoController.calculateFinalTotal,
                   billVatTotal: invoicePlutoController.computeTotalVat,
@@ -53,6 +54,8 @@ class BillButtons extends StatelessWidget {
                   billAdditionsTotal: invoicePlutoController.computeAdditions,
                   billItems: invoicePlutoController.handleSaveAllMaterials(),
                 );
+
+                await invoiceController.addNewInvoice(billModel);
               },
               iconData: Icons.add_chart_outlined),
           AppButton(
