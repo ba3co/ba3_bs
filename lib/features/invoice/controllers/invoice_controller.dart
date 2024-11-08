@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -129,6 +131,7 @@ class InvoiceController extends GetxController with AppValidator {
   Future<void> addNewInvoice(BillModel billModel) async {
     if (!validateForm()) return;
 
+    log('billTotal ${billModel.billDetails.billTotal}');
     // Create a modified copy of the billModel
     final updatedBillModel = billModel.copyWith(
       billDetails: billModel.billDetails.copyWith(

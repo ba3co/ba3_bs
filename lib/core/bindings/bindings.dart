@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/classes/datasources/translation_data_source_base.dart';
+import 'package:ba3_bs/core/classes/datasources/i_translation_service.dart';
 import 'package:ba3_bs/core/classes/repositories/firebase_repo_concrete.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
@@ -24,11 +24,11 @@ import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
-import '../../features/print/data/datasources/custom_dio_client.dart';
-import '../../features/print/data/datasources/custom_http_client.dart';
-import '../../features/print/data/datasources/google_translation_data_source.dart';
+import '../../features/print/data/datasources/dio_client.dart';
+import '../../features/print/data/datasources/google_translation.dart';
+import '../../features/print/data/datasources/http_client.dart';
 import '../../features/print/data/repositories/translation_repository.dart';
-import '../classes/datasources/http_client_base.dart';
+import '../classes/datasources/api_client_base.dart';
 import '../classes/repositories/firebase_repo_base.dart';
 import '../network/api_constants.dart';
 
@@ -51,16 +51,14 @@ class AppBindings extends Bindings {
       InvoicesDataSource(firestore),
     );
 
-    // Instantiate custom HTTP client, GoogleTranslationDataSource and TranslationRepository
-    final HttpClientBase customHttpClient = CustomHttpClient<Map<String, dynamic>>(Client());
-    final HttpClientBase customDioClient = CustomDioClient<Map<String, dynamic>>(Dio());
+    // Instantiate Api client, GoogleTranslationDataSource and TranslationRepository
+    final APiClientBase httpClient = HttpClient<Map<String, dynamic>>(Client());
+    final APiClientBase dioClient = DioClient<Map<String, dynamic>>(Dio());
 
-    final TranslationDataSourceBase googleTranslationDataSource = GoogleTranslationDataSource(
-      baseUrl: ApiConstants.translationBaseUrl,
-      apiKey: ApiConstants.translationApiKey,
-      httpClient: customDioClient,
-    );
-    final TranslationRepository translationRepo = TranslationRepository(googleTranslationDataSource);
+    final ITranslationService googleTranslation = GoogleTranslation(
+        baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
+
+    final TranslationRepository translationRepo = TranslationRepository(googleTranslation);
 
     // Lazy load controllers
     Get.lazyPut(() => NfcCardsController(), fenix: true);

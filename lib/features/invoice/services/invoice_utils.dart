@@ -2,6 +2,7 @@ import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/utils.dart';
 import '../../materials/data/models/material_model.dart';
 
 class InvoiceUtils {
@@ -31,7 +32,16 @@ class InvoiceUtils {
   }
 
   bool validateInvoiceRow(PlutoRow row, String cellKey) {
-    final cellValue = row.cells[cellKey]?.value ?? 0;
-    return cellValue > 0;
+    final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
+
+    int invRecQuantity = int.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
+
+    return invRecQuantity > 0;
+  }
+
+  double getCellValueInDouble(Map<String, PlutoCell> cells, String cellKey) {
+    final String cellValue = cells[cellKey]?.value.toString() ?? '';
+
+    return double.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
   }
 }

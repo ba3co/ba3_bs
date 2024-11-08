@@ -295,28 +295,18 @@ abstract class AppConstants {
 
   static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(
-      title: 'الحساب',
-      field: 'accountId',
+      title: '',
+      field: 'id',
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
       title: 'الحسم',
-      field: 'discountId',
+      field: 'discount',
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
-      title: 'نسبه الحسم',
-      field: 'discountRatioId',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'الاضافه',
-      field: 'additionId',
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: 'نسبه الاضافه',
-      field: 'additionRatioId',
+      title: 'الاضافات',
+      field: 'addition',
       type: PlutoColumnType.text(),
     ),
   ];
@@ -324,20 +314,16 @@ abstract class AppConstants {
   static List<PlutoRow> additionsDiscountsRows = [
     PlutoRow(
       cells: {
-        'accountId': PlutoCell(value: 'الحسم الممنوح'),
-        'discountId': PlutoCell(value: ''),
-        'discountRatioId': PlutoCell(value: ''),
-        'additionId': PlutoCell(value: ''),
-        'additionRatioId': PlutoCell(value: ''),
+        'id': PlutoCell(value: 'النسبه'),
+        'discount': PlutoCell(value: ''),
+        'addition': PlutoCell(value: ''),
       },
     ),
     PlutoRow(
       cells: {
-        'accountId': PlutoCell(value: 'الاضافات'),
-        'discountId': PlutoCell(value: ''),
-        'discountRatioId': PlutoCell(value: ''),
-        'additionId': PlutoCell(value: ''),
-        'additionRatioId': PlutoCell(value: ''),
+        'id': PlutoCell(value: 'القيمة'),
+        'discount': PlutoCell(value: ''),
+        'addition': PlutoCell(value: ''),
       },
     ),
   ];

@@ -1,4 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'dart:developer';
+
+import 'package:ba3_bs/features/invoice/services/invoice_utils.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -12,11 +14,21 @@ class InvoiceGridService {
 
   PlutoGridStateManager get additionsDiscountsStateManager => invoicePlutoController.additionsDiscountsStateManager;
 
-  PlutoGridOnChangedEvent? get billAdditionsOnChangedEvent => invoicePlutoController.billAdditionsOnChangedEvent;
+  InvoiceUtils get invoiceUtils => invoicePlutoController.invoiceUtils;
 
   void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
     stateManager.changeCellValue(
       stateManager.currentRow!.cells[field]!,
+      value,
+      callOnChangedEvent: false,
+      notify: true,
+      force: true,
+    );
+  }
+
+  void updateAdditionsDiscountsCellValue(PlutoCell cell, dynamic value) {
+    additionsDiscountsStateManager.changeCellValue(
+      cell,
       value,
       callOnChangedEvent: false,
       notify: true,
@@ -49,29 +61,28 @@ class InvoiceGridService {
     updateCellValue(mainTableStateManager, "invRecTotal", total.toStringAsFixed(2));
   }
 
-  void updateDiscountCell(double total) {
-    String? discountRatioStr = billAdditionsOnChangedEvent!.row.cells['discountRatioId']?.value;
-    if (discountRatioStr == null || discountRatioStr.isEmpty) {
-      return;
-    }
-    double discountAmount = invoicePlutoController.calculateDiscountAmount(discountRatioStr, total);
-
-    updateCellValue(additionsDiscountsStateManager, "discountId", discountAmount.toStringAsFixed(2));
-
-    debugPrint('onAdditionsDiscountsChanged on updateDiscountCell');
+  void updateAdditionDiscountCells(double total) {
+    if (total == 0) return;
+    _updateCellValue('discount', total);
+    _updateCellValue('addition', total);
   }
 
-  void updateAdditionCell(double total) {
-    String? additionRatioStr = billAdditionsOnChangedEvent!.row.cells['additionRatioId']?.value;
-    if (additionRatioStr == null || additionRatioStr.isEmpty) {
-      return;
-    }
-    double additionAmount = invoicePlutoController.calculateAdditionAmount(
-        billAdditionsOnChangedEvent!.row.cells['additionRatioId']?.value, total);
+  void _updateCellValue(String field, double total) {
+    final ratioRow = additionsDiscountsStateManager.rows.first;
+    final valueRow = additionsDiscountsStateManager.rows.last;
 
-    updateCellValue(additionsDiscountsStateManager, "additionId", additionAmount.toStringAsFixed(2));
+    // Retrieve the ratio value for the specified field.
+    final ratio = invoiceUtils.getCellValueInDouble(ratioRow.cells, field);
+    if (ratio == 0) return;
 
-    debugPrint('onAdditionsDiscountsChanged on updateAdditionCell');
+    // Calculate the new amount based on the ratio and total.
+    final newValue = invoicePlutoController.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
+
+    // Get the cell to update.
+    final valueCell = valueRow.cells[field]!;
+    updateAdditionsDiscountsCellValue(valueCell, newValue);
+
+    log('$field amount updated: $newValue');
   }
 
   List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records) => records.map((record) {
@@ -83,31 +94,10 @@ class InvoiceGridService {
   List<PlutoRow> convertAdditionsDiscountsRecordsToRows(List<Map<String, String>> additionsDiscountsRecords) =>
       additionsDiscountsRecords.map((record) {
         final cells = {
-          'accountId': PlutoCell(value: record['accountId'] ?? ''),
-          'discountId': PlutoCell(value: record['discountId'] ?? ''),
-          'discountRatioId': PlutoCell(value: record['discountRatioId'] ?? ''),
-          'additionId': PlutoCell(value: record['additionId'] ?? ''),
-          'additionRatioId': PlutoCell(value: record['additionRatioId'] ?? ''),
+          'id': PlutoCell(value: record['id'] ?? ''),
+          'discount': PlutoCell(value: record['discount'] ?? ''),
+          'addition': PlutoCell(value: record['addition'] ?? '')
         };
         return PlutoRow(cells: cells);
       }).toList();
-
-  List<PlutoRow> loadAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
-    additionsDiscountsStateManager.removeAllRows();
-
-    if (additionsDiscountsRecords.isEmpty) {
-      return invoicePlutoController.additionsDiscountsRows;
-    } else {
-      return additionsDiscountsRecords.map((record) {
-        final cells = {
-          'accountId': PlutoCell(value: record['accountId'] ?? ''),
-          'discountId': PlutoCell(value: record['discountId'] ?? ''),
-          'discountRatioId': PlutoCell(value: record['discountRatioId'] ?? ''),
-          'additionId': PlutoCell(value: record['additionId'] ?? ''),
-          'additionRatioId': PlutoCell(value: record['additionRatioId'] ?? ''),
-        };
-        return PlutoRow(cells: cells);
-      }).toList();
-    }
-  }
 }

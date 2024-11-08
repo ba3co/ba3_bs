@@ -194,34 +194,40 @@ class BillDetails {
     };
   }
 
-  Map<String, String> _createRecordRow({
-    required String accountId,
-    String discountId = '',
-    String discountRatioId = '',
-    String additionId = '',
-    String additionRatioId = '',
-  }) =>
-      {
-        'accountId': accountId,
-        'discountId': discountId,
-        'discountRatioId': discountRatioId,
-        'additionId': additionId,
-        'additionRatioId': additionRatioId,
-      };
+  Map<String, String> _createRecordRow(
+          {required String id,
+          bool isRatio = false,
+          String discountRatio = '',
+          String additionRatio = '',
+          String discountValue = '',
+          String additionValue = ''}) =>
+      isRatio
+          ? {
+              'id': id,
+              'discount': discountRatio,
+              'addition': additionRatio,
+            }
+          : {
+              'id': id,
+              'discount': discountValue,
+              'addition': additionValue,
+            };
 
   List<Map<String, String>> get additionsDiscountsRecords {
     final double total = billTotal ?? 0;
 
     return [
       _createRecordRow(
-        accountId: 'الحسم الممنوح',
-        discountId: (billDiscountsTotal ?? 0).toString(),
-        discountRatioId: _calculateRatio(billDiscountsTotal ?? 0, total),
+        id: 'النسبه',
+        isRatio: true,
+        discountRatio: _calculateRatio(billDiscountsTotal ?? 0, total),
+        additionRatio: _calculateRatio(billAdditionsTotal ?? 0, total),
       ),
       _createRecordRow(
-        accountId: 'الاضافات',
-        additionId: (billAdditionsTotal ?? 0).toString(),
-        additionRatioId: _calculateRatio(billAdditionsTotal ?? 0, total),
+        id: 'القيمة',
+        isRatio: false,
+        discountValue: (billDiscountsTotal ?? 0).toString(),
+        additionValue: (billAdditionsTotal ?? 0).toString(),
       ),
     ];
   }

@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 
-import '../../../../core/classes/datasources/http_client_base.dart';
+import '../../../../core/classes/datasources/api_client_base.dart';
 
-class CustomDioClient<T> implements HttpClientBase<T> {
+class DioClient<T> implements APiClientBase<T> {
   final Dio dio;
 
-  CustomDioClient(this.dio);
+  DioClient(this.dio);
 
   @override
   Future<T> post(String url, {Map<String, String>? headers, Object? body}) async {

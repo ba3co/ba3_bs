@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/custom_pluto_short_cut.dart';
@@ -21,7 +20,6 @@ class BillBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var plutoController = Get.find<InvoicePlutoController>();
     return Expanded(
       child: Column(
         children: [
@@ -39,8 +37,8 @@ class BillBody extends StatelessWidget {
                           evenRowColor: Color(billTypeModel.color!),
                           controller: controller,
                           shortCut: customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, "invRecProduct")),
-                          onRowSecondaryTap: plutoController.onMainTableRowSecondaryTap,
-                          onChanged: plutoController.onMainTableStateManagerChanged,
+                          onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
+                          onChanged: controller.onMainTableStateManagerChanged,
                         ),
                       );
                     }),
@@ -52,13 +50,11 @@ class BillBody extends StatelessWidget {
                     flex: 1,
                     child: BillGridWidget(
                       rowColor: Colors.grey,
-                      columns: plutoController.additionsDiscountsColumns,
-                      rows: plutoController.additionsDiscountsRows,
+                      columns: controller.additionsDiscountsColumns,
+                      rows: controller.additionsDiscountsRows,
                       shortCut: customPlutoShortcut(GetAccountsByEnterAction(controller, "accountId")),
-                      onChanged: plutoController.onAdditionsDiscountsChanged,
-                      onLoaded: (PlutoGridOnLoadedEvent event) {
-                        plutoController.updateAdditionsDiscountsStateManager(event.stateManager);
-                      },
+                      onChanged: controller.onAdditionsDiscountsChanged,
+                      onLoaded: controller.onAdditionsDiscountsLoaded,
                     ),
                   );
                 }),

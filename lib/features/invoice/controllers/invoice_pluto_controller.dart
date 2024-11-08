@@ -15,10 +15,6 @@ import '../services/invoice_grid_service.dart';
 import '../services/invoice_utils.dart';
 
 class InvoicePlutoController extends GetxController {
-  InvoicePlutoController() {
-    getColumns();
-  }
-
   // Services
   late final InvoiceGridService gridService;
   late final InvoiceCalculator calculator;
@@ -33,7 +29,7 @@ class InvoicePlutoController extends GetxController {
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   // Columns and rows
-  List<PlutoColumn> mainTableColumns = [];
+  List<PlutoColumn> mainTableColumns = InvoiceRecordModel().toEditedMap().keys.toList();
 
   List<PlutoRow> mainTableRows = [];
 
@@ -47,8 +43,6 @@ class InvoicePlutoController extends GetxController {
   String customerName = '';
 
   ValueNotifier<double> vatTotalNotifier = ValueNotifier<double>(0.0);
-
-  PlutoGridOnChangedEvent? billAdditionsOnChangedEvent;
 
   // Initializer
   void _initializeServices() {
@@ -64,20 +58,29 @@ class InvoicePlutoController extends GetxController {
     _initializeServices();
   }
 
-  updateMainTableStateManager(stateManager) {
-    mainTableStateManager = stateManager;
-    update();
+  onMainTableLoaded(PlutoGridOnLoadedEvent event) {
+    mainTableStateManager = event.stateManager;
+
+    final newRows = mainTableStateManager.getNewRows(count: 30);
+    mainTableStateManager.appendRows(newRows);
+
+    if (mainTableStateManager.rows.isNotEmpty && mainTableStateManager.rows.first.cells.length > 1) {
+      final secondCell = mainTableStateManager.rows.first.cells.entries.elementAt(1).value;
+      mainTableStateManager.setCurrentCell(secondCell, 0);
+
+      FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
+    }
   }
 
-  updateAdditionsDiscountsStateManager(stateManager) {
-    additionsDiscountsStateManager = stateManager;
-    update();
-  }
+  onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
+    additionsDiscountsStateManager = event.stateManager;
 
-  getColumns() {
-    Map<PlutoColumn, dynamic> sampleData = InvoiceRecordModel().toEditedMap();
-    mainTableColumns = sampleData.keys.toList();
-    update();
+    if (additionsDiscountsStateManager.rows.isNotEmpty && additionsDiscountsStateManager.rows.first.cells.length > 1) {
+      final secondCell = additionsDiscountsStateManager.rows.first.cells.entries.elementAt(1).value;
+      additionsDiscountsStateManager.setCurrentCell(secondCell, 0);
+
+      FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
+    }
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
@@ -115,37 +118,38 @@ class InvoicePlutoController extends GetxController {
   }
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
-    billAdditionsOnChangedEvent = event;
-
     final String field = event.column.field;
     final cells = event.row.cells;
     final total = computeWithVatTotal;
 
-    if (field == 'discountRatioId') {
-      final discountAmount = calculateDiscountAmount(cells['discountRatioId']?.value, total).toStringAsFixed(2);
-      gridService.updateCellValue(additionsDiscountsStateManager, "discountId", discountAmount);
-    } else if (field == 'additionRatioId') {
-      final additionAmount = calculateAdditionAmount(cells['additionRatioId']?.value, total).toStringAsFixed(2);
-      gridService.updateCellValue(additionsDiscountsStateManager, "additionId", additionAmount);
+    if (total == 0) return;
+
+    if (field == 'discount' || field == 'addition') {
+      _updateCellValue(field, cells, total);
     }
 
     safeUpdateUI();
   }
 
-  void updateAdditionDiscountCell(double total) {
-    debugPrint('updateAdditionDiscountCell total: $total, billAdditionsOnChangedEvent: $billAdditionsOnChangedEvent');
-    if (total != 0 && billAdditionsOnChangedEvent != null) {
-      gridService.updateDiscountCell(total);
-      gridService.updateAdditionCell(total);
-    }
+  void _updateCellValue(String field, Map<String, PlutoCell> cells, double total) {
+    double ratio = invoiceUtils.getCellValueInDouble(cells, field);
+
+    if (ratio == 0) return;
+
+    final newValue = calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
+
+    final valueCell = additionsDiscountsStateManager.rows.last.cells[field]!;
+
+    gridService.updateAdditionsDiscountsCellValue(valueCell, newValue);
   }
+
+  void updateAdditionDiscountCell(double total) => gridService.updateAdditionDiscountCells(total);
 
   // Method to clear cell values of additions and discounts rows
   void clearAdditionsDiscountsCells() {
-    // Iterate only over the rows and clear non-accountId cells in one pass
     for (PlutoRow row in AppConstants.additionsDiscountsRows) {
       for (MapEntry<String, PlutoCell> entry in row.cells.entries) {
-        if (entry.key != 'accountId') {
+        if (entry.key != 'id') {
           entry.value.value = '';
         }
       }
@@ -188,11 +192,12 @@ class InvoicePlutoController extends GetxController {
   }
 
   void loadAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
-    mainTableStateManager.removeAllRows();
+    additionsDiscountsStateManager.removeAllRows();
 
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
     }
+
     additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
   }
 
@@ -200,9 +205,9 @@ class InvoicePlutoController extends GetxController {
         update();
       });
 
-  double get computeWithVatTotal => calculator.computeWithVatTotal;
-
   updateVatTotalNotifier(double total) => vatTotalNotifier.value = total;
+
+  double get computeWithVatTotal => calculator.computeWithVatTotal;
 
   double get computeWithoutVatTotal => calculator.computeWithoutVatTotal;
 
@@ -214,11 +219,10 @@ class InvoicePlutoController extends GetxController {
 
   double calculateDiscount(double total, double discountRate) => calculator.calculateDiscount(total, discountRate);
 
-  double calculateDiscountAmount(String? discountRatioStr, double total) =>
-      calculator.calculateDiscountAmount(discountRatioStr, total);
+  double calculateAmountFromRatio(double discountRatio, double total) =>
+      calculator.calculateAmountFromRatio(discountRatio, total);
 
-  double calculateAdditionAmount(String? additionRatioStr, double total) =>
-      calculator.calculateAdditionAmount(additionRatioStr, total);
+  double calculateRatioFromAmount(double amount, double total) => calculator.calculateRatioFromAmount(amount, total);
 
   double get computeAdditions => calculator.computeAdditions;
 

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../../core/classes/datasources/translation_data_source_base.dart';
+import '../../../../core/classes/datasources/i_translation_service.dart';
 
 class TranslationRepository {
-  final TranslationDataSourceBase _dataSource;
+  final ITranslationService _dataSource;
 
   TranslationRepository(this._dataSource);
 

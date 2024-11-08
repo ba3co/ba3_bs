@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import '../../../../core/classes/datasources/http_client_base.dart';
+import '../../../../core/classes/datasources/api_client_base.dart';
 
-class CustomHttpClient<T> implements HttpClientBase<T> {
+class HttpClient<T> implements APiClientBase<T> {
   final Client client;
 
-  CustomHttpClient(this.client);
+  HttpClient(this.client);
 
   @override
   Future<T> post(String url, {Map<String, String>? headers, Object? body}) async {
