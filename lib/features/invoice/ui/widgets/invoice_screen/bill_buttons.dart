@@ -1,5 +1,3 @@
-import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
-import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -45,33 +43,13 @@ class BillButtons extends StatelessWidget {
           AppButton(
               title: "إضافة",
               onPressed: () async {
-                final billModel = BillModel.fromInvoiceData(
-                  billTypeModel: billTypeModel,
-                  billTotal: invoicePlutoController.calculateFinalTotal,
-                  billVatTotal: invoicePlutoController.computeTotalVat,
-                  billGiftsTotal: invoicePlutoController.computeGifts,
-                  billDiscountsTotal: invoicePlutoController.computeDiscounts,
-                  billAdditionsTotal: invoicePlutoController.computeAdditions,
-                  billItems: invoicePlutoController.handleSaveAllMaterials(),
-                );
-
-                await invoiceController.addNewInvoice(billModel);
+                invoiceController.saveBill(billTypeModel: billTypeModel);
               },
               iconData: Icons.add_chart_outlined),
           AppButton(
               title: 'السند',
               onPressed: () async {
-                if (!invoiceController.validateForm()) return;
-
-                Get.find<BondController>().createBond(
-                  billTypeModel: billTypeModel,
-                  vat: invoicePlutoController.computeTotalVat,
-                  customerAccount: invoiceController.selectedCustomerAccount!,
-                  total: invoicePlutoController.computeWithoutVatTotal,
-                  gifts: invoicePlutoController.computeGifts,
-                  discount: invoicePlutoController.computeDiscounts,
-                  addition: invoicePlutoController.computeAdditions,
-                );
+                invoiceController.createBond(billTypeModel);
               },
               iconData: Icons.file_open_outlined),
           AppButton(

@@ -62,9 +62,14 @@ class SellerController extends GetxController {
   List<SellerModel> getSellersAccounts(String query) => searchSellersByNameOrCode(query);
 
   // Get seller name by ID
-  String getSellerNameFromId(String? id) {
+  String getSellerNameById(String? id) {
     if (id == null || id.isEmpty) return '';
     return sellers.firstWhere((seller) => seller.costGuid == id).costName ?? '';
+  }
+
+  // Get seller  by ID
+  SellerModel getSellerById(String id) {
+    return sellers.firstWhere((seller) => seller.costGuid == id);
   }
 
   // Replace Arabic numerals with English numerals
@@ -72,6 +77,12 @@ class SellerController extends GetxController {
     return input.replaceAllMapped(RegExp(r'[٠-٩]'), (Match match) {
       return String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
     });
+  }
+
+  initSellerAccount(SellerModel? newAccount) {
+    if (newAccount != null) {
+      selectedSellerAccount = newAccount;
+    }
   }
 
   Future<void> openSellerSelectionDialog(

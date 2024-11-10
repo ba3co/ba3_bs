@@ -108,7 +108,7 @@ class InvoicePlutoController extends GetxController {
   void onMainTableRowSecondaryTap(event) {
     var materialName = mainTableStateManager.currentRow?.cells['invRecProduct']?.value;
     log('invRecId $materialName');
-    MaterialModel? materialModel = Get.find<MaterialController>().getMaterialFromName(materialName);
+    MaterialModel? materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
     if (materialModel != null) {
       if (event.cell.column.field == "invRecSubTotal") {
         contextMenu.showContextMenuSubTotal(
@@ -163,7 +163,7 @@ class InvoicePlutoController extends GetxController {
 
     final invoiceRecords = mainTableStateManager.rows
         .map((row) {
-          final materialModel = materialController.getMaterialFromName(row.cells['invRecProduct']!.value);
+          final materialModel = materialController.getMaterialByName(row.cells['invRecProduct']!.value);
           return invoiceUtils.validateInvoiceRow(row, 'invRecQuantity') && materialModel != null
               ? _createInvoiceRecord(row, materialModel.id!)
               : null;
@@ -193,7 +193,6 @@ class InvoicePlutoController extends GetxController {
 
   void loadAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
-
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
     }

@@ -14,11 +14,8 @@ class AllBillsScreen extends StatelessWidget {
         title: "جميع الفواتير",
         onLoaded: (e) {},
         onSelected: (event) {
-          String customerAccName = event.row?.cells['حساب العميل']?.value;
-          String sellerAccountName = event.row?.cells['حساب البائع']?.value;
           String billId = event.row?.cells['billId']?.value;
-          controller.navigateToBillDetailsScreen(
-              billId: billId, customerAccName: customerAccName, sellerAccName: sellerAccountName);
+          controller.navigateToBillDetailsScreen(billId);
         },
         isLoading: controller.isLoading,
         tableSourceModels: controller.bills,

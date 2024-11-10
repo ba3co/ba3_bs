@@ -31,7 +31,7 @@ class BondController extends GetxController {
       double gifts, double discount, double addition) {
     if (billTypeModel.accounts == null) return;
 
-    BillType billType = BillType.fromLabel(billTypeModel.billTypeLabel!);
+    BillType billType = BillType.byLabel(billTypeModel.billTypeLabel!);
 
     switch (billType) {
       case BillType.sales:

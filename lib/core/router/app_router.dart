@@ -1,4 +1,3 @@
-import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:ba3_bs/features/invoice/ui/screens/all_bills_screen.dart';
@@ -31,9 +30,7 @@ List<GetPage<dynamic>>? appRouter = [
         Map arguments = Get.arguments as Map;
 
         BillModel billModel = arguments['billModel'] as BillModel;
-        AccountModel customerAccName = arguments['customerAcc'] as AccountModel;
-        String sellerAccName = arguments['sellerAccName'] as String;
 
-        return BillDetailsScreen(billModel: billModel, customerAcc: customerAccName, sellerAccName: sellerAccName);
+        return BillDetailsScreen(billModel: billModel);
       })
 ];

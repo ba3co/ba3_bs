@@ -50,17 +50,17 @@ class BillHeader extends StatelessWidget {
                 ),
                 SearchableAccountField(
                   label: 'حساب العميل :',
-                  textEditingController: invoiceController.invCustomerAccountController,
+                  textEditingController: invoiceController.customerAccountController,
                   validator: (value) => invoiceController.validator(value, 'حساب العميل'),
                   isCustomerAccount: true,
                 ),
                 SearchableAccountField(
                   label: 'البائع :',
-                  textEditingController: invoiceController.sellerController,
+                  textEditingController: invoiceController.sellerAccountController,
                   validator: (value) => invoiceController.validator(value, 'البائع'),
                   onSubmitted: (text) {
                     Get.find<SellerController>().openSellerSelectionDialog(
-                        query: text, textEditingController: invoiceController.sellerController);
+                        query: text, textEditingController: invoiceController.sellerAccountController);
                   },
                 ),
                 BillHeaderField(

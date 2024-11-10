@@ -43,7 +43,7 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
                               onLoaded: (p0) {},
                               onSelected: (selected) {
                                 selectedMaterial =
-                                    materialController.getMaterialFromId(selected.row?.cells['الرقم التعريفي']!.value);
+                                    materialController.getMaterialById(selected.row?.cells['الرقم التعريفي']!.value);
                                 Get.back();
                               },
                             ),

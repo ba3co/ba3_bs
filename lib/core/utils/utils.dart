@@ -214,7 +214,7 @@ class Utils {
     }
   }
 
-  static String getAccountNameFromId(id) {
+  static String getAccountNameById(id) {
     if (id != null && id != " " && id != "") {
 //      return Get.find<AccountController>().accountList[id]?.accName ?? "$id";
       return "";

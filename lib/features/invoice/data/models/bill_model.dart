@@ -44,37 +44,101 @@ class BillModel implements PlutoAdaptable {
   }
 
   factory BillModel.fromInvoiceData({
-    required double billVatTotal,
+    BillModel? billModel,
+    String? note,
+    int? billNumber,
+    required String billCustomerId,
+    required String billSellerId,
+    required int billPayType,
+    required String billDate,
     required double billGiftsTotal,
     required double billDiscountsTotal,
     required double billAdditionsTotal,
     required double billTotal,
+    required double billVatTotal,
+    required double billWithoutVatTotal,
     required BillTypeModel billTypeModel,
     required List<InvoiceRecordModel> billItems,
-  }) =>
-      BillModel(
-        billTypeModel: billTypeModel,
-        billDetails: BillDetails(
-          billTotal: billTotal,
-          billVatTotal: billVatTotal,
-          billGiftsTotal: billGiftsTotal,
-          billDiscountsTotal: billDiscountsTotal,
-          billAdditionsTotal: billAdditionsTotal,
-        ),
-        items: BillItems(
-            itemList: billItems
-                .map((invoiceRecordModel) => BillItem(
-                      itemGuid: invoiceRecordModel.invRecId!,
-                      itemName: invoiceRecordModel.invRecProduct!,
-                      itemQuantity: invoiceRecordModel.invRecQuantity!,
-                      itemTotalPrice: invoiceRecordModel.invRecTotal.toString(),
-                      itemSubTotalPrice: invoiceRecordModel.invRecSubTotal,
-                      itemVatPrice: invoiceRecordModel.invRecVat,
-                      itemGiftsPrice: invoiceRecordModel.invRecGiftTotal,
-                      itemGiftsNumber: invoiceRecordModel.invRecGift,
-                    ))
-                .toList()),
+  }) {
+    final billDetails = _createBillDetails(
+      existingDetails: billModel?.billDetails,
+      note: note,
+      billNumber: billNumber,
+      billCustomerId: billCustomerId,
+      billSellerId: billSellerId,
+      billPayType: billPayType,
+      billDate: billDate,
+      billTotal: billTotal,
+      billVatTotal: billVatTotal,
+      billWithoutVatTotal: billWithoutVatTotal,
+      billGiftsTotal: billGiftsTotal,
+      billDiscountsTotal: billDiscountsTotal,
+      billAdditionsTotal: billAdditionsTotal,
+    );
+
+    final items = _createBillItems(billItems);
+
+    return billModel == null
+        ? BillModel(
+            billTypeModel: billTypeModel,
+            billDetails: billDetails,
+            items: items,
+          )
+        : billModel.copyWith(
+            billTypeModel: billTypeModel,
+            billDetails: billDetails,
+            items: items,
+          );
+  }
+
+  static BillDetails _createBillDetails({
+    BillDetails? existingDetails,
+    String? note,
+    int? billNumber,
+    required String billCustomerId,
+    required String billSellerId,
+    required int billPayType,
+    required String billDate,
+    required double billTotal,
+    required double billVatTotal,
+    required double billWithoutVatTotal,
+    required double billGiftsTotal,
+    required double billDiscountsTotal,
+    required double billAdditionsTotal,
+  }) {
+    return BillDetails(
+      billGuid: existingDetails?.billGuid,
+      note: note,
+      billNumber: billNumber,
+      billCustomerId: billCustomerId,
+      billSellerId: billSellerId,
+      billPayType: billPayType,
+      billDate: billDate,
+      billTotal: billTotal,
+      billVatTotal: billVatTotal,
+      billWithoutVatTotal: billWithoutVatTotal,
+      billGiftsTotal: billGiftsTotal,
+      billDiscountsTotal: billDiscountsTotal,
+      billAdditionsTotal: billAdditionsTotal,
+    );
+  }
+
+  static BillItems _createBillItems(List<InvoiceRecordModel> invoiceRecords) {
+    final itemList = invoiceRecords.map((invoiceRecord) {
+      return BillItem(
+        itemGuid: invoiceRecord.invRecId!,
+        itemName: invoiceRecord.invRecProduct!,
+        itemQuantity: invoiceRecord.invRecQuantity!,
+        itemTotalPrice: invoiceRecord.invRecTotal.toString(),
+        itemSubTotalPrice: invoiceRecord.invRecSubTotal,
+        itemVatPrice: invoiceRecord.invRecVat,
+        itemGiftsPrice: invoiceRecord.invRecGiftTotal,
+        itemGiftsNumber: invoiceRecord.invRecGift,
       );
+    }).toList();
+
+    return BillItems(itemList: itemList);
+  }
 
   Map<String, dynamic> toJson() => {
         'billId': billId,
@@ -87,15 +151,16 @@ class BillModel implements PlutoAdaptable {
   Map<String, dynamic> toPlutoGridFormat() => {
         'billId': billId ?? '',
         'التاريخ': billDetails.billDate ?? '',
-        'المجموع الكلي': billDetails.billTotal ?? 0,
         'مجموع الضريبة': double.tryParse(billDetails.billVatTotal?.toStringAsFixed(2) ?? '0') ?? 0,
+        'المجموع قبل الضريبة': billDetails.billWithoutVatTotal ?? 0,
+        'المجموع الكلي': billDetails.billTotal ?? 0,
         'مجموع الحسم': billDetails.billDiscountsTotal ?? 0,
         'مجموع الهدايا': billDetails.billGiftsTotal ?? 0,
         'مجموع الاضافات': billDetails.billAdditionsTotal ?? 0,
-        "نوع الفاتورة": BillType.fromLabel(billTypeModel.billTypeLabel ?? "").value,
+        "نوع الفاتورة": BillType.byLabel(billTypeModel.billTypeLabel ?? "").value,
         'نوع الدفع': InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
         'حساب العميل': billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
-        'حساب البائع': Get.find<SellerController>().getSellerNameFromId(billDetails.billSellerId),
+        'حساب البائع': Get.find<SellerController>().getSellerNameById(billDetails.billSellerId),
         'المستودع': billTypeModel.accounts?[BillAccounts.store] ?? '',
         'وصف': billDetails.note ?? '',
       };
@@ -111,6 +176,7 @@ class BillDetails {
   final String? billCustomerId;
   final double? billTotal;
   final double? billVatTotal;
+  final double? billWithoutVatTotal;
   final double? billGiftsTotal;
   final double? billDiscountsTotal;
   final double? billAdditionsTotal;
@@ -123,8 +189,9 @@ class BillDetails {
     this.note,
     this.billCustomerId,
     this.billTotal,
-    this.billSellerId,
     this.billVatTotal,
+    this.billWithoutVatTotal,
+    this.billSellerId,
     this.billGiftsTotal,
     this.billDiscountsTotal,
     this.billAdditionsTotal,
@@ -140,6 +207,7 @@ class BillDetails {
     final String? billSellerId,
     final double? billTotal,
     final double? billVatTotal,
+    final double? billWithoutVatTotal,
     final double? billGiftsTotal,
     final double? billDiscountsTotal,
     final double? billAdditionsTotal,
@@ -151,9 +219,10 @@ class BillDetails {
       billDate: billDate ?? this.billDate,
       note: note ?? this.note,
       billTotal: billTotal ?? this.billTotal,
+      billVatTotal: billVatTotal ?? this.billVatTotal,
+      billWithoutVatTotal: billWithoutVatTotal ?? this.billWithoutVatTotal,
       billCustomerId: billCustomerId ?? this.billCustomerId,
       billSellerId: billSellerId ?? this.billSellerId,
-      billVatTotal: billVatTotal ?? this.billVatTotal,
       billDiscountsTotal: billDiscountsTotal ?? this.billDiscountsTotal,
       billGiftsTotal: billGiftsTotal ?? this.billGiftsTotal,
       billAdditionsTotal: billAdditionsTotal ?? this.billAdditionsTotal,
@@ -168,9 +237,10 @@ class BillDetails {
       billDate: json['billDate'],
       note: json['note'],
       billCustomerId: json['billCustomerId'],
-      billTotal: json['billTotal'],
       billSellerId: json['billSellerId'],
+      billTotal: json['billTotal'],
       billVatTotal: json['billVatTotal'],
+      billWithoutVatTotal: json['billWithoutVatTotal'],
       billGiftsTotal: json['billGiftsTotal'],
       billDiscountsTotal: json['billDiscountsTotal'],
       billAdditionsTotal: json['billAdditionsTotal'],
@@ -186,8 +256,9 @@ class BillDetails {
       'note': note,
       'billCustomerId': billCustomerId,
       'billTotal': billTotal,
-      'billSellerId': billSellerId,
+      'billWithoutVatTotal': billWithoutVatTotal,
       'billVatTotal': billVatTotal,
+      'billSellerId': billSellerId,
       'billGiftsTotal': billGiftsTotal,
       'billDiscountsTotal': billDiscountsTotal,
       'billAdditionsTotal': billAdditionsTotal,
@@ -214,14 +285,13 @@ class BillDetails {
             };
 
   List<Map<String, String>> get additionsDiscountsRecords {
-    final double total = billTotal ?? 0;
-
+    final partialTotal = (billVatTotal ?? 0) + (billWithoutVatTotal ?? 0);
     return [
       _createRecordRow(
         id: 'النسبه',
         isRatio: true,
-        discountRatio: _calculateRatio(billDiscountsTotal ?? 0, total),
-        additionRatio: _calculateRatio(billAdditionsTotal ?? 0, total),
+        discountRatio: _calculateRatio(billDiscountsTotal ?? 0, partialTotal),
+        additionRatio: _calculateRatio(billAdditionsTotal ?? 0, partialTotal),
       ),
       _createRecordRow(
         id: 'القيمة',

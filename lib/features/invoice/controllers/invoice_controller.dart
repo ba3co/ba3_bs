@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +11,7 @@ import '../../../core/router/app_routes.dart';
 import '../../../core/utils/generate_id.dart';
 import '../../../core/utils/utils.dart';
 import '../../accounts/data/models/account_model.dart';
+import '../../bond/controllers/bond_controller.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../../print/controller/print_controller.dart';
 import '../data/models/invoice_record_model.dart';
@@ -26,8 +26,8 @@ class InvoiceController extends GetxController with AppValidator {
   final TextEditingController invCodeController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
-  final TextEditingController invCustomerAccountController = TextEditingController();
-  final TextEditingController sellerController = TextEditingController();
+  final TextEditingController customerAccountController = TextEditingController();
+  final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   final TextEditingController firstPayController = TextEditingController();
   final TextEditingController invReturnDateController = TextEditingController();
@@ -63,7 +63,7 @@ class InvoiceController extends GetxController with AppValidator {
 
   String get invId => generateId(RecordType.invoice);
 
-  updateBillType(String billTypeLabel) => billType = BillType.fromLabel(billTypeLabel);
+  updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
   void setBillDate(DateTime newDate) {
     billDate = newDate.toString().split(" ")[0];
@@ -83,13 +83,6 @@ class InvoiceController extends GetxController with AppValidator {
     }
   }
 
-  initCustomerAccount(AccountModel? account) {
-    if (account != null) {
-      selectedCustomerAccount = account;
-      invCustomerAccountController.text = account.accName!;
-    }
-  }
-
   Future<void> fetchBills() async {
     final result = await _billsRepo.getAll();
 
@@ -103,15 +96,6 @@ class InvoiceController extends GetxController with AppValidator {
     );
     isLoading = false;
     update();
-  }
-
-  Future<void> deleteInvoice(String billId) async {
-    final result = await _billsRepo.delete(billId);
-
-    result.fold((failure) => Utils.showSnackBar('خطأ', failure.message),
-        (success) => Utils.showSnackBar('نجاح', 'تم حذف الفاتورة بنجاح!'));
-
-    Get.offAllNamed(AppRoutes.mainLayout);
   }
 
   Future<void> getAllBillTypes() async {
@@ -128,52 +112,100 @@ class InvoiceController extends GetxController with AppValidator {
     update();
   }
 
-  Future<void> addNewInvoice(BillModel billModel) async {
+  Future<void> saveBill({required BillTypeModel billTypeModel, BillModel? billModel, bool isEdit = false}) async {
     if (!validateForm()) return;
 
-    log('billTotal ${billModel.billDetails.billTotal}');
-    // Create a modified copy of the billModel
-    final updatedBillModel = billModel.copyWith(
-      billDetails: billModel.billDetails.copyWith(
-        note: null,
-        billNumber: null,
-        billCustomerId: selectedCustomerAccount!.id!,
-        billSellerId: Get.find<SellerController>().selectedSellerAccount!.costGuid!,
-        billPayType: selectedPayType.index,
-        billDate: billDate!,
-      ),
-    );
+    final updatedBillModel = _createBillModelFromInvoiceData(billModel: billModel, billTypeModel: billTypeModel);
 
     final result = await _billsRepo.save(updatedBillModel);
 
+    // Display appropriate success message based on the operation type
+    final successMessage = isEdit ? 'تم تعديل الفاتورة بنجاح!' : 'تم حفظ الفاتورة بنجاح!';
+
+    result.fold(
+      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (success) => Utils.showSnackBar('نجاح', successMessage),
+    );
+    if (isEdit) {
+      await fetchBills();
+
+      Get.until(ModalRoute.withName(AppRoutes.showAllBillsScreen));
+    }
+  }
+
+  Future<void> deleteBill(String billId) async {
+    final result = await _billsRepo.delete(billId);
+
     result.fold((failure) => Utils.showSnackBar('خطأ', failure.message),
-        (success) => Utils.showSnackBar('نجاح', 'تم حفظ الفاتورة بنجاح!'));
+        (success) => Utils.showSnackBar('نجاح', 'تم حذف الفاتورة بنجاح!'));
+
+    Get.offAllNamed(AppRoutes.mainLayout);
   }
 
   Future<void> printInvoice(List<InvoiceRecordModel> invRecords) async =>
       await Get.find<PrintingController>().startPrinting(invRecords: invRecords, invId: invId, invDate: billDate!);
 
-  BillModel getBillFromId(String billId) => bills.firstWhere((bill) => bill.billId == billId);
+  void createBond(BillTypeModel billTypeModel) {
+    if (!validateForm()) return;
+
+    final BondController bondController = Get.find<BondController>();
+    final InvoicePlutoController invoicePlutoController = Get.find<InvoicePlutoController>();
+
+    bondController.createBond(
+      billTypeModel: billTypeModel,
+      vat: invoicePlutoController.computeTotalVat,
+      customerAccount: selectedCustomerAccount!,
+      total: invoicePlutoController.computeWithoutVatTotal,
+      gifts: invoicePlutoController.computeGifts,
+      discount: invoicePlutoController.computeDiscounts,
+      addition: invoicePlutoController.computeAdditions,
+    );
+  }
+
+  BillModel _createBillModelFromInvoiceData({BillModel? billModel, required BillTypeModel billTypeModel}) {
+    final InvoicePlutoController invoicePlutoController = Get.find<InvoicePlutoController>();
+
+    return BillModel.fromInvoiceData(
+      billModel: billModel,
+      billTypeModel: billTypeModel,
+      note: null,
+      billNumber: null,
+      billCustomerId: selectedCustomerAccount!.id!,
+      billSellerId: Get.find<SellerController>().selectedSellerAccount!.costGuid!,
+      billPayType: selectedPayType.index,
+      billDate: billDate!,
+      billTotal: invoicePlutoController.calculateFinalTotal,
+      billVatTotal: invoicePlutoController.computeTotalVat,
+      billWithoutVatTotal: invoicePlutoController.computeWithoutVatTotal,
+      billGiftsTotal: invoicePlutoController.computeGifts,
+      billDiscountsTotal: invoicePlutoController.computeDiscounts,
+      billAdditionsTotal: invoicePlutoController.computeAdditions,
+      billItems: invoicePlutoController.handleSaveAllMaterials(),
+    );
+  }
+
+  BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
 
-  void navigateToBillDetailsScreen(
-      {required String billId, required String customerAccName, required String sellerAccName}) {
+  void navigateToBillDetailsScreen(String billId) {
     _initializeInvoiceController();
 
     final InvoicePlutoController invoicePlutoController = Get.find<InvoicePlutoController>();
 
-    final BillModel billModel = getBillFromId(billId);
+    final BillModel billModel = getBillById(billId);
 
     _prepareInvoiceRecords(billModel.items, invoicePlutoController);
 
     _prepareAdditionsDiscountsRecords(billModel.billDetails, invoicePlutoController);
 
-    final AccountModel customerAccount = _initializeCustomerAccount(billModel);
+    _initializeCustomerAccount(billModel);
+
+    _initializeSellerAccount(billModel);
 
     Get.toNamed(
       AppRoutes.billDetailsScreen,
-      arguments: {'billModel': billModel, 'customerAcc': customerAccount, 'sellerAccName': sellerAccName},
+      arguments: {'billModel': billModel},
     );
   }
 
@@ -185,11 +217,29 @@ class InvoiceController extends GetxController with AppValidator {
   _prepareAdditionsDiscountsRecords(BillDetails billDetails, InvoicePlutoController invoicePlutoController) =>
       invoicePlutoController.loadAdditionsDiscountsRows(billDetails.additionsDiscountsRecords);
 
-  AccountModel _initializeCustomerAccount(BillModel billModel) {
+  void _initializeCustomerAccount(BillModel billModel) {
     final AccountModel customerAcc = billModel.billTypeModel.accounts![BillAccounts.caches]!;
 
     initCustomerAccount(customerAcc);
-    return customerAcc;
+  }
+
+  void _initializeSellerAccount(BillModel billModel) {
+    final SellerModel sellerAcc = Get.find<SellerController>().getSellerById(billModel.billDetails.billSellerId!);
+
+    initSellerAccount(sellerAcc);
+  }
+
+  initCustomerAccount(AccountModel? account) {
+    if (account != null) {
+      selectedCustomerAccount = account;
+      customerAccountController.text = account.accName!;
+    }
+  }
+
+  initSellerAccount(SellerModel sellerAcc) {
+    Get.find<SellerController>().initSellerAccount(sellerAcc);
+
+    sellerAccountController.text = sellerAcc.costName!;
   }
 }
 

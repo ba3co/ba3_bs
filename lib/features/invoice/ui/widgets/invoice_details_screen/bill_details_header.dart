@@ -5,24 +5,16 @@ import 'package:get/get.dart';
 import '../../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
-import '../../../../accounts/data/models/account_model.dart';
 import '../../../../patterns/ui/widgets/searchable_account_field.dart';
 import '../../../controllers/invoice_controller.dart';
 import '../../../data/models/bill_model.dart';
 import '../invoice_screen/bill_header_field.dart';
 
 class BillDetailsHeader extends StatelessWidget {
-  const BillDetailsHeader(
-      {super.key,
-      required this.invoiceController,
-      required this.billModel,
-      required this.customerAcc,
-      required this.sellerAccName});
+  const BillDetailsHeader({super.key, required this.invoiceController, required this.billModel});
 
   final InvoiceController invoiceController;
   final BillModel billModel;
-  final AccountModel customerAcc;
-  final String sellerAccName;
 
   @override
   Widget build(BuildContext context) {
@@ -60,17 +52,17 @@ class BillDetailsHeader extends StatelessWidget {
                 ),
                 SearchableAccountField(
                   label: 'حساب العميل :',
-                  textEditingController: invoiceController.invCustomerAccountController,
+                  textEditingController: invoiceController.customerAccountController,
                   validator: (value) => invoiceController.validator(value, 'حساب العميل'),
                   isCustomerAccount: true,
                 ),
                 SearchableAccountField(
                   label: 'البائع :',
-                  textEditingController: invoiceController.sellerController..text = sellerAccName,
+                  textEditingController: invoiceController.sellerAccountController,
                   validator: (value) => invoiceController.validator(value, 'البائع'),
                   onSubmitted: (text) {
                     Get.find<SellerController>().openSellerSelectionDialog(
-                        query: text, textEditingController: invoiceController.sellerController);
+                        query: text, textEditingController: invoiceController.sellerAccountController);
                   },
                 ),
                 BillHeaderField(

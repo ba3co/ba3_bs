@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/classes/datasources/firebase_datasource_base.dart';
@@ -33,7 +31,6 @@ class InvoicesDataSource implements FirebaseDatasourceBase<BillModel> {
 
   @override
   Future<void> save(BillModel bill) async {
-    log('bill ${bill.billDetails.billCustomerId}');
     final collection = _firestore.collection(_collection);
     if (bill.billId == null) {
       // Create a new document and set its ID in the model
@@ -42,7 +39,7 @@ class InvoicesDataSource implements FirebaseDatasourceBase<BillModel> {
           bill.copyWith(billId: newDocRefId, billDetails: bill.billDetails.copyWith(billGuid: newDocRefId)).toJson());
     } else {
       // Update the existing document
-      await collection.doc(bill.billId).set(bill.toJson());
+      await collection.doc(bill.billId).update(bill.toJson());
     }
   }
 

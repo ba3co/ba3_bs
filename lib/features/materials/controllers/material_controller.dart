@@ -68,16 +68,16 @@ class MaterialController extends GetxController {
     return searchedMaterials;
   }
 
-  String getMaterialNameFromId(String? id) {
+  String getMaterialNameById(String? id) {
     if (id == null || id.isEmpty) return '';
     return materials.firstWhere((material) => material.id == id).matName ?? '';
   }
 
-  MaterialModel getMaterialFromId(String id) {
+  MaterialModel getMaterialById(String id) {
     return materials.firstWhere((material) => material.id == id);
   }
 
-  MaterialModel? getMaterialFromName(name) {
+  MaterialModel? getMaterialByName(name) {
     if (name != null && name != " " && name != "") {
       return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
     }

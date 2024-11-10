@@ -80,7 +80,7 @@ enum BillType {
   });
 
   // Factory constructor with error handling for unmatched labels
-  factory BillType.fromLabel(String label) {
+  factory BillType.byLabel(String label) {
     return BillType.values.firstWhere(
       (type) => type.label == label,
       orElse: () => throw ArgumentError('No matching BillType for label: $label'),
