@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
@@ -106,15 +104,35 @@ class InvoicePlutoController extends GetxController {
   }
 
   void onMainTableRowSecondaryTap(event) {
-    var materialName = mainTableStateManager.currentRow?.cells['invRecProduct']?.value;
-    log('invRecId $materialName');
-    MaterialModel? materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
-    if (materialModel != null) {
-      if (event.cell.column.field == "invRecSubTotal") {
-        contextMenu.showContextMenuSubTotal(
-            index: event.rowIdx, materialModel: materialModel, tapPosition: event.offset, invoiceUtils: invoiceUtils);
-      }
+    final materialName = mainTableStateManager.currentRow?.cells['invRecProduct']?.value;
+    if (materialName == null) return;
+
+    final materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
+    if (materialModel == null) return;
+
+    _handleContextMenu(event, materialModel);
+  }
+
+  void _handleContextMenu(event, MaterialModel materialModel) {
+    final field = event.cell.column.field;
+    if (field == "invRecSubTotal") {
+      _showSubTotalContextMenu(event, materialModel);
+    } else if (field == "invRecId") {
+      _showDeleteConfirmationDialog(event);
     }
+  }
+
+  void _showSubTotalContextMenu(event, MaterialModel materialModel) {
+    contextMenu.showContextMenuSubTotal(
+      index: event.rowIdx,
+      materialModel: materialModel,
+      tapPosition: event.offset,
+      invoiceUtils: invoiceUtils,
+    );
+  }
+
+  void _showDeleteConfirmationDialog(event) {
+    contextMenu.showDeleteConfirmationDialog(event.rowIdx);
   }
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
@@ -132,29 +150,20 @@ class InvoicePlutoController extends GetxController {
   }
 
   void _updateCellValue(String field, Map<String, PlutoCell> cells, double total) {
+    if (additionsDiscountsStateManager.rows.isEmpty) return;
+
     double ratio = invoiceUtils.getCellValueInDouble(cells, field);
 
     if (ratio == 0) return;
 
     final newValue = calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
 
-    final valueCell = additionsDiscountsStateManager.rows.last.cells[field]!;
+    final valueCell = invoiceUtils.valueRow.cells[field]!;
 
     gridService.updateAdditionsDiscountsCellValue(valueCell, newValue);
   }
 
   void updateAdditionDiscountCell(double total) => gridService.updateAdditionDiscountCells(total);
-
-  // Method to clear cell values of additions and discounts rows
-  void clearAdditionsDiscountsCells() {
-    for (PlutoRow row in AppConstants.additionsDiscountsRows) {
-      for (MapEntry<String, PlutoCell> entry in row.cells.entries) {
-        if (entry.key != 'id') {
-          entry.value.value = '';
-        }
-      }
-    }
-  }
 
   List<InvoiceRecordModel> handleSaveAllMaterials() {
     mainTableStateManager.setShowLoading(true);
@@ -229,11 +238,29 @@ class InvoicePlutoController extends GetxController {
 
   double get computeDiscounts => calculator.computeDiscounts;
 
+  void _clearAdditionsDiscountsCells() {
+    for (int i = 1; i < AppConstants.additionsDiscountsRows.length; i++) {
+      _clearRowCells(AppConstants.additionsDiscountsRows[i]);
+    }
+  }
+
+  void _clearRowCells(PlutoRow row) {
+    _clearCellValue(row, 'discount');
+    _clearCellValue(row, 'addition');
+  }
+
+  void _clearCellValue(PlutoRow row, String cellKey) {
+    final cell = row.cells[cellKey];
+    if (cell?.value.isNotEmpty ?? false) cell?.value = '';
+  }
+
   @override
   void onClose() {
     super.onClose();
-    clearAdditionsDiscountsCells(); // Clear cell values when the controller is closed
+    _clearAdditionsDiscountsCells(); // Clear cell values when the controller is closed
   }
 }
 
 // 530
+
+// 236

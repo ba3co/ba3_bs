@@ -48,6 +48,8 @@ class InvoiceController extends GetxController with AppValidator {
 
   bool isLoading = true;
 
+  Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
+
   @override
   void onInit() {
     super.onInit();
@@ -119,7 +121,6 @@ class InvoiceController extends GetxController with AppValidator {
 
     final result = await _billsRepo.save(updatedBillModel);
 
-    // Display appropriate success message based on the operation type
     final successMessage = isEdit ? 'تم تعديل الفاتورة بنجاح!' : 'تم حفظ الفاتورة بنجاح!';
 
     result.fold(
@@ -163,11 +164,14 @@ class InvoiceController extends GetxController with AppValidator {
   }
 
   BillModel _createBillModelFromInvoiceData({BillModel? billModel, required BillTypeModel billTypeModel}) {
-    final InvoicePlutoController invoicePlutoController = Get.find<InvoicePlutoController>();
+    final invoicePlutoController = Get.find<InvoicePlutoController>();
+
+    // Update bill type accounts if selected additions or discounts are available
+    final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel);
 
     return BillModel.fromInvoiceData(
       billModel: billModel,
-      billTypeModel: billTypeModel,
+      billTypeModel: updatedBillTypeModel ?? billTypeModel,
       note: null,
       billNumber: null,
       billCustomerId: selectedCustomerAccount!.id!,
@@ -184,6 +188,25 @@ class InvoiceController extends GetxController with AppValidator {
     );
   }
 
+  BillTypeModel? _updateBillTypeAccounts(BillTypeModel billTypeModel) {
+    final selectedAccounts = selectedAdditionsDiscountAccounts;
+    if (selectedAccounts.isEmpty) return null;
+
+    final updatedAccounts = {...billTypeModel.accounts ?? {}};
+
+    // Update discounts account
+    if (selectedAccounts.containsKey(BillAccounts.discounts)) {
+      updatedAccounts[BillAccounts.discounts] = selectedAccounts[BillAccounts.discounts]!;
+    }
+
+    // Update additions account
+    if (selectedAccounts.containsKey(BillAccounts.additions)) {
+      updatedAccounts[BillAccounts.additions] = selectedAccounts[BillAccounts.additions]!;
+    }
+
+    return billTypeModel.copyWith(accounts: updatedAccounts);
+  }
+
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
@@ -197,7 +220,7 @@ class InvoiceController extends GetxController with AppValidator {
 
     _prepareInvoiceRecords(billModel.items, invoicePlutoController);
 
-    _prepareAdditionsDiscountsRecords(billModel.billDetails, invoicePlutoController);
+    _prepareAdditionsDiscountsRecords(billModel, invoicePlutoController);
 
     _initializeCustomerAccount(billModel);
 
@@ -214,19 +237,13 @@ class InvoiceController extends GetxController with AppValidator {
   _prepareInvoiceRecords(BillItems billItems, InvoicePlutoController invoiceController) =>
       invoiceController.loadMainTableRows(billItems.materialRecords);
 
-  _prepareAdditionsDiscountsRecords(BillDetails billDetails, InvoicePlutoController invoicePlutoController) =>
-      invoicePlutoController.loadAdditionsDiscountsRows(billDetails.additionsDiscountsRecords);
+  _prepareAdditionsDiscountsRecords(BillModel billModel, InvoicePlutoController invoicePlutoController) =>
+      invoicePlutoController.loadAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
 
   void _initializeCustomerAccount(BillModel billModel) {
     final AccountModel customerAcc = billModel.billTypeModel.accounts![BillAccounts.caches]!;
 
     initCustomerAccount(customerAcc);
-  }
-
-  void _initializeSellerAccount(BillModel billModel) {
-    final SellerModel sellerAcc = Get.find<SellerController>().getSellerById(billModel.billDetails.billSellerId!);
-
-    initSellerAccount(sellerAcc);
   }
 
   initCustomerAccount(AccountModel? account) {
@@ -236,11 +253,19 @@ class InvoiceController extends GetxController with AppValidator {
     }
   }
 
-  initSellerAccount(SellerModel sellerAcc) {
+  void _initializeSellerAccount(BillModel billModel) {
+    final SellerModel sellerAcc = Get.find<SellerController>().getSellerById(billModel.billDetails.billSellerId!);
+
     Get.find<SellerController>().initSellerAccount(sellerAcc);
 
     sellerAccountController.text = sellerAcc.costName!;
   }
+
+  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) {
+    selectedAdditionsDiscountAccounts[key] = value;
+  }
 }
 
 // 300
+
+// 193

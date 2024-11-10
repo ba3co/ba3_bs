@@ -62,24 +62,27 @@ class InvoiceGridService {
   }
 
   void updateAdditionDiscountCells(double total) {
-    if (total == 0) return;
-    _updateCellValue('discount', total);
-    _updateCellValue('addition', total);
+    if (additionsDiscountsStateManager.rows.isEmpty) return;
+
+    final PlutoRow valueRow = invoiceUtils.valueRow;
+
+    // Update both discount and addition cells based on the total value
+    final fields = ['discount', 'addition'];
+
+    for (final field in fields) {
+      total == 0 ? updateAdditionsDiscountsCellValue(valueRow.cells[field]!, '') : _updateCell(field, valueRow, total);
+    }
   }
 
-  void _updateCellValue(String field, double total) {
-    final ratioRow = additionsDiscountsStateManager.rows.first;
-    final valueRow = additionsDiscountsStateManager.rows.last;
+  void _updateCell(String field, PlutoRow valueRow, double total) {
+    final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
-    // Retrieve the ratio value for the specified field.
     final ratio = invoiceUtils.getCellValueInDouble(ratioRow.cells, field);
-    if (ratio == 0) return;
 
-    // Calculate the new amount based on the ratio and total.
-    final newValue = invoicePlutoController.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
+    final newValue = ratio == 0 ? '' : invoicePlutoController.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
 
-    // Get the cell to update.
     final valueCell = valueRow.cells[field]!;
+
     updateAdditionsDiscountsCellValue(valueCell, newValue);
 
     log('$field amount updated: $newValue');

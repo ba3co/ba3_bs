@@ -38,8 +38,6 @@ class PatternController extends GetxController with AppValidator {
 
   final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
 
-  Map<Account, AccountModel> selectedAccounts = {};
-
   @override
   void onInit() {
     super.onInit();

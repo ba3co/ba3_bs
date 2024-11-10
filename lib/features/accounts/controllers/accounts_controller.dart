@@ -101,7 +101,7 @@ class AccountsController extends GetxController {
           selectedAccounts[billAccounts] = selectedAccountModel;
         }
 
-        // Assign selectedCustomerAccount only if the controller matches invCustomerAccountController
+        // Assign selectedCustomerAccount only if the controller matches customerAccountController
         if (isCustomerAccount) {
           Get.find<InvoiceController>().updateCustomerAccount(selectedAccountModel);
         }

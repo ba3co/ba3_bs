@@ -5,19 +5,20 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
+import '../../features/invoice/controllers/invoice_controller.dart';
+import '../helper/enums/enums.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
-  const GetAccountsByEnterAction(this.controller, this.fieldTitle);
+  const GetAccountsByEnterAction(this.controller);
 
   final InvoicePlutoController controller;
-  final String fieldTitle;
 
   @override
   void execute({
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getAccounts(stateManager, controller, fieldTitle);
+    await getAccounts(stateManager, controller);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -59,31 +60,61 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  getAccounts(PlutoGridStateManager stateManager, InvoicePlutoController controller, fieldTitle) async {
-    if (stateManager.currentColumn?.field == "accountId") {
-      AccountModel? accountModel = await Get.find<AccountsController>().openAccountSelectionDialog(
-        query: stateManager.currentCell?.value,
-      );
+  /// Handles account selection and updates the grid cell value.
+  Future<void> getAccounts(PlutoGridStateManager stateManager, InvoicePlutoController controller) async {
+    final columnField = stateManager.currentColumn?.field;
+    final rowIdValue = stateManager.currentRow?.cells['id']?.value;
+
+    // Check if the selected column is 'discount' or 'addition' and the row is 'اسم الحساب'
+    if ((columnField == 'discount' || columnField == 'addition') && rowIdValue == 'اسم الحساب') {
+      final accountModel = await _openAccountSelectionDialog(stateManager.currentCell?.value);
 
       if (accountModel != null) {
-        stateManager.changeCellValue(
-          stateManager.currentRow!.cells[stateManager.currentColumn?.field]!,
-          accountModel.accName,
-          force: true,
-          callOnChangedEvent: true,
-          notify: true,
-        );
+        _updateSelectedAccount(columnField, accountModel);
+        _updateCellValue(stateManager, columnField, accountModel.accName);
       } else {
-        stateManager.changeCellValue(
-          stateManager.currentRow!.cells["accountId"]!,
-          stateManager.currentCell?.value,
-          callOnChangedEvent: false,
-          notify: true,
-        );
+        _resetCellValue(stateManager, columnField);
       }
+
       stateManager.notifyListeners();
       controller.update();
     }
+  }
+
+  /// Opens the account selection dialog and returns the selected account model.
+  Future<AccountModel?> _openAccountSelectionDialog(String query) async =>
+      await Get.find<AccountsController>().openAccountSelectionDialog(query: query);
+
+  /// Updates the selected additions or discounts account based on the column field.
+  void _updateSelectedAccount(String? columnField, AccountModel accountModel) {
+    final invoiceController = Get.find<InvoiceController>();
+
+    if (columnField == 'discount') {
+      invoiceController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
+    } else if (columnField == 'addition') {
+      invoiceController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
+    }
+  }
+
+  /// Updates the value of the current cell.
+  void _updateCellValue(PlutoGridStateManager stateManager, String? columnField, String? newValue) {
+    stateManager.changeCellValue(
+      stateManager.currentRow!.cells[columnField]!,
+      newValue,
+      force: true,
+      callOnChangedEvent: true,
+      notify: true,
+    );
+  }
+
+  /// Resets the value of the current cell to its original state.
+  void _resetCellValue(PlutoGridStateManager stateManager, String? columnField) {
+    stateManager.changeCellValue(
+      stateManager.currentRow!.cells[columnField]!,
+      stateManager.currentCell?.value,
+      callOnChangedEvent: false,
+      notify: true,
+    );
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {

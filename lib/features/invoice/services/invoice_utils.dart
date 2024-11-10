@@ -1,11 +1,19 @@
+import 'dart:developer';
+
+import 'package:get/get.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/utils.dart';
 import '../../materials/data/models/material_model.dart';
+import '../controllers/invoice_pluto_controller.dart';
 
 class InvoiceUtils {
+  InvoicePlutoController get invoicePlutoController => Get.find<InvoicePlutoController>();
+
+  PlutoGridStateManager get additionsDiscountsStateManager => invoicePlutoController.additionsDiscountsStateManager;
+
   double getPrice({required MaterialModel materialModel, required String type}) {
     double price = 0;
 
@@ -44,4 +52,15 @@ class InvoiceUtils {
 
     return double.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
   }
+
+  PlutoRow get ratioRow {
+    log('additionsDiscountsStateManager.rows ${additionsDiscountsStateManager.rows[1].cells['id']?.value}');
+    return additionsDiscountsStateManager.rows.firstWhere(
+      (row) => row.cells['id']?.value == 'النسبة',
+    );
+  }
+
+  PlutoRow get valueRow => additionsDiscountsStateManager.rows.firstWhere(
+        (row) => row.cells['id']?.value == 'القيمة',
+      );
 }

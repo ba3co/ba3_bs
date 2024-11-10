@@ -155,15 +155,59 @@ class BillModel implements PlutoAdaptable {
         'المجموع قبل الضريبة': billDetails.billWithoutVatTotal ?? 0,
         'المجموع الكلي': billDetails.billTotal ?? 0,
         'مجموع الحسم': billDetails.billDiscountsTotal ?? 0,
-        'مجموع الهدايا': billDetails.billGiftsTotal ?? 0,
         'مجموع الاضافات': billDetails.billAdditionsTotal ?? 0,
-        "نوع الفاتورة": BillType.byLabel(billTypeModel.billTypeLabel ?? "").value,
+        'مجموع الهدايا': billDetails.billGiftsTotal ?? 0,
+        'نوع الفاتورة': BillType.byLabel(billTypeModel.billTypeLabel ?? "").value,
         'نوع الدفع': InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
         'حساب العميل': billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         'حساب البائع': Get.find<SellerController>().getSellerNameById(billDetails.billSellerId),
         'المستودع': billTypeModel.accounts?[BillAccounts.store] ?? '',
         'وصف': billDetails.note ?? '',
       };
+
+  Map<String, String> _createRecordRow(
+          {required String id,
+          bool isRatio = false,
+          String discountRatio = '',
+          String additionRatio = '',
+          String discountValue = '',
+          String additionValue = ''}) =>
+      isRatio
+          ? {
+              'id': id,
+              'discount': discountRatio,
+              'addition': additionRatio,
+            }
+          : {
+              'id': id,
+              'discount': discountValue,
+              'addition': additionValue,
+            };
+
+  List<Map<String, String>> get additionsDiscountsRecords {
+    final partialTotal = (billDetails.billVatTotal ?? 0) + (billDetails.billWithoutVatTotal ?? 0);
+    return [
+      {
+        'id': 'اسم الحساب',
+        'discount': billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
+        'addition': billTypeModel.accounts?[BillAccounts.additions]?.accName ?? '',
+      },
+      _createRecordRow(
+        id: 'النسبة',
+        isRatio: true,
+        discountRatio: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
+        additionRatio: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
+      ),
+      _createRecordRow(
+        id: 'القيمة',
+        isRatio: false,
+        discountValue: (billDetails.billDiscountsTotal ?? 0).toString(),
+        additionValue: (billDetails.billAdditionsTotal ?? 0).toString(),
+      ),
+    ];
+  }
+
+  String _calculateRatio(double value, double total) => total != 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
 }
 
 class BillDetails {
@@ -264,45 +308,6 @@ class BillDetails {
       'billAdditionsTotal': billAdditionsTotal,
     };
   }
-
-  Map<String, String> _createRecordRow(
-          {required String id,
-          bool isRatio = false,
-          String discountRatio = '',
-          String additionRatio = '',
-          String discountValue = '',
-          String additionValue = ''}) =>
-      isRatio
-          ? {
-              'id': id,
-              'discount': discountRatio,
-              'addition': additionRatio,
-            }
-          : {
-              'id': id,
-              'discount': discountValue,
-              'addition': additionValue,
-            };
-
-  List<Map<String, String>> get additionsDiscountsRecords {
-    final partialTotal = (billVatTotal ?? 0) + (billWithoutVatTotal ?? 0);
-    return [
-      _createRecordRow(
-        id: 'النسبه',
-        isRatio: true,
-        discountRatio: _calculateRatio(billDiscountsTotal ?? 0, partialTotal),
-        additionRatio: _calculateRatio(billAdditionsTotal ?? 0, partialTotal),
-      ),
-      _createRecordRow(
-        id: 'القيمة',
-        isRatio: false,
-        discountValue: (billDiscountsTotal ?? 0).toString(),
-        additionValue: (billAdditionsTotal ?? 0).toString(),
-      ),
-    ];
-  }
-
-  String _calculateRatio(double value, double total) => total != 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
 }
 
 class BillItems {

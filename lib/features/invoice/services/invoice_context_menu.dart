@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/widgets/app_button.dart';
 import '../../materials/data/models/material_model.dart';
 import 'invoice_grid_service.dart';
 import 'invoice_utils.dart';
@@ -58,5 +59,32 @@ class InvoiceContextMenu {
         invoicePlutoController.update();
       },
     );
+  }
+
+  void showDeleteConfirmationDialog(int index) {
+    Get.defaultDialog(
+      title: "تأكيد الحذف",
+      content: const Text("هل انت متأكد من حذف هذا العنصر"),
+      actions: [
+        AppButton(
+          title: "نعم",
+          onPressed: () => _deleteRow(index),
+          iconData: Icons.check,
+        ),
+        AppButton(
+          title: "لا",
+          onPressed: Get.back,
+          iconData: Icons.clear,
+          color: Colors.red,
+        ),
+      ],
+    );
+  }
+
+  void _deleteRow(int rowIdx) {
+    final rowToRemove = invoicePlutoController.mainTableStateManager.rows[rowIdx];
+    invoicePlutoController.mainTableStateManager.removeRows([rowToRemove]);
+    Get.back();
+    invoicePlutoController.update();
   }
 }

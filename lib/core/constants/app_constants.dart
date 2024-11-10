@@ -295,8 +295,9 @@ abstract class AppConstants {
 
   static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(
-      title: '',
+      title: 'الحساب',
       field: 'id',
+      enableEditingMode: false,
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
@@ -314,7 +315,14 @@ abstract class AppConstants {
   static List<PlutoRow> additionsDiscountsRows = [
     PlutoRow(
       cells: {
-        'id': PlutoCell(value: 'النسبه'),
+        'id': PlutoCell(value: 'اسم الحساب'),
+        'discount': PlutoCell(value: 'الحسم الممنوح'),
+        'addition': PlutoCell(value: 'ايرادات مختلفة'),
+      },
+    ),
+    PlutoRow(
+      cells: {
+        'id': PlutoCell(value: 'النسبة'),
         'discount': PlutoCell(value: ''),
         'addition': PlutoCell(value: ''),
       },

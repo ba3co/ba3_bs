@@ -24,43 +24,37 @@ class BillBody extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: GetBuilder<InvoicePlutoController>(builder: (controller) {
-                      return FocusScope(
-                        autofocus: true, // لتمكين التركيز تلقائيًا عند إنشاء الشاشة
-                        child: CustomPlutoWithEdite(
-                          evenRowColor: Color(billTypeModel.color!),
-                          controller: controller,
-                          shortCut: customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, "invRecProduct")),
-                          onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
-                          onChanged: controller.onMainTableStateManagerChanged,
-                        ),
-                      );
-                    }),
+            flex: 5,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: GetBuilder<InvoicePlutoController>(builder: (controller) {
+                return FocusScope(
+                  autofocus: true, // لتمكين التركيز تلقائيًا عند إنشاء الشاشة
+                  child: CustomPlutoWithEdite(
+                    evenRowColor: Color(billTypeModel.color!),
+                    controller: controller,
+                    shortCut: customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, "invRecProduct")),
+                    onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
+                    onChanged: controller.onMainTableStateManagerChanged,
                   ),
-                ),
-                const VerticalSpace(),
-                GetBuilder<InvoicePlutoController>(builder: (controller) {
-                  return Expanded(
-                    flex: 1,
-                    child: BillGridWidget(
-                      rowColor: Colors.grey,
-                      columns: controller.additionsDiscountsColumns,
-                      rows: controller.additionsDiscountsRows,
-                      shortCut: customPlutoShortcut(GetAccountsByEnterAction(controller, "accountId")),
-                      onChanged: controller.onAdditionsDiscountsChanged,
-                      onLoaded: controller.onAdditionsDiscountsLoaded,
-                    ),
-                  );
-                }),
-              ],
+                );
+              }),
             ),
           ),
+          const VerticalSpace(),
+          GetBuilder<InvoicePlutoController>(builder: (controller) {
+            return Expanded(
+              flex: 3,
+              child: BillGridWidget(
+                rowColor: Colors.grey,
+                columns: controller.additionsDiscountsColumns,
+                rows: controller.additionsDiscountsRows,
+                shortCut: customPlutoShortcut(GetAccountsByEnterAction(controller)),
+                onChanged: controller.onAdditionsDiscountsChanged,
+                onLoaded: controller.onAdditionsDiscountsLoaded,
+              ),
+            );
+          }),
         ],
       ),
     );

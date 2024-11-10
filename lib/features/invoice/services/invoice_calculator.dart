@@ -135,7 +135,7 @@ class InvoiceCalculator {
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
 
-    PlutoRow ratioRow = additionsDiscountsStateManager.rows.first;
+    final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
     final discountRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, 'discount');
     if (discountRatio == 0) return 0;
@@ -150,7 +150,7 @@ class InvoiceCalculator {
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
 
-    PlutoRow ratioRow = additionsDiscountsStateManager.rows.first;
+    final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
     final additionsRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, 'addition');
 
