@@ -91,4 +91,4 @@ class BillTypeModel implements PlutoAdaptable {
 }
 
 // Utility function to get an Account object from a string
-Account getBillAccountFromLabel(String label) => BillAccounts.fromLabel(label);
+Account getBillAccountFromLabel(String label) => BillAccounts.byLabel(label);

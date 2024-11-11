@@ -1,10 +1,11 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:get/get.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../core/constants/app_constants.dart';
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/utils.dart';
 import '../../materials/data/models/material_model.dart';
 import '../controllers/invoice_pluto_controller.dart';
@@ -14,25 +15,17 @@ class InvoiceUtils {
 
   PlutoGridStateManager get additionsDiscountsStateManager => invoicePlutoController.additionsDiscountsStateManager;
 
-  double getPrice({required MaterialModel materialModel, required String type}) {
-    double price = 0;
-
+  double getPrice({required MaterialModel materialModel, required PriceType type}) {
     switch (type) {
-      case AppConstants.invoiceChoosePriceMethodeCustomerPrice:
-        price = double.parse(materialModel.endUserPrice ?? "0");
-        break;
-      case AppConstants.invoiceChoosePriceMethodeWholePrice:
-        price = double.parse(materialModel.wholesalePrice ?? "0");
-        break;
-      case AppConstants.invoiceChoosePriceMethodeRetailPrice:
-        price = double.parse(materialModel.retailPrice ?? "0");
-        break;
-
+      case PriceType.consumer:
+        return double.tryParse(materialModel.endUserPrice ?? '') ?? 0;
+      case PriceType.bulk:
+        return double.tryParse(materialModel.wholesalePrice ?? '') ?? 0;
+      case PriceType.retail:
+        return double.tryParse(materialModel.retailPrice ?? '') ?? 0;
       default:
-        throw ArgumentError("Unknown price method: $type");
+        throw ArgumentError('Unknown price method: $type');
     }
-
-    return price;
   }
 
   double parseExpression(String expression) {
@@ -54,13 +47,13 @@ class InvoiceUtils {
   }
 
   PlutoRow get ratioRow {
-    log('additionsDiscountsStateManager.rows ${additionsDiscountsStateManager.rows[1].cells['id']?.value}');
+    log('additionsDiscountsStateManager.rows ${additionsDiscountsStateManager.rows[1].cells[AppConstants.id]?.value}');
     return additionsDiscountsStateManager.rows.firstWhere(
-      (row) => row.cells['id']?.value == 'النسبة',
+      (row) => row.cells[AppConstants.id]?.value == AppConstants.ratio,
     );
   }
 
   PlutoRow get valueRow => additionsDiscountsStateManager.rows.firstWhere(
-        (row) => row.cells['id']?.value == 'القيمة',
+        (row) => row.cells[AppConstants.id]?.value == AppConstants.value,
       );
 }

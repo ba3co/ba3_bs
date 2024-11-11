@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../network/error/failure.dart';
 
-abstract class FirebaseRepositoryBase<T> {
+abstract class IFirebaseRepository<T> {
   Future<Either<Failure, List<T>>> getAll();
 
   Future<Either<Failure, T?>> getById(String id);

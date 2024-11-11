@@ -3,6 +3,7 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import 'invoice_record_model.dart';
 
@@ -25,23 +26,20 @@ class BillModel implements PlutoAdaptable {
     final BillTypeModel? billTypeModel,
     final BillItems? items,
     final BillDetails? billDetails,
-  }) {
-    return BillModel(
-      billId: billId ?? this.billId,
-      billTypeModel: billTypeModel ?? this.billTypeModel,
-      items: items ?? this.items,
-      billDetails: billDetails ?? this.billDetails,
-    );
-  }
+  }) =>
+      BillModel(
+        billId: billId ?? this.billId,
+        billTypeModel: billTypeModel ?? this.billTypeModel,
+        items: items ?? this.items,
+        billDetails: billDetails ?? this.billDetails,
+      );
 
-  factory BillModel.fromJson(Map<String, dynamic> json) {
-    return BillModel(
-      billId: json['billId'],
-      billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
-      billDetails: BillDetails.fromJson(json['billDetails']),
-      items: BillItems.fromJson(json['items']),
-    );
-  }
+  factory BillModel.fromJson(Map<String, dynamic> json) => BillModel(
+        billId: json['billId'],
+        billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
+        billDetails: BillDetails.fromJson(json['billDetails']),
+        items: BillItems.fromJson(json['items']),
+      );
 
   factory BillModel.fromInvoiceData({
     BillModel? billModel,
@@ -105,23 +103,22 @@ class BillModel implements PlutoAdaptable {
     required double billGiftsTotal,
     required double billDiscountsTotal,
     required double billAdditionsTotal,
-  }) {
-    return BillDetails(
-      billGuid: existingDetails?.billGuid,
-      note: note,
-      billNumber: billNumber,
-      billCustomerId: billCustomerId,
-      billSellerId: billSellerId,
-      billPayType: billPayType,
-      billDate: billDate,
-      billTotal: billTotal,
-      billVatTotal: billVatTotal,
-      billWithoutVatTotal: billWithoutVatTotal,
-      billGiftsTotal: billGiftsTotal,
-      billDiscountsTotal: billDiscountsTotal,
-      billAdditionsTotal: billAdditionsTotal,
-    );
-  }
+  }) =>
+      BillDetails(
+        billGuid: existingDetails?.billGuid,
+        note: note,
+        billNumber: billNumber,
+        billCustomerId: billCustomerId,
+        billSellerId: billSellerId,
+        billPayType: billPayType,
+        billDate: billDate,
+        billTotal: billTotal,
+        billVatTotal: billVatTotal,
+        billWithoutVatTotal: billWithoutVatTotal,
+        billGiftsTotal: billGiftsTotal,
+        billDiscountsTotal: billDiscountsTotal,
+        billAdditionsTotal: billAdditionsTotal,
+      );
 
   static BillItems _createBillItems(List<InvoiceRecordModel> invoiceRecords) {
     final itemList = invoiceRecords.map((invoiceRecord) {
@@ -165,49 +162,36 @@ class BillModel implements PlutoAdaptable {
         'وصف': billDetails.note ?? '',
       };
 
-  Map<String, String> _createRecordRow(
-          {required String id,
-          bool isRatio = false,
-          String discountRatio = '',
-          String additionRatio = '',
-          String discountValue = '',
-          String additionValue = ''}) =>
-      isRatio
-          ? {
-              'id': id,
-              'discount': discountRatio,
-              'addition': additionRatio,
-            }
-          : {
-              'id': id,
-              'discount': discountValue,
-              'addition': additionValue,
-            };
+  Map<String, String> _createRecordRow({required String id, required String discount, required String addition}) =>
+      {AppConstants.id: id, AppConstants.discount: discount, AppConstants.addition: addition};
+
+  String _calculateRatio(double value, double total) => total > 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
+
+  double _partialTotal() => (billDetails.billVatTotal ?? 0) + (billDetails.billWithoutVatTotal ?? 0);
 
   List<Map<String, String>> get additionsDiscountsRecords {
-    final partialTotal = (billDetails.billVatTotal ?? 0) + (billDetails.billWithoutVatTotal ?? 0);
+    final partialTotal = _partialTotal();
+    final discountTotal = (billDetails.billDiscountsTotal ?? 0).toString();
+    final additionTotal = (billDetails.billAdditionsTotal ?? 0).toString();
+
     return [
-      {
-        'id': 'اسم الحساب',
-        'discount': billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
-        'addition': billTypeModel.accounts?[BillAccounts.additions]?.accName ?? '',
-      },
       _createRecordRow(
-        id: 'النسبة',
-        isRatio: true,
-        discountRatio: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
-        additionRatio: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
+        id: AppConstants.accountName,
+        discount: billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
+        addition: billTypeModel.accounts?[BillAccounts.additions]?.accName ?? '',
       ),
       _createRecordRow(
-        id: 'القيمة',
-        isRatio: false,
-        discountValue: (billDetails.billDiscountsTotal ?? 0).toString(),
-        additionValue: (billDetails.billAdditionsTotal ?? 0).toString(),
+        id: AppConstants.ratio,
+        discount: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
+        addition: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
+      ),
+      _createRecordRow(
+        id: AppConstants.value,
+        discount: discountTotal,
+        addition: additionTotal,
       ),
     ];
   }
-
-  String _calculateRatio(double value, double total) => total != 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
 }
 
 class BillDetails {
@@ -255,59 +239,54 @@ class BillDetails {
     final double? billGiftsTotal,
     final double? billDiscountsTotal,
     final double? billAdditionsTotal,
-  }) {
-    return BillDetails(
-      billGuid: billGuid ?? this.billGuid,
-      billPayType: billPayType ?? this.billPayType,
-      billNumber: billNumber ?? this.billNumber,
-      billDate: billDate ?? this.billDate,
-      note: note ?? this.note,
-      billTotal: billTotal ?? this.billTotal,
-      billVatTotal: billVatTotal ?? this.billVatTotal,
-      billWithoutVatTotal: billWithoutVatTotal ?? this.billWithoutVatTotal,
-      billCustomerId: billCustomerId ?? this.billCustomerId,
-      billSellerId: billSellerId ?? this.billSellerId,
-      billDiscountsTotal: billDiscountsTotal ?? this.billDiscountsTotal,
-      billGiftsTotal: billGiftsTotal ?? this.billGiftsTotal,
-      billAdditionsTotal: billAdditionsTotal ?? this.billAdditionsTotal,
-    );
-  }
+  }) =>
+      BillDetails(
+        billGuid: billGuid ?? this.billGuid,
+        billPayType: billPayType ?? this.billPayType,
+        billNumber: billNumber ?? this.billNumber,
+        billDate: billDate ?? this.billDate,
+        note: note ?? this.note,
+        billTotal: billTotal ?? this.billTotal,
+        billVatTotal: billVatTotal ?? this.billVatTotal,
+        billWithoutVatTotal: billWithoutVatTotal ?? this.billWithoutVatTotal,
+        billCustomerId: billCustomerId ?? this.billCustomerId,
+        billSellerId: billSellerId ?? this.billSellerId,
+        billDiscountsTotal: billDiscountsTotal ?? this.billDiscountsTotal,
+        billGiftsTotal: billGiftsTotal ?? this.billGiftsTotal,
+        billAdditionsTotal: billAdditionsTotal ?? this.billAdditionsTotal,
+      );
 
-  factory BillDetails.fromJson(Map<String, dynamic> json) {
-    return BillDetails(
-      billGuid: json['billGuid'],
-      billPayType: json['billPayType'],
-      billNumber: json['billNumber'],
-      billDate: json['billDate'],
-      note: json['note'],
-      billCustomerId: json['billCustomerId'],
-      billSellerId: json['billSellerId'],
-      billTotal: json['billTotal'],
-      billVatTotal: json['billVatTotal'],
-      billWithoutVatTotal: json['billWithoutVatTotal'],
-      billGiftsTotal: json['billGiftsTotal'],
-      billDiscountsTotal: json['billDiscountsTotal'],
-      billAdditionsTotal: json['billAdditionsTotal'],
-    );
-  }
+  factory BillDetails.fromJson(Map<String, dynamic> json) => BillDetails(
+        billGuid: json['billGuid'],
+        billPayType: json['billPayType'],
+        billNumber: json['billNumber'],
+        billDate: json['billDate'],
+        note: json['note'],
+        billCustomerId: json['billCustomerId'],
+        billSellerId: json['billSellerId'],
+        billTotal: json['billTotal'],
+        billVatTotal: json['billVatTotal'],
+        billWithoutVatTotal: json['billWithoutVatTotal'],
+        billGiftsTotal: json['billGiftsTotal'],
+        billDiscountsTotal: json['billDiscountsTotal'],
+        billAdditionsTotal: json['billAdditionsTotal'],
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'billGuid': billGuid,
-      'billPayType': billPayType,
-      'billNumber': billNumber,
-      'billDate': billDate,
-      'note': note,
-      'billCustomerId': billCustomerId,
-      'billTotal': billTotal,
-      'billWithoutVatTotal': billWithoutVatTotal,
-      'billVatTotal': billVatTotal,
-      'billSellerId': billSellerId,
-      'billGiftsTotal': billGiftsTotal,
-      'billDiscountsTotal': billDiscountsTotal,
-      'billAdditionsTotal': billAdditionsTotal,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'billGuid': billGuid,
+        'billPayType': billPayType,
+        'billNumber': billNumber,
+        'billDate': billDate,
+        'note': note,
+        'billCustomerId': billCustomerId,
+        'billTotal': billTotal,
+        'billWithoutVatTotal': billWithoutVatTotal,
+        'billVatTotal': billVatTotal,
+        'billSellerId': billSellerId,
+        'billGiftsTotal': billGiftsTotal,
+        'billDiscountsTotal': billDiscountsTotal,
+        'billAdditionsTotal': billAdditionsTotal,
+      };
 }
 
 class BillItems {
@@ -315,11 +294,9 @@ class BillItems {
 
   BillItems({required this.itemList});
 
-  BillItems copyWith({List<BillItem>? itemList}) {
-    return BillItems(
-      itemList: itemList ?? this.itemList,
-    );
-  }
+  BillItems copyWith({List<BillItem>? itemList}) => BillItems(
+        itemList: itemList ?? this.itemList,
+      );
 
   factory BillItems.fromJson(Map<String, dynamic> json) {
     var itemsJson = json['Item'] as List<dynamic>;
@@ -365,31 +342,28 @@ class BillItem {
     final double? itemVatPrice,
     final int? itemGiftsNumber,
     final double? itemGiftsPrice,
-  }) {
-    return BillItem(
-      itemGuid: itemGuid ?? this.itemGuid,
-      itemName: itemName ?? this.itemName,
-      itemQuantity: itemQuantity ?? this.itemQuantity,
-      itemTotalPrice: itemTotalPrice ?? this.itemTotalPrice,
-      itemSubTotalPrice: itemSubTotalPrice ?? this.itemSubTotalPrice,
-      itemVatPrice: itemVatPrice ?? this.itemVatPrice,
-      itemGiftsNumber: itemGiftsNumber ?? this.itemGiftsNumber,
-      itemGiftsPrice: itemGiftsPrice ?? this.itemGiftsPrice,
-    );
-  }
+  }) =>
+      BillItem(
+        itemGuid: itemGuid ?? this.itemGuid,
+        itemName: itemName ?? this.itemName,
+        itemQuantity: itemQuantity ?? this.itemQuantity,
+        itemTotalPrice: itemTotalPrice ?? this.itemTotalPrice,
+        itemSubTotalPrice: itemSubTotalPrice ?? this.itemSubTotalPrice,
+        itemVatPrice: itemVatPrice ?? this.itemVatPrice,
+        itemGiftsNumber: itemGiftsNumber ?? this.itemGiftsNumber,
+        itemGiftsPrice: itemGiftsPrice ?? this.itemGiftsPrice,
+      );
 
-  factory BillItem.fromJson(Map<String, dynamic> json) {
-    return BillItem(
-      itemGuid: json['ItemGuid'],
-      itemName: json['ItemName'],
-      itemQuantity: json['ItemQuantity'],
-      itemTotalPrice: json['itemTotalPrice'],
-      itemSubTotalPrice: json['itemSubTotalPrice'],
-      itemVatPrice: json['itemVatPrice'],
-      itemGiftsNumber: json['itemGiftsNumber'],
-      itemGiftsPrice: json['itemGiftsPrice'],
-    );
-  }
+  factory BillItem.fromJson(Map<String, dynamic> json) => BillItem(
+        itemGuid: json['ItemGuid'],
+        itemName: json['ItemName'],
+        itemQuantity: json['ItemQuantity'],
+        itemTotalPrice: json['itemTotalPrice'],
+        itemSubTotalPrice: json['itemSubTotalPrice'],
+        itemVatPrice: json['itemVatPrice'],
+        itemGiftsNumber: json['itemGiftsNumber'],
+        itemGiftsPrice: json['itemGiftsPrice'],
+      );
 
   Map<String, dynamic> toJson() => {
         'ItemGuid': itemGuid,

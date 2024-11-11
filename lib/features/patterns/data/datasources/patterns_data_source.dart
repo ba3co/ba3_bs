@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../core/classes/datasources/firebase_datasource_base.dart';
+import '../../../../core/classes/base/i_firebase_datasource.dart';
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
 import '../models/bill_type_model.dart';
 
-class PatternsDataSource implements FirebaseDatasourceBase<BillTypeModel> {
+class PatternsDataSource implements IFirebaseDatasource<BillTypeModel> {
   final FirebaseFirestore _firestore;
   final String _collection = 'bill_types'; // Collection name in Firestore
 

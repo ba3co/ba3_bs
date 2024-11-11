@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/invoice/controllers/invoice_controller.dart';
+import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
@@ -63,10 +64,11 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   /// Handles account selection and updates the grid cell value.
   Future<void> getAccounts(PlutoGridStateManager stateManager, InvoicePlutoController controller) async {
     final columnField = stateManager.currentColumn?.field;
-    final rowIdValue = stateManager.currentRow?.cells['id']?.value;
+    final rowIdValue = stateManager.currentRow?.cells[AppConstants.id]?.value;
 
     // Check if the selected column is 'discount' or 'addition' and the row is 'اسم الحساب'
-    if ((columnField == 'discount' || columnField == 'addition') && rowIdValue == 'اسم الحساب') {
+    if ((columnField == AppConstants.discount || columnField == AppConstants.addition) &&
+        rowIdValue == AppConstants.accountName) {
       final accountModel = await _openAccountSelectionDialog(stateManager.currentCell?.value);
 
       if (accountModel != null) {
@@ -89,9 +91,9 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   void _updateSelectedAccount(String? columnField, AccountModel accountModel) {
     final invoiceController = Get.find<InvoiceController>();
 
-    if (columnField == 'discount') {
+    if (columnField == AppConstants.discount) {
       invoiceController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
-    } else if (columnField == 'addition') {
+    } else if (columnField == AppConstants.addition) {
       invoiceController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
     }
   }

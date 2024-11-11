@@ -4,11 +4,11 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../datasources/firebase_datasource_base.dart';
-import 'firebase_repo_base.dart';
+import '../base/i_firebase_datasource.dart';
+import '../base/i_firebase_repo.dart';
 
-class FirebaseRepositoryConcrete<T> implements FirebaseRepositoryBase<T> {
-  final FirebaseDatasourceBase<T> _dataSource;
+class FirebaseRepositoryConcrete<T> implements IFirebaseRepository<T> {
+  final IFirebaseDatasource<T> _dataSource;
 
   FirebaseRepositoryConcrete(this._dataSource);
 

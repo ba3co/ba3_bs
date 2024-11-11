@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import 'bill_model.dart';
 
 class InvoiceRecordModel {
@@ -42,38 +43,38 @@ class InvoiceRecordModel {
       );
 
   InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) {
-    invRecId = map['invRecId'];
-    invRecProduct = map['invRecProduct'];
-    invRecQuantity = int.tryParse(map['invRecQuantity'].toString());
-    invRecSubTotal = double.tryParse(map['invRecSubTotal'].toString());
-    invRecTotal = double.tryParse(map['invRecTotal'].toString());
-    invRecVat = double.tryParse((map['invRecVat']).toString());
-    invRecIsLocal = map['invRecIsLocal'];
-    invRecGift = int.tryParse(map['invRecGift'].toString());
-    invRecGiftTotal = (map['invRecGiftTotal'] ?? 0) * 1.0;
+    invRecId = map[AppConstants.invRecId];
+    invRecProduct = map[AppConstants.invRecProduct];
+    invRecQuantity = int.tryParse(map[AppConstants.invRecQuantity].toString());
+    invRecSubTotal = double.tryParse(map[AppConstants.invRecSubTotal].toString());
+    invRecTotal = double.tryParse(map[AppConstants.invRecTotal].toString());
+    invRecVat = double.tryParse((map[AppConstants.invRecVat]).toString());
+    invRecIsLocal = map[AppConstants.invRecIsLocal];
+    invRecGift = int.tryParse(map[AppConstants.invRecGift].toString());
+    invRecGiftTotal = (map[AppConstants.invRecGiftTotal] ?? 0) * 1.0;
   }
 
   toJson() {
     return {
-      'invRecId': invRecId,
-      'invRecProduct': invRecProduct,
-      'invRecQuantity': invRecQuantity,
-      'invRecSubTotal': invRecSubTotal,
-      'invRecTotal': invRecTotal,
-      'invRecVat': invRecVat,
-      'invRecIsLocal': invRecIsLocal,
-      'invRecGift': invRecGift,
-      'invRecGiftTotal': invRecGiftTotal,
+      AppConstants.invRecId: invRecId,
+      AppConstants.invRecProduct: invRecProduct,
+      AppConstants.invRecQuantity: invRecQuantity,
+      AppConstants.invRecSubTotal: invRecSubTotal,
+      AppConstants.invRecTotal: invRecTotal,
+      AppConstants.invRecVat: invRecVat,
+      AppConstants.invRecIsLocal: invRecIsLocal,
+      AppConstants.invRecGift: invRecGift,
+      AppConstants.invRecGiftTotal: invRecGiftTotal,
     };
   }
 
   InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map) {
-    String? prodName = map['invRecProduct'];
-    int? giftsNumber = _parseInteger(map['invRecGift']);
-    int? quantity = _parseInteger(map['invRecQuantity']);
-    double? subTotal = _parseDouble(map['invRecSubTotal']);
-    double? total = _parseDouble(map['invRecTotal']);
-    double? vat = _parseDouble(map['invRecVat']);
+    String? prodName = map[AppConstants.invRecProduct];
+    int? giftsNumber = _parseInteger(map[AppConstants.invRecGift]);
+    int? quantity = _parseInteger(map[AppConstants.invRecQuantity]);
+    double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
+    double? total = _parseDouble(map[AppConstants.invRecTotal]);
+    double? vat = _parseDouble(map[AppConstants.invRecVat]);
 
     invRecId = matId;
     invRecProduct = prodName;
@@ -81,7 +82,7 @@ class InvoiceRecordModel {
     invRecSubTotal = subTotal;
     invRecTotal = total;
     invRecVat = vat;
-    invRecIsLocal = map['invRecIsLocal'];
+    invRecIsLocal = map[AppConstants.invRecIsLocal];
     invRecGift = giftsNumber;
 
     final effectiveVat = vat ?? 0;
@@ -166,12 +167,12 @@ class InvoiceRecordModel {
     return {
       PlutoColumn(
         title: 'الرقم',
-        field: 'invRecId',
+        field: AppConstants.invRecId,
         readOnly: true,
         width: 50,
         type: PlutoColumnType.text(),
         renderer: (rendererContext) {
-          if (rendererContext.row.cells["invRecProduct"]?.value != '') {
+          if (rendererContext.row.cells[AppConstants.invRecProduct]?.value != '') {
             rendererContext.cell.value = rendererContext.rowIdx.toString();
             return Text(rendererContext.rowIdx.toString());
           }
@@ -180,7 +181,7 @@ class InvoiceRecordModel {
       ): invRecId,
       PlutoColumn(
         title: 'المادة',
-        field: 'invRecProduct',
+        field: AppConstants.invRecProduct,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
           return false;
@@ -188,39 +189,39 @@ class InvoiceRecordModel {
       ): invRecProduct,
       PlutoColumn(
         title: 'الكمية',
-        field: 'invRecQuantity',
+        field: AppConstants.invRecQuantity,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
-          return cell.row.cells['invRecProduct']?.value == '';
+          return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecQuantity,
       PlutoColumn(
         title: 'السعر الإفرادي',
-        field: "invRecSubTotal",
+        field: AppConstants.invRecSubTotal,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
-          return cell.row.cells['invRecProduct']?.value == '';
+          return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecSubTotal,
       PlutoColumn(
         title: 'الضريبة',
-        field: 'invRecVat',
+        field: AppConstants.invRecVat,
         type: PlutoColumnType.text(),
       ): invRecVat,
       PlutoColumn(
         title: 'المجموع',
-        field: 'invRecTotal',
+        field: AppConstants.invRecTotal,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
-          return cell.row.cells['invRecProduct']?.value == '';
+          return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecTotal,
       PlutoColumn(
         title: 'الهدايا',
-        field: "invRecGift",
+        field: AppConstants.invRecGift,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
-          return cell.row.cells['invRecProduct']?.value == '';
+          return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecGift,
     };

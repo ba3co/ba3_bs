@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/widgets/app_spacer.dart';
-import '../../../../../core/widgets/custom_pluto_short_cut.dart';
-import '../../../../../core/widgets/custom_pluto_with_edite.dart';
 import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
 import '../../../../../core/widgets/get_products_by_enter_action.dart';
+import '../../../../../core/widgets/pluto_short_cut.dart';
+import '../../../../../core/widgets/pluto_with_edite.dart';
 import '../../../../patterns/data/models/bill_type_model.dart';
 import '../../../controllers/invoice_pluto_controller.dart';
 import 'bill_grid_widget.dart';
@@ -24,16 +25,17 @@ class BillBody extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            flex: 5,
+            flex: 3,
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
               child: GetBuilder<InvoicePlutoController>(builder: (controller) {
                 return FocusScope(
                   autofocus: true, // لتمكين التركيز تلقائيًا عند إنشاء الشاشة
-                  child: CustomPlutoWithEdite(
+                  child: PlutoWithEdite(
                     evenRowColor: Color(billTypeModel.color!),
                     controller: controller,
-                    shortCut: customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, "invRecProduct")),
+                    shortCut:
+                        customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, AppConstants.invRecProduct)),
                     onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
                     onChanged: controller.onMainTableStateManagerChanged,
                   ),
@@ -44,7 +46,7 @@ class BillBody extends StatelessWidget {
           const VerticalSpace(),
           GetBuilder<InvoicePlutoController>(builder: (controller) {
             return Expanded(
-              flex: 3,
+              flex: 2,
               child: BillGridWidget(
                 rowColor: Colors.grey,
                 columns: controller.additionsDiscountsColumns,

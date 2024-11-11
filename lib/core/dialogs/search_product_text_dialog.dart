@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../features/invoice/ui/widgets/invoice_screen/custom_Text_field.dart';
-import '../widgets/new_pluto.dart';
+import '../widgets/pluto_grid_with_app_bar_.dart';
 
 Future<MaterialModel?> searchProductTextDialog(String productText) async {
   TextEditingController productTextController = TextEditingController()..text = productText;
@@ -37,7 +37,7 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
                           child: ClipRRect(
                             clipBehavior: Clip.hardEdge,
                             borderRadius: BorderRadius.circular(15),
-                            child: CustomPlutoGridWithAppBar(
+                            child: PlutoGridWithAppBar(
                               title: 'اختيار مادة',
                               tableSourceModels: searchedMaterials,
                               onLoaded: (p0) {},

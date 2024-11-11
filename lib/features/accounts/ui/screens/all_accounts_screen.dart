@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/widgets/new_pluto.dart';
+import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 import '../../controllers/accounts_controller.dart';
 
 class AllAccountScreen extends StatelessWidget {
@@ -10,7 +10,7 @@ class AllAccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AccountsController>(builder: (controller) {
-      return CustomPlutoGridWithAppBar(
+      return PlutoGridWithAppBar(
         title: 'جميع الحسابات',
         onLoaded: (e) {},
         onSelected: (p0) {},

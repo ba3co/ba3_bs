@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/widgets/new_pluto.dart';
+import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 import '../../controllers/pattern_controller.dart';
 import 'add_pattern_page.dart';
 
@@ -11,7 +11,7 @@ class AllPatternPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<PatternController>(
-        builder: (controller) => CustomPlutoGridWithAppBar(
+        builder: (controller) => PlutoGridWithAppBar(
               title: "أنماط البيع",
               isLoading: controller.isLoading,
               tableSourceModels: controller.billsTypes,

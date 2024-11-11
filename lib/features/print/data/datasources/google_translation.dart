@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:ba3_bs/core/classes/datasources/i_translation_service.dart';
+import 'package:ba3_bs/core/classes/base/i_translation_service.dart';
 
-import '../../../../core/classes/datasources/api_client_base.dart';
+import '../../../../core/classes/base/i_api_client.dart';
 
 class GoogleTranslation implements ITranslationService {
   final String baseUrl;
   final String apiKey;
-  final APiClientBase client;
+  final IAPiClient client;
 
   GoogleTranslation({required this.baseUrl, required this.apiKey, required this.client});
 

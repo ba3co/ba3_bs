@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/widgets/new_pluto.dart';
+import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 import '../../controllers/invoice_controller.dart';
 
 class AllBillsScreen extends StatelessWidget {
@@ -10,7 +10,7 @@ class AllBillsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<InvoiceController>(builder: (controller) {
-      return CustomPlutoGridWithAppBar(
+      return PlutoGridWithAppBar(
         title: "جميع الفواتير",
         onLoaded: (e) {},
         onSelected: (event) {
@@ -19,6 +19,8 @@ class AllBillsScreen extends StatelessWidget {
         },
         isLoading: controller.isLoading,
         tableSourceModels: controller.bills,
+        icon: Icons.outbox,
+        onIconPressed: controller.exportBillsJsonFile,
       );
     });
   }

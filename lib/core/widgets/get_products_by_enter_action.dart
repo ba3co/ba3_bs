@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/services.dart';
@@ -59,19 +60,15 @@ class GetProductByPlutoGridEnterAction extends PlutoGridShortcutAction {
   }
 
   getProduct(PlutoGridStateManager stateManager, InvoicePlutoController controller, fieldTitle) async {
-    if (stateManager.currentColumn?.field == "invRecProduct") {
+    if (stateManager.currentColumn?.field == AppConstants.invRecProduct) {
       MaterialModel? material = await searchProductTextDialog(stateManager.currentCell?.value);
       if (material != null) {
         updateCellValue(stateManager, stateManager.currentColumn!.field, material.matName);
-        updateCellValue(stateManager, 'invRecSubTotal', material.endUserPrice);
-        updateCellValue(stateManager, 'invRecQuantity', 1);
-        updateCellValue(stateManager, 'invRecSubTotal', material.endUserPrice);
-
-        // controller.updateInvoiceValues(
-        //     controller.getPrice(prodName: newValue, type: AppConstants.invoiceChoosePriceMethodeCustomerPrice), 1);
+        updateCellValue(stateManager, AppConstants.invRecSubTotal, material.endUserPrice);
+        updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
       } else {
         stateManager.changeCellValue(
-          stateManager.currentRow!.cells["invRecProduct"]!,
+          stateManager.currentRow!.cells[AppConstants.invRecProduct]!,
           stateManager.currentCell?.value,
           callOnChangedEvent: false,
           notify: true,

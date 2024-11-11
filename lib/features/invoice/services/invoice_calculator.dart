@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dar
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/utils.dart';
 import 'invoice_utils.dart';
 
@@ -16,8 +17,8 @@ class InvoiceCalculator {
 
   double get computeWithVatTotal {
     double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
-      if (record.toJson()["invRecQuantity"] != '' && record.toJson()["invRecSubTotal"] != '') {
-        return sum + (double.tryParse(record.toJson()["invRecTotal"].toString()) ?? 0);
+      if (record.toJson()[AppConstants.invRecQuantity] != '' && record.toJson()[AppConstants.invRecSubTotal] != '') {
+        return sum + (double.tryParse(record.toJson()[AppConstants.invRecTotal].toString()) ?? 0);
       }
       return sum;
     });
@@ -31,9 +32,9 @@ class InvoiceCalculator {
     mainTableStateManager.setShowLoading(true);
 
     double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
-      String quantityStr = record.toJson()["invRecQuantity"].toString();
-      String subTotalStr = record.toJson()["invRecSubTotal"].toString();
-      String giftStr = record.toJson()["invRecGift"].toString();
+      String quantityStr = record.toJson()[AppConstants.invRecQuantity].toString();
+      String subTotalStr = record.toJson()[AppConstants.invRecSubTotal].toString();
+      String giftStr = record.toJson()[AppConstants.invRecGift].toString();
 
       // Check conditions
       if (quantityStr.isNotEmpty && subTotalStr.isNotEmpty && (giftStr.isEmpty || (int.tryParse(giftStr) ?? 0) >= 0)) {
@@ -52,10 +53,12 @@ class InvoiceCalculator {
   double get computeTotalVat => mainTableStateManager.rows.fold(
         0.0,
         (previousValue, record) {
-          double vatAmount =
-              double.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecVat"].toString())) ?? 0.0;
-          int quantity =
-              int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecQuantity"].toString())) ?? 1;
+          double vatAmount = double.tryParse(
+                  Utils.replaceArabicNumbersWithEnglish(record.toJson()[AppConstants.invRecVat].toString())) ??
+              0.0;
+          int quantity = int.tryParse(
+                  Utils.replaceArabicNumbersWithEnglish(record.toJson()[AppConstants.invRecQuantity].toString())) ??
+              1;
 
           return previousValue + (vatAmount * quantity);
         },
@@ -65,10 +68,11 @@ class InvoiceCalculator {
     mainTableStateManager.setShowLoading(true);
 
     int total = mainTableStateManager.rows.fold(0, (sum, record) {
-      String giftValue = record.toJson()["invRecGift"] ?? '';
+      String giftValue = record.toJson()[AppConstants.invRecGift] ?? '';
       if (giftValue.isNotEmpty) {
-        int quantity =
-            int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecQuantity"].toString())) ?? 0;
+        int quantity = int.tryParse(
+                Utils.replaceArabicNumbersWithEnglish(record.toJson()[AppConstants.invRecQuantity].toString())) ??
+            0;
         return sum + quantity;
       }
       return sum;
@@ -83,8 +87,9 @@ class InvoiceCalculator {
 
     mainTableStateManager.setShowLoading(true);
 
-    if (record.toJson()["invRecGift"] != null && record.toJson()["invRecGift"] != '') {
-      gifts = int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecGift"].toString())) ?? 0;
+    if (record.toJson()[AppConstants.invRecGift] != null && record.toJson()[AppConstants.invRecGift] != '') {
+      gifts =
+          int.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()[AppConstants.invRecGift].toString())) ?? 0;
     }
     mainTableStateManager.setShowLoading(false);
 
@@ -92,9 +97,9 @@ class InvoiceCalculator {
   }
 
   double computeGiftPrice(record) {
-    double itemSubTotal = double.tryParse(record.toJson()["invRecSubTotal"].toString())!;
+    double itemSubTotal = double.tryParse(record.toJson()[AppConstants.invRecSubTotal].toString())!;
     double itemVAt =
-        double.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()["invRecVat"].toString())) ?? 0;
+        double.tryParse(Utils.replaceArabicNumbersWithEnglish(record.toJson()[AppConstants.invRecVat].toString())) ?? 0;
 
     return itemSubTotal + itemVAt;
   }
@@ -107,7 +112,7 @@ class InvoiceCalculator {
 
   double get computeGifts {
     double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
-      if (record.toJson()["invRecSubTotal"] != '' && record.toJson()["invRecGift"] != '') {
+      if (record.toJson()[AppConstants.invRecSubTotal] != '' && record.toJson()[AppConstants.invRecGift] != '') {
         return sum + computeRecordGiftsTotal(record);
       }
       return sum;
@@ -137,7 +142,7 @@ class InvoiceCalculator {
 
     final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
-    final discountRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, 'discount');
+    final discountRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, AppConstants.discount);
     if (discountRatio == 0) return 0;
 
     discounts = computeWithVatTotal * (discountRatio / 100);
@@ -152,7 +157,7 @@ class InvoiceCalculator {
 
     final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
-    final additionsRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, 'addition');
+    final additionsRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, AppConstants.addition);
 
     if (additionsRatio == 0) return 0;
 

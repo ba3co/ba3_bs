@@ -1,8 +1,10 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/constants/app_constants.dart';
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../materials/data/models/material_model.dart';
 import 'invoice_grid_service.dart';
@@ -13,17 +15,12 @@ class InvoiceContextMenu {
 
   InvoiceGridService get invoiceGridService => invoicePlutoController.gridService;
 
-  void showContextMenuSubTotal(
-      {required Offset tapPosition,
-      required MaterialModel materialModel,
-      required int index,
-      required InvoiceUtils invoiceUtils}) {
-    final menuItems = [
-      {'label': 'سعر المستهلك', 'method': AppConstants.invoiceChoosePriceMethodeCustomerPrice},
-      {'label': 'سعر الجملة', 'method': AppConstants.invoiceChoosePriceMethodeWholePrice},
-      {'label': 'سعر المفرق', 'method': AppConstants.invoiceChoosePriceMethodeRetailPrice},
-    ];
-
+  void showContextMenuSubTotal({
+    required Offset tapPosition,
+    required MaterialModel materialModel,
+    required int index,
+    required InvoiceUtils invoiceUtils,
+  }) {
     showMenu(
       context: Get.context!,
       position: RelativeRect.fromLTRB(
@@ -32,28 +29,33 @@ class InvoiceContextMenu {
         tapPosition.dx + 1.0,
         tapPosition.dy + 1.0,
       ),
-      items: menuItems.map((menuItem) {
-        return showContextMenuItem(index, materialModel, menuItem['label']!, menuItem['method']!, invoiceUtils);
+      items: PriceType.values.map((type) {
+        return showContextMenuItem(index, materialModel, type, invoiceUtils);
       }).toList(),
     );
   }
 
   PopupMenuItem showContextMenuItem(
-      int index, MaterialModel materialModel, String text, String method, InvoiceUtils invoiceUtils) {
+    int index,
+    MaterialModel materialModel,
+    PriceType type,
+    InvoiceUtils invoiceUtils,
+  ) {
     return PopupMenuItem(
       enabled: true,
       child: ListTile(
         title: Text(
-          "$text: ${invoiceUtils.getPrice(type: method, materialModel: materialModel).toStringAsFixed(2)}",
+          '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
           textDirection: TextDirection.rtl,
         ),
       ),
       onTap: () {
         invoiceGridService.updateInvoiceValues(
-          invoiceUtils.getPrice(materialModel: materialModel, type: method),
-          int.tryParse(
-                  invoicePlutoController.mainTableStateManager.rows[index].cells["invRecQuantity"]?.value.toString() ??
-                      "1") ??
+          invoiceUtils.getPrice(materialModel: materialModel, type: type),
+          int.tryParse(invoicePlutoController
+                      .mainTableStateManager.rows[index].cells[AppConstants.invRecQuantity]?.value
+                      .toString() ??
+                  '1') ??
               1,
         );
         invoicePlutoController.update();
@@ -63,19 +65,28 @@ class InvoiceContextMenu {
 
   void showDeleteConfirmationDialog(int index) {
     Get.defaultDialog(
-      title: "تأكيد الحذف",
-      content: const Text("هل انت متأكد من حذف هذا العنصر"),
+      title: AppConstants.deleteConfirmationTitle,
+      content: const Text(AppConstants.deleteConfirmationMessage),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       actions: [
-        AppButton(
-          title: "نعم",
-          onPressed: () => _deleteRow(index),
-          iconData: Icons.check,
-        ),
-        AppButton(
-          title: "لا",
-          onPressed: Get.back,
-          iconData: Icons.clear,
-          color: Colors.red,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            AppButton(
+              title: AppConstants.yes,
+              onPressed: () => _deleteRow(index),
+              color: Colors.red,
+              iconData: Icons.check,
+              width: 80,
+            ),
+            const HorizontalSpace(20),
+            AppButton(
+              title: AppConstants.no,
+              onPressed: Get.back,
+              iconData: Icons.clear,
+              width: 80,
+            ),
+          ],
         ),
       ],
     );

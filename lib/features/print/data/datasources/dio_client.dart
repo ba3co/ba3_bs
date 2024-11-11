@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 
-import '../../../../core/classes/datasources/api_client_base.dart';
+import '../../../../core/classes/base/i_api_client.dart';
 
-class DioClient<T> implements APiClientBase<T> {
+class DioClient<T> implements IAPiClient<T> {
   final Dio dio;
 
   DioClient(this.dio);

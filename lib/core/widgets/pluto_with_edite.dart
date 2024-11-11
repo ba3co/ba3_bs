@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/invoice/controllers/invoice_pluto_controller.dart';
-import 'custom_pluto_grid_style_config.dart';
+import 'pluto_grid_style_config.dart';
 
-class CustomPlutoWithEdite extends StatelessWidget {
-  const CustomPlutoWithEdite({
+class PlutoWithEdite extends StatelessWidget {
+  const PlutoWithEdite({
     super.key,
     required this.controller,
     this.shortCut,

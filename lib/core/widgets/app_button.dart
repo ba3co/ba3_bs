@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 
 class AppButton extends StatelessWidget {
-  const AppButton({super.key, required this.title, required this.onPressed, required this.iconData, this.color});
+  const AppButton(
+      {super.key, required this.title, required this.onPressed, required this.iconData, this.color, this.width = 100});
 
   final String title;
   final Color? color;
   final IconData iconData;
   final VoidCallback onPressed;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class AppButton extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))))),
         onPressed: onPressed,
         child: SizedBox(
-          width: 100,
+          width: width,
           height: AppConstants.constHeightTextField,
           child: Center(
             child: Row(

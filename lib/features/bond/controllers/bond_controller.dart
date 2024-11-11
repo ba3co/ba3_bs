@@ -37,7 +37,7 @@ class BondController extends GetxController {
       case BillType.sales:
         handleSales(billTypeModel.accounts!, customerAccount, total, vat, gifts, discount, addition);
         break;
-      case BillType.buy:
+      case BillType.purchase:
         handleBuy(billTypeModel.accounts!, customerAccount, total, vat, gifts, discount, addition);
         break;
       default:

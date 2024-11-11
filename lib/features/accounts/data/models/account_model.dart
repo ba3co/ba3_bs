@@ -114,16 +114,15 @@ class AccountModel implements PlutoAdaptable {
     };
   }
 
-  factory AccountModel.fromMap(Map<String, dynamic> json) {
-    return AccountModel(
-      id: json['AccPtr'].toString(),
-      accName: json['AccName'].toString(),
-    );
-  }
+  factory AccountModel.fromMap(Map<String, dynamic> json) => AccountModel(
+        id: json['AccPtr'].toString(),
+        accName: json['AccName'].toString(),
+      );
 
-  Map<String, dynamic> toMap() {
-    return {'AccPtr': id, 'AccName': accName};
-  }
+  Map<String, dynamic> toMap() => {
+        'AccPtr': id,
+        'AccName': accName,
+      };
 
   AccountModel copyWith({
     String? id,

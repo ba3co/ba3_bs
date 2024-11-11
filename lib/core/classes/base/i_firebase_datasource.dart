@@ -1,4 +1,4 @@
-abstract class FirebaseDatasourceBase<T> {
+abstract class IFirebaseDatasource<T> {
   Future<List<T>> fetchAll();
 
   Future<T> fetchById(String id);

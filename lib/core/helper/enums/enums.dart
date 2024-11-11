@@ -61,14 +61,15 @@ enum InvPayType {
 }
 
 enum BillType {
-  sales(label: 'invoiceTypeSales', value: 'قاتورة مبيعات'),
-  buy(label: 'invoiceTypeBuy', value: 'قاتورة مشتريات'),
+  sales(label: 'sales', value: 'قاتورة مبيعات'),
+  purchase(label: 'purchase', value: 'قاتورة مشتريات'),
   salesReturn(label: 'salesReturn', value: 'قاتورة مرتجع مبيع'),
-  buyReturn(label: 'buyReturn', value: 'قاتورة مرتجع شراء'),
-  inputSettlement(label: 'inputSettlement', value: 'قاتورة تسوية ادخال'),
-  outputSettlement(label: 'outputSettlement', value: 'قاتورة تسوية اخراج'),
-  salesWithPartner(label: 'invoiceTypeSalesWithPartner', value: 'قاتورة مبيعات مع شريك'),
-  salesWithoutReceipt(label: 'salesWithoutReceipt', value: 'قاتورة مبيعات بدون اصل');
+  purchaseReturn(label: 'purchaseReturn', value: 'قاتورة مرتجع شراء'),
+  adjustmentEntry(label: 'adjustmentEntry', value: 'قاتورة تسوية ادخال'),
+  outputAdjustment(label: 'outputAdjustment', value: 'قاتورة تسوية اخراج'),
+  firstPeriodInventory(label: 'firstPeriodInventory', value: 'بضاعة أول المدة'),
+  transferIn(label: 'transferIn', value: 'إد.عملية مناقلة'),
+  transferOut(label: 'transferOut', value: 'إخ.عملية مناقلة');
 
   final String label;
 
@@ -116,7 +117,7 @@ enum BillAccounts implements Account {
   const BillAccounts(this.label);
 
   // Factory constructor with error handling for unmatched labels
-  factory BillAccounts.fromLabel(String label) {
+  factory BillAccounts.byLabel(String label) {
     return BillAccounts.values.firstWhere(
       (type) => type.label == label,
       orElse: () => throw ArgumentError('No matching BillType for label: $label'),
@@ -163,4 +164,14 @@ enum CustomerAccount implements Account {
   final String label;
 
   const CustomerAccount(this.label);
+}
+
+enum PriceType {
+  consumer('سعر المستهلك'),
+  bulk('سعر الجملة'),
+  retail('سعر المفرق');
+
+  final String label;
+
+  const PriceType(this.label);
 }

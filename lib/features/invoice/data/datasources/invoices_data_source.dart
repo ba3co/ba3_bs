@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../core/classes/datasources/firebase_datasource_base.dart';
+import '../../../../core/classes/base/i_firebase_datasource.dart';
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
 import '../models/bill_model.dart';
 
-class InvoicesDataSource implements FirebaseDatasourceBase<BillModel> {
+class InvoicesDataSource implements IFirebaseDatasource<BillModel> {
   final FirebaseFirestore _firestore;
   final String _collection = 'bills'; // Collection name in Firestore
 

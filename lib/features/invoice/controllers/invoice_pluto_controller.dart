@@ -83,28 +83,30 @@ class InvoicePlutoController extends GetxController {
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
     final quantityNum = Utils.extractNumbersAndCalculate(
-        mainTableStateManager.currentRow!.cells["invRecQuantity"]?.value?.toString() ?? '');
+        mainTableStateManager.currentRow!.cells[AppConstants.invRecQuantity]?.value?.toString() ?? '');
 
     final subTotalStr =
-        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells["invRecSubTotal"]?.value);
-    final totalStr = Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells["invRecTotal"]?.value);
-    final vat = Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells["invRecVat"]?.value ?? "0");
+        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells[AppConstants.invRecSubTotal]?.value);
+    final totalStr =
+        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells[AppConstants.invRecTotal]?.value);
+    final vat =
+        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells[AppConstants.invRecVat]?.value ?? "0");
 
     final double subTotal = invoiceUtils.parseExpression(subTotalStr);
     final double total = invoiceUtils.parseExpression(totalStr);
     final int quantity = double.parse(quantityNum).toInt();
 
-    if (event.column.field == "invRecSubTotal") gridService.updateInvoiceValues(subTotal, quantity);
-    if (event.column.field == "invRecTotal") gridService.updateInvoiceValuesByTotal(total, quantity);
-    if (event.column.field == "invRecQuantity" && quantity > 0) {
+    if (event.column.field == AppConstants.invRecSubTotal) gridService.updateInvoiceValues(subTotal, quantity);
+    if (event.column.field == AppConstants.invRecTotal) gridService.updateInvoiceValuesByTotal(total, quantity);
+    if (event.column.field == AppConstants.invRecQuantity && quantity > 0) {
       gridService.updateInvoiceValuesByQuantity(quantity, subTotal, double.parse(vat));
     }
 
     safeUpdateUI();
   }
 
-  void onMainTableRowSecondaryTap(event) {
-    final materialName = mainTableStateManager.currentRow?.cells['invRecProduct']?.value;
+  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event) {
+    final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
     final materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
@@ -113,11 +115,11 @@ class InvoicePlutoController extends GetxController {
     _handleContextMenu(event, materialModel);
   }
 
-  void _handleContextMenu(event, MaterialModel materialModel) {
+  void _handleContextMenu(PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel) {
     final field = event.cell.column.field;
-    if (field == "invRecSubTotal") {
+    if (field == AppConstants.invRecSubTotal) {
       _showSubTotalContextMenu(event, materialModel);
-    } else if (field == "invRecId") {
+    } else if (field == AppConstants.invRecId) {
       _showDeleteConfirmationDialog(event);
     }
   }
@@ -142,7 +144,7 @@ class InvoicePlutoController extends GetxController {
 
     if (total == 0) return;
 
-    if (field == 'discount' || field == 'addition') {
+    if (field == AppConstants.discount || field == AppConstants.addition) {
       _updateCellValue(field, cells, total);
     }
 
@@ -172,8 +174,8 @@ class InvoicePlutoController extends GetxController {
 
     final invoiceRecords = mainTableStateManager.rows
         .map((row) {
-          final materialModel = materialController.getMaterialByName(row.cells['invRecProduct']!.value);
-          return invoiceUtils.validateInvoiceRow(row, 'invRecQuantity') && materialModel != null
+          final materialModel = materialController.getMaterialByName(row.cells[AppConstants.invRecProduct]!.value);
+          return invoiceUtils.validateInvoiceRow(row, AppConstants.invRecQuantity) && materialModel != null
               ? _createInvoiceRecord(row, materialModel.id!)
               : null;
         })
@@ -188,7 +190,7 @@ class InvoicePlutoController extends GetxController {
   InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) =>
       InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
 
-  void loadMainTableRows(List<InvoiceRecordModel> invRecords) {
+  void prepareItems(List<InvoiceRecordModel> invRecords) {
     mainTableStateManager.removeAllRows();
     final newRows = mainTableStateManager.getNewRows(count: 30);
 
@@ -200,7 +202,7 @@ class InvoicePlutoController extends GetxController {
     mainTableStateManager.appendRows(newRows);
   }
 
-  void loadAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
+  void prepareAdditionsDiscounts(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
@@ -245,8 +247,8 @@ class InvoicePlutoController extends GetxController {
   }
 
   void _clearRowCells(PlutoRow row) {
-    _clearCellValue(row, 'discount');
-    _clearCellValue(row, 'addition');
+    _clearCellValue(row, AppConstants.discount);
+    _clearCellValue(row, AppConstants.addition);
   }
 
   void _clearCellValue(PlutoRow row, String cellKey) {

@@ -5,7 +5,8 @@ import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../core/classes/repositories/firebase_repo_base.dart';
+import '../../../core/classes/base/i_firebase_repo.dart';
+import '../../../core/classes/concrete/json_export_repository.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/utils/generate_id.dart';
@@ -18,11 +19,11 @@ import '../data/models/invoice_record_model.dart';
 import 'invoice_pluto_controller.dart';
 
 class InvoiceController extends GetxController with AppValidator {
-  final FirebaseRepositoryBase<BillTypeModel> _patternsRepo;
-  final FirebaseRepositoryBase<BillModel> _billsRepo;
+  final IFirebaseRepository<BillTypeModel> _patternsFirebaseRepo;
+  final IFirebaseRepository<BillModel> _billsFirebaseRepo;
+  final JsonExportRepository<BillModel> _invoiceRepo;
 
-  InvoiceController(this._patternsRepo, this._billsRepo);
-
+  final formKey = GlobalKey<FormState>();
   final TextEditingController invCodeController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
@@ -33,124 +34,115 @@ class InvoiceController extends GetxController with AppValidator {
   final TextEditingController invReturnDateController = TextEditingController();
   final TextEditingController invReturnCodeController = TextEditingController();
 
-  final formKey = GlobalKey<FormState>();
-
-  String? billDate;
-
+  late String billDate;
   List<BillTypeModel> billsTypes = [];
-
   AccountModel? selectedCustomerAccount;
-
   InvPayType selectedPayType = InvPayType.cash;
   BillType billType = BillType.sales;
-
   List<BillModel> bills = [];
-
   bool isLoading = true;
 
   Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
 
+  InvoiceController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._invoiceRepo);
+
   @override
   void onInit() {
     super.onInit();
-
     getAllBillTypes();
-
     setBillDate(DateTime.now());
   }
 
-  bool validateForm() => formKey.currentState!.validate();
+  bool validateForm() => formKey.currentState?.validate() ?? false;
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   String get invId => generateId(RecordType.invoice);
 
-  updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
+  void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
   void setBillDate(DateTime newDate) {
     billDate = newDate.toString().split(" ")[0];
     update();
   }
 
-  onPayTypeChanged(InvPayType? payType) {
+  void onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
       selectedPayType = payType;
       update();
     }
   }
 
-  updateCustomerAccount(AccountModel? newAccount) {
+  void updateCustomerAccount(AccountModel? newAccount) {
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
     }
   }
 
   Future<void> fetchBills() async {
-    final result = await _billsRepo.getAll();
-
+    final result = await _billsFirebaseRepo.getAll();
     result.fold(
-      (failure) {
-        Utils.showSnackBar('خطأ', failure.message);
-      },
-      (fetchedBills) {
-        bills.assignAll(fetchedBills);
-      },
+      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (fetchedBills) => bills.assignAll(fetchedBills),
     );
     isLoading = false;
     update();
   }
 
   Future<void> getAllBillTypes() async {
-    final result = await _patternsRepo.getAll();
-
+    final result = await _patternsFirebaseRepo.getAll();
     result.fold(
-      (failure) {
-        Utils.showSnackBar('خطأ', failure.message);
-      },
-      (fetchedBillTypes) {
-        billsTypes.assignAll(fetchedBillTypes);
-      },
+      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
     );
     update();
   }
 
   Future<void> saveBill({required BillTypeModel billTypeModel, BillModel? billModel, bool isEdit = false}) async {
     if (!validateForm()) return;
+    final updatedBillModel = _createBillModelFromInvoiceData(billModel, billTypeModel);
 
-    final updatedBillModel = _createBillModelFromInvoiceData(billModel: billModel, billTypeModel: billTypeModel);
-
-    final result = await _billsRepo.save(updatedBillModel);
-
+    final result = await _billsFirebaseRepo.save(updatedBillModel);
     final successMessage = isEdit ? 'تم تعديل الفاتورة بنجاح!' : 'تم حفظ الفاتورة بنجاح!';
 
     result.fold(
       (failure) => Utils.showSnackBar('خطأ', failure.message),
       (success) => Utils.showSnackBar('نجاح', successMessage),
     );
+
     if (isEdit) {
       await fetchBills();
-
       Get.until(ModalRoute.withName(AppRoutes.showAllBillsScreen));
     }
   }
 
   Future<void> deleteBill(String billId) async {
-    final result = await _billsRepo.delete(billId);
-
-    result.fold((failure) => Utils.showSnackBar('خطأ', failure.message),
-        (success) => Utils.showSnackBar('نجاح', 'تم حذف الفاتورة بنجاح!'));
-
+    final result = await _billsFirebaseRepo.delete(billId);
+    result.fold(
+      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (success) => Utils.showSnackBar('نجاح', 'تم حذف الفاتورة بنجاح!'),
+    );
     Get.offAllNamed(AppRoutes.mainLayout);
   }
 
-  Future<void> printInvoice(List<InvoiceRecordModel> invRecords) async =>
-      await Get.find<PrintingController>().startPrinting(invRecords: invRecords, invId: invId, invDate: billDate!);
+  Future<void> printInvoice(List<InvoiceRecordModel> invRecords) async {
+    await Get.find<PrintingController>().startPrinting(invRecords: invRecords, invId: invId, invDate: billDate);
+  }
+
+  Future<void> exportBillsJsonFile() async {
+    if (bills.isEmpty) return;
+    final result = await _invoiceRepo.exportJsonFile(bills);
+
+    result.fold(
+      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (success) => Utils.showSnackBar('نجاح', 'تم تصدير الفواتير بنجاح!'),
+    );
+  }
 
   void createBond(BillTypeModel billTypeModel) {
     if (!validateForm()) return;
-
-    final BondController bondController = Get.find<BondController>();
-    final InvoicePlutoController invoicePlutoController = Get.find<InvoicePlutoController>();
+    final bondController = Get.find<BondController>();
+    final invoicePlutoController = Get.find<InvoicePlutoController>();
 
     bondController.createBond(
       billTypeModel: billTypeModel,
@@ -163,10 +155,8 @@ class InvoiceController extends GetxController with AppValidator {
     );
   }
 
-  BillModel _createBillModelFromInvoiceData({BillModel? billModel, required BillTypeModel billTypeModel}) {
+  BillModel _createBillModelFromInvoiceData(BillModel? billModel, BillTypeModel billTypeModel) {
     final invoicePlutoController = Get.find<InvoicePlutoController>();
-
-    // Update bill type accounts if selected additions or discounts are available
     final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel);
 
     return BillModel.fromInvoiceData(
@@ -177,7 +167,7 @@ class InvoiceController extends GetxController with AppValidator {
       billCustomerId: selectedCustomerAccount!.id!,
       billSellerId: Get.find<SellerController>().selectedSellerAccount!.costGuid!,
       billPayType: selectedPayType.index,
-      billDate: billDate!,
+      billDate: billDate,
       billTotal: invoicePlutoController.calculateFinalTotal,
       billVatTotal: invoicePlutoController.computeTotalVat,
       billWithoutVatTotal: invoicePlutoController.computeWithoutVatTotal,
@@ -190,21 +180,39 @@ class InvoiceController extends GetxController with AppValidator {
 
   BillTypeModel? _updateBillTypeAccounts(BillTypeModel billTypeModel) {
     final selectedAccounts = selectedAdditionsDiscountAccounts;
-    if (selectedAccounts.isEmpty) return null;
-
     final updatedAccounts = {...billTypeModel.accounts ?? {}};
 
-    // Update discounts account
-    if (selectedAccounts.containsKey(BillAccounts.discounts)) {
-      updatedAccounts[BillAccounts.discounts] = selectedAccounts[BillAccounts.discounts]!;
-    }
+    if (_noUpdateNeeded(selectedAccounts, selectedCustomerAccount)) return null;
 
-    // Update additions account
-    if (selectedAccounts.containsKey(BillAccounts.additions)) {
-      updatedAccounts[BillAccounts.additions] = selectedAccounts[BillAccounts.additions]!;
-    }
+    _updateDiscountAndAdditionAccounts(selectedAccounts, updatedAccounts);
+
+    _updateCachesAccount(selectedCustomerAccount, updatedAccounts);
 
     return billTypeModel.copyWith(accounts: updatedAccounts);
+  }
+
+  // Return null if there is Additions and Discounts Accounts not updated and no selected customer account
+  bool _noUpdateNeeded(Map<Account, AccountModel> selectedAccounts, AccountModel? selectedCustomerAccount) =>
+      selectedAccounts.isEmpty && selectedCustomerAccount == null;
+
+  // Update discount and addition accounts
+  void _updateDiscountAndAdditionAccounts(
+      Map<Account, AccountModel> selectedAccounts, Map<Account, AccountModel> updatedAccounts) {
+    if (selectedAccounts.isNotEmpty) {
+      if (selectedAccounts.containsKey(BillAccounts.discounts)) {
+        updatedAccounts[BillAccounts.discounts] = selectedAccounts[BillAccounts.discounts]!;
+      }
+      if (selectedAccounts.containsKey(BillAccounts.additions)) {
+        updatedAccounts[BillAccounts.additions] = selectedAccounts[BillAccounts.additions]!;
+      }
+    }
+  }
+
+  // Update caches account if selectedCustomerAccount is not null and differs from the current cache
+  void _updateCachesAccount(AccountModel? selectedCustomerAccount, Map<Account, AccountModel> updatedAccounts) {
+    if (selectedCustomerAccount != null && updatedAccounts[BillAccounts.caches]?.id != selectedCustomerAccount.id) {
+      updatedAccounts[BillAccounts.caches] = selectedCustomerAccount;
+    }
   }
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
@@ -226,19 +234,16 @@ class InvoiceController extends GetxController with AppValidator {
 
     _initializeSellerAccount(billModel);
 
-    Get.toNamed(
-      AppRoutes.billDetailsScreen,
-      arguments: {'billModel': billModel},
-    );
+    Get.toNamed(AppRoutes.billDetailsScreen, arguments: {'billModel': billModel});
   }
 
   void _initializeInvoiceController() => Get.lazyPut(() => InvoicePlutoController());
 
-  _prepareInvoiceRecords(BillItems billItems, InvoicePlutoController invoiceController) =>
-      invoiceController.loadMainTableRows(billItems.materialRecords);
+  _prepareInvoiceRecords(BillItems billItems, InvoicePlutoController invoicePlutoController) =>
+      invoicePlutoController.prepareItems(billItems.materialRecords);
 
   _prepareAdditionsDiscountsRecords(BillModel billModel, InvoicePlutoController invoicePlutoController) =>
-      invoicePlutoController.loadAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
+      invoicePlutoController.prepareAdditionsDiscounts(billModel.additionsDiscountsRecords);
 
   void _initializeCustomerAccount(BillModel billModel) {
     final AccountModel customerAcc = billModel.billTypeModel.accounts![BillAccounts.caches]!;
@@ -254,9 +259,10 @@ class InvoiceController extends GetxController with AppValidator {
   }
 
   void _initializeSellerAccount(BillModel billModel) {
-    final SellerModel sellerAcc = Get.find<SellerController>().getSellerById(billModel.billDetails.billSellerId!);
+    final sellerController = Get.find<SellerController>();
+    final SellerModel sellerAcc = sellerController.getSellerById(billModel.billDetails.billSellerId!);
 
-    Get.find<SellerController>().initSellerAccount(sellerAcc);
+    sellerController.initSellerAccount(sellerAcc);
 
     sellerAccountController.text = sellerAcc.costName!;
   }

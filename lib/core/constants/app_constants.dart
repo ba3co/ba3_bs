@@ -293,21 +293,45 @@ abstract class AppConstants {
   static const String cacheError = 'cache_error';
   static const String noInternetError = 'no_internet_error';
 
+  //INVOICE
+  static const String invRecId = 'invRecId';
+  static const String invRecProduct = 'invRecProduct';
+  static const String invRecTotal = 'invRecTotal';
+  static const String invRecSubTotal = 'invRecSubTotal';
+  static const String invRecVat = 'invRecVat';
+  static const String invRecQuantity = 'invRecQuantity';
+  static const String invRecIsLocal = 'invRecIsLocal';
+  static const String invRecGift = 'invRecGift';
+  static const String invRecGiftTotal = 'invRecGiftTotal';
+  static const String ratio = 'النسبة';
+  static const String value = 'القيمة';
+  static const String accountName = 'اسم الحساب';
+  static const String id = 'id';
+  static const String discount = 'discount';
+  static const String addition = 'addition';
+  static const String account = 'الحساب';
+  static const String discountAr = 'الحسم';
+  static const String additionAr = 'الاضافات';
+  static const String deleteConfirmationTitle = 'تأكيد الحذف';
+  static const String deleteConfirmationMessage = 'هل انت متأكد من حذف هذا العنصر';
+  static const String yes = 'نعم';
+  static const String no = 'لا';
+
   static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(
-      title: 'الحساب',
-      field: 'id',
+      title: AppConstants.account,
+      field: AppConstants.id,
       enableEditingMode: false,
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
-      title: 'الحسم',
-      field: 'discount',
+      title: AppConstants.discountAr,
+      field: AppConstants.discount,
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
-      title: 'الاضافات',
-      field: 'addition',
+      title: AppConstants.additionAr,
+      field: AppConstants.addition,
       type: PlutoColumnType.text(),
     ),
   ];
@@ -315,23 +339,23 @@ abstract class AppConstants {
   static List<PlutoRow> additionsDiscountsRows = [
     PlutoRow(
       cells: {
-        'id': PlutoCell(value: 'اسم الحساب'),
-        'discount': PlutoCell(value: 'الحسم الممنوح'),
-        'addition': PlutoCell(value: 'ايرادات مختلفة'),
+        AppConstants.id: PlutoCell(value: AppConstants.accountName),
+        AppConstants.discount: PlutoCell(value: 'الحسم الممنوح'),
+        AppConstants.addition: PlutoCell(value: 'ايرادات مختلفة'),
       },
     ),
     PlutoRow(
       cells: {
-        'id': PlutoCell(value: 'النسبة'),
-        'discount': PlutoCell(value: ''),
-        'addition': PlutoCell(value: ''),
+        AppConstants.id: PlutoCell(value: AppConstants.ratio),
+        AppConstants.discount: PlutoCell(value: ''),
+        AppConstants.addition: PlutoCell(value: ''),
       },
     ),
     PlutoRow(
       cells: {
-        'id': PlutoCell(value: 'القيمة'),
-        'discount': PlutoCell(value: ''),
-        'addition': PlutoCell(value: ''),
+        AppConstants.id: PlutoCell(value: AppConstants.value),
+        AppConstants.discount: PlutoCell(value: ''),
+        AppConstants.addition: PlutoCell(value: ''),
       },
     ),
   ];

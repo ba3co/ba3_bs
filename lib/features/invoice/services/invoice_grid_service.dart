@@ -4,6 +4,7 @@ import 'package:ba3_bs/features/invoice/services/invoice_utils.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../controllers/invoice_pluto_controller.dart';
 import '../data/models/invoice_record_model.dart';
 
@@ -39,26 +40,26 @@ class InvoiceGridService {
   void updateInvoiceValuesByQuantity(int quantity, subtotal, double vat) {
     double total = (subtotal + vat) * quantity;
 
-    updateCellValue(mainTableStateManager, "invRecTotal", total.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total.toStringAsFixed(2));
   }
 
   void updateInvoiceValues(double subTotal, int quantity) {
     double vat = subTotal * 0.05;
     double total = (subTotal + vat) * quantity;
 
-    updateCellValue(mainTableStateManager, "invRecVat", vat.toStringAsFixed(2));
-    updateCellValue(mainTableStateManager, "invRecSubTotal", subTotal.toStringAsFixed(2));
-    updateCellValue(mainTableStateManager, "invRecTotal", total.toStringAsFixed(2));
-    updateCellValue(mainTableStateManager, "invRecQuantity", quantity);
+    updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotal.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecQuantity, quantity);
   }
 
   void updateInvoiceValuesByTotal(double total, int quantity) {
     double subTotal = total / (quantity * 1.05);
     double vat = subTotal * 0.05;
 
-    updateCellValue(mainTableStateManager, "invRecVat", vat.toStringAsFixed(2));
-    updateCellValue(mainTableStateManager, "invRecSubTotal", subTotal.toStringAsFixed(2));
-    updateCellValue(mainTableStateManager, "invRecTotal", total.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotal.toStringAsFixed(2));
+    updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total.toStringAsFixed(2));
   }
 
   void updateAdditionDiscountCells(double total) {
@@ -67,7 +68,7 @@ class InvoiceGridService {
     final PlutoRow valueRow = invoiceUtils.valueRow;
 
     // Update both discount and addition cells based on the total value
-    final fields = ['discount', 'addition'];
+    final fields = [AppConstants.discount, AppConstants.addition];
 
     for (final field in fields) {
       total == 0 ? updateAdditionsDiscountsCellValue(valueRow.cells[field]!, '') : _updateCell(field, valueRow, total);
@@ -97,9 +98,9 @@ class InvoiceGridService {
   List<PlutoRow> convertAdditionsDiscountsRecordsToRows(List<Map<String, String>> additionsDiscountsRecords) =>
       additionsDiscountsRecords.map((record) {
         final cells = {
-          'id': PlutoCell(value: record['id'] ?? ''),
-          'discount': PlutoCell(value: record['discount'] ?? ''),
-          'addition': PlutoCell(value: record['addition'] ?? '')
+          AppConstants.id: PlutoCell(value: record[AppConstants.id] ?? ''),
+          AppConstants.discount: PlutoCell(value: record[AppConstants.discount] ?? ''),
+          AppConstants.addition: PlutoCell(value: record[AppConstants.addition] ?? '')
         };
         return PlutoRow(cells: cells);
       }).toList();
