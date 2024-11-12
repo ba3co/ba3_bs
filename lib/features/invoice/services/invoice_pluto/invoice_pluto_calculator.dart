@@ -2,18 +2,16 @@ import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dar
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../core/constants/app_constants.dart';
-import '../../../core/utils/utils.dart';
-import 'invoice_utils.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/utils.dart';
+import 'invoice_pluto_utils.dart';
 
-class InvoiceCalculator {
+class InvoicePlutoCalculator {
   InvoicePlutoController get invoicePlutoController => Get.find<InvoicePlutoController>();
 
   PlutoGridStateManager get mainTableStateManager => invoicePlutoController.mainTableStateManager;
 
   PlutoGridStateManager get additionsDiscountsStateManager => invoicePlutoController.additionsDiscountsStateManager;
-
-  InvoiceUtils get invoiceUtils => invoicePlutoController.invoiceUtils;
 
   double get computeWithVatTotal {
     double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
@@ -133,9 +131,10 @@ class InvoiceCalculator {
     return (amount / total) * 100;
   }
 
-  double get calculateFinalTotal => computeWithVatTotal - computeDiscounts + computeAdditions;
+  double calculateFinalTotal(InvoicePlutoUtils invoiceUtils) =>
+      computeWithVatTotal - computeDiscounts(invoiceUtils) + computeAdditions(invoiceUtils);
 
-  double get computeDiscounts {
+  double computeDiscounts(InvoicePlutoUtils invoiceUtils) {
     double discounts = 0;
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
@@ -143,6 +142,7 @@ class InvoiceCalculator {
     final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
     final discountRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, AppConstants.discount);
+
     if (discountRatio == 0) return 0;
 
     discounts = computeWithVatTotal * (discountRatio / 100);
@@ -150,7 +150,7 @@ class InvoiceCalculator {
     return discounts;
   }
 
-  double get computeAdditions {
+  double computeAdditions(InvoicePlutoUtils invoiceUtils) {
     double additions = 0;
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;

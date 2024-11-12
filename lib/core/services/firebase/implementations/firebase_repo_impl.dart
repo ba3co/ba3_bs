@@ -4,13 +4,13 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../base/i_firebase_datasource.dart';
-import '../base/i_firebase_repo.dart';
+import '../abstract/i_firebase_datasource.dart';
+import '../abstract/i_firebase_repo.dart';
 
-class FirebaseRepositoryConcrete<T> implements IFirebaseRepository<T> {
+class FirebaseRepositoryImpl<T> implements IFirebaseRepository<T> {
   final IFirebaseDatasource<T> _dataSource;
 
-  FirebaseRepositoryConcrete(this._dataSource);
+  FirebaseRepositoryImpl(this._dataSource);
 
   @override
   Future<Either<Failure, List<T>>> getAll() async {

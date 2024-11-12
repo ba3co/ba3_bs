@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../core/classes/base/i_firebase_datasource.dart';
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
+import '../../../../core/services/firebase/abstract/i_firebase_datasource.dart';
 import '../models/bill_model.dart';
 
 class InvoicesDataSource implements IFirebaseDatasource<BillModel> {

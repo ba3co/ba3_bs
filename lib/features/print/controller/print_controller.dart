@@ -10,10 +10,10 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
+import '../../../core/services/translation/implementations/translation_repository.dart';
 import '../../../core/styling/printer_text_styles.dart';
 import '../../invoice/data/models/invoice_record_model.dart';
 import '../../materials/data/models/material_model.dart';
-import '../data/repositories/translation_repository.dart';
 import '../ui/widgets/printing_loading_dialog.dart';
 
 class PrintingController extends GetxController {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/controllers/window_close_controller.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../accounts/ui/screens/account_layout.dart';
 import '../../../invoice/ui/screens/invoice_layout.dart';
@@ -32,6 +34,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    Get.put(WindowCloseController());
     allData = appLayouts.where((element) => checkMainPermission(element.role)).toList();
     tabController = TabController(length: appLayouts.length, vsync: this, initialIndex: tabIndex);
     pageController = PageController();

@@ -1,16 +1,14 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:get/get.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../core/helper/enums/enums.dart';
-import '../../../core/utils/utils.dart';
-import '../../materials/data/models/material_model.dart';
-import '../controllers/invoice_pluto_controller.dart';
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/utils/utils.dart';
+import '../../../materials/data/models/material_model.dart';
+import '../../controllers/invoice_pluto_controller.dart';
 
-class InvoiceUtils {
+class InvoicePlutoUtils {
   InvoicePlutoController get invoicePlutoController => Get.find<InvoicePlutoController>();
 
   PlutoGridStateManager get additionsDiscountsStateManager => invoicePlutoController.additionsDiscountsStateManager;
@@ -32,7 +30,7 @@ class InvoiceUtils {
     return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
   }
 
-  bool validateInvoiceRow(PlutoRow row, String cellKey) {
+  bool isValidItemQuantity(PlutoRow row, String cellKey) {
     final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
 
     int invRecQuantity = int.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
@@ -46,12 +44,9 @@ class InvoiceUtils {
     return double.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
   }
 
-  PlutoRow get ratioRow {
-    log('additionsDiscountsStateManager.rows ${additionsDiscountsStateManager.rows[1].cells[AppConstants.id]?.value}');
-    return additionsDiscountsStateManager.rows.firstWhere(
-      (row) => row.cells[AppConstants.id]?.value == AppConstants.ratio,
-    );
-  }
+  PlutoRow get ratioRow => additionsDiscountsStateManager.rows.firstWhere(
+        (row) => row.cells[AppConstants.id]?.value == AppConstants.ratio,
+      );
 
   PlutoRow get valueRow => additionsDiscountsStateManager.rows.firstWhere(
         (row) => row.cells[AppConstants.id]?.value == AppConstants.value,

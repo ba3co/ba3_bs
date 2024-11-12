@@ -4,22 +4,21 @@ import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/helper/enums/enums.dart';
-import '../../../core/widgets/app_button.dart';
-import '../../materials/data/models/material_model.dart';
-import 'invoice_grid_service.dart';
-import 'invoice_utils.dart';
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../materials/data/models/material_model.dart';
+import 'invoice_pluto_grid_service.dart';
+import 'invoice_pluto_utils.dart';
 
-class InvoiceContextMenu {
+class InvoicePlutoContextMenu {
   InvoicePlutoController get invoicePlutoController => Get.find<InvoicePlutoController>();
-
-  InvoiceGridService get invoiceGridService => invoicePlutoController.gridService;
 
   void showContextMenuSubTotal({
     required Offset tapPosition,
     required MaterialModel materialModel,
     required int index,
-    required InvoiceUtils invoiceUtils,
+    required InvoicePlutoUtils invoiceUtils,
+    required InvoicePlutoGridService gridService,
   }) {
     showMenu(
       context: Get.context!,
@@ -29,9 +28,9 @@ class InvoiceContextMenu {
         tapPosition.dx + 1.0,
         tapPosition.dy + 1.0,
       ),
-      items: PriceType.values.map((type) {
-        return showContextMenuItem(index, materialModel, type, invoiceUtils);
-      }).toList(),
+      items: PriceType.values
+          .map((type) => showContextMenuItem(index, materialModel, type, invoiceUtils, gridService))
+          .toList(),
     );
   }
 
@@ -39,7 +38,8 @@ class InvoiceContextMenu {
     int index,
     MaterialModel materialModel,
     PriceType type,
-    InvoiceUtils invoiceUtils,
+    InvoicePlutoUtils invoiceUtils,
+    InvoicePlutoGridService gridService,
   ) {
     return PopupMenuItem(
       enabled: true,
@@ -50,8 +50,8 @@ class InvoiceContextMenu {
         ),
       ),
       onTap: () {
-        invoiceGridService.updateInvoiceValues(
-          invoiceUtils.getPrice(materialModel: materialModel, type: type),
+        gridService.updateInvoiceValues(
+          invoiceUtils.getPrice(type: type, materialModel: materialModel),
           int.tryParse(invoicePlutoController
                       .mainTableStateManager.rows[index].cells[AppConstants.invRecQuantity]?.value
                       .toString() ??

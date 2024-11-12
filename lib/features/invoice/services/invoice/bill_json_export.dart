@@ -1,14 +1,8 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/services/json_export/abstract/base_json_export_service.dart';
+import '../../data/models/bill_model.dart';
 
-import 'package:path_provider/path_provider.dart';
-
-import '../../../core/classes/base/i_json_export_service.dart';
-import '../../../core/helper/enums/enums.dart';
-import '../data/models/bill_model.dart';
-
-class BillJsonExport implements IJsonExportService<BillModel> {
+class BillJsonExport extends BaseJsonExportService<BillModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
   @override
   Map<String, dynamic> toExportJson(List<BillModel> itemsModels) {
@@ -16,7 +10,7 @@ class BillJsonExport implements IJsonExportService<BillModel> {
       "Bill": itemsModels.map((billModel) {
         return {
           "B": {
-            "BillTypeGuid": billTypeGuide(billModel.billTypeModel.billTypeLabel!),
+            "BillTypeGuid": _billTypeGuide(billModel.billTypeModel.billTypeLabel!),
             "BillGuid": billModel.billDetails.billGuid,
             "BillBranch": "",
             "BillPayType": billModel.billDetails.billPayType ?? 0,
@@ -28,7 +22,7 @@ class BillJsonExport implements IJsonExportService<BillModel> {
             "BillCurrencyGuid": "884edcde-c172-490d-a2f2-f10a0b90326a",
             "BillCurrencyVal": 1,
             "BillDate": billModel.billDetails.billDate ?? "",
-            "BillStoreGuid": "6d9836d1-fccd-4006-804f-81709eecde57",
+            "BillStoreGuid": billModel.billTypeModel.accounts?[BillAccounts.store]?.id,
             "Note": billModel.billDetails.note ?? "",
             "BillCustAcc": "00000000-0000-0000-0000-000000000000",
             "BillMatAccGuid": "",
@@ -60,7 +54,7 @@ class BillJsonExport implements IJsonExportService<BillModel> {
                       "QtyBonus": "${item.itemQuantity},0",
                       "Unit": 1, // Customize based on your data
                       "PriceDescExtra": "${item.itemTotalPrice},0,0",
-                      "StorePtr": "6d9836d1-fccd-4006-804f-81709eecde57",
+                      "StorePtr": billModel.billTypeModel.accounts?[BillAccounts.store]?.id,
                       "Note": item.itemName,
                       "BonusDisc": 0,
                       "UlQty": "${item.itemQuantity},${item.itemQuantity}",
@@ -70,7 +64,7 @@ class BillJsonExport implements IJsonExportService<BillModel> {
                       "ExpireProdDate": "1-1-1980,1-1-1980", // Replace with actual expiration dates if available
                       "LengthWidthHeight": "0,0,0,0",
                       "Guid": item.itemGuid,
-                      "VatRatio": item.itemVatPrice ?? 0,
+                      "VatRatio": _calcVatRatio(item.itemVatPrice, item.itemSubTotalPrice),
                       "SoGuid": "",
                       "SoType": 0
                     })
@@ -81,36 +75,7 @@ class BillJsonExport implements IJsonExportService<BillModel> {
     };
   }
 
-  @override
-  Future<void> exportToFile(List<BillModel> itemsModels) async {
-    final Directory documentsDirectory = await getApplicationDocumentsDirectorySafe();
-    final String filePath = '${documentsDirectory.path}/exported_bills.json';
-    final File file = File(filePath);
-
-    final jsonContent = jsonEncode(toExportJson(itemsModels));
-    await file.writeAsString(jsonContent);
-
-    log('File exported to: $filePath');
-  }
-
-  Future<Directory> getApplicationDocumentsDirectorySafe() async => await getApplicationDocumentsDirectory();
-
-  Future<Directory> getDesktopDirectory() async {
-    if (Platform.isWindows) {
-      final desktopPath = Directory('${Platform.environment['USERPROFILE']}\\Desktop');
-      return desktopPath.existsSync() ? desktopPath : Directory('');
-    } else if (Platform.isMacOS) {
-      final desktopPath = Directory('/Users/${Platform.environment['USER']}/Desktop');
-      return desktopPath.existsSync() ? desktopPath : Directory('');
-    } else if (Platform.isLinux) {
-      final desktopPath = Directory('/home/${Platform.environment['USER']}/Desktop');
-      return desktopPath.existsSync() ? desktopPath : Directory('');
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
-  }
-
-  String billTypeGuideByLabel(String label) {
+  String _billTypeGuideByLabel(String label) {
     final Map<String, String> typeGuideMap = {
       BillType.purchase.label: "eb10653a-a43f-44e5-889d-41ce68c43ec4",
       BillType.sales.label: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
@@ -131,5 +96,10 @@ class BillJsonExport implements IJsonExportService<BillModel> {
     return typeGuide;
   }
 
-  String billTypeGuide(String billLabel) => billTypeGuideByLabel(billLabel);
+  String _billTypeGuide(String billLabel) => _billTypeGuideByLabel(billLabel);
+
+  int _calcVatRatio(double? vat, double? sunTotal) {
+    if (vat == null || vat == 0 || sunTotal == null || sunTotal == 0) return 0;
+    return ((vat / sunTotal) * 100).round();
+  }
 }

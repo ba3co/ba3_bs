@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
@@ -79,10 +80,18 @@ class SellerController extends GetxController {
     });
   }
 
-  initSellerAccount(SellerModel? newAccount) {
+  updateSellerAccount(SellerModel? newAccount) {
     if (newAccount != null) {
       selectedSellerAccount = newAccount;
     }
+  }
+
+  void initSellerAccount(String billSellerId) {
+    final SellerModel sellerAcc = getSellerById(billSellerId);
+
+    updateSellerAccount(sellerAcc);
+
+    Get.find<InvoiceController>().sellerAccountController.text = sellerAcc.costName!;
   }
 
   Future<void> openSellerSelectionDialog(

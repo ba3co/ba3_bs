@@ -70,7 +70,7 @@ class BillButtons extends StatelessWidget {
               iconData: Icons.print_outlined,
               title: 'طباعة',
               onPressed: () async {
-                invoiceController.printInvoice(invoicePlutoController.handleSaveAllMaterials());
+                invoiceController.printInvoice(invoicePlutoController.generateInvoiceRecords);
               },
             ),
             AppButton(title: "E-Invoice", onPressed: () {}, iconData: Icons.link),

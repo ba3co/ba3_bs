@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../network/error/failure.dart';
-import '../base/i_json_export_service.dart';
+import '../../../network/error/failure.dart';
+import '../abstract/i_json_export_service.dart';
 
 class JsonExportRepository<T> {
   final IJsonExportService<T> _jsonExport;

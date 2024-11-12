@@ -3,9 +3,9 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/classes/base/i_firebase_repo.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
+import '../../../core/services/firebase/abstract/i_firebase_repo.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 

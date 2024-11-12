@@ -1,21 +1,19 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/features/invoice/services/invoice_utils.dart';
+import 'package:ba3_bs/features/invoice/services/invoice_pluto/invoice_pluto_utils.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../core/constants/app_constants.dart';
-import '../controllers/invoice_pluto_controller.dart';
-import '../data/models/invoice_record_model.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../controllers/invoice_pluto_controller.dart';
+import '../../data/models/invoice_record_model.dart';
 
-class InvoiceGridService {
+class InvoicePlutoGridService {
   InvoicePlutoController get invoicePlutoController => Get.find<InvoicePlutoController>();
 
   PlutoGridStateManager get mainTableStateManager => invoicePlutoController.mainTableStateManager;
 
   PlutoGridStateManager get additionsDiscountsStateManager => invoicePlutoController.additionsDiscountsStateManager;
-
-  InvoiceUtils get invoiceUtils => invoicePlutoController.invoiceUtils;
 
   void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
     stateManager.changeCellValue(
@@ -62,7 +60,7 @@ class InvoiceGridService {
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total.toStringAsFixed(2));
   }
 
-  void updateAdditionDiscountCells(double total) {
+  void updateAdditionDiscountCells(double total, InvoicePlutoUtils invoiceUtils) {
     if (additionsDiscountsStateManager.rows.isEmpty) return;
 
     final PlutoRow valueRow = invoiceUtils.valueRow;
@@ -71,11 +69,13 @@ class InvoiceGridService {
     final fields = [AppConstants.discount, AppConstants.addition];
 
     for (final field in fields) {
-      total == 0 ? updateAdditionsDiscountsCellValue(valueRow.cells[field]!, '') : _updateCell(field, valueRow, total);
+      total == 0
+          ? updateAdditionsDiscountsCellValue(valueRow.cells[field]!, '')
+          : _updateCell(field, valueRow, total, invoiceUtils);
     }
   }
 
-  void _updateCell(String field, PlutoRow valueRow, double total) {
+  void _updateCell(String field, PlutoRow valueRow, double total, InvoicePlutoUtils invoiceUtils) {
     final PlutoRow ratioRow = invoiceUtils.ratioRow;
 
     final ratio = invoiceUtils.getCellValueInDouble(ratioRow.cells, field);
