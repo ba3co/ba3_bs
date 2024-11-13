@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/utils/utils.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:get/get.dart';
@@ -185,8 +185,8 @@ class AccountModel implements PlutoAdaptable {
         'رمز الحساب': accCode,
         'اسم الحساب': accName,
         'الاسم الاتيني': accLatinName,
-        'نوع الحساب': Utils.getAccountType(accType),
-        'Debit Or Credit': Utils.getAccountAccDebitOrCredit(accDebitOrCredit),
+        'نوع الحساب': AppServiceUtils.getAccountType(accType),
+        'Debit Or Credit': AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),
         'حساب الاب': Get.find<AccountsController>().getAccountNameById(accParentGuid),
         'الاولاد': Get.find<AccountsController>().getAccountChildren(id).join(' , '),
       };

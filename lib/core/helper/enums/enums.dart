@@ -43,6 +43,8 @@ enum InvoiceType {
 
 enum RequestState { initial, loading, error, success }
 
+enum NotificationStatus { success, error, info }
+
 enum InvPayType {
   cash('نقدي'),
   due('اجل');

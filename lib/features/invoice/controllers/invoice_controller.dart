@@ -1,32 +1,32 @@
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
-import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
-import '../../../core/network/error/failure.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/abstract/i_firebase_repo.dart';
 import '../../../core/services/json_export/implementations/json_export_repo.dart';
+import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/utils/generate_id.dart';
-import '../../../core/utils/utils.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../../print/controller/print_controller.dart';
 import '../data/models/invoice_record_model.dart';
 import '../services/invoice/invoice_service.dart';
+import '../services/invoice/invoice_utils.dart';
 import 'invoice_pluto_controller.dart';
 
 class InvoiceController extends GetxController with AppValidator {
   // Repositories
   final IFirebaseRepository<BillTypeModel> _patternsFirebaseRepo;
   final IFirebaseRepository<BillModel> _billsFirebaseRepo;
-  final JsonExportRepository<BillModel> _invoiceRepo;
+  final JsonExportRepository<BillModel> _jsonExportRepo;
 
   // Services
   late final InvoiceService _invoiceService;
+  late final InvoiceUtils _invoiceUtils;
 
   final formKey = GlobalKey<FormState>();
   final TextEditingController invCodeController = TextEditingController();
@@ -49,11 +49,12 @@ class InvoiceController extends GetxController with AppValidator {
 
   Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
 
-  InvoiceController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._invoiceRepo);
+  InvoiceController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);
 
   // Initializer
   void _initializeServices() {
     _invoiceService = InvoiceService();
+    _invoiceUtils = InvoiceUtils();
   }
 
   @override
@@ -96,29 +97,35 @@ class InvoiceController extends GetxController with AppValidator {
 
   Future<void> fetchBills() async {
     final result = await _billsFirebaseRepo.getAll();
+
     result.fold(
-      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedBills) => bills.assignAll(fetchedBills),
     );
+
     isLoading = false;
     update();
   }
 
   Future<void> getAllBillTypes() async {
     final result = await _patternsFirebaseRepo.getAll();
+
     result.fold(
-      (failure) => Utils.showSnackBar('خطأ', failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
     );
+
     update();
   }
 
   Future<void> deleteBill(String billId) async {
     final result = await _billsFirebaseRepo.delete(billId);
+
     result.fold(
-      (failure) => Utils.showSnackBar('خطأ', failure.message),
-      (success) => Utils.showSnackBar('نجاح', 'تم حذف الفاتورة بنجاح!'),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) => AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!'),
     );
+
     Get.offAllNamed(AppRoutes.mainLayout);
   }
 
@@ -127,12 +134,16 @@ class InvoiceController extends GetxController with AppValidator {
   }
 
   Future<void> exportBillsJsonFile() async {
-    if (bills.isEmpty) return;
-    final result = await _invoiceRepo.exportJsonFile(bills);
+    if (bills.isEmpty) {
+      AppUIUtils.onFailure('لا توجد فواتير للتصدير');
+      return;
+    }
+
+    final result = await _jsonExportRepo.exportJsonFile(bills);
 
     result.fold(
-      (failure) => Utils.showSnackBar('خطأ', failure.message),
-      (success) => Utils.showSnackBar('نجاح', 'تم تصدير الفواتير بنجاح!'),
+      (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
+      (filePath) => _invoiceUtils.showExportSuccessDialog(filePath),
     );
   }
 
@@ -148,26 +159,24 @@ class InvoiceController extends GetxController with AppValidator {
     final updatedBillModel = _createBillModelFromInvoiceData(billModel, billTypeModel);
 
     if (updatedBillModel == null) {
-      Utils.showSnackBar('خطأ', 'من فضلك أدخل اسم العميل واسم البائع!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
       return;
     }
 
     final result = await _billsFirebaseRepo.save(updatedBillModel);
 
-    _postSaveActions(result, isEdit);
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _onSaveBillSuccess(isEdit),
+    );
   }
 
-  Future<void> _postSaveActions(Either<Failure, Unit> result, bool isEdit) async {
-    result.fold(
-      (failure) => Utils.showSnackBar('خطأ', failure.message),
-      (_) async {
-        Utils.showSnackBar('نجاح', isEdit ? 'تم تعديل الفاتورة بنجاح!' : 'تم حفظ الفاتورة بنجاح!');
-        if (isEdit) {
-          await fetchBills();
-          Get.until(ModalRoute.withName(AppRoutes.showAllBillsScreen));
-        }
-      },
-    );
+  Future<void> _onSaveBillSuccess(bool isEdit) async {
+    AppUIUtils.onSuccess(isEdit ? 'تم تعديل الفاتورة بنجاح!' : 'تم حفظ الفاتورة بنجاح!');
+    if (isEdit) {
+      await fetchBills();
+      Get.until(ModalRoute.withName(AppRoutes.showAllBillsScreen));
+    }
   }
 
   BillModel? _createBillModelFromInvoiceData(BillModel? billModel, BillTypeModel billTypeModel) {
@@ -226,7 +235,9 @@ class InvoiceController extends GetxController with AppValidator {
 
     _initializeCustomerAccount(billModel);
 
-    initSellerAccount(billModel.billDetails.billSellerId!);
+    _initSellerAccount(billModel.billDetails.billSellerId!);
+
+    _initBillNumberController(billModel.billDetails.billNumber);
 
     Get.toNamed(AppRoutes.billDetailsScreen, arguments: {'billModel': billModel});
   }
@@ -258,7 +269,15 @@ class InvoiceController extends GetxController with AppValidator {
     }
   }
 
-  void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
+  _initBillNumberController(int? billNumber) {
+    if (billNumber != null) {
+      invCodeController.text = billNumber.toString();
+    } else {
+      invCodeController.text = '';
+    }
+  }
+
+  void _initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
 
   updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
       selectedAdditionsDiscountAccounts[key] = value;

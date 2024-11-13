@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/utils/utils.dart';
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -142,13 +142,10 @@ class PatternController extends GetxController with AppValidator {
     final result = await _repository.getAll();
 
     result.fold(
-      (failure) {
-        Utils.showSnackBar('خطأ', failure.message);
-      },
-      (fetchedBillTypes) {
-        billsTypes.assignAll(fetchedBillTypes);
-      },
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
     );
+
     isLoading = false;
     update();
   }
@@ -160,8 +157,10 @@ class PatternController extends GetxController with AppValidator {
 
     final result = await _repository.save(billTypeModel);
 
-    result.fold((failure) => Utils.showSnackBar('خطأ', failure.message),
-        (success) => Utils.showSnackBar('نجاح', 'تم حفظ النموذج بنجاح!'));
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) => AppUIUtils.onFailure('تم حفظ النموذج بنجاح!'),
+    );
   }
 
   BillTypeModel _createBillTypeModel() {

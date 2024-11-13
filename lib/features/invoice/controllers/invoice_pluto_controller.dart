@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../core/utils/utils.dart';
+import '../../../core/utils/app_service_utils.dart';
 import '../data/models/invoice_record_model.dart';
 import '../services/invoice_pluto/invoice_pluto_calculator.dart';
 import '../services/invoice_pluto/invoice_pluto_context_menu.dart';
@@ -82,15 +82,15 @@ class InvoicePlutoController extends GetxController {
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
-    final quantityNum = Utils.extractNumbersAndCalculate(
+    final quantityNum = AppServiceUtils.extractNumbersAndCalculate(
         mainTableStateManager.currentRow!.cells[AppConstants.invRecQuantity]?.value?.toString() ?? '');
 
-    final subTotalStr =
-        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells[AppConstants.invRecSubTotal]?.value);
-    final totalStr =
-        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells[AppConstants.invRecTotal]?.value);
-    final vat =
-        Utils.extractNumbersAndCalculate(mainTableStateManager.currentRow!.cells[AppConstants.invRecVat]?.value ?? "0");
+    final subTotalStr = AppServiceUtils.extractNumbersAndCalculate(
+        mainTableStateManager.currentRow!.cells[AppConstants.invRecSubTotal]?.value);
+    final totalStr = AppServiceUtils.extractNumbersAndCalculate(
+        mainTableStateManager.currentRow!.cells[AppConstants.invRecTotal]?.value);
+    final vat = AppServiceUtils.extractNumbersAndCalculate(
+        mainTableStateManager.currentRow!.cells[AppConstants.invRecVat]?.value ?? "0");
 
     final double subTotal = _invoiceUtils.parseExpression(subTotalStr);
     final double total = _invoiceUtils.parseExpression(totalStr);

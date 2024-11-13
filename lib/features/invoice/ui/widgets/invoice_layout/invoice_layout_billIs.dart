@@ -27,9 +27,12 @@ class InvoiceLayoutBills extends StatelessWidget {
                 bill: bill,
                 invoiceController: invoiceController,
                 onPressed: () {
-                  invoiceController.sellerAccountController.clear();
-                  invoiceController.initCustomerAccount(bill.accounts?[BillAccounts.caches]);
+                  invoiceController
+                    ..sellerAccountController.clear()
+                    ..initCustomerAccount(bill.accounts?[BillAccounts.caches]);
+
                   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+
                   Get.to(
                     () => InvoiceScreen(billTypeModel: bill),
                     binding: BindingsBuilder(() {

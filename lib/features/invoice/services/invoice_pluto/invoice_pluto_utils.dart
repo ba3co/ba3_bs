@@ -4,7 +4,7 @@ import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/utils/utils.dart';
+import '../../../../core/utils/app_service_utils.dart';
 import '../../../materials/data/models/material_model.dart';
 import '../../controllers/invoice_pluto_controller.dart';
 
@@ -33,7 +33,7 @@ class InvoicePlutoUtils {
   bool isValidItemQuantity(PlutoRow row, String cellKey) {
     final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
 
-    int invRecQuantity = int.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
+    int invRecQuantity = int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
 
     return invRecQuantity > 0;
   }
@@ -41,7 +41,7 @@ class InvoicePlutoUtils {
   double getCellValueInDouble(Map<String, PlutoCell> cells, String cellKey) {
     final String cellValue = cells[cellKey]?.value.toString() ?? '';
 
-    return double.tryParse(Utils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
+    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
   }
 
   PlutoRow get ratioRow => additionsDiscountsStateManager.rows.firstWhere(

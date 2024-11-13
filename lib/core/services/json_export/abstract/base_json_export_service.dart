@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -13,7 +12,7 @@ abstract class BaseJsonExportService<T> implements IJsonExportService<T> {
 
   /// Shared method for exporting JSON data to a file
   @override
-  Future<void> exportToFile(List<T> itemsModels) async {
+  Future<String> exportToFile(List<T> itemsModels) async {
     final Directory documentsDirectory = await getApplicationDocumentsDirectory();
     final String filePath = '${documentsDirectory.path}/exported_data.json';
 
@@ -22,6 +21,6 @@ abstract class BaseJsonExportService<T> implements IJsonExportService<T> {
 
     await file.writeAsString(jsonContent);
 
-    log('File exported to: $filePath');
+    return filePath;
   }
 }

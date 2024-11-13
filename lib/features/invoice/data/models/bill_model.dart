@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:get/get.dart';
@@ -44,7 +45,6 @@ class BillModel implements PlutoAdaptable {
   factory BillModel.fromInvoiceData({
     BillModel? billModel,
     String? note,
-    int? billNumber,
     required String billCustomerId,
     required String billSellerId,
     required int billPayType,
@@ -61,7 +61,6 @@ class BillModel implements PlutoAdaptable {
     final billDetails = _createBillDetails(
       existingDetails: billModel?.billDetails,
       note: note,
-      billNumber: billNumber,
       billCustomerId: billCustomerId,
       billSellerId: billSellerId,
       billPayType: billPayType,
@@ -92,7 +91,6 @@ class BillModel implements PlutoAdaptable {
   static BillDetails _createBillDetails({
     BillDetails? existingDetails,
     String? note,
-    int? billNumber,
     required String billCustomerId,
     required String billSellerId,
     required int billPayType,
@@ -106,8 +104,8 @@ class BillModel implements PlutoAdaptable {
   }) =>
       BillDetails(
         billGuid: existingDetails?.billGuid,
+        billNumber: existingDetails?.billNumber,
         note: note,
-        billNumber: billNumber,
         billCustomerId: billCustomerId,
         billSellerId: billSellerId,
         billPayType: billPayType,
@@ -147,9 +145,10 @@ class BillModel implements PlutoAdaptable {
   @override
   Map<String, dynamic> toPlutoGridFormat() => {
         'billId': billId ?? '',
+        'رقم الفاتورة': billDetails.billNumber ?? '',
         'التاريخ': billDetails.billDate ?? '',
-        'مجموع الضريبة': double.tryParse(billDetails.billVatTotal?.toStringAsFixed(2) ?? '0') ?? 0,
-        'المجموع قبل الضريبة': billDetails.billWithoutVatTotal ?? 0,
+        'مجموع الضريبة': AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
+        'المجموع قبل الضريبة': AppServiceUtils.toFixedDouble(billDetails.billWithoutVatTotal),
         'المجموع الكلي': billDetails.billTotal ?? 0,
         'مجموع الحسم': billDetails.billDiscountsTotal ?? 0,
         'مجموع الاضافات': billDetails.billAdditionsTotal ?? 0,

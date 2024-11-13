@@ -11,13 +11,13 @@ class JsonExportRepository<T> {
 
   JsonExportRepository(this._jsonExport);
 
-  Future<Either<Failure, Unit>> exportJsonFile(List<T> itemsModels) async {
+  Future<Either<Failure, String>> exportJsonFile(List<T> itemsModels) async {
     try {
-      await _jsonExport.exportToFile(itemsModels);
-      return const Right(unit);
+      String filePath = await _jsonExport.exportToFile(itemsModels);
+      return Right(filePath);
     } catch (e) {
-      log('Error exporting bills: $e');
-      return Left(Failure(ResponseCode.UNKNOWN, 'Failed to export bill data: $e'));
+      log('[$e] فشل في تصدير الملف');
+      return Left(ErrorHandler(e).failure);
     }
   }
 }

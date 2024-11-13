@@ -24,7 +24,6 @@ class InvoiceService {
       billModel: billModel,
       billTypeModel: billTypeModel,
       note: null,
-      billNumber: null,
       billCustomerId: invoiceController.selectedCustomerAccount!.id!,
       billSellerId: sellerController.selectedSellerAccount!.costGuid!,
       billPayType: invoiceController.selectedPayType.index,

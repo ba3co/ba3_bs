@@ -1,36 +1,50 @@
 // ignore_for_file: constant_identifier_names
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 
 import '../../constants/app_constants.dart';
+import 'app_exception.dart';
 import 'failure.dart';
 
-class ErrorHandler implements Exception {
-  ErrorHandler(error) {
-    if (error is DioException) {
-      failure = _handleDioError(error);
-    } else if (error is SocketException) {
-      failure = ResponseTypes.NO_INTERNET_CONNECTION.getFailure();
-    } else if (error is Failure) {
-      failure = error;
-    } else {
-      // default error
-      failure = ResponseTypes.UNKNOWN.getFailure();
-    }
-  }
+class ErrorHandler {
+  final Failure failure;
 
-  late Failure failure;
+  ErrorHandler(exception) : failure = _handleException(mapErrorToException(exception));
+}
+
+AppException mapErrorToException(error) {
+  if (error is DioException) return DioAppException(error);
+  if (error is SocketException) return const SocketAppException();
+  if (error is FirebaseException) return FirebaseAppException(error);
+  if (error is Failure) return FailureAppException(error);
+  return UnknownAppException(error);
+}
+
+// Handling exceptions using sealed classes
+Failure _handleException(AppException exception) {
+  switch (exception) {
+    case DioAppException dioException:
+      return _handleDioError(dioException.error);
+    case SocketAppException _:
+      return ResponseTypes.NO_INTERNET_CONNECTION.getFailure();
+    case FirebaseAppException firebaseException:
+      return _handleFirebaseError(firebaseException.error);
+    case FailureAppException failureException:
+      return failureException.failure;
+    case UnknownAppException unknownException:
+      return _handleDefaultError(unknownException.error);
+  }
 }
 
 Failure _handleDioError(DioException error) {
   String? errorMessage;
 
-  if (error.response?.data != null) {
-    errorMessage = error.response?.data is Map ? error.response?.data['error']['message'] : null;
-    errorMessage = errorMessage == '' ? null : errorMessage;
+  if (error.response?.data is Map) {
+    errorMessage = error.response?.data['error']?['message'] as String?;
   }
-  errorMessage ??= error.response?.statusMessage;
+  errorMessage ??= error.response?.statusMessage ?? 'Unknown Dio error';
 
   switch (error.type) {
     case DioExceptionType.connectionTimeout:
@@ -44,12 +58,31 @@ Failure _handleDioError(DioException error) {
     case DioExceptionType.cancel:
       return ResponseTypes.CANCEL.getFailure(message: errorMessage);
     case DioExceptionType.unknown:
-      return ResponseTypes.UNKNOWN.getFailure(message: errorMessage);
     case DioExceptionType.connectionError:
       return ResponseTypes.NO_INTERNET_CONNECTION.getFailure(message: errorMessage);
     default:
       return ResponseTypes.UNKNOWN.getFailure(message: errorMessage);
   }
+}
+
+Failure _handleFirebaseError(FirebaseException error) {
+  switch (error.code) {
+    case 'permission-denied':
+      return ResponseTypes.FORBIDDEN.getFailure(message: 'Permission denied.');
+    case 'unavailable':
+      return ResponseTypes.INTERNAL_SERVER_ERROR.getFailure(message: 'Service temporarily unavailable.');
+    case 'deadline-exceeded':
+      return ResponseTypes.CONNECT_TIMEOUT.getFailure(message: 'Operation timed out.');
+    case 'not-found':
+      return ResponseTypes.NOT_FOUND.getFailure(message: 'Requested resource not found.');
+    default:
+      return ResponseTypes.UNKNOWN.getFailure(message: 'Firebase error: ${error.message ?? 'Unknown error'}');
+  }
+}
+
+Failure _handleDefaultError(dynamic error) {
+  final message = error is String ? error : error.toString();
+  return ResponseTypes.UNKNOWN.getFailure(message: message);
 }
 
 enum ResponseTypes {

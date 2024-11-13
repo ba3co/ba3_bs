@@ -8,7 +8,7 @@ class BillJsonExport extends BaseJsonExportService<BillModel> {
   Map<String, dynamic> toExportJson(List<BillModel> itemsModels) {
     return {
       "Bill": itemsModels.map((billModel) {
-        return {
+        return <String, dynamic>{
           "B": {
             "BillTypeGuid": _billTypeGuide(billModel.billTypeModel.billTypeLabel!),
             "BillGuid": billModel.billDetails.billGuid,

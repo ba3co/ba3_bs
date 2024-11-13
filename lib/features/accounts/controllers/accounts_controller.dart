@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
-import '../../../core/utils/utils.dart';
+import '../../../core/utils/app_ui_utils.dart';
 import '../../invoice/controllers/invoice_controller.dart';
 import '../../patterns/controllers/pattern_controller.dart';
 import '../../patterns/ui/widgets/account_selection_dialog.dart';
@@ -111,7 +111,7 @@ class AccountsController extends GetxController {
       }
       return selectedAccountModel;
     } else {
-      Utils.showSnackBar('فحص الحسابات', 'هذا الحساب غير موجود');
+      AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
       return null;
     }
   }

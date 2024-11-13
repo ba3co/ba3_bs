@@ -1,8 +1,8 @@
-import 'package:ba3_bs/core/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/app_service_utils.dart';
 import 'bill_model.dart';
 
 class InvoiceRecordModel {
@@ -98,13 +98,13 @@ class InvoiceRecordModel {
 // Helper method to parse integers, handling Arabic numerals
   int? _parseInteger(dynamic value) {
     if (value == null) return null;
-    return int.tryParse(Utils.replaceArabicNumbersWithEnglish(value.toString()));
+    return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString()));
   }
 
 // Helper method to parse doubles, handling Arabic numerals
   double? _parseDouble(dynamic value) {
     if (value == null) return null;
-    return double.tryParse(Utils.replaceArabicNumbersWithEnglish(value.toString()));
+    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString()));
   }
 
   @override

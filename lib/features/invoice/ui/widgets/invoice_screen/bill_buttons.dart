@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/styling/app_colors.dart';
-import '../../../../../core/utils/utils.dart';
+import '../../../../../core/utils/app_ui_utils.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/option_text_widget.dart';
@@ -169,7 +169,7 @@ class BillButtons extends StatelessWidget {
                             title: "تاريخ الفاتورة:  ",
                             controller: invoiceController.invReturnDateController,
                             onSubmitted: (text) async {
-                              invoiceController.invReturnDateController.text = Utils.getDateFromString(text);
+                              invoiceController.invReturnDateController.text = AppUIUtils.getDateFromString(text);
                             },
                           ),
                           const SizedBox(

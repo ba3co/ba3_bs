@@ -5,7 +5,7 @@ import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../../../core/utils/utils.dart';
+import '../../../core/utils/app_ui_utils.dart';
 import '../../patterns/ui/widgets/account_selection_dialog.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
@@ -111,7 +111,7 @@ class SellerController extends GetxController {
         update();
       }
     } else {
-      Utils.showSnackBar('فحص الحسابات', 'هذا الحساب غير موجود');
+      AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }
   }
 }

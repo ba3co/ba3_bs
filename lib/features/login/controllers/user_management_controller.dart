@@ -9,7 +9,8 @@ import 'package:pinput/pinput.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/utils/utils.dart';
+import '../../../core/utils/app_ui_utils.dart';
+import '../../../core/utils/generate_id.dart';
 import '../data/models/card_model.dart';
 import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
@@ -160,7 +161,7 @@ class UserManagementController extends GetxController {
   }
 
   void addUser() async {
-    initAddUserModel?.userId ??= Utils.generateId(RecordType.user);
+    initAddUserModel?.userId ??= generateId(RecordType.user);
     initAddUserModel?.userStatus ??= AppConstants.userStatusOnline;
     final result = await _userRepository.saveUser(initAddUserModel!);
     result.fold(
@@ -172,7 +173,7 @@ class UserManagementController extends GetxController {
   RoleModel? roleModel;
 
   void addRole() async {
-    roleModel?.roleId ??= Utils.generateId(RecordType.role);
+    roleModel?.roleId ??= generateId(RecordType.role);
     final result = await _userRepository.saveRole(roleModel!);
     result.fold(
       (failure) => Get.snackbar("Error", failure.message),
@@ -293,7 +294,7 @@ Future<bool> hasPermissionForOperation(role, page) async {
     var a = await Get.defaultDialog(
         barrierDismissible: false,
         title:
-            "احتاج الاذن\nل ${Utils.getRoleNameFromEnum(role.toString())}\nفي ${Utils.getPageNameFromEnum(page.toString())}",
+            "احتاج الاذن\nل ${AppUIUtils.getRoleNameFromEnum(role.toString())}\nفي ${AppUIUtils.getPageNameFromEnum(page.toString())}",
         content: StatefulBuilder(builder: (context, setstate) {
           if (!init && isNfcAvailable) {
             init = true;
