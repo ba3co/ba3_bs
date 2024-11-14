@@ -147,4 +147,18 @@ class AppServiceUtils {
 
   static double toFixedDouble(double? value, [int fractionDigits = 2]) =>
       double.tryParse(value?.toStringAsFixed(fractionDigits) ?? '0') ?? 0.0;
+
+  static double calcSub(int vatRatio, double total) {
+    double sub = total / (1 + (vatRatio / 100));
+
+    return sub;
+  }
+
+  static double calcVat(int? vatRatio, double? total) {
+    if (vatRatio == null || vatRatio == 0 || total == null || total == 0) return 0;
+
+    double sunTotal = calcSub(vatRatio, total);
+
+    return total - sunTotal;
+  }
 }

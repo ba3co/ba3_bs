@@ -65,7 +65,7 @@ AppBar billDetailsAppBar(InvoiceController invoiceController, BillTypeModel bill
                     width: Get.width * 0.10,
                     child: CustomTextFieldWithoutIcon(
                       isNumeric: true,
-                      controller: invoiceController.invCodeController,
+                      controller: invoiceController.billNumberController,
                       onSubmitted: (text) {},
                     )),
                 IconButton(onPressed: () {}, icon: const Icon(Icons.keyboard_double_arrow_left)),

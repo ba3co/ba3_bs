@@ -30,12 +30,13 @@ class BillBody extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 8),
               child: GetBuilder<InvoicePlutoController>(builder: (controller) {
                 return FocusScope(
-                  autofocus: true, // لتمكين التركيز تلقائيًا عند إنشاء الشاشة
+                  autofocus: true,
                   child: PlutoWithEdite(
                     evenRowColor: Color(billTypeModel.color!),
                     controller: controller,
-                    shortCut:
-                        customPlutoShortcut(GetProductByPlutoGridEnterAction(controller, AppConstants.invRecProduct)),
+                    shortCut: customPlutoShortcut(
+                      GetProductByPlutoGridEnterAction(controller, AppConstants.invRecProduct),
+                    ),
                     onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
                     onChanged: controller.onMainTableStateManagerChanged,
                   ),

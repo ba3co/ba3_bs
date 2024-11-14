@@ -1,0 +1,106 @@
+import 'invoice_record_model.dart';
+
+class BillItems {
+  final List<BillItem> itemList;
+
+  BillItems({required this.itemList});
+
+  factory BillItems.fromJson(Map<String, dynamic> json) {
+    var itemsJson = json['Item'] as List<dynamic>;
+    List<BillItem> itemList = itemsJson.map((item) => BillItem.fromJson(item)).toList();
+    return BillItems(itemList: itemList);
+  }
+
+  factory BillItems.fromInvoiceRecords(List<InvoiceRecordModel> invoiceRecords) {
+    final itemList = invoiceRecords.map((invoiceRecord) {
+      return BillItem(
+        itemGuid: invoiceRecord.invRecId!,
+        itemName: invoiceRecord.invRecProduct!,
+        itemQuantity: invoiceRecord.invRecQuantity!,
+        itemTotalPrice: invoiceRecord.invRecTotal.toString(),
+        itemSubTotalPrice: invoiceRecord.invRecSubTotal,
+        itemVatPrice: invoiceRecord.invRecVat,
+        itemGiftsPrice: invoiceRecord.invRecGiftTotal,
+        itemGiftsNumber: invoiceRecord.invRecGift,
+      );
+    }).toList();
+
+    return BillItems(itemList: itemList);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'Item': itemList.map((item) => item.toJson()).toList(),
+      };
+
+  BillItems copyWith({List<BillItem>? itemList}) => BillItems(
+        itemList: itemList ?? this.itemList,
+      );
+
+  List<InvoiceRecordModel> get materialRecords =>
+      itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
+}
+
+class BillItem {
+  final String itemGuid;
+  final String itemName;
+  final int itemQuantity;
+  final String itemTotalPrice;
+  final double? itemSubTotalPrice;
+  final double? itemVatPrice;
+  final int? itemGiftsNumber;
+  final double? itemGiftsPrice;
+
+  BillItem({
+    required this.itemGuid,
+    required this.itemName,
+    required this.itemQuantity,
+    required this.itemTotalPrice,
+    this.itemSubTotalPrice,
+    this.itemVatPrice,
+    this.itemGiftsNumber,
+    this.itemGiftsPrice,
+  });
+
+  factory BillItem.fromJson(Map<String, dynamic> json) => BillItem(
+        itemGuid: json['ItemGuid'],
+        itemName: json['ItemName'],
+        itemQuantity: json['ItemQuantity'],
+        itemTotalPrice: json['itemTotalPrice'],
+        itemSubTotalPrice: json['itemSubTotalPrice'],
+        itemVatPrice: json['itemVatPrice'],
+        itemGiftsNumber: json['itemGiftsNumber'],
+        itemGiftsPrice: json['itemGiftsPrice'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'ItemGuid': itemGuid,
+        'ItemName': itemName,
+        'ItemQuantity': itemQuantity,
+        'itemTotalPrice': itemTotalPrice,
+        'itemSubTotalPrice': itemSubTotalPrice,
+        'itemVatPrice': itemVatPrice,
+        'itemGiftsNumber': itemGiftsNumber,
+        'itemGiftsPrice': itemGiftsPrice,
+      };
+
+  BillItem copyWith({
+    final String? itemGuid,
+    final String? itemName,
+    final int? itemQuantity,
+    final String? itemTotalPrice,
+    final double? itemSubTotalPrice,
+    final double? itemVatPrice,
+    final int? itemGiftsNumber,
+    final double? itemGiftsPrice,
+  }) =>
+      BillItem(
+        itemGuid: itemGuid ?? this.itemGuid,
+        itemName: itemName ?? this.itemName,
+        itemQuantity: itemQuantity ?? this.itemQuantity,
+        itemTotalPrice: itemTotalPrice ?? this.itemTotalPrice,
+        itemSubTotalPrice: itemSubTotalPrice ?? this.itemSubTotalPrice,
+        itemVatPrice: itemVatPrice ?? this.itemVatPrice,
+        itemGiftsNumber: itemGiftsNumber ?? this.itemGiftsNumber,
+        itemGiftsPrice: itemGiftsPrice ?? this.itemGiftsPrice,
+      );
+}

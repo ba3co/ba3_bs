@@ -28,7 +28,7 @@ class PatternController extends GetxController with AppValidator {
 
   final formKey = GlobalKey<FormState>();
 
-  InvoiceType selectedBillType = InvoiceType.buy;
+  InvoiceType selectedBillType = InvoiceType.purchase;
 
   int selectedColorValue = Colors.red.value;
 
@@ -42,7 +42,7 @@ class PatternController extends GetxController with AppValidator {
   void onInit() {
     super.onInit();
 
-    autoFillControllers(InvoiceType.buy);
+    autoFillControllers(InvoiceType.purchase);
 
     controllerToBillAccountsMap.addAll({
       giftsController: BillAccounts.gifts,
@@ -83,7 +83,7 @@ class PatternController extends GetxController with AppValidator {
 
         break;
 
-      case InvoiceType.buy:
+      case InvoiceType.purchase:
         fillControllers(
             shortName: 'شراء', fullName: 'فاتورة مشتريات', latinShortName: 'Buy', latinFullName: 'Purchase Invoice');
 
@@ -172,6 +172,7 @@ class PatternController extends GetxController with AppValidator {
       fullName: fullNameController.text,
       latinFullName: latinFullNameController.text,
       billTypeLabel: selectedBillType.value,
+      billTypeId: BillType.byLabel(selectedBillType.value).typeGuide,
       accounts: accounts,
       color: selectedColorValue,
     );

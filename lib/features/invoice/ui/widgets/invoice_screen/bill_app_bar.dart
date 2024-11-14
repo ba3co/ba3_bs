@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/invoice/controllers/invoice_search_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,15 +61,23 @@ AppBar billAppBar(InvoiceController invoiceController, BillTypeModel billModel) 
             ),
             Row(
               children: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.keyboard_double_arrow_right)),
+                IconButton(
+                    onPressed: () {
+                      Get.find<InvoiceSearchController>().getPreviousBill();
+                    },
+                    icon: const Icon(Icons.keyboard_double_arrow_right)),
                 SizedBox(
                     width: Get.width * 0.10,
                     child: CustomTextFieldWithoutIcon(
                       isNumeric: true,
-                      controller: invoiceController.invCodeController,
+                      controller: invoiceController.billNumberController,
                       onSubmitted: (text) {},
                     )),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.keyboard_double_arrow_left)),
+                IconButton(
+                    onPressed: () {
+                      Get.find<InvoiceSearchController>().getNextBill();
+                    },
+                    icon: const Icon(Icons.keyboard_double_arrow_left)),
               ],
             ),
           ],

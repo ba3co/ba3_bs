@@ -27,7 +27,7 @@ import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/abstract/i_firebase_repo.dart';
-import '../services/json_export/implementations/json_export_repo.dart';
+import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/translation/abstract/i_api_client.dart';
 import '../services/translation/implementations/dio_client.dart';
 import '../services/translation/implementations/google_translation.dart';

@@ -25,12 +25,12 @@ enum RecordType {
 }
 
 enum InvoiceType {
-  buy(label: 'شراء', value: 'invoiceTypeBuy'),
-  sales(label: 'مبيع', value: 'invoiceTypeSales'),
-  buyReturn(label: 'مرتجع شراء', value: 'buyReturn'),
+  purchase(label: 'شراء', value: 'purchase'),
+  sales(label: 'مبيع', value: 'sales'),
+  buyReturn(label: 'مرتجع شراء', value: 'purchaseReturn'),
   salesReturn(label: 'مرتجع بيع', value: 'salesReturn'),
-  add(label: 'إدخال', value: 'inputSettlement'),
-  remove(label: 'إخراج', value: 'outputSettlement');
+  add(label: 'تسوية إدخال', value: 'adjustmentEntry'),
+  remove(label: 'تسوية إخراج', value: 'outputAdjustment');
 
   final String label;
   final String value;
@@ -63,23 +63,62 @@ enum InvPayType {
 }
 
 enum BillType {
-  sales(label: 'sales', value: 'قاتورة مبيعات'),
-  purchase(label: 'purchase', value: 'قاتورة مشتريات'),
-  salesReturn(label: 'salesReturn', value: 'قاتورة مرتجع مبيع'),
-  purchaseReturn(label: 'purchaseReturn', value: 'قاتورة مرتجع شراء'),
-  adjustmentEntry(label: 'adjustmentEntry', value: 'قاتورة تسوية ادخال'),
-  outputAdjustment(label: 'outputAdjustment', value: 'قاتورة تسوية اخراج'),
-  firstPeriodInventory(label: 'firstPeriodInventory', value: 'بضاعة أول المدة'),
-  transferIn(label: 'transferIn', value: 'إد.عملية مناقلة'),
-  transferOut(label: 'transferOut', value: 'إخ.عملية مناقلة');
+  sales(
+    label: 'sales',
+    value: 'قاتورة مبيعات',
+    typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
+  ),
+  purchase(
+    label: 'purchase',
+    value: 'قاتورة مشتريات',
+    typeGuide: "eb10653a-a43f-44e5-889d-41ce68c43ec4",
+  ),
+  salesReturn(
+    label: 'salesReturn',
+    value: 'قاتورة مرتجع مبيع',
+    typeGuide: "2373523c-9f23-4ce7-a6a2-6277757fc381",
+  ),
+  purchaseReturn(
+    label: 'purchaseReturn',
+    value: 'قاتورة مرتجع شراء',
+    typeGuide: "507f9e7d-e44e-4c4e-9761-bb3cd4fc1e0d",
+  ),
+  adjustmentEntry(
+    label: 'adjustmentEntry',
+    value: 'قاتورة تسوية ادخال',
+    typeGuide: "06f0e6ea-3493-480c-9e0c-573baf049605",
+  ),
+  outputAdjustment(
+    label: 'outputAdjustment',
+    value: 'قاتورة تسوية اخراج',
+    typeGuide: "563af9aa-5d7e-470b-8c3c-fee784da810a",
+  ),
+  firstPeriodInventory(
+    label: 'firstPeriodInventory',
+    value: 'بضاعة أول المدة',
+    typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
+  ),
+  transferIn(
+    label: 'transferIn',
+    value: 'إد.عملية مناقلة',
+    typeGuide: "f0f2a5db-53ed-4e53-9686-d6a809911327",
+  ),
+  transferOut(
+    label: 'transferOut',
+    value: 'إخ.عملية مناقلة',
+    typeGuide: "1e90ef6a-f7ef-484e-9035-0ab761371545",
+  );
 
   final String label;
 
   final String value;
 
+  final String typeGuide;
+
   const BillType({
     required this.label,
     required this.value,
+    required this.typeGuide,
   });
 
   // Factory constructor with error handling for unmatched labels
@@ -87,6 +126,13 @@ enum BillType {
     return BillType.values.firstWhere(
       (type) => type.label == label,
       orElse: () => throw ArgumentError('No matching BillType for label: $label'),
+    );
+  }
+
+  factory BillType.byTypeGuide(String typeGuide) {
+    return BillType.values.firstWhere(
+      (type) => type.typeGuide == typeGuide,
+      orElse: () => throw ArgumentError('No matching BillType for label: $typeGuide'),
     );
   }
 }

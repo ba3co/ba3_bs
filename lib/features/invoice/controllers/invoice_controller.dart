@@ -1,4 +1,7 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
+import 'package:ba3_bs/features/invoice/controllers/invoice_search_controller.dart';
 import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +10,13 @@ import 'package:get/get.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/abstract/i_firebase_repo.dart';
-import '../../../core/services/json_export/implementations/json_export_repo.dart';
+import '../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/utils/generate_id.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../../print/controller/print_controller.dart';
+import '../data/models/bill_items.dart';
 import '../data/models/invoice_record_model.dart';
 import '../services/invoice/invoice_service.dart';
 import '../services/invoice/invoice_utils.dart';
@@ -29,7 +33,7 @@ class InvoiceController extends GetxController with AppValidator {
   late final InvoiceUtils _invoiceUtils;
 
   final formKey = GlobalKey<FormState>();
-  final TextEditingController invCodeController = TextEditingController();
+  final TextEditingController billNumberController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
   final TextEditingController customerAccountController = TextEditingController();
@@ -222,45 +226,26 @@ class InvoiceController extends GetxController with AppValidator {
     }
   }
 
+  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
+      selectedAdditionsDiscountAccounts[key] = value;
+
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
 
   void navigateToBillDetailsScreen(String billId) {
-    final InvoicePlutoController invoicePlutoController = _initInvoicePlutoControllerIfNeeded();
-
     final BillModel billModel = getBillById(billId);
 
-    _prepareInvoiceRecords(billModel.items, invoicePlutoController);
+    _updateScreenWithCurrentBill(billModel);
 
-    _prepareAdditionsDiscountsRecords(billModel, invoicePlutoController);
+    _initInvoiceSearchController(billModel);
 
-    _initializeCustomerAccount(billModel);
-
-    _initSellerAccount(billModel.billDetails.billSellerId!);
-
-    _initBillNumberController(billModel.billDetails.billNumber);
-
-    Get.toNamed(AppRoutes.billDetailsScreen, arguments: {'billModel': billModel});
+    Get.toNamed(AppRoutes.billDetailsScreen);
   }
 
-  InvoicePlutoController _initInvoicePlutoControllerIfNeeded() {
-    if (!Get.isRegistered<InvoicePlutoController>()) {
-      Get.lazyPut(() => InvoicePlutoController());
-    }
-
-    return Get.find<InvoicePlutoController>();
-  }
-
-  _prepareInvoiceRecords(BillItems billItems, InvoicePlutoController invoicePlutoController) =>
+  prepareInvoiceRecords(BillItems billItems, InvoicePlutoController invoicePlutoController) =>
       invoicePlutoController.prepareMaterialsRows(billItems.materialRecords);
 
-  _prepareAdditionsDiscountsRecords(BillModel billModel, InvoicePlutoController invoicePlutoController) =>
+  prepareAdditionsDiscountsRecords(BillModel billModel, InvoicePlutoController invoicePlutoController) =>
       invoicePlutoController.prepareAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
-
-  void _initializeCustomerAccount(BillModel billModel) {
-    final AccountModel customerAcc = billModel.billTypeModel.accounts![BillAccounts.caches]!;
-
-    initCustomerAccount(customerAcc);
-  }
 
   initCustomerAccount(AccountModel? account) {
     if (account != null) {
@@ -269,18 +254,41 @@ class InvoiceController extends GetxController with AppValidator {
     }
   }
 
-  _initBillNumberController(int? billNumber) {
+  initBillNumberController(int? billNumber) {
     if (billNumber != null) {
-      invCodeController.text = billNumber.toString();
+      billNumberController.text = billNumber.toString();
     } else {
-      invCodeController.text = '';
+      billNumberController.text = '';
     }
   }
 
-  void _initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
+  List<BillModel> getBillsByType(String billTypeId) =>
+      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
-  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
-      selectedAdditionsDiscountAccounts[key] = value;
+  void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
+
+  void _updateScreenWithCurrentBill(BillModel bill) {
+    InvoicePlutoController invoicePlutoController = Get.putIfAbsent(InvoicePlutoController());
+
+    onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
+
+    setBillDate(bill.billDetails.billDate!.toDate!);
+
+    initBillNumberController(bill.billDetails.billNumber);
+
+    initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
+    initSellerAccount(bill.billDetails.billSellerId!);
+
+    prepareInvoiceRecords(bill.items, invoicePlutoController);
+    prepareAdditionsDiscountsRecords(bill, invoicePlutoController);
+  }
+
+  // Update `_initInvoiceSearchController` to use `Get.putIfAbsent`:
+  void _initInvoiceSearchController(BillModel bill) {
+    List<BillModel> billsByCategory = getBillsByType(bill.billTypeModel.billTypeId!);
+
+    Get.putIfAbsent(InvoiceSearchController()).initSearchControllerBill(billsByCategory: billsByCategory, bill: bill);
+  }
 }
 
 // 300

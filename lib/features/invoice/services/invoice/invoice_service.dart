@@ -34,7 +34,7 @@ class InvoiceService {
       billGiftsTotal: invoicePlutoController.computeGifts,
       billDiscountsTotal: invoicePlutoController.computeDiscounts,
       billAdditionsTotal: invoicePlutoController.computeAdditions,
-      billItems: invoicePlutoController.generateInvoiceRecords,
+      billRecordsItems: invoicePlutoController.generateInvoiceRecords,
     );
   }
 

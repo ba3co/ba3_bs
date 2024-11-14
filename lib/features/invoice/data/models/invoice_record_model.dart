@@ -3,7 +3,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/app_service_utils.dart';
-import 'bill_model.dart';
+import 'bill_items.dart';
 
 class InvoiceRecordModel {
   String? invRecId;
