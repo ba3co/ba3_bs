@@ -69,7 +69,6 @@ class InvoiceSearchController extends GetxController {
   void _updateScreenWithCurrentBill() {
     final invoiceController = Get.find<InvoiceController>();
     invoiceController.updateScreenWithBillData(currentBill);
-    update();
   }
 
   // Utility method to show failure messages
