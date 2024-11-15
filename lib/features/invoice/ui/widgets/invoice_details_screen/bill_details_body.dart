@@ -9,10 +9,10 @@ import '../../../../../core/widgets/pluto_short_cut.dart';
 import '../../../../../core/widgets/pluto_with_edite.dart';
 import '../../../../patterns/data/models/bill_type_model.dart';
 import '../../../controllers/invoice_pluto_controller.dart';
-import 'bill_grid_widget.dart';
+import '../bill_grid_widget.dart';
 
-class BillBody extends StatelessWidget {
-  const BillBody({
+class BillDetailsBody extends StatelessWidget {
+  const BillDetailsBody({
     super.key,
     required this.billTypeModel,
   });

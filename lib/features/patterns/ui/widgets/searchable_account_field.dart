@@ -8,16 +8,19 @@ class SearchableAccountField extends StatelessWidget {
   final String label;
   final TextEditingController textEditingController;
   final bool isCustomerAccount; // Add this parameter to indicate customer account field
+  final bool fromAddBill; // Add this parameter to indicate customer account field
   final Function(String text)? onSubmitted;
   final String? Function(String?)? validator;
 
-  const SearchableAccountField(
-      {super.key,
-      required this.label,
-      required this.textEditingController,
-      this.onSubmitted,
-      this.validator,
-      this.isCustomerAccount = false});
+  const SearchableAccountField({
+    super.key,
+    required this.label,
+    required this.textEditingController,
+    this.onSubmitted,
+    this.validator,
+    this.isCustomerAccount = false,
+    this.fromAddBill = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,7 @@ class SearchableAccountField extends StatelessWidget {
                       query: text,
                       textEditingController: textEditingController,
                       isCustomerAccount: isCustomerAccount,
+                      fromAddBill: fromAddBill,
                     );
                   },
             ),

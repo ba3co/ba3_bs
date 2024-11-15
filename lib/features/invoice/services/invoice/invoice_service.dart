@@ -1,7 +1,6 @@
-import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
-import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:get/get.dart';
 
+import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/bond_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/invoice_pluto_controller.dart';
@@ -10,24 +9,24 @@ import '../../data/models/bill_model.dart';
 class InvoiceService {
   InvoicePlutoController get invoicePlutoController => Get.find<InvoicePlutoController>();
 
-  InvoiceController get invoiceController => Get.find<InvoiceController>();
-
-  SellerController get sellerController => Get.find<SellerController>();
-
   BondController get bondController => Get.find<BondController>();
 
-  BillModel? createBillModel(BillModel? billModel, BillTypeModel billTypeModel) {
-    if (invoiceController.selectedCustomerAccount == null || sellerController.selectedSellerAccount == null) {
-      return null;
-    }
+  BillModel? createBillModel({
+    BillModel? billModel,
+    required BillTypeModel billTypeModel,
+    required String billCustomerId,
+    required String billSellerId,
+    required int billPayType,
+    required String billDate,
+  }) {
     return BillModel.fromInvoiceData(
       billModel: billModel,
       billTypeModel: billTypeModel,
       note: null,
-      billCustomerId: invoiceController.selectedCustomerAccount!.id!,
-      billSellerId: sellerController.selectedSellerAccount!.costGuid!,
-      billPayType: invoiceController.selectedPayType.index,
-      billDate: invoiceController.billDate,
+      billCustomerId: billCustomerId,
+      billSellerId: billSellerId,
+      billPayType: billPayType,
+      billDate: billDate,
       billTotal: invoicePlutoController.calculateFinalTotal,
       billVatTotal: invoicePlutoController.computeTotalVat,
       billWithoutVatTotal: invoicePlutoController.computeWithoutVatTotal,
@@ -38,9 +37,13 @@ class InvoiceService {
     );
   }
 
-  void createBond(BillTypeModel billTypeModel) => bondController.createBond(
+  void createBond({
+    required BillTypeModel billTypeModel,
+    required AccountModel customerAccount,
+  }) =>
+      bondController.createBond(
         billTypeModel: billTypeModel,
-        customerAccount: invoiceController.selectedCustomerAccount!,
+        customerAccount: customerAccount,
         vat: invoicePlutoController.computeTotalVat,
         total: invoicePlutoController.computeWithoutVatTotal,
         gifts: invoicePlutoController.computeGifts,

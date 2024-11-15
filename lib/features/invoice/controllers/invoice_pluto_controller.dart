@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
@@ -207,11 +209,16 @@ class InvoicePlutoController extends GetxController {
 
   void prepareAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
+    final newRows = _invoiceUtils.emptyAdditionsDiscountsRecords();
+
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = _gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
-    }
 
-    additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
+      additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
+    } else {
+      log('additionsDiscountsRecords empty');
+      additionsDiscountsStateManager.appendRows(newRows);
+    }
   }
 
   void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
@@ -241,7 +248,7 @@ class InvoicePlutoController extends GetxController {
 
   double calculateRatioFromAmount(double amount, double total) => _calculator.calculateRatioFromAmount(amount, total);
 
-  void _clearAdditionsDiscountsCells() {
+  void clearAdditionsDiscountsCells() {
     for (int i = 1; i < AppConstants.additionsDiscountsRows.length; i++) {
       _clearRowCells(AppConstants.additionsDiscountsRows[i]);
     }
@@ -260,7 +267,7 @@ class InvoicePlutoController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    _clearAdditionsDiscountsCells(); // Clear cell values when the controller is closed
+    clearAdditionsDiscountsCells(); // Clear cell values when the controller is closed
   }
 }
 

@@ -20,6 +20,10 @@ class InvoicesDataSource implements IFirebaseDatasource<BillModel> {
   Future<List<BillModel>> fetchAll() async {
     final snapshot = await _firestore.collection(_billsCollection).get();
     final invoices = snapshot.docs.map((doc) => BillModel.fromJson(doc.data())).toList();
+
+    // Sort the list by `billNumber` in ascending order
+    invoices.sort((a, b) => a.billDetails.billNumber!.compareTo(b.billDetails.billNumber!));
+
     return invoices;
   }
 

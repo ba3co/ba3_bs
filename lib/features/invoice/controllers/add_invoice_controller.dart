@@ -1,8 +1,7 @@
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
-import 'package:ba3_bs/features/invoice/controllers/add_invoice_controller.dart';
-import 'package:ba3_bs/features/invoice/controllers/invoice_search_controller.dart';
+import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:ba3_bs/features/invoice/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
@@ -11,30 +10,23 @@ import 'package:get/get.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/abstract/i_firebase_repo.dart';
-import '../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/utils/generate_id.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../../print/controller/print_controller.dart';
-import '../data/models/bill_items.dart';
 import '../data/models/invoice_record_model.dart';
 import '../services/invoice/invoice_service.dart';
-import '../services/invoice/invoice_utils.dart';
-import '../ui/screens/add_invoice_screen.dart';
 import 'invoice_pluto_controller.dart';
 
-class InvoiceController extends GetxController with AppValidator {
+class AddInvoiceController extends GetxController with AppValidator {
   // Repositories
-  final IFirebaseRepository<BillTypeModel> _patternsFirebaseRepo;
   final IFirebaseRepository<BillModel> _billsFirebaseRepo;
-  final JsonExportRepository<BillModel> _jsonExportRepo;
 
-  InvoiceController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);
+  AddInvoiceController(this._billsFirebaseRepo);
 
   // Services
   late final InvoiceService _invoiceService;
-  late final InvoiceUtils _invoiceUtils;
 
   final formKey = GlobalKey<FormState>();
   final TextEditingController billNumberController = TextEditingController();
@@ -43,12 +35,8 @@ class InvoiceController extends GetxController with AppValidator {
   final TextEditingController customerAccountController = TextEditingController();
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
-  final TextEditingController firstPayController = TextEditingController();
-  final TextEditingController invReturnDateController = TextEditingController();
-  final TextEditingController invReturnCodeController = TextEditingController();
 
   late String billDate;
-  List<BillTypeModel> billsTypes = [];
   AccountModel? selectedCustomerAccount;
   InvPayType selectedPayType = InvPayType.cash;
   BillType billType = BillType.sales;
@@ -60,7 +48,6 @@ class InvoiceController extends GetxController with AppValidator {
   // Initializer
   void _initializeServices() {
     _invoiceService = InvoiceService();
-    _invoiceUtils = InvoiceUtils();
   }
 
   @override
@@ -69,8 +56,6 @@ class InvoiceController extends GetxController with AppValidator {
     _initializeServices();
 
     setBillDate(DateTime.now());
-
-    getAllBillTypes();
   }
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
@@ -113,17 +98,6 @@ class InvoiceController extends GetxController with AppValidator {
     update();
   }
 
-  Future<void> getAllBillTypes() async {
-    final result = await _patternsFirebaseRepo.getAll();
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
-    );
-
-    update();
-  }
-
   Future<void> deleteBill(String billId) async {
     final result = await _billsFirebaseRepo.delete(billId);
 
@@ -137,20 +111,6 @@ class InvoiceController extends GetxController with AppValidator {
 
   Future<void> printInvoice(List<InvoiceRecordModel> invRecords) async {
     await Get.find<PrintingController>().startPrinting(invRecords: invRecords, invId: invId, invDate: billDate);
-  }
-
-  Future<void> exportBillsJsonFile() async {
-    if (bills.isEmpty) {
-      AppUIUtils.onFailure('لا توجد فواتير للتصدير');
-      return;
-    }
-
-    final result = await _jsonExportRepo.exportJsonFile(bills);
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
-      (filePath) => _invoiceUtils.showExportSuccessDialog(filePath),
-    );
   }
 
   void createBond(BillTypeModel billTypeModel) {
@@ -173,12 +133,13 @@ class InvoiceController extends GetxController with AppValidator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onSaveBillSuccess(isEdit),
+      (_) => _onSaveBillSuccess(isEdit, billTypeModel),
     );
   }
 
-  Future<void> _onSaveBillSuccess(bool isEdit) async {
+  Future<void> _onSaveBillSuccess(bool isEdit, BillTypeModel billTypeModel) async {
     AppUIUtils.onSuccess(isEdit ? 'تم تعديل الفاتورة بنجاح!' : 'تم حفظ الفاتورة بنجاح!');
+    _resetInvoiceForm(billTypeModel);
     if (isEdit) {
       await fetchBills();
       Get.until(ModalRoute.withName(AppRoutes.showAllBillsScreen));
@@ -193,6 +154,9 @@ class InvoiceController extends GetxController with AppValidator {
     if (selectedCustomerAccount == null || sellerController.selectedSellerAccount == null) {
       return null;
     }
+    log('billDate $billDate');
+    log('accName ${selectedCustomerAccount?.accName}');
+    log('billPayType ${selectedPayType.index}');
 
     return _invoiceService.createBillModel(
       billModel: billModel,
@@ -246,48 +210,6 @@ class InvoiceController extends GetxController with AppValidator {
 
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
 
-  void navigateToAddInvoiceScreen(BillTypeModel billTypeModel) {
-    Get.delete<InvoicePlutoController>();
-
-    AddInvoiceController addInvoiceController = Get.put(AddInvoiceController(_billsFirebaseRepo));
-    Get.putIfAbsent(InvoicePlutoController());
-
-    addInvoiceController
-      ..sellerAccountController.clear()
-      ..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
-
-    Get.to(() => AddInvoiceScreen(billTypeModel: billTypeModel));
-  }
-
-  void openBillDetailsById(String billId) {
-    final BillModel billModel = getBillById(billId);
-    _navigateToBillDetailsWithModel(billModel);
-  }
-
-  Future<void> openLastBillDetails(String billTypeId) async {
-    await fetchBills();
-
-    List<BillModel> billsByCategory = getBillsByType(billTypeId);
-
-    if (billsByCategory.isEmpty) return;
-
-    BillModel lastBillModel = billsByCategory.last;
-
-    _navigateToBillDetailsWithModel(lastBillModel);
-  }
-
-  void _navigateToBillDetailsWithModel(BillModel billModel) {
-    updateScreenWithBillData(billModel);
-    initializeInvoiceSearch(billModel);
-    Get.offNamed(AppRoutes.billDetailsScreen);
-  }
-
-  prepareInvoiceRecords(BillItems billItems, InvoicePlutoController invoicePlutoController) =>
-      invoicePlutoController.prepareMaterialsRows(billItems.materialRecords);
-
-  prepareAdditionsDiscountsRecords(BillModel billModel, InvoicePlutoController invoicePlutoController) =>
-      invoicePlutoController.prepareAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
-
   initCustomerAccount(AccountModel? account) {
     if (account != null) {
       selectedCustomerAccount = account;
@@ -303,36 +225,23 @@ class InvoiceController extends GetxController with AppValidator {
     }
   }
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
-
   void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
 
-  void updateScreenWithBillData(BillModel bill) {
-    InvoicePlutoController invoicePlutoController = Get.putIfAbsent(InvoicePlutoController());
+  void _resetInvoiceForm(BillTypeModel billTypeModel) {
+    // Clear all material and additions/discounts records in InvoicePlutoController
+    Get.find<InvoicePlutoController>()
+      ..prepareMaterialsRows([])
+      ..prepareAdditionsDiscountsRows([])
+      ..update();
 
-    onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
+    sellerAccountController.clear();
 
-    setBillDate(bill.billDetails.billDate!.toDate!);
-
-    initBillNumberController(bill.billDetails.billNumber);
-
-    initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
-    initSellerAccount(bill.billDetails.billSellerId!);
-
-    prepareInvoiceRecords(bill.items, invoicePlutoController);
-    prepareAdditionsDiscountsRecords(bill, invoicePlutoController);
-
-    invoicePlutoController.update();
+    update();
   }
 
-  void initializeInvoiceSearch(BillModel bill) {
-    List<BillModel> billsByCategory = getBillsByType(bill.billTypeModel.billTypeId!);
+  Future<void> onBackPressed(String billTypeId) async {
+    InvoiceController invoiceController = Get.find<InvoiceController>();
 
-    Get.putIfAbsent(InvoiceSearchController()).initSearchControllerBill(billsByCategory: billsByCategory, bill: bill);
+    invoiceController.openLastBillDetails(billTypeId);
   }
 }
-
-// 300
-
-// 193

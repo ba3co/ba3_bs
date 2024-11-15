@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/invoice/controllers/invoice_search_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/invoice_controller.dart';
 
 AppBar billDetailsAppBar(InvoiceController invoiceController, BillTypeModel billModel) {
+  InvoiceSearchController invoiceSearchController = Get.find<InvoiceSearchController>();
   return AppBar(
     leadingWidth: 100,
     title: Text('${billModel.fullName}'),
@@ -60,15 +62,25 @@ AppBar billDetailsAppBar(InvoiceController invoiceController, BillTypeModel bill
             ),
             Row(
               children: [
-                IconButton(onPressed: () {}, icon: const Icon(Icons.keyboard_double_arrow_right)),
+                IconButton(
+                    onPressed: () {
+                      invoiceSearchController.getPreviousBill();
+                    },
+                    icon: const Icon(Icons.keyboard_double_arrow_right)),
                 SizedBox(
                     width: Get.width * 0.10,
                     child: CustomTextFieldWithoutIcon(
                       isNumeric: true,
                       controller: invoiceController.billNumberController,
-                      onSubmitted: (text) {},
+                      onSubmitted: (billNumber) {
+                        invoiceSearchController.getBillByNumber(billNumber);
+                      },
                     )),
-                IconButton(onPressed: () {}, icon: const Icon(Icons.keyboard_double_arrow_left)),
+                IconButton(
+                    onPressed: () {
+                      invoiceSearchController.getNextBill();
+                    },
+                    icon: const Icon(Icons.keyboard_double_arrow_left)),
               ],
             ),
           ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../controllers/invoice_pluto_controller.dart';
+import '../../controllers/invoice_pluto_controller.dart';
 
 class VatTotalCard extends StatelessWidget {
   final double width;

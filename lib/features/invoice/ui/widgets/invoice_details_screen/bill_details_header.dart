@@ -8,7 +8,7 @@ import '../../../../../core/widgets/date_picker.dart';
 import '../../../../patterns/ui/widgets/searchable_account_field.dart';
 import '../../../controllers/invoice_controller.dart';
 import '../../../data/models/bill_model.dart';
-import '../invoice_screen/bill_header_field.dart';
+import '../bill_header_field.dart';
 
 class BillDetailsHeader extends StatelessWidget {
   const BillDetailsHeader({super.key, required this.invoiceController, required this.billModel});

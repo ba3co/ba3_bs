@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
-import '../../../../../core/helper/enums/enums.dart';
 import '../../../controllers/invoice_controller.dart';
-import '../../../controllers/invoice_pluto_controller.dart';
-import '../../screens/invoice_screen.dart';
 import 'bill_item_widget.dart';
 
 class InvoiceLayoutBills extends StatelessWidget {
@@ -27,18 +22,7 @@ class InvoiceLayoutBills extends StatelessWidget {
                 bill: bill,
                 invoiceController: invoiceController,
                 onPressed: () {
-                  invoiceController
-                    ..sellerAccountController.clear()
-                    ..initCustomerAccount(bill.accounts?[BillAccounts.caches]);
-
-                  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-
-                  Get.to(
-                    () => InvoiceScreen(billTypeModel: bill),
-                    binding: BindingsBuilder(() {
-                      Get.lazyPut(() => InvoicePlutoController());
-                    }),
-                  );
+                  invoiceController.openLastBillDetails(bill.billTypeId!);
                 },
               ))
           .toList(),

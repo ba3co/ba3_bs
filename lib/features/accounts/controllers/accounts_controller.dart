@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/features/invoice/controllers/add_invoice_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
@@ -83,6 +84,7 @@ class AccountsController extends GetxController {
     required String query,
     TextEditingController? textEditingController,
     bool isCustomerAccount = false,
+    bool fromAddBill = false,
   }) async {
     List<AccountModel> searchedAccounts = getAccounts(query);
 
@@ -103,7 +105,13 @@ class AccountsController extends GetxController {
 
         // Assign selectedCustomerAccount only if the controller matches customerAccountController
         if (isCustomerAccount) {
-          Get.find<InvoiceController>().updateCustomerAccount(selectedAccountModel);
+          if (fromAddBill) {
+            log('fromAddBill');
+            Get.find<AddInvoiceController>().updateCustomerAccount(selectedAccountModel);
+          } else {
+            log('InvoiceController');
+            Get.find<InvoiceController>().updateCustomerAccount(selectedAccountModel);
+          }
         }
 
         textEditingController.text = selectedAccountModel.accName!;

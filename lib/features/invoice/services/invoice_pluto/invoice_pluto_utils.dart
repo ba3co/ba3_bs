@@ -51,4 +51,30 @@ class InvoicePlutoUtils {
   PlutoRow get valueRow => additionsDiscountsStateManager.rows.firstWhere(
         (row) => row.cells[AppConstants.id]?.value == AppConstants.value,
       );
+
+  List<PlutoRow> emptyAdditionsDiscountsRecords() {
+    return [
+      PlutoRow(
+        cells: {
+          AppConstants.id: PlutoCell(value: AppConstants.accountName),
+          AppConstants.discount: PlutoCell(value: 'الحسم الممنوح'),
+          AppConstants.addition: PlutoCell(value: 'ايرادات مختلفة'),
+        },
+      ),
+      PlutoRow(
+        cells: {
+          AppConstants.id: PlutoCell(value: AppConstants.ratio),
+          AppConstants.discount: PlutoCell(value: ''),
+          AppConstants.addition: PlutoCell(value: ''),
+        },
+      ),
+      PlutoRow(
+        cells: {
+          AppConstants.id: PlutoCell(value: AppConstants.value),
+          AppConstants.discount: PlutoCell(value: ''),
+          AppConstants.addition: PlutoCell(value: ''),
+        },
+      ),
+    ];
+  }
 }

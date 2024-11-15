@@ -1,18 +1,21 @@
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
-import 'package:ba3_bs/features/invoice/controllers/invoice_search_controller.dart';
+import 'package:ba3_bs/features/invoice/controllers/add_invoice_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
-import '../../../../../core/widgets/custom_text_field_without_icon.dart';
-import '../../../controllers/invoice_controller.dart';
 
-AppBar billAppBar(InvoiceController invoiceController, BillTypeModel billModel) {
+AppBar addBillAppBar(AddInvoiceController addInvoiceController, BillTypeModel billTypeModel) {
   return AppBar(
     leadingWidth: 100,
-    title: Text('${billModel.fullName}'),
+    centerTitle: true,
+    leading: BackButton(
+      onPressed: () {
+        addInvoiceController.onBackPressed(billTypeModel.billTypeId!);
+      },
+    ),
+    title: Text('${billTypeModel.fullName}'),
     actions: [
       SizedBox(
         height: AppConstants.constHeightTextField,
@@ -40,9 +43,9 @@ AppBar billAppBar(InvoiceController invoiceController, BillTypeModel billModel) 
                         child: DropdownButton(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           underline: const SizedBox(),
-                          value: invoiceController.selectedPayType,
+                          value: addInvoiceController.selectedPayType,
                           isExpanded: true,
-                          onChanged: (payType) => invoiceController.onPayTypeChanged(payType),
+                          onChanged: (payType) => addInvoiceController.onPayTypeChanged(payType),
                           items: InvPayType.values
                               .map((InvPayType type) => DropdownMenuItem<InvPayType>(
                                     value: type,
@@ -58,27 +61,6 @@ AppBar billAppBar(InvoiceController invoiceController, BillTypeModel billModel) 
                   ),
                 ],
               ),
-            ),
-            Row(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      Get.find<InvoiceSearchController>().getPreviousBill();
-                    },
-                    icon: const Icon(Icons.keyboard_double_arrow_right)),
-                SizedBox(
-                    width: Get.width * 0.10,
-                    child: CustomTextFieldWithoutIcon(
-                      isNumeric: true,
-                      controller: invoiceController.billNumberController,
-                      onSubmitted: (text) {},
-                    )),
-                IconButton(
-                    onPressed: () {
-                      Get.find<InvoiceSearchController>().getNextBill();
-                    },
-                    icon: const Icon(Icons.keyboard_double_arrow_left)),
-              ],
             ),
           ],
         ),

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/invoice/controllers/add_invoice_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,13 +7,12 @@ import '../../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
 import '../../../../patterns/ui/widgets/searchable_account_field.dart';
-import '../../../controllers/invoice_controller.dart';
-import 'bill_header_field.dart';
+import '../bill_header_field.dart';
 
-class BillHeader extends StatelessWidget {
-  const BillHeader({super.key, required this.invoiceController});
+class AddBillHeader extends StatelessWidget {
+  const AddBillHeader({super.key, required this.addInvoiceController});
 
-  final InvoiceController invoiceController;
+  final AddInvoiceController addInvoiceController;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class BillHeader extends StatelessWidget {
         SizedBox(
           width: Get.width - 20,
           child: Form(
-            key: invoiceController.formKey,
+            key: addInvoiceController.formKey,
             child: Wrap(
               spacing: 20,
               alignment: WrapAlignment.spaceBetween,
@@ -30,14 +30,14 @@ class BillHeader extends StatelessWidget {
                 BillHeaderField(
                   label: 'تاريخ الفاتورة :',
                   child: DatePicker(
-                    initDate: invoiceController.billDate,
-                    onDateSelected: invoiceController.setBillDate,
+                    initDate: addInvoiceController.billDate,
+                    onDateSelected: addInvoiceController.setBillDate,
                   ),
                 ),
                 BillHeaderField(
                   label: 'المستودع :',
                   child: CustomTextFieldWithIcon(
-                    controller: invoiceController.storeController,
+                    controller: addInvoiceController.storeController,
                     onSubmitted: (text) {},
                     onIconPressed: () {},
                   ),
@@ -45,28 +45,29 @@ class BillHeader extends StatelessWidget {
                 BillHeaderField(
                   label: 'رقم الجوال :',
                   child: CustomTextFieldWithoutIcon(
-                    controller: invoiceController.mobileNumberController,
+                    controller: addInvoiceController.mobileNumberController,
                   ),
                 ),
                 SearchableAccountField(
                   label: 'حساب العميل :',
-                  textEditingController: invoiceController.customerAccountController,
-                  validator: (value) => invoiceController.validator(value, 'حساب العميل'),
+                  textEditingController: addInvoiceController.customerAccountController,
+                  validator: (value) => addInvoiceController.validator(value, 'حساب العميل'),
                   isCustomerAccount: true,
+                  fromAddBill: true,
                 ),
                 SearchableAccountField(
                   label: 'البائع :',
-                  textEditingController: invoiceController.sellerAccountController,
-                  validator: (value) => invoiceController.validator(value, 'البائع'),
+                  textEditingController: addInvoiceController.sellerAccountController,
+                  validator: (value) => addInvoiceController.validator(value, 'البائع'),
                   onSubmitted: (text) {
                     Get.find<SellerController>().openSellerSelectionDialog(
-                        query: text, textEditingController: invoiceController.sellerAccountController);
+                        query: text, textEditingController: addInvoiceController.sellerAccountController);
                   },
                 ),
                 BillHeaderField(
                   label: 'البيان',
                   child: CustomTextFieldWithoutIcon(
-                    controller: invoiceController.noteController,
+                    controller: addInvoiceController.noteController,
                   ),
                 ),
               ],

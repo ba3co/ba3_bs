@@ -15,7 +15,7 @@ class AllBillsScreen extends StatelessWidget {
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells['billId']?.value;
-          controller.navigateToBillDetailsScreen(billId);
+          controller.openBillDetailsById(billId);
         },
         isLoading: controller.isLoading,
         tableSourceModels: controller.bills,

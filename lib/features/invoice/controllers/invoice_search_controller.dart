@@ -1,14 +1,11 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/bill_model.dart';
-import 'invoice_pluto_controller.dart';
 
 class InvoiceSearchController extends GetxController {
   late List<BillModel> bills;
@@ -25,8 +22,15 @@ class InvoiceSearchController extends GetxController {
   BillModel getCurrentBill() => bills[currentBillIndex];
 
   // Set the current bill by bill number, or show an error if not found
-  void getBillByNumber(int billNumber) {
-    final index = bills.indexWhere((bill) => bill.billDetails.billNumber == billNumber);
+  void getBillByNumber(String billNumber) {
+    int? billNumberInt = billNumber.toInt;
+
+    if (billNumberInt == null || billNumberInt < 1 || billNumberInt > bills.length) {
+      _showFailureMessage();
+      return;
+    }
+
+    final index = bills.indexWhere((bill) => bill.billDetails.billNumber == billNumberInt);
     if (index != -1) {
       _updateCurrentBill(index);
     } else {
@@ -64,16 +68,8 @@ class InvoiceSearchController extends GetxController {
   // Update the screen with the current bill's details
   void _updateScreenWithCurrentBill() {
     final invoiceController = Get.find<InvoiceController>();
-    InvoicePlutoController invoicePlutoController = Get.putIfAbsent(InvoicePlutoController());
-
-    invoiceController
-      ..onPayTypeChanged(InvPayType.fromIndex(currentBill.billDetails.billPayType!))
-      ..setBillDate(currentBill.billDetails.billDate.toDate!)
-      ..initBillNumberController(currentBill.billDetails.billNumber)
-      ..initCustomerAccount(currentBill.billTypeModel.accounts?[BillAccounts.caches])
-      ..initSellerAccount(currentBill.billDetails.billSellerId!)
-      ..prepareInvoiceRecords(currentBill.items, invoicePlutoController)
-      ..prepareAdditionsDiscountsRecords(currentBill, invoicePlutoController);
+    invoiceController.updateScreenWithBillData(currentBill);
+    update();
   }
 
   // Utility method to show failure messages

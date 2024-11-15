@@ -1,21 +1,24 @@
+import 'package:ba3_bs/features/invoice/controllers/add_invoice_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
-import '../../../controllers/invoice_controller.dart';
+import '../../../../patterns/data/models/bill_type_model.dart';
 import '../../../controllers/invoice_pluto_controller.dart';
-import '../../../data/models/bill_model.dart';
 
-class BillDetailsButtons extends StatelessWidget {
-  const BillDetailsButtons({super.key, required this.invoiceController, required this.billModel});
+class AddBillButtons extends StatelessWidget {
+  const AddBillButtons({
+    super.key,
+    required this.addInvoiceController,
+    required this.billTypeModel,
+  });
 
-  final InvoiceController invoiceController;
-  final BillModel billModel;
+  final AddInvoiceController addInvoiceController;
+  final BillTypeModel billTypeModel;
 
   @override
   Widget build(BuildContext context) {
     InvoicePlutoController invoicePlutoController = Get.find<InvoicePlutoController>();
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Wrap(
@@ -24,29 +27,36 @@ class BillDetailsButtons extends StatelessWidget {
         runSpacing: 20,
         children: [
           AppButton(
-              title: 'جديد',
+              title: "إضافة",
               onPressed: () async {
-                invoiceController.navigateToAddInvoiceScreen(billModel.billTypeModel);
+                addInvoiceController.saveBill(billTypeModel: billTypeModel);
               },
-              iconData: Icons.create_new_folder_outlined),
+              iconData: Icons.add_chart_outlined),
           AppButton(
               title: 'السند',
               onPressed: () async {
-                invoiceController.createBond(billModel.billTypeModel);
+                addInvoiceController.createBond(billTypeModel);
               },
               iconData: Icons.file_open_outlined),
           AppButton(
-              title: "تعديل",
-              onPressed: () async {
-                invoiceController.saveBill(billModel: billModel, billTypeModel: billModel.billTypeModel, isEdit: true);
-              },
-              iconData: Icons.edit_outlined),
+            title: 'موافقة',
+            onPressed: () async {},
+            iconData: Icons.file_download_done_outlined,
+            color: Colors.green,
+          ),
+          AppButton(title: "تعديل", onPressed: () async {}, iconData: Icons.edit_outlined),
+          AppButton(
+            title: "مبيعات",
+            onPressed: () async {},
+            iconData: Icons.done_all,
+            color: Colors.green,
+          ),
           ...[
             AppButton(
               iconData: Icons.print_outlined,
               title: 'طباعة',
               onPressed: () async {
-                invoiceController.printInvoice(invoicePlutoController.generateInvoiceRecords);
+                addInvoiceController.printInvoice(invoicePlutoController.generateInvoiceRecords);
               },
             ),
             AppButton(title: "E-Invoice", onPressed: () {}, iconData: Icons.link),
@@ -54,9 +64,7 @@ class BillDetailsButtons extends StatelessWidget {
               iconData: Icons.delete_outline,
               color: Colors.red,
               title: 'حذف',
-              onPressed: () async {
-                invoiceController.deleteBill(billModel.billId!);
-              },
+              onPressed: () async {},
             )
           ],
         ],

@@ -4,7 +4,7 @@ import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../features/invoice/ui/widgets/invoice_screen/custom_Text_field.dart';
+import '../../features/invoice/ui/widgets/custom_Text_field.dart';
 import '../widgets/pluto_grid_with_app_bar_.dart';
 
 Future<MaterialModel?> searchProductTextDialog(String productText) async {
