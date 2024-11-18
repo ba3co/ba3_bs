@@ -1,6 +1,6 @@
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
-import 'package:ba3_bs/features/invoice/ui/screens/all_bills_screen.dart';
-import 'package:ba3_bs/features/invoice/ui/screens/bill_details_screen.dart';
+import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
+import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_screen.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_page.dart';

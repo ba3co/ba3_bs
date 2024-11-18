@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:get/get.dart';
@@ -73,7 +71,6 @@ class BondController extends GetxController {
   // Handle buy invoice creation
   void handleBuy(Map<Account, AccountModel> billModelAccounts, AccountModel customerAccount, double total, double vat,
       double gifts, double discount, double addition) {
-    log('handleBuy');
     Map<AccountModel, List<BondItemModel>> bonds = {};
 
     // Create a main sales bond
@@ -171,7 +168,7 @@ class BondController extends GetxController {
             columnName: AppConstants.rowBondCreditAmount,
             value: bondItem.bondItemType == BondItemType.creditor ? bondItem.amount : 0.0,
           ),
-          DataGridCell<String>(columnName: AppConstants.rowBondDescription, value: "Bond for ${account.toString()}"),
+          DataGridCell<String>(columnName: AppConstants.rowBondDescription, value: '${account.note}'),
         ]);
       });
     }).toList();

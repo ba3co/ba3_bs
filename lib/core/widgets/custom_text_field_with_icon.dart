@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class CustomTextFieldWithIcon extends StatefulWidget {
   const CustomTextFieldWithIcon({
     super.key,
-    required this.controller,
+    required this.textEditingController,
     required this.onSubmitted,
     this.validator,
     this.keyboardType,
@@ -14,9 +14,9 @@ class CustomTextFieldWithIcon extends StatefulWidget {
     this.isNumeric = false,
   });
 
-  final TextEditingController controller;
+  final TextEditingController textEditingController;
   final void Function(String) onSubmitted;
-  final String? Function(String?)? validator;
+  final FormFieldValidator<String>? validator;
   final Function()? onIconPressed;
   final void Function(String _)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
@@ -31,25 +31,25 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(convertArabicNumbersToEnglish);
+    widget.textEditingController.addListener(convertArabicNumbersToEnglish);
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(convertArabicNumbersToEnglish);
+    widget.textEditingController.removeListener(convertArabicNumbersToEnglish);
     super.dispose();
   }
 
   void convertArabicNumbersToEnglish() {
     if (widget.isNumeric) {
-      final text = widget.controller.text;
+      final text = widget.textEditingController.text;
       final convertedText = text.replaceAllMapped(
         RegExp(r'[٠-٩]'),
         (match) => (match.group(0)!.codeUnitAt(0) - 0x660).toString(),
       );
 
       if (text != convertedText) {
-        widget.controller.value = widget.controller.value.copyWith(
+        widget.textEditingController.value = widget.textEditingController.value.copyWith(
           text: convertedText,
           selection: TextSelection.collapsed(offset: convertedText.length),
         );
@@ -66,10 +66,10 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
       onChanged: widget.onChanged,
       cursorHeight: 15,
       // onSubmitted: onSubmitted,
-      controller: widget.controller,
+      controller: widget.textEditingController,
       inputFormatters: widget.inputFormatters,
-      onTap: () =>
-          widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
+      onTap: () => widget.textEditingController.selection =
+          TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
 
       // onTapOutside: onTapOutside,
       decoration: InputDecoration(

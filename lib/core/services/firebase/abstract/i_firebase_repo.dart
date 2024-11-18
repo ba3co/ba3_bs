@@ -7,7 +7,5 @@ abstract class IFirebaseRepository<T> {
 
   Future<Either<Failure, T?>> getById(String id);
 
-  Future<Either<Failure, Unit>> save(T item);
-
   Future<Either<Failure, Unit>> delete(String id);
 }

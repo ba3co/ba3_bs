@@ -1,3 +1,5 @@
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+
 enum EnvType { debug, release }
 
 enum UserManagementStatus { first, login, block, auth }
@@ -132,7 +134,7 @@ enum BillType {
   factory BillType.byTypeGuide(String typeGuide) {
     return BillType.values.firstWhere(
       (type) => type.typeGuide == typeGuide,
-      orElse: () => throw ArgumentError('No matching BillType for label: $typeGuide'),
+      orElse: () => throw ArgumentError('No matching BillType for guide: $typeGuide'),
     );
   }
 }
@@ -222,4 +224,44 @@ enum PriceType {
   final String label;
 
   const PriceType(this.label);
+}
+
+enum StoreAccount {
+  main(
+    label: 'mainStore',
+    value: 'المستودع الرئيسي',
+    typeGuide: "6d9836d1-fccd-4006-804f-81709eecde57",
+  );
+
+  final String label;
+
+  final String value;
+
+  final String typeGuide;
+
+  const StoreAccount({
+    required this.label,
+    required this.value,
+    required this.typeGuide,
+  });
+
+  // Factory constructor with error handling for unmatched labels
+  factory StoreAccount.byLabel(String label) {
+    return StoreAccount.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching StoreAccount for label: $label'),
+    );
+  }
+
+  factory StoreAccount.byTypeGuide(String typeGuide) {
+    return StoreAccount.values.firstWhere(
+      (type) => type.typeGuide == typeGuide,
+      orElse: () => throw ArgumentError('No matching StoreAccount for guide: $typeGuide'),
+    );
+  }
+
+  AccountModel get toStoreAccountModel => AccountModel(
+        id: typeGuide,
+        accName: value,
+      );
 }

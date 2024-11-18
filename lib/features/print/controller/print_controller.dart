@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -12,7 +13,7 @@ import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
 import '../../../core/services/translation/implementations/translation_repository.dart';
 import '../../../core/styling/printer_text_styles.dart';
-import '../../invoice/data/models/invoice_record_model.dart';
+import '../../bill/data/models/invoice_record_model.dart';
 import '../../materials/data/models/material_model.dart';
 import '../ui/widgets/printing_loading_dialog.dart';
 
@@ -24,7 +25,7 @@ class PrintingController extends GetxController {
   bool connected = false;
   List<BluetoothInfo> items = [];
 
-  var dots = ''.obs;
+  RxString dots = ''.obs;
   Timer? _dotTimer;
 
   @override
@@ -40,7 +41,7 @@ class PrintingController extends GetxController {
   }
 
   Future<void> startPrinting(
-      {required List<InvoiceRecordModel> invRecords, required String invId, required String invDate}) async {
+      {required int billNumber, required List<InvoiceRecordModel> invRecords, required String invDate}) async {
     Get.defaultDialog(
       title: '',
       content: const PrintingLoadingDialog(),
@@ -48,10 +49,10 @@ class PrintingController extends GetxController {
       titlePadding: EdgeInsets.zero,
       radius: 8,
     );
-
-    await printInvoice(invRecords: invRecords, invId: invId, invDate: invDate);
-    Get.back();
-    Get.delete<PrintingController>();
+    log('startPrinting... with billNumber $billNumber');
+    // await printInvoice(billNumber: billNumber, invRecords: invRecords, invDate: invDate);
+    // Get.back();
+    // Get.delete<PrintingController>();
   }
 
   @override
@@ -61,7 +62,7 @@ class PrintingController extends GetxController {
   }
 
   Future<void> printInvoice(
-      {required List<InvoiceRecordModel> invRecords, required String invId, required String invDate}) async {
+      {required int billNumber, required List<InvoiceRecordModel> invRecords, required String invDate}) async {
     List<BluetoothInfo> pairedDevices = await getBluetoothDevices();
     const String printerMacAddress = ApiConstants.printerMacAddress;
 
@@ -72,7 +73,7 @@ class PrintingController extends GetxController {
     if (printerFound) {
       if (!connected) await connectToPrinter(printerMacAddress);
 
-      await sendPrintData(invRecords, invDate, invId);
+      await sendPrintData(invRecords, invDate, billNumber);
     } else {
       debugPrint('Cannot find the printer');
     }
@@ -98,9 +99,9 @@ class PrintingController extends GetxController {
   }
 
   // Sends the print data to the printer if connected
-  Future<void> sendPrintData(List<InvoiceRecordModel> invRecords, String invDate, String invId) async {
+  Future<void> sendPrintData(List<InvoiceRecordModel> invRecords, String invDate, int billNumber) async {
     if (await PrintBluetoothThermal.connectionStatus) {
-      List<int> ticket = await generateInvoicePrintData(invRecords, invDate, invId);
+      List<int> ticket = await generateInvoicePrintData(invRecords, invDate, billNumber);
 
       // Write bytes to the printer
       await PrintBluetoothThermal.writeBytes(ticket);
@@ -112,7 +113,7 @@ class PrintingController extends GetxController {
 
   // Generates the print data for the invoice
   Future<List<int>> generateInvoicePrintData(
-      List<InvoiceRecordModel> invoiceRecords, String invoiceDate, String invoiceId) async {
+      List<InvoiceRecordModel> invoiceRecords, String invoiceDate, int billNumber) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = generator.reset();
@@ -120,7 +121,7 @@ class PrintingController extends GetxController {
     // Header
     bytes += generator.text('Tax Invoice', styles: PrinterTextStyles.centered, linesAfter: 1);
     bytes += await _generateLogo(generator);
-    bytes += _generateHeader(generator, invoiceDate, invoiceId);
+    bytes += _generateHeader(generator, invoiceDate, billNumber);
 
     // Process Items
     final result = await _processInvoiceItems(generator, invoiceRecords);
@@ -212,13 +213,13 @@ class PrintingController extends GetxController {
     return [];
   }
 
-  List<int> _generateHeader(Generator generator, String date, String invoiceId) {
+  List<int> _generateHeader(Generator generator, String date, int billNumber) {
     return [
       ...generator.emptyLines(2),
       ...generator.text('Burj AlArab Mobile Phone', styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(1),
       ...generator.text('Date: $date', styles: PrinterTextStyles.left),
-      ...generator.text('IN NO: $invoiceId', styles: PrinterTextStyles.left),
+      ...generator.text('IN NO: $billNumber', styles: PrinterTextStyles.left),
       ...generator.text('TRN: 10036 93114 00003', styles: PrinterTextStyles.left, linesAfter: 1),
     ];
   }

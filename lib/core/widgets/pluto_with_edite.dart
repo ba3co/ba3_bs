@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../features/invoice/controllers/invoice_pluto_controller.dart';
 import 'pluto_grid_style_config.dart';
 
 class PlutoWithEdite extends StatelessWidget {
   const PlutoWithEdite({
     super.key,
-    required this.controller,
     this.shortCut,
     this.onChanged,
     required this.onRowSecondaryTap,
     this.evenRowColor = Colors.blueAccent,
+    required this.columns,
+    required this.rows,
+    required this.onLoaded,
   });
 
-  final InvoicePlutoController controller;
+  final List<PlutoColumn> columns;
+  final List<PlutoRow> rows;
   final PlutoGridShortcut? shortCut;
   final Function(PlutoGridOnChangedEvent)? onChanged;
   final Function(PlutoGridOnRowSecondaryTapEvent) onRowSecondaryTap;
+  final void Function(PlutoGridOnLoadedEvent)? onLoaded;
   final Color evenRowColor;
 
   @override
@@ -25,8 +28,8 @@ class PlutoWithEdite extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: PlutoGrid(
-        columns: controller.mainTableColumns,
-        rows: controller.mainTableRows,
+        columns: columns,
+        rows: rows,
         onRowSecondaryTap: onRowSecondaryTap,
         onChanged: onChanged,
         configuration: PlutoGridConfiguration(
@@ -34,7 +37,7 @@ class PlutoWithEdite extends StatelessWidget {
           style: buildGridStyleConfig(evenRowColor: evenRowColor),
           localeText: const PlutoGridLocaleText.arabic(),
         ),
-        onLoaded: controller.onMainTableLoaded,
+        onLoaded: onLoaded,
       ),
     );
   }

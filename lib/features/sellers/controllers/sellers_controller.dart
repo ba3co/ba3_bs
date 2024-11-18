@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/router/app_routes.dart';
-import 'package:ba3_bs/features/invoice/controllers/invoice_controller.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../../core/utils/app_ui_utils.dart';
-import '../../patterns/ui/widgets/account_selection_dialog.dart';
+import '../../bill/ui/widgets/bill_shared/seller_selection_dialog.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
@@ -91,7 +91,7 @@ class SellerController extends GetxController {
 
     updateSellerAccount(sellerAcc);
 
-    Get.find<InvoiceController>().sellerAccountController.text = sellerAcc.costName!;
+    Get.find<BillDetailsController>().sellerAccountController.text = sellerAcc.costName!;
   }
 
   Future<void> openSellerSelectionDialog(
@@ -100,7 +100,7 @@ class SellerController extends GetxController {
 
     if (searchedSellersAccounts.isNotEmpty) {
       SellerModel? selectedSeller = await Get.defaultDialog<SellerModel>(
-        title: 'Choose Account',
+        title: 'Choose Seller',
         content: SellerSelectionDialog(sellers: searchedSellersAccounts),
       );
 

@@ -1,25 +1,29 @@
+import 'package:ba3_bs/core/controllers/abstract/i_pluto_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
-import '../../features/invoice/controllers/invoice_controller.dart';
 import '../constants/app_constants.dart';
+import '../controllers/abstract/i_bill_controller.dart';
 import '../helper/enums/enums.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
-  const GetAccountsByEnterAction(this.controller);
+  const GetAccountsByEnterAction({
+    required this.plutoController,
+    required this.billController,
+  });
 
-  final InvoicePlutoController controller;
+  final IPlutoController plutoController;
+  final IBillController billController;
 
   @override
   void execute({
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getAccounts(stateManager, controller);
+    await getAccounts(stateManager, plutoController, billController);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -62,7 +66,11 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   }
 
   /// Handles account selection and updates the grid cell value.
-  Future<void> getAccounts(PlutoGridStateManager stateManager, InvoicePlutoController controller) async {
+  Future<void> getAccounts(
+    PlutoGridStateManager stateManager,
+    IPlutoController plutoController,
+    IBillController billController,
+  ) async {
     final columnField = stateManager.currentColumn?.field;
     final rowIdValue = stateManager.currentRow?.cells[AppConstants.id]?.value;
 
@@ -72,14 +80,14 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       final accountModel = await _openAccountSelectionDialog(stateManager.currentCell?.value);
 
       if (accountModel != null) {
-        _updateSelectedAccount(columnField, accountModel);
+        _updateSelectedAccount(columnField, accountModel, billController);
         _updateCellValue(stateManager, columnField, accountModel.accName);
       } else {
         _resetCellValue(stateManager, columnField);
       }
 
       stateManager.notifyListeners();
-      controller.update();
+      plutoController.update();
     }
   }
 
@@ -88,13 +96,11 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       await Get.find<AccountsController>().openAccountSelectionDialog(query: query);
 
   /// Updates the selected additions or discounts account based on the column field.
-  void _updateSelectedAccount(String? columnField, AccountModel accountModel) {
-    final invoiceController = Get.find<InvoiceController>();
-
+  void _updateSelectedAccount(String? columnField, AccountModel accountModel, IBillController billController) {
     if (columnField == AppConstants.discount) {
-      invoiceController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
+      billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
     } else if (columnField == AppConstants.addition) {
-      invoiceController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
+      billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
     }
   }
 

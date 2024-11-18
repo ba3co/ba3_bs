@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class CustomTextFieldWithoutIcon extends StatefulWidget {
   const CustomTextFieldWithoutIcon({
     super.key,
-    required this.controller,
+    required this.textEditingController,
     this.onSubmitted,
     this.validator,
     this.keyboardType,
@@ -15,14 +15,14 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.enabled = true,
   });
 
-  final TextEditingController controller;
+  final TextEditingController textEditingController;
   final void Function(String)? onSubmitted;
   final Function()? onIconPressed;
   final void Function(String _)? onChanged;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final bool isNumeric, enabled;
-  final String? Function(String?)? validator;
+  final FormFieldValidator<String>? validator;
 
   @override
   State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
@@ -32,25 +32,25 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(convertArabicNumbersToEnglish);
+    widget.textEditingController.addListener(convertArabicNumbersToEnglish);
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(convertArabicNumbersToEnglish);
+    widget.textEditingController.removeListener(convertArabicNumbersToEnglish);
     super.dispose();
   }
 
   void convertArabicNumbersToEnglish() {
     if (widget.isNumeric) {
-      final text = widget.controller.text;
+      final text = widget.textEditingController.text;
       final convertedText = text.replaceAllMapped(
         RegExp(r'[٠-٩]'),
         (match) => (match.group(0)!.codeUnitAt(0) - 0x660).toString(),
       );
 
       if (text != convertedText) {
-        widget.controller.value = widget.controller.value.copyWith(
+        widget.textEditingController.value = widget.textEditingController.value.copyWith(
           text: convertedText,
           selection: TextSelection.collapsed(offset: convertedText.length),
         );
@@ -65,12 +65,12 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
       validator: widget.validator,
       enabled: widget.enabled,
       onFieldSubmitted: widget.onSubmitted,
-      controller: widget.controller,
+      controller: widget.textEditingController,
       keyboardType: widget.keyboardType,
       scrollPadding: EdgeInsets.zero,
       cursorHeight: 15,
-      onTap: () =>
-          widget.controller.selection = TextSelection(baseOffset: 0, extentOffset: widget.controller.text.length),
+      onTap: () => widget.textEditingController.selection =
+          TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
       inputFormatters: widget.inputFormatters,
       decoration: InputDecoration(
         fillColor: Colors.white,

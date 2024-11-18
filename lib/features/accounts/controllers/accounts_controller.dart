@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/router/app_routes.dart';
-import 'package:ba3_bs/features/invoice/controllers/add_invoice_controller.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/app_ui_utils.dart';
-import '../../invoice/controllers/invoice_controller.dart';
+import '../../../core/widgets/account_selection_dialog.dart';
+import '../../bill/controllers/bill/bill_details_controller.dart';
 import '../../patterns/controllers/pattern_controller.dart';
-import '../../patterns/ui/widgets/account_selection_dialog.dart';
 import '../data/models/account_model.dart';
 import '../data/repositories/accounts_repository.dart';
 
@@ -107,10 +107,10 @@ class AccountsController extends GetxController {
         if (isCustomerAccount) {
           if (fromAddBill) {
             log('fromAddBill');
-            Get.find<AddInvoiceController>().updateCustomerAccount(selectedAccountModel);
+            Get.find<AddBillController>().updateCustomerAccount(selectedAccountModel);
           } else {
             log('InvoiceController');
-            Get.find<InvoiceController>().updateCustomerAccount(selectedAccountModel);
+            Get.find<BillDetailsController>().updateCustomerAccount(selectedAccountModel);
           }
         }
 

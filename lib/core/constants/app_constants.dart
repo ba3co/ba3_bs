@@ -293,7 +293,7 @@ abstract class AppConstants {
   static const String cacheError = 'cache_error';
   static const String noInternetError = 'no_internet_error';
 
-  //INVOICE
+  //bill
   static const String invRecId = 'invRecId';
   static const String invRecProduct = 'invRecProduct';
   static const String invRecTotal = 'invRecTotal';

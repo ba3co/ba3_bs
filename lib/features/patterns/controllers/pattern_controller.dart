@@ -1,16 +1,17 @@
+import 'package:ba3_bs/core/services/firebase/abstract/firebase_repo_without_result_base.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/controllers/abstract/i_selected_store_controller.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
-import '../../../core/services/firebase/abstract/i_firebase_repo.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 
-class PatternController extends GetxController with AppValidator {
-  final IFirebaseRepository<BillTypeModel> _repository;
+class PatternController extends GetxController with AppValidator implements IStoreSelectionHandler {
+  final FirebaseRepositoryWithoutResultBase<BillTypeModel> _repository;
 
   PatternController(this._repository);
 
@@ -37,6 +38,17 @@ class PatternController extends GetxController with AppValidator {
   bool isLoading = true;
 
   final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
+
+  @override
+  StoreAccount selectedStore = StoreAccount.main;
+
+  @override
+  void onSelectedStoreChanged(StoreAccount? newStore) {
+    if (newStore != null) {
+      selectedStore = newStore;
+      update();
+    }
+  }
 
   @override
   void onInit() {
@@ -165,6 +177,8 @@ class PatternController extends GetxController with AppValidator {
 
   BillTypeModel _createBillTypeModel() {
     Map<Account, AccountModel> accounts = Get.find<AccountsController>().selectedAccounts;
+
+    accounts[BillAccounts.store] = selectedStore.toStoreAccountModel;
 
     return BillTypeModel(
       shortName: shortNameController.text,

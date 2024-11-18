@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/controllers/window_close_controller.dart';
+import '../../../../core/controllers/implementations/window_close_controller.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../accounts/ui/screens/account_layout.dart';
-import '../../../invoice/ui/screens/invoice_layout.dart';
+import '../../../bill/ui/screens/bill_layout.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../../materials/ui/screens/materials_layout.dart';
 import '../../../patterns/ui/screens/pattern_layout.dart';
@@ -21,7 +21,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   List<({String name, Widget layout, String role})> appLayouts = [
-    (name: 'الفواتير', layout: const InvoiceLayout(), role: AppConstants.roleViewInvoice),
+    (name: 'الفواتير', layout: const BillLayout(), role: AppConstants.roleViewInvoice),
     (name: 'أنماط البيع', layout: const PatternLayout(), role: AppConstants.roleViewPattern),
     (name: "المواد", layout: const MaterialLayout(), role: AppConstants.roleViewMaterial),
     (name: 'الحسابات', layout: const AccountLayout(), role: AppConstants.roleViewAccount),

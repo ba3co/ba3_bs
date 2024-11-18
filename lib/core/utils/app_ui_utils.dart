@@ -123,10 +123,11 @@ class AppUIUtils {
       );
 
   static showSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
-    Get.snackbar(
-      title ?? _getTitle(status),
-      message,
-    );
+    // Close any existing SnackBar
+    Get.closeAllSnackbars();
+
+    // Show the new SnackBar
+    Get.snackbar(title ?? _getTitle(status), message);
   }
 
   static String _getTitle(NotificationStatus status) {

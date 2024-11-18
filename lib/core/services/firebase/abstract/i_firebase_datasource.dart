@@ -3,7 +3,5 @@ abstract class IFirebaseDatasource<T> {
 
   Future<T> fetchById(String id);
 
-  Future<void> save(T item);
-
   Future<void> delete(String id);
 }

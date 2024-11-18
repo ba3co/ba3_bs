@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/widgets/app_spacer.dart';
 import '../../controllers/pattern_controller.dart';
-import '../widgets/add_pattern_bottom_buttons.dart';
-import '../widgets/add_pattern_form.dart';
-import '../widgets/colors_picker.dart';
+import '../widgets/add_pattern/add_pattern_bottom_buttons.dart';
+import '../widgets/add_pattern/add_pattern_form.dart';
+import '../widgets/add_pattern/colors_picker.dart';
 
 class AddPatternPage extends StatelessWidget {
   const AddPatternPage({super.key});

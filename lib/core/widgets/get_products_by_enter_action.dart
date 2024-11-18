@@ -1,23 +1,22 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/features/invoice/controllers/invoice_pluto_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../controllers/abstract/i_pluto_controller.dart';
 import '../dialogs/search_product_text_dialog.dart';
 
-class GetProductByPlutoGridEnterAction extends PlutoGridShortcutAction {
-  const GetProductByPlutoGridEnterAction(this.controller, this.fieldTitle);
+class GetProductByEnterAction extends PlutoGridShortcutAction {
+  const GetProductByEnterAction(this.controller);
 
-  final InvoicePlutoController controller;
-  final String fieldTitle;
+  final IPlutoController controller;
 
   @override
   void execute({
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getProduct(stateManager, controller, fieldTitle);
+    await getProduct(stateManager, controller);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -59,7 +58,7 @@ class GetProductByPlutoGridEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  getProduct(PlutoGridStateManager stateManager, InvoicePlutoController controller, fieldTitle) async {
+  getProduct(PlutoGridStateManager stateManager, IPlutoController controller) async {
     if (stateManager.currentColumn?.field == AppConstants.invRecProduct) {
       MaterialModel? material = await searchProductTextDialog(stateManager.currentCell?.value);
       if (material != null) {
