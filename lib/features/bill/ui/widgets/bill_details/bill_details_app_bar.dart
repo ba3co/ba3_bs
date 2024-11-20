@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
@@ -80,7 +81,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   IconButton(
                       onPressed: () {
-                        billSearchController.getPreviousBill();
+                        billSearchController.navigateToPreviousBill();
                       },
                       icon: const Icon(Icons.keyboard_double_arrow_right)),
                   SizedBox(
@@ -89,12 +90,12 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         isNumeric: true,
                         textEditingController: billDetailsController.billNumberController,
                         onSubmitted: (billNumber) {
-                          billSearchController.getBillByNumber(billNumber);
+                          billSearchController.navigateToBillByNumber(billNumber.toInt);
                         },
                       )),
                   IconButton(
                       onPressed: () {
-                        billSearchController.getNextBill();
+                        billSearchController.navigateToNextBill();
                       },
                       icon: const Icon(Icons.keyboard_double_arrow_left)),
                 ],

@@ -12,10 +12,7 @@ import '../../../../patterns/data/models/bill_type_model.dart';
 import '../bill_shared/bill_grid_widget.dart';
 
 class AddBillBody extends StatelessWidget {
-  const AddBillBody({
-    super.key,
-    required this.billTypeModel,
-  });
+  const AddBillBody({super.key, required this.billTypeModel});
 
   final BillTypeModel billTypeModel;
 

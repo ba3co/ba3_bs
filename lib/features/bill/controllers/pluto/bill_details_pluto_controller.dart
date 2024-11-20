@@ -124,37 +124,58 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
 
   onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
     additionsDiscountsStateManager = event.stateManager;
-
-    // if (additionsDiscountsStateManager.rows.isNotEmpty && additionsDiscountsStateManager.rows.first.cells.length > 1) {
-    //   final secondCell = additionsDiscountsStateManager.rows.first.cells.entries.elementAt(1).value;
-    //   additionsDiscountsStateManager.setCurrentCell(secondCell, 0);
-    //
-    //   FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
-    // }
   }
 
+  //TODO(Bahhaa): onMainTableStateManagerChanged
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
-    final quantityNum = AppServiceUtils.extractNumbersAndCalculate(
-        mainTableStateManager.currentRow!.cells[AppConstants.invRecQuantity]?.value?.toString() ?? '');
+    if (mainTableStateManager.currentRow == null) return;
+    final String field = event.column.field;
 
-    final subTotalStr = AppServiceUtils.extractNumbersAndCalculate(
-        mainTableStateManager.currentRow!.cells[AppConstants.invRecSubTotal]?.value);
-    final totalStr = AppServiceUtils.extractNumbersAndCalculate(
-        mainTableStateManager.currentRow!.cells[AppConstants.invRecTotal]?.value);
-    final vat = AppServiceUtils.extractNumbersAndCalculate(
-        mainTableStateManager.currentRow!.cells[AppConstants.invRecVat]?.value ?? "0");
+    // Extract and calculate values
+    final quantity = _getQuantity();
+    final subTotal = _getSubTotal();
+    final total = _getTotal();
+    final vat = _getVat();
 
-    final double subTotal = _invoiceUtils.parseExpression(subTotalStr);
-    final double total = _invoiceUtils.parseExpression(totalStr);
-    final int quantity = double.parse(quantityNum).toInt();
-
-    if (event.column.field == AppConstants.invRecSubTotal) _gridService.updateInvoiceValues(subTotal, quantity);
-    if (event.column.field == AppConstants.invRecTotal) _gridService.updateInvoiceValuesByTotal(total, quantity);
-    if (event.column.field == AppConstants.invRecQuantity && quantity > 0) {
-      _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, double.parse(vat));
-    }
+    // Handle updates based on the changed column
+    _handleColumnUpdate(field, quantity, subTotal, total, vat);
 
     safeUpdateUI();
+  }
+
+  void _handleColumnUpdate(String columnField, int quantity, double subTotal, double total, double vat) {
+    if (columnField == AppConstants.invRecSubTotal) {
+      _gridService.updateInvoiceValues(subTotal, quantity);
+    } else if (columnField == AppConstants.invRecTotal) {
+      _gridService.updateInvoiceValuesByTotal(total, quantity);
+    } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
+      _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat);
+    }
+  }
+
+  double _getSubTotal() {
+    final subTotalStr = _extractCellValueAsNumber(AppConstants.invRecSubTotal);
+    return _invoiceUtils.parseExpression(subTotalStr);
+  }
+
+  double _getTotal() {
+    final totalStr = _extractCellValueAsNumber(AppConstants.invRecTotal);
+    return _invoiceUtils.parseExpression(totalStr);
+  }
+
+  int _getQuantity() {
+    final quantityStr = _extractCellValueAsNumber(AppConstants.invRecQuantity);
+    return double.parse(quantityStr).toInt();
+  }
+
+  double _getVat() {
+    final vatStr = _extractCellValueAsNumber(AppConstants.invRecVat, defaultValue: "0");
+    return double.parse(vatStr);
+  }
+
+  String _extractCellValueAsNumber(String field, {String defaultValue = ""}) {
+    final cellValue = mainTableStateManager.currentRow!.cells[field]?.value?.toString() ?? defaultValue;
+    return AppServiceUtils.extractNumbersAndCalculate(cellValue);
   }
 
   void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event) {
@@ -189,6 +210,7 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
     _contextMenu.showDeleteConfirmationDialog(event.rowIdx);
   }
 
+  //TODO(Bahhaa): onAdditionsDiscountsChanged
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
     final String field = event.column.field;
     final cells = event.row.cells;
@@ -288,6 +310,4 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
   }
 }
 
-// 530
-
-// 236
+// 530 - 236

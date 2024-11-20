@@ -1,9 +1,9 @@
-import 'package:ba3_bs/core/services/firebase/abstract/firebase_repo_with_result_base.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
 import 'package:ba3_bs/core/services/translation/abstract/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -30,7 +30,6 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
-import '../services/firebase/abstract/firebase_repo_without_result_base.dart';
 import '../services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/translation/abstract/i_api_client.dart';
@@ -49,12 +48,12 @@ class AppBindings extends Bindings {
     final userManagementRepo = UserManagementRepository(UserManagementService());
 
     // Instantiate PatternsDataSource and FirebaseRepositoryConcrete of BillTypeModel
-    final FirebaseRepositoryWithoutResultBase<BillTypeModel> patternsFirebaseRepo = FirebaseRepositoryWithoutResultImpl(
+    final FirebaseRepositoryWithoutResultImpl<BillTypeModel> patternsFirebaseRepo = FirebaseRepositoryWithoutResultImpl(
       PatternsDataSource(firestore),
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BillModel
-    final FirebaseRepositoryWithResultBase<BillModel> billsFirebaseRepoWithResult = FirebaseRepositoryWithResultImpl(
+    final FirebaseRepositoryWithResultImpl<BillModel> billsFirebaseRepo = FirebaseRepositoryWithResultImpl(
       BillsDataSource(firestore),
     );
 
@@ -78,10 +77,9 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 
-    Get.lazyPut(() => BillDetailsController(billsFirebaseRepoWithResult), fenix: true);
+    Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
 
-    Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepoWithResult, billJsonExportRepo),
-        fenix: true);
+    Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
     Get.lazyPut(() => AddBillPlutoController(), fenix: true);
@@ -91,5 +89,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => SellerController(SellersRepository()), fenix: true);
 
     Get.lazyPut(() => PrintingController(translationRepo), fenix: true);
+
+    Get.lazyPut(() => BillSearchController(), fenix: true);
   }
 }

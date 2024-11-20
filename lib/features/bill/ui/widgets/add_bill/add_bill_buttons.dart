@@ -26,7 +26,7 @@ class AddBillButtons extends StatelessWidget {
         runSpacing: 20,
         children: [
           Obx(() {
-            final bool showAddNewBillButton = addBillController.showAddNewBillButton.value;
+            final bool showAddNewBillButton = addBillController.isAddNewBillButtonVisible.value;
             return showAddNewBillButton
                 ? AppButton(
                     title: 'جديد',
@@ -52,7 +52,7 @@ class AddBillButtons extends StatelessWidget {
               iconData: Icons.print_outlined,
               title: 'طباعة',
               onPressed: () async {
-                addBillController.printInvoice(Get.find<AddBillPlutoController>().generateBillRecords);
+                addBillController.printBill(Get.find<AddBillPlutoController>().generateBillRecords);
               },
             ),
             AppButton(title: "E-Invoice", onPressed: () {}, iconData: Icons.link),

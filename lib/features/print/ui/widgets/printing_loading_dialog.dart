@@ -13,7 +13,7 @@ class PrintingLoadingDialog extends StatelessWidget {
       children: [
         Obx(() {
           // Observe dots and update text dynamically
-          final dots = Get.find<PrintingController>().dots.value;
+          final dots = Get.find<PrintingController>().loadingDots.value;
           return Text(
             'جاري الطباعه$dots',
             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),

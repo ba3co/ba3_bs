@@ -3,15 +3,13 @@ import 'dart:developer';
 import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:ba3_bs/core/services/firebase/abstract/firebase_datasource_without_result_base.dart';
-import 'package:ba3_bs/core/services/firebase/abstract/firebase_repo_without_result_base.dart';
 import 'package:dartz/dartz.dart';
 
-class FirebaseRepositoryWithoutResultImpl<T> implements FirebaseRepositoryWithoutResultBase<T> {
+class FirebaseRepositoryWithoutResultImpl<T> {
   final FirebaseDatasourceWithoutResultBase<T> _dataSource;
 
   FirebaseRepositoryWithoutResultImpl(this._dataSource);
 
-  @override
   Future<Either<Failure, List<T>>> getAll() async {
     try {
       final items = await _dataSource.fetchAll();
@@ -22,7 +20,6 @@ class FirebaseRepositoryWithoutResultImpl<T> implements FirebaseRepositoryWithou
     }
   }
 
-  @override
   Future<Either<Failure, T>> getById(String id) async {
     try {
       final item = await _dataSource.fetchById(id);
@@ -33,7 +30,6 @@ class FirebaseRepositoryWithoutResultImpl<T> implements FirebaseRepositoryWithou
     }
   }
 
-  @override
   Future<Either<Failure, Unit>> delete(String id) async {
     try {
       await _dataSource.delete(id);
@@ -44,7 +40,6 @@ class FirebaseRepositoryWithoutResultImpl<T> implements FirebaseRepositoryWithou
     }
   }
 
-  @override
   Future<Either<Failure, Unit>> save(T item) async {
     try {
       await _dataSource.save(item);

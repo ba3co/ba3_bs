@@ -1,8 +1,10 @@
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
+import 'package:ba3_bs/features/bill/ui/screens/add_bill_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_screen.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_page.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:get/get.dart';
@@ -24,4 +26,17 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
   GetPage(name: AppRoutes.showAllBillsScreen, page: () => const AllBillsScreen()),
   GetPage(name: AppRoutes.billDetailsScreen, page: () => const BillDetailsScreen()),
+  GetPage(
+    name: AppRoutes.addBillScreen,
+    page: () {
+      final Map arguments = Get.arguments as Map;
+      final BillTypeModel billTypeModel = arguments['billTypeModel'];
+      final bool fromBillDetails = arguments['fromBillDetails'];
+
+      return AddBillScreen(
+        billTypeModel: billTypeModel,
+        fromBillDetails: fromBillDetails,
+      );
+    },
+  )
 ];

@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/controllers/abstract/i_bill_controller.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
-import 'package:ba3_bs/core/services/firebase/abstract/firebase_repo_with_result_base.dart';
+import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -15,6 +16,7 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
+import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
 import 'all_bills_controller.dart';
@@ -23,7 +25,7 @@ import 'bill_search_controller.dart';
 
 class AddBillController extends GetxController with AppValidator implements IBillController, IStoreSelectionHandler {
   // Repositories
-  final FirebaseRepositoryWithResultBase<BillModel> _billsFirebaseRepo;
+  final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
 
   AddBillController(this._billsFirebaseRepo);
 
@@ -41,16 +43,18 @@ class AddBillController extends GetxController with AppValidator implements IBil
 
   late String billDate;
   AccountModel? selectedCustomerAccount;
+
   InvPayType selectedPayType = InvPayType.cash;
   BillType billType = BillType.sales;
+
   List<BillModel> bills = [];
   bool isLoading = true;
 
   Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
 
-  RxBool showAddNewBillButton = false.obs;
+  RxBool isAddNewBillButtonVisible = false.obs;
 
-  int? lastBillAddedNumber;
+  int? recentBillNumber;
 
   @override
   updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
@@ -106,15 +110,30 @@ class AddBillController extends GetxController with AppValidator implements IBil
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> printInvoice(List<InvoiceRecordModel> invRecords) async {
-    log('lastBillAddedNumber $lastBillAddedNumber');
-    if (!_hasBillItems(invRecords)) return;
-
-    if (!_hasBillNumber()) return;
+  Future<void> printBill(List<InvoiceRecordModel> invRecords) async {
+    if (!_validateBeforePrinting(invRecords)) return;
 
     await Get.find<PrintingController>()
-        .startPrinting(invRecords: invRecords, billNumber: lastBillAddedNumber!, invDate: billDate);
+        .startPrinting(invRecords: invRecords, billNumber: recentBillNumber!, invDate: billDate);
   }
+
+  bool _validateBeforePrinting(List<InvoiceRecordModel> invoiceRecords) {
+    if (!_hasRecords(invoiceRecords)) {
+      AppUIUtils.onFailure('يرجى إضافة عنصر واحد على الأقل إلى الفاتورة!');
+      return false;
+    }
+
+    if (!_hasBillNumber()) {
+      AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا قبل طباعتها!');
+      return false;
+    }
+
+    return true;
+  }
+
+  bool _hasRecords(List<InvoiceRecordModel> items) => items.isNotEmpty;
+
+  bool _hasBillNumber() => recentBillNumber != null;
 
   void createBond(BillTypeModel billTypeModel) {
     if (!validateForm()) return;
@@ -145,17 +164,39 @@ class AddBillController extends GetxController with AppValidator implements IBil
     );
   }
 
-  bool _hasBillItems(List items) {
-    if (items.isEmpty) {
-      AppUIUtils.onFailure('يرجى إضافة عنصر واحد على الأقل إلى الفاتورة!');
-      return false;
-    }
-    return true;
+  Future<void> _handleSaveSuccess(int billNumber) async {
+    AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+
+    _setLastBillNumber(billNumber);
+
+    _updateAddNewBillButtonVisibility(true);
   }
 
-  bool _hasBillNumber() {
-    if (lastBillAddedNumber == null) {
-      AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا قبل طباعتها!');
+  void resetBillForm() {
+    Get.find<AddBillPlutoController>().resetAllTables();
+
+    sellerAccountController.clear();
+
+    _clearLastBillNumber();
+
+    _updateAddNewBillButtonVisibility(false);
+  }
+
+  void _setLastBillNumber(int billNumber) {
+    recentBillNumber = billNumber;
+  }
+
+  void _clearLastBillNumber() {
+    recentBillNumber = null;
+  }
+
+  _updateAddNewBillButtonVisibility(newValue) {
+    isAddNewBillButtonVisible.value = newValue;
+  }
+
+  bool _hasBillItems(List<BillItem> items) {
+    if (items.isEmpty) {
+      AppUIUtils.onFailure('يرجى إضافة عنصر واحد على الأقل إلى الفاتورة!');
       return false;
     }
     return true;
@@ -251,45 +292,33 @@ class AddBillController extends GetxController with AppValidator implements IBil
 
   void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
 
-  Future<void> _handleSaveSuccess(int billNumber) async {
-    AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+  Future<void> onBackPressed({required String billTypeId, required bool fromBillDetails}) async {
+    final previousRoute = Get.previousRoute;
 
-    _updateLastBillAddedNumber(billNumber);
-
-    _toggleShowAddNewBillButton(true);
-  }
-
-  _updateLastBillAddedNumber(int? newBillNumber) {
-    lastBillAddedNumber = newBillNumber;
-  }
-
-  _toggleShowAddNewBillButton(newValue) {
-    showAddNewBillButton.value = newValue;
-  }
-
-  void resetBillForm() {
-    Get.find<AddBillPlutoController>().resetAllTables();
-
-    sellerAccountController.clear();
-
-    _updateLastBillAddedNumber(null);
-
-    _toggleShowAddNewBillButton(false);
-  }
-
-  Future<void> onBackPressed(String billTypeId) async {
     AllBillsController allBillsController = Get.find<AllBillsController>();
 
     await allBillsController.fetchBills();
 
+    resetBillForm();
+
     List<BillModel> billsByCategory = allBillsController.getBillsByType(billTypeId);
 
-    final BillModel lastBill = billsByCategory.last;
+    if (billsByCategory.isNotEmpty) {
+      final BillModel lastBill = billsByCategory.last;
 
-    Get.find<BillDetailsController>().updateScreenWithBillData(lastBill);
+      Get.find<BillDetailsController>().refreshScreenWithCurrentBillModel(lastBill);
 
-    Get.find<BillSearchController>().initSearchControllerBill(billsByCategory: billsByCategory, bill: lastBill);
+      Get.find<BillSearchController>().initializeBillSearch(billsByCategory: billsByCategory, bill: lastBill);
+    }
 
-    Get.back();
+    log('fromBillDetails $fromBillDetails');
+
+    if (!fromBillDetails && billsByCategory.isNotEmpty) {
+      Get.offNamed(AppRoutes.billDetailsScreen);
+      log('in if previousRoute $previousRoute');
+    } else {
+      log('in else previousRoute $previousRoute');
+      Get.back();
+    }
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:get/get.dart';
 
@@ -12,76 +11,110 @@ class BillSearchController extends GetxController {
   late BillModel currentBill;
   late int currentBillIndex;
 
-  initSearchControllerBill({required List<BillModel> billsByCategory, required BillModel bill}) {
+  /// Initializes the bill search with the given bills and current bill
+  void initializeBillSearch({required List<BillModel> billsByCategory, required BillModel bill}) {
     bills = billsByCategory;
-    currentBill = bill;
-    currentBillIndex = bills.indexOf(currentBill);
+    currentBillIndex = bills.indexOf(bill);
+    currentBill = bills[currentBillIndex];
+
+    log('bills ${bills.length}');
+    log('currentBillIndex ${currentBillIndex}');
+    log('currentBillNumber ${currentBill.billDetails.billNumber}');
   }
 
-  // Method to get the current bill
-  BillModel getCurrentBill() => bills[currentBillIndex];
+  /// Gets the current bill
+  BillModel getCurrentBill() => currentBill;
 
-  // Move to the last bill, or show an error if no bills are available
-  void toLastBill() {
-    if (bills.isEmpty) {
-      _showFailureMessage();
+  /// Finds the index of the bill with the given number
+  int _getBillIndexByNumber(int? billNumber) => bills.indexWhere((bill) => bill.billDetails.billNumber == billNumber);
+
+  /// Updates the bill in the search results if it exists
+  void updateBillInSearchResults(BillModel updatedBill) {
+    final billIndex = _getBillIndexByNumber(updatedBill.billDetails.billNumber);
+
+    if (billIndex != -1) {
+      bills[billIndex] = updatedBill;
+    }
+  }
+
+  /// Validates whether the given bill number is within range
+  bool _isBillNumberValid(int? billNumber) =>
+      billNumber != null &&
+      billNumber >= bills.first.billDetails.billNumber! &&
+      billNumber <= bills.last.billDetails.billNumber!;
+
+  /// Handles invalid bill number cases by showing appropriate error messages
+  void _handleInvalidBillNumber(int? billNumber) {
+    final firstBillNumber = bills.first.billDetails.billNumber!;
+    final lastBillNumber = bills.last.billDetails.billNumber!;
+
+    final message = billNumber == null
+        ? 'من فضلك أدخل رقم صحيح'
+        : billNumber < firstBillNumber
+            ? 'رقم الفاتورة غير متوفر. رقم أول فاتورة هو $firstBillNumber'
+            : 'رقم الفاتورة غير متوفر. رقم أخر فاتورة هو $lastBillNumber';
+
+    _showErrorMessage(message);
+  }
+
+  /// Navigates to the bill by its number
+  void navigateToBillByNumber(int? billNumber) {
+    if (!_isBillNumberValid(billNumber)) {
+      _handleInvalidBillNumber(billNumber);
       return;
     }
 
-    // Update to the last bill in the list
-    _updateCurrentBill(bills.length - 1);
-  }
+    final billIndex = _getBillIndexByNumber(billNumber);
 
-  // Set the current bill by bill number, or show an error if not found
-  void getBillByNumber(String billNumber) {
-    int? billNumberInt = billNumber.toInt;
-
-    if (billNumberInt == null || billNumberInt < 1 || billNumberInt > bills.length) {
-      _showFailureMessage();
-      return;
-    }
-
-    final index = bills.indexWhere((bill) => bill.billDetails.billNumber == billNumberInt);
-    if (index != -1) {
-      _updateCurrentBill(index);
+    if (billIndex != -1) {
+      _updateCurrentBill(billIndex);
     } else {
-      _showFailureMessage();
+      _showErrorMessage('الفاتورة غير موجودة');
     }
   }
 
-  // Move to the next bill, or show an error if at the end
-  void getNextBill() {
-    log('currentBillIndex: $currentBillIndex');
+  /// Moves to the next bill if possible
+  void navigateToNextBill() {
+    log('Navigating to next bill, current index: $currentBillIndex');
     if (currentBillIndex < bills.length - 1) {
       _updateCurrentBill(currentBillIndex + 1);
     } else {
-      _showFailureMessage();
+      _showErrorMessage('لا يوجد فاتورة أخرى');
     }
   }
 
-  // Move to the previous bill, or show an error if at the start
-  void getPreviousBill() {
-    log('currentBillIndex: $currentBillIndex');
+  /// Moves to the previous bill if possible
+  void navigateToPreviousBill() {
+    log('Navigating to previous bill, current index: $currentBillIndex');
     if (currentBillIndex > 0) {
       _updateCurrentBill(currentBillIndex - 1);
     } else {
-      _showFailureMessage();
+      _showErrorMessage('لا يوجد فاتورة سابقة');
     }
   }
 
-  // Helper to update current bill and notify listeners
+  /// Moves to the last bill in the list
+  void navigateToLastBill() {
+    if (bills.isEmpty) {
+      _showErrorMessage('لا توجد فواتير متوفرة');
+      return;
+    }
+    _updateCurrentBill(bills.length - 1);
+  }
+
+  /// Updates the current bill and refreshes the screen
   void _updateCurrentBill(int index) {
     currentBillIndex = index;
     currentBill = bills[index];
-    _updateScreenWithCurrentBill();
+    _refreshScreenWithCurrentBill();
   }
 
-  // Update the screen with the current bill's details
-  void _updateScreenWithCurrentBill() {
-    final invoiceController = Get.find<BillDetailsController>();
-    invoiceController.updateScreenWithBillData(currentBill);
+  /// Refreshes the screen with the current bill's details
+  void _refreshScreenWithCurrentBill() {
+    final billDetailsController = Get.find<BillDetailsController>();
+    billDetailsController.refreshScreenWithCurrentBillModel(currentBill);
   }
 
-  // Utility method to show failure messages
-  void _showFailureMessage() => AppUIUtils.onFailure('هذه الفاتورة غير متوفرة');
+  /// Displays an error message
+  void _showErrorMessage(String message) => AppUIUtils.onFailure(message);
 }

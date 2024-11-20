@@ -2,9 +2,10 @@ import 'package:ba3_bs/core/controllers/abstract/i_bill_controller.dart';
 import 'package:ba3_bs/core/controllers/abstract/i_selected_store_controller.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
-import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/firebase/abstract/firebase_repo_with_result_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -20,7 +20,6 @@ import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
-import '../../ui/screens/add_bill_screen.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends GetxController
@@ -28,7 +27,7 @@ class BillDetailsController extends GetxController
     implements IBillController, IStoreSelectionHandler {
   // Repositories
 
-  final FirebaseRepositoryWithResultBase<BillModel> _billsFirebaseRepoWithResult;
+  final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepoWithResult;
 
   BillDetailsController(this._billsFirebaseRepoWithResult);
 
@@ -106,18 +105,7 @@ class BillDetailsController extends GetxController
     }
   }
 
-  Future<void> deleteBill(String billId) async {
-    final result = await _billsFirebaseRepoWithResult.delete(billId);
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!'),
-    );
-
-    Get.offAllNamed(AppRoutes.mainLayout);
-  }
-
-  Future<void> printInvoice({required int billNumber, required List<InvoiceRecordModel> invRecords}) async {
+  Future<void> printBill({required int billNumber, required List<InvoiceRecordModel> invRecords}) async {
     await Get.find<PrintingController>()
         .startPrinting(invRecords: invRecords, billNumber: billNumber, invDate: billDate);
   }
@@ -126,6 +114,24 @@ class BillDetailsController extends GetxController
     if (!validateForm()) return;
 
     _billService.createBond(billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
+  }
+
+  Future<void> deleteBill(String billId) async {
+    final result = await _billsFirebaseRepoWithResult.delete(billId);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) => _handleDeleteSuccess(),
+    );
+  }
+
+  Future<void> _handleDeleteSuccess() async {
+    //TODO: only call this fetchBills() if open bill details by bill id from all bills screen
+
+    await Get.find<AllBillsController>().fetchBills();
+
+    Get.back();
+    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
   }
 
   Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
@@ -142,14 +148,14 @@ class BillDetailsController extends GetxController
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onUpdateBillSuccess(),
+      (billModel) => _handleUpdateSuccess(billModel),
     );
   }
 
-  Future<void> _onUpdateBillSuccess() async {
+  void _handleUpdateSuccess(BillModel billModel) {
     AppUIUtils.onSuccess('تم تعديل الفاتورة بنجاح!');
 
-    await Get.find<AllBillsController>().fetchBills();
+    Get.find<BillSearchController>().updateBillInSearchResults(billModel);
   }
 
   BillModel? _createBillModelFromInvoiceData(BillModel billModel, BillTypeModel billTypeModel) {
@@ -217,23 +223,21 @@ class BillDetailsController extends GetxController
     }
   }
 
-  void navigateToAddBillScreen(BillTypeModel billTypeModel) {
-    Get.find<AddBillPlutoController>().resetAllTables();
+  void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false}) {
+    Get.put(AddBillController(_billsFirebaseRepoWithResult))
+        .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
 
-    AddBillController addBillController = Get.put(AddBillController(_billsFirebaseRepoWithResult));
-
-    addBillController
-      ..sellerAccountController.clear()
-      ..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
-
-    Get.to(() => AddBillScreen(billTypeModel: billTypeModel));
+    Get.toNamed(AppRoutes.addBillScreen, arguments: {
+      'billTypeModel': billTypeModel,
+      'fromBillDetails': fromBillDetails,
+    });
   }
 
-  prepareBillRecords(BillItems billItems, BillDetailsPlutoController invoicePlutoController) =>
-      invoicePlutoController.prepareBillMaterialsRows(billItems.materialRecords);
+  prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
+      billDetailsPlutoController.prepareBillMaterialsRows(billItems.materialRecords);
 
-  prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController invoicePlutoController) =>
-      invoicePlutoController.prepareAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
+  prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
+      billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
 
   initCustomerAccount(AccountModel? account) {
     if (account != null) {
@@ -252,7 +256,7 @@ class BillDetailsController extends GetxController
 
   void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
 
-  void updateScreenWithBillData(BillModel bill) {
+  void refreshScreenWithCurrentBillModel(BillModel bill) {
     BillDetailsPlutoController billPlutoController = Get.find<BillDetailsPlutoController>();
 
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
@@ -271,6 +275,4 @@ class BillDetailsController extends GetxController
   }
 }
 
-// 300
-
-// 193
+// 300 - 193

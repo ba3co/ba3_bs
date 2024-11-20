@@ -15,10 +15,10 @@ class AllBillsTypesList extends StatelessWidget {
       spacing: 10.0,
       runSpacing: 2.0,
       children: allBillsController.billsTypes
-          .map((bill) => BillITypeItemWidget(
-                bill: bill,
+          .map((billTypeModel) => BillITypeItemWidget(
+                bill: billTypeModel,
                 onPressed: () {
-                  allBillsController.openLastBillDetails(bill.billTypeId!);
+                  allBillsController.openLastBillDetails(billTypeModel);
                 },
               ))
           .toList(),

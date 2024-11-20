@@ -1,10 +1,9 @@
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/firebase/abstract/i_firebase_repo.dart';
+import '../../../../core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
+import '../../../../core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -14,8 +13,8 @@ import 'bill_search_controller.dart';
 
 class AllBillsController extends GetxController {
   // Repositories
-  final IFirebaseRepository<BillTypeModel> _patternsFirebaseRepo;
-  final IFirebaseRepository<BillModel> _billsFirebaseRepo;
+  final FirebaseRepositoryWithoutResultImpl<BillTypeModel> _patternsFirebaseRepo;
+  final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
   final JsonExportRepository<BillModel> _jsonExportRepo;
 
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);
@@ -89,33 +88,36 @@ class AllBillsController extends GetxController {
     _navigateToBillDetailsWithModel(billModel);
   }
 
-  Future<void> openLastBillDetails(String billTypeId, [bool offRoute = false]) async {
+  Future<void> openLastBillDetails(BillTypeModel billTypeModel) async {
     await fetchBills();
 
-    List<BillModel> billsByCategory = getBillsByType(billTypeId);
+    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
-    if (billsByCategory.isEmpty) return;
+    if (billsByCategory.isEmpty) {
+      _navigateToAddBill(billTypeModel);
+      return;
+    }
 
     BillModel lastBillModel = billsByCategory.last;
 
-    _navigateToBillDetailsWithModel(lastBillModel, offRoute);
+    _navigateToBillDetailsWithModel(lastBillModel);
   }
 
-  void _navigateToBillDetailsWithModel(BillModel billModel, [bool offRoute = false]) {
-    Get.find<BillDetailsController>().updateScreenWithBillData(billModel);
+  void _navigateToAddBill(BillTypeModel billTypeModel) {
+    Get.find<BillDetailsController>().navigateToAddBillScreen(billTypeModel);
+  }
+
+  void _navigateToBillDetailsWithModel(BillModel billModel) {
+    Get.find<BillDetailsController>().refreshScreenWithCurrentBillModel(billModel);
 
     initializeBillSearch(billModel);
 
-    if (offRoute) {
-      Get.until(ModalRoute.withName(AppRoutes.billDetailsScreen));
-    } else {
-      Get.toNamed(AppRoutes.billDetailsScreen);
-    }
+    Get.toNamed(AppRoutes.billDetailsScreen);
   }
 
   void initializeBillSearch(BillModel bill) {
     List<BillModel> billsByCategory = getBillsByType(bill.billTypeModel.billTypeId!);
 
-    Get.putIfAbsent(BillSearchController()).initSearchControllerBill(billsByCategory: billsByCategory, bill: bill);
+    Get.find<BillSearchController>().initializeBillSearch(billsByCategory: billsByCategory, bill: bill);
   }
 }

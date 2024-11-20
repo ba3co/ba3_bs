@@ -11,14 +11,19 @@ import '../widgets/add_bill/add_bill_calculations.dart';
 import '../widgets/add_bill/add_bill_header.dart';
 
 class AddBillScreen extends StatelessWidget {
-  const AddBillScreen({super.key, required this.billTypeModel});
+  const AddBillScreen({super.key, required this.billTypeModel, required this.fromBillDetails});
 
   final BillTypeModel billTypeModel;
+  final bool fromBillDetails;
 
   @override
   Widget build(BuildContext context) => GetBuilder<AddBillController>(builder: (addBillController) {
         return Scaffold(
-          appBar: AddBillAppBar(billTypeModel: billTypeModel, addBillController: addBillController),
+          appBar: AddBillAppBar(
+            billTypeModel: billTypeModel,
+            fromBillDetails: fromBillDetails,
+            addBillController: addBillController,
+          ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

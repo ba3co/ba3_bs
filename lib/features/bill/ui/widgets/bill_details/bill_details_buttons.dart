@@ -24,7 +24,10 @@ class BillDetailsButtons extends StatelessWidget {
           AppButton(
               title: 'جديد',
               onPressed: () async {
-                billDetailsController.navigateToAddBillScreen(billModel.billTypeModel);
+                billDetailsController.navigateToAddBillScreen(
+                  billModel.billTypeModel,
+                  fromBillDetails: true,
+                );
               },
               iconData: Icons.create_new_folder_outlined),
           AppButton(
@@ -44,7 +47,7 @@ class BillDetailsButtons extends StatelessWidget {
               iconData: Icons.print_outlined,
               title: 'طباعة',
               onPressed: () async {
-                billDetailsController.printInvoice(
+                billDetailsController.printBill(
                   billNumber: billModel.billDetails.billNumber!,
                   invRecords: Get.find<BillDetailsPlutoController>().generateBillRecords,
                 );
