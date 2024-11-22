@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/controllers/abstract/i_pluto_controller.dart';
+import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -137,14 +137,14 @@ class BillPlutoCalculator {
   double calculateFinalTotal(BillPlutoUtils invoiceUtils) =>
       computeWithVatTotal - computeDiscounts(invoiceUtils) + computeAdditions(invoiceUtils);
 
-  double computeDiscounts(BillPlutoUtils invoiceUtils) {
+  double computeDiscounts(BillPlutoUtils plutoUtils) {
     double discounts = 0;
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
 
-    final PlutoRow ratioRow = invoiceUtils.ratioRow;
+    final PlutoRow ratioRow = plutoUtils.ratioRow;
 
-    final discountRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, AppConstants.discount);
+    final discountRatio = plutoUtils.getCellValueInDouble(ratioRow.cells, AppConstants.discount);
 
     if (discountRatio == 0) return 0;
 
@@ -153,14 +153,14 @@ class BillPlutoCalculator {
     return discounts;
   }
 
-  double computeAdditions(BillPlutoUtils invoiceUtils) {
+  double computeAdditions(BillPlutoUtils plutoUtils) {
     double additions = 0;
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
 
-    final PlutoRow ratioRow = invoiceUtils.ratioRow;
+    final PlutoRow ratioRow = plutoUtils.ratioRow;
 
-    final additionsRatio = invoiceUtils.getCellValueInDouble(ratioRow.cells, AppConstants.addition);
+    final additionsRatio = plutoUtils.getCellValueInDouble(ratioRow.cells, AppConstants.addition);
 
     if (additionsRatio == 0) return 0;
 

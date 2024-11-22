@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../../widgets/app_spacer.dart';
+import '../../../core/widgets/app_spacer.dart';
 
 class WindowCloseController extends GetxController with WindowListener {
   RxBool isWindowClosePrevented = false.obs;

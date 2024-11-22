@@ -1,11 +1,12 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/controllers/abstract/i_pluto_controller.dart';
+import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill_pluto/bill_pluto_calculator.dart';
@@ -13,11 +14,11 @@ import '../../services/bill_pluto/bill_pluto_context_menu.dart';
 import '../../services/bill_pluto/bill_pluto_grid_service.dart';
 import '../../services/bill_pluto/bill_pluto_utils.dart';
 
-class BillDetailsPlutoController extends GetxController implements IPlutoController {
+class BillDetailsPlutoController extends IPlutoController {
   // Services
   late final BillPlutoGridService _gridService;
   late final BillPlutoCalculator _calculator;
-  late final BillPlutoUtils _invoiceUtils;
+  late final BillPlutoUtils _plutoUtils;
   late final BillPlutoContextMenu _contextMenu;
 
   // Columns and rows
@@ -52,8 +53,12 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
       });
 
   @override
-  String calculateAmountFromRatio(double discountRatio, double total) =>
-      _calculator.calculateAmountFromRatio(discountRatio, total).toStringAsFixed(2);
+  String calculateAmountFromRatio(double ratio, double total) =>
+      _calculator.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
+
+  @override
+  String calculateRatioFromAmount(double amount, double total) =>
+      _calculator.calculateRatioFromAmount(amount, total).toStringAsFixed(2);
 
   @override
   double get computeWithVatTotal => _calculator.computeWithVatTotal;
@@ -71,13 +76,13 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
   double get computeGifts => _calculator.computeGifts;
 
   @override
-  double get computeAdditions => _calculator.computeAdditions(_invoiceUtils);
+  double get computeAdditions => _calculator.computeAdditions(_plutoUtils);
 
   @override
-  double get calculateFinalTotal => _calculator.calculateFinalTotal(_invoiceUtils);
+  double get calculateFinalTotal => _calculator.calculateFinalTotal(_plutoUtils);
 
   @override
-  double get computeDiscounts => _calculator.computeDiscounts(_invoiceUtils);
+  double get computeDiscounts => _calculator.computeDiscounts(_plutoUtils);
 
   @override
   List<InvoiceRecordModel> get generateBillRecords {
@@ -86,7 +91,7 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
     final materialController = Get.find<MaterialController>();
 
     final invoiceRecords = mainTableStateManager.rows
-        .map((row) => _processInvoiceRow(row, materialController))
+        .map((row) => _processBillRow(row, materialController))
         .whereType<InvoiceRecordModel>()
         .toList();
 
@@ -104,7 +109,7 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
   void _initializeServices() {
     _gridService = BillPlutoGridService(this);
     _calculator = BillPlutoCalculator(this);
-    _invoiceUtils = BillPlutoUtils(this);
+    _plutoUtils = BillPlutoUtils(this);
     _contextMenu = BillPlutoContextMenu(this);
   }
 
@@ -155,26 +160,26 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
 
   double _getSubTotal() {
     final subTotalStr = _extractCellValueAsNumber(AppConstants.invRecSubTotal);
-    return _invoiceUtils.parseExpression(subTotalStr);
+    return _plutoUtils.parseExpression(subTotalStr);
   }
 
   double _getTotal() {
     final totalStr = _extractCellValueAsNumber(AppConstants.invRecTotal);
-    return _invoiceUtils.parseExpression(totalStr);
+    return _plutoUtils.parseExpression(totalStr);
   }
 
   int _getQuantity() {
     final quantityStr = _extractCellValueAsNumber(AppConstants.invRecQuantity);
-    return double.parse(quantityStr).toInt();
+    return (quantityStr.toDouble ?? 0).toInt();
   }
 
   double _getVat() {
-    final vatStr = _extractCellValueAsNumber(AppConstants.invRecVat, defaultValue: "0");
-    return double.parse(vatStr);
+    final vatStr = _extractCellValueAsNumber(AppConstants.invRecVat);
+    return vatStr.toDouble ?? 0;
   }
 
-  String _extractCellValueAsNumber(String field, {String defaultValue = ""}) {
-    final cellValue = mainTableStateManager.currentRow!.cells[field]?.value?.toString() ?? defaultValue;
+  String _extractCellValueAsNumber(String field) {
+    final cellValue = mainTableStateManager.currentRow!.cells[field]?.value?.toString() ?? '';
     return AppServiceUtils.extractNumbersAndCalculate(cellValue);
   }
 
@@ -202,7 +207,7 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
         index: event.rowIdx,
         materialModel: materialModel,
         tapPosition: event.offset,
-        invoiceUtils: _invoiceUtils,
+        invoiceUtils: _plutoUtils,
         gridService: _gridService);
   }
 
@@ -228,24 +233,32 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
   void _updateCellValue(String field, Map<String, PlutoCell> cells, double total) {
     if (additionsDiscountsStateManager.rows.isEmpty) return;
 
-    double ratio = _invoiceUtils.getCellValueInDouble(cells, field);
+    final inputValue = _plutoUtils.getCellValueInDouble(cells, field);
 
-    if (ratio == 0) return;
+    if (inputValue == 0) return;
 
-    final newValue = calculateAmountFromRatio(ratio, total);
+    final isRatioCell = cells[AppConstants.id]?.value == AppConstants.value;
 
-    final valueCell = _invoiceUtils.valueRow.cells[field]!;
+    final targetRow = isRatioCell ? _plutoUtils.ratioRow : _plutoUtils.valueRow;
 
-    _gridService.updateAdditionsDiscountsCellValue(valueCell, newValue);
+    final calculateNewValue = isRatioCell ? calculateRatioFromAmount : calculateAmountFromRatio;
+
+    final newValue = calculateNewValue(inputValue, total);
+
+    final targetCell = targetRow.cells[field]!;
+
+    _gridService.updateAdditionsDiscountsCellValue(targetCell, newValue);
   }
 
-  void updateAdditionDiscountCell(double total) => _gridService.updateAdditionDiscountCells(total, _invoiceUtils);
+  void updateAdditionDiscountCell(double total) => _gridService.updateAdditionDiscountCells(total, _plutoUtils);
 
-  InvoiceRecordModel? _processInvoiceRow(PlutoRow row, MaterialController materialController) {
+  InvoiceRecordModel? _processBillRow(PlutoRow row, MaterialController materialController) {
     final materialModel = materialController.getMaterialByName(row.cells[AppConstants.invRecProduct]!.value);
-    if (_invoiceUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
+
+    if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
       return _createInvoiceRecord(row, materialModel.id!);
     }
+
     return null;
   }
 
@@ -269,7 +282,7 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
   void prepareAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
 
-    final newRows = _invoiceUtils.emptyAdditionsDiscountsRecords();
+    final newRows = _plutoUtils.emptyAdditionsDiscountsRecords();
 
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = _gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
@@ -284,8 +297,6 @@ class BillDetailsPlutoController extends GetxController implements IPlutoControl
   void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
         update();
       });
-
-  double calculateRatioFromAmount(double amount, double total) => _calculator.calculateRatioFromAmount(amount, total);
 
   void clearAdditionsDiscountsCells() {
     for (int i = 1; i < AppConstants.additionsDiscountsRows.length; i++) {

@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/controllers/abstract/i_pluto_controller.dart';
+import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../accounts/data/models/account_model.dart';

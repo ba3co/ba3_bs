@@ -2,8 +2,9 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
-import 'package:ba3_bs/core/services/firebase/abstract/firebase_datasource_with_result_base.dart';
 import 'package:dartz/dartz.dart';
+
+import '../interfaces/firebase_datasource_with_result_base.dart';
 
 class FirebaseRepositoryWithResultImpl<T> {
   final FirebaseDatasourceWithResultBase<T> _dataSource;

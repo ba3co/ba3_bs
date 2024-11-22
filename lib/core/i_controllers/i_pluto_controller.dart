@@ -1,8 +1,9 @@
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../features/bill/data/models/invoice_record_model.dart';
+import '../../features/bill/data/models/invoice_record_model.dart';
 
-abstract class IPlutoController {
+abstract class IPlutoController extends GetxController {
   /// Main table's state manager.
   PlutoGridStateManager get mainTableStateManager;
 
@@ -12,11 +13,11 @@ abstract class IPlutoController {
   /// Updates the VAT total notifier.
   void updateVatTotalNotifier(double total);
 
-  /// Triggers an update call for the controller.
-  void update();
-
   /// Calculates the amount from a given ratio and total.
   String calculateAmountFromRatio(double ratio, double total);
+
+  /// Calculates the ratio from a given amount and total.
+  String calculateRatioFromAmount(double amount, double total);
 
   /// Computes the total including VAT.
   double get computeWithVatTotal;

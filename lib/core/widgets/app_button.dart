@@ -4,13 +4,20 @@ import '../constants/app_constants.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton(
-      {super.key, required this.title, required this.onPressed, required this.iconData, this.color, this.width = 100});
+      {super.key,
+      required this.title,
+      required this.onPressed,
+      required this.iconData,
+      this.color,
+      this.width = 100,
+      this.fontSize = 16});
 
   final String title;
   final Color? color;
   final IconData iconData;
   final VoidCallback onPressed;
   final double width;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +39,11 @@ class AppButton extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: fontSize),
                   ),
                 ),
                 // const Spacer(),
-                Icon(
-                  iconData,
-                  size: 22,
-                ),
+                Icon(iconData, size: 22),
               ],
             ),
           ),

@@ -1,9 +1,10 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/controllers/abstract/i_pluto_controller.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../materials/data/models/material_model.dart';
 
@@ -28,13 +29,14 @@ class BillPlutoUtils {
   }
 
   double parseExpression(String expression) {
+    if (expression.isEmpty) return 0;
     return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
   }
 
   bool isValidItemQuantity(PlutoRow row, String cellKey) {
     final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
 
-    int invRecQuantity = int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
+    int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt ?? 0;
 
     return invRecQuantity > 0;
   }
@@ -42,7 +44,9 @@ class BillPlutoUtils {
   double getCellValueInDouble(Map<String, PlutoCell> cells, String cellKey) {
     final String cellValue = cells[cellKey]?.value.toString() ?? '';
 
-    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue)) ?? 0;
+    final cellValueStr = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue);
+
+    return parseExpression(cellValueStr);
   }
 
   PlutoRow get ratioRow => additionsDiscountsStateManager.rows.firstWhere(

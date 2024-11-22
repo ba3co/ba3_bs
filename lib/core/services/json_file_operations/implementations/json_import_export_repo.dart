@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../network/error/failure.dart';
-import '../abstract/export/I_json_export_repository.dart';
-import '../abstract/import/I_json_import_repository.dart';
+import '../interfaces/export/i_json_export_repository.dart';
+import '../interfaces/import/i_json_import_repository.dart';
 
 class JsonImportExportRepository<T> implements IJsonImportRepository<T>, IJsonExportRepository<T> {
   final IJsonImportRepository<T> _importRepo;

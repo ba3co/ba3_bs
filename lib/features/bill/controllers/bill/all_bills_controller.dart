@@ -20,7 +20,7 @@ class AllBillsController extends GetxController {
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);
 
   // Services
-  late final InvoiceUtils _invoiceUtils;
+  late final BillUtils _billUtils;
 
   List<BillTypeModel> billsTypes = [];
   List<BillModel> bills = [];
@@ -28,7 +28,7 @@ class AllBillsController extends GetxController {
 
   // Initializer
   void _initializeServices() {
-    _invoiceUtils = InvoiceUtils();
+    _billUtils = BillUtils();
   }
 
   @override
@@ -74,7 +74,7 @@ class AllBillsController extends GetxController {
 
     result.fold(
       (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
-      (filePath) => _invoiceUtils.showExportSuccessDialog(filePath),
+      (filePath) => _billUtils.showExportSuccessDialog(filePath),
     );
   }
 

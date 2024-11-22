@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
 
-class InvoiceUtils {
+class BillUtils {
   void showExportSuccessDialog(String filePath) {
     AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!');
     Get.defaultDialog(

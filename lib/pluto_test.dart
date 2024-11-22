@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -16,42 +18,47 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
     PlutoColumn(title: 'الكمية', field: 'quantity', type: PlutoColumnType.number()),
     PlutoColumn(title: 'السعر الافرادي', field: 'unitPrice', type: PlutoColumnType.number()),
     PlutoColumn(title: 'الضريبة', field: 'tax', type: PlutoColumnType.number()),
-    PlutoColumn(title: 'المجموع', field: 'total', type: PlutoColumnType.number(), readOnly: true),
+    PlutoColumn(title: 'المجموع', field: 'total', type: PlutoColumnType.number()),
   ];
 
   final List<PlutoRow> firstTableRows = List.generate(4, (index) {
     return PlutoRow(cells: {
       'item': PlutoCell(value: 'Item $index'),
-      'quantity': PlutoCell(value: 1 + index),
-      'unitPrice': PlutoCell(value: 100 + (index * 20)),
-      'tax': PlutoCell(value: 0),  // VAT will be calculated as 5% of unit price
-      'total': PlutoCell(value: (1 + index) * (100 + (index * 20))),
+      'quantity': PlutoCell(value: 1),
+      'unitPrice': PlutoCell(value: 95),
+      'tax': PlutoCell(value: 5), // VAT will be calculated as 5% of unit price
+      'total': PlutoCell(value: 100),
     });
   });
 
   // Second table columns and rows
   final List<PlutoColumn> secondTableColumns = [
     PlutoColumn(title: 'الحساب', field: 'account', type: PlutoColumnType.text()),
-    PlutoColumn(title: 'الحسم', field: 'discount', type: PlutoColumnType.number(), readOnly: true),
+    PlutoColumn(title: 'الحسم', field: 'discount', type: PlutoColumnType.number()),
     PlutoColumn(title: 'نسبة الحسم', field: 'discountPercentage', type: PlutoColumnType.number()),
+    PlutoColumn(title: 'الاضافة', field: 'addition', type: PlutoColumnType.number()),
+    PlutoColumn(title: 'نسبة الاضافة', field: 'additionPercentage', type: PlutoColumnType.number()),
   ];
 
   final List<PlutoRow> secondTableRows = List.generate(3, (index) {
     return PlutoRow(cells: {
       'account': PlutoCell(value: 'Account $index'),
       'discount': PlutoCell(value: 0),
-      'discountPercentage': PlutoCell(value: 0),
+      'discountPercentage': index.isEven ? PlutoCell(value: index + 1 * 5) : PlutoCell(value: 0),
+      'addition': PlutoCell(value: 0),
+      'additionPercentage': index.isOdd ? PlutoCell(value: index * 5) : PlutoCell(value: 0),
     });
   });
 
-  num totalFirstTable = 0;  // To keep track of the total sum of the first table
+  num totalFirstTable = 0; // To keep track of the total sum of the first table
 
   @override
   void initState() {
     super.initState();
+    log('initState');
     // Initialize total from first table
     _updateFirstTableTotal();
-    _applyDiscounts();  // Apply initial discounts (if any)
+    _applyDiscounts('initState'); // Apply initial discounts (if any)
   }
 
   @override
@@ -82,15 +89,16 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
                 columns: firstTableColumns,
                 rows: firstTableRows,
                 onLoaded: (PlutoGridOnLoadedEvent event) {
+                  log('onLoaded firstTable');
                   firstTableStateManager = event.stateManager;
                   // Recalculate the total when the grid is loaded
                   _updateFirstTableTotal();
-                  _applyDiscounts();  // Reapply discounts if needed
+                  _applyDiscounts('onLoaded firstTable'); // Reapply discounts if needed
                 },
                 onChanged: (PlutoGridOnChangedEvent event) {
                   if (event.column.field == 'quantity' || event.column.field == 'unitPrice') {
                     _updateFirstTableTotal();
-                    _applyDiscounts();
+                    _applyDiscounts('onChanged firstTable');
                   }
                 },
               ),
@@ -101,11 +109,14 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
                 columns: secondTableColumns,
                 rows: secondTableRows,
                 onLoaded: (PlutoGridOnLoadedEvent event) {
+                  log('onLoaded secondTable');
                   secondTableStateManager = event.stateManager;
+                  _applyDiscounts('onLoaded secondTable'); // Reapply discounts if needed
                 },
                 onChanged: (PlutoGridOnChangedEvent event) {
-                  if (event.column.field == 'discountPercentage') {
-                    _applyDiscounts();
+                  log('field ${event.column.field}');
+                  if (event.column.field == 'discountPercentage' || event.column.field == 'additionPercentage') {
+                    _applyDiscounts('onChanged secondTable');
                   }
                 },
               ),
@@ -120,7 +131,7 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
   void _updateFirstTableTotal() {
     if (firstTableStateManager == null) return; // Ensure the manager is initialized
 
-    totalFirstTable = 0;  // Reset the total when recalculating
+    totalFirstTable = 0; // Reset the total when recalculating
 
     for (final row in firstTableStateManager!.rows) {
       final quantity = row.cells['quantity']?.value ?? 0;
@@ -128,33 +139,41 @@ class _PlutoGridExamplePageState extends State<PlutoGridExamplePage> {
 
       // VAT calculation (5% of the unit price)
       final vat = unitPrice * 0.05;
-      row.cells['tax']?.value = vat;  // Update VAT in the 'tax' field
+      row.cells['tax']?.value = vat; // Update VAT in the 'tax' field
 
       // Calculate total for the row
       final total = (quantity * unitPrice) + vat;
       row.cells['total']?.value = total;
 
-      totalFirstTable += total;  // Add row total to the overall total
+      totalFirstTable += total; // Add row total to the overall total
     }
 
     firstTableStateManager!.notifyListeners();
   }
 
   // Method to apply the discounts from the second table to the total in the first table
-  void _applyDiscounts() {
+  void _applyDiscounts(String from) {
+    log('_applyDiscounts $from');
     if (secondTableStateManager == null) return; // Ensure the manager is initialized
 
-    num totalAfterDiscounts = totalFirstTable;  // Start with the sum of the first table
+    num totalAfterDiscounts = totalFirstTable; // Start with the sum of the first table
 
     for (final row in secondTableStateManager!.rows) {
       final discountPercentage = row.cells['discountPercentage']?.value ?? 0;
+      final additionPercentage = row.cells['additionPercentage']?.value ?? 0;
+
+      log('discountPercentage ${row.cells['discountPercentage']?.value} ');
+      log('additionPercentage ${row.cells['additionPercentage']?.value} ');
 
       // Calculate discount amount
       final discountAmount = totalFirstTable * (discountPercentage / 100);
+      final additionAmount = totalFirstTable * (additionPercentage / 100);
 
       // Apply the discount
       row.cells['discount']?.value = discountAmount;
-      totalAfterDiscounts -= discountAmount;  // Subtract the discount from the total
+      row.cells['addition']?.value = additionAmount;
+      totalAfterDiscounts =
+          totalAfterDiscounts - discountAmount + additionAmount; // Subtract the discount from the total
     }
 
     // Update the total value in the blue container

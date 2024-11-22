@@ -38,14 +38,18 @@ class MaterialController extends GetxController {
     Get.toNamed(AppRoutes.showAllMaterialsScreen);
   }
 
-  List<MaterialModel> searchOfProductByText(query) {
+  void reFetchMaterials() {
     if (materials.isEmpty) {
-      log('materials.isEmpty');
+      log('fetchMaterials...');
       fetchMaterials();
     }
+  }
 
-    log('materials ${materials.length}');
+  List<MaterialModel> searchOfProductByText(query) {
+    reFetchMaterials();
+
     List<MaterialModel> searchedMaterials = [];
+
     query = replaceArabicNumbersWithEnglish(query);
     String query2 = '';
     String query3 = '';
@@ -57,6 +61,7 @@ class MaterialController extends GetxController {
       query3 = query;
       query2 = query;
     }
+
     searchedMaterials = materials.where((item) {
       bool prodName = item.matName.toString().toLowerCase().contains(query3.toLowerCase()) &&
           item.matName.toString().toLowerCase().contains(query2.toLowerCase());
@@ -71,6 +76,12 @@ class MaterialController extends GetxController {
   String getMaterialNameById(String? id) {
     if (id == null || id.isEmpty) return '';
     return materials.firstWhere((material) => material.id == id).matName ?? '';
+  }
+
+  String getMaterialBarcodeById(String? id) {
+    if (id == null || id.isEmpty) return '0';
+    reFetchMaterials();
+    return materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
   }
 
   MaterialModel getMaterialById(String id) {

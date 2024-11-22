@@ -1,4 +1,4 @@
-import '../../helper/enums/enums.dart';
+import '../helper/enums/enums.dart';
 
 abstract class IStoreSelectionHandler {
   StoreAccount get selectedStore;

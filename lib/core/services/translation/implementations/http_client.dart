@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import '../abstract/i_api_client.dart';
+import '../interfaces/i_api_client.dart';
 
 class HttpClient<T> implements IAPiClient<T> {
   final Client client;

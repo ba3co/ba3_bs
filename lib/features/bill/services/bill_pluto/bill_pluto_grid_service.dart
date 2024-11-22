@@ -1,7 +1,7 @@
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/controllers/abstract/i_pluto_controller.dart';
+import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../data/models/invoice_record_model.dart';
 import 'bill_pluto_utils.dart';
 
@@ -74,10 +74,10 @@ class BillPlutoGridService {
     }
   }
 
-  void _updateCell(String field, PlutoRow valueRow, double total, BillPlutoUtils invoiceUtils) {
-    final PlutoRow ratioRow = invoiceUtils.ratioRow;
+  void _updateCell(String field, PlutoRow valueRow, double total, BillPlutoUtils plutoUtils) {
+    final PlutoRow ratioRow = plutoUtils.ratioRow;
 
-    final ratio = invoiceUtils.getCellValueInDouble(ratioRow.cells, field);
+    final ratio = plutoUtils.getCellValueInDouble(ratioRow.cells, field);
 
     final newValue = ratio == 0 ? '' : controller.calculateAmountFromRatio(ratio, total);
 

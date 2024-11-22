@@ -3,8 +3,8 @@ import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/services.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../controllers/abstract/i_pluto_controller.dart';
 import '../dialogs/search_product_text_dialog.dart';
+import '../i_controllers/i_pluto_controller.dart';
 
 class GetProductByEnterAction extends PlutoGridShortcutAction {
   const GetProductByEnterAction(this.controller);

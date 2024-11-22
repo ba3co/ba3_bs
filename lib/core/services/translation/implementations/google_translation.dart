@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:ba3_bs/core/services/translation/abstract/i_translation_service.dart';
+import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 
-import '../abstract/i_api_client.dart';
+import '../interfaces/i_api_client.dart';
 
 class GoogleTranslation implements ITranslationService {
   final String baseUrl;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constants/app_constants.dart';
-import '../controllers/abstract/i_selected_store_controller.dart';
 import '../helper/enums/enums.dart';
+import '../interfaces/i_store_selection_handler.dart';
 
 class StoreDropdown extends StatelessWidget {
   const StoreDropdown({super.key, required this.storeSelectionHandler});

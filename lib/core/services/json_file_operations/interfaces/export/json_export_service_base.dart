@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'i_json_export_service.dart';
 
-abstract class BaseJsonExportService<T> implements IJsonExportService<T> {
+abstract class JsonExportServiceBase<T> implements IJsonExportService<T> {
   /// Abstract method to be implemented by subclasses for JSON conversion
   @override
   Map<String, dynamic> toExportJson(List<T> itemsModels);

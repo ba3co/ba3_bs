@@ -12,10 +12,11 @@ import 'package:get/get.dart';
 import '../../features/bond/ui/screens/entry_bond_details_view.dart';
 import '../../features/login/ui/screens/login_screen.dart';
 import '../../features/patterns/ui/screens/all_pattern_page.dart';
+import '../../pluto_test.dart';
 import 'app_routes.dart';
 
 List<GetPage<dynamic>>? appRouter = [
-  GetPage(name: AppRoutes.splashScreen, page: () => const MainScreen()),
+  GetPage(name: AppRoutes.splashScreen, page: () => PlutoGridExamplePage()),
   GetPage(name: AppRoutes.mainLayout, page: () => const MainScreen()),
   GetPage(name: AppRoutes.loginScreen, page: () => const LoginScreen()),
   GetPage(name: AppRoutes.patternsScreen, page: () => const PatternLayout()),

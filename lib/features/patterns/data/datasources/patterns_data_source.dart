@@ -1,8 +1,8 @@
-import 'package:ba3_bs/core/services/firebase/abstract/firebase_datasource_without_result_base.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
+import '../../../../core/services/firebase/interfaces/firebase_datasource_without_result_base.dart';
 import '../models/bill_type_model.dart';
 
 class PatternsDataSource implements FirebaseDatasourceWithoutResultBase<BillTypeModel> {

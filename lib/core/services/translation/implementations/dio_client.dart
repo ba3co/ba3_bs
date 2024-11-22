@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../abstract/i_api_client.dart';
+import '../interfaces/i_api_client.dart';
 
 class DioClient<T> implements IAPiClient<T> {
   final Dio dio;

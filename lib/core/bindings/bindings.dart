@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
-import 'package:ba3_bs/core/services/translation/abstract/i_translation_service.dart';
+import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
@@ -32,11 +32,11 @@ import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
-import '../services/translation/abstract/i_api_client.dart';
 import '../services/translation/implementations/dio_client.dart';
 import '../services/translation/implementations/google_translation.dart';
 import '../services/translation/implementations/http_client.dart';
-import '../services/translation/implementations/translation_repository.dart';
+import '../services/translation/implementations/translation_repo.dart';
+import '../services/translation/interfaces/i_api_client.dart';
 
 class AppBindings extends Bindings {
   @override
@@ -65,6 +65,8 @@ class AppBindings extends Bindings {
         baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
 
     final TranslationRepository translationRepo = TranslationRepository(googleTranslation);
+
+    Get.lazyPut(() => translationRepo, fenix: true);
 
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
 

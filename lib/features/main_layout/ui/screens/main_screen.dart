@@ -3,13 +3,13 @@ import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/controllers/implementations/window_close_controller.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../accounts/ui/screens/account_layout.dart';
 import '../../../bill/ui/screens/bill_layout.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../../materials/ui/screens/materials_layout.dart';
 import '../../../patterns/ui/screens/pattern_layout.dart';
+import '../../controllers/window_close_controller.dart';
 import '../widgets/drawer_list_tile.dart';
 
 class MainScreen extends StatefulWidget {

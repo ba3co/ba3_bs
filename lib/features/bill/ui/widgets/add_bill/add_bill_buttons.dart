@@ -55,7 +55,16 @@ class AddBillButtons extends StatelessWidget {
                 addBillController.printBill(Get.find<AddBillPlutoController>().generateBillRecords);
               },
             ),
-            AppButton(title: "E-Invoice", onPressed: () {}, iconData: Icons.link),
+            Obx(() {
+              final bool showAddNewBillButton = addBillController.isAddNewBillButtonVisible.value;
+              return showAddNewBillButton
+                  ? AppButton(
+                      title: 'E-Invoice',
+                      onPressed: () => addBillController.showEInvoice(),
+                      iconData: Icons.link,
+                    )
+                  : const SizedBox.shrink();
+            }),
           ],
         ],
       ),

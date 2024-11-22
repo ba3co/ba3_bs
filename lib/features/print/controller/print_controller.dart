@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -10,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
-import '../../../core/services/translation/implementations/translation_repository.dart';
+import '../../../core/services/translation/implementations/translation_repo.dart';
 import '../../../core/styling/printer_text_styles.dart';
 import '../../bill/data/models/invoice_record_model.dart';
 import '../../materials/data/models/material_model.dart';
@@ -205,7 +206,7 @@ class PrintingController extends GetxController {
   // Generates the logo image for printing
   Future<List<int>> _generateLogo(Generator generator) async {
     try {
-      final ByteData data = await rootBundle.load('assets/images/ba3_logo.jpg');
+      final ByteData data = await rootBundle.load(AppAssets.ba3Logo);
       final Uint8List imageBytes = data.buffer.asUint8List();
       final img.Image? image = img.decodeImage(imageBytes);
 

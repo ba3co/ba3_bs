@@ -1,10 +1,13 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../../../data/models/bill_model.dart';
+import '../bill_shared/show_e_invoice_dialog.dart';
 
 class BillDetailsButtons extends StatelessWidget {
   const BillDetailsButtons({super.key, required this.billDetailsController, required this.billModel});
@@ -53,7 +56,25 @@ class BillDetailsButtons extends StatelessWidget {
                 );
               },
             ),
-            AppButton(title: "E-Invoice", onPressed: () {}, iconData: Icons.link),
+            AppButton(
+                title: 'E-Invoice',
+                onPressed: () {
+                  showEInvoiceDialog(billDetailsController, billModel.billId!);
+                },
+                iconData: Icons.link),
+            AppButton(
+                title: 'Pdf-Email',
+                fontSize: 15,
+                onPressed: () {
+                  billDetailsController.generateAndSendBillPdf(
+                    recipientEmail: AppStrings.recipientEmail,
+                    billModel: billModel,
+                    fileName: AppStrings.bill,
+                    logoSrc: AppAssets.ba3Logo,
+                    fontSrc: AppAssets.notoSansArabicRegular,
+                  );
+                },
+                iconData: Icons.link),
             AppButton(
               iconData: Icons.delete_outline,
               color: Colors.red,

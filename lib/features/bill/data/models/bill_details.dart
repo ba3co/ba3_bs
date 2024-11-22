@@ -8,7 +8,7 @@ class BillDetails {
   final String? billCustomerId;
   final double? billTotal;
   final double? billVatTotal;
-  final double? billWithoutVatTotal;
+  final double? billBeforeVatTotal;
   final double? billGiftsTotal;
   final double? billDiscountsTotal;
   final double? billAdditionsTotal;
@@ -22,7 +22,7 @@ class BillDetails {
     this.billCustomerId,
     this.billTotal,
     this.billVatTotal,
-    this.billWithoutVatTotal,
+    this.billBeforeVatTotal,
     this.billSellerId,
     this.billGiftsTotal,
     this.billDiscountsTotal,
@@ -39,7 +39,7 @@ class BillDetails {
         billSellerId: json['billSellerId'],
         billTotal: json['billTotal'],
         billVatTotal: json['billVatTotal'],
-        billWithoutVatTotal: json['billWithoutVatTotal'],
+        billBeforeVatTotal: json['billWithoutVatTotal'],
         billGiftsTotal: json['billGiftsTotal'],
         billDiscountsTotal: json['billDiscountsTotal'],
         billAdditionsTotal: json['billAdditionsTotal'],
@@ -69,7 +69,7 @@ class BillDetails {
         billDate: billDate,
         billTotal: billTotal,
         billVatTotal: billVatTotal,
-        billWithoutVatTotal: billWithoutVatTotal,
+        billBeforeVatTotal: billWithoutVatTotal,
         billGiftsTotal: billGiftsTotal,
         billDiscountsTotal: billDiscountsTotal,
         billAdditionsTotal: billAdditionsTotal,
@@ -83,7 +83,7 @@ class BillDetails {
         'note': note,
         'billCustomerId': billCustomerId,
         'billTotal': billTotal,
-        'billWithoutVatTotal': billWithoutVatTotal,
+        'billWithoutVatTotal': billBeforeVatTotal,
         'billVatTotal': billVatTotal,
         'billSellerId': billSellerId,
         'billGiftsTotal': billGiftsTotal,
@@ -114,7 +114,7 @@ class BillDetails {
         note: note ?? this.note,
         billTotal: billTotal ?? this.billTotal,
         billVatTotal: billVatTotal ?? this.billVatTotal,
-        billWithoutVatTotal: billWithoutVatTotal ?? this.billWithoutVatTotal,
+        billBeforeVatTotal: billWithoutVatTotal ?? this.billBeforeVatTotal,
         billCustomerId: billCustomerId ?? this.billCustomerId,
         billSellerId: billSellerId ?? this.billSellerId,
         billDiscountsTotal: billDiscountsTotal ?? this.billDiscountsTotal,

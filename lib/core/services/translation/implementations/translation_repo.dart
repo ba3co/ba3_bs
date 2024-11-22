@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../abstract/i_translation_service.dart';
+import '../interfaces/i_translation_service.dart';
 
 class TranslationRepository {
   final ITranslationService _dataSource;
@@ -13,7 +13,8 @@ class TranslationRepository {
         return await _dataSource.getTranslation(text);
       } catch (e) {
         debugPrint('Translation error: $e');
-        return text; // Return original text as a fallback in case of translation failure
+        // Return original text as a fallback in case of translation failure
+        return text;
       }
     } else {
       return text;

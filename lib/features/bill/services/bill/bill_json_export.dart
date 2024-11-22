@@ -1,8 +1,8 @@
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/services/json_file_operations/abstract/export/base_json_export_service.dart';
+import '../../../../core/services/json_file_operations/interfaces/export/json_export_service_base.dart';
 import '../../data/models/bill_model.dart';
 
-class BillJsonExport extends BaseJsonExportService<BillModel> {
+class BillJsonExport extends JsonExportServiceBase<BillModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
   @override
   Map<String, dynamic> toExportJson(List<BillModel> itemsModels) {

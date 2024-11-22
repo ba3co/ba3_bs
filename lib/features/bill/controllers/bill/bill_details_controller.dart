@@ -1,7 +1,7 @@
-import 'package:ba3_bs/core/controllers/abstract/i_bill_controller.dart';
-import 'package:ba3_bs/core/controllers/abstract/i_selected_store_controller.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
+import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
+import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
@@ -22,9 +22,7 @@ import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
-class BillDetailsController extends GetxController
-    with AppValidator
-    implements IBillController, IStoreSelectionHandler {
+class BillDetailsController extends IBillController with AppValidator implements IStoreSelectionHandler {
   // Repositories
 
   final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepoWithResult;

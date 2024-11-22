@@ -140,7 +140,7 @@ class BillModel implements PlutoAdaptable {
         'رقم الفاتورة': billDetails.billNumber ?? '',
         'التاريخ': billDetails.billDate ?? '',
         'مجموع الضريبة': AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
-        'المجموع قبل الضريبة': AppServiceUtils.toFixedDouble(billDetails.billWithoutVatTotal),
+        'المجموع قبل الضريبة': AppServiceUtils.toFixedDouble(billDetails.billBeforeVatTotal),
         'المجموع الكلي': AppServiceUtils.toFixedDouble(billDetails.billTotal),
         'مجموع الحسم': AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
         'مجموع الاضافات': AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
@@ -184,5 +184,5 @@ class BillModel implements PlutoAdaptable {
 
   String _calculateRatio(double value, double total) => total > 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
 
-  double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billWithoutVatTotal ?? 0);
+  double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 }

@@ -1,7 +1,6 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/core/controllers/abstract/i_bill_controller.dart';
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
+import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller.dart';
@@ -10,8 +9,9 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/controllers/abstract/i_selected_store_controller.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/interfaces/i_store_selection_handler.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -19,11 +19,12 @@ import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
+import '../../ui/widgets/bill_shared/show_e_invoice_dialog.dart';
 import 'all_bills_controller.dart';
 import 'bill_details_controller.dart';
 import 'bill_search_controller.dart';
 
-class AddBillController extends GetxController with AppValidator implements IBillController, IStoreSelectionHandler {
+class AddBillController extends IBillController with AppValidator implements IStoreSelectionHandler {
   // Repositories
   final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
 
@@ -47,7 +48,6 @@ class AddBillController extends GetxController with AppValidator implements IBil
   InvPayType selectedPayType = InvPayType.cash;
   BillType billType = BillType.sales;
 
-  List<BillModel> bills = [];
   bool isLoading = true;
 
   Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
@@ -55,6 +55,8 @@ class AddBillController extends GetxController with AppValidator implements IBil
   RxBool isAddNewBillButtonVisible = false.obs;
 
   int? recentBillNumber;
+
+  BillModel? recentBill;
 
   @override
   updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
@@ -108,7 +110,17 @@ class AddBillController extends GetxController with AppValidator implements IBil
     }
   }
 
-  BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
+  BillModel get getRecentBill => recentBill!;
+
+  bool get _hasBill => recentBill != null;
+
+  showEInvoice() {
+    if (!_hasBill) {
+      AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا!');
+      return;
+    }
+    showEInvoiceDialog(this, getRecentBill.billId!);
+  }
 
   Future<void> printBill(List<InvoiceRecordModel> invRecords) async {
     if (!_validateBeforePrinting(invRecords)) return;
@@ -123,7 +135,7 @@ class AddBillController extends GetxController with AppValidator implements IBil
       return false;
     }
 
-    if (!_hasBillNumber()) {
+    if (!_hasBillNumber) {
       AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا قبل طباعتها!');
       return false;
     }
@@ -133,7 +145,7 @@ class AddBillController extends GetxController with AppValidator implements IBil
 
   bool _hasRecords(List<InvoiceRecordModel> items) => items.isNotEmpty;
 
-  bool _hasBillNumber() => recentBillNumber != null;
+  bool get _hasBillNumber => recentBillNumber != null;
 
   void createBond(BillTypeModel billTypeModel) {
     if (!validateForm()) return;
@@ -160,16 +172,26 @@ class AddBillController extends GetxController with AppValidator implements IBil
     // Handle the result (success or failure)
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (billModel) => _handleSaveSuccess(billModel.billDetails.billNumber!),
+      (billModel) => _handleSaveSuccess(billModel),
     );
   }
 
-  Future<void> _handleSaveSuccess(int billNumber) async {
+  Future<void> _handleSaveSuccess(BillModel billModel) async {
     AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
 
-    _setLastBillNumber(billNumber);
+    _setRecentBill(billModel);
+
+    _setRecentBillNumber(billModel.billDetails.billNumber!);
 
     _updateAddNewBillButtonVisibility(true);
+
+    generateAndSendBillPdf(
+      recipientEmail: AppStrings.recipientEmail,
+      billModel: billModel,
+      fileName: AppStrings.bill,
+      logoSrc: AppAssets.ba3Logo,
+      fontSrc: AppAssets.notoSansArabicRegular,
+    );
   }
 
   void resetBillForm() {
@@ -177,16 +199,26 @@ class AddBillController extends GetxController with AppValidator implements IBil
 
     sellerAccountController.clear();
 
-    _clearLastBillNumber();
+    _clearRecentBillNumber();
+
+    _clearRecentBill();
 
     _updateAddNewBillButtonVisibility(false);
   }
 
-  void _setLastBillNumber(int billNumber) {
+  void _setRecentBill(BillModel billModel) {
+    recentBill = billModel;
+  }
+
+  void _setRecentBillNumber(int billNumber) {
     recentBillNumber = billNumber;
   }
 
-  void _clearLastBillNumber() {
+  void _clearRecentBill() {
+    recentBill = null;
+  }
+
+  void _clearRecentBillNumber() {
     recentBillNumber = null;
   }
 
@@ -293,8 +325,6 @@ class AddBillController extends GetxController with AppValidator implements IBil
   void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
 
   Future<void> onBackPressed({required String billTypeId, required bool fromBillDetails}) async {
-    final previousRoute = Get.previousRoute;
-
     AllBillsController allBillsController = Get.find<AllBillsController>();
 
     await allBillsController.fetchBills();
@@ -311,13 +341,9 @@ class AddBillController extends GetxController with AppValidator implements IBil
       Get.find<BillSearchController>().initializeBillSearch(billsByCategory: billsByCategory, bill: lastBill);
     }
 
-    log('fromBillDetails $fromBillDetails');
-
     if (!fromBillDetails && billsByCategory.isNotEmpty) {
       Get.offNamed(AppRoutes.billDetailsScreen);
-      log('in if previousRoute $previousRoute');
     } else {
-      log('in else previousRoute $previousRoute');
       Get.back();
     }
   }

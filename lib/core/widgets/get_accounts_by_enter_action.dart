@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/controllers/abstract/i_pluto_controller.dart';
+import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -6,8 +6,8 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../constants/app_constants.dart';
-import '../controllers/abstract/i_bill_controller.dart';
 import '../helper/enums/enums.dart';
+import '../i_controllers/i_bill_controller.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   const GetAccountsByEnterAction({

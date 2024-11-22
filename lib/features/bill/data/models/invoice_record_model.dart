@@ -204,6 +204,7 @@ class InvoiceRecordModel {
       PlutoColumn(
         title: 'الضريبة',
         field: AppConstants.invRecVat,
+        enableEditingMode: false,
         type: PlutoColumnType.text(),
       ): invRecVat,
       PlutoColumn(
