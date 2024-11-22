@@ -10,9 +10,6 @@ abstract class IPlutoController extends GetxController {
   /// State manager for additions and discounts.
   PlutoGridStateManager get additionsDiscountsStateManager;
 
-  /// Updates the VAT total notifier.
-  void updateVatTotalNotifier(double total);
-
   /// Calculates the amount from a given ratio and total.
   String calculateAmountFromRatio(double ratio, double total);
 
@@ -23,7 +20,7 @@ abstract class IPlutoController extends GetxController {
   double get computeWithVatTotal;
 
   /// Computes the total excluding VAT.
-  double get computeWithoutVatTotal;
+  double get computeBeforeVatTotal;
 
   /// Computes the total VAT amount.
   double get computeTotalVat;

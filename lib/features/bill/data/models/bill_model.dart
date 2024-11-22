@@ -160,27 +160,38 @@ class BillModel implements PlutoAdaptable {
 
     return [
       _createRecordRow(
-        id: AppConstants.accountName,
-        discount: billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
-        addition: billTypeModel.accounts?[BillAccounts.additions]?.accName ?? '',
+        account: billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
+        discountValue: discountTotal,
+        discountRatio: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
+        additionValue: '',
+        additionRatio: '',
       ),
       _createRecordRow(
-        id: AppConstants.ratio,
-        discount: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
-        addition: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
-      ),
-      _createRecordRow(
-        id: AppConstants.value,
-        discount: discountTotal,
-        addition: additionTotal,
+        account: billTypeModel.accounts?[BillAccounts.additions]?.accName ?? '',
+        discountValue: '',
+        discountRatio: '',
+        additionValue: additionTotal,
+        additionRatio: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
       ),
     ];
   }
 
   static String _billTypeLabel(String typeGuide) => BillType.byTypeGuide(typeGuide).label;
 
-  Map<String, String> _createRecordRow({required String id, required String discount, required String addition}) =>
-      {AppConstants.id: id, AppConstants.discount: discount, AppConstants.addition: addition};
+  Map<String, String> _createRecordRow({
+    required String account,
+    required String discountValue,
+    required String additionValue,
+    required String discountRatio,
+    required String additionRatio,
+  }) =>
+      {
+        AppConstants.id: account,
+        AppConstants.discount: discountValue,
+        AppConstants.discountRatio: discountRatio,
+        AppConstants.addition: additionValue,
+        AppConstants.additionRatio: additionRatio,
+      };
 
   String _calculateRatio(double value, double total) => total > 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
 

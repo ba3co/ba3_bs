@@ -24,7 +24,6 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required PlutoGridStateManager stateManager,
   }) async {
     await getAccounts(stateManager, plutoController, billController);
-    // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
         row: stateManager.currentRow,
@@ -72,15 +71,13 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     IBillController billController,
   ) async {
     final columnField = stateManager.currentColumn?.field;
-    final rowIdValue = stateManager.currentRow?.cells[AppConstants.id]?.value;
+    final currentRow = stateManager.currentRow;
 
-    // Check if the selected column is 'discount' or 'addition' and the row is 'اسم الحساب'
-    if ((columnField == AppConstants.discount || columnField == AppConstants.addition) &&
-        rowIdValue == AppConstants.accountName) {
+    if (columnField == AppConstants.id) {
       final accountModel = await _openAccountSelectionDialog(stateManager.currentCell?.value);
 
       if (accountModel != null) {
-        _updateSelectedAccount(columnField, accountModel, billController);
+        _updateSelectedAccount(currentRow, accountModel, billController);
         _updateCellValue(stateManager, columnField, accountModel.accName);
       } else {
         _resetCellValue(stateManager, columnField);
@@ -96,10 +93,11 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       await Get.find<AccountsController>().openAccountSelectionDialog(query: query);
 
   /// Updates the selected additions or discounts account based on the column field.
-  void _updateSelectedAccount(String? columnField, AccountModel accountModel, IBillController billController) {
-    if (columnField == AppConstants.discount) {
+  void _updateSelectedAccount(PlutoRow? currentRow, AccountModel accountModel, IBillController billController) {
+    final String cellAccountValue = currentRow?.cells[AppConstants.id]?.value;
+    if (cellAccountValue.contains('الحسم')) {
       billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
-    } else if (columnField == AppConstants.addition) {
+    } else {
       billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
     }
   }

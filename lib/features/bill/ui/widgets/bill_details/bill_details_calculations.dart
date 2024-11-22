@@ -1,4 +1,3 @@
-import 'package:ba3_bs/features/bill/ui/widgets/bill_details/bill_details_vat_total_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,10 +26,15 @@ class BillDetailsCalculations extends StatelessWidget {
             CalculationCard(
               width: 150,
               color: Colors.blueGrey.shade400,
-              value: controller.computeWithoutVatTotal.toStringAsFixed(2),
+              value: controller.computeBeforeVatTotal.toStringAsFixed(2),
               label: 'المجموع قبل الضريبة',
             ),
-            BillDetailsVatTotalCard(width: 300, controller: controller),
+            CalculationCard(
+              width: 150,
+              color: Colors.grey.shade600,
+              value: controller.computeWithVatTotal.toStringAsFixed(2),
+              label: 'النهائي الجزئي',
+            ),
             CalculationCard(
               width: 300,
               color: Colors.blue,

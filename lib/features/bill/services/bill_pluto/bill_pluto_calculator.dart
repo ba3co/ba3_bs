@@ -22,12 +22,10 @@ class BillPlutoCalculator {
       return sum;
     });
 
-    controller.updateVatTotalNotifier(total);
-
     return total;
   }
 
-  double get computeWithoutVatTotal {
+  double get computeBeforeVatTotal {
     mainTableStateManager.setShowLoading(true);
 
     double total = mainTableStateManager.rows.fold(0.0, (sum, record) {
@@ -134,38 +132,34 @@ class BillPlutoCalculator {
     return (amount / total) * 100;
   }
 
-  double calculateFinalTotal(BillPlutoUtils invoiceUtils) =>
-      computeWithVatTotal - computeDiscounts(invoiceUtils) + computeAdditions(invoiceUtils);
+  double calculateFinalTotal(BillPlutoUtils plutoUtils) {
+    final double partialTotal = computeWithVatTotal;
+    return partialTotal - computeDiscounts(plutoUtils, partialTotal) + computeAdditions(plutoUtils, partialTotal);
+  }
 
-  double computeDiscounts(BillPlutoUtils plutoUtils) {
+  double computeDiscounts(BillPlutoUtils plutoUtils, double partialTotal) {
     double discounts = 0;
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
 
-    final PlutoRow ratioRow = plutoUtils.ratioRow;
+    for (final row in additionsDiscountsStateManager.rows) {
+      final discountRatio = plutoUtils.getCellValueInDouble(row.cells, AppConstants.discountRatio);
 
-    final discountRatio = plutoUtils.getCellValueInDouble(ratioRow.cells, AppConstants.discount);
-
-    if (discountRatio == 0) return 0;
-
-    discounts = computeWithVatTotal * (discountRatio / 100);
-
+      discounts += partialTotal * (discountRatio / 100);
+    }
     return discounts;
   }
 
-  double computeAdditions(BillPlutoUtils plutoUtils) {
+  double computeAdditions(BillPlutoUtils plutoUtils, double partialTotal) {
     double additions = 0;
 
     if (additionsDiscountsStateManager.rows.isEmpty) return 0;
 
-    final PlutoRow ratioRow = plutoUtils.ratioRow;
+    for (final row in additionsDiscountsStateManager.rows) {
+      final additionsRatio = plutoUtils.getCellValueInDouble(row.cells, AppConstants.additionRatio);
 
-    final additionsRatio = plutoUtils.getCellValueInDouble(ratioRow.cells, AppConstants.addition);
-
-    if (additionsRatio == 0) return 0;
-
-    additions = computeWithVatTotal * (additionsRatio / 100);
-
+      additions += partialTotal * (additionsRatio / 100);
+    }
     return additions;
   }
 }

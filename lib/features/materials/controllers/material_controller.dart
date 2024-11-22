@@ -81,7 +81,15 @@ class MaterialController extends GetxController {
   String getMaterialBarcodeById(String? id) {
     if (id == null || id.isEmpty) return '0';
     reFetchMaterials();
-    return materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String mat = materials
+            .firstWhere((material) => material.id == id, orElse: () => MaterialModel(matBarCode: '0'))
+            .matBarCode ??
+        '0';
+
+    if (mat == 'null') {
+      return '0';
+    }
+    return mat;
   }
 
   MaterialModel getMaterialById(String id) {

@@ -309,9 +309,13 @@ abstract class AppConstants {
   static const String id = 'id';
   static const String discount = 'discount';
   static const String addition = 'addition';
+  static const String discountRatio = 'discountRatio';
+  static const String additionRatio = 'additionRatio';
   static const String account = 'الحساب';
   static const String discountAr = 'الحسم';
+  static const String discountRatioAr = 'نسبة الحسم';
   static const String additionAr = 'الاضافات';
+  static const String additionRatioAr = 'نسبة الاضافات';
   static const String deleteConfirmationTitle = 'تأكيد الحذف';
   static const String deleteConfirmationMessage = 'هل انت متأكد من حذف هذا العنصر';
   static const String yes = 'نعم';
@@ -321,7 +325,6 @@ abstract class AppConstants {
     PlutoColumn(
       title: AppConstants.account,
       field: AppConstants.id,
-      enableEditingMode: false,
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
@@ -330,8 +333,18 @@ abstract class AppConstants {
       type: PlutoColumnType.text(),
     ),
     PlutoColumn(
+      title: AppConstants.discountRatioAr,
+      field: AppConstants.discountRatio,
+      type: PlutoColumnType.text(),
+    ),
+    PlutoColumn(
       title: AppConstants.additionAr,
       field: AppConstants.addition,
+      type: PlutoColumnType.text(),
+    ),
+    PlutoColumn(
+      title: AppConstants.additionRatioAr,
+      field: AppConstants.additionRatio,
       type: PlutoColumnType.text(),
     ),
   ];
@@ -340,23 +353,20 @@ abstract class AppConstants {
     PlutoRow(
       cells: {
         AppConstants.id: PlutoCell(value: AppConstants.accountName),
-        AppConstants.discount: PlutoCell(value: 'الحسم الممنوح'),
-        AppConstants.addition: PlutoCell(value: 'ايرادات مختلفة'),
+        AppConstants.discount: PlutoCell(value: ''),
+        AppConstants.discountRatio: PlutoCell(value: ''),
+        AppConstants.addition: PlutoCell(value: ''),
+        AppConstants.additionRatio: PlutoCell(value: ''),
       },
     ),
     PlutoRow(
       cells: {
-        AppConstants.id: PlutoCell(value: AppConstants.ratio),
+        AppConstants.id: PlutoCell(value: AppConstants.accountName),
         AppConstants.discount: PlutoCell(value: ''),
+        AppConstants.discountRatio: PlutoCell(value: ''),
         AppConstants.addition: PlutoCell(value: ''),
+        AppConstants.additionRatio: PlutoCell(value: ''),
       },
-    ),
-    PlutoRow(
-      cells: {
-        AppConstants.id: PlutoCell(value: AppConstants.value),
-        AppConstants.discount: PlutoCell(value: ''),
-        AppConstants.addition: PlutoCell(value: ''),
-      },
-    ),
+    )
   ];
 }

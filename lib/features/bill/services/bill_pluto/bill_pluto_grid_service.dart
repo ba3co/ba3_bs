@@ -62,29 +62,30 @@ class BillPlutoGridService {
   void updateAdditionDiscountCells(double total, BillPlutoUtils invoiceUtils) {
     if (additionsDiscountsStateManager.rows.isEmpty) return;
 
-    final PlutoRow valueRow = invoiceUtils.valueRow;
+    for (final row in additionsDiscountsStateManager.rows) {
+      // Update both discount and addition cells based on the total value
+      final fields = [AppConstants.discount, AppConstants.addition];
 
-    // Update both discount and addition cells based on the total value
-    final fields = [AppConstants.discount, AppConstants.addition];
-
-    for (final field in fields) {
-      total == 0
-          ? updateAdditionsDiscountsCellValue(valueRow.cells[field]!, '')
-          : _updateCell(field, valueRow, total, invoiceUtils);
+      for (final field in fields) {
+        total == 0
+            ? updateAdditionsDiscountsCellValue(row.cells[field]!, '')
+            : _updateCell(field, row, total, invoiceUtils);
+      }
     }
   }
 
-  void _updateCell(String field, PlutoRow valueRow, double total, BillPlutoUtils plutoUtils) {
-    final PlutoRow ratioRow = plutoUtils.ratioRow;
-
-    final ratio = plutoUtils.getCellValueInDouble(ratioRow.cells, field);
+  void _updateCell(String field, PlutoRow row, double total, BillPlutoUtils plutoUtils) {
+    final ratio = plutoUtils.getCellValueInDouble(row.cells, _getTargetField(field));
 
     final newValue = ratio == 0 ? '' : controller.calculateAmountFromRatio(ratio, total);
 
-    final valueCell = valueRow.cells[field]!;
+    final valueCell = row.cells[field]!;
 
     updateAdditionsDiscountsCellValue(valueCell, newValue);
   }
+
+  String _getTargetField(String field) =>
+      field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
 
   List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records) => records.map((record) {
         final rowData = record.toEditedMap();
@@ -97,7 +98,9 @@ class BillPlutoGridService {
         final cells = {
           AppConstants.id: PlutoCell(value: record[AppConstants.id] ?? ''),
           AppConstants.discount: PlutoCell(value: record[AppConstants.discount] ?? ''),
-          AppConstants.addition: PlutoCell(value: record[AppConstants.addition] ?? '')
+          AppConstants.discountRatio: PlutoCell(value: record[AppConstants.discountRatio] ?? ''),
+          AppConstants.addition: PlutoCell(value: record[AppConstants.addition] ?? ''),
+          AppConstants.additionRatio: PlutoCell(value: record[AppConstants.additionRatio] ?? ''),
         };
         return PlutoRow(cells: cells);
       }).toList();

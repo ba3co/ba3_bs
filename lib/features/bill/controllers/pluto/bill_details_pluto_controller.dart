@@ -35,8 +35,6 @@ class BillDetailsPlutoController extends IPlutoController {
 
   String customerName = '';
 
-  ValueNotifier<double> vatTotalNotifier = ValueNotifier<double>(0.0);
-
   // State managers
   @override
   PlutoGridStateManager mainTableStateManager =
@@ -49,7 +47,7 @@ class BillDetailsPlutoController extends IPlutoController {
   @override
   updateVatTotalNotifier(double total) =>
       WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
-        vatTotalNotifier.value = total;
+        //vatTotalNotifier.value = total;
       });
 
   @override
@@ -64,7 +62,7 @@ class BillDetailsPlutoController extends IPlutoController {
   double get computeWithVatTotal => _calculator.computeWithVatTotal;
 
   @override
-  double get computeWithoutVatTotal => _calculator.computeWithoutVatTotal;
+  double get computeBeforeVatTotal => _calculator.computeBeforeVatTotal;
 
   @override
   double get computeTotalVat => _calculator.computeTotalVat;
@@ -76,13 +74,13 @@ class BillDetailsPlutoController extends IPlutoController {
   double get computeGifts => _calculator.computeGifts;
 
   @override
-  double get computeAdditions => _calculator.computeAdditions(_plutoUtils);
+  double get computeAdditions => _calculator.computeAdditions(_plutoUtils, computeWithVatTotal);
 
   @override
   double get calculateFinalTotal => _calculator.calculateFinalTotal(_plutoUtils);
 
   @override
-  double get computeDiscounts => _calculator.computeDiscounts(_plutoUtils);
+  double get computeDiscounts => _calculator.computeDiscounts(_plutoUtils, computeWithVatTotal);
 
   @override
   List<InvoiceRecordModel> get generateBillRecords {
@@ -131,7 +129,7 @@ class BillDetailsPlutoController extends IPlutoController {
     additionsDiscountsStateManager = event.stateManager;
   }
 
-  //TODO(Bahhaa): onMainTableStateManagerChanged
+  //TODO: onMainTableStateManagerChanged
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
     if (mainTableStateManager.currentRow == null) return;
     final String field = event.column.field;
@@ -156,6 +154,7 @@ class BillDetailsPlutoController extends IPlutoController {
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
       _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat);
     }
+    updateAdditionDiscountCell(computeWithVatTotal);
   }
 
   double _getSubTotal() {
@@ -211,43 +210,53 @@ class BillDetailsPlutoController extends IPlutoController {
         gridService: _gridService);
   }
 
-  void _showDeleteConfirmationDialog(event) {
-    _contextMenu.showDeleteConfirmationDialog(event.rowIdx);
-  }
+  void _showDeleteConfirmationDialog(event) => _contextMenu.showDeleteConfirmationDialog(event.rowIdx);
 
-  //TODO(Bahhaa): onAdditionsDiscountsChanged
+  //TODO: onAdditionsDiscountsChanged
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
-    final String field = event.column.field;
+    final field = event.column.field;
     final cells = event.row.cells;
+    final row = event.row;
     final total = computeWithVatTotal;
 
-    if (total == 0) return;
+    if (total == 0 || !_isRelevantField(field)) return;
 
-    if (field == AppConstants.discount || field == AppConstants.addition) {
-      _updateCellValue(field, cells, total);
-    }
-
+    _updateAdditionsDiscountsCells(field, row, cells, total);
     safeUpdateUI();
   }
 
-  void _updateCellValue(String field, Map<String, PlutoCell> cells, double total) {
+  bool _isRelevantField(String field) {
+    return {
+      AppConstants.discount,
+      AppConstants.discountRatio,
+      AppConstants.addition,
+      AppConstants.additionRatio,
+    }.contains(field);
+  }
+
+  void _updateAdditionsDiscountsCells(String field, PlutoRow row, Map<String, PlutoCell> cells, double total) {
     if (additionsDiscountsStateManager.rows.isEmpty) return;
 
     final inputValue = _plutoUtils.getCellValueInDouble(cells, field);
-
     if (inputValue == 0) return;
 
-    final isRatioCell = cells[AppConstants.id]?.value == AppConstants.value;
+    final isRatioCell = _isRatioField(field);
+    final targetField = _getTargetField(field, isRatioCell);
 
-    final targetRow = isRatioCell ? _plutoUtils.ratioRow : _plutoUtils.valueRow;
-
-    final calculateNewValue = isRatioCell ? calculateRatioFromAmount : calculateAmountFromRatio;
-
+    final calculateNewValue = isRatioCell ? calculateAmountFromRatio : calculateRatioFromAmount;
     final newValue = calculateNewValue(inputValue, total);
 
-    final targetCell = targetRow.cells[field]!;
+    _gridService.updateAdditionsDiscountsCellValue(row.cells[targetField]!, newValue);
+  }
 
-    _gridService.updateAdditionsDiscountsCellValue(targetCell, newValue);
+  bool _isRatioField(String field) => field == AppConstants.discountRatio || field == AppConstants.additionRatio;
+
+  String _getTargetField(String field, bool isRatioCell) {
+    if (isRatioCell) {
+      return field == AppConstants.discountRatio ? AppConstants.discount : AppConstants.addition;
+    } else {
+      return field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
+    }
   }
 
   void updateAdditionDiscountCell(double total) => _gridService.updateAdditionDiscountCells(total, _plutoUtils);
