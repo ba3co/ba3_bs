@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import '../../features/accounts/data/models/account_model.dart';
 import '../../features/bill/services/bill/bill_pdf_generator.dart';
 import '../helper/enums/enums.dart';
-import '../services/mailer_messaging_service /implementations/gmail_messaging_service.dart';
-import '../services/mailer_messaging_service /implementations/mailer_messaging_repo.dart';
+import '../services/mailer_messaging_service/implementations/gmail_messaging_service.dart';
+import '../services/mailer_messaging_service/implementations/mailer_messaging_repo.dart';
 import '../services/pdf_generator/implementations/pdf_generator_repo.dart';
 import '../utils/app_ui_utils.dart';
 
