@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,31 +12,35 @@ import '../widgets/bill_details/bill_details_calculations.dart';
 import '../widgets/bill_details/bill_details_header.dart';
 
 class BillDetailsScreen extends StatelessWidget {
-  const BillDetailsScreen({super.key});
+  final bool fromBillById;
+
+  const BillDetailsScreen({super.key, required this.fromBillById});
 
   @override
   Widget build(BuildContext context) => GetBuilder<BillSearchController>(
         builder: (billSearchController) {
+          final BillModel currentBill = billSearchController.getCurrentBill;
           return GetBuilder<BillDetailsController>(
             builder: (billDetailsController) {
               return Scaffold(
                 appBar: BillDetailsAppBar(
-                  billTypeModel: billSearchController.currentBill.billTypeModel,
+                  billTypeModel: currentBill.billTypeModel,
                   billDetailsController: billDetailsController,
                   billSearchController: billSearchController,
                 ),
                 body: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BillDetailsHeader(
-                        billDetailsController: billDetailsController, billModel: billSearchController.currentBill),
+                    BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
                     const VerticalSpace(20),
-                    BillDetailsBody(billTypeModel: billSearchController.currentBill.billTypeModel),
+                    BillDetailsBody(billTypeModel: currentBill.billTypeModel),
                     const VerticalSpace(10),
                     const BillDetailsCalculations(),
                     const Divider(),
                     BillDetailsButtons(
-                        billDetailsController: billDetailsController, billModel: billSearchController.currentBill),
+                        billDetailsController: billDetailsController,
+                        billModel: currentBill,
+                        fromBillById: fromBillById),
                   ],
                 ),
               );

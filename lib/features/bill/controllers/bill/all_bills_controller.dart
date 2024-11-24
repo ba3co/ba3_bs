@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:get/get.dart';
 
@@ -42,6 +44,7 @@ class AllBillsController extends GetxController {
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
   Future<void> fetchBills() async {
+    log('fetchBills');
     final result = await _billsFirebaseRepo.getAll();
 
     result.fold(
@@ -85,7 +88,7 @@ class AllBillsController extends GetxController {
 
   void openBillDetailsById(String billId) {
     final BillModel billModel = getBillById(billId);
-    _navigateToBillDetailsWithModel(billModel);
+    _navigateToBillDetailsWithModel(billModel, fromBillById: true);
   }
 
   Future<void> openLastBillDetails(BillTypeModel billTypeModel) async {
@@ -107,12 +110,12 @@ class AllBillsController extends GetxController {
     Get.find<BillDetailsController>().navigateToAddBillScreen(billTypeModel);
   }
 
-  void _navigateToBillDetailsWithModel(BillModel billModel) {
+  void _navigateToBillDetailsWithModel(BillModel billModel, {bool fromBillById = false}) {
     Get.find<BillDetailsController>().refreshScreenWithCurrentBillModel(billModel);
 
     initializeBillSearch(billModel);
 
-    Get.toNamed(AppRoutes.billDetailsScreen);
+    Get.toNamed(AppRoutes.billDetailsScreen, arguments: fromBillById);
   }
 
   void initializeBillSearch(BillModel bill) {

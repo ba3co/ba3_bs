@@ -324,7 +324,8 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
   void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
 
-  Future<void> onBackPressed({required String billTypeId, required bool fromBillDetails}) async {
+  Future<void> onBackPressed(
+      {required String billTypeId, required bool fromBillDetails, required bool fromBillById}) async {
     AllBillsController allBillsController = Get.find<AllBillsController>();
 
     await allBillsController.fetchBills();
@@ -342,7 +343,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
     }
 
     if (!fromBillDetails && billsByCategory.isNotEmpty) {
-      Get.offNamed(AppRoutes.billDetailsScreen);
+      Get.offNamed(AppRoutes.billDetailsScreen, arguments: fromBillById);
     } else {
       Get.back();
     }

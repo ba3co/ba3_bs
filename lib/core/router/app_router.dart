@@ -25,17 +25,24 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
   GetPage(name: AppRoutes.showAllBillsScreen, page: () => const AllBillsScreen()),
-  GetPage(name: AppRoutes.billDetailsScreen, page: () => const BillDetailsScreen()),
+  GetPage(
+      name: AppRoutes.billDetailsScreen,
+      page: () {
+        final bool fromBillById = Get.arguments as bool;
+        return BillDetailsScreen(fromBillById: fromBillById);
+      }),
   GetPage(
     name: AppRoutes.addBillScreen,
     page: () {
       final Map arguments = Get.arguments as Map;
       final BillTypeModel billTypeModel = arguments['billTypeModel'];
       final bool fromBillDetails = arguments['fromBillDetails'];
+      final bool fromBillById = arguments['fromBillById'];
 
       return AddBillScreen(
         billTypeModel: billTypeModel,
         fromBillDetails: fromBillDetails,
+        fromBillById: fromBillById,
       );
     },
   )

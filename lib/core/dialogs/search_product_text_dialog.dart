@@ -3,6 +3,7 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/bill/ui/widgets/bill_shared/custom_Text_field.dart';
 import '../widgets/pluto_grid_with_app_bar_.dart';
@@ -40,11 +41,13 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
                             child: PlutoGridWithAppBar(
                               title: 'اختيار مادة',
                               tableSourceModels: searchedMaterials,
-                              onLoaded: (p0) {},
-                              onSelected: (selected) {
-                                selectedMaterial =
-                                    materialController.getMaterialById(selected.row?.cells['الرقم التعريفي']!.value);
-                                Get.back();
+                              onLoaded: (PlutoGridOnLoadedEvent onLoadedEvent) {},
+                              onSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
+                                final materialId = onSelectedEvent.row?.cells['الرقم التعريفي']?.value;
+                                if (materialId != null) {
+                                  selectedMaterial = materialController.getMaterialById(materialId);
+                                  Get.back();
+                                }
                               },
                             ),
                           )),

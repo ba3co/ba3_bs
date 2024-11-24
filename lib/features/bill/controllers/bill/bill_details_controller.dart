@@ -114,19 +114,20 @@ class BillDetailsController extends IBillController with AppValidator implements
     _billService.createBond(billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
   }
 
-  Future<void> deleteBill(String billId) async {
+  Future<void> deleteBill(String billId, {bool fromBillById = false}) async {
     final result = await _billsFirebaseRepoWithResult.delete(billId);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _handleDeleteSuccess(),
+      (success) => _handleDeleteSuccess(fromBillById),
     );
   }
 
-  Future<void> _handleDeleteSuccess() async {
+  Future<void> _handleDeleteSuccess([fromBillById]) async {
     //TODO: only call this fetchBills() if open bill details by bill id from all bills screen
-
-    await Get.find<AllBillsController>().fetchBills();
+    if (fromBillById) {
+      await Get.find<AllBillsController>().fetchBills();
+    }
 
     Get.back();
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
@@ -221,14 +222,12 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
-  void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false}) {
+  void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false, bool fromBillById = false}) {
     Get.put(AddBillController(_billsFirebaseRepoWithResult))
         .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
 
-    Get.toNamed(AppRoutes.addBillScreen, arguments: {
-      'billTypeModel': billTypeModel,
-      'fromBillDetails': fromBillDetails,
-    });
+    Get.toNamed(AppRoutes.addBillScreen,
+        arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
   }
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>

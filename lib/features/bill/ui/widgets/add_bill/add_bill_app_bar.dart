@@ -12,11 +12,13 @@ class AddBillAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.addBillController,
     required this.billTypeModel,
     required this.fromBillDetails,
+    required this.fromBillById,
   });
 
   final AddBillController addBillController;
   final BillTypeModel billTypeModel;
   final bool fromBillDetails;
+  final bool fromBillById;
 
   // kToolbarHeight: default AppBar height.
   @override
@@ -32,6 +34,7 @@ class AddBillAppBar extends StatelessWidget implements PreferredSizeWidget {
           addBillController.onBackPressed(
             billTypeId: billTypeModel.billTypeId!,
             fromBillDetails: fromBillDetails,
+            fromBillById: fromBillById,
           );
         },
       ),

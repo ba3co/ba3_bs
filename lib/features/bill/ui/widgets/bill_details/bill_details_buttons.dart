@@ -10,10 +10,16 @@ import '../../../data/models/bill_model.dart';
 import '../bill_shared/show_e_invoice_dialog.dart';
 
 class BillDetailsButtons extends StatelessWidget {
-  const BillDetailsButtons({super.key, required this.billDetailsController, required this.billModel});
+  const BillDetailsButtons({
+    super.key,
+    required this.billDetailsController,
+    required this.billModel,
+    required this.fromBillById,
+  });
 
   final BillDetailsController billDetailsController;
   final BillModel billModel;
+  final bool fromBillById;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +36,7 @@ class BillDetailsButtons extends StatelessWidget {
                 billDetailsController.navigateToAddBillScreen(
                   billModel.billTypeModel,
                   fromBillDetails: true,
+                  fromBillById: fromBillById,
                 );
               },
               iconData: Icons.create_new_folder_outlined),
@@ -80,7 +87,7 @@ class BillDetailsButtons extends StatelessWidget {
               color: Colors.red,
               title: 'حذف',
               onPressed: () async {
-                billDetailsController.deleteBill(billModel.billId!);
+                billDetailsController.deleteBill(billModel.billId!, fromBillById: fromBillById);
               },
             )
           ],

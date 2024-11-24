@@ -82,22 +82,22 @@ class BillsDataSource implements FirebaseDatasourceWithResultBase<BillModel> {
   Future<int> _getNextBillNumber(String billType) async {
     final docRef = _firestore.collection(_billNumbersCollection).doc(billType);
 
-    return await _firestore.runTransaction((transaction) async {
-      final snapshot = await transaction.get(docRef);
+    // Fetch the document snapshot
+    final snapshot = await docRef.get();
 
-      if (!snapshot.exists) {
-        // If the document does not exist, initialize it
-        transaction.set(docRef, {'type': billType, 'lastNumber': 1});
-        return 1;
-      }
+    if (!snapshot.exists) {
+      // If the document does not exist, initialize it
+      await docRef.set({'type': billType, 'lastNumber': 1});
+      return 1;
+    }
 
-      // Get the current last number and increment it
-      final lastNumber = snapshot.data()?['lastNumber'] as int? ?? 0;
-      final newNumber = lastNumber + 1;
+    // Get the current last number and increment it
+    final lastNumber = snapshot.data()?['lastNumber'] as int? ?? 0;
+    final newNumber = lastNumber + 1;
 
-      // Update the document with the new number
-      transaction.update(docRef, {'lastNumber': newNumber});
-      return newNumber;
-    });
+    // Update the document with the new number
+    await docRef.update({'lastNumber': newNumber});
+
+    return newNumber;
   }
 }

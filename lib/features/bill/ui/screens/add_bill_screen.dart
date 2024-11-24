@@ -11,10 +11,12 @@ import '../widgets/add_bill/add_bill_calculations.dart';
 import '../widgets/add_bill/add_bill_header.dart';
 
 class AddBillScreen extends StatelessWidget {
-  const AddBillScreen({super.key, required this.billTypeModel, required this.fromBillDetails});
+  const AddBillScreen(
+      {super.key, required this.billTypeModel, required this.fromBillDetails, required this.fromBillById});
 
   final BillTypeModel billTypeModel;
   final bool fromBillDetails;
+  final bool fromBillById;
 
   @override
   Widget build(BuildContext context) => GetBuilder<AddBillController>(builder: (addBillController) {
@@ -22,6 +24,7 @@ class AddBillScreen extends StatelessWidget {
           appBar: AddBillAppBar(
             billTypeModel: billTypeModel,
             fromBillDetails: fromBillDetails,
+            fromBillById: fromBillById,
             addBillController: addBillController,
           ),
           body: Column(

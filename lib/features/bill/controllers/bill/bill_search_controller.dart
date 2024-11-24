@@ -18,12 +18,12 @@ class BillSearchController extends GetxController {
     currentBill = bills[currentBillIndex];
 
     log('bills ${bills.length}');
-    log('currentBillIndex ${currentBillIndex}');
+    log('currentBillIndex $currentBillIndex');
     log('currentBillNumber ${currentBill.billDetails.billNumber}');
   }
 
   /// Gets the current bill
-  BillModel getCurrentBill() => currentBill;
+  BillModel get getCurrentBill => bills[currentBillIndex];
 
   /// Finds the index of the bill with the given number
   int _getBillIndexByNumber(int? billNumber) => bills.indexWhere((bill) => bill.billDetails.billNumber == billNumber);
@@ -35,6 +35,7 @@ class BillSearchController extends GetxController {
     if (billIndex != -1) {
       bills[billIndex] = updatedBill;
     }
+    update();
   }
 
   /// Validates whether the given bill number is within range
