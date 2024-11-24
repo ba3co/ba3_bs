@@ -111,7 +111,7 @@ class MaterialModel implements PlutoAdaptable {
       id: json['mptr'].toString(),
       matCode: json['MatCode'],
       matName: json['MatName'].toString(),
-      matBarCode: json['MatBarCode'].toString(),
+      matBarCode: json['MatBarCode']?.toString(),
       matGroupGuid: json['MatGroupGuid'].toString(),
       matUnity: json['MatUnity'].toString(),
       matPriceType: json['MatPriceType'],

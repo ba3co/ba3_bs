@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -125,10 +123,8 @@ class AppUIUtils {
       );
 
   static showSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
-    log('closeAllSnackbars');
     // Close any existing SnackBar
     Get.closeCurrentSnackbar();
-    log('showSnackBar');
     // Show the new SnackBar
     Get.snackbar(title ?? _getTitle(status), message);
   }

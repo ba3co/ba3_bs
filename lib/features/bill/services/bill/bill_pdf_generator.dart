@@ -111,7 +111,7 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
   }
 
   Widget _buildBarcode(String itemGuid) {
-    final barcode = Barcode.codabar();
+    final barcode = Barcode.code128();
     final barcodeData = materialController.getMaterialBarcodeById(itemGuid);
 
     return BarcodeWidget(
