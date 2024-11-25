@@ -321,6 +321,9 @@ abstract class AppConstants {
   static const String yes = 'نعم';
   static const String no = 'لا';
 
+  static const String discountAccountType = 'discountAccountType';
+  static const String additionAccountType = 'additionAccountType';
+
   static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(
       title: AppConstants.account,
@@ -352,7 +355,7 @@ abstract class AppConstants {
   static List<PlutoRow> additionsDiscountsRows = [
     PlutoRow(
       cells: {
-        AppConstants.id: PlutoCell(value: AppConstants.accountName),
+        AppConstants.id: PlutoCell(value: ''),
         AppConstants.discount: PlutoCell(value: ''),
         AppConstants.discountRatio: PlutoCell(value: ''),
         AppConstants.addition: PlutoCell(value: ''),
@@ -361,7 +364,7 @@ abstract class AppConstants {
     ),
     PlutoRow(
       cells: {
-        AppConstants.id: PlutoCell(value: AppConstants.accountName),
+        AppConstants.id: PlutoCell(value: ''),
         AppConstants.discount: PlutoCell(value: ''),
         AppConstants.discountRatio: PlutoCell(value: ''),
         AppConstants.addition: PlutoCell(value: ''),

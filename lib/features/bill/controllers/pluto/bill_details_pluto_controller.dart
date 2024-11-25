@@ -9,10 +9,10 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../data/models/invoice_record_model.dart';
-import '../../services/bill_pluto/bill_pluto_calculator.dart';
-import '../../services/bill_pluto/bill_pluto_context_menu.dart';
-import '../../services/bill_pluto/bill_pluto_grid_service.dart';
-import '../../services/bill_pluto/bill_pluto_utils.dart';
+import '../../services/pluto/bill_pluto_calculator.dart';
+import '../../services/pluto/bill_pluto_context_menu.dart';
+import '../../services/pluto/bill_pluto_grid_service.dart';
+import '../../services/pluto/bill_pluto_utils.dart';
 
 class BillDetailsPlutoController extends IPlutoController {
   // Services
@@ -30,11 +30,6 @@ class BillDetailsPlutoController extends IPlutoController {
 
   List<PlutoColumn> additionsDiscountsColumns = AppConstants.additionsDiscountsColumns;
 
-  // Invoice details
-  String typeBile = '';
-
-  String customerName = '';
-
   // State managers
   @override
   PlutoGridStateManager mainTableStateManager =
@@ -43,12 +38,6 @@ class BillDetailsPlutoController extends IPlutoController {
   @override
   PlutoGridStateManager additionsDiscountsStateManager =
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
-
-  @override
-  updateVatTotalNotifier(double total) =>
-      WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
-        //vatTotalNotifier.value = total;
-      });
 
   @override
   String calculateAmountFromRatio(double ratio, double total) =>
@@ -129,7 +118,6 @@ class BillDetailsPlutoController extends IPlutoController {
     additionsDiscountsStateManager = event.stateManager;
   }
 
-  //TODO: onMainTableStateManagerChanged
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
     if (mainTableStateManager.currentRow == null) return;
     final String field = event.column.field;
@@ -212,7 +200,6 @@ class BillDetailsPlutoController extends IPlutoController {
 
   void _showDeleteConfirmationDialog(event) => _contextMenu.showDeleteConfirmationDialog(event.rowIdx);
 
-  //TODO: onAdditionsDiscountsChanged
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
     final field = event.column.field;
     final cells = event.row.cells;

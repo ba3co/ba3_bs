@@ -1,5 +1,6 @@
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../bill/data/models/discount_addition_account_model.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class BillTypeModel implements PlutoAdaptable {
@@ -13,6 +14,7 @@ class BillTypeModel implements PlutoAdaptable {
 
   // Using a map to store accounts with Account as the key and AccountModel as the value
   final Map<Account, AccountModel>? accounts;
+  final Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts;
 
   BillTypeModel({
     this.billTypeId,
@@ -23,6 +25,7 @@ class BillTypeModel implements PlutoAdaptable {
     this.billTypeLabel,
     this.color,
     this.accounts,
+    this.discountAdditionAccounts,
   });
 
   factory BillTypeModel.fromJson(Map<String, dynamic> json) {
@@ -40,7 +43,21 @@ class BillTypeModel implements PlutoAdaptable {
         AccountModel accountModel = AccountModel.fromMap(accountModelJson);
         return MapEntry(billAccount, accountModel);
       }),
+      discountAdditionAccounts: _deserializeDiscountAdditionAccounts(json['discountAdditionAccounts']),
     );
+  }
+
+  static Map<Account, List<DiscountAdditionAccountModel>>? _deserializeDiscountAdditionAccounts(
+      Map<String, dynamic>? discountAdditionAccountsJson) {
+    if (discountAdditionAccountsJson == null) return null;
+
+    return discountAdditionAccountsJson.map((billAccountLabel, discountListJson) {
+      Account billAccount = getBillAccountFromLabel(billAccountLabel);
+      List<DiscountAdditionAccountModel> discountList = (discountListJson as List)
+          .map((discountJson) => DiscountAdditionAccountModel.fromJson(discountJson))
+          .toList();
+      return MapEntry(billAccount, discountList);
+    });
   }
 
   Map<String, dynamic> toJson() => {
@@ -53,19 +70,30 @@ class BillTypeModel implements PlutoAdaptable {
         'color': color,
         // Serialize accounts map
         'accounts': accounts?.map((billAccounts, accountModel) => MapEntry(billAccounts.label, accountModel.toMap())),
+
+        'discountAdditionAccounts': _serializeDiscountAdditionAccounts(discountAdditionAccounts),
       };
 
-  BillTypeModel copyWith({
-    String? billTypeId,
-    String? shortName,
-    String? fullName,
-    String? latinShortName,
-    String? latinFullName,
-    String? billTypeLabel,
-    int? color,
-    String? store,
-    Map<Account, AccountModel>? accounts,
-  }) =>
+  Map<String, dynamic>? _serializeDiscountAdditionAccounts(
+      Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts) {
+    if (discountAdditionAccounts == null) return null;
+
+    return discountAdditionAccounts.map((billAccount, discountList) {
+      return MapEntry(billAccount.label, discountList.map((discount) => discount.toJson()).toList());
+    });
+  }
+
+  BillTypeModel copyWith(
+          {String? billTypeId,
+          String? shortName,
+          String? fullName,
+          String? latinShortName,
+          String? latinFullName,
+          String? billTypeLabel,
+          int? color,
+          String? store,
+          Map<Account, AccountModel>? accounts,
+          Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts}) =>
       BillTypeModel(
         billTypeId: billTypeId ?? this.billTypeId,
         shortName: shortName ?? this.shortName,
@@ -75,6 +103,7 @@ class BillTypeModel implements PlutoAdaptable {
         billTypeLabel: billTypeLabel ?? this.billTypeLabel,
         color: color ?? this.color,
         accounts: accounts ?? this.accounts,
+        discountAdditionAccounts: discountAdditionAccounts ?? this.discountAdditionAccounts,
       );
 
   @override

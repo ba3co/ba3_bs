@@ -1,7 +1,11 @@
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
+import '../../../accounts/controllers/accounts_controller.dart';
+import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import 'bill_pluto_utils.dart';
 
@@ -104,4 +108,104 @@ class BillPlutoGridService {
         };
         return PlutoRow(cells: cells);
       }).toList();
+
+  Map<Account, List<DiscountAdditionAccountModel>> collectDiscountsAndAdditions(BillPlutoUtils plutoUtils) {
+    final accounts = <Account, List<DiscountAdditionAccountModel>>{};
+    final accountsController = Get.find<AccountsController>();
+
+    for (final row in additionsDiscountsStateManager.rows) {
+      final discountData = _extractDiscountData(plutoUtils, row);
+      final additionData = _extractAdditionData(plutoUtils, row);
+
+      if (discountData.isValid || additionData.isValid) {
+        final accountName = row.cells[AppConstants.id]?.value ?? '';
+        final accountId = accountsController.getAccountIdByName(accountName);
+
+        if (_isValidAccount(accountName, accountId)) {
+          final accountModel = _createAccountModel(
+            accountName: accountName,
+            accountId: accountId,
+            discountData: discountData,
+            additionData: additionData,
+          );
+
+          _updateAccountsMap(accounts, discountData, additionData, accountModel);
+        }
+      }
+    }
+
+    return accounts;
+  }
+
+// Helper method to extract discount data
+  DiscountData _extractDiscountData(BillPlutoUtils plutoUtils, PlutoRow row) {
+    return DiscountData(
+      percentage: plutoUtils.getCellValueInDouble(row.cells, AppConstants.discountRatio),
+      value: plutoUtils.getCellValueInDouble(row.cells, AppConstants.discount),
+    );
+  }
+
+// Helper method to extract addition data
+  AdditionData _extractAdditionData(BillPlutoUtils plutoUtils, PlutoRow row) {
+    return AdditionData(
+      percentage: plutoUtils.getCellValueInDouble(row.cells, AppConstants.additionRatio),
+      value: plutoUtils.getCellValueInDouble(row.cells, AppConstants.addition),
+    );
+  }
+
+// Helper method to check if account data is valid
+  bool _isValidAccount(String accountName, String accountId) {
+    return accountName.isNotEmpty && accountId.isNotEmpty;
+  }
+
+// Helper method to create the DiscountAdditionAccountModel
+  DiscountAdditionAccountModel _createAccountModel({
+    required String accountName,
+    required String accountId,
+    required DiscountData discountData,
+    required AdditionData additionData,
+  }) {
+    return DiscountAdditionAccountModel(
+      accName: accountName,
+      id: accountId,
+      amount: discountData.isValid ? discountData.value : additionData.value,
+      percentage: discountData.isValid ? discountData.percentage : additionData.percentage,
+    );
+  }
+
+// Helper method to update the accounts map
+  void _updateAccountsMap(
+    Map<Account, List<DiscountAdditionAccountModel>> accounts,
+    DiscountData discountData,
+    AdditionData additionData,
+    DiscountAdditionAccountModel accountModel,
+  ) {
+    final accountType = discountData.isValid ? BillAccounts.discounts : BillAccounts.additions;
+
+    if (accounts.containsKey(accountType)) {
+      accounts[accountType]?.add(accountModel);
+    } else {
+      accounts[accountType] = [accountModel];
+    }
+  }
+}
+
+// Data class for discount data
+class DiscountData {
+  final double percentage;
+  final double value;
+
+  bool get isValid => percentage > 0;
+
+  DiscountData({required this.percentage, required this.value});
+}
+
+// Data class for addition data
+class AdditionData {
+  final double percentage;
+  final double value;
+
+  bool get isValid => percentage > 0;
+
+  AdditionData({required this.percentage, required this.value});
 }

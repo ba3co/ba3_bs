@@ -6,7 +6,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../constants/app_constants.dart';
-import '../helper/enums/enums.dart';
 import '../i_controllers/i_bill_controller.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
@@ -77,7 +76,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       final accountModel = await _openAccountSelectionDialog(stateManager.currentCell?.value);
 
       if (accountModel != null) {
-        _updateSelectedAccount(currentRow, accountModel, billController);
+        // _updateSelectedAccount(currentRow, accountModel, billController);
         _updateCellValue(stateManager, columnField, accountModel.accName);
       } else {
         _resetCellValue(stateManager, columnField);
@@ -93,14 +92,15 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       await Get.find<AccountsController>().openAccountSelectionDialog(query: query);
 
   /// Updates the selected additions or discounts account based on the column field.
-  void _updateSelectedAccount(PlutoRow? currentRow, AccountModel accountModel, IBillController billController) {
-    final String cellAccountValue = currentRow?.cells[AppConstants.id]?.value;
-    if (cellAccountValue.contains('الحسم')) {
-      billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
-    } else {
-      billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
-    }
-  }
+  // void _updateSelectedAccount(PlutoRow? currentRow, AccountModel accountModel, IBillController billController) {
+  //   final Key? cellAccountKey = currentRow?.cells[AppConstants.id]?.key;
+  //
+  //   if (cellAccountKey == const Key(AppConstants.discountAccountKey)) {
+  //     billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
+  //   } else {
+  //     billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
+  //   }
+  // }
 
   /// Updates the value of the current cell.
   void _updateCellValue(PlutoGridStateManager stateManager, String? columnField, String? newValue) {

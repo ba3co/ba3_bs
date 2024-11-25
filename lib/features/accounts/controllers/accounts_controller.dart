@@ -59,10 +59,7 @@ class AccountsController extends GetxController {
   Map<String, AccountModel> mapAccountsByName(String query) {
     final resultMap = <String, AccountModel>{};
     for (var account in searchAccountsByNameOrCode(query)) {
-      resultMap[account.accName!] = AccountModel(
-        id: account.id,
-        accName: account.accName,
-      );
+      resultMap[account.accName!] = AccountModel(id: account.id, accName: account.accName);
     }
     return resultMap;
   }
@@ -70,6 +67,11 @@ class AccountsController extends GetxController {
   String getAccountNameById(String? accountId) {
     if (accountId == null || accountId.isEmpty) return '';
     return accounts.where((account) => account.id == accountId).firstOrNull?.accName ?? '';
+  }
+
+  String getAccountIdByName(String? accountName) {
+    if (accountName == null || accountName.isEmpty) return '';
+    return accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
   }
 
   List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);

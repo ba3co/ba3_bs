@@ -9,10 +9,10 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/utils/app_service_utils.dart';
 import '../../data/models/invoice_record_model.dart';
-import '../../services/bill_pluto/bill_pluto_calculator.dart';
-import '../../services/bill_pluto/bill_pluto_context_menu.dart';
-import '../../services/bill_pluto/bill_pluto_grid_service.dart';
-import '../../services/bill_pluto/bill_pluto_utils.dart';
+import '../../services/pluto/bill_pluto_calculator.dart';
+import '../../services/pluto/bill_pluto_context_menu.dart';
+import '../../services/pluto/bill_pluto_grid_service.dart';
+import '../../services/pluto/bill_pluto_utils.dart';
 
 class AddBillPlutoController extends IPlutoController {
   // Services
@@ -29,11 +29,6 @@ class AddBillPlutoController extends IPlutoController {
   List<PlutoRow> additionsDiscountsRows = AppConstants.additionsDiscountsRows;
 
   List<PlutoColumn> additionsDiscountsColumns = AppConstants.additionsDiscountsColumns;
-
-  // Invoice details
-  String typeBile = '';
-
-  String customerName = '';
 
   // State managers
   @override

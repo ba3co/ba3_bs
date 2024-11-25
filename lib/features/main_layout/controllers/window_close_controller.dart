@@ -23,11 +23,6 @@ class WindowCloseController extends GetxController with WindowListener {
     super.onClose();
   }
 
-  @override
-  void onWindowFocus() {
-    update();
-  }
-
   Future<void> _configureWindowSettings() async {
     await windowManager.setPreventClose(true);
     isWindowClosePrevented.value = true;
@@ -84,7 +79,7 @@ class WindowCloseController extends GetxController with WindowListener {
                               ),
                             ),
                             child: const Text(
-                              'Close',
+                              'Exit',
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -125,7 +120,7 @@ class WindowCloseController extends GetxController with WindowListener {
             onPressed: () {
               Get.back(result: true);
             },
-            child: const Text('Close'),
+            child: const Text('Exit'),
           ),
           cancel: ElevatedButton(
             onPressed: () {
@@ -134,7 +129,7 @@ class WindowCloseController extends GetxController with WindowListener {
             child: const Text('Cancel'),
           ),
         ) ??
-        false;
+        false; // Default return if dismissed
   }
 
   Future<bool> showExitConfirmationDialog() async {

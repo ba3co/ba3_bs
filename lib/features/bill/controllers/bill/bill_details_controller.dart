@@ -124,7 +124,7 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   Future<void> _handleDeleteSuccess([fromBillById]) async {
-    //TODO: only call this fetchBills() if open bill details by bill id from all bills screen
+    // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
       await Get.find<AllBillsController>().fetchBills();
     }
