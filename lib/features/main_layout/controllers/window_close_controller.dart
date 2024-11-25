@@ -23,6 +23,11 @@ class WindowCloseController extends GetxController with WindowListener {
     super.onClose();
   }
 
+  @override
+  void onWindowFocus() {
+    update();
+  }
+
   Future<void> _configureWindowSettings() async {
     await windowManager.setPreventClose(true);
     isWindowClosePrevented.value = true;
@@ -114,22 +119,22 @@ class WindowCloseController extends GetxController with WindowListener {
   }
 
   Future<bool> _showDefaultExitDialog() async {
-    bool? shouldExit = await Get.defaultDialog(
-      content: const Text('Do you really want to quit?'),
-      confirm: ElevatedButton(
-        onPressed: () {
-          Get.back(result: true);
-        },
-        child: const Text('Close'),
-      ),
-      cancel: ElevatedButton(
-        onPressed: () {
-          Get.back(result: false);
-        },
-        child: const Text('Cancel'),
-      ),
-    );
-    return shouldExit ?? false;
+    return await Get.defaultDialog(
+          content: const Text('?Do you really want to quit'),
+          confirm: ElevatedButton(
+            onPressed: () {
+              Get.back(result: true);
+            },
+            child: const Text('Close'),
+          ),
+          cancel: ElevatedButton(
+            onPressed: () {
+              Get.back(result: false);
+            },
+            child: const Text('Cancel'),
+          ),
+        ) ??
+        false;
   }
 
   Future<bool> showExitConfirmationDialog() async {
@@ -150,11 +155,7 @@ class WindowCloseController extends GetxController with WindowListener {
 
       if (shouldClose) {
         await windowManager.destroy(); // Close the window
-      } else {
-        await windowManager.setPreventClose(true); // Re-enable close prevention
       }
-    } else {
-      await windowManager.destroy(); // Close the window without confirmation
     }
   }
 }
