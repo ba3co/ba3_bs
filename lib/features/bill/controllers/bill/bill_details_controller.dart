@@ -222,6 +222,26 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
+  // Future<void> startMultiWindowMode(BillTypeModel billTypeModel,
+  //     {bool fromBillDetails = false, bool fromBillById = false}) async {
+  //   // // Prepare arguments to pass to the new window
+  //   // final args = {
+  //   //   'billTypeModel': billTypeModel.toJson(),
+  //   //   'fromBillDetails': fromBillDetails,
+  //   //   'fromBillById': fromBillById
+  //   // };
+  //   //
+  //   // // Create a new window and pass arguments as JSON
+  //   // final window = await DesktopMultiWindow.createWindow(jsonEncode(args));
+  //   //
+  //   // // Configure and show the new window
+  //   // window
+  //   //   ..setFrame(const Offset(0, 0) & const Size(800, 600))
+  //   //   ..center()
+  //   //   ..setTitle('Another Window')
+  //   //   ..show();
+  // }
+
   void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false, bool fromBillById = false}) {
     Get.put(AddBillController(_billsFirebaseRepoWithResult))
         .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);

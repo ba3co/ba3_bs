@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
 
-import 'core/bindings/bindings.dart';
-import 'core/constants/app_strings.dart';
-import 'core/helper/init_app/app_initializer.dart';
-import 'core/router/app_router.dart';
-import 'core/styling/app_themes.dart';
-import 'core/widgets/app_scroll_behavior.dart';
-
-void main() async {
-  await initializeApp();
-  runApp(const MyApp());
-}
+import '../core/bindings/bindings.dart';
+import '../core/constants/app_strings.dart';
+import '../core/router/app_router.dart';
+import '../core/styling/app_themes.dart';
+import '../core/widgets/app_scroll_behavior.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

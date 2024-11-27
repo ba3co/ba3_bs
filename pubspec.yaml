@@ -11,8 +11,8 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
-  firebase_core: ^3.6.0
-  cloud_firestore: ^5.4.4
+  firebase_core: ^3.8.0
+  cloud_firestore: ^5.5.0
   get: ^4.6.6
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -40,6 +40,8 @@ dependencies:
   mailer: ^6.2.0
   qr_flutter: ^4.1.0
   pdf: ^3.11.1
+  desktop_multi_window: ^0.2.0
+  desktop_lifecycle: ^0.1.1
 
 
 dev_dependencies:

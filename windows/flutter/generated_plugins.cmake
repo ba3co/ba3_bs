@@ -4,6 +4,8 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
+  desktop_lifecycle
+  desktop_multi_window
   firebase_core
   flutter_platform_alert
   screen_retriever

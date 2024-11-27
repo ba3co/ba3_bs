@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -9,7 +8,6 @@ import '../../../bill/ui/screens/bill_layout.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../../materials/ui/screens/materials_layout.dart';
 import '../../../patterns/ui/screens/pattern_layout.dart';
-import '../../controllers/window_close_controller.dart';
 import '../widgets/drawer_list_tile.dart';
 
 class MainScreen extends StatefulWidget {
@@ -34,7 +32,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Get.put(WindowCloseController());
+    // Get.put(WindowCloseController());
     allData = appLayouts.where((element) => checkMainPermission(element.role)).toList();
     tabController = TabController(length: appLayouts.length, vsync: this, initialIndex: tabIndex);
     pageController = PageController();

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/widgets/app_button.dart';
+import '../../../../floating_window/controllers/floating_window_manager.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../../../data/models/bill_model.dart';
@@ -23,6 +24,7 @@ class BillDetailsButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FloatingWindowManager floatingWindowManager = FloatingWindowManager();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Wrap(
@@ -31,66 +33,79 @@ class BillDetailsButtons extends StatelessWidget {
         runSpacing: 20,
         children: [
           AppButton(
-              title: 'جديد',
-              onPressed: () async {
-                billDetailsController.navigateToAddBillScreen(
-                  billModel.billTypeModel,
-                  fromBillDetails: true,
-                  fromBillById: fromBillById,
-                );
-              },
-              iconData: Icons.create_new_folder_outlined),
+            title: 'جديد',
+            onPressed: () {
+              floatingWindowManager.createNewFloatingWindow(
+                context: context,
+                child: const Center(
+                  child: Text(
+                    'New Floating Window Content',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              );
+            },
+            iconData: Icons.create_new_folder_outlined,
+          ),
           AppButton(
-              title: 'السند',
-              onPressed: () async {
-                billDetailsController.createBond(billModel.billTypeModel);
-              },
-              iconData: Icons.file_open_outlined),
+            title: 'السند',
+            onPressed: () async {
+              billDetailsController.createBond(billModel.billTypeModel);
+            },
+            iconData: Icons.file_open_outlined,
+          ),
           AppButton(
-              title: "تعديل",
-              onPressed: () async {
-                billDetailsController.updateBill(billModel: billModel, billTypeModel: billModel.billTypeModel);
-              },
-              iconData: Icons.edit_outlined),
-          ...[
-            AppButton(
-              iconData: Icons.print_outlined,
-              title: 'طباعة',
-              onPressed: () async {
-                billDetailsController.printBill(
-                  billNumber: billModel.billDetails.billNumber!,
-                  invRecords: Get.find<BillDetailsPlutoController>().generateBillRecords,
-                );
-              },
-            ),
-            AppButton(
-                title: 'E-Invoice',
-                onPressed: () {
-                  showEInvoiceDialog(billDetailsController, billModel.billId!);
-                },
-                iconData: Icons.link),
-            AppButton(
-                title: 'Pdf-Email',
-                fontSize: 15,
-                onPressed: () {
-                  billDetailsController.generateAndSendBillPdf(
-                    recipientEmail: AppStrings.recipientEmail,
-                    billModel: billModel,
-                    fileName: AppStrings.bill,
-                    logoSrc: AppAssets.ba3Logo,
-                    fontSrc: AppAssets.notoSansArabicRegular,
-                  );
-                },
-                iconData: Icons.link),
-            AppButton(
-              iconData: Icons.delete_outline,
-              color: Colors.red,
-              title: 'حذف',
-              onPressed: () async {
-                billDetailsController.deleteBill(billModel.billId!, fromBillById: fromBillById);
-              },
-            )
-          ],
+            title: "تعديل",
+            onPressed: () async {
+              billDetailsController.updateBill(
+                billModel: billModel,
+                billTypeModel: billModel.billTypeModel,
+              );
+            },
+            iconData: Icons.edit_outlined,
+          ),
+          AppButton(
+            iconData: Icons.print_outlined,
+            title: 'طباعة',
+            onPressed: () async {
+              billDetailsController.printBill(
+                billNumber: billModel.billDetails.billNumber!,
+                invRecords: Get.find<BillDetailsPlutoController>().generateBillRecords,
+              );
+            },
+          ),
+          AppButton(
+            title: 'E-Invoice',
+            onPressed: () {
+              showEInvoiceDialog(billDetailsController, billModel.billId!);
+            },
+            iconData: Icons.link,
+          ),
+          AppButton(
+            title: 'Pdf-Email',
+            fontSize: 15,
+            onPressed: () {
+              billDetailsController.generateAndSendBillPdf(
+                recipientEmail: AppStrings.recipientEmail,
+                billModel: billModel,
+                fileName: AppStrings.bill,
+                logoSrc: AppAssets.ba3Logo,
+                fontSrc: AppAssets.notoSansArabicRegular,
+              );
+            },
+            iconData: Icons.link,
+          ),
+          AppButton(
+            iconData: Icons.delete_outline,
+            color: Colors.red,
+            title: 'حذف',
+            onPressed: () async {
+              billDetailsController.deleteBill(
+                billModel.billId!,
+                fromBillById: fromBillById,
+              );
+            },
+          ),
         ],
       ),
     );

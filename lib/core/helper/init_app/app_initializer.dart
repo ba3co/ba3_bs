@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/app/my_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';

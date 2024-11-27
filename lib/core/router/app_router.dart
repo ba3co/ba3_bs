@@ -1,10 +1,8 @@
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
-import 'package:ba3_bs/features/bill/ui/screens/add_bill_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_screen.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
-import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_page.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:get/get.dart';
@@ -31,19 +29,19 @@ List<GetPage<dynamic>>? appRouter = [
         final bool fromBillById = Get.arguments as bool;
         return BillDetailsScreen(fromBillById: fromBillById);
       }),
-  GetPage(
-    name: AppRoutes.addBillScreen,
-    page: () {
-      final Map arguments = Get.arguments as Map;
-      final BillTypeModel billTypeModel = arguments['billTypeModel'];
-      final bool fromBillDetails = arguments['fromBillDetails'];
-      final bool fromBillById = arguments['fromBillById'];
-
-      return AddBillScreen(
-        billTypeModel: billTypeModel,
-        fromBillDetails: fromBillDetails,
-        fromBillById: fromBillById,
-      );
-    },
-  )
+  // GetPage(
+  //   name: AppRoutes.addBillScreen,
+  //   page: () {
+  //     final Map arguments = Get.arguments as Map;
+  //     final BillTypeModel billTypeModel = arguments['billTypeModel'];
+  //     final bool fromBillDetails = arguments['fromBillDetails'];
+  //     final bool fromBillById = arguments['fromBillById'];
+  //
+  //     return AddBillScreen(
+  //       billTypeModel: billTypeModel,
+  //       fromBillDetails: fromBillDetails,
+  //       fromBillById: fromBillById,
+  //     );
+  //   },
+  // )
 ];
