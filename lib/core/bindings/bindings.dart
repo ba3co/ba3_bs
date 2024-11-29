@@ -68,6 +68,8 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => translationRepo, fenix: true);
 
+    Get.lazyPut(() => billsFirebaseRepo, fenix: true);
+
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
 
     // Lazy load controllers

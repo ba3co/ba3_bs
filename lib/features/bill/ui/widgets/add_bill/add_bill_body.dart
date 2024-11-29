@@ -42,7 +42,7 @@ class AddBillBody extends StatelessWidget {
               }),
             ),
           ),
-          const VerticalSpace(),
+          const VerticalSpace(5),
           GetBuilder<AddBillPlutoController>(builder: (addBillPlutoController) {
             return Expanded(
               flex: 2,

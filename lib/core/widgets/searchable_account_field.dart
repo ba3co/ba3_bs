@@ -11,6 +11,8 @@ class SearchableAccountField extends StatelessWidget {
   final bool fromAddBill; // Add this parameter to indicate customer account field
   final Function(String text)? onSubmitted;
   final FormFieldValidator<String>? validator;
+  final double? height;
+  final double? width;
 
   const SearchableAccountField({
     super.key,
@@ -20,12 +22,15 @@ class SearchableAccountField extends StatelessWidget {
     this.validator,
     this.isCustomerAccount = false,
     this.fromAddBill = false,
+    this.height,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: Get.width * 0.45,
+      width: width ?? Get.width * 0.45,
+      height: height,
       child: Row(
         children: [
           SizedBox(width: 100, child: Text(label)),

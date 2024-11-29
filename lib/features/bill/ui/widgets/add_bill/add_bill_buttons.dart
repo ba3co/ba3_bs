@@ -19,7 +19,7 @@ class AddBillButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.end,
         spacing: 20,

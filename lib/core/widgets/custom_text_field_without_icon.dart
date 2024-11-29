@@ -13,6 +13,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.inputFormatters,
     this.isNumeric = false,
     this.enabled = true,
+    this.height,
   });
 
   final TextEditingController textEditingController;
@@ -23,6 +24,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final TextInputType? keyboardType;
   final bool isNumeric, enabled;
   final FormFieldValidator<String>? validator;
+  final double? height;
 
   @override
   State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
@@ -60,39 +62,42 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      onChanged: widget.onChanged,
-      validator: widget.validator,
-      enabled: widget.enabled,
-      onFieldSubmitted: widget.onSubmitted,
-      controller: widget.textEditingController,
-      keyboardType: widget.keyboardType,
-      scrollPadding: EdgeInsets.zero,
-      cursorHeight: 15,
-      onTap: () => widget.textEditingController.selection =
-          TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
-      inputFormatters: widget.inputFormatters,
-      decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        border: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.black, // Change the border color
-            width: 2.0, // Change the border width
+    return SizedBox(
+      height: widget.height,
+      child: TextFormField(
+        onChanged: widget.onChanged,
+        validator: widget.validator,
+        enabled: widget.enabled,
+        onFieldSubmitted: widget.onSubmitted,
+        controller: widget.textEditingController,
+        keyboardType: widget.keyboardType,
+        scrollPadding: EdgeInsets.zero,
+        cursorHeight: 15,
+        onTap: () => widget.textEditingController.selection =
+            TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
+        inputFormatters: widget.inputFormatters,
+        decoration: InputDecoration(
+          fillColor: Colors.white,
+          filled: true,
+          border: UnderlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.black, // Change the border color
+              width: 2.0, // Change the border width
+            ),
+            borderRadius: BorderRadius.circular(5.0), // Adjust border radius
           ),
-          borderRadius: BorderRadius.circular(5.0), // Adjust border radius
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.blue, // Change the border color when focused
-            width: 2.0,
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.blue, // Change the border color when focused
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(5.0),
           ),
-          borderRadius: BorderRadius.circular(5.0),
+          contentPadding: const EdgeInsets.symmetric(vertical: 0), // Center the text vertically
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 0), // Center the text vertically
+        textAlign: TextAlign.center,
+        // Center the text horizontally
       ),
-      textAlign: TextAlign.center,
-      // Center the text horizontally
     );
   }
 }

@@ -29,15 +29,15 @@ class AddBillAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leadingWidth: 100,
       centerTitle: true,
-      leading: BackButton(
-        onPressed: () {
-          addBillController.onBackPressed(
-            billTypeId: billTypeModel.billTypeId!,
-            fromBillDetails: fromBillDetails,
-            fromBillById: fromBillById,
-          );
-        },
-      ),
+      // leading: BackButton(
+      //   onPressed: () {
+      //     addBillController.onBackPressed(
+      //       billTypeId: billTypeModel.billTypeId!,
+      //       fromBillDetails: fromBillDetails,
+      //       fromBillById: fromBillById,
+      //     );
+      //   },
+      // ),
       title: Text('${billTypeModel.fullName}'),
       actions: [
         SizedBox(

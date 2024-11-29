@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constants/app_constants.dart';
-
 class AppButton extends StatelessWidget {
   const AppButton(
       {super.key,
@@ -10,6 +8,7 @@ class AppButton extends StatelessWidget {
       required this.iconData,
       this.color,
       this.width = 100,
+      this.height,
       this.fontSize = 16});
 
   final String title;
@@ -17,6 +16,7 @@ class AppButton extends StatelessWidget {
   final IconData iconData;
   final VoidCallback onPressed;
   final double width;
+  final double? height;
   final double fontSize;
 
   @override
@@ -29,7 +29,7 @@ class AppButton extends StatelessWidget {
         onPressed: onPressed,
         child: SizedBox(
           width: width,
-          height: AppConstants.constHeightTextField,
+          height: height ?? 35.0,
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

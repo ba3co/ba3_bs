@@ -40,8 +40,6 @@ dependencies:
   mailer: ^6.2.0
   qr_flutter: ^4.1.0
   pdf: ^3.11.1
-  desktop_multi_window: ^0.2.0
-  desktop_lifecycle: ^0.1.1
 
 
 dev_dependencies:

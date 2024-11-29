@@ -1,3 +1,4 @@
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../helper/enums/enums.dart';
@@ -372,4 +373,7 @@ abstract class AppConstants {
       },
     )
   ];
+
+  static final double bottomWindowWidthRatio = 200 / 1.sw;
+  static final double bottomWindowHeightRatio = 40 / 1.sh;
 }

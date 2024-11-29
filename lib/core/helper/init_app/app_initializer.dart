@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/app/my_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
@@ -18,8 +15,8 @@ Future<void> initializeApp() async {
 Future<void> initializeWindowSettings() async {
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(800, 600),
-    minimumSize: Size(800, 600),
+    size: Size(1000, 600),
+    minimumSize: Size(1000, 600),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -9,12 +11,25 @@ class FloatingWindowManager {
     required Widget child,
   }) {
     FloatingWindowController floatingWindowController = _createNewFloatingWindowController();
-    floatingWindowController.showFloatingWindow(context: context, child: child);
+
+    ({Offset initPosition, Size initializePositionRatio}) position =
+        floatingWindowController.initWindowPositionManager();
+
+    floatingWindowController.showFloatingWindow(
+      context: context,
+      child: child,
+      initPosition: position.initPosition,
+      initializePositionRatio: position.initializePositionRatio,
+    );
   }
 
   FloatingWindowController _createNewFloatingWindowController() {
-    // Create a new instance of FloatingWindowController every time
+    if (Get.isRegistered<FloatingWindowController>()) {
+      return Get.find<FloatingWindowController>();
+    }
+    log('create FloatingWindowController');
     Get.create(() => FloatingWindowController(), permanent: false);
+    log('find FloatingWindowController');
     return Get.find<FloatingWindowController>();
   }
 }

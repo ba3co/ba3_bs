@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../floating_window/controllers/floating_window_manager.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../../../data/models/bill_model.dart';
@@ -24,7 +23,6 @@ class BillDetailsButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FloatingWindowManager floatingWindowManager = FloatingWindowManager();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Wrap(
@@ -35,14 +33,11 @@ class BillDetailsButtons extends StatelessWidget {
           AppButton(
             title: 'جديد',
             onPressed: () {
-              floatingWindowManager.createNewFloatingWindow(
-                context: context,
-                child: const Center(
-                  child: Text(
-                    'New Floating Window Content',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              billDetailsController.createNewFloatingAddBillScreen(
+                billModel.billTypeModel,
+                context,
+                fromBillDetails: true,
+                fromBillById: fromBillById,
               );
             },
             iconData: Icons.create_new_folder_outlined,

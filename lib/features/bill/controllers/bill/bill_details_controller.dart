@@ -15,11 +15,13 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../floating_window/controllers/floating_window_manager.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
+import '../../ui/screens/add_bill_screen.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController with AppValidator implements IStoreSelectionHandler {
@@ -222,32 +224,30 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
-  // Future<void> startMultiWindowMode(BillTypeModel billTypeModel,
-  //     {bool fromBillDetails = false, bool fromBillById = false}) async {
-  //   // // Prepare arguments to pass to the new window
-  //   // final args = {
-  //   //   'billTypeModel': billTypeModel.toJson(),
-  //   //   'fromBillDetails': fromBillDetails,
-  //   //   'fromBillById': fromBillById
-  //   // };
-  //   //
-  //   // // Create a new window and pass arguments as JSON
-  //   // final window = await DesktopMultiWindow.createWindow(jsonEncode(args));
-  //   //
-  //   // // Configure and show the new window
-  //   // window
-  //   //   ..setFrame(const Offset(0, 0) & const Size(800, 600))
-  //   //   ..center()
-  //   //   ..setTitle('Another Window')
-  //   //   ..show();
-  // }
-
   void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false, bool fromBillById = false}) {
     Get.put(AddBillController(_billsFirebaseRepoWithResult))
         .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
 
     Get.toNamed(AppRoutes.addBillScreen,
         arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
+  }
+
+  void createNewFloatingAddBillScreen(
+    BillTypeModel billTypeModel,
+    BuildContext context, {
+    bool fromBillDetails = false,
+    bool fromBillById = false,
+  }) {
+    FloatingWindowManager floatingWindowManager = FloatingWindowManager();
+
+    floatingWindowManager.createNewFloatingWindow(
+      context: context,
+      child: AddBillScreen(
+        billTypeModel: billTypeModel,
+        fromBillDetails: fromBillDetails,
+        fromBillById: fromBillById,
+      ),
+    );
   }
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>

@@ -315,7 +315,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
     }
   }
 
-  initCustomerAccount(AccountModel? account) {
+  void initCustomerAccount(AccountModel? account) {
     if (account != null) {
       selectedCustomerAccount = account;
       customerAccountController.text = account.accName!;
