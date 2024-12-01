@@ -19,48 +19,46 @@ class AddBillBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final addBillController = Get.find<AddBillController>();
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: GetBuilder<AddBillPlutoController>(builder: (controller) {
-                return FocusScope(
-                  autofocus: true,
-                  child: PlutoWithEdite(
-                    columns: controller.mainTableColumns,
-                    rows: controller.mainTableRows,
-                    onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
-                    onChanged: controller.onMainTableStateManagerChanged,
-                    onLoaded: controller.onMainTableLoaded,
-                    shortCut: customPlutoShortcut(GetProductByEnterAction(controller)),
-                    evenRowColor: Color(billTypeModel.color!),
-                  ),
-                );
-              }),
-            ),
+    return Column(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: GetBuilder<AddBillPlutoController>(builder: (controller) {
+              return FocusScope(
+                autofocus: true,
+                child: PlutoWithEdite(
+                  columns: controller.mainTableColumns,
+                  rows: controller.mainTableRows,
+                  onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
+                  onChanged: controller.onMainTableStateManagerChanged,
+                  onLoaded: controller.onMainTableLoaded,
+                  shortCut: customPlutoShortcut(GetProductByEnterAction(controller)),
+                  evenRowColor: Color(billTypeModel.color!),
+                ),
+              );
+            }),
           ),
-          const VerticalSpace(5),
-          GetBuilder<AddBillPlutoController>(builder: (addBillPlutoController) {
-            return Expanded(
-              flex: 2,
-              child: BillGridWidget(
-                rowColor: Colors.grey,
-                columns: addBillPlutoController.additionsDiscountsColumns,
-                rows: addBillPlutoController.additionsDiscountsRows,
-                onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
-                onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
-                shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                  plutoController: addBillPlutoController,
-                  billController: addBillController,
-                )),
-              ),
-            );
-          }),
-        ],
-      ),
+        ),
+        const VerticalSpace(5),
+        GetBuilder<AddBillPlutoController>(builder: (addBillPlutoController) {
+          return Expanded(
+            flex: 1,
+            child: BillGridWidget(
+              rowColor: Colors.grey,
+              columns: addBillPlutoController.additionsDiscountsColumns,
+              rows: addBillPlutoController.additionsDiscountsRows,
+              onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
+              onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
+              shortCut: customPlutoShortcut(GetAccountsByEnterAction(
+                plutoController: addBillPlutoController,
+                billController: addBillController,
+              )),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

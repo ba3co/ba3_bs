@@ -10,43 +10,38 @@ class AddBillCalculations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AddBillPlutoController>(
-      builder: (controller) => SizedBox(
-        width: Get.width,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            CalculationCard(
-              width: .09.sw,
-              height: .07.sh,
-              color: Colors.blueGrey.shade400,
-              value: controller.computeTotalVat.toStringAsFixed(2),
-              label: 'القيمة المضافة',
-            ),
-            CalculationCard(
-              width: .09.sw,
-              height: .07.sh,
-              color: Colors.blueGrey.shade400,
-              value: controller.computeBeforeVatTotal.toStringAsFixed(2),
-              label: 'المجموع قبل الضريبة',
-            ),
-            CalculationCard(
-              width: .09.sw,
-              height: .07.sh,
-              color: Colors.grey.shade600,
-              value: controller.computeWithVatTotal.toStringAsFixed(2),
-              label: 'النهائي الجزئي',
-            ),
-            CalculationCard(
-              width: .12.sw,
-              height: .07.sh,
-              color: Colors.blue,
-              value: controller.calculateFinalTotal.toStringAsFixed(2),
-              label: 'النهائي',
-            ),
-          ],
-        ),
-      ),
-    );
+    return GetBuilder<AddBillPlutoController>(builder: (controller) {
+      return Wrap(
+        crossAxisAlignment: WrapCrossAlignment.end,
+        alignment: WrapAlignment.end,
+        runSpacing: 10.0,
+        children: [
+          CalculationCard(
+            width: 50.0.w,
+            color: Colors.blueGrey.shade400,
+            value: controller.computeTotalVat.toStringAsFixed(2),
+            label: 'القيمة المضافة',
+          ),
+          CalculationCard(
+            width: 50.0.w,
+            color: Colors.blueGrey.shade400,
+            value: controller.computeBeforeVatTotal.toStringAsFixed(2),
+            label: 'المجموع قبل الضريبة',
+          ),
+          CalculationCard(
+            width: 50.0.w,
+            color: Colors.grey.shade600,
+            value: controller.computeWithVatTotal.toStringAsFixed(2),
+            label: 'النهائي الجزئي',
+          ),
+          CalculationCard(
+            width: 50.0.w,
+            color: Colors.blue,
+            value: controller.calculateFinalTotal.toStringAsFixed(2),
+            label: 'النهائي',
+          ),
+        ],
+      );
+    });
   }
 }

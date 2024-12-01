@@ -21,7 +21,7 @@ class AddBillButtons extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end,
+        crossAxisAlignment: WrapCrossAlignment.start,
         spacing: 20,
         runSpacing: 20,
         children: [

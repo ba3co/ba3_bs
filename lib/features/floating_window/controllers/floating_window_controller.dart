@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/floating_window/controllers/window_position_manager.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ class FloatingWindowController extends GetxController {
   FloatingWindowController() {
     log('call FloatingWindowController constructor');
     _initializeWindow();
-//    windowPositionManager.windowPositions.clear();
   }
 
   late double x, y, width, height;
@@ -27,9 +27,9 @@ class FloatingWindowController extends GetxController {
 
   final GlobalKey floatingWindowKey = GlobalKey();
 
-  Timer? resizeDebounceTimer;
+  Timer? _resizeDebounceTimer;
 
-  Timer? updateForParentSizeChangeDebounceTimer;
+  Timer? _windowSizeChangeDebounceTimer;
 
   Offset? resizeStartPosition;
 
@@ -37,15 +37,12 @@ class FloatingWindowController extends GetxController {
 
   var mouseCursor = SystemMouseCursors.basic.obs;
 
-  final double bottomWindowWidth = 200;
-  final double bottomWindowHeight = 40;
+  double bottomWindowWidthRatio = AppConstants.bottomWindowWidth / AppConstants.deviceFullWidth;
 
-  double bottomWindowWidthRatio = 200 / 1.sw;
-
-  double bottomWindowHeightRatio = 40 / 1.sh;
+  double bottomWindowHeightRatio = AppConstants.bottomWindowHeight / AppConstants.deviceFullHeight;
 
   // New State to Handle Minimized State
-  bool isHiddenToBottom = false;
+  bool isMinimized = false;
 
   void _initializeWindow() {
     width = 0.7.sw;
@@ -57,78 +54,29 @@ class FloatingWindowController extends GetxController {
     parentSize.value = Size(1.sw, 1.sh);
   }
 
-  ({Offset initPosition, Size initializePositionRatio}) initWindowPositionManager() {
-    log('parentSize.value.width ${parentSize.value.width}');
-    log(' parentSize.value.height ${parentSize.value.height}');
+  Offset initWindowPositionManager() {
+    final double windowWidth = bottomWindowWidthRatio * parentSize.value.width; // Width for the minimized container
+    final double windowHeight = bottomWindowHeightRatio * parentSize.value.height; // Height for the minimized container
 
-    final initPosition =
-        windowPositionManager.getNextWindowPositionRatio(200.0, 40.0, parentSize.value.width, parentSize.value.height);
+    final targetPositionRatio = windowPositionManager.getNextWindowPositionRatio(
+        windowWidth, windowHeight, parentSize.value.width, parentSize.value.height);
 
-    log('initPosition dx ${initPosition.dx}');
-    log('initPosition dy ${initPosition.dy}');
-    final initializePositionRatio = calculateInitializePositionRatio(initPosition);
-
-    return (initPosition: initPosition, initializePositionRatio: initializePositionRatio);
+    return targetPositionRatio;
   }
 
-  Size calculateInitializePositionRatio(Offset initialPosition) {
-    final differenceWidth = initialPosition.dx;
-    final differenceHeight = parentSize.value.height - initialPosition.dy;
+  void updateWindowForSizeChange({
+    required Size newParentSize,
+    required Offset positionRatio,
+  }) {
+    // Cancel the previous timer if it exists
+    _windowSizeChangeDebounceTimer?.cancel();
 
-    log('differenceHeight width on calculateInitializePositionRatio: $differenceWidth');
-    log('differenceWidth height on calculateInitializePositionRatio: $differenceHeight');
-
-    // Calculate and store the initial position ratio
-    return Size(
-      differenceWidth,
-      differenceHeight,
-    );
-  }
-
-  void updateForParentSizeChange(Size newParentSize, {required Offset positionRatio, required Size difference}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!isHiddenToBottom) {
-        width = newParentSize.width * 0.7;
-        height = newParentSize.height * 0.8;
-
-        x = (newParentSize.width - width) / 2;
-        y = (newParentSize.height - height) / 2;
+    // Start a new timer
+    _windowSizeChangeDebounceTimer = Timer(const Duration(milliseconds: 80), () {
+      if (isMinimized) {
+        _updateMinimizedState(newParentSize, positionRatio);
       } else {
-        width = bottomWindowWidthRatio * newParentSize.width; // Width for the minimized container
-        height = bottomWindowHeightRatio * newParentSize.height; // Height for the minimized container
-
-        x = positionRatio.dx * newParentSize.width;
-        y = positionRatio.dy * newParentSize.height;
-
-        // if (width < 130) {
-        //   double increasedWidthNeeded = 130 - width;
-        //   width = increasedWidthNeeded + width;
-        //   // x = x + increasedWidthNeeded;
-        // }
-        log('bottomWindowWidthRatio');
-        log('width $width');
-        log('height $height');
-        // Calculate the position based on the original ratio
-        // x = initializePositionRatio.width;
-        // y = newParentSize.height - initializePositionRatio.height;
-
-        // // Handle horizontal overflow
-        // if (x + width > newParentSize.width) {
-        //   x = 10;
-        //   y = y - height - 20;
-        //
-        //   // Handle vertical overflow
-        //   if (y < 0) y = newParentSize.height - height - 20;
-        // }
-
-        log('newParentSize width on updateForParentSizeChange: ${newParentSize.width}');
-        log('newParentSize height on updateForParentSizeChange: ${newParentSize.height}');
-
-        log('positionRatio dx on updateForParentSizeChange: ${positionRatio.dx}');
-        log('positionRatio dy on updateForParentSizeChange: ${positionRatio.dy}');
-
-        log('x position on updateForParentSizeChange: $x');
-        log('y position on updateForParentSizeChange: $y');
+        _updateMaximizedState(newParentSize);
       }
 
       // Update the parent size and refresh the UI
@@ -137,8 +85,27 @@ class FloatingWindowController extends GetxController {
     });
   }
 
+  void _updateMaximizedState(Size newParentSize) {
+    width = newParentSize.width * 0.7;
+    height = newParentSize.height * 0.8;
+
+    x = (newParentSize.width - width) / 2;
+    y = (newParentSize.height - height) / 2;
+  }
+
+  void _updateMinimizedState(Size newParentSize, Offset positionRatio) {
+    width = bottomWindowWidthRatio * newParentSize.width; // Width for the minimized container
+    height = bottomWindowHeightRatio * newParentSize.height; // Height for the minimized container
+
+    x = positionRatio.dx * newParentSize.width;
+    y = positionRatio.dy * newParentSize.height;
+
+    log('newParentSize width on updateForParentSizeChange: ${newParentSize.width}');
+    log('newParentSize height on updateForParentSizeChange: ${newParentSize.height}');
+  }
+
   /// Resize to 95% of the parent container
-  void resizeToMax() {
+  void maximize() {
     width = parentSize.value.width * 0.95;
     height = parentSize.value.height * 0.95;
 
@@ -161,16 +128,11 @@ class FloatingWindowController extends GetxController {
     update();
   }
 
-  void hideToBottom(Offset position) {
-    isHiddenToBottom = true;
-    width = 200.0; // Width for the minimized container
-    height = 40.0; // Height for the minimized container
+  void minimize(Offset position) {
+    isMinimized = true;
 
     width = bottomWindowWidthRatio * parentSize.value.width; // Width for the minimized container
     height = bottomWindowHeightRatio * parentSize.value.height; // Height for the minimized container
-
-    log('dx position on hideToBottom: ${position.dx}');
-    log('dy position on hideToBottom: ${position.dy}');
 
     x = position.dx * parentSize.value.width;
     y = position.dy * parentSize.value.height;
@@ -178,26 +140,20 @@ class FloatingWindowController extends GetxController {
     update();
   }
 
-  void restoreFromBottom() {
-    isHiddenToBottom = false;
+  void restoreWindowFromMinimized() {
+    isMinimized = false;
     _initializeWindow();
     update();
   }
 
-  void restoreFromBottomToMax() {
-    isHiddenToBottom = false;
-    resizeToMax();
+  void maximizeWindowFromMinimized() {
+    isMinimized = false;
+    maximize();
     update();
   }
 
-  void showFloatingWindow(
-      {required BuildContext context,
-      required Widget child,
-      required Offset initPosition,
-      required Size initializePositionRatio}) {
-    log('dx position on showFloatingWindow: ${initPosition.dx}');
-    log('dy position on showFloatingWindow: ${initPosition.dy}');
-
+  void displayFloatingWindow(
+      {required BuildContext context, required Widget child, required Offset targetPositionRatio}) {
     final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
 
@@ -206,11 +162,10 @@ class FloatingWindowController extends GetxController {
         return DraggableFloatingWindow(
           onClose: () {
             overlayEntry.remove();
-            windowPositionManager.removeWindowPosition(initPosition);
+            windowPositionManager.removeWindowPosition(targetPositionRatio);
           },
-          initPosition: initPosition,
-          initializePositionRatio: initializePositionRatio,
-          child: child,
+          targetPositionRatio: targetPositionRatio,
+          floatingWindowContent: child,
         );
       },
     );
@@ -237,8 +192,8 @@ class FloatingWindowController extends GetxController {
     update();
 
     // Debounced constraints enforcement
-    resizeDebounceTimer?.cancel();
-    resizeDebounceTimer = Timer(const Duration(milliseconds: 100), () {
+    _resizeDebounceTimer?.cancel();
+    _resizeDebounceTimer = Timer(const Duration(milliseconds: 100), () {
       _applyConstraints(screenWidth, screenHeight);
       update();
     });
@@ -314,21 +269,13 @@ class FloatingWindowController extends GetxController {
   }
 
   void _updateCursor(Offset position) {
-    if (_isOnTopLeftCorner(position)) {
+    if (_isOnTopLeftCorner(position) || _isOnBottomRightCorner(position)) {
       mouseCursor.value = SystemMouseCursors.resizeUpLeftDownRight;
-    } else if (_isOnTopRightCorner(position)) {
+    } else if (_isOnTopRightCorner(position) || _isOnBottomLeftCorner(position)) {
       mouseCursor.value = SystemMouseCursors.resizeUpRightDownLeft;
-    } else if (_isOnBottomLeftCorner(position)) {
-      mouseCursor.value = SystemMouseCursors.resizeUpRightDownLeft;
-    } else if (_isOnBottomRightCorner(position)) {
-      mouseCursor.value = SystemMouseCursors.resizeUpLeftDownRight;
-    } else if (_isOnRightEdge(position)) {
+    } else if (_isOnLeftEdge(position) || _isOnRightEdge(position)) {
       mouseCursor.value = SystemMouseCursors.resizeLeftRight;
-    } else if (_isOnBottomEdge(position)) {
-      mouseCursor.value = SystemMouseCursors.resizeUpDown;
-    } else if (_isOnLeftEdge(position)) {
-      mouseCursor.value = SystemMouseCursors.resizeLeftRight;
-    } else if (_isOnTopEdge(position)) {
+    } else if (_isOnTopEdge(position) || _isOnBottomEdge(position)) {
       mouseCursor.value = SystemMouseCursors.resizeUpDown;
     } else {
       mouseCursor.value = SystemMouseCursors.move;

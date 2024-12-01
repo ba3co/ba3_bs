@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,17 +9,11 @@ import '../controllers/floating_window_controller.dart';
 
 class DraggableFloatingWindow extends StatelessWidget {
   final VoidCallback onClose;
-  final Widget child;
-  final Offset initPosition;
-  final Size initializePositionRatio;
+  final Offset targetPositionRatio;
+  final Widget floatingWindowContent;
 
-  const DraggableFloatingWindow({
-    super.key,
-    required this.onClose,
-    required this.child,
-    required this.initPosition,
-    required this.initializePositionRatio,
-  });
+  const DraggableFloatingWindow(
+      {super.key, required this.onClose, required this.floatingWindowContent, required this.targetPositionRatio});
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +24,14 @@ class DraggableFloatingWindow extends StatelessWidget {
             final newParentSize = Size(constraints.maxWidth, constraints.maxHeight);
 
             if (controller.parentSize.value != newParentSize) {
-              controller.updateForParentSizeChange(newParentSize,
-                  positionRatio: initPosition, difference: initializePositionRatio);
+              log('controller.parentSize.value != newParentSize');
+              controller.updateWindowForSizeChange(newParentSize: newParentSize, positionRatio: targetPositionRatio);
             }
 
             return GestureDetector(
-              onPanUpdate: controller.isHiddenToBottom ? null : controller.onPanUpdate,
-              onPanStart: controller.isHiddenToBottom ? null : controller.onPanStart,
-              onPanEnd: controller.isHiddenToBottom ? null : controller.onPanEnd,
+              onPanUpdate: controller.isMinimized ? null : controller.onPanUpdate,
+              onPanStart: controller.isMinimized ? null : controller.onPanStart,
+              onPanEnd: controller.isMinimized ? null : controller.onPanEnd,
               child: Stack(
                 children: [
                   Positioned(
@@ -43,35 +39,30 @@ class DraggableFloatingWindow extends StatelessWidget {
                     top: controller.y,
                     child: Obx(() {
                       return MouseRegion(
-                        onHover: controller.isHiddenToBottom ? null : controller.onHover,
+                        onHover: controller.isMinimized ? null : controller.onHover,
                         cursor: controller.mouseCursor.value,
                         child: Material(
                           key: controller.floatingWindowKey,
                           elevation: 8,
                           borderRadius: BorderRadius.circular(12),
-                          child: AnimatedContainer(
+                          child: Container(
                             width: controller.width,
                             height: controller.height,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: controller.isHiddenToBottom
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                            child: controller.isMinimized
                                 ? Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       Expanded(
                                         child: IconButton(
                                           icon: Icon(Icons.keyboard_arrow_up, size: .026.sh),
-                                          onPressed: controller.restoreFromBottom,
+                                          onPressed: controller.restoreWindowFromMinimized,
                                         ),
                                       ),
                                       Expanded(
                                         child: IconButton(
                                           icon: Icon(Icons.fullscreen, size: .026.sh),
-                                          onPressed: controller.restoreFromBottomToMax,
+                                          onPressed: controller.maximizeWindowFromMinimized,
                                         ),
                                       ),
                                       Expanded(
@@ -85,7 +76,7 @@ class DraggableFloatingWindow extends StatelessWidget {
                                 : Column(
                                     children: [
                                       Container(
-                                        height: 40.0,
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
                                         decoration: const BoxDecoration(
                                           color: Color(0xFF2C2C2E),
                                           borderRadius: BorderRadius.only(
@@ -108,7 +99,7 @@ class DraggableFloatingWindow extends StatelessWidget {
                                             const HorizontalSpace(),
                                             InkWell(
                                               onTap: () {
-                                                controller.hideToBottom(initPosition);
+                                                controller.minimize(targetPositionRatio);
                                               },
                                               child: const CircleAvatar(
                                                 backgroundColor: Color(0xFFFFBD44),
@@ -118,7 +109,7 @@ class DraggableFloatingWindow extends StatelessWidget {
                                             ),
                                             const HorizontalSpace(),
                                             InkWell(
-                                              onTap: controller.resizeToMax,
+                                              onTap: controller.maximize,
                                               child: const CircleAvatar(
                                                 backgroundColor: Color(0xFF00CA4E),
                                                 radius: 7,
@@ -128,7 +119,7 @@ class DraggableFloatingWindow extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      Expanded(child: child),
+                                      Expanded(child: floatingWindowContent), // This stays as it is.
                                     ],
                                   ),
                           ),

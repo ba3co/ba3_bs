@@ -15,7 +15,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../../floating_window/controllers/floating_window_manager.dart';
+import '../../../floating_window/services/floating_window_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
@@ -238,9 +238,7 @@ class BillDetailsController extends IBillController with AppValidator implements
     bool fromBillDetails = false,
     bool fromBillById = false,
   }) {
-    FloatingWindowManager floatingWindowManager = FloatingWindowManager();
-
-    floatingWindowManager.createNewFloatingWindow(
+    FloatingWindowService.launchFloatingWindow(
       context: context,
       child: AddBillScreen(
         billTypeModel: billTypeModel,

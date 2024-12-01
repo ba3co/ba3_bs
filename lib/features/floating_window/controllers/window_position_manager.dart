@@ -2,6 +2,11 @@ import 'dart:developer';
 import 'dart:ui';
 
 class WindowPositionManager {
+  static const double verticalPadding = 10.0; // Padding to vertical space
+  static const double horizontalPadding = 10.0; // Padding to horizontal space
+
+  static const double horizontalBoundaryPadding = 20.0; // Padding to prevent horizontal overflow
+
   // Singleton implementation
   WindowPositionManager._();
 
@@ -22,8 +27,8 @@ class WindowPositionManager {
 
       // Initial position as ratio
       final ratio = Offset(
-        10 / parentWidth,
-        (parentHeight - windowHeight - 20) / parentHeight,
+        horizontalPadding / parentWidth,
+        (parentHeight - windowHeight - verticalPadding) / parentHeight,
       );
 
       windowPositionRatios.add(ratio);
@@ -40,15 +45,15 @@ class WindowPositionManager {
     );
 
     // Calculate the new position
-    double x = lastWindowPosition.dx + windowWidth + 10;
+    double x = lastWindowPosition.dx + windowWidth + horizontalPadding;
 
     // Handle horizontal overflow
-    if (x + windowWidth > parentWidth) {
-      x = 10;
-      double y = lastWindowPosition.dy - windowHeight - 20;
+    if (x + windowWidth + horizontalBoundaryPadding > parentWidth) {
+      x = horizontalPadding;
+      double y = lastWindowPosition.dy - windowHeight - verticalPadding;
 
       // Handle vertical overflow
-      if (y < 0) y = parentHeight - windowHeight - 20;
+      if (y < 0) y = parentHeight - windowHeight - verticalPadding;
 
       // Convert new absolute position to ratio
       final newRatio = Offset(

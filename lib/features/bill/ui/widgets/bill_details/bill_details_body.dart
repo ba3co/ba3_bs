@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -23,7 +22,7 @@ class BillDetailsBody extends StatelessWidget {
     final billDetailsController = Get.find<BillDetailsController>();
     return SizedBox(
       width: 1.0.sw,
-      height: 1.0.sh,
+      height: .56.sh,
       child: Column(
         children: [
           Expanded(
@@ -49,7 +48,7 @@ class BillDetailsBody extends StatelessWidget {
           const VerticalSpace(),
           GetBuilder<BillDetailsPlutoController>(builder: (billDetailsPlutoController) {
             return Expanded(
-              flex: 2,
+              flex: 1,
               child: BillGridWidget(
                 rowColor: Colors.grey,
                 columns: billDetailsPlutoController.additionsDiscountsColumns,
