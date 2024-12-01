@@ -22,22 +22,24 @@ class CalculationCard extends StatelessWidget {
     return Container(
       color: color,
       width: width,
-      height: height ?? .08.sh,
+      height: height ?? 100.h,
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.symmetric(horizontal: 8),
-      child: FittedBox(
-        child: Column(
-          children: [
-            Text(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
               value,
               style: const TextStyle(fontSize: 30, color: Colors.white),
             ),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
+          ),
+          const Spacer(),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
       ),
     );
   }

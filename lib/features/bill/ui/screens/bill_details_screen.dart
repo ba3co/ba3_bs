@@ -28,8 +28,9 @@ class BillDetailsScreen extends StatelessWidget {
                   billDetailsController: billDetailsController,
                   billSearchController: billSearchController,
                 ),
-                body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                body: ListView(
+                  shrinkWrap: true,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
                     const VerticalSpace(20),

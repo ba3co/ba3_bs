@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
@@ -19,7 +21,9 @@ class BillDetailsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final billDetailsController = Get.find<BillDetailsController>();
-    return Expanded(
+    return SizedBox(
+      width: 1.0.sw,
+      height: 1.0.sh,
       child: Column(
         children: [
           Expanded(

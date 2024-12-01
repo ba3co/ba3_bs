@@ -21,7 +21,7 @@ class BillLayout extends StatelessWidget {
                   padding: const EdgeInsets.all(15.0),
                   children: [
                     AllBillsTypesList(allBillsController: controller),
-                    const VerticalSpace(30),
+                    const VerticalSpace(20),
                     DisplayAllBillsButton(
                       onTap: () {
                         controller

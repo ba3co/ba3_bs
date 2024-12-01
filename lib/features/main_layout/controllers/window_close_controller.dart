@@ -13,6 +13,7 @@ class WindowCloseController extends GetxController with WindowListener {
   @override
   void onInit() {
     super.onInit();
+
     windowManager.addListener(this);
     _configureWindowSettings();
   }

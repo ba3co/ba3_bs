@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/styling/app_colors.dart';
@@ -34,7 +37,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    Get.put(WindowCloseController());
+    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS)) {
+      Get.put(WindowCloseController());
+
+
+    } else {
+
+    }
     allData = appLayouts.where((element) => checkMainPermission(element.role)).toList();
     tabController = TabController(length: appLayouts.length, vsync: this, initialIndex: tabIndex);
     pageController = PageController();
@@ -42,70 +51,72 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColors.backGroundColor,
-        body: Row(
-          children: [
-            Container(
-                width: 250,
-                color: Colors.blue,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: TabContainer(
-                        textDirection: TextDirection.rtl,
-                        controller: tabController,
-                        tabEdge: TabEdge.right,
-                        tabsEnd: 1,
-                        tabsStart: 0,
-                        tabMaxLength: 60,
-                        tabExtent: 250,
-                        borderRadius: BorderRadius.circular(0),
-                        tabBorderRadius: BorderRadius.circular(20),
-                        childPadding: const EdgeInsets.all(0.0),
-                        selectedTextStyle: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.0,
+    return SafeArea(
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: AppColors.backGroundColor,
+          body: Row(
+            children: [
+              Container(
+                  width:  0.3.sw ,
+                  color: Colors.blue,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: TabContainer(
+                          textDirection: TextDirection.rtl,
+                          controller: tabController,
+                          tabEdge: TabEdge.right,
+                          tabsEnd: 1,
+                          tabsStart: 0,
+                          tabMaxLength: 60,
+                          tabExtent: 0.3.sw,
+                          borderRadius: BorderRadius.circular(0),
+                          tabBorderRadius: BorderRadius.circular(20),
+                          childPadding: const EdgeInsets.all(0.0),
+                          selectedTextStyle: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 15.0,
+                          ),
+                          unselectedTextStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.0,
+                          ),
+                          colors: List.generate(appLayouts.length, (index) => AppColors.backGroundColor),
+                          tabs: List.generate(
+                            appLayouts.length,
+                            (index) {
+                              return DrawerListTile(
+                                index: index,
+                                title: appLayouts[index].name,
+                                press: () {
+                                  tabController.animateTo(index);
+                                  tabIndex = index;
+                                  setState(() {});
+                                },
+                              );
+                            },
+                          ),
+                          children: List.generate(
+                            appLayouts.length,
+                            (index) => const SizedBox(width: 1),
+                          ),
                         ),
-                        unselectedTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.0,
-                        ),
-                        colors: List.generate(appLayouts.length, (index) => AppColors.backGroundColor),
-                        tabs: List.generate(
-                          appLayouts.length,
-                          (index) {
-                            return DrawerListTile(
-                              index: index,
-                              title: appLayouts[index].name,
-                              press: () {
-                                tabController.animateTo(index);
-                                tabIndex = index;
-                                setState(() {});
-                              },
-                            );
-                          },
-                        ),
-                        children: List.generate(
-                          appLayouts.length,
-                          (index) => const SizedBox(width: 1),
-                        ),
-                      ),
-                    )
-                  ],
-                )),
-            Expanded(
-              child: Column(children: [
-                Expanded(
-                    child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: appLayouts[tabIndex].layout,
-                ))
-              ]),
-            )
-          ],
+                      )
+                    ],
+                  )),
+              Expanded(
+                child: Column(children: [
+                  Expanded(
+                      child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: appLayouts[tabIndex].layout,
+                  ))
+                ]),
+              )
+            ],
+          ),
         ),
       ),
     );

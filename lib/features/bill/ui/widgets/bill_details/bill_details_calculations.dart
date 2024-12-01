@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/pluto/bill_details_pluto_controller.dart';
@@ -18,25 +20,25 @@ class BillDetailsCalculations extends StatelessWidget {
           runSpacing: 10.0,
           children: [
             CalculationCard(
-              width: 150,
+              width: 65.0.w,
               color: Colors.blueGrey.shade400,
               value: controller.computeTotalVat.toStringAsFixed(2),
               label: 'القيمة المضافة',
             ),
             CalculationCard(
-              width: 150,
+              width: 65.0.w,
               color: Colors.blueGrey.shade400,
               value: controller.computeBeforeVatTotal.toStringAsFixed(2),
               label: 'المجموع قبل الضريبة',
             ),
             CalculationCard(
-              width: 150,
+              width: 65.0.w,
               color: Colors.grey.shade600,
               value: controller.computeWithVatTotal.toStringAsFixed(2),
               label: 'النهائي الجزئي',
             ),
             CalculationCard(
-              width: 300,
+              width: 100.0.w,
               color: Colors.blue,
               value: controller.calculateFinalTotal.toStringAsFixed(2),
               label: 'النهائي',

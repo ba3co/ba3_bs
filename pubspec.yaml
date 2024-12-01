@@ -33,7 +33,7 @@ dependencies:
   tab_container: ^3.5.3
   math_expressions: ^2.6.0
   image: ^4.3.0
-  print_bluetooth_thermal: ^1.1.1
+  print_bluetooth_thermal: ^1.1.4
   esc_pos_utils_plus: ^2.0.4
   http: ^1.2.2
   path_provider: ^2.1.5

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import '../../features/bond/ui/screens/entry_bond_details_view.dart';
 import '../../features/login/ui/screens/login_screen.dart';
 import '../../features/patterns/ui/screens/all_pattern_page.dart';
+import '../bindings/middlewares.dart';
 import 'app_routes.dart';
 
 List<GetPage<dynamic>>? appRouter = [
@@ -22,9 +23,11 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.entryBondDetailsView, page: () => const EntryBondDetailsView()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
-  GetPage(name: AppRoutes.showAllBillsScreen, page: () => const AllBillsScreen()),
+  GetPage(name: AppRoutes.showAllBillsScreen, page: () => const AllBillsScreen(),),
   GetPage(
       name: AppRoutes.billDetailsScreen,
+      middlewares: [LandscapeMiddleware()],
+
       page: () {
         final bool fromBillById = Get.arguments as bool;
         return BillDetailsScreen(fromBillById: fromBillById);

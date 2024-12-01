@@ -9,6 +9,7 @@
 #include <cloud_firestore/cloud_firestore_plugin_c_api.h>
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <flutter_platform_alert/flutter_platform_alert_plugin.h>
+#include <print_bluetooth_thermal/print_bluetooth_thermal_plugin_c_api.h>
 #include <screen_retriever/screen_retriever_plugin.h>
 #include <window_manager/window_manager_plugin.h>
 
@@ -19,6 +20,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
   FlutterPlatformAlertPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterPlatformAlertPlugin"));
+  PrintBluetoothThermalPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("PrintBluetoothThermalPluginCApi"));
   ScreenRetrieverPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ScreenRetrieverPlugin"));
   WindowManagerPluginRegisterWithRegistrar(
