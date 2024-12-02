@@ -29,6 +29,8 @@ class AccountModel implements PlutoAdaptable {
   int? accNumber;
   int? accBranchMask;
 
+  List<String>? billsId;
+
   AccountModel({
     this.id,
     this.accName,
@@ -54,6 +56,7 @@ class AccountModel implements PlutoAdaptable {
     this.accBranchGuid,
     this.accNumber,
     this.accBranchMask,
+    this.billsId,
   });
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
@@ -82,6 +85,7 @@ class AccountModel implements PlutoAdaptable {
       accBranchGuid: json['AccBranchGuid'],
       accNumber: json['AccNumber'],
       accBranchMask: json['AccBranchMask'],
+        billsId:json['billsId']??["AQGmxAyLwBsHi9gTTsXn","BuXK4e6GR6f5GFHfavRu"],
     );
   }
 
@@ -111,6 +115,7 @@ class AccountModel implements PlutoAdaptable {
       'AccBranchGuid': accBranchGuid,
       'AccNumber': accNumber,
       'AccBranchMask': accBranchMask,
+      'billsId': billsId?.toList()??[],
     };
   }
 
@@ -189,5 +194,6 @@ class AccountModel implements PlutoAdaptable {
         'Debit Or Credit': AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),
         'حساب الاب': Get.find<AccountsController>().getAccountNameById(accParentGuid),
         'الاولاد': Get.find<AccountsController>().getAccountChildren(id).join(' , '),
+        'عدد الفواتير': billsId?.length??"no bill yet.",
       };
 }

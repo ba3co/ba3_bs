@@ -20,6 +20,8 @@ class AccountsController extends GetxController {
 
   List<AccountModel> accounts = [];
 
+
+
   bool isLoading = true;
 
   Map<Account, AccountModel> selectedAccounts = {};
@@ -44,6 +46,9 @@ class AccountsController extends GetxController {
 
   void navigateToAllAccountsScreen() {
     Get.toNamed(AppRoutes.showAllAccountsScreen);
+  }
+  void navigateToAccountDetailsScreen(String accountId) {
+    Get.toNamed(AppRoutes.showAccountDetailsScreen,arguments: accountId);
   }
 
   List<AccountModel> searchAccountsByNameOrCode(text) {
