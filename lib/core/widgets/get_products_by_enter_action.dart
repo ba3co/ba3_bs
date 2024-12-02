@@ -1,22 +1,27 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../features/floating_window/services/overlay_entry_with_priority.dart';
+import '../../features/materials/controllers/material_controller.dart';
 import '../dialogs/search_product_text_dialog.dart';
 import '../i_controllers/i_pluto_controller.dart';
 
 class GetProductByEnterAction extends PlutoGridShortcutAction {
-  const GetProductByEnterAction(this.controller);
+  const GetProductByEnterAction(this.controller, this.context);
 
   final IPlutoController controller;
+  final BuildContext context;
 
   @override
   void execute({
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getProduct(stateManager, controller);
+    getProduct(stateManager, controller);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -58,24 +63,103 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  getProduct(PlutoGridStateManager stateManager, IPlutoController controller) async {
-    if (stateManager.currentColumn?.field == AppConstants.invRecProduct) {
-      MaterialModel? material = await searchProductTextDialog(stateManager.currentCell?.value);
-      if (material != null) {
-        updateCellValue(stateManager, stateManager.currentColumn!.field, material.matName);
-        updateCellValue(stateManager, AppConstants.invRecSubTotal, material.endUserPrice);
-        updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
-      } else {
-        stateManager.changeCellValue(
-          stateManager.currentRow!.cells[AppConstants.invRecProduct]!,
-          stateManager.currentCell?.value,
-          callOnChangedEvent: false,
-          notify: true,
-        );
-      }
-      stateManager.notifyListeners();
-      controller.update();
+  void getProduct(PlutoGridStateManager stateManager, IPlutoController controller) {
+    if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
+
+    // Initialize variables
+    final productText = stateManager.currentCell?.value ?? '';
+    final productTextController = TextEditingController()..text = productText;
+    final materialController = Get.find<MaterialController>();
+
+    // Search for matching materials
+    var searchedMaterials = materialController.searchOfProductByText(productText);
+    MaterialModel? selectedMaterial;
+
+    if (searchedMaterials.length == 1) {
+      // Single match
+      selectedMaterial = searchedMaterials.first;
+      updateWithSelectedMaterial(selectedMaterial, stateManager, controller);
+    } else if (searchedMaterials.isEmpty) {
+      // No matches
+      updateWithSelectedMaterial(null, stateManager, controller);
+    } else {
+      // Multiple matches, show search dialog
+      _showSearchDialog(
+        productTextController: productTextController,
+        searchedMaterials: searchedMaterials,
+        materialController: materialController,
+        stateManager: stateManager,
+        controller: controller,
+      );
     }
+  }
+
+  void _showSearchDialog({
+    required TextEditingController productTextController,
+    required List<MaterialModel> searchedMaterials,
+    required MaterialController materialController,
+    required PlutoGridStateManager stateManager,
+    required IPlutoController controller,
+  }) {
+    final overlay = Overlay.of(context);
+
+    late OverlayEntry overlayEntry;
+
+    OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
+
+    late OverlayEntryWithPriority overlayEntryWithPriority;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => SearchProductTextDialog(
+        searchedMaterials: searchedMaterials,
+        onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
+          final materialId = onSelectedEvent.row?.cells['الرقم التعريفي']?.value;
+
+          final selectedMaterial = materialId != null ? materialController.getMaterialById(materialId) : null;
+
+          updateWithSelectedMaterial(selectedMaterial, stateManager, controller);
+
+          overlayEntry.remove(); // Remove overlay after selection
+          entryWithPriorityInstance.remove(overlayEntryWithPriority);
+        },
+        onCloseTap: () {
+          overlayEntry.remove();
+          entryWithPriorityInstance.remove(overlayEntryWithPriority);
+        },
+        onSubmitted: (_) {
+          searchedMaterials = materialController.searchOfProductByText(productTextController.text);
+          materialController.update();
+        },
+        productTextController: productTextController,
+      ),
+    );
+
+    overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
+
+    overlay.insert(overlayEntry);
+    entryWithPriorityInstance.add(overlayEntryWithPriority);
+  }
+
+  void updateWithSelectedMaterial(
+    MaterialModel? materialModel,
+    PlutoGridStateManager stateManager,
+    IPlutoController plutoController,
+  ) {
+    if (materialModel != null) {
+      _updateRowWithMaterial(materialModel, stateManager);
+      plutoController.moveToNextRow(stateManager, AppConstants.invRecProduct);
+    } else {
+      plutoController.restoreCurrentCell(stateManager);
+    }
+
+    stateManager.notifyListeners();
+    plutoController.update();
+  }
+
+  void _updateRowWithMaterial(MaterialModel materialModel, PlutoGridStateManager stateManager) {
+    updateCellValue(stateManager, AppConstants.invRecProduct, materialModel.matName);
+    updateCellValue(stateManager, AppConstants.invRecSubTotal, materialModel.endUserPrice);
+    updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {

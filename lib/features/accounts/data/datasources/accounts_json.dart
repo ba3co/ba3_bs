@@ -18460,7 +18460,7 @@ String accountsJson = '''
 					},
 					{
 						"AccPtr": "4fd556cc-6408-4fe7-809a-0d35bc399c11",
-						"AccName": "المشتريات",
+						"AccName": "المشترياتالمشتريات",
 						"AccLatinName": "المشتريات",
 						"AccCode": 31,
 						"AccCDate": "25-7-2015",

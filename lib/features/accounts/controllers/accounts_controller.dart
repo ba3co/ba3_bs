@@ -1,14 +1,14 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
-import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/widgets/account_selection_dialog.dart';
-import '../../bill/controllers/bill/bill_details_controller.dart';
+import '../../floating_window/services/overlay_entry_with_priority.dart';
 import '../../patterns/controllers/pattern_controller.dart';
 import '../data/models/account_model.dart';
 import '../data/repositories/accounts_repository.dart';
@@ -82,22 +82,22 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
-  Future<AccountModel?> openAccountSelectionDialog({
+  AccountModel? openAccountSelectionDialog({
     required String query,
+    required BuildContext context,
     TextEditingController? textEditingController,
-    bool isCustomerAccount = false,
     bool fromAddBill = false,
-  }) async {
+    bool isCustomerAccount = false,
+    IBillController? billController,
+  }) {
     List<AccountModel> searchedAccounts = getAccounts(query);
+    AccountModel? selectedAccountModel;
 
-    if (searchedAccounts.isNotEmpty) {
-      AccountModel? selectedAccountModel = await Get.defaultDialog<AccountModel>(
-        title: 'Choose Account',
-        content: AccountSelectionDialog(accounts: searchedAccounts),
-      );
+    if (searchedAccounts.length == 1) {
+      // Single match
+      selectedAccountModel = searchedAccounts.first;
 
-      if (selectedAccountModel != null && textEditingController != null) {
-        // Infer `billTypeAccounts` from the controller
+      if (textEditingController != null) {
         final BillAccounts? billAccounts =
             Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
 
@@ -105,24 +105,129 @@ class AccountsController extends GetxController {
           selectedAccounts[billAccounts] = selectedAccountModel;
         }
 
-        // Assign selectedCustomerAccount only if the controller matches customerAccountController
         if (isCustomerAccount) {
           if (fromAddBill) {
             log('fromAddBill');
-            Get.find<AddBillController>().updateCustomerAccount(selectedAccountModel);
+            billController!.updateCustomerAccount(selectedAccountModel);
           } else {
-            log('InvoiceController');
-            Get.find<BillDetailsController>().updateCustomerAccount(selectedAccountModel);
+            log('BillDetailsController');
+            billController!.updateCustomerAccount(selectedAccountModel);
           }
         }
 
         textEditingController.text = selectedAccountModel.accName!;
-        update();
       }
       return selectedAccountModel;
+    } else if (searchedAccounts.isNotEmpty) {
+      // Multiple matches, show search dialog
+
+      // Create an overlay entry to show the dialog on top of everything
+      final overlay = Overlay.of(context);
+
+      late OverlayEntry overlayEntry;
+
+      OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
+
+      late OverlayEntryWithPriority overlayEntryWithPriority;
+
+      overlayEntry = OverlayEntry(
+        builder: (context) {
+          return AccountSelectionDialog(
+            accounts: searchedAccounts,
+            onCloseTap: () {
+              overlayEntry.remove();
+              entryWithPriorityInstance.remove(overlayEntryWithPriority);
+            },
+            onAccountTap: (selectedAccount) {
+              // Remove the overlay entry when account is selected
+              overlayEntry.remove();
+              entryWithPriorityInstance.remove(overlayEntryWithPriority);
+
+              // Set the selected account to the model
+              selectedAccountModel = selectedAccount;
+
+              // Callback for parent function with selected account
+              if (selectedAccountModel != null && textEditingController != null) {
+                final BillAccounts? billAccounts =
+                    Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
+
+                if (billAccounts != null) {
+                  selectedAccounts[billAccounts] = selectedAccountModel!;
+                }
+
+                if (isCustomerAccount) {
+                  if (fromAddBill) {
+                    log('fromAddBill');
+                    billController!.updateCustomerAccount(selectedAccountModel);
+                  } else {
+                    log('InvoiceController');
+                    billController!.updateCustomerAccount(selectedAccountModel);
+                  }
+                }
+
+                textEditingController.text = selectedAccountModel!.accName!;
+              }
+            },
+          );
+        },
+      );
+
+      overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
+
+      // Insert the overlay entry above all other widgets
+      overlay.insert(overlayEntry);
+      entryWithPriorityInstance.add(overlayEntryWithPriority);
+
+      // Wait for the dialog to return a result (if needed)
+      return selectedAccountModel;
     } else {
+      // No matches
       AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
       return null;
     }
   }
+
+// Future<AccountModel?> openAccountSelectionDialog({
+//   required String query,
+//   TextEditingController? textEditingController,
+//   bool isCustomerAccount = false,
+//   bool fromAddBill = false,
+// }) async {
+//   List<AccountModel> searchedAccounts = getAccounts(query);
+//
+//   if (searchedAccounts.isNotEmpty) {
+//     AccountModel? selectedAccountModel = await Get.defaultDialog<AccountModel>(
+//       title: 'Choose Account',
+//       content: AccountSelectionDialog(accounts: searchedAccounts),
+//     );
+//
+//     if (selectedAccountModel != null && textEditingController != null) {
+//       // Infer `billTypeAccounts` from the controller
+//       final BillAccounts? billAccounts =
+//           Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
+//
+//       if (billAccounts != null) {
+//         selectedAccounts[billAccounts] = selectedAccountModel;
+//       }
+//
+//       // Assign selectedCustomerAccount only if the controller matches customerAccountController
+//       if (isCustomerAccount) {
+//         if (fromAddBill) {
+//           log('fromAddBill');
+//           Get.find<AddBillController>().updateCustomerAccount(selectedAccountModel);
+//         } else {
+//           log('InvoiceController');
+//           Get.find<BillDetailsController>().updateCustomerAccount(selectedAccountModel);
+//         }
+//       }
+//
+//       textEditingController.text = selectedAccountModel.accName!;
+//       update();
+//     }
+//     return selectedAccountModel;
+//   } else {
+//     AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
+//     return null;
+//   }
+// }
 }

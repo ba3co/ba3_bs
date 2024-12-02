@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/ui/widgets/bill_shared/seller_selection_dialog.dart';
+import '../../floating_window/services/overlay_entry_with_priority.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
@@ -94,22 +95,48 @@ class SellerController extends GetxController {
     Get.find<BillDetailsController>().sellerAccountController.text = sellerAcc.costName!;
   }
 
-  Future<void> openSellerSelectionDialog(
-      {required String query, required TextEditingController textEditingController}) async {
+  void openSellerSelectionDialog({
+    required String query,
+    required TextEditingController textEditingController,
+    required BuildContext context,
+  }) {
     List<SellerModel> searchedSellersAccounts = getSellersAccounts(query);
+    if (searchedSellersAccounts.length == 1) {
+      // Single match
+      selectedSellerAccount = searchedSellersAccounts.first;
 
-    if (searchedSellersAccounts.isNotEmpty) {
-      SellerModel? selectedSeller = await Get.defaultDialog<SellerModel>(
-        title: 'Choose Seller',
-        content: SellerSelectionDialog(sellers: searchedSellersAccounts),
+      textEditingController.text = selectedSellerAccount!.costName!;
+    } else if (searchedSellersAccounts.isNotEmpty) {
+      // Use the updated SellerSelectionDialog
+      final overlay = Overlay.of(context);
+
+      late OverlayEntry overlayEntry;
+
+      OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
+
+      late OverlayEntryWithPriority overlayEntryWithPriority;
+
+      overlayEntry = OverlayEntry(
+        builder: (context) => SellerSelectionDialog(
+          sellers: searchedSellersAccounts,
+          onCloseTap: () {
+            overlayEntry.remove();
+            entryWithPriorityInstance.remove(overlayEntryWithPriority);
+          },
+          onSellerTap: (selectedSeller) {
+            overlayEntry.remove();
+            entryWithPriorityInstance.remove(overlayEntryWithPriority);
+
+            selectedSellerAccount = selectedSeller;
+            textEditingController.text = selectedSeller.costName!;
+          },
+        ),
       );
 
-      if (selectedSeller != null) {
-        textEditingController.text = selectedSeller.costName!;
+      overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
 
-        selectedSellerAccount = selectedSeller;
-        update();
-      }
+      overlay.insert(overlayEntry);
+      entryWithPriorityInstance.add(overlayEntryWithPriority);
     } else {
       AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }

@@ -82,14 +82,14 @@ class PlutoGridWithAppBar extends StatelessWidget {
   AppBar plutoGridAppBar(IconData? icon, VoidCallback? onIconPressed) {
     return AppBar(
       centerTitle: true,
+      leading: icon != null
+          ? IconButton(
+              onPressed: onIconPressed,
+              icon: Icon(icon),
+            )
+          : null,
       title: Text(title),
       actions: [
-        if (icon != null)
-          IconButton(
-            onPressed: onIconPressed,
-            color: Colors.blue,
-            icon: Icon(icon),
-          ),
         Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
             child: Text('عدد العناصر المتأثرة: ${tableSourceModels.length}')),

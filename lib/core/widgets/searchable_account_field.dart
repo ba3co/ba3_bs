@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../i_controllers/i_bill_controller.dart';
 import 'custom_text_field_with_icon.dart';
 
 class SearchableAccountField extends StatelessWidget {
@@ -13,11 +14,13 @@ class SearchableAccountField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final double? height;
   final double? width;
+  final IBillController? billController;
 
   const SearchableAccountField({
     super.key,
     required this.label,
     required this.textEditingController,
+    this.billController,
     this.onSubmitted,
     this.validator,
     this.isCustomerAccount = false,
@@ -41,11 +44,12 @@ class SearchableAccountField extends StatelessWidget {
               onSubmitted: onSubmitted ??
                   (text) {
                     Get.find<AccountsController>().openAccountSelectionDialog(
-                      query: text,
-                      textEditingController: textEditingController,
-                      isCustomerAccount: isCustomerAccount,
-                      fromAddBill: fromAddBill,
-                    );
+                        query: text,
+                        textEditingController: textEditingController,
+                        isCustomerAccount: isCustomerAccount,
+                        fromAddBill: fromAddBill,
+                        context: context,
+                        billController: billController);
                   },
             ),
           ),

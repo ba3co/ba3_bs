@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
@@ -20,50 +19,46 @@ class BillDetailsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final billDetailsController = Get.find<BillDetailsController>();
-    return SizedBox(
-      width: 1.0.sw,
-      height: .56.sh,
-      child: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8),
-              child: GetBuilder<BillDetailsPlutoController>(builder: (controller) {
-                return FocusScope(
-                  autofocus: true,
-                  child: PlutoWithEdite(
-                    columns: controller.mainTableColumns,
-                    rows: controller.mainTableRows,
-                    onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
-                    onChanged: controller.onMainTableStateManagerChanged,
-                    onLoaded: controller.onMainTableLoaded,
-                    shortCut: customPlutoShortcut(GetProductByEnterAction(controller)),
-                    evenRowColor: Color(billTypeModel.color!),
-                  ),
-                );
-              }),
-            ),
+    return Column(
+      children: [
+        Expanded(
+          flex: 3,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: GetBuilder<BillDetailsPlutoController>(builder: (controller) {
+              return FocusScope(
+                autofocus: true,
+                child: PlutoWithEdite(
+                  columns: controller.mainTableColumns,
+                  rows: controller.mainTableRows,
+                  onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
+                  onChanged: controller.onMainTableStateManagerChanged,
+                  onLoaded: controller.onMainTableLoaded,
+                  shortCut: customPlutoShortcut(GetProductByEnterAction(controller, context)),
+                  evenRowColor: Color(billTypeModel.color!),
+                ),
+              );
+            }),
           ),
-          const VerticalSpace(),
-          GetBuilder<BillDetailsPlutoController>(builder: (billDetailsPlutoController) {
-            return Expanded(
-              flex: 1,
-              child: BillGridWidget(
-                rowColor: Colors.grey,
-                columns: billDetailsPlutoController.additionsDiscountsColumns,
-                rows: billDetailsPlutoController.additionsDiscountsRows,
-                onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
-                onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
-                shortCut: customPlutoShortcut(GetAccountsByEnterAction(
+        ),
+        const VerticalSpace(),
+        GetBuilder<BillDetailsPlutoController>(builder: (billDetailsPlutoController) {
+          return Expanded(
+            flex: 1,
+            child: BillGridWidget(
+              rowColor: Colors.grey,
+              columns: billDetailsPlutoController.additionsDiscountsColumns,
+              rows: billDetailsPlutoController.additionsDiscountsRows,
+              onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
+              onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
+              shortCut: customPlutoShortcut(GetAccountsByEnterAction(
                   plutoController: billDetailsPlutoController,
                   billController: billDetailsController,
-                )),
-              ),
-            );
-          }),
-        ],
-      ),
+                  context: context)),
+            ),
+          );
+        }),
+      ],
     );
   }
 }

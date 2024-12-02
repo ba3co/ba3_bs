@@ -74,6 +74,13 @@ class AddBillController extends IBillController with AppValidator implements ISt
   }
 
   @override
+  void updateCustomerAccount(AccountModel? newAccount) {
+    if (newAccount != null) {
+      selectedCustomerAccount = newAccount;
+    }
+  }
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();
@@ -101,12 +108,6 @@ class AddBillController extends IBillController with AppValidator implements ISt
     if (payType != null) {
       selectedPayType = payType;
       update();
-    }
-  }
-
-  void updateCustomerAccount(AccountModel? newAccount) {
-    if (newAccount != null) {
-      selectedCustomerAccount = newAccount;
     }
   }
 

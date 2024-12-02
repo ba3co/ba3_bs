@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../floating_window/services/floating_window_service.dart';
@@ -69,6 +68,13 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   @override
+  void updateCustomerAccount(AccountModel? newAccount) {
+    if (newAccount != null) {
+      selectedCustomerAccount = newAccount;
+    }
+  }
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();
@@ -96,12 +102,6 @@ class BillDetailsController extends IBillController with AppValidator implements
     if (payType != null) {
       selectedPayType = payType;
       update();
-    }
-  }
-
-  void updateCustomerAccount(AccountModel? newAccount) {
-    if (newAccount != null) {
-      selectedCustomerAccount = newAccount;
     }
   }
 
@@ -225,11 +225,11 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false, bool fromBillById = false}) {
-    Get.put(AddBillController(_billsFirebaseRepoWithResult))
-        .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
-
-    Get.toNamed(AppRoutes.addBillScreen,
-        arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
+    // Get.put(AddBillController(_billsFirebaseRepoWithResult))
+    //     .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
+    //
+    // Get.toNamed(AppRoutes.addBillScreen,
+    //     arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
   }
 
   void createNewFloatingAddBillScreen(
@@ -238,14 +238,31 @@ class BillDetailsController extends IBillController with AppValidator implements
     bool fromBillDetails = false,
     bool fromBillById = false,
   }) {
+    final tag = 'AddBillController_${UniqueKey().toString()}';
+
+    // Initialize the AddBillController
+    AddBillController addBillController = _initializeAddBillController(billTypeModel, tag);
+
+    // Launch the floating window with the AddBillScreen
     FloatingWindowService.launchFloatingWindow(
       context: context,
+      onClose: () {
+        Get.delete<AddBillController>(tag: tag, force: true);
+      },
       child: AddBillScreen(
         billTypeModel: billTypeModel,
         fromBillDetails: fromBillDetails,
         fromBillById: fromBillById,
+        tag: tag,
+        addBillController: addBillController,
       ),
     );
+  }
+
+  AddBillController _initializeAddBillController(BillTypeModel billTypeModel, String tag) {
+    // Create the AddBillController using Get
+    return Get.put<AddBillController>(AddBillController(_billsFirebaseRepoWithResult), tag: tag)
+      ..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
   }
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>

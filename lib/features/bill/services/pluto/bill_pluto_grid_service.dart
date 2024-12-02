@@ -38,6 +38,29 @@ class BillPlutoGridService {
     );
   }
 
+  void moveToNextRow(PlutoGridStateManager stateManager, String cellField) {
+    final currentRowIdx = stateManager.currentRowIdx;
+
+    if (currentRowIdx != null && currentRowIdx < stateManager.rows.length - 1) {
+      stateManager.setCurrentCell(
+        stateManager.rows[currentRowIdx + 1].cells[cellField],
+        currentRowIdx + 1,
+      );
+    }
+  }
+
+  void restoreCurrentCell(PlutoGridStateManager stateManager) {
+    final currentCell = stateManager.currentCell;
+    if (currentCell != null) {
+      stateManager.changeCellValue(
+        stateManager.currentRow!.cells[AppConstants.invRecProduct]!,
+        currentCell.value,
+        callOnChangedEvent: false,
+        notify: true,
+      );
+    }
+  }
+
   void updateInvoiceValuesByQuantity(int quantity, subtotal, double vat) {
     double total = (subtotal + vat) * quantity;
 

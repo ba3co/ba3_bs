@@ -87,6 +87,13 @@ class BillDetailsPlutoController extends IPlutoController {
   }
 
   @override
+  void moveToNextRow(PlutoGridStateManager stateManager, String cellField) =>
+      _gridService.moveToNextRow(stateManager, cellField);
+
+  @override
+  void restoreCurrentCell(PlutoGridStateManager stateManager) => _gridService.restoreCurrentCell(stateManager);
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();

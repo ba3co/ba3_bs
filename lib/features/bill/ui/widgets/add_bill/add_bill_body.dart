@@ -12,29 +12,33 @@ import '../../../../patterns/data/models/bill_type_model.dart';
 import '../bill_shared/bill_grid_widget.dart';
 
 class AddBillBody extends StatelessWidget {
-  const AddBillBody({super.key, required this.billTypeModel});
+  const AddBillBody({
+    super.key,
+    required this.billTypeModel,
+    required this.addBillController,
+  });
 
   final BillTypeModel billTypeModel;
+  final AddBillController addBillController;
 
   @override
   Widget build(BuildContext context) {
-    final addBillController = Get.find<AddBillController>();
     return Column(
       children: [
         Expanded(
           flex: 2,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: GetBuilder<AddBillPlutoController>(builder: (controller) {
+            child: GetBuilder<AddBillPlutoController>(builder: (addBillPlutoController) {
               return FocusScope(
                 autofocus: true,
                 child: PlutoWithEdite(
-                  columns: controller.mainTableColumns,
-                  rows: controller.mainTableRows,
-                  onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
-                  onChanged: controller.onMainTableStateManagerChanged,
-                  onLoaded: controller.onMainTableLoaded,
-                  shortCut: customPlutoShortcut(GetProductByEnterAction(controller)),
+                  columns: addBillPlutoController.mainTableColumns,
+                  rows: addBillPlutoController.mainTableRows,
+                  onRowSecondaryTap: addBillPlutoController.onMainTableRowSecondaryTap,
+                  onChanged: addBillPlutoController.onMainTableStateManagerChanged,
+                  onLoaded: addBillPlutoController.onMainTableLoaded,
+                  shortCut: customPlutoShortcut(GetProductByEnterAction(addBillPlutoController, context)),
                   evenRowColor: Color(billTypeModel.color!),
                 ),
               );
@@ -52,9 +56,7 @@ class AddBillBody extends StatelessWidget {
               onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
               onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
               shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                plutoController: addBillPlutoController,
-                billController: addBillController,
-              )),
+                  plutoController: addBillPlutoController, billController: addBillController, context: context)),
             ),
           );
         }),

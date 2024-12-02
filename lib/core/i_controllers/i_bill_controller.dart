@@ -16,6 +16,8 @@ abstract class IBillController extends GetxController {
   /// Updates the selected account additions or discounts
   void updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value);
 
+  void updateCustomerAccount(AccountModel? newAccount);
+
   /// Sends the bill email with optional attachments
   Future<void> sendBillToEmail({
     required String recipientEmail,

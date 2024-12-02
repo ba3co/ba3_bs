@@ -42,4 +42,8 @@ abstract class IPlutoController extends GetxController {
 
   /// Generates a list of invoice records from the table data.
   List<InvoiceRecordModel> get generateBillRecords;
+
+  void moveToNextRow(PlutoGridStateManager stateManager, String cellField);
+
+  void restoreCurrentCell(PlutoGridStateManager stateManager);
 }

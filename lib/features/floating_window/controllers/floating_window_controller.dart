@@ -2,12 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/features/floating_window/controllers/window_position_manager.dart';
+import 'package:ba3_bs/features/floating_window/managers/window_position_manager.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../services/overlay_entry_with_priority.dart';
 import '../ui/draggable_floating_window.dart';
 
 class FloatingWindowController extends GetxController {
@@ -21,7 +22,7 @@ class FloatingWindowController extends GetxController {
 
   late double x, y, width, height;
 
-  final double minWidth = 750.0, minHeight = 400.0, edgeSize = 5.0;
+  final double minWidth = 750.0, minHeight = 400.0, edgeSize = 10.0;
 
   final parentSize = Rx<Size>(Size.zero);
 
@@ -153,16 +154,36 @@ class FloatingWindowController extends GetxController {
   }
 
   void displayFloatingWindow(
-      {required BuildContext context, required Widget child, required Offset targetPositionRatio}) {
+      {required BuildContext context,
+      required Widget child,
+      required Offset targetPositionRatio,
+      VoidCallback? onClose}) {
     final overlay = Overlay.of(context);
+
     late OverlayEntry overlayEntry;
 
     overlayEntry = OverlayEntry(
       builder: (context) {
         return DraggableFloatingWindow(
+          onBringToTop: () {
+            // Check if any high-priority dialog or overlay is on top
+            bool hasHigherPriorityOverlay = OverlayEntryWithPriorityManager.instance.overlayEntries.any((entry) {
+              return entry.priority == 0; // Check if any overlay has higher priority
+            });
+
+            // Bring this floating window to the top only if no higher-priority overlays exist
+            if (!hasHigherPriorityOverlay) {
+              overlayEntry.remove();
+              overlay.insert(overlayEntry);
+            }
+          },
           onClose: () {
             overlayEntry.remove();
             windowPositionManager.removeWindowPosition(targetPositionRatio);
+
+            if (onClose != null) {
+              onClose();
+            }
           },
           targetPositionRatio: targetPositionRatio,
           floatingWindowContent: child,

@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -12,10 +13,12 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   const GetAccountsByEnterAction({
     required this.plutoController,
     required this.billController,
+    required this.context,
   });
 
   final IPlutoController plutoController;
   final IBillController billController;
+  final BuildContext context;
 
   @override
   void execute({
@@ -73,7 +76,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     final currentRow = stateManager.currentRow;
 
     if (columnField == AppConstants.id) {
-      final accountModel = await _openAccountSelectionDialog(stateManager.currentCell?.value);
+      final accountModel = _openAccountSelectionDialog(stateManager.currentCell?.value);
 
       if (accountModel != null) {
         // _updateSelectedAccount(currentRow, accountModel, billController);
@@ -88,8 +91,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   }
 
   /// Opens the account selection dialog and returns the selected account model.
-  Future<AccountModel?> _openAccountSelectionDialog(String query) async =>
-      await Get.find<AccountsController>().openAccountSelectionDialog(query: query);
+  AccountModel? _openAccountSelectionDialog(String query) =>
+      Get.find<AccountsController>().openAccountSelectionDialog(query: query, context: context);
 
   /// Updates the selected additions or discounts account based on the column field.
   // void _updateSelectedAccount(PlutoRow? currentRow, AccountModel accountModel, IBillController billController) {

@@ -9,11 +9,16 @@ import '../controllers/floating_window_controller.dart';
 
 class DraggableFloatingWindow extends StatelessWidget {
   final VoidCallback onClose;
+  final VoidCallback onBringToTop;
   final Offset targetPositionRatio;
   final Widget floatingWindowContent;
 
   const DraggableFloatingWindow(
-      {super.key, required this.onClose, required this.floatingWindowContent, required this.targetPositionRatio});
+      {super.key,
+      required this.onClose,
+      required this.onBringToTop,
+      required this.floatingWindowContent,
+      required this.targetPositionRatio});
 
   @override
   Widget build(BuildContext context) {
@@ -75,48 +80,51 @@ class DraggableFloatingWindow extends StatelessWidget {
                                   )
                                 : Column(
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 10),
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xFF2C2C2E),
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(8.0),
-                                            topRight: Radius.circular(8.0),
+                                      InkWell(
+                                        onTap: onBringToTop,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 10),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFF2C2C2E),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(8.0),
+                                              topRight: Radius.circular(8.0),
+                                            ),
                                           ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            const HorizontalSpace(),
-                                            InkWell(
-                                              onTap: onClose,
-                                              child: const CircleAvatar(
-                                                backgroundColor: Color(0xFFFF605C),
-                                                radius: 7,
-                                                child: Icon(Icons.close, color: Colors.black, size: 12),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              const HorizontalSpace(),
+                                              InkWell(
+                                                onTap: onClose,
+                                                child: const CircleAvatar(
+                                                  backgroundColor: Color(0xFFFF605C),
+                                                  radius: 7,
+                                                  child: Icon(Icons.close, color: Colors.black, size: 12),
+                                                ),
                                               ),
-                                            ),
-                                            const HorizontalSpace(),
-                                            InkWell(
-                                              onTap: () {
-                                                controller.minimize(targetPositionRatio);
-                                              },
-                                              child: const CircleAvatar(
-                                                backgroundColor: Color(0xFFFFBD44),
-                                                radius: 7,
-                                                child: Icon(Icons.remove, color: Colors.black, size: 12),
+                                              const HorizontalSpace(),
+                                              InkWell(
+                                                onTap: () {
+                                                  controller.minimize(targetPositionRatio);
+                                                },
+                                                child: const CircleAvatar(
+                                                  backgroundColor: Color(0xFFFFBD44),
+                                                  radius: 7,
+                                                  child: Icon(Icons.remove, color: Colors.black, size: 12),
+                                                ),
                                               ),
-                                            ),
-                                            const HorizontalSpace(),
-                                            InkWell(
-                                              onTap: controller.maximize,
-                                              child: const CircleAvatar(
-                                                backgroundColor: Color(0xFF00CA4E),
-                                                radius: 7,
-                                                child: Icon(Icons.fullscreen_outlined, color: Colors.black, size: 12),
+                                              const HorizontalSpace(),
+                                              InkWell(
+                                                onTap: controller.maximize,
+                                                child: const CircleAvatar(
+                                                  backgroundColor: Color(0xFF00CA4E),
+                                                  radius: 7,
+                                                  child: Icon(Icons.fullscreen_outlined, color: Colors.black, size: 12),
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Expanded(child: floatingWindowContent), // This stays as it is.

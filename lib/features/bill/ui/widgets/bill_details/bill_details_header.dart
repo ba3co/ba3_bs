@@ -48,6 +48,7 @@ class BillDetailsHeader extends StatelessWidget {
                   textEditingController: billDetailsController.customerAccountController,
                   validator: (value) => billDetailsController.validator(value, 'حساب العميل'),
                   isCustomerAccount: true,
+                  billController: billDetailsController,
                 ),
                 SearchableAccountField(
                   label: 'البائع :',
@@ -55,7 +56,10 @@ class BillDetailsHeader extends StatelessWidget {
                   validator: (value) => billDetailsController.validator(value, 'البائع'),
                   onSubmitted: (text) {
                     Get.find<SellerController>().openSellerSelectionDialog(
-                        query: text, textEditingController: billDetailsController.sellerAccountController);
+                      query: text,
+                      textEditingController: billDetailsController.sellerAccountController,
+                      context: context,
+                    );
                   },
                 ),
                 BillHeaderField(

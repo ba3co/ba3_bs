@@ -17,36 +17,47 @@ class BillDetailsScreen extends StatelessWidget {
   const BillDetailsScreen({super.key, required this.fromBillById});
 
   @override
-  Widget build(BuildContext context) => GetBuilder<BillSearchController>(
-        builder: (billSearchController) {
-          final BillModel currentBill = billSearchController.getCurrentBill;
-          return GetBuilder<BillDetailsController>(
-            builder: (billDetailsController) {
-              return Scaffold(
-                appBar: BillDetailsAppBar(
-                  billTypeModel: currentBill.billTypeModel,
-                  billDetailsController: billDetailsController,
-                  billSearchController: billSearchController,
-                ),
-                body: ListView(
-                  shrinkWrap: true,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) {
+    return GetBuilder<BillSearchController>(builder: (billSearchController) {
+      final BillModel currentBill = billSearchController.getCurrentBill;
+      return GetBuilder<BillDetailsController>(builder: (billDetailsController) {
+        return Scaffold(
+          appBar: BillDetailsAppBar(
+            billTypeModel: currentBill.billTypeModel,
+            billDetailsController: billDetailsController,
+            billSearchController: billSearchController,
+          ),
+          body: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
                   children: [
                     BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
-                    const VerticalSpace(20),
-                    BillDetailsBody(billTypeModel: currentBill.billTypeModel),
-                    const VerticalSpace(10),
-                    const BillDetailsCalculations(),
-                    const Divider(),
-                    BillDetailsButtons(
-                        billDetailsController: billDetailsController,
-                        billModel: currentBill,
-                        fromBillById: fromBillById),
+                    const VerticalSpace(5),
                   ],
                 ),
-              );
-            },
-          );
-        },
-      );
+              ),
+              SliverFillRemaining(
+                hasScrollBody: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: BillDetailsBody(billTypeModel: currentBill.billTypeModel)),
+                    const VerticalSpace(10),
+                    const Align(alignment: Alignment.centerLeft, child: BillDetailsCalculations()),
+                    const Divider(height: 10),
+                    BillDetailsButtons(
+                      billDetailsController: billDetailsController,
+                      billModel: currentBill,
+                      fromBillById: fromBillById,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+    });
+  }
 }
