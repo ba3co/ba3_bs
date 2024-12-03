@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../features/floating_window/services/overlay_entry_with_priority.dart';
+import '../../features/floating_window/managers/overlay_entry_with_priority_manager.dart';
+import '../../features/floating_window/models/overlay_entry_with_priority.dart';
 import '../../features/materials/controllers/material_controller.dart';
 import '../dialogs/search_product_text_dialog.dart';
 import '../i_controllers/i_pluto_controller.dart';
@@ -63,7 +64,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  void getProduct(PlutoGridStateManager stateManager, IPlutoController controller) {
+  void getProduct(PlutoGridStateManager stateManager, IPlutoController plutoController) {
     if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
 
     // Initialize variables
@@ -78,10 +79,10 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     if (searchedMaterials.length == 1) {
       // Single match
       selectedMaterial = searchedMaterials.first;
-      updateWithSelectedMaterial(selectedMaterial, stateManager, controller);
+      updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
     } else if (searchedMaterials.isEmpty) {
       // No matches
-      updateWithSelectedMaterial(null, stateManager, controller);
+      updateWithSelectedMaterial(null, stateManager, plutoController);
     } else {
       // Multiple matches, show search dialog
       _showSearchDialog(
@@ -89,7 +90,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
         searchedMaterials: searchedMaterials,
         materialController: materialController,
         stateManager: stateManager,
-        controller: controller,
+        plutoController: plutoController,
       );
     }
   }
@@ -99,7 +100,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required List<MaterialModel> searchedMaterials,
     required MaterialController materialController,
     required PlutoGridStateManager stateManager,
-    required IPlutoController controller,
+    required IPlutoController plutoController,
   }) {
     final overlay = Overlay.of(context);
 
@@ -117,7 +118,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
           final selectedMaterial = materialId != null ? materialController.getMaterialById(materialId) : null;
 
-          updateWithSelectedMaterial(selectedMaterial, stateManager, controller);
+          updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
 
           overlayEntry.remove(); // Remove overlay after selection
           entryWithPriorityInstance.remove(overlayEntryWithPriority);
@@ -135,9 +136,9 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     );
 
     overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
+    entryWithPriorityInstance.add(overlayEntryWithPriority);
 
     overlay.insert(overlayEntry);
-    entryWithPriorityInstance.add(overlayEntryWithPriority);
   }
 
   void updateWithSelectedMaterial(

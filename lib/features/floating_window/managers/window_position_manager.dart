@@ -1,31 +1,31 @@
-import 'dart:developer';
 import 'dart:ui';
 
+/// Manages window positions as ratios relative to the parent window dimensions.
 class WindowPositionManager {
-  static const double verticalPadding = 10.0; // Padding to vertical space
-  static const double horizontalPadding = 10.0; // Padding to horizontal space
+  /// Padding for vertical space between windows.
+  static const double verticalPadding = 10.0;
 
-  static const double horizontalBoundaryPadding = 20.0; // Padding to prevent horizontal overflow
+  /// Padding for horizontal space between windows.
+  static const double horizontalPadding = 10.0;
 
-  // Singleton implementation
+  /// Padding to prevent horizontal overflow of windows.
+  static const double horizontalBoundaryPadding = 20.0;
+
+  /// Private constructor to prevent external instantiation.
   WindowPositionManager._();
 
+  /// Singleton instance of the WindowPositionManager.
   static final WindowPositionManager instance = WindowPositionManager._();
 
-  List<Offset> windowPositionRatios = []; // Store positions as ratios
+  /// List of window positions stored as ratios of the parent dimensions.
+  List<Offset> windowPositionRatios = [];
 
-  Offset getNextWindowPositionRatio(
-    double windowWidth,
-    double windowHeight,
-    double parentWidth,
-    double parentHeight,
-  ) {
-    log('call getNextWindowPositionRatio');
-
+  /// Calculates and returns the next available position for a new window,
+  /// based on the parent window's dimensions.
+  /// The position is returned as a ratio of the parent's width and height.
+  Offset getNextWindowPositionRatio(double windowWidth, double windowHeight, double parentWidth, double parentHeight) {
+    // If no previous positions exist, set the initial position.
     if (windowPositionRatios.isEmpty) {
-      log('windowPositionRatios.isEmpty');
-
-      // Initial position as ratio
       final ratio = Offset(
         horizontalPadding / parentWidth,
         (parentHeight - windowHeight - verticalPadding) / parentHeight,
@@ -35,52 +35,44 @@ class WindowPositionManager {
       return ratio;
     }
 
-    log('windowPositionRatios length ${windowPositionRatios.length}');
     final lastWindowRatio = windowPositionRatios.last;
 
-    // Convert ratio back to absolute position
-    final lastWindowPosition = Offset(
-      lastWindowRatio.dx * parentWidth,
-      lastWindowRatio.dy * parentHeight,
-    );
+    // Convert the last window's position ratio to absolute coordinates.
+    final lastWindowPosition = Offset(lastWindowRatio.dx * parentWidth, lastWindowRatio.dy * parentHeight);
 
-    // Calculate the new position
+    // Calculate the new x-position of the window.
     double x = lastWindowPosition.dx + windowWidth + horizontalPadding;
 
-    // Handle horizontal overflow
+    // Handle horizontal overflow by wrapping to the next line.
     if (x + windowWidth + horizontalBoundaryPadding > parentWidth) {
       x = horizontalPadding;
       double y = lastWindowPosition.dy - windowHeight - verticalPadding;
 
-      // Handle vertical overflow
+      // Handle vertical overflow by moving the window to the bottom if needed.
       if (y < 0) y = parentHeight - windowHeight - verticalPadding;
 
-      // Convert new absolute position to ratio
-      final newRatio = Offset(
-        x / parentWidth,
-        y / parentHeight,
-      );
+      // Convert the new position to a ratio and add it to the list.
+      final newRatio = Offset(x / parentWidth, y / parentHeight);
 
       windowPositionRatios.add(newRatio);
       return newRatio;
     }
 
-    // Convert new absolute position to ratio
-    final newRatio = Offset(
-      x / parentWidth,
-      (lastWindowPosition.dy) / parentHeight,
-    );
+    // Convert the new position to a ratio and add it to the list.
+    final newRatio = Offset(x / parentWidth, (lastWindowPosition.dy) / parentHeight);
 
     windowPositionRatios.add(newRatio);
     return newRatio;
   }
 
+  /// Adds a new window position ratio to the list if it doesn't already exist.
   void addWindowPosition(Offset position) {
     if (!windowPositionRatios.contains(position)) {
       windowPositionRatios.add(position);
     }
   }
 
+  /// Removes a specific window position ratio from the list.
   void removeWindowPosition(Offset position) {
     windowPositionRatios.remove(position);
   }

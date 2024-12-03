@@ -21,6 +21,7 @@ import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
 import '../../ui/screens/add_bill_screen.dart';
+import '../pluto/add_bill_pluto_controller.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController with AppValidator implements IStoreSelectionHandler {
@@ -243,18 +244,23 @@ class BillDetailsController extends IBillController with AppValidator implements
     // Initialize the AddBillController
     AddBillController addBillController = _initializeAddBillController(billTypeModel, tag);
 
+    // Initialize the AddBillPlutoController
+    AddBillPlutoController addBillPlutoController = _initializeAddBillPlutoController(tag);
+
     // Launch the floating window with the AddBillScreen
     FloatingWindowService.launchFloatingWindow(
       context: context,
-      onClose: () {
+      onCloseContentControllerCallback: () {
         Get.delete<AddBillController>(tag: tag, force: true);
+        Get.delete<AddBillPlutoController>(tag: tag, force: true);
       },
-      child: AddBillScreen(
+      floatingWindowContent: AddBillScreen(
         billTypeModel: billTypeModel,
         fromBillDetails: fromBillDetails,
         fromBillById: fromBillById,
-        tag: tag,
         addBillController: addBillController,
+        addBillPlutoController: addBillPlutoController,
+        tag: tag,
       ),
     );
   }
@@ -264,6 +270,9 @@ class BillDetailsController extends IBillController with AppValidator implements
     return Get.put<AddBillController>(AddBillController(_billsFirebaseRepoWithResult), tag: tag)
       ..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
   }
+
+  AddBillPlutoController _initializeAddBillPlutoController(String tag) =>
+      Get.put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareBillMaterialsRows(billItems.materialRecords);

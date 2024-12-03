@@ -26,9 +26,13 @@ class AddBillPlutoController extends IPlutoController {
 
   List<PlutoRow> mainTableRows = [];
 
-  List<PlutoRow> additionsDiscountsRows = AppConstants.additionsDiscountsRows;
+  //List<PlutoRow> additionsDiscountsRows = AppConstants.additionsDiscountsRows;
 
-  List<PlutoColumn> additionsDiscountsColumns = AppConstants.additionsDiscountsColumns;
+  // List<PlutoColumn> additionsDiscountsColumns = AppConstants.additionsDiscountsColumns;
+
+  List<PlutoRow> additionsDiscountsRows = [];
+
+  List<PlutoColumn> additionsDiscountsColumns = AdditionsDiscountsRecordModel().toEditedMap().keys.toList();
 
   // State managers
   @override
@@ -123,6 +127,9 @@ class AddBillPlutoController extends IPlutoController {
 
   onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
     additionsDiscountsStateManager = event.stateManager;
+
+    final newRows = additionsDiscountsStateManager.getNewRows(count: 2);
+    additionsDiscountsStateManager.appendRows(newRows);
 
     if (additionsDiscountsStateManager.rows.isNotEmpty && additionsDiscountsStateManager.rows.first.cells.length > 1) {
       final secondCell = additionsDiscountsStateManager.rows.first.cells.entries.elementAt(1).value;
@@ -293,7 +300,7 @@ class AddBillPlutoController extends IPlutoController {
   void prepareAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
 
-    final newRows = _plutoUtils.emptyAdditionsDiscountsRecords();
+    final newRows = mainTableStateManager.getNewRows(count: 2);
 
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = _gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);

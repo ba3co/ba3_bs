@@ -16,6 +16,8 @@ class PlutoGridWithAppBar extends StatelessWidget {
     required this.tableSourceModels,
     this.icon,
     this.onIconPressed,
+    this.leadingIcon,
+    this.onLeadingIconPressed,
   });
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -28,6 +30,8 @@ class PlutoGridWithAppBar extends StatelessWidget {
   final bool isLoading;
   final IconData? icon;
   final VoidCallback? onIconPressed;
+  final IconData? leadingIcon;
+  final VoidCallback? onLeadingIconPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -82,14 +86,20 @@ class PlutoGridWithAppBar extends StatelessWidget {
   AppBar plutoGridAppBar(IconData? icon, VoidCallback? onIconPressed) {
     return AppBar(
       centerTitle: true,
-      leading: icon != null
+      leading: leadingIcon != null
           ? IconButton(
-              onPressed: onIconPressed,
-              icon: Icon(icon),
+              onPressed: onLeadingIconPressed,
+              icon: Icon(leadingIcon),
             )
           : null,
       title: Text(title),
       actions: [
+        if (icon != null)
+          IconButton(
+            onPressed: onIconPressed,
+            color: Colors.blue,
+            icon: Icon(icon),
+          ),
         Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
             child: Text('عدد العناصر المتأثرة: ${tableSourceModels.length}')),

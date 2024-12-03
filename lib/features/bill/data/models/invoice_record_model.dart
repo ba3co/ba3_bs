@@ -1,7 +1,9 @@
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import 'bill_items.dart';
 
@@ -223,6 +225,160 @@ class InvoiceRecordModel {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecGift,
+    };
+  }
+}
+
+class AdditionsDiscountsRecordModel {
+  String? account;
+  double? discount;
+  double? discountRatio;
+  double? addition;
+  double? additionRatio;
+
+  AdditionsDiscountsRecordModel({
+    this.account,
+    this.discount,
+    this.discountRatio,
+    this.addition,
+    this.additionRatio,
+  });
+
+  /// Factory method to create an InvoiceRecordModel from a BillItem.
+  factory AdditionsDiscountsRecordModel.fromBillModel(BillModel billModel) {
+    double partialTotal = (billModel.billDetails.billVatTotal ?? 0) + (billModel.billDetails.billBeforeVatTotal ?? 0);
+
+    final discountTotal = billModel.billDetails.billDiscountsTotal ?? 0;
+    final additionTotal = billModel.billDetails.billAdditionsTotal ?? 0;
+
+    double calculateRatio(double value, double total) =>
+        AppServiceUtils.toFixedDouble(total > 0 ? ((value / total) * 100) : 0);
+
+    return AdditionsDiscountsRecordModel(
+      account: billModel.billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
+      discount: AppServiceUtils.toFixedDouble(discountTotal),
+      discountRatio: calculateRatio(billModel.billDetails.billDiscountsTotal ?? 0, partialTotal),
+      addition: AppServiceUtils.toFixedDouble(additionTotal),
+      additionRatio: calculateRatio(billModel.billDetails.billAdditionsTotal ?? 0, partialTotal),
+    );
+  }
+
+  factory AdditionsDiscountsRecordModel.fromJson(Map<dynamic, dynamic> map) => AdditionsDiscountsRecordModel(
+        account: map[AppConstants.id],
+        discount: _parseDouble(map[AppConstants.discount]),
+        discountRatio: _parseDouble(map[AppConstants.discountRatio]),
+        addition: _parseDouble(map[AppConstants.addition]),
+        additionRatio: _parseDouble(map[AppConstants.additionRatio]),
+      );
+
+  toJson() => {
+        AppConstants.id: account,
+        AppConstants.discount: discount,
+        AppConstants.discountRatio: discountRatio,
+        AppConstants.addition: addition,
+        AppConstants.additionRatio: additionRatio,
+      };
+
+  factory AdditionsDiscountsRecordModel.fromJsonPluto(Map<dynamic, dynamic> map) {
+    final String? account = map[AppConstants.id];
+    final double? discount = _parseDouble(map[AppConstants.discount]);
+    final double? discountRatio = _parseDouble(map[AppConstants.discountRatio]);
+    final double? addition = _parseDouble(map[AppConstants.addition]);
+    final double? additionRatio = _parseDouble(map[AppConstants.additionRatio]);
+
+    return AdditionsDiscountsRecordModel(
+      account: account,
+      discount: discount,
+      discountRatio: discountRatio,
+      addition: addition,
+      additionRatio: additionRatio,
+    );
+  }
+
+  // Helper method to parse integers, handling Arabic numerals
+  static int? _parseInteger(dynamic value) {
+    if (value == null) return null;
+    return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString()));
+  }
+
+  // Helper method to parse doubles, handling Arabic numerals
+  static double? _parseDouble(dynamic value) {
+    if (value == null) return null;
+    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString()));
+  }
+
+  @override
+  int get hashCode => account.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AdditionsDiscountsRecordModel && runtimeType == other.runtimeType && account == other.account;
+
+  Map<String, Map<String, dynamic>> getChanges(AdditionsDiscountsRecordModel other) {
+    Map<String, dynamic> newChanges = {};
+    Map<String, dynamic> oldChanges = {};
+
+    if (discount != other.discount) {
+      newChanges['discount'] = other.discount;
+      oldChanges['discount'] = discount;
+    }
+
+    if (addition != other.addition) {
+      newChanges['addition'] = other.addition;
+      oldChanges['addition'] = addition;
+    }
+
+    if (discountRatio != other.discountRatio) {
+      newChanges['discountRatio'] = other.discountRatio;
+      oldChanges['discountRatio'] = discountRatio;
+    }
+
+    if (additionRatio != other.additionRatio) {
+      newChanges['additionRatio'] = other.additionRatio;
+      oldChanges['additionRatio'] = additionRatio;
+    }
+
+    if (newChanges.isNotEmpty) newChanges['account'] = other.account;
+    if (oldChanges.isNotEmpty) oldChanges['account'] = account;
+
+    return {"newData": newChanges, "oldData": oldChanges};
+  }
+
+  Map<PlutoColumn, dynamic> toEditedMap() {
+    return {
+      PlutoColumn(
+        title: AppConstants.account,
+        field: AppConstants.id,
+        type: PlutoColumnType.text(),
+        renderer: (rendererContext) {
+          if (rendererContext.row.cells[AppConstants.id]?.value != '') {
+            rendererContext.cell.value = rendererContext.rowIdx.toString();
+            return Text(rendererContext.rowIdx.toString());
+          }
+          return const Text("");
+        },
+      ): account,
+      PlutoColumn(
+        title: AppConstants.discountAr,
+        field: AppConstants.discount,
+        type: PlutoColumnType.text(),
+      ): discount,
+      PlutoColumn(
+        title: AppConstants.discountRatioAr,
+        field: AppConstants.discountRatio,
+        type: PlutoColumnType.text(),
+      ): discountRatio,
+      PlutoColumn(
+        title: AppConstants.additionAr,
+        field: AppConstants.addition,
+        type: PlutoColumnType.text(),
+      ): addition,
+      PlutoColumn(
+        title: AppConstants.additionRatioAr,
+        field: AppConstants.additionRatio,
+        type: PlutoColumnType.text(),
+      ): additionRatio,
     };
   }
 }

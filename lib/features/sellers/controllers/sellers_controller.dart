@@ -7,7 +7,8 @@ import 'package:get/get.dart';
 
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/ui/widgets/bill_shared/seller_selection_dialog.dart';
-import '../../floating_window/services/overlay_entry_with_priority.dart';
+import '../../floating_window/managers/overlay_entry_with_priority_manager.dart';
+import '../../floating_window/models/overlay_entry_with_priority.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
@@ -134,9 +135,9 @@ class SellerController extends GetxController {
       );
 
       overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
+      entryWithPriorityInstance.add(overlayEntryWithPriority);
 
       overlay.insert(overlayEntry);
-      entryWithPriorityInstance.add(overlayEntryWithPriority);
     } else {
       AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }

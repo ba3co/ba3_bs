@@ -16,10 +16,14 @@ class AddBillBody extends StatelessWidget {
     super.key,
     required this.billTypeModel,
     required this.addBillController,
+    required this.addBillPlutoController,
+    required this.tag,
   });
 
   final BillTypeModel billTypeModel;
   final AddBillController addBillController;
+  final AddBillPlutoController addBillPlutoController;
+  final String tag;
 
   @override
   Widget build(BuildContext context) {
@@ -29,37 +33,41 @@ class AddBillBody extends StatelessWidget {
           flex: 2,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: GetBuilder<AddBillPlutoController>(builder: (addBillPlutoController) {
-              return FocusScope(
-                autofocus: true,
-                child: PlutoWithEdite(
-                  columns: addBillPlutoController.mainTableColumns,
-                  rows: addBillPlutoController.mainTableRows,
-                  onRowSecondaryTap: addBillPlutoController.onMainTableRowSecondaryTap,
-                  onChanged: addBillPlutoController.onMainTableStateManagerChanged,
-                  onLoaded: addBillPlutoController.onMainTableLoaded,
-                  shortCut: customPlutoShortcut(GetProductByEnterAction(addBillPlutoController, context)),
-                  evenRowColor: Color(billTypeModel.color!),
-                ),
-              );
-            }),
+            child: GetBuilder<AddBillPlutoController>(
+                tag: tag,
+                builder: (_) {
+                  return FocusScope(
+                    autofocus: true,
+                    child: PlutoWithEdite(
+                      columns: addBillPlutoController.mainTableColumns,
+                      rows: addBillPlutoController.mainTableRows,
+                      onRowSecondaryTap: addBillPlutoController.onMainTableRowSecondaryTap,
+                      onChanged: addBillPlutoController.onMainTableStateManagerChanged,
+                      onLoaded: addBillPlutoController.onMainTableLoaded,
+                      shortCut: customPlutoShortcut(GetProductByEnterAction(addBillPlutoController, context)),
+                      evenRowColor: Color(billTypeModel.color!),
+                    ),
+                  );
+                }),
           ),
         ),
         const VerticalSpace(5),
-        GetBuilder<AddBillPlutoController>(builder: (addBillPlutoController) {
-          return Expanded(
-            flex: 1,
-            child: BillGridWidget(
-              rowColor: Colors.grey,
-              columns: addBillPlutoController.additionsDiscountsColumns,
-              rows: addBillPlutoController.additionsDiscountsRows,
-              onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
-              onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
-              shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                  plutoController: addBillPlutoController, billController: addBillController, context: context)),
-            ),
-          );
-        }),
+        GetBuilder<AddBillPlutoController>(
+            tag: tag,
+            builder: (_) {
+              return Expanded(
+                flex: 1,
+                child: BillGridWidget(
+                  rowColor: Colors.grey,
+                  columns: addBillPlutoController.additionsDiscountsColumns,
+                  rows: addBillPlutoController.additionsDiscountsRows,
+                  onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
+                  onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
+                  shortCut: customPlutoShortcut(GetAccountsByEnterAction(
+                      plutoController: addBillPlutoController, billController: addBillController, context: context)),
+                ),
+              );
+            }),
       ],
     );
   }

@@ -52,8 +52,8 @@ class SearchProductTextDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                           child: PlutoGridWithAppBar(
                             title: 'اختيار مادة',
-                            icon: Icons.close,
-                            onIconPressed: onCloseTap,
+                            leadingIcon: Icons.close,
+                            onLeadingIconPressed: onCloseTap,
                             tableSourceModels: searchedMaterials,
                             onLoaded: (PlutoGridOnLoadedEvent onLoadedEvent) {},
                             onSelected: onRowSelected,

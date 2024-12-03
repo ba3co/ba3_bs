@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
+import 'package:ba3_bs/core/widgets/account_selection_dialog.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
+import '../../features/floating_window/managers/overlay_entry_with_priority_manager.dart';
+import '../../features/floating_window/models/overlay_entry_with_priority.dart';
 import '../constants/app_constants.dart';
 import '../i_controllers/i_bill_controller.dart';
 
@@ -73,26 +76,85 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     IBillController billController,
   ) async {
     final columnField = stateManager.currentColumn?.field;
-    final currentRow = stateManager.currentRow;
+    if (columnField != AppConstants.id) return;
 
-    if (columnField == AppConstants.id) {
-      final accountModel = _openAccountSelectionDialog(stateManager.currentCell?.value);
+    final accountsController = Get.find<AccountsController>();
+    final query = stateManager.currentCell?.value ?? '';
 
-      if (accountModel != null) {
-        // _updateSelectedAccount(currentRow, accountModel, billController);
-        _updateCellValue(stateManager, columnField, accountModel.accName);
-      } else {
-        _resetCellValue(stateManager, columnField);
-      }
+    List<AccountModel> searchedAccounts = accountsController.getAccounts(query);
+    AccountModel? selectedAccountModel;
 
-      stateManager.notifyListeners();
-      plutoController.update();
+    if (searchedAccounts.length == 1) {
+      // Single match
+      selectedAccountModel = searchedAccounts.first;
+      updateWithSelectedAccount(selectedAccountModel, stateManager, plutoController, columnField!);
+    } else if (searchedAccounts.isEmpty) {
+      // No matches
+      _resetCellValue(stateManager, columnField);
+
+      updateWithSelectedAccount(null, stateManager, plutoController, columnField!);
+    } else {
+      // Multiple matches, show search dialog
+      _showSearchDialog(
+        columnField: columnField!,
+        stateManager: stateManager,
+        controller: plutoController,
+        searchedAccounts: searchedAccounts,
+      );
     }
   }
 
-  /// Opens the account selection dialog and returns the selected account model.
-  AccountModel? _openAccountSelectionDialog(String query) =>
-      Get.find<AccountsController>().openAccountSelectionDialog(query: query, context: context);
+  void _showSearchDialog({
+    required List<AccountModel> searchedAccounts,
+    required PlutoGridStateManager stateManager,
+    required IPlutoController controller,
+    required String columnField,
+  }) {
+    final overlay = Overlay.of(context);
+
+    late OverlayEntry overlayEntry;
+
+    OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
+
+    late OverlayEntryWithPriority overlayEntryWithPriority;
+
+    overlayEntry = OverlayEntry(
+      builder: (context) => AccountSelectionDialog(
+        accounts: searchedAccounts,
+        onAccountTap: (selectedAccount) {
+          updateWithSelectedAccount(selectedAccount, stateManager, plutoController, columnField);
+
+          overlayEntry.remove(); // Remove overlay after selection
+          entryWithPriorityInstance.remove(overlayEntryWithPriority);
+        },
+        onCloseTap: () {
+          overlayEntry.remove();
+          entryWithPriorityInstance.remove(overlayEntryWithPriority);
+        },
+      ),
+    );
+
+    overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
+    entryWithPriorityInstance.add(overlayEntryWithPriority);
+
+    overlay.insert(overlayEntry);
+  }
+
+  void updateWithSelectedAccount(
+    AccountModel? accountModel,
+    PlutoGridStateManager stateManager,
+    IPlutoController plutoController,
+    String columnField,
+  ) {
+    if (accountModel != null) {
+      _updateCellValue(stateManager, columnField, accountModel.accName);
+    } else {
+      _resetCellValue(stateManager, columnField);
+    }
+
+    stateManager.notifyListeners();
+    plutoController.update();
+  }
 
   /// Updates the selected additions or discounts account based on the column field.
   // void _updateSelectedAccount(PlutoRow? currentRow, AccountModel accountModel, IBillController billController) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/bill/add_bill_controller.dart';
+import '../../controllers/pluto/add_bill_pluto_controller.dart';
 import '../widgets/add_bill/add_bill_app_bar.dart';
 import '../widgets/add_bill/add_bill_body.dart';
 import '../widgets/add_bill/add_bill_buttons.dart';
@@ -17,6 +18,7 @@ class AddBillScreen extends StatelessWidget {
     required this.fromBillDetails,
     required this.fromBillById,
     required this.addBillController,
+    required this.addBillPlutoController,
     required this.tag,
   });
 
@@ -24,6 +26,7 @@ class AddBillScreen extends StatelessWidget {
   final bool fromBillDetails;
   final bool fromBillById;
   final AddBillController addBillController;
+  final AddBillPlutoController addBillPlutoController;
   final String tag;
 
   @override
@@ -53,12 +56,21 @@ class AddBillScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                          child: AddBillBody(
-                        billTypeModel: billTypeModel,
-                        addBillController: addBillController,
-                      )),
+                        child: AddBillBody(
+                          billTypeModel: billTypeModel,
+                          addBillController: addBillController,
+                          addBillPlutoController: addBillPlutoController,
+                          tag: tag,
+                        ),
+                      ),
                       const VerticalSpace(5),
-                      const Align(alignment: Alignment.centerLeft, child: AddBillCalculations()),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: AddBillCalculations(
+                          addBillPlutoController: addBillPlutoController,
+                          tag: tag,
+                        ),
+                      ),
                       const Divider(height: 10),
                       AddBillButtons(addBillController: addBillController, billTypeModel: billTypeModel),
                     ],

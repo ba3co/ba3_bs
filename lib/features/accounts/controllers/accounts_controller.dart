@@ -8,7 +8,8 @@ import 'package:get/get.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/widgets/account_selection_dialog.dart';
-import '../../floating_window/services/overlay_entry_with_priority.dart';
+import '../../floating_window/managers/overlay_entry_with_priority_manager.dart';
+import '../../floating_window/models/overlay_entry_with_priority.dart';
 import '../../patterns/controllers/pattern_controller.dart';
 import '../data/models/account_model.dart';
 import '../data/repositories/accounts_repository.dart';
@@ -19,8 +20,6 @@ class AccountsController extends GetxController {
   AccountsController(this._accountsRepository);
 
   List<AccountModel> accounts = [];
-
-
 
   bool isLoading = true;
 
@@ -47,8 +46,9 @@ class AccountsController extends GetxController {
   void navigateToAllAccountsScreen() {
     Get.toNamed(AppRoutes.showAllAccountsScreen);
   }
+
   void navigateToAccountDetailsScreen(String accountId) {
-    Get.toNamed(AppRoutes.showAccountDetailsScreen,arguments: accountId);
+    Get.toNamed(AppRoutes.showAccountDetailsScreen, arguments: accountId);
   }
 
   List<AccountModel> searchAccountsByNameOrCode(text) {
@@ -87,7 +87,7 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
-  AccountModel? openAccountSelectionDialog({
+  void openAccountSelectionDialog({
     required String query,
     required BuildContext context,
     TextEditingController? textEditingController,
@@ -122,7 +122,6 @@ class AccountsController extends GetxController {
 
         textEditingController.text = selectedAccountModel.accName!;
       }
-      return selectedAccountModel;
     } else if (searchedAccounts.isNotEmpty) {
       // Multiple matches, show search dialog
 
@@ -152,6 +151,7 @@ class AccountsController extends GetxController {
               selectedAccountModel = selectedAccount;
 
               // Callback for parent function with selected account
+
               if (selectedAccountModel != null && textEditingController != null) {
                 final BillAccounts? billAccounts =
                     Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
@@ -178,17 +178,15 @@ class AccountsController extends GetxController {
       );
 
       overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
+      entryWithPriorityInstance.add(overlayEntryWithPriority);
 
       // Insert the overlay entry above all other widgets
       overlay.insert(overlayEntry);
-      entryWithPriorityInstance.add(overlayEntryWithPriority);
 
       // Wait for the dialog to return a result (if needed)
-      return selectedAccountModel;
     } else {
       // No matches
       AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
-      return null;
     }
   }
 
