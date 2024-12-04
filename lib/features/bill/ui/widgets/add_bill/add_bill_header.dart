@@ -10,6 +10,7 @@ import '../../../../../core/widgets/date_picker.dart';
 import '../../../../../core/widgets/searchable_account_field.dart';
 import '../../../../../core/widgets/store_dropdown.dart';
 import '../bill_shared/bill_header_field.dart';
+import '../bill_shared/form_field_row.dart';
 
 class AddBillHeader extends StatelessWidget {
   const AddBillHeader({super.key, required this.addBillController});
@@ -24,7 +25,7 @@ class AddBillHeader extends StatelessWidget {
         key: addBillController.formKey,
         child: Column(
           children: [
-            BillHeaderRow(
+            FormFieldRow(
               firstItem: BillHeaderField(
                 label: 'تاريخ الفاتورة',
                 child: DatePicker(
@@ -37,7 +38,7 @@ class AddBillHeader extends StatelessWidget {
               ),
             ),
             const VerticalSpace(),
-            BillHeaderRow(
+            FormFieldRow(
               firstItem: BillHeaderField(
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
@@ -56,7 +57,7 @@ class AddBillHeader extends StatelessWidget {
               ),
             ),
             const VerticalSpace(),
-            BillHeaderRow(
+            FormFieldRow(
               firstItem: SearchableAccountField(
                 label: 'البائع',
                 height: .038.sh,
@@ -81,24 +82,6 @@ class AddBillHeader extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class BillHeaderRow extends StatelessWidget {
-  const BillHeaderRow({super.key, required this.firstItem, required this.secondItem});
-
-  final Widget firstItem;
-  final Widget secondItem;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: firstItem),
-        const HorizontalSpace(20),
-        Expanded(child: secondItem),
-      ],
     );
   }
 }

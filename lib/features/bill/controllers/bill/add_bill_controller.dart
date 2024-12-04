@@ -20,6 +20,7 @@ import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
 import '../../ui/widgets/bill_shared/show_e_invoice_dialog.dart';
+import '../pluto/bill_details_pluto_controller.dart';
 import 'all_bills_controller.dart';
 import 'bill_details_controller.dart';
 import 'bill_search_controller.dart';
@@ -27,8 +28,9 @@ import 'bill_search_controller.dart';
 class AddBillController extends IBillController with AppValidator implements IStoreSelectionHandler {
   // Repositories
   final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
+  final AddBillPlutoController addBillPlutoController;
 
-  AddBillController(this._billsFirebaseRepo);
+  AddBillController(this._billsFirebaseRepo, {required this.addBillPlutoController});
 
   // Services
   late final BillService _billService;
@@ -90,7 +92,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
   // Initializer
   void _initializeServices() {
-    _billService = BillService(Get.find<AddBillPlutoController>());
+    _billService = BillService(addBillPlutoController);
   }
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
@@ -115,12 +117,12 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
   bool get _hasBill => recentBill != null;
 
-  showEInvoice() {
+  showEInvoice(BuildContext context) {
     if (!_hasBill) {
       AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا!');
       return;
     }
-    showEInvoiceDialog(this, getRecentBill.billId!);
+    showCustomEInvoiceOverlay(context, this, getRecentBill);
   }
 
   Future<void> printBill(List<InvoiceRecordModel> invRecords) async {
@@ -196,7 +198,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
   }
 
   void resetBillForm() {
-    Get.find<AddBillPlutoController>().resetAllTables();
+    addBillPlutoController.resetAllTables();
 
     sellerAccountController.clear();
 
@@ -323,10 +325,14 @@ class AddBillController extends IBillController with AppValidator implements ISt
     }
   }
 
-  void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
-
-  Future<void> onBackPressed(
-      {required String billTypeId, required bool fromBillDetails, required bool fromBillById}) async {
+  Future<void> onBackPressed({
+    required String billTypeId,
+    required bool fromBillDetails,
+    required bool fromBillById,
+    required BillDetailsController billDetailsController,
+    required BillDetailsPlutoController billDetailsPlutoController,
+    required BillSearchController billSearchController,
+  }) async {
     AllBillsController allBillsController = Get.find<AllBillsController>();
 
     await allBillsController.fetchBills();
@@ -338,9 +344,14 @@ class AddBillController extends IBillController with AppValidator implements ISt
     if (billsByCategory.isNotEmpty) {
       final BillModel lastBill = billsByCategory.last;
 
-      Get.find<BillDetailsController>().refreshScreenWithCurrentBillModel(lastBill);
+      billDetailsController.refreshScreenWithCurrentBillModel(lastBill, billDetailsPlutoController);
 
-      Get.find<BillSearchController>().initializeBillSearch(billsByCategory: billsByCategory, bill: lastBill);
+      billSearchController.initializeBillSearch(
+        billsByCategory: billsByCategory,
+        bill: lastBill,
+        billDetailsController: billDetailsController,
+        billDetailsPlutoController: billDetailsPlutoController,
+      );
     }
 
     if (!fromBillDetails && billsByCategory.isNotEmpty) {

@@ -5,17 +5,28 @@ import 'package:get/get.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bill_model.dart';
+import '../pluto/bill_details_pluto_controller.dart';
 
 class BillSearchController extends GetxController {
   late List<BillModel> bills;
   late BillModel currentBill;
   late int currentBillIndex;
+  late BillDetailsController billDetailsController;
+  late BillDetailsPlutoController billDetailsPlutoController;
 
   /// Initializes the bill search with the given bills and current bill
-  void initializeBillSearch({required List<BillModel> billsByCategory, required BillModel bill}) {
+  void initializeBillSearch({
+    required List<BillModel> billsByCategory,
+    required BillModel bill,
+    required BillDetailsController billDetailsController,
+    required BillDetailsPlutoController billDetailsPlutoController,
+  }) {
     bills = billsByCategory;
     currentBillIndex = bills.indexOf(bill);
     currentBill = bills[currentBillIndex];
+
+    this.billDetailsController = billDetailsController;
+    this.billDetailsPlutoController = billDetailsPlutoController;
 
     log('bills ${bills.length}');
     log('currentBillIndex $currentBillIndex');
@@ -108,13 +119,18 @@ class BillSearchController extends GetxController {
     currentBillIndex = index;
     currentBill = bills[index];
     _refreshScreenWithCurrentBill();
+    update();
   }
 
   /// Refreshes the screen with the current bill's details
   void _refreshScreenWithCurrentBill() {
-    final billDetailsController = Get.find<BillDetailsController>();
-    billDetailsController.refreshScreenWithCurrentBillModel(currentBill);
+    billDetailsController.refreshScreenWithCurrentBillModel(currentBill, billDetailsPlutoController);
   }
+
+  /// Checks if the current bill is the last in the list
+  bool get isLast => currentBillIndex == bills.length - 1;
+
+  bool get isNew => currentBill.billId == null;
 
   /// Displays an error message
   void _showErrorMessage(String message) => AppUIUtils.onFailure(message);

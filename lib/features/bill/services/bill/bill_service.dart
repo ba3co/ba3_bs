@@ -7,9 +7,9 @@ import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
 
 class BillService {
-  final IPlutoController controller;
+  final IPlutoController plutoController;
 
-  BillService(this.controller);
+  BillService(this.plutoController);
 
   BondController get bondController => Get.find<BondController>();
 
@@ -29,13 +29,13 @@ class BillService {
       billSellerId: billSellerId,
       billPayType: billPayType,
       billDate: billDate,
-      billTotal: controller.calculateFinalTotal,
-      billVatTotal: controller.computeTotalVat,
-      billWithoutVatTotal: controller.computeBeforeVatTotal,
-      billGiftsTotal: controller.computeGifts,
-      billDiscountsTotal: controller.computeDiscounts,
-      billAdditionsTotal: controller.computeAdditions,
-      billRecordsItems: controller.generateBillRecords,
+      billTotal: plutoController.calculateFinalTotal,
+      billVatTotal: plutoController.computeTotalVat,
+      billWithoutVatTotal: plutoController.computeBeforeVatTotal,
+      billGiftsTotal: plutoController.computeGifts,
+      billDiscountsTotal: plutoController.computeDiscounts,
+      billAdditionsTotal: plutoController.computeAdditions,
+      billRecordsItems: plutoController.generateBillRecords,
     );
   }
 
@@ -46,10 +46,10 @@ class BillService {
       bondController.createBond(
         billTypeModel: billTypeModel,
         customerAccount: customerAccount,
-        vat: controller.computeTotalVat,
-        total: controller.computeBeforeVatTotal,
-        gifts: controller.computeGifts,
-        discount: controller.computeDiscounts,
-        addition: controller.computeAdditions,
+        vat: plutoController.computeTotalVat,
+        total: plutoController.computeBeforeVatTotal,
+        gifts: plutoController.computeGifts,
+        discount: plutoController.computeDiscounts,
+        addition: plutoController.computeAdditions,
       );
 }

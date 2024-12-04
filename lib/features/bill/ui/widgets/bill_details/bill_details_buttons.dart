@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/widgets/app_button.dart';
@@ -13,11 +13,15 @@ class BillDetailsButtons extends StatelessWidget {
   const BillDetailsButtons({
     super.key,
     required this.billDetailsController,
+    required this.billDetailsPlutoController,
     required this.billModel,
     required this.fromBillById,
+    required this.billSearchController,
   });
 
   final BillDetailsController billDetailsController;
+  final BillDetailsPlutoController billDetailsPlutoController;
+  final BillSearchController billSearchController;
   final BillModel billModel;
   final bool fromBillById;
 
@@ -30,18 +34,25 @@ class BillDetailsButtons extends StatelessWidget {
         spacing: 20,
         runSpacing: 20,
         children: [
-          AppButton(
-            title: 'جديد',
-            onPressed: () {
-              billDetailsController.createNewFloatingAddBillScreen(
-                billModel.billTypeModel,
-                context,
-                fromBillDetails: true,
-                fromBillById: fromBillById,
-              );
-            },
-            iconData: Icons.create_new_folder_outlined,
-          ),
+          // AppButton(
+          //   title: 'جديد',
+          //   onPressed: () {
+          //     billDetailsController.createNewFloatingAddBillScreen(
+          //       billModel.billTypeModel,
+          //       context,
+          //       fromBillDetails: true,
+          //       fromBillById: fromBillById,
+          //     );
+          //   },
+          //   iconData: Icons.create_new_folder_outlined,
+          // ),
+          if (billSearchController.isNew)
+            AppButton(
+                title: 'إضافة',
+                onPressed: () async {
+                  billDetailsController.saveBill(billModel.billTypeModel);
+                },
+                iconData: Icons.add_chart_outlined),
           AppButton(
             title: 'السند',
             onPressed: () async {
@@ -49,58 +60,60 @@ class BillDetailsButtons extends StatelessWidget {
             },
             iconData: Icons.file_open_outlined,
           ),
-          AppButton(
-            title: "تعديل",
-            onPressed: () async {
-              billDetailsController.updateBill(
-                billModel: billModel,
-                billTypeModel: billModel.billTypeModel,
-              );
-            },
-            iconData: Icons.edit_outlined,
-          ),
+          if (!billSearchController.isNew)
+            AppButton(
+              title: "تعديل",
+              onPressed: () async {
+                billDetailsController.updateBill(
+                  billModel: billModel,
+                  billTypeModel: billModel.billTypeModel,
+                );
+              },
+              iconData: Icons.edit_outlined,
+            ),
           AppButton(
             iconData: Icons.print_outlined,
             title: 'طباعة',
             onPressed: () async {
               billDetailsController.printBill(
                 billNumber: billModel.billDetails.billNumber!,
-                invRecords: Get.find<BillDetailsPlutoController>().generateBillRecords,
+                invRecords: billDetailsPlutoController.generateBillRecords,
               );
             },
           ),
           AppButton(
             title: 'E-Invoice',
             onPressed: () {
-              showEInvoiceDialog(billDetailsController, billModel.billId!);
+              showCustomEInvoiceOverlay(context, billDetailsController, billModel);
             },
             iconData: Icons.link,
           ),
-          AppButton(
-            title: 'Pdf-Email',
-            fontSize: 15,
-            onPressed: () {
-              billDetailsController.generateAndSendBillPdf(
-                recipientEmail: AppStrings.recipientEmail,
-                billModel: billModel,
-                fileName: AppStrings.bill,
-                logoSrc: AppAssets.ba3Logo,
-                fontSrc: AppAssets.notoSansArabicRegular,
-              );
-            },
-            iconData: Icons.link,
-          ),
-          AppButton(
-            iconData: Icons.delete_outline,
-            color: Colors.red,
-            title: 'حذف',
-            onPressed: () async {
-              billDetailsController.deleteBill(
-                billModel.billId!,
-                fromBillById: fromBillById,
-              );
-            },
-          ),
+          if (!billSearchController.isNew)
+            AppButton(
+              title: 'Pdf-Email',
+              onPressed: () {
+                billDetailsController.generateAndSendBillPdf(
+                  recipientEmail: AppStrings.recipientEmail,
+                  billModel: billModel,
+                  fileName: AppStrings.bill,
+                  logoSrc: AppAssets.ba3Logo,
+                  fontSrc: AppAssets.notoSansArabicRegular,
+                );
+              },
+              iconData: Icons.link,
+            ),
+          if (!billSearchController.isNew)
+            AppButton(
+              iconData: Icons.delete_outline,
+              color: Colors.red,
+              title: 'حذف',
+              onPressed: () async {
+                billDetailsController.deleteBill(
+                  billModel.billId!,
+                  fromBillById: fromBillById,
+                );
+              },
+            ),
         ],
       ),
     );

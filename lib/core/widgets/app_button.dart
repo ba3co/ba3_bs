@@ -7,43 +7,43 @@ class AppButton extends StatelessWidget {
       required this.onPressed,
       required this.iconData,
       this.color,
-      this.width = 100,
+      this.width,
       this.height,
-      this.fontSize = 16});
+      this.fontSize});
 
   final String title;
   final Color? color;
   final IconData iconData;
   final VoidCallback onPressed;
-  final double width;
+  final double? width;
   final double? height;
-  final double fontSize;
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(color),
-            shape: const WidgetStatePropertyAll(
-                RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))))),
+          backgroundColor: WidgetStatePropertyAll(color),
+          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+          shape: const WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+          ),
+        ),
         onPressed: onPressed,
         child: SizedBox(
-          width: width,
-          height: height ?? 35.0,
+          width: width ?? 110,
+          height: height ?? 35,
           child: Center(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: fontSize),
-                  ),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: fontSize ?? 15),
                 ),
-                // const Spacer(),
-                Icon(iconData, size: 22),
+                Icon(iconData, size: 20),
               ],
             ),
           ),

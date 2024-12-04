@@ -60,41 +60,29 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      // validator: validator,
       onFieldSubmitted: widget.onSubmitted,
       validator: widget.validator,
       onChanged: widget.onChanged,
       cursorHeight: 15,
-      // onSubmitted: onSubmitted,
       controller: widget.textEditingController,
       inputFormatters: widget.inputFormatters,
       onTap: () => widget.textEditingController.selection =
           TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
-
-      // onTapOutside: onTapOutside,
       decoration: InputDecoration(
         fillColor: Colors.white,
         filled: true,
         errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
+        contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
         disabledBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.white, // Change the border color
-            width: 2.0, // Change the border width
-          ),
-          borderRadius: BorderRadius.circular(5.0), // Adjust border radius
+          borderSide: const BorderSide(color: Colors.white, width: 2.0),
+          borderRadius: BorderRadius.circular(5.0),
         ),
         border: UnderlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.black, // Change the border color
-            width: 2.0, // Change the border width
-          ),
-          borderRadius: BorderRadius.circular(5.0), // Adjust border radius
+          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderRadius: BorderRadius.circular(5.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.blue, // Change the border color when focused
-            width: 2.0,
-          ),
+          borderSide: const BorderSide(color: Colors.blue, width: 2.0),
           borderRadius: BorderRadius.circular(5.0),
         ),
         suffixIcon: IconButton(
@@ -104,7 +92,6 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
         ),
         // Add an icon as a prefix
 
-        contentPadding: const EdgeInsets.symmetric(vertical: 0.0),
         // Center the text vertically
       ),
       textAlign: TextAlign.center,

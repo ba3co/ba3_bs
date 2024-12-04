@@ -295,12 +295,6 @@ class AdditionsDiscountsRecordModel {
     );
   }
 
-  // Helper method to parse integers, handling Arabic numerals
-  static int? _parseInteger(dynamic value) {
-    if (value == null) return null;
-    return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString()));
-  }
-
   // Helper method to parse doubles, handling Arabic numerals
   static double? _parseDouble(dynamic value) {
     if (value == null) return null;
@@ -351,13 +345,6 @@ class AdditionsDiscountsRecordModel {
         title: AppConstants.account,
         field: AppConstants.id,
         type: PlutoColumnType.text(),
-        renderer: (rendererContext) {
-          if (rendererContext.row.cells[AppConstants.id]?.value != '') {
-            rendererContext.cell.value = rendererContext.rowIdx.toString();
-            return Text(rendererContext.rowIdx.toString());
-          }
-          return const Text("");
-        },
       ): account,
       PlutoColumn(
         title: AppConstants.discountAr,

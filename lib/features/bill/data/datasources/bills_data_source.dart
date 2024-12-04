@@ -59,13 +59,13 @@ class BillsDataSource implements FirebaseDatasourceWithResultBase<BillModel> {
   }
 
   Future<BillModel> _createNewBill(BillModel bill) async {
-    final newInvoiceNumber = await _getNextBillNumber(bill.billTypeModel.billTypeLabel!);
+    final newBillNumber = await _getNextBillNumber(bill.billTypeModel.billTypeLabel!);
 
     final newDocRefId = _firestore.collection(_billsCollection).doc().id;
 
     final newBill = bill.copyWith(
       billId: newDocRefId,
-      billDetails: bill.billDetails.copyWith(billGuid: newDocRefId, billNumber: newInvoiceNumber),
+      billDetails: bill.billDetails.copyWith(billGuid: newDocRefId, billNumber: newBillNumber),
     );
 
     final newBillJson = newBill.toJson();

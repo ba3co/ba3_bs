@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:get/get.dart';
 
 import '../../features/accounts/data/models/account_model.dart';
+import '../../features/bill/data/models/bill_items.dart';
 import '../../features/bill/services/bill/bill_pdf_generator.dart';
 import '../helper/enums/enums.dart';
 import '../services/mailer_messaging_service/implementations/gmail_messaging_service.dart';
@@ -78,6 +79,10 @@ abstract class IBillController extends GetxController {
     String? subject,
     String? body,
   }) async {
+    if (!hasBillId(billModel.billId)) return;
+
+    if (!hasBillItems(billModel.items.itemList)) return;
+
     final pdfFilePath =
         await _generateBillPdf(billModel: billModel, fileName: fileName, logoSrc: logoSrc, fontSrc: fontSrc);
 
@@ -96,5 +101,21 @@ abstract class IBillController extends GetxController {
     final pdfGeneratorRepo = PdfGeneratorRepository<BillModel>(pdfGenerator: BillPdfGenerator());
 
     return await pdfGeneratorRepo.savePdf(billModel, fileName, logoSrc: logoSrc, fontSrc: fontSrc);
+  }
+
+  bool hasBillItems(List<BillItem> items) {
+    if (items.isEmpty) {
+      AppUIUtils.onFailure('يرجى إضافة عنصر واحد على الأقل إلى الفاتورة!');
+      return false;
+    }
+    return true;
+  }
+
+  bool hasBillId(String? billId) {
+    if (billId == null) {
+      AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا قبل طباعتها!');
+      return false;
+    }
+    return true;
   }
 }

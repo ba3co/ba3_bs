@@ -11,7 +11,10 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../floating_window/services/floating_window_service.dart';
@@ -27,9 +30,10 @@ import '../pluto/bill_details_pluto_controller.dart';
 class BillDetailsController extends IBillController with AppValidator implements IStoreSelectionHandler {
   // Repositories
 
-  final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepoWithResult;
+  final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
+  final BillDetailsPlutoController billDetailsPlutoController;
 
-  BillDetailsController(this._billsFirebaseRepoWithResult);
+  BillDetailsController(this._billsFirebaseRepo, {required this.billDetailsPlutoController});
 
   // Services
   late final BillService _billService;
@@ -85,7 +89,7 @@ class BillDetailsController extends IBillController with AppValidator implements
 
   // Initializer
   void _initializeServices() {
-    _billService = BillService(Get.find<BillDetailsPlutoController>());
+    _billService = BillService(billDetailsPlutoController);
   }
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
@@ -118,7 +122,7 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   Future<void> deleteBill(String billId, {bool fromBillById = false}) async {
-    final result = await _billsFirebaseRepoWithResult.delete(billId);
+    final result = await _billsFirebaseRepo.delete(billId);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -136,6 +140,76 @@ class BillDetailsController extends IBillController with AppValidator implements
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
   }
 
+  Future<void> saveBill(BillTypeModel billTypeModel) async {
+    // Validate the form first
+    if (!validateForm()) return;
+
+    // Create the bill model from the provided invoice data
+    final BillModel? updatedBillModel = _createBillModelFromBillData(billTypeModel);
+
+    // Return if the model creation failed
+    if (updatedBillModel == null) return;
+
+    // Check if the bill items are not empty
+    if (!hasBillItems(updatedBillModel.items.itemList)) return;
+
+    // Save the bill to Firestore
+    final result = await _billsFirebaseRepo.save(updatedBillModel);
+
+    // Handle the result (success or failure)
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (billModel) => _handleSaveSuccess(billModel),
+    );
+  }
+
+  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel) {
+    final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel) ?? billTypeModel;
+    final sellerController = Get.find<SellerController>();
+
+    // Validate customer and seller accounts
+    if (!_validateCustomerAccount() || !_validateSellerAccount(sellerController)) {
+      return null;
+    }
+
+    // Create and return the bill model
+    return _billService.createBillModel(
+      billTypeModel: updatedBillTypeModel,
+      billDate: billDate,
+      billCustomerId: selectedCustomerAccount!.id!,
+      billSellerId: sellerController.selectedSellerAccount!.costGuid!,
+      billPayType: selectedPayType.index,
+    );
+  }
+
+  bool _validateCustomerAccount() {
+    if (selectedCustomerAccount == null) {
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');
+      return false;
+    }
+    return true;
+  }
+
+  bool _validateSellerAccount(SellerController sellerController) {
+    if (sellerController.selectedSellerAccount == null) {
+      AppUIUtils.onFailure('من فضلك أدخل اسم البائع!');
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _handleSaveSuccess(BillModel billModel) async {
+    AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+
+    generateAndSendBillPdf(
+      recipientEmail: AppStrings.recipientEmail,
+      billModel: billModel,
+      fileName: AppStrings.bill,
+      logoSrc: AppAssets.ba3Logo,
+      fontSrc: AppAssets.notoSansArabicRegular,
+    );
+  }
+
   Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
     if (!validateForm()) return;
 
@@ -146,7 +220,7 @@ class BillDetailsController extends IBillController with AppValidator implements
       return;
     }
 
-    final result = await _billsFirebaseRepoWithResult.save(updatedBillModel);
+    final result = await _billsFirebaseRepo.save(updatedBillModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -225,12 +299,15 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
-  void navigateToAddBillScreen(BillTypeModel billTypeModel, {bool fromBillDetails = false, bool fromBillById = false}) {
-    // Get.put(AddBillController(_billsFirebaseRepoWithResult))
-    //     .initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
-    //
-    // Get.toNamed(AppRoutes.addBillScreen,
-    //     arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
+  void navigateToAddBillScreen(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController,
+      {bool fromBillDetails = false, bool fromBillById = false}) {
+    Get.put(AddBillController(
+      _billsFirebaseRepo,
+      addBillPlutoController: addBillPlutoController,
+    )).initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
+
+    Get.toNamed(AppRoutes.addBillScreen,
+        arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
   }
 
   void createNewFloatingAddBillScreen(
@@ -241,11 +318,11 @@ class BillDetailsController extends IBillController with AppValidator implements
   }) {
     final tag = 'AddBillController_${UniqueKey().toString()}';
 
-    // Initialize the AddBillController
-    AddBillController addBillController = _initializeAddBillController(billTypeModel, tag);
-
     // Initialize the AddBillPlutoController
     AddBillPlutoController addBillPlutoController = _initializeAddBillPlutoController(tag);
+
+    // Initialize the AddBillController
+    AddBillController addBillController = _initializeAddBillController(billTypeModel, addBillPlutoController, tag);
 
     // Launch the floating window with the AddBillScreen
     FloatingWindowService.launchFloatingWindow(
@@ -265,20 +342,23 @@ class BillDetailsController extends IBillController with AppValidator implements
     );
   }
 
-  AddBillController _initializeAddBillController(BillTypeModel billTypeModel, String tag) {
+  AddBillController _initializeAddBillController(
+      BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController, String tag) {
     // Create the AddBillController using Get
-    return Get.put<AddBillController>(AddBillController(_billsFirebaseRepoWithResult), tag: tag)
-      ..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
+    return Get.put<AddBillController>(
+      AddBillController(_billsFirebaseRepo, addBillPlutoController: addBillPlutoController),
+      tag: tag,
+    )..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
   }
 
   AddBillPlutoController _initializeAddBillPlutoController(String tag) =>
       Get.put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareBillMaterialsRows(billItems.materialRecords);
+      billDetailsPlutoController.prepareBillMaterialsRows(billItems.getMaterialRecords);
 
   prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.additionsDiscountsRecords);
+      billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);
 
   initCustomerAccount(AccountModel? account) {
     if (account != null) {
@@ -295,11 +375,9 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
-  void initSellerAccount(String billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId);
+  void initSellerAccount(String? billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId, this);
 
-  void refreshScreenWithCurrentBillModel(BillModel bill) {
-    BillDetailsPlutoController billPlutoController = Get.find<BillDetailsPlutoController>();
-
+  void refreshScreenWithCurrentBillModel(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate(bill.billDetails.billDate!.toDate!);
@@ -307,7 +385,8 @@ class BillDetailsController extends IBillController with AppValidator implements
     initBillNumberController(bill.billDetails.billNumber);
 
     initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
-    initSellerAccount(bill.billDetails.billSellerId!);
+
+    initSellerAccount(bill.billDetails.billSellerId);
 
     prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);

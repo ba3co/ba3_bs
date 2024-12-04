@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +19,7 @@ class AllBillsTypesList extends StatelessWidget {
           .map((billTypeModel) => BillITypeItemWidget(
                 bill: billTypeModel,
                 onPressed: () {
-                  allBillsController.openLastBillDetails(billTypeModel);
+                  allBillsController.openBillDetails(context, billTypeModel);
                 },
               ))
           .toList(),

@@ -36,7 +36,15 @@ class BillItems {
         itemList: itemList ?? this.itemList,
       );
 
-  List<InvoiceRecordModel> get materialRecords =>
+  List<InvoiceRecordModel> get getMaterialRecords {
+    if (itemList.isEmpty) {
+      return [];
+    } else {
+      return _materialRecords;
+    }
+  }
+
+  List<InvoiceRecordModel> get _materialRecords =>
       itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
 }
 

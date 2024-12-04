@@ -60,7 +60,7 @@ class AddBillButtons extends StatelessWidget {
               return showAddNewBillButton
                   ? AppButton(
                       title: 'E-Invoice',
-                      onPressed: () => addBillController.showEInvoice(),
+                      onPressed: () => addBillController.showEInvoice(context),
                       iconData: Icons.link,
                     )
                   : const SizedBox.shrink();

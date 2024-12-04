@@ -26,9 +26,9 @@ class BillDetailsPlutoController extends IPlutoController {
 
   List<PlutoRow> mainTableRows = [];
 
-  List<PlutoRow> additionsDiscountsRows = AppConstants.additionsDiscountsRows;
+  List<PlutoRow> additionsDiscountsRows = [];
 
-  List<PlutoColumn> additionsDiscountsColumns = AppConstants.additionsDiscountsColumns;
+  List<PlutoColumn> additionsDiscountsColumns = AdditionsDiscountsRecordModel().toEditedMap().keys.toList();
 
   // State managers
   @override
@@ -123,6 +123,16 @@ class BillDetailsPlutoController extends IPlutoController {
 
   onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
     additionsDiscountsStateManager = event.stateManager;
+
+    final newRows = additionsDiscountsStateManager.getNewRows(count: 2);
+    additionsDiscountsStateManager.appendRows(newRows);
+
+    if (additionsDiscountsStateManager.rows.isNotEmpty && additionsDiscountsStateManager.rows.first.cells.length > 1) {
+      final secondCell = additionsDiscountsStateManager.rows.first.cells.entries.elementAt(1).value;
+      additionsDiscountsStateManager.setCurrentCell(secondCell, 0);
+
+      FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
+    }
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
@@ -276,24 +286,25 @@ class BillDetailsPlutoController extends IPlutoController {
 
     if (invRecords.isNotEmpty) {
       mainTableRows = _gridService.convertRecordsToRows(invRecords);
-      mainTableStateManager.appendRows(mainTableRows);
-    }
 
-    mainTableStateManager.appendRows(newRows);
+      mainTableStateManager.appendRows(mainTableRows);
+      mainTableStateManager.appendRows(newRows);
+    } else {
+      mainTableRows = [];
+      mainTableStateManager.appendRows(newRows);
+    }
   }
 
   void prepareAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
-
-    final newRows = _plutoUtils.emptyAdditionsDiscountsRecords();
 
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = _gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
 
       additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
     } else {
-      additionsDiscountsRows = newRows;
-      additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
+      additionsDiscountsRows = [];
+      additionsDiscountsStateManager.appendRows(_plutoUtils.emptyAdditionsDiscountsRecords());
     }
   }
 

@@ -9,6 +9,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
+import '../bill_shared/custom_dropdown.dart';
 
 class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BillDetailsAppBar({
@@ -49,30 +50,20 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                          height: AppConstants.constHeightTextField,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: Colors.black38),
-                              borderRadius: BorderRadius.circular(8)),
-                          child: DropdownButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            underline: const SizedBox(),
-                            value: billDetailsController.selectedPayType,
-                            isExpanded: true,
-                            onChanged: (payType) => billDetailsController.onPayTypeChanged(payType),
-                            items: InvPayType.values
-                                .map((InvPayType type) => DropdownMenuItem<InvPayType>(
-                                      value: type,
-                                      child: SizedBox(
-                                          width: double.infinity,
-                                          child: Text(
-                                            type.label,
-                                            textDirection: TextDirection.rtl,
-                                          )),
-                                    ))
-                                .toList(),
-                          )),
+                      child: CustomDropdown<InvPayType>(
+                        value: billDetailsController.selectedPayType,
+                        items: InvPayType.values,
+                        itemLabelBuilder: (type) => type.label,
+                        onChanged: (selectedType) {
+                          billDetailsController.onPayTypeChanged(selectedType);
+                        },
+                        height: AppConstants.constHeightTextField,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black38),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
                   ],
                 ),

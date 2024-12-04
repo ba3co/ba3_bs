@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_with
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
-import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -80,7 +79,7 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 
-    Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
+    // Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
 

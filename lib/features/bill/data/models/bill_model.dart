@@ -153,10 +153,21 @@ class BillModel implements PlutoAdaptable {
         'وصف': billDetails.note ?? '',
       };
 
-  List<Map<String, String>> get additionsDiscountsRecords {
+  List<Map<String, String>> get getAdditionsDiscountsRecords {
+    final discountTotal = (billDetails.billDiscountsTotal ?? 0);
+    final additionTotal = (billDetails.billAdditionsTotal ?? 0);
+
+    if (discountTotal == 0 && additionTotal == 0) {
+      return [];
+    } else {
+      return _additionsDiscountsRecords;
+    }
+  }
+
+  List<Map<String, String>> get _additionsDiscountsRecords {
     final partialTotal = _partialTotal;
-    final discountTotal = (billDetails.billDiscountsTotal ?? 0).toString();
-    final additionTotal = (billDetails.billAdditionsTotal ?? 0).toString();
+    final discountTotal = (billDetails.billDiscountsTotal ?? 0).toStringAsFixed(2);
+    final additionTotal = (billDetails.billAdditionsTotal ?? 0).toStringAsFixed(2);
 
     return [
       _createRecordRow(

@@ -12,52 +12,65 @@ import '../../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../bill_shared/bill_grid_widget.dart';
 
 class BillDetailsBody extends StatelessWidget {
-  const BillDetailsBody({super.key, required this.billTypeModel});
+  const BillDetailsBody({
+    super.key,
+    required this.billTypeModel,
+    required this.billDetailsController,
+    required this.billDetailsPlutoController,
+    required this.tag,
+  });
 
   final BillTypeModel billTypeModel;
+  final BillDetailsController billDetailsController;
+  final BillDetailsPlutoController billDetailsPlutoController;
+  final String tag;
 
   @override
   Widget build(BuildContext context) {
-    final billDetailsController = Get.find<BillDetailsController>();
     return Column(
       children: [
         Expanded(
-          flex: 3,
+          flex: 2,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: GetBuilder<BillDetailsPlutoController>(builder: (controller) {
-              return FocusScope(
-                autofocus: true,
-                child: PlutoWithEdite(
-                  columns: controller.mainTableColumns,
-                  rows: controller.mainTableRows,
-                  onRowSecondaryTap: controller.onMainTableRowSecondaryTap,
-                  onChanged: controller.onMainTableStateManagerChanged,
-                  onLoaded: controller.onMainTableLoaded,
-                  shortCut: customPlutoShortcut(GetProductByEnterAction(controller, context)),
-                  evenRowColor: Color(billTypeModel.color!),
-                ),
-              );
-            }),
+            child: GetBuilder<BillDetailsPlutoController>(
+                tag: tag,
+                builder: (_) {
+                  return FocusScope(
+                    autofocus: true,
+                    child: PlutoWithEdite(
+                      columns: billDetailsPlutoController.mainTableColumns,
+                      rows: billDetailsPlutoController.mainTableRows,
+                      onRowSecondaryTap: billDetailsPlutoController.onMainTableRowSecondaryTap,
+                      onChanged: billDetailsPlutoController.onMainTableStateManagerChanged,
+                      onLoaded: billDetailsPlutoController.onMainTableLoaded,
+                      shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),
+                      evenRowColor: Color(billTypeModel.color!),
+                    ),
+                  );
+                }),
           ),
         ),
         const VerticalSpace(),
-        GetBuilder<BillDetailsPlutoController>(builder: (billDetailsPlutoController) {
-          return Expanded(
-            flex: 1,
-            child: BillGridWidget(
-              rowColor: Colors.grey,
-              columns: billDetailsPlutoController.additionsDiscountsColumns,
-              rows: billDetailsPlutoController.additionsDiscountsRows,
-              onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
-              onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
-              shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                  plutoController: billDetailsPlutoController,
-                  billController: billDetailsController,
-                  context: context)),
-            ),
-          );
-        }),
+        GetBuilder<BillDetailsPlutoController>(
+            tag: tag,
+            builder: (_) {
+              return Expanded(
+                flex: 1,
+                child: BillGridWidget(
+                  rowColor: Colors.grey,
+                  columns: billDetailsPlutoController.additionsDiscountsColumns,
+                  rows: billDetailsPlutoController.additionsDiscountsRows,
+                  onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
+                  onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
+                  shortCut: customPlutoShortcut(GetAccountsByEnterAction(
+                    plutoController: billDetailsPlutoController,
+                    billController: billDetailsController,
+                    context: context,
+                  )),
+                ),
+              );
+            }),
       ],
     );
   }

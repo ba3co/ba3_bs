@@ -88,12 +88,18 @@ class SellerController extends GetxController {
     }
   }
 
-  void initSellerAccount(String billSellerId) {
-    final SellerModel sellerAcc = getSellerById(billSellerId);
+  void initSellerAccount(String? billSellerId, BillDetailsController billDetailsController) {
+    if (billSellerId == null) {
+      selectedSellerAccount = null;
 
-    updateSellerAccount(sellerAcc);
+      billDetailsController.sellerAccountController.text = '';
+    } else {
+      final SellerModel sellerAccount = getSellerById(billSellerId);
 
-    Get.find<BillDetailsController>().sellerAccountController.text = sellerAcc.costName!;
+      updateSellerAccount(sellerAccount);
+
+      billDetailsController.sellerAccountController.text = sellerAccount.costName!;
+    }
   }
 
   void openSellerSelectionDialog({
