@@ -1,7 +1,9 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../features/bill/ui/widgets/bill_shared/custom_dropdown.dart';
 import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 import '../interfaces/i_store_selection_handler.dart';
@@ -28,16 +30,19 @@ class StoreDropdown extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.white,
               ),
-              child: CustomDropdown<StoreAccount>(
+              child: OverlayService.showOverlayDropdown<StoreAccount>(
                 value: storeSelectionHandler.selectedStore,
                 items: StoreAccount.values,
-                itemLabelBuilder: (store) => store.value,
                 onChanged: storeSelectionHandler.onSelectedStoreChanged,
+                itemLabelBuilder: (store) => store.value,
                 height: AppConstants.constHeightTextField,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black38),
                   borderRadius: BorderRadius.circular(5),
                 ),
+                onCloseCallback: () {
+                  log('StoreAccount Dropdown Overly Closed.');
+                },
               ),
             ),
           ),

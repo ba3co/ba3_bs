@@ -140,8 +140,12 @@ class AllBillsController extends GetxController {
     // Initialize the BillDetailsPlutoController
     BillDetailsPlutoController billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
 
+    // Initialize the BillSearchController
+    BillSearchController billSearchController = _initializeBillSearchController(tag);
+
     // Initialize the BillDetailsController
-    BillDetailsController billDetailsController = _initializeBillDetailsController(tag, billDetailsPlutoController);
+    BillDetailsController billDetailsController =
+        _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
     if (billsByCategory.isEmpty) {
       _openAddBillFloatingWindow(context, billTypeModel, billDetailsController);
@@ -157,6 +161,7 @@ class AllBillsController extends GetxController {
       currentBill: lastBillModel,
       allBills: modifiedBills,
       billDetailsController: billDetailsController,
+      billSearchController: billSearchController,
       billDetailsPlutoController: billDetailsPlutoController,
       tag: tag,
     );
@@ -173,12 +178,10 @@ class AllBillsController extends GetxController {
     required BillModel currentBill,
     required List<BillModel> allBills,
     required BillDetailsController billDetailsController,
+    required BillSearchController billSearchController,
     required BillDetailsPlutoController billDetailsPlutoController,
     bool fromBillById = false,
   }) {
-    // Initialize the BillSearchController
-    BillSearchController billSearchController = _initializeBillSearchController(tag);
-
     billDetailsController.refreshScreenWithCurrentBillModel(currentBill, billDetailsPlutoController);
 
     initializeBillSearch(
@@ -226,9 +229,16 @@ class AllBillsController extends GetxController {
   }
 
   BillDetailsController _initializeBillDetailsController(
-          String tag, BillDetailsPlutoController billDetailsPlutoController) =>
+    String tag,
+    BillDetailsPlutoController billDetailsPlutoController,
+    BillSearchController billSearchController,
+  ) =>
       Get.put<BillDetailsController>(
-        BillDetailsController(_billsFirebaseRepo, billDetailsPlutoController: billDetailsPlutoController),
+        BillDetailsController(
+          _billsFirebaseRepo,
+          billDetailsPlutoController: billDetailsPlutoController,
+          billSearchController: billSearchController,
+        ),
         tag: tag,
       );
 
@@ -252,11 +262,12 @@ class AllBillsController extends GetxController {
     // Initialize the BillDetailsPlutoController
     BillDetailsPlutoController billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
 
-    // Initialize the BillDetailsController
-    BillDetailsController billDetailsController = _initializeBillDetailsController(tag, billDetailsPlutoController);
-
     // Initialize the BillSearchController
     BillSearchController billSearchController = _initializeBillSearchController(tag);
+
+    // Initialize the BillDetailsController
+    BillDetailsController billDetailsController =
+        _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
     billDetailsController.refreshScreenWithCurrentBillModel(billModel, billDetailsPlutoController);
 

@@ -36,54 +36,44 @@ class PlutoGridWithAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: plutoGridAppBar(icon, onIconPressed),
+      appBar: plutoGridAppBar(),
       body: GetBuilder<PlutoController>(
         builder: (controller) {
           return isLoading
               ? const SizedBox()
-              : Column(
-                  children: [
-                    Expanded(
-                      child: PlutoGrid(
-                        key: controller.plutoKey,
-                        onLoaded: (event) {
-                          event.stateManager.setShowColumnFilter(true);
-                        },
-                        onSelected: onSelected,
-                        columns: controller.generateColumns(tableSourceModels),
-                        rows: controller.generateRows(tableSourceModels),
-                        mode: PlutoGridMode.selectWithOneTap,
-                        configuration: PlutoGridConfiguration(
-                          shortcut: const PlutoGridShortcut(),
-                          style: PlutoGridStyleConfig(
-                            enableRowColorAnimation: true,
-                            evenRowColor: Colors.blueAccent.withOpacity(0.5),
-                            columnTextStyle:
-                                const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
-                            activatedColor: Colors.white.withOpacity(0.5),
-                            cellTextStyle:
-                                const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                            gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
-                            gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
-                            // gridBorderColor: Colors.transparent,
-                          ),
-                          localeText: const PlutoGridLocaleText.arabic(),
-                        ),
-                        createFooter: (stateManager) {
-                          stateManager.setPageSize(100, notify: false); // default 40
-
-                          return PlutoPagination(stateManager);
-                        },
-                      ),
+              : PlutoGrid(
+                  key: controller.plutoKey,
+                  onLoaded: onLoaded,
+                  onSelected: onSelected,
+                  columns: controller.generateColumns(tableSourceModels),
+                  rows: controller.generateRows(tableSourceModels),
+                  mode: PlutoGridMode.selectWithOneTap,
+                  configuration: PlutoGridConfiguration(
+                    shortcut: const PlutoGridShortcut(),
+                    style: PlutoGridStyleConfig(
+                      enableRowColorAnimation: true,
+                      evenRowColor: Colors.blueAccent.withOpacity(0.5),
+                      columnTextStyle: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+                      activatedColor: Colors.white.withOpacity(0.5),
+                      cellTextStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                      gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
+                      gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
+                      // gridBorderColor: Colors.transparent,
                     ),
-                  ],
+                    localeText: const PlutoGridLocaleText.arabic(),
+                  ),
+                  createFooter: (stateManager) {
+                    stateManager.setPageSize(100, notify: false); // default 40
+
+                    return PlutoPagination(stateManager);
+                  },
                 );
         },
       ),
     );
   }
 
-  AppBar plutoGridAppBar(IconData? icon, VoidCallback? onIconPressed) {
+  AppBar plutoGridAppBar() {
     return AppBar(
       centerTitle: true,
       leading: leadingIcon != null

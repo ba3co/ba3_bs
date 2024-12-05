@@ -5,10 +5,9 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/dialogs/seller_selection_dialog_content.dart';
 import '../../../core/utils/app_ui_utils.dart';
-import '../../bill/ui/widgets/bill_shared/seller_selection_dialog.dart';
-import '../../floating_window/managers/overlay_entry_with_priority_manager.dart';
-import '../../floating_window/models/overlay_entry_with_priority.dart';
+import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
@@ -114,36 +113,22 @@ class SellerController extends GetxController {
 
       textEditingController.text = selectedSellerAccount!.costName!;
     } else if (searchedSellersAccounts.isNotEmpty) {
-      // Use the updated SellerSelectionDialog
-      final overlay = Overlay.of(context);
-
-      late OverlayEntry overlayEntry;
-
-      OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
-
-      late OverlayEntryWithPriority overlayEntryWithPriority;
-
-      overlayEntry = OverlayEntry(
-        builder: (context) => SellerSelectionDialog(
+      OverlayService.showOverlayDialog(
+        context: context,
+        title: 'أختر البائع',
+        content: SellerSelectionDialogContent(
           sellers: searchedSellersAccounts,
-          onCloseTap: () {
-            overlayEntry.remove();
-            entryWithPriorityInstance.remove(overlayEntryWithPriority);
-          },
           onSellerTap: (selectedSeller) {
-            overlayEntry.remove();
-            entryWithPriorityInstance.remove(overlayEntryWithPriority);
+            OverlayService.back();
 
             selectedSellerAccount = selectedSeller;
             textEditingController.text = selectedSeller.costName!;
           },
         ),
+        onCloseCallback: () {
+          log('Seller Selection Dialog Closed.');
+        },
       );
-
-      overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
-      entryWithPriorityInstance.add(overlayEntryWithPriority);
-
-      overlay.insert(overlayEntry);
     } else {
       AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }

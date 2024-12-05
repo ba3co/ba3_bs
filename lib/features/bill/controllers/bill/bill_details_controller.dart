@@ -32,8 +32,13 @@ class BillDetailsController extends IBillController with AppValidator implements
 
   final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
+  final BillSearchController billSearchController;
 
-  BillDetailsController(this._billsFirebaseRepo, {required this.billDetailsPlutoController});
+  BillDetailsController(
+    this._billsFirebaseRepo, {
+    required this.billDetailsPlutoController,
+    required this.billSearchController,
+  });
 
   // Services
   late final BillService _billService;
@@ -231,7 +236,15 @@ class BillDetailsController extends IBillController with AppValidator implements
   void _handleUpdateSuccess(BillModel billModel) {
     AppUIUtils.onSuccess('تم تعديل الفاتورة بنجاح!');
 
-    Get.find<BillSearchController>().updateBillInSearchResults(billModel);
+    billSearchController.updateBillInSearchResults(billModel);
+
+    generateAndSendBillPdf(
+      recipientEmail: AppStrings.recipientEmail,
+      billModel: billModel,
+      fileName: AppStrings.bill,
+      logoSrc: AppAssets.ba3Logo,
+      fontSrc: AppAssets.notoSansArabicRegular,
+    );
   }
 
   BillModel? _createBillModelFromInvoiceData(BillModel billModel, BillTypeModel billTypeModel) {

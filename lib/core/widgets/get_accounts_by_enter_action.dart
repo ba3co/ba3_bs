@@ -1,5 +1,7 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/core/dialogs/account_selection_dialog_content.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
-import 'package:ba3_bs/core/widgets/account_selection_dialog.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -7,8 +9,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
-import '../../features/floating_window/managers/overlay_entry_with_priority_manager.dart';
-import '../../features/floating_window/models/overlay_entry_with_priority.dart';
+import '../../features/floating_window/services/overlay_service.dart';
 import '../constants/app_constants.dart';
 import '../i_controllers/i_bill_controller.dart';
 
@@ -110,34 +111,21 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required IPlutoController controller,
     required String columnField,
   }) {
-    final overlay = Overlay.of(context);
-
-    late OverlayEntry overlayEntry;
-
-    OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
-
-    late OverlayEntryWithPriority overlayEntryWithPriority;
-
-    overlayEntry = OverlayEntry(
-      builder: (context) => AccountSelectionDialog(
+    OverlayService.showOverlayDialog(
+      context: context,
+      title: 'أختر الحساب',
+      content: AccountSelectionDialogContent(
         accounts: searchedAccounts,
         onAccountTap: (selectedAccount) {
-          updateWithSelectedAccount(selectedAccount, stateManager, plutoController, columnField);
+          OverlayService.back();
 
-          overlayEntry.remove(); // Remove overlay after selection
-          entryWithPriorityInstance.remove(overlayEntryWithPriority);
-        },
-        onCloseTap: () {
-          overlayEntry.remove();
-          entryWithPriorityInstance.remove(overlayEntryWithPriority);
+          updateWithSelectedAccount(selectedAccount, stateManager, plutoController, columnField);
         },
       ),
+      onCloseCallback: () {
+        log('Account Selection Dialog Closed.');
+      },
     );
-
-    overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
-    entryWithPriorityInstance.add(overlayEntryWithPriority);
-
-    overlay.insert(overlayEntry);
   }
 
   void updateWithSelectedAccount(

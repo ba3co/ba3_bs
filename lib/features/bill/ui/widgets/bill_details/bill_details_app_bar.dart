@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -8,8 +10,8 @@ import 'package:get/get.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
+import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
-import '../bill_shared/custom_dropdown.dart';
 
 class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
   const BillDetailsAppBar({
@@ -50,7 +52,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Expanded(
-                      child: CustomDropdown<InvPayType>(
+                      child: OverlayService.showOverlayDropdown<InvPayType>(
                         value: billDetailsController.selectedPayType,
                         items: InvPayType.values,
                         itemLabelBuilder: (type) => type.label,
@@ -63,6 +65,9 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                           border: Border.all(color: Colors.black38),
                           borderRadius: BorderRadius.circular(8),
                         ),
+                        onCloseCallback: () {
+                          log('InvPayType Dropdown Overly Closed.');
+                        },
                       ),
                     ),
                   ],

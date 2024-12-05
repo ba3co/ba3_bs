@@ -19,8 +19,7 @@ class OverlayManager {
         return DraggableFloatingWindow(
           onBringToTop: () {
             // Check if any high-priority dialog or overlay is on top
-            bool hasHigherPriorityOverlay =
-                OverlayEntryWithPriorityManager.instance.overlayEntries.any((entry) => entry.priority == 0);
+            bool hasHigherPriorityOverlay = OverlayEntryWithPriorityManager.instance.hasHigherPriorityOverlay();
 
             // Bring this floating window to the top only if no higher-priority overlays exist
             if (!hasHigherPriorityOverlay) {

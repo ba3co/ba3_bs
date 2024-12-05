@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import '../models/overlay_entry_with_priority.dart';
 
-/// Manages a list of overlay entries with associated priorities.
 class OverlayEntryWithPriorityManager {
   /// Private constructor to prevent external instantiation.
   OverlayEntryWithPriorityManager._();
@@ -9,15 +10,121 @@ class OverlayEntryWithPriorityManager {
   static final OverlayEntryWithPriorityManager instance = OverlayEntryWithPriorityManager._();
 
   /// Stores overlay entries; lower priority numbers indicate higher importance.
-  final List<OverlayEntryWithPriority> overlayEntries = [];
+  final List<OverlayEntryWithPriority> _overlayEntries = [];
+
+  late OverlayEntry _overlayEntry;
+  late OverlayEntryWithPriority _overlayEntryWithPriority;
+  VoidCallback? _onCloseCallback;
+
+  /// Displays an overlay with priority management.
+  ///
+  /// This method shows a customizable overlay with content, an optional title, and size.
+  /// The `onCloseCallback` is triggered when the overlay is dismissed, allowing actions
+  /// after it is closed. The overlay can be dismissed by tapping the background, which will
+  /// trigger the `onTap` handler and call `_removeOverlay()`, ultimately invoking the callback.
+  ///
+  /// Parameters:
+  /// - `overlay`: The `OverlayState` to insert the overlay into.
+  /// - `content`: The content widget for the overlay.
+  /// - `title`: An optional title to display at the top.
+  /// - `width`: Optional width of the overlay.
+  /// - `height`: Optional height of the overlay.
+  /// - `priority`: Optional priority, where lower values are higher priority.
+  /// - `onCloseCallback`: A callback invoked after the overlay is closed.
+
+  void displayOverlay({
+    required OverlayState overlay,
+    required Widget content,
+    OverlayEntry? overlayEntry,
+    String? title,
+    double? width,
+    double? height,
+    int? priority,
+    VoidCallback? onCloseCallback,
+  }) {
+    if (hasHigherPriorityOverlay()) {
+      _removeOverlay();
+    }
+
+    _onCloseCallback = onCloseCallback;
+
+    // Create a new overlay entry if none is passed
+    _overlayEntry = overlayEntry ??
+        OverlayEntry(
+          builder: (context) {
+            return GestureDetector(
+              onTap: () {
+                _removeOverlay();
+              },
+              child: Material(
+                color: Colors.transparent,
+                elevation: 8,
+                borderRadius: BorderRadius.circular(24),
+                child: Center(
+                  child: Container(
+                    width: width ?? 500,
+                    height: height ?? 500,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Header with Close Button
+                        if (title != null)
+                          Column(
+                            children: [
+                              Text(
+                                title,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const Divider(),
+                            ],
+                          ),
+                        // Content Area
+                        Expanded(child: content),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+
+    _overlayEntryWithPriority = OverlayEntryWithPriority(
+      overlayEntry: _overlayEntry,
+      priority: priority ?? 0,
+    );
+
+    // Add overlay entry with priority
+    _addOverlayEntryWithPriority();
+
+    // Insert overlay entry into the overlay
+    overlay.insert(_overlayEntry);
+  }
 
   /// Adds an overlay entry with a specified priority.
-  void add(OverlayEntryWithPriority overlayEntryWithPriority) {
-    overlayEntries.add(overlayEntryWithPriority);
+  void _addOverlayEntryWithPriority() {
+    _overlayEntries.add(_overlayEntryWithPriority);
   }
 
-  /// Removes a specific overlay entry.
-  void remove(OverlayEntryWithPriority overlayEntryWithPriority) {
-    overlayEntries.remove(overlayEntryWithPriority);
+  /// Removes the current overlay entry.
+  void _removeOverlay() {
+    _overlayEntry.remove();
+    _overlayEntries.remove(_overlayEntryWithPriority);
+    _onCloseCallback?.call();
   }
+
+  /// Manually removes the overlay.
+  /// For example, use this when the user selects an item in the dialog to dismissed it.
+  void dispose() {
+    _removeOverlay();
+  }
+
+  /// Checks if any overlay exists with a priority higher than the given [defaultPriority].
+  /// Lower numbers indicate higher priority (e.g., 0 is higher than 1).
+  bool hasHigherPriorityOverlay([int defaultPriority = 1]) =>
+      _overlayEntries.any((entry) => entry.priority < defaultPriority);
 }

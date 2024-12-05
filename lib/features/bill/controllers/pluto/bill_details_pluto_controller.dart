@@ -126,13 +126,6 @@ class BillDetailsPlutoController extends IPlutoController {
 
     final newRows = additionsDiscountsStateManager.getNewRows(count: 2);
     additionsDiscountsStateManager.appendRows(newRows);
-
-    if (additionsDiscountsStateManager.rows.isNotEmpty && additionsDiscountsStateManager.rows.first.cells.length > 1) {
-      final secondCell = additionsDiscountsStateManager.rows.first.cells.entries.elementAt(1).value;
-      additionsDiscountsStateManager.setCurrentCell(secondCell, 0);
-
-      FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
-    }
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {

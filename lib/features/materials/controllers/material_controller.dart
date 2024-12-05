@@ -66,7 +66,7 @@ class MaterialController extends GetxController {
       bool prodName = item.matName.toString().toLowerCase().contains(query3.toLowerCase()) &&
           item.matName.toString().toLowerCase().contains(query2.toLowerCase());
       bool prodCode = item.matCode.toString().toLowerCase().contains(query.toLowerCase());
-      bool prodBarcode = item.matBarCode.toString().toLowerCase().contains(query.toLowerCase());
+      bool prodBarcode = item.matBarCode != null ? item.matBarCode!.toLowerCase().contains(query.toLowerCase()) : false;
       return (prodName || prodCode || prodBarcode);
     }).toList();
 

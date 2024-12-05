@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -10,16 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/interfaces/i_store_selection_handler.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../floating_window/services/overlay_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_service.dart';
-import '../../ui/widgets/bill_shared/show_e_invoice_dialog.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 import 'all_bills_controller.dart';
 import 'bill_details_controller.dart';
@@ -122,7 +125,18 @@ class AddBillController extends IBillController with AppValidator implements ISt
       AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا!');
       return;
     }
-    showCustomEInvoiceOverlay(context, this, getRecentBill);
+
+    OverlayService.showOverlayDialog(
+      context: context,
+      title: "Invoice QR Code",
+      content: EInvoiceDialogContent(
+        billController: this,
+        billId: getRecentBill.billId!,
+      ),
+      onCloseCallback: () {
+        log("E-Invoice dialog closed.");
+      },
+    );
   }
 
   Future<void> printBill(List<InvoiceRecordModel> invRecords) async {

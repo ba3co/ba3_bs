@@ -1,13 +1,16 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../../core/widgets/app_button.dart';
+import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../../../data/models/bill_model.dart';
-import '../bill_shared/show_e_invoice_dialog.dart';
 
 class BillDetailsButtons extends StatelessWidget {
   const BillDetailsButtons({
@@ -84,7 +87,19 @@ class BillDetailsButtons extends StatelessWidget {
           AppButton(
             title: 'E-Invoice',
             onPressed: () {
-              showCustomEInvoiceOverlay(context, billDetailsController, billModel);
+              if (!billDetailsController.hasBillId(billModel.billId)) return;
+
+              OverlayService.showOverlayDialog(
+                context: context,
+                title: "Invoice QR Code",
+                content: EInvoiceDialogContent(
+                  billController: billDetailsController,
+                  billId: billModel.billId!,
+                ),
+                onCloseCallback: () {
+                  log("E-Invoice dialog closed.");
+                },
+              );
             },
             iconData: Icons.link,
           ),

@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../features/floating_window/managers/overlay_entry_with_priority_manager.dart';
-import '../../features/floating_window/models/overlay_entry_with_priority.dart';
+import '../../features/floating_window/services/overlay_service.dart';
 import '../../features/materials/controllers/material_controller.dart';
-import '../dialogs/search_product_text_dialog.dart';
+import '../dialogs/product_selection_dialog_content.dart';
 import '../i_controllers/i_pluto_controller.dart';
 
 class GetProductByEnterAction extends PlutoGridShortcutAction {
@@ -102,16 +104,11 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required PlutoGridStateManager stateManager,
     required IPlutoController plutoController,
   }) {
-    final overlay = Overlay.of(context);
-
-    late OverlayEntry overlayEntry;
-
-    OverlayEntryWithPriorityManager entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
-
-    late OverlayEntryWithPriority overlayEntryWithPriority;
-
-    overlayEntry = OverlayEntry(
-      builder: (context) => SearchProductTextDialog(
+    OverlayService.showOverlayDialog(
+      context: context,
+      height: .7.sh,
+      width: .8.sw,
+      content: ProductSelectionDialogContent(
         searchedMaterials: searchedMaterials,
         onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
           final materialId = onSelectedEvent.row?.cells['الرقم التعريفي']?.value;
@@ -120,12 +117,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
           updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
 
-          overlayEntry.remove(); // Remove overlay after selection
-          entryWithPriorityInstance.remove(overlayEntryWithPriority);
-        },
-        onCloseTap: () {
-          overlayEntry.remove();
-          entryWithPriorityInstance.remove(overlayEntryWithPriority);
+          OverlayService.back();
         },
         onSubmitted: (_) {
           searchedMaterials = materialController.searchOfProductByText(productTextController.text);
@@ -133,12 +125,10 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
         },
         productTextController: productTextController,
       ),
+      onCloseCallback: () {
+        log('Product Selection Dialog Closed.');
+      },
     );
-
-    overlayEntryWithPriority = OverlayEntryWithPriority(overlayEntry: overlayEntry, priority: 0);
-    entryWithPriorityInstance.add(overlayEntryWithPriority);
-
-    overlay.insert(overlayEntry);
   }
 
   void updateWithSelectedMaterial(

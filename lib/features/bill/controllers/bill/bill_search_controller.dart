@@ -114,7 +114,7 @@ class BillSearchController extends GetxController {
     _updateCurrentBill(bills.length - 1);
   }
 
-  /// Updates the current bill and refreshes the screen
+  /// Updates the current bill and refreshes the screen`
   void _updateCurrentBill(int index) {
     currentBillIndex = index;
     currentBill = bills[index];

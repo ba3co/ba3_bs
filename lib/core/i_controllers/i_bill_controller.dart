@@ -113,7 +113,7 @@ abstract class IBillController extends GetxController {
 
   bool hasBillId(String? billId) {
     if (billId == null) {
-      AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا قبل طباعتها!');
+      AppUIUtils.onFailure('يرجى إضافة الفاتورة أولا!');
       return false;
     }
     return true;
