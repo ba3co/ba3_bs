@@ -1,3 +1,5 @@
+import 'package:pluto_grid/pluto_grid.dart';
+
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
@@ -107,15 +109,23 @@ class BillTypeModel implements PlutoAdaptable {
       );
 
   @override
-  Map<String, dynamic> toPlutoGridFormat() => {
-        'billTypeId': billTypeId,
-        'shortName': shortName,
-        'fullName': fullName,
-        'latinShortName': latinShortName,
-        'latinFullName': latinFullName,
-        'billType': billTypeLabel,
-        'color': color,
-        'accounts': accounts?.map((key, value) => MapEntry(key.label, value.toPlutoGridFormat())),
+  Map<PlutoColumn, dynamic> toPlutoGridFormat() => {
+    PlutoColumn(title:'billTypeId' ,field: 'billTypeId',type: PlutoColumnType.text())
+    : billTypeId,
+    PlutoColumn(title: 'shortName' ,field: 'shortName' ,type: PlutoColumnType.text())
+   : shortName,
+    PlutoColumn(title: 'fullName',field: 'fullName',type: PlutoColumnType.text())
+    : fullName,
+    PlutoColumn(title:'latinShortName' ,field: 'latinShortName',type: PlutoColumnType.text())
+    : latinShortName,
+    PlutoColumn(title: 'latinFullName',field: 'latinFullName',type: PlutoColumnType.text())
+    : latinFullName,
+    PlutoColumn(title:'billType' ,field:'billType' ,type: PlutoColumnType.text())
+    : billTypeLabel,
+    PlutoColumn(title:'color' ,field: 'color',type: PlutoColumnType.text())
+    : color,
+    PlutoColumn(title: 'accounts' ,field: 'accounts' ,type: PlutoColumnType.text())
+   : accounts?.map((key, value) => MapEntry(key.label, value.toPlutoGridFormat())),
       };
 }
 

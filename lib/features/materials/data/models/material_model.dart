@@ -1,4 +1,5 @@
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 class MaterialModel implements PlutoAdaptable {
   final String? id;
@@ -216,12 +217,16 @@ class MaterialModel implements PlutoAdaptable {
       };
 
   @override
-  Map<String, dynamic> toPlutoGridFormat() {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat() {
     return {
-      'الرقم التعريفي': id,
-      'اسم المادة': matName,
-      'رمز المادة': matCode,
-      'الباركود': matBarCode,
+      PlutoColumn(title: 'الرقم التعريفي',field:'الرقم التعريفي' ,type: PlutoColumnType.text())
+      : id,
+      PlutoColumn(title: 'اسم المادة',field: 'اسم المادة',type: PlutoColumnType.text())
+      : matName,
+      PlutoColumn(title: 'رمز المادة',field: 'رمز المادة',type: PlutoColumnType.text())
+      : matCode,
+      PlutoColumn(title: 'الباركود' ,field: 'الباركود' ,type: PlutoColumnType.text())
+     : matBarCode,
     };
   }
 

@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 class AccountModel implements PlutoAdaptable {
   String? id;
@@ -184,16 +185,19 @@ class AccountModel implements PlutoAdaptable {
   }
 
   @override
-  Map<String, dynamic> toPlutoGridFormat() => {
-        'الرقم التعريفي': id,
-        'رقم الحساب': accNumber,
-        'رمز الحساب': accCode,
-        'اسم الحساب': accName,
-        'الاسم الاتيني': accLatinName,
-        'نوع الحساب': AppServiceUtils.getAccountType(accType),
-        'Debit Or Credit': AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),
-        'حساب الاب': Get.find<AccountsController>().getAccountNameById(accParentGuid),
-        'الاولاد': Get.find<AccountsController>().getAccountChildren(id).join(' , '),
-        'عدد الفواتير': billsId?.length??"no bill yet.",
+  Map<PlutoColumn, dynamic> toPlutoGridFormat() => {
+    PlutoColumn(field:  'الرقم التعريفي',type: PlutoColumnType.text(), title: 'الرقم التعريفي')
+       : id,
+    PlutoColumn(field:   'رقم الحساب',type: PlutoColumnType.text(), title:  'رقم الحساب')
+        : accNumber,PlutoColumn(field:  'رمز الحساب',type: PlutoColumnType.text(), title: 'رمز الحساب')
+        : accCode,PlutoColumn(field:  'اسم الحساب',type: PlutoColumnType.text(), title: 'اسم الحساب')
+        : accName,PlutoColumn(field:  'الاسم الاتيني',type: PlutoColumnType.text(), title: 'الاسم الاتيني')
+        : accLatinName,PlutoColumn(field:   'نوع الحساب',type: PlutoColumnType.text(), title:  'نوع الحساب')
+        : AppServiceUtils.getAccountType(accType),PlutoColumn(field: 'Debit Or Credit',type: PlutoColumnType.text(), title: 'Debit Or Credit')
+        : AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),PlutoColumn(field:  'حساب الاب',type: PlutoColumnType.text(), title: 'حساب الاب')
+        : Get.find<AccountsController>().getAccountNameById(accParentGuid),
+  PlutoColumn(field:  'الاولاد',type: PlutoColumnType.text(), title: 'الاولاد')
+      : Get.find<AccountsController>().getAccountChildren(id).join(' , ') ,
+
       };
 }

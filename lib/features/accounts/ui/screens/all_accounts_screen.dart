@@ -15,17 +15,21 @@ class AllAccountScreen extends StatelessWidget {
         title: 'جميع الحسابات',
         onLoaded: (e) {},
         onSelected: (p0) {
+          final String accId = p0.row?.cells['الرقم التعريفي']?.value;
 
-          final String accId=p0.row?.cells['الرقم التعريفي']?.value;
-
-      final    billController=Get.find<AllBillsController>();
-      print(controller.accounts.where((element) => element.id==accId,).first.toJson());
-          for(var bill in controller.accounts.where((element) => element.id==accId,).first.billsId??[]){
+          final billController = Get.find<AllBillsController>();
+          for (var bill in controller.accounts
+                  .where(
+                    (element) => element.id == accId,
+                  )
+                  .first
+                  .billsId ??
+              []) {
             billController.getAllAccountBills(bill);
           }
-          controller
-          
-            .navigateToAccountDetailsScreen(accId);
+
+
+          controller.navigateToAccountDetailsScreen(accId);
         },
         isLoading: controller.isLoading,
         tableSourceModels: controller.accounts,

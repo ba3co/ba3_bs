@@ -147,6 +147,15 @@ enum BondItemType {
 
   const BondItemType(this.label);
 }
+enum BondType {
+  credit('دفع'),
+  debt('قبض'),
+  daily('يومية');
+
+  final String label;
+
+  const BondType(this.label);
+}
 
 abstract class Account {
   String get label;

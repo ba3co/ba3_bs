@@ -43,7 +43,7 @@ class BillService {
     required BillTypeModel billTypeModel,
     required AccountModel customerAccount,
   }) =>
-      bondController.createBond(
+      bondController.createBillBond(
         billTypeModel: billTypeModel,
         customerAccount: customerAccount,
         vat: plutoController.computeTotalVat,
