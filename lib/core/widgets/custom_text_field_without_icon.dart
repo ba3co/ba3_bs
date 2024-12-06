@@ -14,6 +14,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.isNumeric = false,
     this.enabled = true,
     this.height,
+    this.suffixIcon,
   });
 
   final TextEditingController textEditingController;
@@ -25,14 +26,13 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final bool isNumeric, enabled;
   final FormFieldValidator<String>? validator;
   final double? height;
+  final Widget? suffixIcon;
 
   @override
-  State<CustomTextFieldWithoutIcon> createState() =>
-      _CustomTextFieldWithoutIconState();
+  State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
 }
 
-class _CustomTextFieldWithoutIconState
-    extends State<CustomTextFieldWithoutIcon> {
+class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon> {
   @override
   void initState() {
     super.initState();
@@ -54,8 +54,7 @@ class _CustomTextFieldWithoutIconState
       );
 
       if (text != convertedText) {
-        widget.textEditingController.value =
-            widget.textEditingController.value.copyWith(
+        widget.textEditingController.value = widget.textEditingController.value.copyWith(
           text: convertedText,
           selection: TextSelection.collapsed(offset: convertedText.length),
         );
@@ -76,9 +75,8 @@ class _CustomTextFieldWithoutIconState
         keyboardType: widget.keyboardType,
         scrollPadding: EdgeInsets.zero,
         cursorHeight: 15,
-        onTap: () => widget.textEditingController.selection = TextSelection(
-            baseOffset: 0,
-            extentOffset: widget.textEditingController.text.length),
+        onTap: () => widget.textEditingController.selection =
+            TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
         inputFormatters: widget.inputFormatters,
         decoration: InputDecoration(
           fillColor: Colors.white,
@@ -98,7 +96,7 @@ class _CustomTextFieldWithoutIconState
             ),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          suffixIcon: const SizedBox.shrink(),
+          suffixIcon: widget.suffixIcon,
         ),
         textAlign: TextAlign.center,
         // Center the text horizontally

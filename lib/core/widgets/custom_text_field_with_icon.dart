@@ -24,8 +24,7 @@ class CustomTextFieldWithIcon extends StatefulWidget {
   final bool isNumeric;
 
   @override
-  State<CustomTextFieldWithIcon> createState() =>
-      _CustomTextFieldWithIconState();
+  State<CustomTextFieldWithIcon> createState() => _CustomTextFieldWithIconState();
 }
 
 class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
@@ -50,8 +49,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
       );
 
       if (text != convertedText) {
-        widget.textEditingController.value =
-            widget.textEditingController.value.copyWith(
+        widget.textEditingController.value = widget.textEditingController.value.copyWith(
           text: convertedText,
           selection: TextSelection.collapsed(offset: convertedText.length),
         );
@@ -68,35 +66,34 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
       cursorHeight: 15,
       controller: widget.textEditingController,
       inputFormatters: widget.inputFormatters,
-      onTap: () => widget.textEditingController.selection = TextSelection(
-          baseOffset: 0,
-          extentOffset: widget.textEditingController.text.length),
+      onTap: () => widget.textEditingController.selection =
+          TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
       decoration: InputDecoration(
-        fillColor: Colors.white,
-        filled: true,
-        errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
-        isDense: true,
-        disabledBorder: UnderlineInputBorder(
-          borderSide: const BorderSide(color: Colors.white, width: 2.0),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        border: UnderlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        suffixIcon: IconButton(
-          onPressed: widget.onIconPressed,
-          focusNode: FocusNode(skipTraversal: true),
-          icon: const Icon(Icons.search),
-        ),
-        // Add an icon as a prefix
-
-        // Center the text vertically
-      ),
+          fillColor: Colors.white,
+          filled: true,
+          errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
+          isDense: true,
+          disabledBorder: UnderlineInputBorder(
+            borderSide: const BorderSide(color: Colors.white, width: 2.0),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          border: UnderlineInputBorder(
+            borderSide: const BorderSide(color: Colors.black, width: 2.0),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          suffixIcon: IconButton(
+            onPressed: widget.onIconPressed,
+            focusNode: FocusNode(skipTraversal: true),
+            icon: const Icon(Icons.search),
+          ),
+          // Add an icon as a prefix
+          contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 4)
+          // Center the text vertically
+          ),
       textAlign: TextAlign.center,
       // Center the text horizontally
     );

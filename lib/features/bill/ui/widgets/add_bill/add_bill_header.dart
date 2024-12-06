@@ -41,16 +41,14 @@ class AddBillHeader extends StatelessWidget {
               firstItem: BillHeaderField(
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
-                  textEditingController:
-                      addBillController.mobileNumberController,
+                  textEditingController: addBillController.mobileNumberController,
+                  suffixIcon: const SizedBox.shrink(),
                 ),
               ),
               secondItem: SearchableAccountField(
                 label: 'حساب العميل',
-                textEditingController:
-                    addBillController.customerAccountController,
-                validator: (value) =>
-                    addBillController.validator(value, 'حساب العميل'),
+                textEditingController: addBillController.customerAccountController,
+                validator: (value) => addBillController.validator(value, 'حساب العميل'),
                 isCustomerAccount: true,
                 billController: addBillController,
                 fromAddBill: true,
@@ -60,15 +58,12 @@ class AddBillHeader extends StatelessWidget {
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: 'البائع',
-                textEditingController:
-                    addBillController.sellerAccountController,
-                validator: (value) =>
-                    addBillController.validator(value, 'البائع'),
+                textEditingController: addBillController.sellerAccountController,
+                validator: (value) => addBillController.validator(value, 'البائع'),
                 onSubmitted: (text) {
                   Get.find<SellerController>().openSellerSelectionDialog(
                     query: text,
-                    textEditingController:
-                        addBillController.sellerAccountController,
+                    textEditingController: addBillController.sellerAccountController,
                     context: context,
                   );
                 },
@@ -77,6 +72,7 @@ class AddBillHeader extends StatelessWidget {
                 label: 'البيان',
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: addBillController.noteController,
+                  suffixIcon: const SizedBox.shrink(),
                 ),
               ),
             ),
