@@ -79,25 +79,25 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
             TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
         inputFormatters: widget.inputFormatters,
         decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          isDense: true,
-          border: UnderlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.black, // Change the border color
-              width: 2.0, // Change the border width
+            fillColor: Colors.white,
+            filled: true,
+            isDense: true,
+            border: UnderlineInputBorder(
+              borderSide: const BorderSide(
+                color: Colors.black, // Change the border color
+                width: 2.0, // Change the border width
+              ),
+              borderRadius: BorderRadius.circular(5.0), // Adjust border radius
             ),
-            borderRadius: BorderRadius.circular(5.0), // Adjust border radius
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.blue, // Change the border color when focused
-              width: 2.0,
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Colors.blue, // Change the border color when focused
+                width: 2.0,
+              ),
+              borderRadius: BorderRadius.circular(5.0),
             ),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          suffixIcon: widget.suffixIcon,
-        ),
+            suffixIcon: widget.suffixIcon,
+            contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 4)),
         textAlign: TextAlign.center,
         // Center the text horizontally
       ),
