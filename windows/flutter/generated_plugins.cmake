@@ -7,7 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   flutter_platform_alert
   print_bluetooth_thermal
-  screen_retriever_windows
+  screen_retriever
   window_manager
 )
 

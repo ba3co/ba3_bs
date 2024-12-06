@@ -91,7 +91,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
             icon: const Icon(Icons.search),
           ),
           // Add an icon as a prefix
-          contentPadding: EdgeInsets.fromLTRB(12, 8, 12, 4)
+          contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)
           // Center the text vertically
           ),
       textAlign: TextAlign.center,

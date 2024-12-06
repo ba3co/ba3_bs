@@ -123,9 +123,7 @@ class AllBillsController extends GetxController {
       return;
     }
 
-    List<BillModel> modifiedBills = AllBillService.appendEmptyBillModel(billsByCategory);
-
-    BillModel lastBillModel = modifiedBills.last;
+    final BillModel lastBillModel = AllBillService.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
   }
@@ -135,29 +133,26 @@ class AllBillsController extends GetxController {
 
     if (!context.mounted) return;
 
-    final List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
+    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
     final String tag = _generateUniqueTag();
     final controllers = _initializeControllers(tag);
 
-    if (billsByCategory.isEmpty) {
-      _openAddBillFloatingWindow(context, billTypeModel, controllers.billDetailsController);
-      return;
-    }
+    final BillModel lastBillModel = AllBillService.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _openBillDetailsFloatingWindow(
-        context: context, billsByCategory: billsByCategory, tag: tag, controllers: controllers);
-  }
-
-  // Opens the 'Add Bill' floating window.
-  void _openAddBillFloatingWindow(
-      BuildContext context, BillTypeModel billTypeModel, BillDetailsController billDetailsController) {
-    billDetailsController.createNewFloatingAddBillScreen(billTypeModel, context);
+      context: context,
+      modifiedBills: billsByCategory,
+      lastBillModel: lastBillModel,
+      tag: tag,
+      controllers: controllers,
+    );
   }
 
   // Opens the 'Bill Details' floating window.
   void _openBillDetailsFloatingWindow({
     required BuildContext context,
-    required List<BillModel> billsByCategory,
+    required List<BillModel> modifiedBills,
+    required BillModel lastBillModel,
     required String tag,
     required ({
       BillDetailsController billDetailsController,
@@ -165,9 +160,6 @@ class AllBillsController extends GetxController {
       BillSearchController billSearchController
     }) controllers,
   }) {
-    final List<BillModel> modifiedBills = AllBillService.appendEmptyBillModel(billsByCategory);
-    final BillModel lastBillModel = modifiedBills.last;
-
     controllers.billDetailsController.updateBillDetailsOnScreen(lastBillModel, controllers.billDetailsPlutoController);
 
     initializeBillSearch(

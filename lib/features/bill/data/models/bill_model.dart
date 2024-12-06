@@ -34,7 +34,7 @@ class BillModel implements PlutoAdaptable {
         items: BillItems.fromJson(json['items']),
       );
 
-  factory BillModel.empty({required BillTypeModel billTypeModel, required int lastBillNumber}) => BillModel(
+  factory BillModel.empty({required BillTypeModel billTypeModel, int lastBillNumber = 0}) => BillModel(
         billTypeModel: billTypeModel,
         items: BillItems(itemList: []),
         billDetails: BillDetails(

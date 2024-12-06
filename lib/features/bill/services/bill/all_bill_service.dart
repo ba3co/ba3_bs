@@ -1,18 +1,13 @@
+import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
 
 class AllBillService {
-  static List<BillModel> appendEmptyBillModel(List<BillModel> bills) {
-    final List<BillModel> modifiedBills = bills;
+  static BillModel appendEmptyBillModel(List<BillModel> bills, BillTypeModel billTypeModel) {
+    final int lastBillNumber = bills.isNotEmpty ? bills.last.billDetails.billNumber! : 0;
 
-    final BillModel lastBillModel = bills.last;
+    final emptyBillModel = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
 
-    final emptyBillModel = BillModel.empty(
-      billTypeModel: lastBillModel.billTypeModel,
-      lastBillNumber: lastBillModel.billDetails.billNumber!,
-    );
-
-    modifiedBills.add(emptyBillModel);
-
-    return modifiedBills;
+    bills.add(emptyBillModel);
+    return emptyBillModel;
   }
 }

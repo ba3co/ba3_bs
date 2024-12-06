@@ -28,7 +28,7 @@ class BillSearchController extends GetxController {
     this.billDetailsController = billDetailsController;
     this.billDetailsPlutoController = billDetailsPlutoController;
 
-    log('bills ${bills.length}');
+    log('bills length ${bills.length}');
     log('currentBillIndex $currentBillIndex');
     log('currentBillNumber ${currentBill.billDetails.billNumber}');
   }
