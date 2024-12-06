@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../widgets/bill_layout/all_bills_types_list.dart';
 import '../widgets/bill_layout/bill_layout_app_bar.dart';
-import '../widgets/bill_layout/display_all_billIs_button.dart';
+import '../widgets/bill_layout/display_all_billIs_button.dart.dart';
 
 class BillLayout extends StatelessWidget {
   const BillLayout({super.key});

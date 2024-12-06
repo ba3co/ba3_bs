@@ -1,4 +1,3 @@
-import 'package:ba3_bs/features/bond/controllers/bond_record_pluto_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -12,36 +11,31 @@ class BondDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
-      child:
-         Scaffold(
-          appBar: AppBar(
-              centerTitle: true,
-              title: Text(""),
-              leading: const BackButton(),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      // bondController.bondNextOrPrev(widget.bondType, true);
-                      // setState(() {});
-                    },
-                    icon: const Icon(Icons.keyboard_double_arrow_right)),
-                SizedBox(
-                  width: 100,
-                  child: CustomTextFieldWithoutIcon(
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onSubmitted: (_) {
-                      // controller.getBondByCode(widget.bondType, _);
-                    },
-                     textEditingController: TextEditingController(),
-                  ),
-                ),
-                IconButton(
-                    onPressed: () {
-                      // bondController.bondNextOrPrev(widget.bondType, false);
-                    },
-                    icon: const Icon(Icons.keyboard_double_arrow_left)),
-              ]),
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(centerTitle: true, title: const Text(""), leading: const BackButton(), actions: [
+            IconButton(
+                onPressed: () {
+                  // bondController.bondNextOrPrev(widget.bondType, true);
+                  // setState(() {});
+                },
+                icon: const Icon(Icons.keyboard_double_arrow_right)),
+            SizedBox(
+              width: 100,
+              child: CustomTextFieldWithoutIcon(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                onSubmitted: (_) {
+                  // controller.getBondByCode(widget.bondType, _);
+                },
+                textEditingController: TextEditingController(),
+              ),
+            ),
+            IconButton(
+                onPressed: () {
+                  // bondController.bondNextOrPrev(widget.bondType, false);
+                },
+                icon: const Icon(Icons.keyboard_double_arrow_left)),
+          ]),
           body: Directionality(
             textDirection: TextDirection.rtl,
             child: Padding(
@@ -63,7 +57,9 @@ class BondDetailsView extends StatelessWidget {
                             children: [
                               const SizedBox(width: 100, child: Text("البيان")),
                               Expanded(
-                                child: CustomTextFieldWithoutIcon(textEditingController: TextEditingController(),),
+                                child: CustomTextFieldWithoutIcon(
+                                  textEditingController: TextEditingController(),
+                                ),
                               ),
                             ],
                           ),
@@ -103,7 +99,8 @@ class BondDetailsView extends StatelessWidget {
                                       // controller.debitOrCreditController.text = await searchAccountTextDialog(text) ?? "";
                                       // invoiceController.getAccountComplete();
                                       // invoiceController.changeSecAccount();
-                                    }, textEditingController: TextEditingController(),
+                                    },
+                                    textEditingController: TextEditingController(),
                                   ),
                                 )
                               ],
@@ -160,7 +157,7 @@ class BondDetailsView extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-               /*   GetBuilder<BondRecordPlutoViewModel>(builder: (controller) {
+                  /*   GetBuilder<BondRecordPlutoViewModel>(builder: (controller) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -398,7 +395,6 @@ class BondDetailsView extends StatelessWidget {
               ),
             ),
           ),
-        )
-    );
+        ));
   }
 }

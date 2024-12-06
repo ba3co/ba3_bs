@@ -123,10 +123,7 @@ class BillDetailsButtons extends StatelessWidget {
               color: Colors.red,
               title: 'حذف',
               onPressed: () async {
-                billDetailsController.deleteBill(
-                  billModel.billId!,
-                  fromBillById: fromBillById,
-                );
+                billDetailsController.deleteBill(billModel, fromBillById: fromBillById);
               },
             ),
         ],

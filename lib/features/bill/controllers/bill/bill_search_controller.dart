@@ -15,7 +15,7 @@ class BillSearchController extends GetxController {
   late BillDetailsPlutoController billDetailsPlutoController;
 
   /// Initializes the bill search with the given bills and current bill
-  void initializeBillSearch({
+  void initialize({
     required List<BillModel> billsByCategory,
     required BillModel bill,
     required BillDetailsController billDetailsController,
@@ -40,7 +40,7 @@ class BillSearchController extends GetxController {
   int _getBillIndexByNumber(int? billNumber) => bills.indexWhere((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Updates the bill in the search results if it exists
-  void updateBillInSearchResults(BillModel updatedBill) {
+  void updateBill(BillModel updatedBill) {
     final billIndex = _getBillIndexByNumber(updatedBill.billDetails.billNumber);
 
     if (billIndex != -1) {
@@ -49,14 +49,26 @@ class BillSearchController extends GetxController {
     update();
   }
 
+  /// Deletes the bill in the search results if it exists
+  void removeBill(BillModel billToDelete) {
+    final billIndex = _getBillIndexByNumber(billToDelete.billDetails.billNumber);
+
+    if (billIndex != -1) {
+      bills.removeAt(billIndex);
+      reloadCurrentBill();
+
+      update();
+    }
+  }
+
   /// Validates whether the given bill number is within range
-  bool _isBillNumberValid(int? billNumber) =>
+  bool _isValidBillNumber(int? billNumber) =>
       billNumber != null &&
       billNumber >= bills.first.billDetails.billNumber! &&
       billNumber <= bills.last.billDetails.billNumber!;
 
   /// Handles invalid bill number cases by showing appropriate error messages
-  void _handleInvalidBillNumber(int? billNumber) {
+  void _showInvalidBillNumberError(int? billNumber) {
     final firstBillNumber = bills.first.billDetails.billNumber!;
     final lastBillNumber = bills.last.billDetails.billNumber!;
 
@@ -66,65 +78,78 @@ class BillSearchController extends GetxController {
             ? 'رقم الفاتورة غير متوفر. رقم أول فاتورة هو $firstBillNumber'
             : 'رقم الفاتورة غير متوفر. رقم أخر فاتورة هو $lastBillNumber';
 
-    _showErrorMessage(message);
+    _displayErrorMessage(message);
   }
 
   /// Navigates to the bill by its number
-  void navigateToBillByNumber(int? billNumber) {
-    if (!_isBillNumberValid(billNumber)) {
-      _handleInvalidBillNumber(billNumber);
+  void goToBillByNumber(int? billNumber) {
+    if (!_isValidBillNumber(billNumber)) {
+      _showInvalidBillNumberError(billNumber);
       return;
     }
 
     final billIndex = _getBillIndexByNumber(billNumber);
 
     if (billIndex != -1) {
-      _updateCurrentBill(billIndex);
+      _setCurrentBill(billIndex);
     } else {
-      _showErrorMessage('الفاتورة غير موجودة');
+      _displayErrorMessage('الفاتورة غير موجودة');
+    }
+  }
+
+  /// Moves to the current bill if possible
+  void reloadCurrentBill() {
+    log('Navigating to current bill, current index: $currentBillIndex');
+    if (currentBillIndex <= bills.length - 1) {
+      _setCurrentBill(currentBillIndex);
+    } else {
+      _displayErrorMessage('لا يوجد فاتورة أخرى');
     }
   }
 
   /// Moves to the next bill if possible
-  void navigateToNextBill() {
+  void next() {
     log('Navigating to next bill, current index: $currentBillIndex');
     if (currentBillIndex < bills.length - 1) {
-      _updateCurrentBill(currentBillIndex + 1);
+      _setCurrentBill(currentBillIndex + 1);
     } else {
-      _showErrorMessage('لا يوجد فاتورة أخرى');
+      _displayErrorMessage('لا يوجد فاتورة أخرى');
     }
   }
 
   /// Moves to the previous bill if possible
-  void navigateToPreviousBill() {
+  void previous() {
     log('Navigating to previous bill, current index: $currentBillIndex');
     if (currentBillIndex > 0) {
-      _updateCurrentBill(currentBillIndex - 1);
+      _setCurrentBill(currentBillIndex - 1);
     } else {
-      _showErrorMessage('لا يوجد فاتورة سابقة');
+      _displayErrorMessage('لا يوجد فاتورة سابقة');
     }
   }
 
   /// Moves to the last bill in the list
-  void navigateToLastBill() {
+  void last() {
     if (bills.isEmpty) {
-      _showErrorMessage('لا توجد فواتير متوفرة');
+      _displayErrorMessage('لا توجد فواتير متوفرة');
       return;
     }
-    _updateCurrentBill(bills.length - 1);
+    _setCurrentBill(bills.length - 1);
   }
 
   /// Updates the current bill and refreshes the screen`
-  void _updateCurrentBill(int index) {
+  void _setCurrentBill(int index) {
     currentBillIndex = index;
     currentBill = bills[index];
-    _refreshScreenWithCurrentBill();
+    _updateBillDetailsOnScreen();
     update();
   }
 
   /// Refreshes the screen with the current bill's details
-  void _refreshScreenWithCurrentBill() {
-    billDetailsController.refreshScreenWithCurrentBillModel(currentBill, billDetailsPlutoController);
+  void _updateBillDetailsOnScreen() {
+    billDetailsController.updateBillDetailsOnScreen(
+      currentBill,
+      billDetailsPlutoController,
+    );
   }
 
   /// Checks if the current bill is the last in the list
@@ -133,5 +158,5 @@ class BillSearchController extends GetxController {
   bool get isNew => currentBill.billId == null;
 
   /// Displays an error message
-  void _showErrorMessage(String message) => AppUIUtils.onFailure(message);
+  void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
 }

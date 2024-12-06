@@ -77,7 +77,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   IconButton(
                       onPressed: () {
-                        billSearchController.navigateToPreviousBill();
+                        billSearchController.previous();
                       },
                       icon: const Icon(Icons.keyboard_double_arrow_right)),
                   SizedBox(
@@ -86,12 +86,12 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         isNumeric: true,
                         textEditingController: billDetailsController.billNumberController,
                         onSubmitted: (billNumber) {
-                          billSearchController.navigateToBillByNumber(billNumber.toInt);
+                          billSearchController.goToBillByNumber(billNumber.toInt);
                         },
                       )),
                   IconButton(
                       onPressed: () {
-                        billSearchController.navigateToNextBill();
+                        billSearchController.next();
                       },
                       icon: const Icon(Icons.keyboard_double_arrow_left)),
                 ],

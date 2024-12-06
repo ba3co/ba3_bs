@@ -34,7 +34,17 @@ class BillModel implements PlutoAdaptable {
         items: BillItems.fromJson(json['items']),
       );
 
-  factory BillModel.fromInvoiceData({
+  factory BillModel.empty({required BillTypeModel billTypeModel, required int lastBillNumber}) => BillModel(
+        billTypeModel: billTypeModel,
+        items: BillItems(itemList: []),
+        billDetails: BillDetails(
+          billPayType: InvPayType.cash.index,
+          billDate: DateTime.now().toString().split(" ")[0],
+          billNumber: lastBillNumber + 1,
+        ),
+      );
+
+  factory BillModel.fromBillData({
     BillModel? billModel,
     String? note,
     required String billCustomerId,
@@ -50,7 +60,7 @@ class BillModel implements PlutoAdaptable {
     required BillTypeModel billTypeModel,
     required List<InvoiceRecordModel> billRecordsItems,
   }) {
-    final billDetails = BillDetails.fromInvoiceData(
+    final billDetails = BillDetails.fromBillData(
       existingDetails: billModel?.billDetails,
       note: note,
       billCustomerId: billCustomerId,
@@ -65,7 +75,7 @@ class BillModel implements PlutoAdaptable {
       billAdditionsTotal: billAdditionsTotal,
     );
 
-    final items = BillItems.fromInvoiceRecords(billRecordsItems);
+    final items = BillItems.fromBillRecords(billRecordsItems);
 
     return billModel == null
         ? BillModel(
@@ -137,36 +147,33 @@ class BillModel implements PlutoAdaptable {
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat() => {
-    PlutoColumn(title: 'billId',field: 'billId',type: PlutoColumnType.text())
-        : billId ?? '',
-    PlutoColumn(title:'رقم الفاتورة' ,field: 'رقم الفاتورة',type: PlutoColumnType.text())
-    : billDetails.billNumber ?? '',
-    PlutoColumn(title: 'التاريخ',field: 'التاريخ',type: PlutoColumnType.text())
-    : billDetails.billDate ?? '',
-    PlutoColumn(title: 'مجموع الضريبة',field:'مجموع الضريبة' ,type: PlutoColumnType.text())
-    : AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
-    PlutoColumn(title: 'المجموع قبل الضريبة' ,field:  'المجموع قبل الضريبة',type: PlutoColumnType.text())
-   : AppServiceUtils.toFixedDouble(billDetails.billBeforeVatTotal),
-    PlutoColumn(title:'المجموع الكلي' ,field: 'المجموع الكلي',type: PlutoColumnType.text())
-    : AppServiceUtils.toFixedDouble(billDetails.billTotal),
-    PlutoColumn(title: 'مجموع الحسم',field:'مجموع الحسم' ,type: PlutoColumnType.text())
-    : AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
-    PlutoColumn(title:'مجموع الاضافات' ,field:'مجموع الاضافات' ,type: PlutoColumnType.text())
-    : AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
-    PlutoColumn(title:'مجموع الهدايا' ,field:'مجموع الهدايا' ,type: PlutoColumnType.text())
-    : billDetails.billGiftsTotal ?? 0,
-    PlutoColumn(title: 'نوع الفاتورة',field: 'نوع الفاتورة',type: PlutoColumnType.text())
-    : BillType.byLabel(billTypeModel.billTypeLabel ?? "").value,
-    PlutoColumn(title: 'نوع الدفع',field:'نوع الدفع' ,type: PlutoColumnType.text())
-    : InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
-    PlutoColumn(title:'حساب العميل' ,field:'حساب العميل' ,type: PlutoColumnType.text())
-    : billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
-    PlutoColumn(title: 'حساب البائع',field:'حساب البائع' ,type: PlutoColumnType.text())
-    : Get.find<SellerController>().getSellerNameById(billDetails.billSellerId),
-    PlutoColumn(title: 'المستودع',field: 'المستودع',type: PlutoColumnType.text())
-    : billTypeModel.accounts?[BillAccounts.store] ?? '',
-    PlutoColumn(title: 'وصف',field: 'وصف',type: PlutoColumnType.text())
-    : billDetails.note ?? '',
+        PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text()): billId ?? '',
+        PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.text()):
+            billDetails.billNumber ?? '',
+        PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.text()): billDetails.billDate ?? '',
+        PlutoColumn(title: 'مجموع الضريبة', field: 'مجموع الضريبة', type: PlutoColumnType.text()):
+            AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
+        PlutoColumn(title: 'المجموع قبل الضريبة', field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
+            AppServiceUtils.toFixedDouble(billDetails.billBeforeVatTotal),
+        PlutoColumn(title: 'المجموع الكلي', field: 'المجموع الكلي', type: PlutoColumnType.text()):
+            AppServiceUtils.toFixedDouble(billDetails.billTotal),
+        PlutoColumn(title: 'مجموع الحسم', field: 'مجموع الحسم', type: PlutoColumnType.text()):
+            AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
+        PlutoColumn(title: 'مجموع الاضافات', field: 'مجموع الاضافات', type: PlutoColumnType.text()):
+            AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
+        PlutoColumn(title: 'مجموع الهدايا', field: 'مجموع الهدايا', type: PlutoColumnType.text()):
+            billDetails.billGiftsTotal ?? 0,
+        PlutoColumn(title: 'نوع الفاتورة', field: 'نوع الفاتورة', type: PlutoColumnType.text()):
+            BillType.byLabel(billTypeModel.billTypeLabel ?? "").value,
+        PlutoColumn(title: 'نوع الدفع', field: 'نوع الدفع', type: PlutoColumnType.text()):
+            InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
+        PlutoColumn(title: 'حساب العميل', field: 'حساب العميل', type: PlutoColumnType.text()):
+            billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
+        PlutoColumn(title: 'حساب البائع', field: 'حساب البائع', type: PlutoColumnType.text()):
+            Get.find<SellerController>().getSellerNameById(billDetails.billSellerId),
+        PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()):
+            billTypeModel.accounts?[BillAccounts.store] ?? '',
+        PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',
       };
 
   List<Map<String, String>> get getAdditionsDiscountsRecords {

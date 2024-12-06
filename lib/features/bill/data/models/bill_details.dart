@@ -45,7 +45,7 @@ class BillDetails {
         billAdditionsTotal: json['billAdditionsTotal'],
       );
 
-  factory BillDetails.fromInvoiceData({
+  factory BillDetails.fromBillData({
     BillDetails? existingDetails,
     String? note,
     required String billCustomerId,

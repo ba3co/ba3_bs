@@ -358,9 +358,9 @@ class AddBillController extends IBillController with AppValidator implements ISt
     if (billsByCategory.isNotEmpty) {
       final BillModel lastBill = billsByCategory.last;
 
-      billDetailsController.refreshScreenWithCurrentBillModel(lastBill, billDetailsPlutoController);
+      billDetailsController.updateBillDetailsOnScreen(lastBill, billDetailsPlutoController);
 
-      billSearchController.initializeBillSearch(
+      billSearchController.initialize(
         billsByCategory: billsByCategory,
         bill: lastBill,
         billDetailsController: billDetailsController,

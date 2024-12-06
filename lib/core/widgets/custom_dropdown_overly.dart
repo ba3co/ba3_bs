@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../features/floating_window/managers/overlay_entry_with_priority_manager.dart';
 
 class CustomDropdownOverly<T> extends StatefulWidget {
-  final T? value;
+  final T value;
   final List<T> items;
   final ValueChanged<T>? onChanged;
   final String Function(T item) itemLabelBuilder;
@@ -17,7 +17,7 @@ class CustomDropdownOverly<T> extends StatefulWidget {
   const CustomDropdownOverly({
     super.key,
     required this.overlayEntryWithPriorityInstance,
-    this.value,
+    required this.value,
     required this.items,
     required this.itemLabelBuilder,
     this.onChanged,
@@ -54,7 +54,6 @@ class _CustomDropdownOverlyState<T> extends State<CustomDropdownOverly<T>> {
     widget.overlayEntryWithPriorityInstance.displayOverlay(
       overlay: overlayState,
       overlayEntry: overlayEntry,
-      content: const SizedBox(),
       priority: widget.priority,
       onCloseCallback: () {
         widget.onCloseCallback?.call();
@@ -132,7 +131,7 @@ class _CustomDropdownOverlyState<T> extends State<CustomDropdownOverly<T>> {
               Expanded(
                 child: Center(
                   child: Text(
-                    widget.value != null ? widget.itemLabelBuilder(widget.value!) : "Select an option",
+                    widget.itemLabelBuilder(widget.value),
                     style: const TextStyle(color: Colors.black),
                   ),
                 ),

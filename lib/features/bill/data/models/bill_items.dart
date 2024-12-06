@@ -11,7 +11,7 @@ class BillItems {
     return BillItems(itemList: itemList);
   }
 
-  factory BillItems.fromInvoiceRecords(List<InvoiceRecordModel> invoiceRecords) {
+  factory BillItems.fromBillRecords(List<InvoiceRecordModel> invoiceRecords) {
     final itemList = invoiceRecords.map((invoiceRecord) {
       return BillItem(
         itemGuid: invoiceRecord.invRecId!,

@@ -21,7 +21,7 @@ class BillService {
     required int billPayType,
     required String billDate,
   }) {
-    return BillModel.fromInvoiceData(
+    return BillModel.fromBillData(
       billModel: billModel,
       billTypeModel: billTypeModel,
       note: null,

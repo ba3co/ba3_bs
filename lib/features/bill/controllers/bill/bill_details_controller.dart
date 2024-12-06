@@ -126,36 +126,49 @@ class BillDetailsController extends IBillController with AppValidator implements
     _billService.createBond(billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
   }
 
-  Future<void> deleteBill(String billId, {bool fromBillById = false}) async {
-    final result = await _billsFirebaseRepo.delete(billId);
+  Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
+    final result = await _billsFirebaseRepo.delete(billModel.billId!);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _handleDeleteSuccess(fromBillById),
+      (success) => _handleDeleteSuccess(billModel, fromBillById),
     );
   }
 
-  Future<void> _handleDeleteSuccess([fromBillById]) async {
+  Future<void> _handleDeleteSuccess(BillModel billModel, [fromBillById]) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
       await Get.find<AllBillsController>().fetchBills();
+      Get.back();
+    } else {
+      billSearchController.removeBill(billModel);
     }
 
-    Get.back();
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
   }
 
   Future<void> saveBill(BillTypeModel billTypeModel) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel);
+  }
+
+  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBillModel: billModel);
+  }
+
+  Future<void> _saveOrUpdateBill({required BillTypeModel billTypeModel, BillModel? existingBillModel}) async {
     // Validate the form first
     if (!validateForm()) return;
 
-    // Create the bill model from the provided invoice data
-    final BillModel? updatedBillModel = _createBillModelFromBillData(billTypeModel);
+    // Create the bill model from the provided data
+    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBillModel);
 
-    // Return if the model creation failed
-    if (updatedBillModel == null) return;
+    // Handle null bill model
+    if (updatedBillModel == null) {
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
+      return;
+    }
 
-    // Check if the bill items are not empty
+    // Ensure there are bill items
     if (!hasBillItems(updatedBillModel.items.itemList)) return;
 
     // Save the bill to Firestore
@@ -164,26 +177,13 @@ class BillDetailsController extends IBillController with AppValidator implements
     // Handle the result (success or failure)
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (billModel) => _handleSaveSuccess(billModel),
-    );
-  }
-
-  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel) {
-    final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel) ?? billTypeModel;
-    final sellerController = Get.find<SellerController>();
-
-    // Validate customer and seller accounts
-    if (!_validateCustomerAccount() || !_validateSellerAccount(sellerController)) {
-      return null;
-    }
-
-    // Create and return the bill model
-    return _billService.createBillModel(
-      billTypeModel: updatedBillTypeModel,
-      billDate: billDate,
-      billCustomerId: selectedCustomerAccount!.id!,
-      billSellerId: sellerController.selectedSellerAccount!.costGuid!,
-      billPayType: selectedPayType.index,
+      (billModel) {
+        if (existingBillModel != null) {
+          _handleUpdateSuccess(billModel);
+        } else {
+          _handleSaveSuccess(billModel);
+        }
+      },
     );
   }
 
@@ -215,28 +215,10 @@ class BillDetailsController extends IBillController with AppValidator implements
     );
   }
 
-  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
-    if (!validateForm()) return;
-
-    final updatedBillModel = _createBillModelFromInvoiceData(billModel, billTypeModel);
-
-    if (updatedBillModel == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
-      return;
-    }
-
-    final result = await _billsFirebaseRepo.save(updatedBillModel);
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (billModel) => _handleUpdateSuccess(billModel),
-    );
-  }
-
   void _handleUpdateSuccess(BillModel billModel) {
     AppUIUtils.onSuccess('تم تعديل الفاتورة بنجاح!');
 
-    billSearchController.updateBillInSearchResults(billModel);
+    billSearchController.updateBill(billModel);
 
     generateAndSendBillPdf(
       recipientEmail: AppStrings.recipientEmail,
@@ -247,15 +229,16 @@ class BillDetailsController extends IBillController with AppValidator implements
     );
   }
 
-  BillModel? _createBillModelFromInvoiceData(BillModel billModel, BillTypeModel billTypeModel) {
+  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
     final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel) ?? billTypeModel;
+    final sellerController = Get.find<SellerController>();
 
-    SellerController sellerController = Get.find<SellerController>();
-
-    if (selectedCustomerAccount == null || sellerController.selectedSellerAccount == null) {
+    // Validate customer and seller accounts
+    if (!_validateCustomerAccount() || !_validateSellerAccount(sellerController)) {
       return null;
     }
 
+    // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
       billTypeModel: updatedBillTypeModel,
@@ -329,7 +312,7 @@ class BillDetailsController extends IBillController with AppValidator implements
     bool fromBillDetails = false,
     bool fromBillById = false,
   }) {
-    final tag = 'AddBillController_${UniqueKey().toString()}';
+    final String tag = _generateUniqueTag();
 
     // Initialize the AddBillPlutoController
     AddBillPlutoController addBillPlutoController = _initializeAddBillPlutoController(tag);
@@ -354,6 +337,8 @@ class BillDetailsController extends IBillController with AppValidator implements
       ),
     );
   }
+
+  String _generateUniqueTag() => 'AddBillController_${UniqueKey().toString()}';
 
   AddBillController _initializeAddBillController(
       BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController, String tag) {
@@ -390,7 +375,7 @@ class BillDetailsController extends IBillController with AppValidator implements
 
   void initSellerAccount(String? billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId, this);
 
-  void refreshScreenWithCurrentBillModel(BillModel bill, BillDetailsPlutoController billPlutoController) {
+  void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate(bill.billDetails.billDate!.toDate!);

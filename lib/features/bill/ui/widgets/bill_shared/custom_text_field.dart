@@ -189,7 +189,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final bool isNumeric, enabled;
 
   @override
-  _CustomTextFieldWithoutIconState createState() => _CustomTextFieldWithoutIconState();
+  State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
 }
 
 class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon> {

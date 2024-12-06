@@ -86,6 +86,9 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       // No matches
       updateWithSelectedMaterial(null, stateManager, plutoController);
     } else {
+      // Clear focus from PlutoWithEdite before showing the dialog
+      FocusScope.of(context).unfocus();
+
       // Multiple matches, show search dialog
       _showSearchDialog(
         productTextController: productTextController,

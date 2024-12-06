@@ -33,7 +33,7 @@ class OverlayService {
   }
 
   static Widget showOverlayDropdown<T>({
-    required T? value,
+    required T value,
     required List<T> items,
     required ValueChanged<T>? onChanged,
     required String Function(T item) itemLabelBuilder,

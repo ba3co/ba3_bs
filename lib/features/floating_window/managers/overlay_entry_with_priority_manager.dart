@@ -34,7 +34,7 @@ class OverlayEntryWithPriorityManager {
 
   void displayOverlay({
     required OverlayState overlay,
-    required Widget content,
+    Widget? content,
     OverlayEntry? overlayEntry,
     String? title,
     double? width,
@@ -83,7 +83,7 @@ class OverlayEntryWithPriorityManager {
                             ],
                           ),
                         // Content Area
-                        Expanded(child: content),
+                        Expanded(child: content ?? const Text('Content shown here')),
                       ],
                     ),
                   ),

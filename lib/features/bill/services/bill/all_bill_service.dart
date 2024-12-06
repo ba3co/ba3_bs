@@ -1,6 +1,3 @@
-import '../../../../core/helper/enums/enums.dart';
-import '../../data/models/bill_details.dart';
-import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 
 class AllBillService {
@@ -9,15 +6,11 @@ class AllBillService {
 
     final BillModel lastBillModel = bills.last;
 
-    final emptyBillModel = BillModel(
+    final emptyBillModel = BillModel.empty(
       billTypeModel: lastBillModel.billTypeModel,
-      items: BillItems(itemList: []),
-      billDetails: BillDetails(
-        billPayType: InvPayType.cash.index,
-        billDate: DateTime.now().toString().split(" ")[0],
-        billNumber: lastBillModel.billDetails.billNumber! + 1,
-      ),
+      lastBillNumber: lastBillModel.billDetails.billNumber!,
     );
+
     modifiedBills.add(emptyBillModel);
 
     return modifiedBills;

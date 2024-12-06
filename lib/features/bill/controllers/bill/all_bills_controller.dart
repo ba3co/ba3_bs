@@ -130,72 +130,78 @@ class AllBillsController extends GetxController {
     _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
   }
 
-  Future<void> openBillDetails(BuildContext context, BillTypeModel billTypeModel) async {
+  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel) async {
     await fetchBills();
 
-    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
+    if (!context.mounted) return;
 
-    final tag = 'AddBillController_${UniqueKey().toString()}';
-
-    // Initialize the BillDetailsPlutoController
-    BillDetailsPlutoController billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
-
-    // Initialize the BillSearchController
-    BillSearchController billSearchController = _initializeBillSearchController(tag);
-
-    // Initialize the BillDetailsController
-    BillDetailsController billDetailsController =
-        _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
+    final List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
+    final String tag = _generateUniqueTag();
+    final controllers = _initializeControllers(tag);
 
     if (billsByCategory.isEmpty) {
-      _openAddBillFloatingWindow(context, billTypeModel, billDetailsController);
+      _openAddBillFloatingWindow(context, billTypeModel, controllers.billDetailsController);
       return;
     }
 
-    List<BillModel> modifiedBills = AllBillService.appendEmptyBillModel(billsByCategory);
-
-    BillModel lastBillModel = modifiedBills.last;
-
     _openBillDetailsFloatingWindow(
-      context: context,
-      currentBill: lastBillModel,
-      allBills: modifiedBills,
-      billDetailsController: billDetailsController,
-      billSearchController: billSearchController,
-      billDetailsPlutoController: billDetailsPlutoController,
-      tag: tag,
-    );
+        context: context, billsByCategory: billsByCategory, tag: tag, controllers: controllers);
   }
 
+  // Opens the 'Add Bill' floating window.
   void _openAddBillFloatingWindow(
       BuildContext context, BillTypeModel billTypeModel, BillDetailsController billDetailsController) {
     billDetailsController.createNewFloatingAddBillScreen(billTypeModel, context);
   }
 
+  // Opens the 'Bill Details' floating window.
   void _openBillDetailsFloatingWindow({
     required BuildContext context,
+    required List<BillModel> billsByCategory,
     required String tag,
-    required BillModel currentBill,
-    required List<BillModel> allBills,
-    required BillDetailsController billDetailsController,
-    required BillSearchController billSearchController,
-    required BillDetailsPlutoController billDetailsPlutoController,
-    bool fromBillById = false,
+    required ({
+      BillDetailsController billDetailsController,
+      BillDetailsPlutoController billDetailsPlutoController,
+      BillSearchController billSearchController
+    }) controllers,
   }) {
-    billDetailsController.refreshScreenWithCurrentBillModel(currentBill, billDetailsPlutoController);
+    final List<BillModel> modifiedBills = AllBillService.appendEmptyBillModel(billsByCategory);
+    final BillModel lastBillModel = modifiedBills.last;
+
+    controllers.billDetailsController.updateBillDetailsOnScreen(lastBillModel, controllers.billDetailsPlutoController);
 
     initializeBillSearch(
-      currentBill: currentBill,
-      allBills: allBills,
-      billSearchController: billSearchController,
-      billDetailsController: billDetailsController,
-      billDetailsPlutoController: billDetailsPlutoController,
+      currentBill: lastBillModel,
+      allBills: modifiedBills,
+      billSearchController: controllers.billSearchController,
+      billDetailsController: controllers.billDetailsController,
+      billDetailsPlutoController: controllers.billDetailsPlutoController,
     );
 
     createNewFloatingAddBillScreen(
       context: context,
-      fromBillById: fromBillById,
       tag: tag,
+      billDetailsController: controllers.billDetailsController,
+      billDetailsPlutoController: controllers.billDetailsPlutoController,
+      billSearchController: controllers.billSearchController,
+    );
+  }
+
+  // Generates a unique tag for identifying controllers.
+  String _generateUniqueTag() => 'BillDetailsController_${UniqueKey().toString()}';
+
+  // Initializes all necessary controllers for bill details handling.
+  ({
+    BillDetailsController billDetailsController,
+    BillDetailsPlutoController billDetailsPlutoController,
+    BillSearchController billSearchController
+  }) _initializeControllers(String tag) {
+    final billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
+    final billSearchController = _initializeBillSearchController(tag);
+    final billDetailsController =
+        _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
+
+    return (
       billDetailsController: billDetailsController,
       billDetailsPlutoController: billDetailsPlutoController,
       billSearchController: billSearchController,
@@ -234,11 +240,8 @@ class AllBillsController extends GetxController {
     BillSearchController billSearchController,
   ) =>
       Get.put<BillDetailsController>(
-        BillDetailsController(
-          _billsFirebaseRepo,
-          billDetailsPlutoController: billDetailsPlutoController,
-          billSearchController: billSearchController,
-        ),
+        BillDetailsController(_billsFirebaseRepo,
+            billDetailsPlutoController: billDetailsPlutoController, billSearchController: billSearchController),
         tag: tag,
       );
 
@@ -269,7 +272,7 @@ class AllBillsController extends GetxController {
     BillDetailsController billDetailsController =
         _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
-    billDetailsController.refreshScreenWithCurrentBillModel(billModel, billDetailsPlutoController);
+    billDetailsController.updateBillDetailsOnScreen(billModel, billDetailsPlutoController);
 
     initializeBillSearch(
       currentBill: billModel,
@@ -295,9 +298,7 @@ class AllBillsController extends GetxController {
     required BillDetailsController billDetailsController,
     required BillDetailsPlutoController billDetailsPlutoController,
   }) {
-    //List<BillModel> billsByCategory = getBillsByType(bill.billTypeModel.billTypeId!);
-
-    billSearchController.initializeBillSearch(
+    billSearchController.initialize(
       bill: currentBill,
       billsByCategory: allBills,
       billDetailsController: billDetailsController,
