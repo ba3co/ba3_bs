@@ -26,16 +26,19 @@ class AddBillButtons extends StatelessWidget {
         runSpacing: 20,
         children: [
           Obx(() {
-            final bool showAddNewBillButton = addBillController.isAddNewBillButtonVisible.value;
+            final bool showAddNewBillButton =
+                addBillController.isAddNewBillButtonVisible.value;
             return showAddNewBillButton
                 ? AppButton(
                     title: 'جديد',
+                    height: 20,
                     onPressed: () async {
                       addBillController.resetBillForm();
                     },
                     iconData: Icons.add_chart_outlined)
                 : AppButton(
                     title: 'إضافة',
+                    height: 20,
                     onPressed: () async {
                       addBillController.saveBill(billTypeModel);
                     },
@@ -43,6 +46,7 @@ class AddBillButtons extends StatelessWidget {
           }),
           AppButton(
               title: 'السند',
+              height: 20,
               onPressed: () async {
                 addBillController.createBond(billTypeModel);
               },
@@ -51,15 +55,19 @@ class AddBillButtons extends StatelessWidget {
             AppButton(
               iconData: Icons.print_outlined,
               title: 'طباعة',
+              height: 20,
               onPressed: () async {
-                addBillController.printBill(Get.find<AddBillPlutoController>().generateBillRecords);
+                addBillController.printBill(
+                    Get.find<AddBillPlutoController>().generateBillRecords);
               },
             ),
             Obx(() {
-              final bool showAddNewBillButton = addBillController.isAddNewBillButtonVisible.value;
+              final bool showAddNewBillButton =
+                  addBillController.isAddNewBillButtonVisible.value;
               return showAddNewBillButton
                   ? AppButton(
                       title: 'E-Invoice',
+                      height: 20,
                       onPressed: () => addBillController.showEInvoice(context),
                       iconData: Icons.link,
                     )

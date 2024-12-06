@@ -52,12 +52,14 @@ class BillDetailsButtons extends StatelessWidget {
           if (billSearchController.isNew)
             AppButton(
                 title: 'إضافة',
+                height: 20,
                 onPressed: () async {
                   billDetailsController.saveBill(billModel.billTypeModel);
                 },
                 iconData: Icons.add_chart_outlined),
           AppButton(
             title: 'السند',
+            height: 20,
             onPressed: () async {
               billDetailsController.createBond(billModel.billTypeModel);
             },
@@ -66,6 +68,7 @@ class BillDetailsButtons extends StatelessWidget {
           if (!billSearchController.isNew)
             AppButton(
               title: "تعديل",
+              height: 20,
               onPressed: () async {
                 billDetailsController.updateBill(
                   billModel: billModel,
@@ -77,6 +80,7 @@ class BillDetailsButtons extends StatelessWidget {
           AppButton(
             iconData: Icons.print_outlined,
             title: 'طباعة',
+            height: 20,
             onPressed: () async {
               billDetailsController.printBill(
                 billNumber: billModel.billDetails.billNumber!,
@@ -86,6 +90,7 @@ class BillDetailsButtons extends StatelessWidget {
           ),
           AppButton(
             title: 'E-Invoice',
+            height: 20,
             onPressed: () {
               if (!billDetailsController.hasBillId(billModel.billId)) return;
 
@@ -106,6 +111,7 @@ class BillDetailsButtons extends StatelessWidget {
           if (!billSearchController.isNew)
             AppButton(
               title: 'Pdf-Email',
+              height: 20,
               onPressed: () {
                 billDetailsController.generateAndSendBillPdf(
                   recipientEmail: AppStrings.recipientEmail,
@@ -120,10 +126,12 @@ class BillDetailsButtons extends StatelessWidget {
           if (!billSearchController.isNew)
             AppButton(
               iconData: Icons.delete_outline,
+              height: 20,
               color: Colors.red,
               title: 'حذف',
               onPressed: () async {
-                billDetailsController.deleteBill(billModel, fromBillById: fromBillById);
+                billDetailsController.deleteBill(billModel,
+                    fromBillById: fromBillById);
               },
             ),
         ],

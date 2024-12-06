@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
@@ -42,15 +41,16 @@ class AddBillHeader extends StatelessWidget {
               firstItem: BillHeaderField(
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
-                  textEditingController: addBillController.mobileNumberController,
-                  height: .038.sh,
+                  textEditingController:
+                      addBillController.mobileNumberController,
                 ),
               ),
               secondItem: SearchableAccountField(
                 label: 'حساب العميل',
-                height: .038.sh,
-                textEditingController: addBillController.customerAccountController,
-                validator: (value) => addBillController.validator(value, 'حساب العميل'),
+                textEditingController:
+                    addBillController.customerAccountController,
+                validator: (value) =>
+                    addBillController.validator(value, 'حساب العميل'),
                 isCustomerAccount: true,
                 billController: addBillController,
                 fromAddBill: true,
@@ -60,13 +60,15 @@ class AddBillHeader extends StatelessWidget {
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: 'البائع',
-                height: .038.sh,
-                textEditingController: addBillController.sellerAccountController,
-                validator: (value) => addBillController.validator(value, 'البائع'),
+                textEditingController:
+                    addBillController.sellerAccountController,
+                validator: (value) =>
+                    addBillController.validator(value, 'البائع'),
                 onSubmitted: (text) {
                   Get.find<SellerController>().openSellerSelectionDialog(
                     query: text,
-                    textEditingController: addBillController.sellerAccountController,
+                    textEditingController:
+                        addBillController.sellerAccountController,
                     context: context,
                   );
                 },
@@ -75,7 +77,6 @@ class AddBillHeader extends StatelessWidget {
                 label: 'البيان',
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: addBillController.noteController,
-                  height: .038.sh,
                 ),
               ),
             ),

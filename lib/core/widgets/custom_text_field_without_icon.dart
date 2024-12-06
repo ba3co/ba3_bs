@@ -27,10 +27,12 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final double? height;
 
   @override
-  State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
+  State<CustomTextFieldWithoutIcon> createState() =>
+      _CustomTextFieldWithoutIconState();
 }
 
-class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon> {
+class _CustomTextFieldWithoutIconState
+    extends State<CustomTextFieldWithoutIcon> {
   @override
   void initState() {
     super.initState();
@@ -52,7 +54,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
       );
 
       if (text != convertedText) {
-        widget.textEditingController.value = widget.textEditingController.value.copyWith(
+        widget.textEditingController.value =
+            widget.textEditingController.value.copyWith(
           text: convertedText,
           selection: TextSelection.collapsed(offset: convertedText.length),
         );
@@ -73,12 +76,14 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
         keyboardType: widget.keyboardType,
         scrollPadding: EdgeInsets.zero,
         cursorHeight: 15,
-        onTap: () => widget.textEditingController.selection =
-            TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
+        onTap: () => widget.textEditingController.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: widget.textEditingController.text.length),
         inputFormatters: widget.inputFormatters,
         decoration: InputDecoration(
           fillColor: Colors.white,
           filled: true,
+          isDense: true,
           border: UnderlineInputBorder(
             borderSide: const BorderSide(
               color: Colors.black, // Change the border color
@@ -93,7 +98,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
             ),
             borderRadius: BorderRadius.circular(5.0),
           ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 0), // Center the text vertically
+          suffixIcon: const SizedBox.shrink(),
         ),
         textAlign: TextAlign.center,
         // Center the text horizontally

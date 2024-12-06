@@ -36,9 +36,11 @@ class CalculationCard extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(color: Colors.white),
+            child: FittedBox(
+              child: Text(
+                label,
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
