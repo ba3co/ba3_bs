@@ -176,21 +176,12 @@ class BillModel implements PlutoAdaptable {
         PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',
       };
 
-  List<Map<String, String>> get getAdditionsDiscountsRecords {
-    final discountTotal = (billDetails.billDiscountsTotal ?? 0);
-    final additionTotal = (billDetails.billAdditionsTotal ?? 0);
-
-    if (discountTotal == 0 && additionTotal == 0) {
-      return [];
-    } else {
-      return _additionsDiscountsRecords;
-    }
-  }
+  List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;
 
   List<Map<String, String>> get _additionsDiscountsRecords {
     final partialTotal = _partialTotal;
-    final discountTotal = (billDetails.billDiscountsTotal ?? 0).toStringAsFixed(2);
-    final additionTotal = (billDetails.billAdditionsTotal ?? 0).toStringAsFixed(2);
+    final discountTotal = billDetails.billDiscountsTotal?.toStringAsFixed(2) ?? '';
+    final additionTotal = billDetails.billAdditionsTotal?.toStringAsFixed(2) ?? '';
 
     return [
       _createRecordRow(
@@ -227,7 +218,7 @@ class BillModel implements PlutoAdaptable {
         AppConstants.additionRatio: additionRatio,
       };
 
-  String _calculateRatio(double value, double total) => total > 0 ? ((value / total) * 100).toStringAsFixed(0) : '0';
+  String _calculateRatio(double value, double total) => total > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
 
   double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 }

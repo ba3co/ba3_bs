@@ -95,7 +95,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
   // Initializer
   void _initializeServices() {
-    _billService = BillService(addBillPlutoController);
+    _billService = BillService(addBillPlutoController, this);
   }
 
   bool validateForm() => formKey.currentState?.validate() ?? false;

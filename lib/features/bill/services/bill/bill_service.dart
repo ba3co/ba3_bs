@@ -1,15 +1,22 @@
+import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/bond_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
+import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
 
 class BillService {
   final IPlutoController plutoController;
+  final IBillController billController;
 
-  BillService(this.plutoController);
+  BillService(this.plutoController, this.billController);
 
   BondController get bondController => Get.find<BondController>();
 
@@ -52,4 +59,43 @@ class BillService {
         discount: plutoController.computeDiscounts,
         addition: plutoController.computeAdditions,
       );
+
+  Future<void> handleDeleteSuccess(BillModel billModel, BillSearchController billSearchController,
+      [fromBillById]) async {
+    // Only fetchBills if open bill details by bill id from AllBillsScreen
+    if (fromBillById) {
+      await Get.find<AllBillsController>().fetchBills();
+      Get.back();
+    } else {
+      billSearchController.removeBill(billModel);
+    }
+
+    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
+  }
+
+  Future<void> handleSaveSuccess(BillModel billModel) async {
+    AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+
+    billController.generateAndSendBillPdf(
+      recipientEmail: AppStrings.recipientEmail,
+      billModel: billModel,
+      fileName: AppStrings.bill,
+      logoSrc: AppAssets.ba3Logo,
+      fontSrc: AppAssets.notoSansArabicRegular,
+    );
+  }
+
+  void handleUpdateSuccess(BillModel billModel, BillSearchController billSearchController) {
+    AppUIUtils.onSuccess('تم تعديل الفاتورة بنجاح!');
+
+    billSearchController.updateBill(billModel);
+
+    billController.generateAndSendBillPdf(
+      recipientEmail: AppStrings.recipientEmail,
+      billModel: billModel,
+      fileName: AppStrings.bill,
+      logoSrc: AppAssets.ba3Logo,
+      fontSrc: AppAssets.notoSansArabicRegular,
+    );
+  }
 }
