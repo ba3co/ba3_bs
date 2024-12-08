@@ -14,7 +14,6 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../../floating_window/services/floating_window_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
-import '../../services/bill/all_bill_service.dart';
 import '../../services/bill/bill_utils.dart';
 import '../pluto/add_bill_pluto_controller.dart';
 import 'bill_search_controller.dart';
@@ -123,7 +122,7 @@ class AllBillsController extends GetxController {
       return;
     }
 
-    final BillModel lastBillModel = AllBillService.appendEmptyBillModel(billsByCategory, billTypeModel);
+    final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
   }
@@ -137,7 +136,7 @@ class AllBillsController extends GetxController {
     final String tag = _generateUniqueTag();
     final controllers = _initializeControllers(tag);
 
-    final BillModel lastBillModel = AllBillService.appendEmptyBillModel(billsByCategory, billTypeModel);
+    final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _openBillDetailsFloatingWindow(
       context: context,
