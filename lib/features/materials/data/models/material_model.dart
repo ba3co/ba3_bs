@@ -109,18 +109,18 @@ class MaterialModel implements PlutoAdaptable {
   // Factory constructor to create an instance from JSON
   factory MaterialModel.fromJson(Map<String, dynamic> json) {
     return MaterialModel(
-      id: json['mptr'].toString(),
+      id: json['mptr']?.toString(),
       matCode: json['MatCode'],
-      matName: json['MatName'].toString(),
+      matName: json['MatName']?.toString(),
       matBarCode: json['MatBarCode']?.toString(),
-      matGroupGuid: json['MatGroupGuid'].toString(),
-      matUnity: json['MatUnity'].toString(),
+      matGroupGuid: json['MatGroupGuid']?.toString(),
+      matUnity: json['MatUnity']?.toString(),
       matPriceType: json['MatPriceType'],
       matBonus: json['MatBonus'],
       matBonusOne: json['MatBonusOne'],
-      matCurrencyGuid: json['MatCurrencyGuid'].toString(),
-      matCurrencyVal: json['MatCurrencyVal'].toDouble(),
-      matPictureGuid: json['MatPictureGuid'].toString(),
+      matCurrencyGuid: json['MatCurrencyGuid']?.toString(),
+      matCurrencyVal: json['MatCurrencyVal']?.toDouble(),
+      matPictureGuid: json['MatPictureGuid']?.toString(),
       matType: json['MatType'],
       matSecurity: json['MatSecurity'],
       matFlag: json['MatFlag'],
@@ -135,8 +135,8 @@ class MaterialModel implements PlutoAdaptable {
       matDefUnit: json['MatDefUnit'],
       matBranchMask: json['MatBranchMask'],
       matAss: json['MatAss'],
-      matOldGUID: json['MatOldGUID'].toString(),
-      matNewGUID: json['MatNewGUID'].toString(),
+      matOldGUID: json['MatOldGUID']?.toString(),
+      matNewGUID: json['MatNewGUID']?.toString(),
       matCalPriceFromDetail: json['MatCalPriceFromDetail'],
       matForceInExpire: json['MatForceInExpire'],
       matForceOutExpire: json['MatForceOutExpire'],
@@ -147,18 +147,18 @@ class MaterialModel implements PlutoAdaptable {
       matForceOutClass: json['MatForceOutClass'],
       matDisableLastPrice: json['MatDisableLastPrice'],
       matLastPriceCurVal: json['MatLastPriceCurVal'].toDouble(),
-      matPrevQty: json['MatPrevQty'].toString(),
+      matPrevQty: json['MatPrevQty']?.toString(),
       matFirstCostDate: DateTime.parse(json['MatFirstCostDate']),
       matHasSegments: json['MatHasSegments'],
-      matParent: json['MatParent'].toString(),
+      matParent: json['MatParent']?.toString(),
       matIsCompositionUpdated: json['MatIsCompositionUpdated'],
       matInheritsParentSpecs: json['MatInheritsParentSpecs'],
-      matCompositionName: json['MatCompositionName'].toString(),
-      matCompositionLatinName: json['MatCompositionLatinName'].toString(),
+      matCompositionName: json['MatCompositionName']?.toString(),
+      matCompositionLatinName: json['MatCompositionLatinName']?.toString(),
       movedComposite: json['MovedComposite'],
-      wholesalePrice: json['Whole2'].toString(),
-      retailPrice: json['retail2'].toString(),
-      endUserPrice: json['EndUser2'].toString(),
+      wholesalePrice: json['Whole2']?.toString(),
+      retailPrice: json['retail2']?.toString(),
+      endUserPrice: json['EndUser2']?.toString(),
     );
   }
 
@@ -219,14 +219,10 @@ class MaterialModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat() {
     return {
-      PlutoColumn(title: 'الرقم التعريفي',field:'الرقم التعريفي' ,type: PlutoColumnType.text())
-      : id,
-      PlutoColumn(title: 'اسم المادة',field: 'اسم المادة',type: PlutoColumnType.text())
-      : matName,
-      PlutoColumn(title: 'رمز المادة',field: 'رمز المادة',type: PlutoColumnType.text())
-      : matCode,
-      PlutoColumn(title: 'الباركود' ,field: 'الباركود' ,type: PlutoColumnType.text())
-     : matBarCode,
+      PlutoColumn(title: 'الرقم التعريفي', field: 'الرقم التعريفي', type: PlutoColumnType.text()): id,
+      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
+      PlutoColumn(title: 'رمز المادة', field: 'رمز المادة', type: PlutoColumnType.text()): matCode,
+      PlutoColumn(title: 'الباركود', field: 'الباركود', type: PlutoColumnType.text()): matBarCode,
     };
   }
 

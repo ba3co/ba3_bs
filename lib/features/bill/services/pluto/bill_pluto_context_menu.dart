@@ -30,7 +30,7 @@ class BillPlutoContextMenu {
         itemLabelBuilder: (type) =>
             '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
         onSelected: (type) {
-          gridService.updateInvoicePreviousRowValues(
+          gridService.updateInvoiceSelectedRowValues(
               controller.mainTableStateManager.rows[index],
               invoiceUtils.getPrice(type: type, materialModel: materialModel),
               int.tryParse(
