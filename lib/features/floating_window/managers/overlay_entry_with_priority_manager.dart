@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../models/overlay_entry_with_priority.dart';
@@ -34,6 +36,10 @@ class OverlayEntryWithPriorityManager {
 
   void displayOverlay({
     required OverlayState overlay,
+    bool? showDivider,
+    BorderRadius? borderRadius,
+    EdgeInsets? contentPadding,
+    Alignment? overlayAlignment,
     Widget? content,
     OverlayEntry? overlayEntry,
     String? title,
@@ -59,16 +65,19 @@ class OverlayEntryWithPriorityManager {
               child: Material(
                 color: Colors.transparent,
                 elevation: 8,
-                borderRadius: BorderRadius.circular(24),
-                child: Center(
+                borderRadius: borderRadius ?? BorderRadius.circular(24),
+                child: Align(
+                  alignment: overlayAlignment ?? Alignment.center,
                   child: Container(
                     width: width ?? 500,
                     height: height ?? 500,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24)),
+                    padding: contentPadding ?? const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    decoration:
+                        BoxDecoration(color: Colors.white, borderRadius: borderRadius ?? BorderRadius.circular(24)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      // Position elements top and bottom
                       children: [
                         // Header with Close Button
                         if (title != null)
@@ -77,11 +86,12 @@ class OverlayEntryWithPriorityManager {
                               Text(
                                 title,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
                               ),
-                              const Divider(),
+                              if (showDivider ?? true) const Divider(),
                             ],
                           ),
+
                         // Content Area
                         Expanded(child: content ?? const Text('Content shown here')),
                       ],
@@ -101,6 +111,7 @@ class OverlayEntryWithPriorityManager {
     // Add overlay entry with priority
     _addOverlayEntryWithPriority();
 
+    log('overlay.insert ${_overlayEntry}');
     // Insert overlay entry into the overlay
     overlay.insert(_overlayEntry);
   }
@@ -127,4 +138,10 @@ class OverlayEntryWithPriorityManager {
   /// Lower numbers indicate higher priority (e.g., 0 is higher than 1).
   bool hasHigherPriorityOverlay([int defaultPriority = 1]) =>
       _overlayEntries.any((entry) => entry.priority < defaultPriority);
+
+  void clearAllHigherPriorityOverlay() {
+    if (hasHigherPriorityOverlay()) {
+      _removeOverlay();
+    }
+  }
 }

@@ -86,6 +86,31 @@ class BillPlutoGridService {
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total.toStringAsFixed(2));
   }
 
+  void updateInvoicePreviousRowValues(PlutoRow currentRow, double subTotal, int quantity) {
+    double vat = subTotal * 0.05;
+    double total = (subTotal + vat) * quantity;
+
+    updatePreviousRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecVat, vat.toStringAsFixed(2));
+    updatePreviousRowCellValue(
+        mainTableStateManager, currentRow, AppConstants.invRecSubTotal, subTotal.toStringAsFixed(2));
+    updatePreviousRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecTotal, total.toStringAsFixed(2));
+    updatePreviousRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecQuantity, quantity);
+  }
+
+  void updatePreviousRowCellValue(
+      PlutoGridStateManager stateManager, PlutoRow currentRow, String field, dynamic value) {
+    if (currentRow.cells.containsKey(field)) {
+      // Update the cell value in the previous row.
+      stateManager.changeCellValue(
+        currentRow.cells[field]!,
+        value,
+        callOnChangedEvent: false,
+        notify: true,
+        force: true,
+      );
+    }
+  }
+
   void updateAdditionDiscountCells(double total, BillPlutoUtils invoiceUtils) {
     if (additionsDiscountsStateManager.rows.isEmpty) return;
 

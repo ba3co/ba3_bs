@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
@@ -41,7 +42,9 @@ class BillDetailsBody extends StatelessWidget {
                     child: PlutoWithEdite(
                       columns: billDetailsPlutoController.mainTableColumns,
                       rows: billDetailsPlutoController.mainTableRows,
-                      onRowSecondaryTap: billDetailsPlutoController.onMainTableRowSecondaryTap,
+                      onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
+                        billDetailsPlutoController.onMainTableRowSecondaryTap(event, context);
+                      },
                       onChanged: billDetailsPlutoController.onMainTableStateManagerChanged,
                       onLoaded: billDetailsPlutoController.onMainTableLoaded,
                       shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),

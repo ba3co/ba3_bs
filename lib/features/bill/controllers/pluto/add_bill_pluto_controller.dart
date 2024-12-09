@@ -191,27 +191,28 @@ class AddBillPlutoController extends IPlutoController {
     return AppServiceUtils.extractNumbersAndCalculate(cellValue);
   }
 
-  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event) {
+  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
     final materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
     if (materialModel == null) return;
 
-    _handleContextMenu(event, materialModel);
+    _handleContextMenu(event, materialModel, context);
   }
 
-  void _handleContextMenu(PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel) {
+  void _handleContextMenu(PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel, BuildContext context) {
     final field = event.cell.column.field;
     if (field == AppConstants.invRecSubTotal) {
-      _showSubTotalContextMenu(event, materialModel);
+      _showSubTotalContextMenu(event, materialModel, context);
     } else if (field == AppConstants.invRecId) {
-      _showDeleteConfirmationDialog(event);
+      _showDeleteConfirmationDialog(event, context);
     }
   }
 
-  void _showSubTotalContextMenu(event, MaterialModel materialModel) {
-    _contextMenu.showContextMenuSubTotal(
+  void _showSubTotalContextMenu(event, MaterialModel materialModel, BuildContext context) {
+    _contextMenu.showPriceTypeMenu(
+        context: context,
         index: event.rowIdx,
         materialModel: materialModel,
         tapPosition: event.offset,
@@ -219,8 +220,8 @@ class AddBillPlutoController extends IPlutoController {
         gridService: _gridService);
   }
 
-  void _showDeleteConfirmationDialog(event) {
-    _contextMenu.showDeleteConfirmationDialog(event.rowIdx);
+  void _showDeleteConfirmationDialog(event, BuildContext context) {
+    _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
   }
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {

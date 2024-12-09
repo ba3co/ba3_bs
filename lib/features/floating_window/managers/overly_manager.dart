@@ -31,9 +31,7 @@ class OverlayManager {
             overlayEntry.remove();
             windowPositionManager.removeWindowPosition(targetPositionRatio);
 
-            if (onCloseContentControllerCallback != null) {
-              onCloseContentControllerCallback();
-            }
+            onCloseContentControllerCallback?.call();
           },
           targetPositionRatio: targetPositionRatio,
           floatingWindowContent: floatingWindowContent,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/widgets/custom_dropdown_overly.dart';
 import '../managers/overlay_entry_with_priority_manager.dart';
+import '../ui/custom_dropdown_overly.dart';
+import '../ui/custom_popup_menu_overly.dart';
 
 class OverlayService {
   static final _entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
@@ -13,16 +14,24 @@ class OverlayService {
   static void showOverlayDialog({
     required BuildContext context,
     required Widget content,
+    bool? showDivider,
+    BorderRadius? borderRadius,
+    EdgeInsets? contentPadding,
+    Alignment? dialogAlignment,
     String? title,
     double? width,
     double? height,
     int? priority,
     VoidCallback? onCloseCallback,
   }) {
-    final OverlayState overlayState = Overlay.of(context);
+    final OverlayState overlay = Overlay.of(context);
 
     _entryWithPriorityInstance.displayOverlay(
-      overlay: overlayState,
+      overlay: overlay,
+      showDivider: showDivider,
+      borderRadius: borderRadius,
+      contentPadding: contentPadding,
+      overlayAlignment: dialogAlignment,
       title: title,
       content: content,
       width: width,
@@ -35,6 +44,9 @@ class OverlayService {
   static Widget showOverlayDropdown<T>({
     required T value,
     required List<T> items,
+    BorderRadius? borderRadius,
+    EdgeInsets? contentPadding,
+    Alignment? dropdownAlignment,
     required ValueChanged<T>? onChanged,
     required String Function(T item) itemLabelBuilder,
     double? height,
@@ -43,16 +55,43 @@ class OverlayService {
     VoidCallback? onCloseCallback,
   }) {
     return CustomDropdownOverly<T>(
-      overlayEntryWithPriorityInstance: _entryWithPriorityInstance,
       value: value,
       items: items,
+      borderRadius: borderRadius,
+      contentPadding: contentPadding,
+      dropdownAlignment: dropdownAlignment,
       itemLabelBuilder: itemLabelBuilder,
       onChanged: onChanged,
       height: height,
       decoration: decoration,
       priority: priority,
-      back: back,
       onCloseCallback: onCloseCallback,
+      back: back,
+      overlayEntryWithPriorityInstance: _entryWithPriorityInstance,
+    );
+  }
+
+  static void showOverlayPopupMenu<T>({
+    required BuildContext context,
+    required Offset tapPosition,
+    required List<T> items,
+    required String Function(T item) itemLabelBuilder,
+    required ValueChanged<T> onSelected,
+    int? priority,
+    VoidCallback? onCloseCallback,
+    double elevation = 8.0,
+    Color backgroundColor = Colors.white,
+  }) {
+    showCustomPopupMenuOverlay<T>(
+      context: context,
+      tapPosition: tapPosition,
+      items: items,
+      back: back,
+      priority: priority,
+      onSelected: onSelected,
+      onCloseCallback: onCloseCallback,
+      itemLabelBuilder: itemLabelBuilder,
+      overlayEntryWithPriorityInstance: _entryWithPriorityInstance,
     );
   }
 }
