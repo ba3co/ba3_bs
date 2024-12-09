@@ -1,7 +1,7 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
@@ -15,88 +15,77 @@ class BillPlutoContextMenu {
 
   BillPlutoContextMenu(this.controller);
 
-  void showContextMenuSubTotal({
+  void showPriceTypeMenu({
+    required BuildContext context,
     required Offset tapPosition,
     required MaterialModel materialModel,
-    required int index,
     required BillPlutoUtils invoiceUtils,
     required BillPlutoGridService gridService,
+    required int index,
   }) {
-    showMenu(
-      context: Get.context!,
-      position: RelativeRect.fromLTRB(
-        tapPosition.dx,
-        tapPosition.dy,
-        tapPosition.dx + 1.0,
-        tapPosition.dy + 1.0,
-      ),
-      items: PriceType.values
-          .map((type) => showContextMenuItem(index, materialModel, type, invoiceUtils, gridService))
-          .toList(),
-    );
+    OverlayService.showOverlayPopupMenu(
+        context: context,
+        tapPosition: tapPosition,
+        items: PriceType.values,
+        itemLabelBuilder: (type) =>
+            '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
+        onSelected: (type) {
+          gridService.updateInvoicePreviousRowValues(
+              controller.mainTableStateManager.rows[index],
+              invoiceUtils.getPrice(type: type, materialModel: materialModel),
+              int.tryParse(
+                    controller.mainTableStateManager.rows[index].cells[AppConstants.invRecQuantity]?.value.toString() ??
+                        '1',
+                  ) ??
+                  1);
+          controller.update();
+        },
+        onCloseCallback: () {
+          debugPrint('PriceType menu closed.');
+        });
   }
 
-  PopupMenuItem showContextMenuItem(
-    int index,
-    MaterialModel materialModel,
-    PriceType type,
-    BillPlutoUtils invoiceUtils,
-    BillPlutoGridService gridService,
-  ) {
-    return PopupMenuItem(
-      enabled: true,
-      child: ListTile(
-        title: Text(
-          '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
-          textDirection: TextDirection.rtl,
-        ),
-      ),
-      onTap: () {
-        gridService.updateInvoiceValues(
-          invoiceUtils.getPrice(type: type, materialModel: materialModel),
-          int.tryParse(
-                  controller.mainTableStateManager.rows[index].cells[AppConstants.invRecQuantity]?.value.toString() ??
-                      '1') ??
-              1,
-        );
-        controller.update();
-      },
-    );
-  }
-
-  void showDeleteConfirmationDialog(int index) {
-    Get.defaultDialog(
+  void showDeleteConfirmationDialog(int index, BuildContext context) {
+    OverlayService.showOverlayDialog(
+      context: context,
+      width: 280,
+      height: 160,
+      showDivider: false,
+      borderRadius: BorderRadius.circular(20),
       title: AppConstants.deleteConfirmationTitle,
-      content: const Text(AppConstants.deleteConfirmationMessage),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            AppButton(
-              title: AppConstants.yes,
-              onPressed: () => _deleteRow(index),
-              color: Colors.red,
-              iconData: Icons.check,
-              width: 80,
-            ),
-            const HorizontalSpace(20),
-            AppButton(
-              title: AppConstants.no,
-              onPressed: Get.back,
-              iconData: Icons.clear,
-              width: 80,
-            ),
-          ],
-        ),
-      ],
+      content: Column(
+        children: [
+          const Spacer(),
+          const Text(AppConstants.deleteConfirmationMessage),
+          const VerticalSpace(15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              AppButton(
+                title: AppConstants.yes,
+                onPressed: () => _deleteRow(index),
+                color: Colors.red,
+                iconData: Icons.check,
+                width: 80,
+              ),
+              const HorizontalSpace(20),
+              const AppButton(
+                title: AppConstants.no,
+                onPressed: OverlayService.back,
+                iconData: Icons.clear,
+                width: 80,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
   void _deleteRow(int rowIdx) {
     final rowToRemove = controller.mainTableStateManager.rows[rowIdx];
     controller.mainTableStateManager.removeRows([rowToRemove]);
-    Get.back();
+    OverlayService.back();
     controller.update();
   }
 }

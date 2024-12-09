@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
@@ -41,7 +42,9 @@ class AddBillBody extends StatelessWidget {
                     child: PlutoWithEdite(
                       columns: addBillPlutoController.mainTableColumns,
                       rows: addBillPlutoController.mainTableRows,
-                      onRowSecondaryTap: addBillPlutoController.onMainTableRowSecondaryTap,
+                      onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
+                        addBillPlutoController.onMainTableRowSecondaryTap(event, context);
+                      },
                       onChanged: addBillPlutoController.onMainTableStateManagerChanged,
                       onLoaded: addBillPlutoController.onMainTableLoaded,
                       shortCut: customPlutoShortcut(GetProductByEnterAction(addBillPlutoController, context)),

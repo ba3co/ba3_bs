@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../../features/floating_window/managers/overlay_entry_with_priority_manager.dart';
+import '../managers/overlay_entry_with_priority_manager.dart';
 
 class CustomDropdownOverly<T> extends StatefulWidget {
   final T value;
   final List<T> items;
-  final ValueChanged<T>? onChanged;
+  final VoidCallback back;
   final String Function(T item) itemLabelBuilder;
+  final OverlayEntryWithPriorityManager overlayEntryWithPriorityInstance;
+  final BorderRadius? borderRadius;
+  final EdgeInsets? contentPadding;
+  final Alignment? dropdownAlignment;
+  final ValueChanged<T>? onChanged;
   final double? height;
   final BoxDecoration? decoration;
   final int? priority;
   final VoidCallback? onCloseCallback;
-  final VoidCallback back;
-  final OverlayEntryWithPriorityManager overlayEntryWithPriorityInstance;
 
   const CustomDropdownOverly({
     super.key,
@@ -26,6 +29,9 @@ class CustomDropdownOverly<T> extends StatefulWidget {
     this.priority,
     required this.back,
     this.onCloseCallback,
+    this.borderRadius,
+    this.contentPadding,
+    this.dropdownAlignment,
   });
 
   @override
@@ -46,14 +52,17 @@ class _CustomDropdownOverlyState<T> extends State<CustomDropdownOverly<T>> {
   }
 
   void _showOverlay() {
-    final OverlayState overlayState = Overlay.of(context);
+    final OverlayState overlay = Overlay.of(context);
 
     overlayEntry = _createOverlayEntry();
 
     // Display the overlay using the OverlayEntryWithPriorityManager with priority management
     widget.overlayEntryWithPriorityInstance.displayOverlay(
-      overlay: overlayState,
+      overlay: overlay,
       overlayEntry: overlayEntry,
+      contentPadding: widget.contentPadding,
+      borderRadius: widget.borderRadius,
+      overlayAlignment: widget.dropdownAlignment,
       priority: widget.priority,
       onCloseCallback: () {
         widget.onCloseCallback?.call();
