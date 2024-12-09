@@ -25,7 +25,7 @@ class AddBillHeader extends StatelessWidget {
         child: Column(
           children: [
             FormFieldRow(
-              firstItem: BillHeaderField(
+              firstItem: TextAndExpandedChildField(
                 label: 'تاريخ الفاتورة',
                 child: DatePicker(
                   initDate: addBillController.billDate,
@@ -38,7 +38,7 @@ class AddBillHeader extends StatelessWidget {
             ),
             const VerticalSpace(),
             FormFieldRow(
-              firstItem: BillHeaderField(
+              firstItem: TextAndExpandedChildField(
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: addBillController.mobileNumberController,
@@ -68,7 +68,7 @@ class AddBillHeader extends StatelessWidget {
                   );
                 },
               ),
-              secondItem: BillHeaderField(
+              secondItem: TextAndExpandedChildField(
                 label: 'البيان',
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: addBillController.noteController,

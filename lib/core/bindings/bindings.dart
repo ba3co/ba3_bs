@@ -4,6 +4,7 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -93,5 +94,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PrintingController(translationRepo), fenix: true);
 
     Get.lazyPut(() => BillSearchController(), fenix: true);
+    Get.lazyPut(() => BondDetailsController(), fenix: true);
   }
 }

@@ -1,3 +1,5 @@
+import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
+import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -6,158 +8,96 @@ import '../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 
 class BondDetailsView extends StatelessWidget {
-  const BondDetailsView({super.key});
+  const BondDetailsView({super.key, this.isDebitOrCredit});
+
+  final bool? isDebitOrCredit;
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
         textDirection: TextDirection.rtl,
-        child: Scaffold(
-          appBar: AppBar(centerTitle: true, title: const Text(""), leading: const BackButton(), actions: [
-            IconButton(
-                onPressed: () {
-                  // bondController.bondNextOrPrev(widget.bondType, true);
-                  // setState(() {});
-                },
-                icon: const Icon(Icons.keyboard_double_arrow_right)),
-            SizedBox(
-              width: 100,
-              child: CustomTextFieldWithoutIcon(
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onSubmitted: (_) {
-                  // controller.getBondByCode(widget.bondType, _);
-                },
-                textEditingController: TextEditingController(),
+        child: GetBuilder<BondDetailsController>(builder: (bondDetailsController) {
+          return Scaffold(
+            appBar: AppBar(centerTitle: true, title: const Text(""), leading: const BackButton(), actions: [
+              IconButton(
+                  onPressed: () {
+                    // bondController.bondNextOrPrev(widget.bondType, true);
+                    // setState(() {});
+                  },
+                  icon: const Icon(Icons.keyboard_double_arrow_right)),
+              SizedBox(
+                width: 100,
+                child: CustomTextFieldWithoutIcon(
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onSubmitted: (_) {
+                    // controller.getBondByCode(widget.bondType, _);
+                  },
+                  textEditingController: TextEditingController(),
+                ),
               ),
-            ),
-            IconButton(
-                onPressed: () {
-                  // bondController.bondNextOrPrev(widget.bondType, false);
-                },
-                icon: const Icon(Icons.keyboard_double_arrow_left)),
-          ]),
-          body: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    width: Get.width,
-                    child: Wrap(
-                      spacing: 20,
-                      alignment: WrapAlignment.spaceBetween,
-                      runSpacing: 10,
-                      children: [
-                        SizedBox(
-                          width: Get.width * 0.45,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 100, child: Text("البيان")),
-                              Expanded(
-                                child: CustomTextFieldWithoutIcon(
-                                  textEditingController: TextEditingController(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: Get.width * 0.45,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 100, child: Text("تاريخ السند : ", style: TextStyle())),
-                              Expanded(
-                                child: CustomTextFieldWithIcon(
-                                  textEditingController: TextEditingController(),
-                                  onSubmitted: (text) async {
-                                    // controller.dateController.text = getDateFromString(text);
-                                    // controller.update();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (true)
-                          SizedBox(
-                            width: Get.width * 0.45,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text(
-                                    "الحساب : ",
-                                  ),
-                                ),
-                                Expanded(
-                                  child: CustomTextFieldWithIcon(
-                                    onSubmitted: (text) async {
-                                      // controller.debitOrCreditController.text = await searchAccountTextDialog(text) ?? "";
-                                      // invoiceController.getAccountComplete();
-                                      // invoiceController.changeSecAccount();
-                                    },
-                                    textEditingController: TextEditingController(),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                      ],
+              IconButton(
+                  onPressed: () {
+                    // bondController.bondNextOrPrev(widget.bondType, false);
+                  },
+                  icon: const Icon(Icons.keyboard_double_arrow_left)),
+            ]),
+            body: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    BondDetailsHeader(bondDetailsController: bondDetailsController),
+                    // Expanded(child: GetBuilder<BondRecordPlutoController>(builder: (controller) {
+                    //   return CustomPlutoWithEdite(
+                    //     controller: controller,
+                    //     shortCut: customPlutoShortcut(GetAccountEnterPlutoGridAction(controller, "bondRecAccount")),
+                    //     onRowSecondaryTap: (event) {
+                    //       if (event.cell.column.field == "bondRecId") {
+                    //         Get.defaultDialog(title: "تأكيد الحذف", content: const Text("هل انت متأكد من حذف هذا العنصر"), actions: [
+                    //           AppButton(
+                    //               title: "نعم",
+                    //               onPressed: () {
+                    //                 controller.clearRowIndex(event.rowIdx);
+                    //               },
+                    //               iconData: Icons.check),
+                    //           AppButton(
+                    //             title: "لا",
+                    //             onPressed: () {
+                    //               Get.back();
+                    //             },
+                    //             iconData: Icons.clear,
+                    //             color: Colors.red,
+                    //           ),
+                    //         ]);
+                    //       }
+                    //     },
+                    //     onChanged: (event) {
+                    //       if (event.column.field == "bondRecDebitAmount") {
+                    //         controller.updateCellValue(
+                    //             "bondRecDebitAmount", extractNumbersAndCalculate(event.row.cells["bondRecDebitAmount"]?.value));
+                    //         if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
+                    //           if ((double.tryParse(event.row.cells["bondRecCreditAmount"]?.value) ?? 0) > 0) {
+                    //             controller.updateCellValue("bondRecCreditAmount", "");
+                    //           }
+                    //         }
+                    //       } else if (event.column.field == "bondRecCreditAmount") {
+                    //         controller.updateCellValue(
+                    //             "bondRecCreditAmount", extractNumbersAndCalculate(event.row.cells["bondRecCreditAmount"]?.value));
+                    //         if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
+                    //           if ((double.tryParse(event.row.cells["bondRecDebitAmount"]?.value) ?? 0) > 0) {
+                    //             controller.updateCellValue("bondRecDebitAmount", "");
+                    //           }
+                    //         }
+                    //       }
+                    //     },
+                    //   );
+                    // })),
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  // Expanded(child: GetBuilder<BondRecordPlutoController>(builder: (controller) {
-                  //   return CustomPlutoWithEdite(
-                  //     controller: controller,
-                  //     shortCut: customPlutoShortcut(GetAccountEnterPlutoGridAction(controller, "bondRecAccount")),
-                  //     onRowSecondaryTap: (event) {
-                  //       if (event.cell.column.field == "bondRecId") {
-                  //         Get.defaultDialog(title: "تأكيد الحذف", content: const Text("هل انت متأكد من حذف هذا العنصر"), actions: [
-                  //           AppButton(
-                  //               title: "نعم",
-                  //               onPressed: () {
-                  //                 controller.clearRowIndex(event.rowIdx);
-                  //               },
-                  //               iconData: Icons.check),
-                  //           AppButton(
-                  //             title: "لا",
-                  //             onPressed: () {
-                  //               Get.back();
-                  //             },
-                  //             iconData: Icons.clear,
-                  //             color: Colors.red,
-                  //           ),
-                  //         ]);
-                  //       }
-                  //     },
-                  //     onChanged: (event) {
-                  //       if (event.column.field == "bondRecDebitAmount") {
-                  //         controller.updateCellValue(
-                  //             "bondRecDebitAmount", extractNumbersAndCalculate(event.row.cells["bondRecDebitAmount"]?.value));
-                  //         if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
-                  //           if ((double.tryParse(event.row.cells["bondRecCreditAmount"]?.value) ?? 0) > 0) {
-                  //             controller.updateCellValue("bondRecCreditAmount", "");
-                  //           }
-                  //         }
-                  //       } else if (event.column.field == "bondRecCreditAmount") {
-                  //         controller.updateCellValue(
-                  //             "bondRecCreditAmount", extractNumbersAndCalculate(event.row.cells["bondRecCreditAmount"]?.value));
-                  //         if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
-                  //           if ((double.tryParse(event.row.cells["bondRecDebitAmount"]?.value) ?? 0) > 0) {
-                  //             controller.updateCellValue("bondRecDebitAmount", "");
-                  //           }
-                  //         }
-                  //       }
-                  //     },
-                  //   );
-                  // })),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  /*   GetBuilder<BondRecordPlutoViewModel>(builder: (controller) {
+                    /*   GetBuilder<BondRecordPlutoViewModel>(builder: (controller) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -391,10 +331,11 @@ class BondDetailsView extends StatelessWidget {
                       ]
                     ],
                   ),*/
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ));
+          );
+        }));
   }
 }

@@ -1,10 +1,12 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/bond_layout_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../widgets/bond_layout/bond_type_item_widget.dart';
+import 'bond_details_view.dart';
 
 class BondLayout extends StatelessWidget {
   const BondLayout({super.key});
@@ -22,14 +24,14 @@ class BondLayout extends StatelessWidget {
                     ...List.generate(
                         BondType.values.length,
                         (index) => Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: BondTypeItemWidget(
+                              padding: const EdgeInsets.all(8.0),
+                              child: BondTypeItemWidget(
                                 onPressed: () {
-
+                                Get.find<BondDetailsController>()..setIsDebitOrCredit(index)..navigateToBondDetails();
                                 },
                                 bond: BondType.values[index],
                               ),
-                        ))
+                            ))
                   ],
                 )),
       ),

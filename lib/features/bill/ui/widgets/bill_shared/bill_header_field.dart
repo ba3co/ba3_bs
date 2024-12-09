@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class BillHeaderField extends StatelessWidget {
+class TextAndExpandedChildField extends StatelessWidget {
   final String label;
   final Widget child;
   final double? width;
 
-  const BillHeaderField({super.key, required this.label, required this.child, this.width});
+  const TextAndExpandedChildField({super.key, required this.label, required this.child, this.width});
 
   @override
   Widget build(BuildContext context) {

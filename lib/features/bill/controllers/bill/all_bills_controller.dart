@@ -193,7 +193,7 @@ class AllBillsController extends GetxController {
         _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
     return (
-      billDetailsController: billDetailsController,
+    billDetailsController: billDetailsController,
       billDetailsPlutoController: billDetailsPlutoController,
       billSearchController: billSearchController,
     );
