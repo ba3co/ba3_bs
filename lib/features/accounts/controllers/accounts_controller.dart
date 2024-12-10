@@ -122,7 +122,7 @@ class AccountsController extends GetxController {
         textEditingController.text = selectedAccountModel.accName!;
       }
     } else if (searchedAccounts.isNotEmpty) {
-      OverlayService.showOverlayDialog(
+      OverlayService.showDialog(
         context: context,
         title: 'أختر الحساب',
         content: AccountSelectionDialogContent(

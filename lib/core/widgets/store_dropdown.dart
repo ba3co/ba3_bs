@@ -30,7 +30,7 @@ class StoreDropdown extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.white,
               ),
-              child: OverlayService.showOverlayDropdown<StoreAccount>(
+              child: OverlayService.showDropdown<StoreAccount>(
                 value: storeSelectionHandler.selectedStore,
                 items: StoreAccount.values,
                 onChanged: storeSelectionHandler.onSelectedStoreChanged,

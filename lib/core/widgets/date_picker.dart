@@ -23,7 +23,7 @@ class DatePicker extends StatelessWidget {
           border: const Border.symmetric(vertical: BorderSide(width: 1))),
       child: InkWell(
         onTap: () {
-          OverlayService.showOverlayDialog(
+          OverlayService.showDialog(
             context: context,
             height: .6.sh,
             width: .5.sw,

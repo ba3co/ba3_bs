@@ -63,6 +63,8 @@ class BillDetailsController extends IBillController with AppValidator implements
 
   Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
 
+  RxBool isBillSaved = false.obs;
+
   @override
   updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
       selectedAdditionsDiscountAccounts[key] = value;
@@ -172,10 +174,14 @@ class BillDetailsController extends IBillController with AppValidator implements
         if (existingBillModel != null) {
           _billService.handleUpdateSuccess(billModel, billSearchController);
         } else {
-          _billService.handleSaveSuccess(billModel);
+          _billService.handleSaveSuccess(billModel, this);
         }
       },
     );
+  }
+
+  updateIsBillSaved(bool newValue) {
+    isBillSaved.value = newValue;
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {

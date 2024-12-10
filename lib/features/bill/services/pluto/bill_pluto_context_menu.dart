@@ -1,7 +1,9 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
@@ -23,21 +25,21 @@ class BillPlutoContextMenu {
     required BillPlutoGridService gridService,
     required int index,
   }) {
-    OverlayService.showOverlayPopupMenu(
+    OverlayService.showPopupMenu(
         context: context,
         tapPosition: tapPosition,
         items: PriceType.values,
         itemLabelBuilder: (type) =>
             '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
-        onSelected: (type) {
-          gridService.updateInvoiceSelectedRowValues(
-              controller.mainTableStateManager.rows[index],
-              invoiceUtils.getPrice(type: type, materialModel: materialModel),
-              int.tryParse(
-                    controller.mainTableStateManager.rows[index].cells[AppConstants.invRecQuantity]?.value.toString() ??
-                        '1',
-                  ) ??
-                  1);
+        onSelected: (PriceType type) {
+          final PlutoRow selectedRow = controller.mainTableStateManager.rows[index];
+          final int quantity = AppServiceUtils.getItemQuantity(selectedRow, AppConstants.invRecQuantity);
+
+          gridService.updateInvoiceValuesBySubTotal(
+            selectedRow: selectedRow,
+            subTotal: invoiceUtils.getPrice(type: type, materialModel: materialModel),
+            quantity: quantity,
+          );
           controller.update();
         },
         onCloseCallback: () {
@@ -46,7 +48,7 @@ class BillPlutoContextMenu {
   }
 
   void showDeleteConfirmationDialog(int index, BuildContext context) {
-    OverlayService.showOverlayDialog(
+    OverlayService.showDialog(
       context: context,
       width: 280,
       height: 160,

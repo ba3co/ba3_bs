@@ -167,7 +167,7 @@ class BillDetailsPlutoController extends IPlutoController {
 
   int _getQuantity() {
     final quantityStr = _extractCellValueAsNumber(AppConstants.invRecQuantity);
-    return (quantityStr.toDouble ?? 0).toInt();
+    return _plutoUtils.parseExpression(quantityStr).toInt();
   }
 
   double _getVat() {
@@ -193,13 +193,13 @@ class BillDetailsPlutoController extends IPlutoController {
   void _handleContextMenu(PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel, BuildContext context) {
     final field = event.cell.column.field;
     if (field == AppConstants.invRecSubTotal) {
-      _showSubTotalContextMenu(event, materialModel, context);
+      _showPriceTypeMenu(event, materialModel, context);
     } else if (field == AppConstants.invRecId) {
       _showDeleteConfirmationDialog(event, context);
     }
   }
 
-  void _showSubTotalContextMenu(event, MaterialModel materialModel, BuildContext context) {
+  void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context) {
     _contextMenu.showPriceTypeMenu(
         context: context,
         index: event.rowIdx,
@@ -245,6 +245,7 @@ class BillDetailsPlutoController extends IPlutoController {
     final calculateNewValue = isRatioCell ? calculateAmountFromRatio : calculateRatioFromAmount;
     final newValue = calculateNewValue(inputValue, total);
 
+    _gridService.updateAdditionsDiscountsCellValue(row.cells[field]!, inputValue);
     _gridService.updateAdditionsDiscountsCellValue(row.cells[targetField]!, newValue);
   }
 

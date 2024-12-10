@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
@@ -133,7 +134,9 @@ class AllBillsController extends GetxController {
     if (!context.mounted) return;
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
-    final String tag = _generateUniqueTag();
+
+    final String tag = AppServiceUtils.generateUniqueTag('BillDetailsController');
+
     final controllers = _initializeControllers(tag);
 
     final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
@@ -178,8 +181,7 @@ class AllBillsController extends GetxController {
     );
   }
 
-  // Generates a unique tag for identifying controllers.
-  String _generateUniqueTag() => 'BillDetailsController_${UniqueKey().toString()}';
+
 
   // Initializes all necessary controllers for bill details handling.
   ({

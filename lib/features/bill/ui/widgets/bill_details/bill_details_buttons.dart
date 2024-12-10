@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/dialogs/e_invoice_dialog_content.dart';
@@ -50,13 +51,18 @@ class BillDetailsButtons extends StatelessWidget {
           //   iconData: Icons.create_new_folder_outlined,
           // ),
           if (billSearchController.isNew)
-            AppButton(
-                title: 'إضافة',
-                height: 20,
-                onPressed: () async {
-                  billDetailsController.saveBill(billModel.billTypeModel);
-                },
-                iconData: Icons.add_chart_outlined),
+            Obx(() {
+              return AppButton(
+                  title: 'إضافة',
+                  height: 20,
+                  color: billDetailsController.isBillSaved.value ? Colors.green : Colors.blue.shade700,
+                  onPressed: billDetailsController.isBillSaved.value
+                      ? () {}
+                      : () async {
+                          billDetailsController.saveBill(billModel.billTypeModel);
+                        },
+                  iconData: Icons.add_chart_outlined);
+            }),
           AppButton(
             title: 'السند',
             height: 20,
@@ -94,7 +100,7 @@ class BillDetailsButtons extends StatelessWidget {
             onPressed: () {
               if (!billDetailsController.hasBillId(billModel.billId)) return;
 
-              OverlayService.showOverlayDialog(
+              OverlayService.showDialog(
                 context: context,
                 title: "Invoice QR Code",
                 content: EInvoiceDialogContent(
@@ -130,8 +136,7 @@ class BillDetailsButtons extends StatelessWidget {
               color: Colors.red,
               title: 'حذف',
               onPressed: () async {
-                billDetailsController.deleteBill(billModel,
-                    fromBillById: fromBillById);
+                billDetailsController.deleteBill(billModel, fromBillById: fromBillById);
               },
             ),
         ],

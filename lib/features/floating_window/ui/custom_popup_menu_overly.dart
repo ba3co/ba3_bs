@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../managers/overlay_entry_with_priority_manager.dart';
 
-void showCustomPopupMenuOverlay<T>({
+void customPopupMenuOverlay<T>({
   required BuildContext context,
   required List<T> items,
   required Offset tapPosition,

@@ -1,4 +1,7 @@
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 class AppServiceUtils {
   static String formatSecretEmail(String email) {
@@ -161,4 +164,15 @@ class AppServiceUtils {
 
     return total - sunTotal;
   }
+
+  static int getItemQuantity(PlutoRow row, String cellKey) {
+    final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
+
+    int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt ?? 1;
+
+    return invRecQuantity;
+  }
+
+  // Generates a unique tag for identifying controllers.
+  static String generateUniqueTag(String controllerName) => '${controllerName}_${UniqueKey().toString()}';
 }

@@ -126,7 +126,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
       return;
     }
 
-    OverlayService.showOverlayDialog(
+    OverlayService.showDialog(
       context: context,
       title: "Invoice QR Code",
       content: EInvoiceDialogContent(

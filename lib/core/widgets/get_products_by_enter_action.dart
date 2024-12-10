@@ -107,7 +107,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required PlutoGridStateManager stateManager,
     required IPlutoController plutoController,
   }) {
-    OverlayService.showOverlayDialog(
+    OverlayService.showDialog(
       context: context,
       height: .7.sh,
       width: .8.sw,

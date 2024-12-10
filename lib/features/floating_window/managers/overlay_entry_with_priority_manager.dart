@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import '../models/overlay_entry_with_priority.dart';
@@ -111,7 +109,6 @@ class OverlayEntryWithPriorityManager {
     // Add overlay entry with priority
     _addOverlayEntryWithPriority();
 
-    log('overlay.insert ${_overlayEntry}');
     // Insert overlay entry into the overlay
     overlay.insert(_overlayEntry);
   }

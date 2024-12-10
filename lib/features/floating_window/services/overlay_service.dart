@@ -11,7 +11,7 @@ class OverlayService {
     _entryWithPriorityInstance.dispose();
   }
 
-  static void showOverlayDialog({
+  static void showDialog({
     required BuildContext context,
     required Widget content,
     bool? showDivider,
@@ -41,7 +41,7 @@ class OverlayService {
     );
   }
 
-  static Widget showOverlayDropdown<T>({
+  static Widget showDropdown<T>({
     required T value,
     required List<T> items,
     BorderRadius? borderRadius,
@@ -71,7 +71,7 @@ class OverlayService {
     );
   }
 
-  static void showOverlayPopupMenu<T>({
+  static void showPopupMenu<T>({
     required BuildContext context,
     required Offset tapPosition,
     required List<T> items,
@@ -82,7 +82,7 @@ class OverlayService {
     double elevation = 8.0,
     Color backgroundColor = Colors.white,
   }) {
-    showCustomPopupMenuOverlay<T>(
+    customPopupMenuOverlay<T>(
       context: context,
       tapPosition: tapPosition,
       items: items,

@@ -113,7 +113,7 @@ class SellerController extends GetxController {
 
       textEditingController.text = selectedSellerAccount!.costName!;
     } else if (searchedSellersAccounts.isNotEmpty) {
-      OverlayService.showOverlayDialog(
+      OverlayService.showDialog(
         context: context,
         title: 'أختر البائع',
         content: SellerSelectionDialogContent(

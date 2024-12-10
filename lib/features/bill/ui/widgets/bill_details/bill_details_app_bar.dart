@@ -52,7 +52,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Expanded(
-                      child: OverlayService.showOverlayDropdown<InvPayType>(
+                      child: OverlayService.showDropdown<InvPayType>(
                         value: billDetailsController.selectedPayType,
                         items: InvPayType.values,
                         itemLabelBuilder: (type) => type.label,

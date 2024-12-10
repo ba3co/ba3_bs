@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:get/get.dart';
 
@@ -73,8 +74,10 @@ class BillService {
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
   }
 
-  Future<void> handleSaveSuccess(BillModel billModel) async {
+  Future<void> handleSaveSuccess(BillModel billModel, BillDetailsController billDetailsController) async {
     AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+
+    billDetailsController.updateIsBillSaved(true);
 
     billController.generateAndSendBillPdf(
       recipientEmail: AppStrings.recipientEmail,

@@ -6,6 +6,8 @@ import '../controllers/floating_window_controller.dart';
 /// Service class to initializing and displaying floating windows.
 class FloatingWindowService {
   /// Launches a floating window with the provided content.
+  ///
+
   static void launchFloatingWindow(
       {required BuildContext context,
       required Widget floatingWindowContent,

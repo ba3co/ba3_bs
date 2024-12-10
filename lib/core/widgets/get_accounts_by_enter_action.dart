@@ -111,7 +111,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required IPlutoController controller,
     required String columnField,
   }) {
-    OverlayService.showOverlayDialog(
+    OverlayService.showDialog(
       context: context,
       title: 'أختر الحساب',
       content: AccountSelectionDialogContent(
