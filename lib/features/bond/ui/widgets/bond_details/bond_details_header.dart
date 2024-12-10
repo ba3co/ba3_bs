@@ -31,8 +31,8 @@ class BondDetailsHeader extends StatelessWidget {
                 firstItem: TextAndExpandedChildField(
                   label: 'تاريخ السند',
                   child: DatePicker(
-                    initDate: bondDetailsController.billDate,
-                    onDateSelected: bondDetailsController.setBillDate,
+                    initDate: bondDetailsController.bondDate,
+                    onDateSelected: bondDetailsController.setBondDate,
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(

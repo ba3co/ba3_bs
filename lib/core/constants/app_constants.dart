@@ -324,6 +324,19 @@ abstract class AppConstants {
   static const String discountAccountType = 'discountAccountType';
   static const String additionAccountType = 'additionAccountType';
 
+
+
+  //////////////////////////////////////////////////////////////
+  ///bondRecord
+  static const String bondRecordDebit = 'bondRecordDebit';
+  static const String bondRecordCredit = 'bondRecordCredit';
+  static const String bondRecordAccount = 'bondRecordAccount';
+  static const String bondRecordAmount = 'bondRecordAmount';
+  static const String bondRecordNote = 'bondRecordNote';
+  static const String bondRecordOpposite = 'bondRecordOpposite';
+  static const String bondRecordBondItemType = 'bondRecordBondItemType';
+
+
   static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(
       title: AppConstants.account,

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/bond/controllers/pluto/bond_record_pluto_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -8,11 +9,11 @@ class BondDetailsController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    setBillDate(DateTime.now());
+    setBondDate(DateTime.now());
   }
 
   final formKey = GlobalKey<FormState>();
-  late String billDate;
+  late String bondDate;
   TextEditingController accountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   bool isDebitOrCredit = false;
@@ -27,11 +28,13 @@ class BondDetailsController extends GetxController {
   }
 
   navigateToBondDetails(){
+    Get.lazyPut(() => BondRecordPlutoController(this), fenix: true);
+
     Get.to(() => const BondDetailsView());
   }
 
-  void setBillDate(DateTime newDate) {
-    billDate = newDate.toString().split(" ")[0];
+  void setBondDate(DateTime newDate) {
+    bondDate = newDate.toString().split(" ")[0];
     update();
   }
 

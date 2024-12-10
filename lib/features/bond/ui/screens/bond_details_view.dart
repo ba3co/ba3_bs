@@ -1,11 +1,15 @@
+import 'package:ba3_bs/core/widgets/pluto_with_edite.dart';
 import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
+import '../../../../core/widgets/get_products_by_enter_action.dart';
+import '../../controllers/pluto/bond_record_pluto_controller.dart';
 
 class BondDetailsView extends StatelessWidget {
   const BondDetailsView({super.key, this.isDebitOrCredit});
@@ -49,51 +53,63 @@ class BondDetailsView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     BondDetailsHeader(bondDetailsController: bondDetailsController),
-                    // Expanded(child: GetBuilder<BondRecordPlutoController>(builder: (controller) {
-                    //   return CustomPlutoWithEdite(
-                    //     controller: controller,
-                    //     shortCut: customPlutoShortcut(GetAccountEnterPlutoGridAction(controller, "bondRecAccount")),
-                    //     onRowSecondaryTap: (event) {
-                    //       if (event.cell.column.field == "bondRecId") {
-                    //         Get.defaultDialog(title: "تأكيد الحذف", content: const Text("هل انت متأكد من حذف هذا العنصر"), actions: [
-                    //           AppButton(
-                    //               title: "نعم",
-                    //               onPressed: () {
-                    //                 controller.clearRowIndex(event.rowIdx);
-                    //               },
-                    //               iconData: Icons.check),
-                    //           AppButton(
-                    //             title: "لا",
-                    //             onPressed: () {
-                    //               Get.back();
-                    //             },
-                    //             iconData: Icons.clear,
-                    //             color: Colors.red,
-                    //           ),
-                    //         ]);
-                    //       }
-                    //     },
-                    //     onChanged: (event) {
-                    //       if (event.column.field == "bondRecDebitAmount") {
-                    //         controller.updateCellValue(
-                    //             "bondRecDebitAmount", extractNumbersAndCalculate(event.row.cells["bondRecDebitAmount"]?.value));
-                    //         if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
-                    //           if ((double.tryParse(event.row.cells["bondRecCreditAmount"]?.value) ?? 0) > 0) {
-                    //             controller.updateCellValue("bondRecCreditAmount", "");
-                    //           }
-                    //         }
-                    //       } else if (event.column.field == "bondRecCreditAmount") {
-                    //         controller.updateCellValue(
-                    //             "bondRecCreditAmount", extractNumbersAndCalculate(event.row.cells["bondRecCreditAmount"]?.value));
-                    //         if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
-                    //           if ((double.tryParse(event.row.cells["bondRecDebitAmount"]?.value) ?? 0) > 0) {
-                    //             controller.updateCellValue("bondRecDebitAmount", "");
-                    //           }
-                    //         }
-                    //       }
-                    //     },
-                    //   );
-                    // })),
+                    Expanded(child: GetBuilder<BondRecordPlutoController>(builder: (bondController) {
+
+                    return   PlutoWithEdite(
+                      columns: bondController.mainTableColumns,
+                      rows: bondController.mainTableRows,
+                      onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
+                        bondController.onRowSecondaryTap(event, context);
+                      },
+                      onChanged: bondController.onMainTableStateManagerChanged,
+                      onLoaded: bondController.onMainTableLoaded,
+                      // shortCut: customPlutoShortcut(GetA(BondRecordPlutoController, context)),
+                      evenRowColor: bondController.color,
+                    );
+                      /*return PlutoWithEdite(
+                        // controller: controller,
+                        // shortCut: customPlutoShortcut(GetAccountEnterPlutoGridAction(controller, "bondRecAccount")),
+                        onRowSecondaryTap: (event) {
+                          if (event.cell.column.field == "bondRecId") {
+                            Get.defaultDialog(title: "تأكيد الحذف", content: const Text("هل انت متأكد من حذف هذا العنصر"), actions: [
+                              AppButton(
+                                  title: "نعم",
+                                  onPressed: () {
+                                    controller.clearRowIndex(event.rowIdx);
+                                  },
+                                  iconData: Icons.check),
+                              AppButton(
+                                title: "لا",
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                iconData: Icons.clear,
+                                color: Colors.red,
+                              ),
+                            ]);
+                          }
+                        },
+                        onChanged: (event) {
+                          if (event.column.field == "bondRecDebitAmount") {
+                            controller.updateCellValue(
+                                "bondRecDebitAmount", extractNumbersAndCalculate(event.row.cells["bondRecDebitAmount"]?.value));
+                            if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
+                              if ((double.tryParse(event.row.cells["bondRecCreditAmount"]?.value) ?? 0) > 0) {
+                                controller.updateCellValue("bondRecCreditAmount", "");
+                              }
+                            }
+                          } else if (event.column.field == "bondRecCreditAmount") {
+                            controller.updateCellValue(
+                                "bondRecCreditAmount", extractNumbersAndCalculate(event.row.cells["bondRecCreditAmount"]?.value));
+                            if (widget.bondType != AppConstants.bondTypeDebit && widget.bondType != AppConstants.bondTypeCredit) {
+                              if ((double.tryParse(event.row.cells["bondRecDebitAmount"]?.value) ?? 0) > 0) {
+                                controller.updateCellValue("bondRecDebitAmount", "");
+                              }
+                            }
+                          }
+                        }, columns: [], rows: [], onLoaded: (PlutoGridOnLoadedEvent ) {  },
+                      );*/
+                    })),
                     const SizedBox(
                       height: 10,
                     ),

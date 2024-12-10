@@ -95,5 +95,6 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => BillSearchController(), fenix: true);
     Get.lazyPut(() => BondDetailsController(), fenix: true);
+    // Get.lazyPut(() => BondRecordPlutoController(), fenix: true);
   }
 }
