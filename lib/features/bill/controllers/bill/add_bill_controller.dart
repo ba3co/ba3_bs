@@ -349,7 +349,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
   }) async {
     AllBillsController allBillsController = Get.find<AllBillsController>();
 
-    await allBillsController.fetchBills();
+    await allBillsController.fetchAllBills();
 
     resetBillForm();
 

@@ -25,7 +25,7 @@ class BillLayout extends StatelessWidget {
                     DisplayAllBillsButton(
                       onTap: () {
                         controller
-                          ..fetchBills()
+                          ..fetchAllBills()
                           ..navigateToAllBillsScreen();
                       },
                     ),

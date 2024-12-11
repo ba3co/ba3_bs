@@ -65,7 +65,7 @@ class BillService {
       [fromBillById]) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
-      await Get.find<AllBillsController>().fetchBills();
+      await Get.find<AllBillsController>().fetchAllBills();
       Get.back();
     } else {
       billSearchController.removeBill(billModel);

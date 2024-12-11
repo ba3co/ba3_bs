@@ -6,12 +6,9 @@ import '../controllers/floating_window_controller.dart';
 /// Service class to initializing and displaying floating windows.
 class FloatingWindowService {
   /// Launches a floating window with the provided content.
-  ///
 
   static void launchFloatingWindow(
-      {required BuildContext context,
-      required Widget floatingWindowContent,
-      VoidCallback? onCloseContentControllerCallback}) {
+      {required BuildContext context, required Widget floatingScreen, VoidCallback? onCloseCallback}) {
     // Initialize the floating window controller
     FloatingWindowController floatingWindowController = _initializeFloatingWindowController();
 
@@ -21,9 +18,9 @@ class FloatingWindowService {
     // Display the floating window
     floatingWindowController.displayFloatingWindow(
       context: context,
-      floatingWindowContent: floatingWindowContent,
+      floatingScreen: floatingScreen,
       targetPositionRatio: targetPositionRatio,
-      onCloseContentControllerCallback: onCloseContentControllerCallback,
+      onCloseCallback: onCloseCallback,
     );
   }
 

@@ -8,9 +8,9 @@ class OverlayManager {
   void displayOverlay({
     required OverlayState overlay,
     required WindowPositionManager windowPositionManager,
-    required Widget floatingWindowContent,
+    required Widget floatingScreen,
     required Offset targetPositionRatio,
-    VoidCallback? onCloseContentControllerCallback,
+    VoidCallback? onCloseCallback,
   }) {
     late OverlayEntry overlayEntry;
 
@@ -31,10 +31,10 @@ class OverlayManager {
             overlayEntry.remove();
             windowPositionManager.removeWindowPosition(targetPositionRatio);
 
-            onCloseContentControllerCallback?.call();
+            onCloseCallback?.call();
           },
           targetPositionRatio: targetPositionRatio,
-          floatingWindowContent: floatingWindowContent,
+          floatingWindowContent: floatingScreen,
         );
       },
     );

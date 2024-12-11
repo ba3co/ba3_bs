@@ -7,6 +7,7 @@ import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/mixin/floating_window_mixin.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
 import '../../../../core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
@@ -19,7 +20,7 @@ import '../../services/bill/bill_utils.dart';
 import '../pluto/add_bill_pluto_controller.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends GetxController {
+class AllBillsController extends GetxController with FloatingWindowMixin {
   // Repositories
   final FirebaseRepositoryWithoutResultImpl<BillTypeModel> _patternsFirebaseRepo;
   final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
@@ -35,21 +36,21 @@ class AllBillsController extends GetxController {
   bool isLoading = true;
 
   // Initializer
-  void _initializeServices() {
+  void _initializeBillUtilities() {
     _billUtils = BillUtils();
   }
 
   @override
   void onInit() {
     super.onInit();
-    _initializeServices();
+    _initializeBillUtilities();
 
-    getAllBillTypes();
+    fetchBillTypes();
   }
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> fetchBills() async {
+  Future<void> fetchAllBills() async {
     log('fetchBills');
     final result = await _billsFirebaseRepo.getAll();
 
@@ -62,7 +63,7 @@ class AllBillsController extends GetxController {
     update();
   }
 
-  Future<void> getAllAccountBills(String accId) async {
+  Future<void> fetchAccountBills(String accId) async {
     log('fetchAccount $accId Bills');
     final result = await _billsFirebaseRepo.getById(accId);
 
@@ -75,7 +76,7 @@ class AllBillsController extends GetxController {
     update();
   }
 
-  Future<void> getAllBillTypes() async {
+  Future<void> fetchBillTypes() async {
     final result = await _patternsFirebaseRepo.getAll();
 
     result.fold(
@@ -114,7 +115,7 @@ class AllBillsController extends GetxController {
   }
 
   Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
-    await fetchBills();
+    await fetchAllBills();
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
@@ -129,15 +130,15 @@ class AllBillsController extends GetxController {
   }
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel) async {
-    await fetchBills();
+    await fetchAllBills();
 
     if (!context.mounted) return;
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
-    final String tag = AppServiceUtils.generateUniqueTag('BillDetailsController');
+    final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
-    final controllers = _initializeControllers(tag);
+    final controllers = _initializeControllers(controllerTag);
 
     final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
@@ -145,7 +146,7 @@ class AllBillsController extends GetxController {
       context: context,
       modifiedBills: billsByCategory,
       lastBillModel: lastBillModel,
-      tag: tag,
+      controllerTag: controllerTag,
       controllers: controllers,
     );
   }
@@ -155,7 +156,7 @@ class AllBillsController extends GetxController {
     required BuildContext context,
     required List<BillModel> modifiedBills,
     required BillModel lastBillModel,
-    required String tag,
+    required String controllerTag,
     required ({
       BillDetailsController billDetailsController,
       BillDetailsPlutoController billDetailsPlutoController,
@@ -172,16 +173,22 @@ class AllBillsController extends GetxController {
       billDetailsPlutoController: controllers.billDetailsPlutoController,
     );
 
-    createNewFloatingAddBillScreen(
+    launchFloatingWindow(
       context: context,
-      tag: tag,
-      billDetailsController: controllers.billDetailsController,
-      billDetailsPlutoController: controllers.billDetailsPlutoController,
-      billSearchController: controllers.billSearchController,
+      onCloseCallback: () {
+        Get.delete<BillDetailsController>(tag: controllerTag, force: true);
+        Get.delete<BillDetailsPlutoController>(tag: controllerTag, force: true);
+        Get.delete<BillSearchController>(tag: controllerTag, force: true);
+      },
+      floatingWidget: BillDetailsScreen(
+        fromBillById: false,
+        billDetailsController: controllers.billDetailsController,
+        billDetailsPlutoController: controllers.billDetailsPlutoController,
+        billSearchController: controllers.billSearchController,
+        tag: controllerTag,
+      ),
     );
   }
-
-
 
   // Initializes all necessary controllers for bill details handling.
   ({
@@ -195,35 +202,9 @@ class AllBillsController extends GetxController {
         _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
     return (
-    billDetailsController: billDetailsController,
+      billDetailsController: billDetailsController,
       billDetailsPlutoController: billDetailsPlutoController,
       billSearchController: billSearchController,
-    );
-  }
-
-  void createNewFloatingAddBillScreen({
-    required BuildContext context,
-    required String tag,
-    required BillDetailsController billDetailsController,
-    required BillDetailsPlutoController billDetailsPlutoController,
-    required BillSearchController billSearchController,
-    bool fromBillById = false,
-  }) {
-    // Launch the floating window with the AddBillScreen
-    FloatingWindowService.launchFloatingWindow(
-      context: context,
-      onCloseContentControllerCallback: () {
-        Get.delete<BillDetailsController>(tag: tag, force: true);
-        Get.delete<BillDetailsPlutoController>(tag: tag, force: true);
-        Get.delete<BillSearchController>(tag: tag, force: true);
-      },
-      floatingWindowContent: BillDetailsScreen(
-        fromBillById: fromBillById,
-        billDetailsController: billDetailsController,
-        billDetailsPlutoController: billDetailsPlutoController,
-        billSearchController: billSearchController,
-        tag: tag,
-      ),
     );
   }
 

@@ -235,11 +235,11 @@ class BillDetailsController extends IBillController with AppValidator implements
     // Launch the floating window with the AddBillScreen
     FloatingWindowService.launchFloatingWindow(
       context: context,
-      onCloseContentControllerCallback: () {
+      onCloseCallback: () {
         Get.delete<AddBillController>(tag: tag, force: true);
         Get.delete<AddBillPlutoController>(tag: tag, force: true);
       },
-      floatingWindowContent: AddBillScreen(
+      floatingScreen: AddBillScreen(
         billTypeModel: billTypeModel,
         fromBillDetails: fromBillDetails,
         fromBillById: fromBillById,

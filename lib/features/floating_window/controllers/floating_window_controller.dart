@@ -40,11 +40,9 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
 
   final Rx<SystemMouseCursor> mouseCursor = SystemMouseCursors.basic.obs;
 
-  double bottomWindowWidthRatio =
-      AppConstants.bottomWindowWidth / AppConstants.deviceFullWidth;
+  double bottomWindowWidthRatio = AppConstants.bottomWindowWidth / AppConstants.deviceFullWidth;
 
-  double bottomWindowHeightRatio =
-      AppConstants.bottomWindowHeight / AppConstants.deviceFullHeight;
+  double bottomWindowHeightRatio = AppConstants.bottomWindowHeight / AppConstants.deviceFullHeight;
 
   // New State to Handle Minimized State
   bool isMinimized = false;
@@ -63,14 +61,11 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   }
 
   Offset initWindowPositionManager() {
-    final double windowWidth = bottomWindowWidthRatio *
-        parentSize.value.width; // Width for the minimized container
-    final double windowHeight = bottomWindowHeightRatio *
-        parentSize.value.height; // Height for the minimized container
+    final double windowWidth = bottomWindowWidthRatio * parentSize.value.width; // Width for the minimized container
+    final double windowHeight = bottomWindowHeightRatio * parentSize.value.height; // Height for the minimized container
 
-    final targetPositionRatio =
-        windowPositionManager.getNextWindowPositionRatio(windowWidth,
-            windowHeight, parentSize.value.width, parentSize.value.height);
+    final targetPositionRatio = windowPositionManager.getNextWindowPositionRatio(
+        windowWidth, windowHeight, parentSize.value.width, parentSize.value.height);
 
     return targetPositionRatio;
   }
@@ -80,9 +75,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
     required Offset positionRatio,
   }) {
     // Determine the debounce duration based on whether the window is minimized or maximized
-    final debounceDuration = isMinimized
-        ? const Duration(milliseconds: 80)
-        : const Duration(milliseconds: 150);
+    final debounceDuration = isMinimized ? const Duration(milliseconds: 80) : const Duration(milliseconds: 150);
 
     // Debounced window size change logic
     _windowSizeChangeDebounce.call(
@@ -113,10 +106,8 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   }
 
   void _updateMinimizedState(Size newParentSize, Offset positionRatio) {
-    width = bottomWindowWidthRatio *
-        newParentSize.width; // Width for the minimized container
-    height = bottomWindowHeightRatio *
-        newParentSize.height; // Height for the minimized container
+    width = bottomWindowWidthRatio * newParentSize.width; // Width for the minimized container
+    height = bottomWindowHeightRatio * newParentSize.height; // Height for the minimized container
 
     x = positionRatio.dx * newParentSize.width;
     y = positionRatio.dy * newParentSize.height;
@@ -152,10 +143,8 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   void minimize(Offset position) {
     isMinimized = true;
 
-    width = bottomWindowWidthRatio *
-        parentSize.value.width; // Width for the minimized container
-    height = bottomWindowHeightRatio *
-        parentSize.value.height; // Height for the minimized container
+    width = bottomWindowWidthRatio * parentSize.value.width; // Width for the minimized container
+    height = bottomWindowHeightRatio * parentSize.value.height; // Height for the minimized container
 
     x = position.dx * parentSize.value.width;
     y = position.dy * parentSize.value.height;
@@ -177,22 +166,21 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
 
   void displayFloatingWindow(
       {required BuildContext context,
-      required Widget floatingWindowContent,
+      required Widget floatingScreen,
       required Offset targetPositionRatio,
-      VoidCallback? onCloseContentControllerCallback}) {
+      VoidCallback? onCloseCallback}) {
     final overlay = Overlay.of(context);
 
     overlayManager.displayOverlay(
       overlay: overlay,
       windowPositionManager: windowPositionManager,
-      floatingWindowContent: floatingWindowContent,
+      floatingScreen: floatingScreen,
       targetPositionRatio: targetPositionRatio,
-      onCloseContentControllerCallback: onCloseContentControllerCallback,
+      onCloseCallback: onCloseCallback,
     );
   }
 
-  void move(
-      DragUpdateDetails details, double screenWidth, double screenHeight) {
+  void move(DragUpdateDetails details, double screenWidth, double screenHeight) {
     x += details.delta.dx;
     y += details.delta.dy;
 
@@ -202,8 +190,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
     update();
   }
 
-  void resize(
-      DragUpdateDetails details, double screenWidth, double screenHeight) {
+  void resize(DragUpdateDetails details, double screenWidth, double screenHeight) {
     // Immediate visual update
     _applyResizeLogic(details, screenWidth, screenHeight);
     update();
@@ -218,8 +205,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
     );
   }
 
-  void _applyResizeLogic(
-      DragUpdateDetails details, double screenWidth, double screenHeight) {
+  void _applyResizeLogic(DragUpdateDetails details, double screenWidth, double screenHeight) {
     final dx = details.delta.dx;
     final dy = details.delta.dy;
 
@@ -271,9 +257,8 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   }
 
   void onPanStart(DragStartDetails details) {
-    final Offset localPosition = getLocalPosition(
-        floatingWindowKey: floatingWindowKey,
-        globalPosition: details.globalPosition);
+    final Offset localPosition =
+        getLocalPosition(floatingWindowKey: floatingWindowKey, globalPosition: details.globalPosition);
 
     if (resizeManager.isOnEdge(localPosition, width, height)) {
       isResizing = true;

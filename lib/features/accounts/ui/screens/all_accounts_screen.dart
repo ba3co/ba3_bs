@@ -25,9 +25,8 @@ class AllAccountScreen extends StatelessWidget {
                   .first
                   .billsId ??
               []) {
-            billController.getAllAccountBills(bill);
+            billController.fetchAccountBills(bill);
           }
-
 
           controller.navigateToAccountDetailsScreen(accId);
         },
