@@ -4,12 +4,12 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../interfaces/firebase_datasource_with_result_base.dart';
+import '../interfaces/database_with_result_base.dart';
 
-class FirebaseRepositoryWithResultImpl<T> {
-  final FirebaseDatasourceWithResultBase<T> _dataSource;
+class DataSourceRepositoryWithResult<T> {
+  final DatabaseWithResultBase<T> _dataSource;
 
-  FirebaseRepositoryWithResultImpl(this._dataSource);
+  DataSourceRepositoryWithResult(this._dataSource);
 
   Future<Either<Failure, List<T>>> getAll() async {
     try {

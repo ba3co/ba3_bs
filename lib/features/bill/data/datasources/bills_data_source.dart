@@ -1,103 +1,57 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// BillsDataSource Implementation
+import 'package:ba3_bs/core/services/firebase/interfaces/database_with_result_base.dart';
 
-import '../../../../core/network/error/error_handler.dart';
-import '../../../../core/network/error/failure.dart';
-import '../../../../core/services/firebase/interfaces/firebase_datasource_with_result_base.dart';
+import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
 import '../models/bill_model.dart';
 
-class BillsDataSource implements FirebaseDatasourceWithResultBase<BillModel> {
-  final FirebaseFirestore _firestore;
+class BillsDataSource extends DatabaseWithResultBase<BillModel> with FirebaseSequentialNumberDatabase {
+  BillsDataSource({required super.databaseService});
 
-  // Bills Collection name in Firestore
-  final String _billsCollection = 'bills';
-
-  // Collection for tracking last used invoice numbers
-  final String _billNumbersCollection = 'bill_numbers';
-
-  BillsDataSource(this._firestore);
+  @override
+  String get path => 'bills';
 
   @override
   Future<List<BillModel>> fetchAll() async {
-    final snapshot = await _firestore.collection(_billsCollection).get();
-    final invoices = snapshot.docs.map((doc) => BillModel.fromJson(doc.data())).toList();
+    final data = await databaseService.fetchAll(path: path);
+
+    final bills = data.map((item) => BillModel.fromJson(item)).toList();
 
     // Sort the list by `billNumber` in ascending order
-    invoices.sort((a, b) => a.billDetails.billNumber!.compareTo(b.billDetails.billNumber!));
+    bills.sort((a, b) => a.billDetails.billNumber!.compareTo(b.billDetails.billNumber!));
 
-    return invoices;
+    return bills;
   }
 
   @override
   Future<BillModel> fetchById(String id) async {
-    final doc = await _firestore.collection(_billsCollection).doc(id).get();
-    if (doc.exists) {
-      final invoice = BillModel.fromJson(doc.data() as Map<String, dynamic>);
-      return invoice;
-    } else {
-      throw Failure(ResponseCode.NOT_FOUND, 'Bill not found');
-    }
-  }
-
-  @override
-  Future<BillModel> save(BillModel billModel) async {
-    if (billModel.billId == null) {
-      // If billId is null, create a new bill
-      final newBillModel = await _createNewBill(billModel);
-
-      return newBillModel;
-    } else {
-      // Update the existing document
-      await _updateExistingBill(billModel);
-
-      return billModel;
-    }
+    final item = await databaseService.fetchById(path: path, documentId: id);
+    return BillModel.fromJson(item);
   }
 
   @override
   Future<void> delete(String id) async {
-    await _firestore.collection(_billsCollection).doc(id).delete();
+    await databaseService.delete(path: path, documentId: id);
+  }
+
+  @override
+  Future<BillModel> save(BillModel item) async {
+    if (item.billId == null) {
+      final newBillModel = await _createNewBill(item);
+
+      return newBillModel;
+    } else {
+      await databaseService.update(path: path, documentId: item.billId!, data: item.toJson());
+      return item;
+    }
   }
 
   Future<BillModel> _createNewBill(BillModel bill) async {
-    final newBillNumber = await _getNextBillNumber(bill.billTypeModel.billTypeLabel!);
+    final newBillNumber = await getNextNumber(path, bill.billTypeModel.billTypeLabel!);
 
-    final newDocRefId = _firestore.collection(_billsCollection).doc().id;
+    final newBillJson = bill.copyWith(billDetails: bill.billDetails.copyWith(billNumber: newBillNumber)).toJson();
 
-    final newBill = bill.copyWith(
-      billId: newDocRefId,
-      billDetails: bill.billDetails.copyWith(billGuid: newDocRefId, billNumber: newBillNumber),
-    );
+    final data = await databaseService.add(path: path, data: newBillJson);
 
-    final newBillJson = newBill.toJson();
-
-    await _firestore.collection(_billsCollection).doc(newDocRefId).set(newBillJson);
-
-    return newBill;
-  }
-
-  Future<void> _updateExistingBill(BillModel bill) async =>
-      await _firestore.collection(_billsCollection).doc(bill.billId).update(bill.toJson());
-
-  /// Fetches the next invoice number for the given bill type and updates it atomically.
-  Future<int> _getNextBillNumber(String billType) async {
-    final docRef = _firestore.collection(_billNumbersCollection).doc(billType);
-
-    // Fetch the document snapshot
-    final snapshot = await docRef.get();
-
-    if (!snapshot.exists) {
-      // If the document does not exist, initialize it
-      await docRef.set({'type': billType, 'lastNumber': 1});
-      return 1;
-    }
-
-    // Get the current last number and increment it
-    final lastNumber = snapshot.data()?['lastNumber'] as int? ?? 0;
-    final newNumber = lastNumber + 1;
-
-    // Update the document with the new number
-    await docRef.update({'lastNumber': newNumber});
-
-    return newNumber;
+    return BillModel.fromJson(data);
   }
 }

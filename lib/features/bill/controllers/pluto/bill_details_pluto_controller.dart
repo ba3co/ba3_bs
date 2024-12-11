@@ -86,8 +86,6 @@ class BillDetailsPlutoController extends IPlutoController {
     return invoiceRecords;
   }
 
-
-
   @override
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) =>
       _gridService.moveToNextRow(stateManager, cellField);

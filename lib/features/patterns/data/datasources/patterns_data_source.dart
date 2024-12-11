@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/network/error/error_handler.dart';
 import '../../../../core/network/error/failure.dart';
-import '../../../../core/services/firebase/interfaces/firebase_datasource_without_result_base.dart';
+import '../../../../core/services/firebase/interfaces/database_without_result_base.dart';
 import '../models/bill_type_model.dart';
 
-class PatternsDataSource implements FirebaseDatasourceWithoutResultBase<BillTypeModel> {
+class PatternsDataSource implements DatabaseWithoutResultBase<BillTypeModel> {
   final FirebaseFirestore _firestore;
   final String _collection = 'bill_types'; // Collection name in Firestore
 

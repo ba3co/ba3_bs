@@ -28,7 +28,7 @@ class BillModel implements PlutoAdaptable {
   });
 
   factory BillModel.fromJson(Map<String, dynamic> json) => BillModel(
-        billId: json['billId'],
+        billId: json['docId'],
         billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
         billDetails: BillDetails.fromJson(json['billDetails']),
         items: BillItems.fromJson(json['items']),
@@ -126,7 +126,7 @@ class BillModel implements PlutoAdaptable {
       );
 
   Map<String, dynamic> toJson() => {
-        'billId': billId,
+        'docId': billId,
         'billTypeModel': billTypeModel.toJson(),
         'billDetails': billDetails.toJson(),
         'items': items.toJson(),
@@ -180,8 +180,9 @@ class BillModel implements PlutoAdaptable {
 
   List<Map<String, String>> get _additionsDiscountsRecords {
     final partialTotal = _partialTotal;
-    final discountTotal = billDetails.billDiscountsTotal?.toStringAsFixed(2) ?? '';
-    final additionTotal = billDetails.billAdditionsTotal?.toStringAsFixed(2) ?? '';
+
+    final discountTotal = AppServiceUtils.zeroToEmpty(billDetails.billDiscountsTotal);
+    final additionTotal = AppServiceUtils.zeroToEmpty(billDetails.billAdditionsTotal);
 
     return [
       _createRecordRow(
@@ -218,7 +219,8 @@ class BillModel implements PlutoAdaptable {
         AppConstants.additionRatio: additionRatio,
       };
 
-  String _calculateRatio(double value, double total) => total > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
+  String _calculateRatio(double value, double total) =>
+      total > 0 && value > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
 
   double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 }

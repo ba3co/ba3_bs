@@ -9,9 +9,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/widgets/app_button.dart';
-import '../../../../core/widgets/custom_text_field_with_icon.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
-import '../../../../core/widgets/get_products_by_enter_action.dart';
 import '../../../../core/widgets/pluto_short_cut.dart';
 import '../../controllers/pluto/bond_record_pluto_controller.dart';
 
@@ -24,29 +22,33 @@ class BondDetailsView extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: GetBuilder<BondDetailsController>(builder: (bondDetailsController) {
           return Scaffold(
-            appBar: AppBar(centerTitle: true, title: Text("سند ${bondDetailsController.bondType.label}"), leading: const BackButton(), actions: [
-              IconButton(
-                  onPressed: () {
-                    // bondController.bondNextOrPrev(widget.bondType, true);
-                    // setState(() {});
-                  },
-                  icon: const Icon(Icons.keyboard_double_arrow_right)),
-              SizedBox(
-                width: 100,
-                child: CustomTextFieldWithoutIcon(
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  onSubmitted: (_) {
-                    // controller.getBondByCode(widget.bondType, _);
-                  },
-                  textEditingController: TextEditingController(),
-                ),
-              ),
-              IconButton(
-                  onPressed: () {
-                    // bondController.bondNextOrPrev(widget.bondType, false);
-                  },
-                  icon: const Icon(Icons.keyboard_double_arrow_left)),
-            ]),
+            appBar: AppBar(
+                centerTitle: true,
+                title: Text("سند ${bondDetailsController.bondType.label}"),
+                leading: const BackButton(),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        // bondController.bondNextOrPrev(widget.bondType, true);
+                        // setState(() {});
+                      },
+                      icon: const Icon(Icons.keyboard_double_arrow_right)),
+                  SizedBox(
+                    width: 100,
+                    child: CustomTextFieldWithoutIcon(
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onSubmitted: (_) {
+                        // controller.getBondByCode(widget.bondType, _);
+                      },
+                      textEditingController: TextEditingController(),
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        // bondController.bondNextOrPrev(widget.bondType, false);
+                      },
+                      icon: const Icon(Icons.keyboard_double_arrow_left)),
+                ]),
             body: Directionality(
               textDirection: TextDirection.rtl,
               child: Padding(
@@ -67,7 +69,6 @@ class BondDetailsView extends StatelessWidget {
                         shortCut: customPlutoShortcut(const EnterAction()),
                         evenRowColor: bondController.color,
                       );
-
                     })),
                     const VerticalSpace(),
                     GetBuilder<BondRecordPlutoController>(builder: (bondRecordPlutoController) {
@@ -83,9 +84,19 @@ class BondDetailsView extends StatelessWidget {
                                     child: Text(
                                       "المجموع",
                                     )),
-                                Container(width: 120, color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondRecordPlutoController.calcDebitTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                                Container(
+                                    width: 120,
+                                    color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                                    padding: const EdgeInsets.all(5),
+                                    child: Text(bondRecordPlutoController.calcDebitTotal().toStringAsFixed(2),
+                                        style: const TextStyle(color: Colors.white, fontSize: 18))),
                                 const SizedBox(width: 10),
-                                Container(width: 120, color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondRecordPlutoController.calcCreditTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                                Container(
+                                    width: 120,
+                                    color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                                    padding: const EdgeInsets.all(5),
+                                    child: Text(bondRecordPlutoController.calcCreditTotal().toStringAsFixed(2),
+                                        style: const TextStyle(color: Colors.white, fontSize: 18))),
                               ],
                             ),
                           ),
@@ -97,7 +108,13 @@ class BondDetailsView extends StatelessWidget {
                             child: Row(
                               children: [
                                 const SizedBox(width: 100, child: Text("الفرق")),
-                                Container(width: 250, color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondRecordPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                                Container(
+                                    width: 250,
+                                    color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                                    padding: const EdgeInsets.all(5),
+                                    child: Text(
+                                        bondRecordPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2),
+                                        style: const TextStyle(color: Colors.white, fontSize: 18))),
                               ],
                             ),
                           ),
@@ -198,11 +215,10 @@ class BondDetailsView extends StatelessWidget {
                                   //   Get.snackbar("خطأ", "يرجى مراجعة السند", icon: const Icon(Icons.error_outline_outlined));
                                   // }
 
-
                                   print(bondRecordPlutoController.generateBondRecords.toJson());
                                 },
                                 // iconData: bondController.isNew ? Icons.add : Icons.edit,
-                                iconData:Icons.add ,
+                                iconData: Icons.add,
                               ),
                               AppButton(
                                   title: "جديد",
@@ -244,10 +260,8 @@ class BondDetailsView extends StatelessWidget {
                             ],
                           ),
                         ],
-
                       );
                     }),
-
                   ],
                 ),
               ),

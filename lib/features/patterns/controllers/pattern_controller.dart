@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo_without_result.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 
 class PatternController extends GetxController with AppValidator implements IStoreSelectionHandler {
-  final FirebaseRepositoryWithoutResultImpl<BillTypeModel> _repository;
+  final DataSourceRepositoryWithoutResult<BillTypeModel> _repository;
 
   PatternController(this._repository);
 
