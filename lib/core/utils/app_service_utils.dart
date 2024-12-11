@@ -69,7 +69,6 @@ class AppServiceUtils {
   static String extractNumbersAndCalculate(String input) {
     // استبدال الفاصلة العربية بالنقطة
 
-
     input = replaceArabicNumbersWithEnglish(input);
     String cleanedInput = input.replaceAll('٫', '.');
 
@@ -178,16 +177,19 @@ class AppServiceUtils {
     return invRecQuantity;
   }
 
+  static String zeroToEmpty(double? value) => value == null || value == 0 ? '' : value.toStringAsFixed(2);
+
   // Generates a unique tag for identifying controllers.
   static String generateUniqueTag(String controllerName) => '${controllerName}_${UniqueKey().toString()}';
+
   static AccountModel? getAccountModelFromLabel(accLabel) => Get.find<AccountsController>()
       .accounts
       .where(
         (element) => element.accName == accLabel,
-  )
+      )
       .firstOrNull;
 
-  static String  generateUniqueId() {
+  static String generateUniqueId() {
     return DateTime.now().microsecondsSinceEpoch.toString();
   }
 }

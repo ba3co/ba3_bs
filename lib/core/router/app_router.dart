@@ -8,7 +8,6 @@ import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:get/get.dart';
 
 import '../../features/bill/ui/screens/bill_details_screen.dart';
-import '../../features/bond/ui/screens/entry_bond_details_view.dart';
 import '../../features/login/ui/screens/login_screen.dart';
 import '../../features/patterns/ui/screens/all_pattern_page.dart';
 import '../bindings/middlewares.dart';

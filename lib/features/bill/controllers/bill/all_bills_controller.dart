@@ -9,11 +9,10 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/mixin/floating_window_mixin.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
-import '../../../../core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo_with_result.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo_without_result.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
-import '../../../floating_window/services/floating_window_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
 import '../../services/bill/bill_utils.dart';
@@ -22,8 +21,8 @@ import 'bill_search_controller.dart';
 
 class AllBillsController extends GetxController with FloatingWindowMixin {
   // Repositories
-  final FirebaseRepositoryWithoutResultImpl<BillTypeModel> _patternsFirebaseRepo;
-  final FirebaseRepositoryWithResultImpl<BillModel> _billsFirebaseRepo;
+  final DataSourceRepositoryWithoutResult<BillTypeModel> _patternsFirebaseRepo;
+  final DataSourceRepositoryWithResult<BillModel> _billsFirebaseRepo;
   final JsonExportRepository<BillModel> _jsonExportRepo;
 
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);

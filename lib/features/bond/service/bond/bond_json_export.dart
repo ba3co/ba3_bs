@@ -2,8 +2,6 @@ import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/json_file_operations/interfaces/export/json_export_service_base.dart';
-import '../../../bill/data/models/bill_model.dart';
-
 
 class BondJsonExport extends JsonExportServiceBase<BondModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
@@ -12,7 +10,7 @@ class BondJsonExport extends JsonExportServiceBase<BondModel> {
     return {
       "Bill": itemsModels.map((billModel) {
         return <String, dynamic>{
-    /*      "B": {
+          /*      "B": {
             "BillTypeGuid": _billTypeGuide(billModel.billTypeModel.billTypeLabel!),
             "BillGuid": billModel.billDetails.billGuid,
             "BillBranch": "",

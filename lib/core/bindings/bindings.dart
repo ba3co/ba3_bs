@@ -1,4 +1,5 @@
-import 'package:ba3_bs/core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo_without_result.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
@@ -32,7 +33,8 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
-import '../services/firebase/implementations/firebase_repo_with_result_impl.dart';
+import '../services/firebase/implementations/datasource_repo_with_result.dart';
+import '../services/firebase/implementations/firestore_service.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/translation/implementations/dio_client.dart';
 import '../services/translation/implementations/google_translation.dart';
@@ -46,23 +48,24 @@ class AppBindings extends Bindings {
     // Initialize Firestore instance
     var firestore = FirebaseFirestore.instance;
 
+    // Initialize RemoteApiService instance
+    IDatabaseService<Map<String, dynamic>> fireStoreService = FireStoreService();
+
     // Initialize repositories
     final userManagementRepo = UserManagementRepository(UserManagementService());
 
     // Instantiate PatternsDataSource and FirebaseRepositoryConcrete of BillTypeModel
-    final FirebaseRepositoryWithoutResultImpl<BillTypeModel> patternsFirebaseRepo = FirebaseRepositoryWithoutResultImpl(
+    final DataSourceRepositoryWithoutResult<BillTypeModel> patternsFirebaseRepo = DataSourceRepositoryWithoutResult(
       PatternsDataSource(firestore),
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BillModel
-    final FirebaseRepositoryWithResultImpl<BillModel> billsFirebaseRepo = FirebaseRepositoryWithResultImpl(
-      BillsDataSource(firestore),
-    );
-
+    final DataSourceRepositoryWithResult<BillModel> billsFirebaseRepo =
+        DataSourceRepositoryWithResult(BillsDataSource(databaseService: fireStoreService));
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
-    final FirebaseRepositoryWithResultImpl<BondModel>bondsFirebaseRepo = FirebaseRepositoryWithResultImpl(
-      BondsDataSource(firestore),
+    final DataSourceRepositoryWithResult<BondModel> bondsFirebaseRepo = DataSourceRepositoryWithResult(
+      BondsDataSource(databaseService: fireStoreService),
     );
 
     // Instantiate Api client, GoogleTranslationDataSource and TranslationRepository
@@ -86,7 +89,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(), fenix: true);
 
-
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
@@ -94,7 +96,7 @@ class AppBindings extends Bindings {
     // Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
-    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo,bondJsonExportRepo), fenix: true);
+    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo, bondJsonExportRepo), fenix: true);
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
 

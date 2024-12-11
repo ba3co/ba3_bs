@@ -1,6 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
-import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/bill/data/models/invoice_record_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
@@ -35,7 +34,8 @@ class BondRecordPlutoController extends IPlutoController {
   }
 
   void _handleColumnUpdate(String columnField) {
-    String correctedText = AppServiceUtils.extractNumbersAndCalculate(mainTableStateManager.currentRow?.cells[columnField]?.value);
+    String correctedText =
+        AppServiceUtils.extractNumbersAndCalculate(mainTableStateManager.currentRow?.cells[columnField]?.value);
     if (columnField == "credit") {
       clearFiledInRow('debit');
       updateCellValue(columnField, correctedText);
@@ -106,7 +106,7 @@ class BondRecordPlutoController extends IPlutoController {
     double total = 0;
 
     for (var element in mainTableStateManager.rows) {
-      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()["account"])!= '') {
+      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()["account"]) != '') {
         total += double.tryParse(element.toJson()["credit"] ?? "") ?? 0;
       }
     }
@@ -118,7 +118,7 @@ class BondRecordPlutoController extends IPlutoController {
     double total = 0;
 
     for (var element in mainTableStateManager.rows) {
-      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()["account"])!= '') {
+      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()["account"]) != '') {
         total += double.tryParse(element.toJson()["debit"] ?? "") ?? 0;
       }
     }
@@ -154,9 +154,9 @@ class BondRecordPlutoController extends IPlutoController {
   double getAmount(Map<String, PlutoCell> cells) {
     double amount = 0;
 
-    if (bondDetailsController.bondType==BondType.credit) {
+    if (bondDetailsController.bondType == BondType.credit) {
       amount = double.tryParse(cells["credit"]?.value.toString() ?? '0') ?? 0;
-    } else if (bondDetailsController.bondType==BondType.debt) {
+    } else if (bondDetailsController.bondType == BondType.debt) {
       amount = double.tryParse(cells["debit"]?.value.toString() ?? '0') ?? 0;
     }
     return amount;
@@ -165,10 +165,10 @@ class BondRecordPlutoController extends IPlutoController {
   BondItemType getBondItemType(Map<String, PlutoCell> cells) {
     BondItemType bondItemType = BondItemType.debtor;
 
-    if (bondDetailsController.bondType==BondType.credit) {
+    if (bondDetailsController.bondType == BondType.credit) {
       bondItemType = BondItemType.debtor;
-    } else if (bondDetailsController.bondType==BondType.debt) {
-      bondItemType = BondItemType. creditor;
+    } else if (bondDetailsController.bondType == BondType.debt) {
+      bondItemType = BondItemType.creditor;
     }
 
     return bondItemType;
@@ -185,7 +185,7 @@ class BondRecordPlutoController extends IPlutoController {
         .map((row) {
           double amount = getAmount(row.cells);
           BondItemType bondItemType = getBondItemType(row.cells);
-print(bondItemType);
+          print(bondItemType);
           return _processBondRow(
             amount: amount,
             note: row.cells['note']?.value,
@@ -203,7 +203,7 @@ print(bondItemType);
         amount: calcCreditTotal(),
         account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
       ));
-    } else if(bondDetailsController.bondType == BondType.debt) {
+    } else if (bondDetailsController.bondType == BondType.debt) {
       bondRecord.add(BondItemModel(
         bondItemType: BondItemType.debtor,
         note: bondDetailsController.noteController.text,
@@ -226,14 +226,12 @@ print(bondItemType);
     required BondItemType bondType,
     required double amount,
   }) {
-
-      return _createBondRecord(
-        bondType: bondType,
-        note: note,
-        amount: amount,
-        account: account,
-      );
-
+    return _createBondRecord(
+      bondType: bondType,
+      note: note,
+      amount: amount,
+      account: account,
+    );
 
     return null;
   }
@@ -281,7 +279,8 @@ print(bondItemType);
 
   // State managers
   @override
-  PlutoGridStateManager mainTableStateManager = PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
+  PlutoGridStateManager mainTableStateManager =
+      PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   Color color = Colors.red;
 

@@ -1,18 +1,15 @@
-
-
 import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-import '../../../../core/services/firebase/implementations/firebase_repo_with_result_impl.dart';
-import '../../../../core/services/firebase/implementations/firebase_repo_without_result_impl.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo_with_result.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 
 class AllBondsController extends GetxController {
-  final FirebaseRepositoryWithResultImpl<BondModel> _billsFirebaseRepo;
+  final DataSourceRepositoryWithResult<BondModel> _billsFirebaseRepo;
   final JsonExportRepository<BondModel> _jsonExportRepo;
 
-  AllBondsController( this._billsFirebaseRepo, this._jsonExportRepo);
-}/*{
+  AllBondsController(this._billsFirebaseRepo, this._jsonExportRepo);
+} /*{
   // Repositories
   final FirebaseRepositoryWithResultImpl<BondModel> _billsFirebaseRepo;
   final JsonExportRepository<BondModel> _jsonExportRepo;

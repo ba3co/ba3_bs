@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
@@ -24,16 +23,13 @@ class BondItemModel implements PlutoAdaptable {
   factory BondItemModel.fromJson(Map<String, dynamic> json) {
     return BondItemModel(
       bondItemType: BondItemType.values.firstWhere(
-            (e) => e.label == json['bondItemType'],
+        (e) => e.label == json['bondItemType'],
         // orElse: () => null,
       ),
       amount: (json['amount'] as num?)?.toDouble(),
-      account: json['account'] != null
-          ? AppServiceUtils.getAccountModelFromLabel(json['account'])
-          : null,
-      oppositeAccount: json['oppositeAccount'] != null
-          ? AppServiceUtils.getAccountModelFromLabel(json['oppositeAccount'])
-          : null,
+      account: json['account'] != null ? AppServiceUtils.getAccountModelFromLabel(json['account']) : null,
+      oppositeAccount:
+          json['oppositeAccount'] != null ? AppServiceUtils.getAccountModelFromLabel(json['oppositeAccount']) : null,
       note: json['note'],
     );
   }
@@ -122,7 +118,6 @@ class BondItemModel implements PlutoAdaptable {
     required BondItemType bondType,
     required double amount,
   }) {
-
     return BondItemModel(
       amount: amount,
       account: AppServiceUtils.getAccountModelFromLabel(account),
@@ -130,7 +125,6 @@ class BondItemModel implements PlutoAdaptable {
       note: note,
     );
   }
-
 
   Map<String, dynamic> toJson() {
     return {
@@ -142,7 +136,6 @@ class BondItemModel implements PlutoAdaptable {
     };
   }
 }
-
 
 class EntryBondModel {
   final Map<AccountModel, List<BondItemModel>> bonds;
@@ -159,11 +152,14 @@ class BondModel {
   BondType? bondType;
   String? bondCode;
 
+  int? bondNumber;
+
   BondModel({
-    required   this.bonds,
-     this.bondId,
-     this.bondCode,
-     this.bondType,
+    required this.bonds,
+    this.bondId,
+    this.bondCode,
+    this.bondType,
+    this.bondNumber,
   });
 
   // تحويل الكائن إلى JSON
@@ -173,22 +169,37 @@ class BondModel {
       'bondId': bondId,
       'bondType': bondType.toString(), // تأكد من أن BondType يمكن تحويله إلى نص
       'bondCode': bondCode,
+      'bondNumber': bondNumber,
     };
   }
 
   // تحويل JSON إلى BondModel
   factory BondModel.fromJson(Map<String, dynamic> json) {
     return BondModel(
-      bonds: (json['bonds'] as List)
-          .map((bondJson) => BondItemModel.fromJson(bondJson))
-          .toList(),
+      bonds: (json['bonds'] as List).map((bondJson) => BondItemModel.fromJson(bondJson)).toList(),
       bondId: json['bondId'],
       bondType: BondType.values.firstWhere(
-            (e) => e.toString() == json['bondType'],
+        (e) => e.toString() == json['bondType'],
         // orElse: () => null,
       ),
       bondCode: json['bondCode'],
+      bondNumber: json['bondNumber'],
+    );
+  }
+
+  BondModel copyWith({
+    List<BondItemModel>? bonds,
+    String? bondId,
+    BondType? bondType,
+    String? bondCode,
+    int? bondNumber,
+  }) {
+    return BondModel(
+      bonds: bonds ?? this.bonds,
+      bondId: bondId ?? this.bondId,
+      bondType: bondType ?? this.bondType,
+      bondCode: bondCode ?? this.bondCode,
+      bondNumber: bondNumber ?? this.bondNumber,
     );
   }
 }
-
