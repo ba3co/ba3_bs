@@ -69,6 +69,7 @@ class AppServiceUtils {
   static String extractNumbersAndCalculate(String input) {
     // استبدال الفاصلة العربية بالنقطة
 
+
     input = replaceArabicNumbersWithEnglish(input);
     String cleanedInput = input.replaceAll('٫', '.');
 

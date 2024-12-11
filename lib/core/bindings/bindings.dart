@@ -3,8 +3,7 @@ import 'package:ba3_bs/core/services/translation/interfaces/i_translation_servic
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
-import 'package:ba3_bs/features/bond/controllers/bond_controller.dart';
-import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -19,6 +18,10 @@ import '../../features/bill/controllers/pluto/bill_details_pluto_controller.dart
 import '../../features/bill/data/datasources/bills_data_source.dart';
 import '../../features/bill/data/models/bill_model.dart';
 import '../../features/bill/services/bill/bill_json_export.dart';
+import '../../features/bond/controllers/bonds/bond_controller.dart';
+import '../../features/bond/controllers/entryBond/entry_bond_controller.dart';
+import '../../features/bond/data/datasources/bond_data_source.dart';
+import '../../features/bond/service/bond/bond_json_export.dart';
 import '../../features/login/controllers/nfc_cards_controller.dart';
 import '../../features/login/controllers/user_management_controller.dart';
 import '../../features/login/data/datasources/user_management_service.dart';
@@ -56,6 +59,12 @@ class AppBindings extends Bindings {
       BillsDataSource(firestore),
     );
 
+
+    // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
+    final FirebaseRepositoryWithResultImpl<BondModel>bondsFirebaseRepo = FirebaseRepositoryWithResultImpl(
+      BondsDataSource(firestore),
+    );
+
     // Instantiate Api client, GoogleTranslationDataSource and TranslationRepository
     final IAPiClient httpClient = HttpClient<Map<String, dynamic>>(Client());
     final IAPiClient dioClient = DioClient<Map<String, dynamic>>(Dio());
@@ -70,11 +79,13 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => billsFirebaseRepo, fenix: true);
 
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
+    final bondJsonExportRepo = JsonExportRepository<BondModel>(BondJsonExport());
 
     // Lazy load controllers
     Get.lazyPut(() => NfcCardsController(), fenix: true);
     Get.lazyPut(() => PlutoController(), fenix: true);
-    Get.lazyPut(() => BondController(), fenix: true);
+    Get.lazyPut(() => EntryBondController(), fenix: true);
+
 
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
 
@@ -83,6 +94,7 @@ class AppBindings extends Bindings {
     // Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
+    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo,bondJsonExportRepo), fenix: true);
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
 
@@ -94,7 +106,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PrintingController(translationRepo), fenix: true);
 
     Get.lazyPut(() => BillSearchController(), fenix: true);
-    Get.lazyPut(() => BondDetailsController(), fenix: true);
+    // Get.lazyPut(() => BondDetailsController(), fenix: true);
     // Get.lazyPut(() => BondRecordPlutoController(), fenix: true);
   }
 }

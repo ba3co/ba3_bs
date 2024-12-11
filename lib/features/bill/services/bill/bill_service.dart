@@ -8,7 +8,7 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../../bond/controllers/bond_controller.dart';
+import '../../../bond/controllers/entryBond/entry_bond_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
@@ -19,7 +19,7 @@ class BillService {
 
   BillService(this.plutoController, this.billController);
 
-  BondController get bondController => Get.find<BondController>();
+  EntryBondController get bondController => Get.find<EntryBondController>();
 
   BillModel? createBillModel({
     BillModel? billModel,

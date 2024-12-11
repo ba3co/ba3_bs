@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
-import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

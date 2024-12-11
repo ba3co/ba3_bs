@@ -21,7 +21,6 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.patternsScreen, page: () => const PatternLayout()),
   GetPage(name: AppRoutes.addPatternsScreen, page: () => const AddPatternPage()),
   GetPage(name: AppRoutes.showAllPatternsScreen, page: () => const AllPatternPage()),
-  GetPage(name: AppRoutes.entryBondDetailsView, page: () => const EntryBondDetailsView()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
   GetPage(

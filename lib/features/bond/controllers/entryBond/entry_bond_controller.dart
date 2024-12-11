@@ -3,12 +3,12 @@ import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../../../core/constants/app_constants.dart';
-import '../../../core/helper/enums/enums.dart';
-import '../../accounts/data/models/account_model.dart';
-import '../data/models/bond_record_model.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/enums/enums.dart';
+import '../../../accounts/data/models/account_model.dart';
+import '../../data/models/bond_record_model.dart';
 
-class BondController extends GetxController {
+class EntryBondController extends GetxController {
   late EntryBondModel bondModel;
 
   // Method to create a bond based on bill type
