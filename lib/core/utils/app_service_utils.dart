@@ -1,7 +1,11 @@
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+
+import '../../features/accounts/controllers/accounts_controller.dart';
+import '../../features/accounts/data/models/account_model.dart';
 
 class AppServiceUtils {
   static String formatSecretEmail(String email) {
@@ -175,4 +179,14 @@ class AppServiceUtils {
 
   // Generates a unique tag for identifying controllers.
   static String generateUniqueTag(String controllerName) => '${controllerName}_${UniqueKey().toString()}';
+  static AccountModel? getAccountModelFromLabel(accLabel) => Get.find<AccountsController>()
+      .accounts
+      .where(
+        (element) => element.accName == accLabel,
+  )
+      .firstOrNull;
+
+  static String  generateUniqueId() {
+    return DateTime.now().microsecondsSinceEpoch.toString();
+  }
 }

@@ -9,7 +9,7 @@ import '../../accounts/data/models/account_model.dart';
 import '../data/models/bond_record_model.dart';
 
 class BondController extends GetxController {
-  late BondModel bondModel;
+  late EntryBondModel bondModel;
 
   // Method to create a bond based on bill type
   void createBillBond({required BillTypeModel billTypeModel, required AccountModel customerAccount, required double total, required double vat, required double gifts, required double discount, required double addition}) {
@@ -60,7 +60,7 @@ class BondController extends GetxController {
     // Add optional bonds for sales
     _addOptionalBonds(billModelAccounts, bonds, gifts, vat, discount, addition, isSales: true);
 
-    bondModel = BondModel(bonds: bonds);
+    bondModel = EntryBondModel(bonds: bonds);
   }
 
   // Handle buy invoice creation
@@ -84,7 +84,7 @@ class BondController extends GetxController {
     // Add optional bonds for sales
     _addOptionalBonds(billModelAccounts, bonds, gifts, vat, discount, addition);
 
-    bondModel = BondModel(bonds: bonds);
+    bondModel = EntryBondModel(bonds: bonds);
   }
 
   // Create bonds for the cash box for sales

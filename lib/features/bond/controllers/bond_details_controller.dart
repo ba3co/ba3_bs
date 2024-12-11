@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_record_pluto_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -17,9 +18,14 @@ class BondDetailsController extends GetxController {
   TextEditingController accountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   bool isDebitOrCredit = false;
+  BondType bondType = BondType.daily;
 
-  void setIsDebitOrCredit(index) {
-    if (index == 0) {
+
+  void setBondType(BondType bondType) {
+    this.bondType=bondType;
+  }
+  void setIsDebitOrCredit() {
+    if (bondType==BondType.daily) {
       isDebitOrCredit = false;
     } else {
       isDebitOrCredit = true;
@@ -28,11 +34,13 @@ class BondDetailsController extends GetxController {
   }
 
   navigateToBondDetails(){
-    Get.lazyPut(() => BondRecordPlutoController(this), fenix: true);
+    Get.lazyPut(() => BondRecordPlutoController(this,bondType ), fenix: true);
 
     Get.to(() => const BondDetailsView());
   }
-
+  String getLastBondCode() {
+    return "00";
+  }
   void setBondDate(DateTime newDate) {
     bondDate = newDate.toString().split(" ")[0];
     update();

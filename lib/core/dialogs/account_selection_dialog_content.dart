@@ -15,6 +15,7 @@ class AccountSelectionDialogContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: accounts.length,
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         return ListTile(
           title: Center(

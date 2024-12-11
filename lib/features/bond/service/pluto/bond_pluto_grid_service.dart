@@ -1,18 +1,17 @@
-import 'package:ba3_bs/features/bond/controllers/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/functions/functions.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
-
 
 class BondPlutoGridService {
   final IPlutoController controller;
-  BondPlutoGridService(this.controller,);
+
+  BondPlutoGridService(
+    this.controller,
+  );
 
   PlutoGridStateManager get mainTableStateManager => controller.mainTableStateManager;
-
 
   void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
     stateManager.changeCellValue(
@@ -23,7 +22,6 @@ class BondPlutoGridService {
       force: true,
     );
   }
-
 
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) {
     final currentRowIdx = stateManager.currentRowIdx;
@@ -48,9 +46,6 @@ class BondPlutoGridService {
     }
   }
 
-
-
-
   void updateBondSelectedRowValues(PlutoRow currentRow, double subTotal, int quantity) {
     final isZeroSubtotal = subTotal == 0;
 
@@ -64,9 +59,7 @@ class BondPlutoGridService {
     updateSelectedRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecQuantity, quantity);
   }
 
-
-  void updateSelectedRowCellValue(
-      PlutoGridStateManager stateManager, PlutoRow currentRow, String field, dynamic value) {
+  void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow currentRow, String field, dynamic value) {
     if (currentRow.cells.containsKey(field)) {
       // Update the cell value in the previous row.
       stateManager.changeCellValue(
@@ -79,21 +72,9 @@ class BondPlutoGridService {
     }
   }
 
-
-
-
   List<PlutoRow> convertRecordsToRows(List<BondItemModel> records) => records.map((record) {
         final rowData = record.toPlutoGridFormat();
         final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);
       }).toList();
-
-
-
-
-
-
-  }
-
-
-
+}
