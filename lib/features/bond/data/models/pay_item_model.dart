@@ -43,10 +43,11 @@ class PayItems {
 
     return PayItems(itemList: itemList);
   }
+
 }
 
 
-class PayItem extends PlutoAdaptable {
+class PayItem extends PlutoAdaptable<BondType> {
   final String? entryAccountGuid;
   final String? entryDate;
   final double? entryDebit;
@@ -140,12 +141,7 @@ class PayItem extends PlutoAdaptable {
   }
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat() {
-    // TODO: implement toPlutoGridFormat
-    throw UnimplementedError();
-  }
-
-  Map<PlutoColumn, dynamic> toPlutoGridFormatWithType(BondType bondType) {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([BondType? type]) {
     return {
       PlutoColumn(title: "رقم", field: AppConstants.entryNumber, type:  PlutoColumnType.text(),readOnly: true,renderer: (rendererContext) {
         if(rendererContext.cell.row.cells[AppConstants.entryAccountGuid]?.value!='') {
@@ -156,12 +152,14 @@ class PayItem extends PlutoAdaptable {
         }
 
       },): entryNumber,
-      PlutoColumn(title: "دائن", field: AppConstants.entryCredit, type: PlutoColumnType.text(), hide: bondType == BondType.paymentVoucher): entryCredit,
-      PlutoColumn(title: "مدين", field: AppConstants.entryDebit, type: PlutoColumnType.text(), hide: bondType == BondType.receiptVoucher): entryDebit,
+      PlutoColumn(title: "دائن", field: AppConstants.entryCredit, type: PlutoColumnType.text(), hide: type! == BondType.paymentVoucher): entryCredit,
+      PlutoColumn(title: "مدين", field: AppConstants.entryDebit, type: PlutoColumnType.text(), hide: type == BondType.receiptVoucher): entryDebit,
       PlutoColumn(title: "الحساب", field: AppConstants.entryAccountGuid, type:PlutoColumnType.text()): entryAccountGuid,
       PlutoColumn(title: "البيان", field: AppConstants.entryNote, type:PlutoColumnType.text()): entryNote,
     };
   }
+
+
 
 
 

@@ -1,8 +1,8 @@
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/bill/data/models/invoice_record_model.dart';
+import '../../features/bond/data/models/pay_item_model.dart';
 
 abstract class IPlutoController extends GetxController {
   /// Main table's state manager.

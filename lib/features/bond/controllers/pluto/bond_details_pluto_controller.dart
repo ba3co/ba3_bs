@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/data/models/invoice_record_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -12,11 +11,11 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../data/models/bond_model.dart';
+import '../../data/models/pay_item_model.dart';
 
 class BondDetailsPlutoController extends IPlutoController {
   // Columns and rows
-  late List<PlutoColumn> mainTableColumns = PayItem().toPlutoGridFormatWithType(bondType).keys.toList();
+  late List<PlutoColumn> mainTableColumns = PayItem().toPlutoGridFormat(bondType).keys.toList();
 
   List<PlutoRow> mainTableRows = [];
 
@@ -130,7 +129,7 @@ class BondDetailsPlutoController extends IPlutoController {
     return total;
   }
 
-  setRows(List<PayItem> modelList) {
+/*  setRows(List<PayItem> modelList) {
     mainTableStateManager.removeAllRows();
     final newRows = mainTableStateManager.getNewRows(count: 30);
 
@@ -153,9 +152,10 @@ class BondDetailsPlutoController extends IPlutoController {
 
     mainTableStateManager.appendRows(mainTableRows);
     mainTableStateManager.appendRows(newRows);
-  }
+  }*/
 
 
+  @override
   List<PayItem> get generateBondRecords {
     mainTableStateManager.setShowLoading(true);
     final payItems = mainTableStateManager.rows
@@ -319,4 +319,9 @@ class BondDetailsPlutoController extends IPlutoController {
   }
 
   void onRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {}
+
+  prepareBondMaterialsRows(List<PayItem> bondItems) {
+
+
+  }
 }

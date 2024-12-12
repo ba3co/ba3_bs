@@ -109,7 +109,7 @@ class BillTypeModel implements PlutoAdaptable {
       );
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat() => {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) => {
     PlutoColumn(title:'billTypeId' ,field: 'billTypeId',type: PlutoColumnType.text())
     : billTypeId,
     PlutoColumn(title: 'shortName' ,field: 'shortName' ,type: PlutoColumnType.text())

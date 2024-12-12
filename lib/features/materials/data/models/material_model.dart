@@ -217,7 +217,7 @@ class MaterialModel implements PlutoAdaptable {
       };
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat() {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
       PlutoColumn(title: 'الرقم التعريفي', field: 'الرقم التعريفي', type: PlutoColumnType.text()): id,
       PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
