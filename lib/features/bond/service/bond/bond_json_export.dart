@@ -2,15 +2,16 @@ import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/json_file_operations/interfaces/export/json_export_service_base.dart';
+import '../../data/models/bond_model.dart';
 
 class BondJsonExport extends JsonExportServiceBase<BondModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
   @override
   Map<String, dynamic> toExportJson(List<BondModel> itemsModels) {
     return {
-      "Bill": itemsModels.map((billModel) {
+      "Pay": itemsModels.map((billModel) {
         return <String, dynamic>{
-          /*      "B": {
+          /*      "p": {
             "BillTypeGuid": _billTypeGuide(billModel.billTypeModel.billTypeLabel!),
             "BillGuid": billModel.billDetails.billGuid,
             "BillBranch": "",
@@ -76,10 +77,7 @@ class BondJsonExport extends JsonExportServiceBase<BondModel> {
     };
   }
 
-  String _billTypeGuide(String billLabel) => BillType.byLabel(billLabel).typeGuide;
+  String _bondTypeGuide(String bondLabel) => BondType.byLabel(bondLabel).typeGuide;
 
-  int _calcVatRatio(double? vat, double? sunTotal) {
-    if (vat == null || vat == 0 || sunTotal == null || sunTotal == 0) return 0;
-    return ((vat / sunTotal) * 100).round();
-  }
+
 }

@@ -96,14 +96,13 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
 
     result.fold(
       (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
-      (filePath) => _billUtils.showExportSuccessDialog(filePath),
+      (filePath) => AppUIUtils.showExportSuccessDialog(filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:'),
     );
   }
 
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openBillDetailsById(String billId) {
     final BillModel billModel = getBillById(billId);
@@ -156,11 +155,7 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
     required List<BillModel> modifiedBills,
     required BillModel lastBillModel,
     required String controllerTag,
-    required ({
-      BillDetailsController billDetailsController,
-      BillDetailsPlutoController billDetailsPlutoController,
-      BillSearchController billSearchController
-    }) controllers,
+    required ({BillDetailsController billDetailsController, BillDetailsPlutoController billDetailsPlutoController, BillSearchController billSearchController}) controllers,
   }) {
     controllers.billDetailsController.updateBillDetailsOnScreen(lastBillModel, controllers.billDetailsPlutoController);
 
@@ -179,7 +174,7 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
         Get.delete<BillDetailsPlutoController>(tag: controllerTag, force: true);
         Get.delete<BillSearchController>(tag: controllerTag, force: true);
       },
-      floatingWidget: BillDetailsScreen(
+      floatingScreen: BillDetailsScreen(
         fromBillById: false,
         billDetailsController: controllers.billDetailsController,
         billDetailsPlutoController: controllers.billDetailsPlutoController,
@@ -190,15 +185,10 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
   }
 
   // Initializes all necessary controllers for bill details handling.
-  ({
-    BillDetailsController billDetailsController,
-    BillDetailsPlutoController billDetailsPlutoController,
-    BillSearchController billSearchController
-  }) _initializeControllers(String tag) {
+  ({BillDetailsController billDetailsController, BillDetailsPlutoController billDetailsPlutoController, BillSearchController billSearchController}) _initializeControllers(String tag) {
     final billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
     final billSearchController = _initializeBillSearchController(tag);
-    final billDetailsController =
-        _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
+    final billDetailsController = _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
     return (
       billDetailsController: billDetailsController,
@@ -213,16 +203,13 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
     BillSearchController billSearchController,
   ) =>
       Get.put<BillDetailsController>(
-        BillDetailsController(_billsFirebaseRepo,
-            billDetailsPlutoController: billDetailsPlutoController, billSearchController: billSearchController),
+        BillDetailsController(_billsFirebaseRepo, billDetailsPlutoController: billDetailsPlutoController, billSearchController: billSearchController),
         tag: tag,
       );
 
-  BillDetailsPlutoController _initializeBillDetailsPlutoController(String tag) =>
-      Get.put<BillDetailsPlutoController>(BillDetailsPlutoController(), tag: tag);
+  BillDetailsPlutoController _initializeBillDetailsPlutoController(String tag) => Get.put<BillDetailsPlutoController>(BillDetailsPlutoController(), tag: tag);
 
-  BillSearchController _initializeBillSearchController(String tag) =>
-      Get.put<BillSearchController>(BillSearchController(), tag: tag);
+  BillSearchController _initializeBillSearchController(String tag) => Get.put<BillSearchController>(BillSearchController(), tag: tag);
 
   void _navigateToAddBill(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) {
     Get.find<BillDetailsController>().navigateToAddBillScreen(billTypeModel, addBillPlutoController);
@@ -242,8 +229,7 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
     BillSearchController billSearchController = _initializeBillSearchController(tag);
 
     // Initialize the BillDetailsController
-    BillDetailsController billDetailsController =
-        _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
+    BillDetailsController billDetailsController = _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
 
     billDetailsController.updateBillDetailsOnScreen(billModel, billDetailsPlutoController);
 

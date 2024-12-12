@@ -72,9 +72,9 @@ class BondPlutoGridService {
     }
   }
 
-  List<PlutoRow> convertRecordsToRows(List<BondItemModel> records) => records.map((record) {
+/*  List<PlutoRow> convertRecordsToRows(List<EntryBondItemModel> records) => records.map((record) {
         final rowData = record.toPlutoGridFormat();
         final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);
-      }).toList();
+      }).toList();*/
 }

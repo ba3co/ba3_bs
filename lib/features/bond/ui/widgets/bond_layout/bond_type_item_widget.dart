@@ -27,7 +27,7 @@ class BondTypeItemWidget extends StatelessWidget {
         ),
       ),
       child: Text(
-        bond.label,
+        bond.value,
         style: const TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,

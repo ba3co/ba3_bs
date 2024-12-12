@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/data/models/invoice_record_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
@@ -8,20 +8,22 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/dialogs/account_selection_dialog_content.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../data/models/bond_model.dart';
 
-class BondRecordPlutoController extends IPlutoController {
+class BondDetailsPlutoController extends IPlutoController {
   // Columns and rows
-  late List<PlutoColumn> mainTableColumns = BondItemModel().toPlutoGridFormatWithType(bondType).keys.toList();
+  late List<PlutoColumn> mainTableColumns = PayItem().toPlutoGridFormatWithType(bondType).keys.toList();
 
   List<PlutoRow> mainTableRows = [];
 
   final BondDetailsController bondDetailsController;
   final BondType bondType;
 
-  BondRecordPlutoController(this.bondDetailsController, this.bondType);
+  BondDetailsPlutoController(this.bondDetailsController, this.bondType);
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
     if (mainTableStateManager.currentRow == null) return;
@@ -36,19 +38,21 @@ class BondRecordPlutoController extends IPlutoController {
   void _handleColumnUpdate(String columnField) {
     String correctedText =
         AppServiceUtils.extractNumbersAndCalculate(mainTableStateManager.currentRow?.cells[columnField]?.value);
-    if (columnField == "credit") {
-      clearFiledInRow('debit');
+    if (columnField ==AppConstants.entryCredit) {
+      clearFiledInRow(AppConstants.entryDebit);
       updateCellValue(columnField, correctedText);
-    } else if (columnField == "debit") {
-      clearFiledInRow('credit');
+    } else if (columnField == AppConstants.entryDebit) {
+      clearFiledInRow(AppConstants.entryCredit);
       updateCellValue(columnField, correctedText);
-    } else if (columnField == "account") {
+    } else if (columnField == AppConstants.entryAccountGuid) {
       setAccount(columnField);
     }
   }
 
   void clearFiledInRow(String filedName) {
-    updateCellValue(filedName, '');
+
+
+    updateCellValue(filedName, '0');
   }
 
   void setAccount(String columnField) {
@@ -106,8 +110,8 @@ class BondRecordPlutoController extends IPlutoController {
     double total = 0;
 
     for (var element in mainTableStateManager.rows) {
-      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()["account"]) != '') {
-        total += double.tryParse(element.toJson()["credit"] ?? "") ?? 0;
+      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
+        total += double.tryParse(element.toJson()[AppConstants.entryCredit] ?? "") ?? 0;
       }
     }
 
@@ -118,15 +122,15 @@ class BondRecordPlutoController extends IPlutoController {
     double total = 0;
 
     for (var element in mainTableStateManager.rows) {
-      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()["account"]) != '') {
-        total += double.tryParse(element.toJson()["debit"] ?? "") ?? 0;
+      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
+        total += double.tryParse(element.toJson()[AppConstants.entryDebit] ?? "") ?? 0;
       }
     }
 
     return total;
   }
 
-  setRows(List<BondItemModel> modelList) {
+  setRows(List<PayItem> modelList) {
     mainTableStateManager.removeAllRows();
     final newRows = mainTableStateManager.getNewRows(count: 30);
 
@@ -151,99 +155,55 @@ class BondRecordPlutoController extends IPlutoController {
     mainTableStateManager.appendRows(newRows);
   }
 
-  double getAmount(Map<String, PlutoCell> cells) {
-    double amount = 0;
 
-    if (bondDetailsController.bondType == BondType.credit) {
-      amount = double.tryParse(cells["credit"]?.value.toString() ?? '0') ?? 0;
-    } else if (bondDetailsController.bondType == BondType.debt) {
-      amount = double.tryParse(cells["debit"]?.value.toString() ?? '0') ?? 0;
-    }
-    return amount;
-  }
-
-  BondItemType getBondItemType(Map<String, PlutoCell> cells) {
-    BondItemType bondItemType = BondItemType.debtor;
-
-    if (bondDetailsController.bondType == BondType.credit) {
-      bondItemType = BondItemType.debtor;
-    } else if (bondDetailsController.bondType == BondType.debt) {
-      bondItemType = BondItemType.creditor;
-    }
-
-    return bondItemType;
-  }
-
-  BondModel get generateBondRecords {
+  List<PayItem> get generateBondRecords {
     mainTableStateManager.setShowLoading(true);
-
-    String bondCode = bondDetailsController.getLastBondCode();
-    final bondRecord = mainTableStateManager.rows
+    final payItems = mainTableStateManager.rows
         .where(
-          (element) => Get.find<AccountsController>().getAccountIdByName(element.cells['account']?.value) != '',
+          (element) => Get.find<AccountsController>().getAccountIdByName(element.cells[AppConstants.entryAccountGuid]?.value) != '',
         )
         .map((row) {
-          double amount = getAmount(row.cells);
-          BondItemType bondItemType = getBondItemType(row.cells);
-          print(bondItemType);
-          return _processBondRow(
-            amount: amount,
-            note: row.cells['note']?.value,
-            account: row.cells['account']?.value,
-            bondType: bondItemType,
+          return _processBondRow(row: row.toJson(),
+
           );
         })
-        .whereType<BondItemModel>()
+        .whereType<PayItem>()
         .toList();
-    if (bondDetailsController.bondType == BondType.credit) {
-      print("object");
-      bondRecord.add(BondItemModel(
-        bondItemType: BondItemType.creditor,
-        note: bondDetailsController.noteController.text,
-        amount: calcCreditTotal(),
-        account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
-      ));
-    } else if (bondDetailsController.bondType == BondType.debt) {
-      bondRecord.add(BondItemModel(
-        bondItemType: BondItemType.debtor,
-        note: bondDetailsController.noteController.text,
-        amount: calcDebitTotal(),
-        account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
-      ));
+    if (bondDetailsController.bondType == BondType.receiptVoucher) {
+
+      // payItems.add(EntryBondItemModel(
+      //   bondItemType: BondItemType.creditor,
+      //   note: bondDetailsController.noteController.text,
+      //   amount: calcCreditTotal(),
+      //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
+      // ));
+    } else if (bondDetailsController.bondType == BondType.paymentVoucher) {
+      // payItems.add(EntryBondItemModel(
+      //   bondItemType: BondItemType.debtor,
+      //   note: bondDetailsController.noteController.text,
+      //   amount: calcDebitTotal(),
+      //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
+      // ));
     }
     mainTableStateManager.setShowLoading(false);
-    return BondModel(
-      bonds: bondRecord,
-      bondId: AppServiceUtils.generateUniqueId(),
-      bondCode: bondCode,
-      bondType: bondDetailsController.bondType,
-    );
+    return payItems;
   }
 
-  BondItemModel? _processBondRow({
-    required String account,
-    required String note,
-    required BondItemType bondType,
-    required double amount,
+  PayItem? _processBondRow({
+    required Map<String, dynamic> row
   }) {
     return _createBondRecord(
-      bondType: bondType,
-      note: note,
-      amount: amount,
-      account: account,
+       row: row
     );
 
     return null;
   }
 
   // Helper method to create an BondItemModel from a row
-  BondItemModel _createBondRecord({
-    required String account,
-    required String note,
-    required BondItemType bondType,
-    required double amount,
+  PayItem _createBondRecord({
+    required Map<String, dynamic> row
   }) =>
-      BondItemModel.fromJsonPluto(account: account, amount: amount, note: note, bondType: bondType);
+      PayItem.fromJsonPluto(row:row);
 
   void updateCellValue(String field, dynamic value) {
     if (mainTableStateManager.currentRow!.cells[field] != null) {
@@ -293,6 +253,7 @@ class BondRecordPlutoController extends IPlutoController {
     if (mainTableStateManager.rows.isNotEmpty && mainTableStateManager.rows.first.cells.length > 1) {
       final secondCell = mainTableStateManager.rows.first.cells.entries.elementAt(1).value;
       mainTableStateManager.setCurrentCell(secondCell, 0);
+      event.stateManager.setKeepFocus(true);
 
       // FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
     }
