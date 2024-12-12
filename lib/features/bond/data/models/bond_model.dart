@@ -1,9 +1,6 @@
-import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -22,7 +19,7 @@ class BondModel extends PlutoAdaptable {
   final int? paySecurity;
   final int? paySkip;
   final int? erParentType;
-  final List<PayItem> payItems;
+  final PayItems payItems;
   final String? e;
 
   BondModel({
@@ -47,7 +44,7 @@ class BondModel extends PlutoAdaptable {
     return BondModel(
       payTypeGuid: json['PayTypeGuid'],
       payNumber: json['PayNumber'],
-      payGuid: json['PayGuid'],
+      payGuid: json['docId'],
       payBranchGuid: json['PayBranchGuid'],
       payDate: json['PayDate'],
       entryPostDate: json['EntryPostDate'],
@@ -58,7 +55,7 @@ class BondModel extends PlutoAdaptable {
       paySecurity: json['PaySecurity'],
       paySkip: json['PaySkip'],
       erParentType: json['ErParentType'],
-      payItems: (json['PayItems']['N'] as List).map((item) => PayItem.fromJson(item)).toList(),
+      payItems: PayItems.fromJson(json['PayItems'] ?? {}),
       e: json['E'],
     );
   }
@@ -67,7 +64,7 @@ class BondModel extends PlutoAdaptable {
     return {
       'PayTypeGuid': payTypeGuid,
       'PayNumber': payNumber,
-      'PayGuid': payGuid,
+      'docId': payGuid,
       'PayBranchGuid': payBranchGuid,
       'PayDate': payDate,
       'EntryPostDate': entryPostDate,
@@ -78,55 +75,52 @@ class BondModel extends PlutoAdaptable {
       'PaySecurity': paySecurity,
       'PaySkip': paySkip,
       'ErParentType': erParentType,
-      'PayItems': payItems.map((item) => item.toJson()).toList(),
+      'PayItems': payItems.toJson(),
       'E': e,
     };
   }
 
   factory BondModel.empty({required BondType bondType, int lastBondNumber = 0}) {
     return BondModel(
-      payItems: [],
+      payItems: PayItems(itemList: []),
       payNumber: lastBondNumber + 1,
       payTypeGuid: bondType,
     );
   }
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat() {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     // TODO: implement toPlutoGridFormat
     throw UnimplementedError();
   }
 
-  factory BondModel.fromBondData(
-      {BondModel? bondModel,
-      required BondType bondType,
-      required note,
-      required String bondCustomerId,
-      required String bondSellerId,
-      required int bondPayType,
-      required String bondDate,
-      required double bondTotal,
-      required double bondVatTotal,
-      required double bondWithoutVatTotal,
-      required double bondGiftsTotal,
-      required double bondDiscountsTotal,
-      required double bondAdditionsTotal,
-      required List<PayItem> bondRecordsItems}) {
-
-
-
+  factory BondModel.fromBondData({
+    BondModel? bondModel,
+    required BondType bondType,
+    required note,
+    required String payAccountGuid,
+    required String payDate,
+    required List<PayItem> bondRecordsItems,
+  }) {
     final items = PayItems.fromBondRecords(bondRecordsItems);
 
     return bondModel == null
-        ? BondModel(
-
-      payItems: items.itemList,
-    )
+        ? BondModel(payItems: items,)
         : bondModel.copyWith(
-      bondTypeModel: bondTypeModel,
-      bondDetails: bondDetails,
-      items: items,
-    );
+            e: "E",
+            erParentType: 4,
+            payBranchGuid: "00000000-0000-0000-0000-000000000000",
+            payCurrencyGuid: "00000000-0000-0000-0000-000000000000",
+            entryPostDate: Timestamp.now().toDate().toString(),
+            paySecurity: 1,
+            paySkip: 0,
+            payCurVal: 1,
+            payAccountGuid: payAccountGuid,
+            payTypeGuid: bondType,
+            payItems: items,
+            payDate: payDate,
+            payNote: note,
+          );
   }
 
   BondModel copyWith({
@@ -143,7 +137,7 @@ class BondModel extends PlutoAdaptable {
     int? paySecurity,
     int? paySkip,
     int? erParentType,
-    List<PayItem>? payItems,
+    PayItems? payItems,
     String? e,
   }) {
     return BondModel(

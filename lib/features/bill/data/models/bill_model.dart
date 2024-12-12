@@ -146,7 +146,7 @@ class BillModel implements PlutoAdaptable {
       );
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat() => {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) => {
         PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text()): billId ?? '',
         PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.text()):
             billDetails.billNumber ?? '',

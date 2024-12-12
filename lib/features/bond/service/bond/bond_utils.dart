@@ -6,7 +6,7 @@ import '../../data/models/bond_model.dart';
 
 class BondUtils {
   BondModel appendEmptyBillModel(List<BondModel> bonds, BondType bondTyp) {
-    final int lastBillNumber = bonds.where((element) => element.payTypeGuid==bondTyp,).isNotEmpty ? bonds.where((element) => element.payTypeGuid==bondTyp,).last.payNumber! : 0;
+    final int lastBillNumber = bonds.isEmpty? bonds.last.payNumber! : 0;
 
     final emptyBillModel = BondModel.empty( bondType: bondTyp,lastBondNumber: lastBillNumber);
 

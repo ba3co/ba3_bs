@@ -46,7 +46,7 @@ class BondsDataSource extends DatabaseWithResultBase<BondModel> with FirebaseSeq
   }
 
   Future<BondModel> _createNewBond(BondModel bond) async {
-    final newBondNumber = await getNextNumber(path, bond.payTypeGuid!.name!);
+    final newBondNumber = await getNextNumber(path, bond.payTypeGuid!.name);
 
     final newBondJson = bond.copyWith(payNumber: newBondNumber).toJson();
 

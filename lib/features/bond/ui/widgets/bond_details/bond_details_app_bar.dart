@@ -1,15 +1,7 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
-import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
-import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/bonds/bond_search_controller.dart';
 

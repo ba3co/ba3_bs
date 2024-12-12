@@ -1,11 +1,8 @@
-import 'dart:developer';
 
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/constants/app_assets.dart';
-import '../../../../../core/dialogs/e_invoice_dialog_content.dart';
+
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/bonds/bond_search_controller.dart';
@@ -46,7 +43,6 @@ class BondDetailsButtons extends StatelessWidget {
                   onPressed: bondDetailsController.isBondSaved.value
                       ? () {}
                       : () async {
-                          bondDetailsController.saveBond(bondModel.payTypeGuid);
                         },
                   iconData: Icons.add_chart_outlined);
             }),
@@ -54,7 +50,6 @@ class BondDetailsButtons extends StatelessWidget {
             title: 'السند',
             height: 20,
             onPressed: () async {
-              bondDetailsController.createBond(bondModel.payTypeGuid);
             },
             iconData: Icons.file_open_outlined,
           ),
@@ -63,10 +58,7 @@ class BondDetailsButtons extends StatelessWidget {
               title: "تعديل",
               height: 20,
               onPressed: () async {
-                bondDetailsController.updateBond(
-                  bondModel: bondModel,
-                  bondTypeModel: bondModel.payTypeGuid,
-                );
+
               },
               iconData: Icons.edit_outlined,
             ),
@@ -76,13 +68,7 @@ class BondDetailsButtons extends StatelessWidget {
               title: 'Pdf-Email',
               height: 20,
               onPressed: () {
-                bondDetailsController.generateAndSendBondPdf(
-                  recipientEmail: AppStrings.recipientEmail,
-                  bondModel: bondModel,
-                  fileName: AppStrings.bond,
-                  logoSrc: AppAssets.ba3Logo,
-                  fontSrc: AppAssets.notoSansArabicRegular,
-                );
+
               },
               iconData: Icons.link,
             ),

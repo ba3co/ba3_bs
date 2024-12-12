@@ -1,12 +1,10 @@
-import 'package:ba3_bs/features/bond/data/models/bond_record_model.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../../../../core/services/firebase/implementations/datasource_repo_with_result.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../data/models/bond_model.dart';
-import '../../ui/screens/bond_details_view.dart';
-import '../pluto/bond_details_pluto_controller.dart';
+
 
 class AllBondsController extends GetxController {
   final DataSourceRepositoryWithResult<BondModel> _billsFirebaseRepo;
@@ -23,6 +21,8 @@ class AllBondsController extends GetxController {
     //   bondDetailsController:, fromBondById: null, bondDetailsPlutoController: null, bondSearchController: null, tag: '',
     // ));
   }
+
+  fetchAllBonds() {}
 } /*{
   // Repositories
   final FirebaseRepositoryWithResultImpl<BondModel> _billsFirebaseRepo;
