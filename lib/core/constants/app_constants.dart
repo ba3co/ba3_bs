@@ -325,17 +325,40 @@ abstract class AppConstants {
   static const String additionAccountType = 'additionAccountType';
 
 
-
+  ///Pay Items
   //////////////////////////////////////////////////////////////
-  ///bondRecord
-  static const String bondRecordDebit = 'bondRecordDebit';
-  static const String bondRecordCredit = 'bondRecordCredit';
-  static const String bondRecordAccount = 'bondRecordAccount';
-  static const String bondRecordAmount = 'bondRecordAmount';
-  static const String bondRecordNote = 'bondRecordNote';
-  static const String bondRecordOpposite = 'bondRecordOpposite';
-  static const String bondRecordBondItemType = 'bondRecordBondItemType';
+  static const String entryAccountGuid = 'EntryAccountGuid';
+  static const String entryDate = 'EntryDate';
+  static const String entryDebit = 'EntryDebit';
+  static const String entryCredit = 'EntryCredit';
+  static const String entryNote = 'EntryNote';
+  static const String entryCurrencyGuid = 'EntryCurrencyGuid';
+  static const String entryCurrencyVal = 'EntryCurrencyVal';
+  static const String entryCostGuid = 'EntryCostGuid';
+  static const String entryClass = 'EntryClass';
+  static const String entryNumber = 'EntryNumber';
+  static const String entryCustomerGuid = 'EntryCustomerGuid';
+  static const String entryType = 'EntryType';
 
+
+
+
+  /// Bond
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  static const String payTypeGuid = 'PayTypeGuid';
+  static const String payNumber = 'PayNumber';
+  static const String payGuid = 'PayGuid';
+  static const String payBranchGuid = 'PayBranchGuid';
+  static const String payDate = 'PayDate';
+  static const String entryPostDate = 'EntryPostDate';
+  static const String payNote = 'PayNote';
+  static const String payCurrencyGuid = 'PayCurrencyGuid';
+  static const String payCurVal = 'PayCurVal';
+  static const String payAccountGuid = 'PayAccountGuid';
+  static const String paySecurity = 'PaySecurity';
+  static const String paySkip = 'PaySkip';
+  static const String prParentType = 'ErParentType';
+  static const String payItems = 'PayItems';
 
   static final List<PlutoColumn> additionsDiscountsColumns = [
     PlutoColumn(

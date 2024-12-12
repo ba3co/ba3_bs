@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -42,6 +43,10 @@ abstract class IPlutoController extends GetxController {
 
   /// Generates a list of invoice records from the table data.
   List<InvoiceRecordModel> get generateBillRecords;
+
+
+  /// Generates a list of bond records from the table data.
+  List<PayItem> get generateBondRecords;
 
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField);
 

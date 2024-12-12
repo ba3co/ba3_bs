@@ -1,21 +1,16 @@
-import 'package:ba3_bs/core/widgets/app_spacer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../sellers/data/models/seller_model.dart';
-import '../../data/models/bill_model.dart';
+import '../../data/models/bond_model.dart';
 
-class BillUtils {
-  BillModel appendEmptyBillModel(List<BillModel> bills, BillTypeModel billTypeModel) {
-    final int lastBillNumber = bills.isNotEmpty ? bills.last.billDetails.billNumber! : 0;
+class BondUtils {
+  BondModel appendEmptyBillModel(List<BondModel> bonds, BondType bondTyp) {
+    final int lastBillNumber = bonds.where((element) => element.payTypeGuid==bondTyp,).isNotEmpty ? bonds.where((element) => element.payTypeGuid==bondTyp,).last.payNumber! : 0;
 
-    final emptyBillModel = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
+    final emptyBillModel = BondModel.empty( bondType: bondTyp,lastBondNumber: lastBillNumber);
 
-    bills.add(emptyBillModel);
+    bonds.add(emptyBillModel);
     return emptyBillModel;
   }
 

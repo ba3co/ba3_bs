@@ -138,6 +138,73 @@ enum BillType {
     );
   }
 }
+enum BondType {
+  openingEntry(
+    label: "Opening Entry",
+    value: "القيد الافتتاحي",
+    typeGuide: "ea69ba80-662d-4fa4-90ee-4d2e1988a8ea",
+    from: 1,
+    to: 1,
+    taxType: 0,
+  ),
+  receiptVoucher(
+    label: "Receipt Voucher",
+    value: "سند قبض",
+    typeGuide: "3dbab874-6002-413b-9a6b-9a216f338097",
+    from: 1,
+    to: 602,
+    taxType: 2,
+  ),
+  paymentVoucher(
+    label: "Payment Voucher",
+    value: "سند دفع",
+    typeGuide: '5085dc23-1444-4e9a-9d8f-1794da9e7f96',
+    from: 1,
+    to: 5051,
+    taxType: 1
+  ),
+  journalVoucher(
+    label: "Journal Voucher",
+    value: "سند يومية",
+    typeGuide: "2a550cb5-4e91-4e68-bacc-a0e7dcbbf1de",
+    from: 1,
+    to: 489,
+    taxType: 1,
+  );
+
+
+  final int from,to,taxType;
+
+  final String label;
+
+  final String value;
+
+  final String typeGuide;
+
+  const BondType({
+    required this.label,
+    required this.value,
+    required this.typeGuide,
+    required this.from,
+    required this.to,
+    required this.taxType,
+  });
+
+  // Factory constructor with error handling for unmatched labels
+  factory BondType.byLabel(String label) {
+    return BondType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching BondType for label: $label'),
+    );
+  }
+
+  factory BondType.byTypeGuide(String typeGuide) {
+    return BondType.values.firstWhere(
+      (type) => type.typeGuide == typeGuide,
+      orElse: () => throw ArgumentError('No matching BondType for guide: $typeGuide'),
+    );
+  }
+}
 
 enum BondItemType {
   creditor('الدائن'),
@@ -147,15 +214,7 @@ enum BondItemType {
 
   const BondItemType(this.label);
 }
-enum BondType {
-  credit('دفع'),
-  debt('قبض'),
-  daily('يومية');
 
-  final String label;
-
-  const BondType(this.label);
-}
 
 abstract class Account {
   String get label;

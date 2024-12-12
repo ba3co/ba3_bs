@@ -38,18 +38,6 @@ class BillDetailsButtons extends StatelessWidget {
         spacing: 20,
         runSpacing: 20,
         children: [
-          // AppButton(
-          //   title: 'جديد',
-          //   onPressed: () {
-          //     billDetailsController.createNewFloatingAddBillScreen(
-          //       billModel.billTypeModel,
-          //       context,
-          //       fromBillDetails: true,
-          //       fromBillById: fromBillById,
-          //     );
-          //   },
-          //   iconData: Icons.create_new_folder_outlined,
-          // ),
           if (billSearchController.isNew)
             Obx(() {
               return AppButton(

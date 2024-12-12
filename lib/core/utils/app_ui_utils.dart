@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
+import '../widgets/app_spacer.dart';
 
 class AppUIUtils {
   static void showToast(String text, {bool isSuccess = false, bool isInfo = false, bool long = false}) {
@@ -44,6 +46,29 @@ class AppUIUtils {
       // throw const FormatException("صيغة غير صحيحة");
       return DateTime.now().toString().split(" ")[0];
     }
+  }
+
+ static void showExportSuccessDialog(String filePath,String successMessage,String title) {
+    AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!');
+    Get.defaultDialog(
+      title: 'تم تصدير الملف إلى:',
+      radius: 8,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+      content: Column(
+        children: [
+          Text(filePath),
+          const VerticalSpace(16),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.copy),
+            label: const Text('نسخ المسار'),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: filePath));
+              AppUIUtils.onSuccess('تم نسخ المسار إلى الحافظة');
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   static String getPageNameFromEnum(String type) {

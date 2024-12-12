@@ -22,6 +22,7 @@ import '../../features/bill/services/bill/bill_json_export.dart';
 import '../../features/bond/controllers/bonds/bond_controller.dart';
 import '../../features/bond/controllers/entryBond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
+import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/service/bond/bond_json_export.dart';
 import '../../features/login/controllers/nfc_cards_controller.dart';
 import '../../features/login/controllers/user_management_controller.dart';

@@ -41,13 +41,13 @@ class EntryBondController extends GetxController {
 
   // Handle sales invoice creation
   void handleSales(Map<Account, AccountModel> billModelAccounts, AccountModel customerAccount, double total, double vat, double gifts, double discount, double addition) {
-    Map<AccountModel, List<BondItemModel>> bonds = {};
+    Map<AccountModel, List<EntryBondItemModel>> bonds = {};
 
     // Create a main sales bond
     if (billModelAccounts.containsKey(BillAccounts.materials)) {
       AccountModel materialsAccount = billModelAccounts[BillAccounts.materials]!;
 
-      bonds[materialsAccount] = [BondItemModel(bondItemType: BondItemType.creditor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
+      bonds[materialsAccount] = [EntryBondItemModel(bondItemType: BondItemType.creditor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
     }
 
     // Create bonds for cash box if applicable
@@ -65,13 +65,13 @@ class EntryBondController extends GetxController {
 
   // Handle buy invoice creation
   void handleBuy(Map<Account, AccountModel> billModelAccounts, AccountModel customerAccount, double total, double vat, double gifts, double discount, double addition) {
-    Map<AccountModel, List<BondItemModel>> bonds = {};
+    Map<AccountModel, List<EntryBondItemModel>> bonds = {};
 
     // Create a main sales bond
     if (billModelAccounts.containsKey(BillAccounts.materials)) {
       AccountModel materialsAccount = billModelAccounts[BillAccounts.materials]!;
 
-      bonds[materialsAccount] = [BondItemModel(bondItemType: BondItemType.debtor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
+      bonds[materialsAccount] = [EntryBondItemModel(bondItemType: BondItemType.debtor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
     }
 
     // Create bonds for cash box if applicable
@@ -88,32 +88,32 @@ class EntryBondController extends GetxController {
   }
 
   // Create bonds for the cash box for sales
-  List<BondItemModel> _createCashBoxSalesBonds(double total, double vat, double discount, double addition) {
+  List<EntryBondItemModel> _createCashBoxSalesBonds(double total, double vat, double discount, double addition) {
     return [
       // TODO: Ahmad
-      if (vat > 0) BondItemModel(bondItemType: BondItemType.debtor, amount: vat, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
-      if (discount > 0) BondItemModel(bondItemType: BondItemType.creditor, amount: discount, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
-      if (addition > 0) BondItemModel(bondItemType: BondItemType.debtor, amount: addition, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
-      BondItemModel(bondItemType: BondItemType.debtor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      if (vat > 0) EntryBondItemModel(bondItemType: BondItemType.debtor, amount: vat, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      if (discount > 0) EntryBondItemModel(bondItemType: BondItemType.creditor, amount: discount, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      if (addition > 0) EntryBondItemModel(bondItemType: BondItemType.debtor, amount: addition, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      EntryBondItemModel(bondItemType: BondItemType.debtor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
     ];
   }
 
 // TODO: Ahmad
   // Create bonds for the cash box for buys
-  List<BondItemModel> _createCashBoxBuysBonds(double total, double vat, double discount, double addition) {
+  List<EntryBondItemModel> _createCashBoxBuysBonds(double total, double vat, double discount, double addition) {
     return [
-      if (vat > 0) BondItemModel(bondItemType: BondItemType.creditor, amount: vat, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
-      if (discount > 0) BondItemModel(bondItemType: BondItemType.debtor, amount: discount, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
-      if (addition > 0) BondItemModel(bondItemType: BondItemType.creditor, amount: addition, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
-      BondItemModel(bondItemType: BondItemType.creditor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      if (vat > 0) EntryBondItemModel(bondItemType: BondItemType.creditor, amount: vat, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      if (discount > 0) EntryBondItemModel(bondItemType: BondItemType.debtor, amount: discount, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      if (addition > 0) EntryBondItemModel(bondItemType: BondItemType.creditor, amount: addition, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
+      EntryBondItemModel(bondItemType: BondItemType.creditor, amount: total, account: AccountModel(), oppositeAccount: AccountModel(), note: ""),
     ];
   }
 
   // Combined method for adding optional bonds
-  void _addOptionalBonds(Map<Account, AccountModel> billModelAccounts, Map<AccountModel, List<BondItemModel>> bonds, double gifts, double vat, double discount, double addition, {bool isSales = false}) {
+  void _addOptionalBonds(Map<Account, AccountModel> billModelAccounts, Map<AccountModel, List<EntryBondItemModel>> bonds, double gifts, double vat, double discount, double addition, {bool isSales = false}) {
     if (vat > 0) {
       // TODO: Ahmad
-      bonds[AccountModel(id: 'a5c04527-63e8-4373-92e8-68d8f88bdb16', accName: 'ضريبة القيمة المضافة')] = [BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: vat, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
+      bonds[AccountModel(id: 'a5c04527-63e8-4373-92e8-68d8f88bdb16', accName: 'ضريبة القيمة المضافة')] = [EntryBondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: vat, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
     }
 
     if (gifts > 0 && billModelAccounts.containsKey(BillAccounts.gifts) && billModelAccounts.containsKey(BillAccounts.exchangeForGifts)) {
@@ -121,17 +121,17 @@ class EntryBondController extends GetxController {
       AccountModel settlementAccount = billModelAccounts[BillAccounts.exchangeForGifts]!;
       bonds[giftsAccount] = [
         // TODO: Ahmad
-        BondItemModel(bondItemType: isSales ? BondItemType.debtor : BondItemType.creditor, amount: gifts, account: AccountModel(), oppositeAccount: AccountModel(), note: "")
+        EntryBondItemModel(bondItemType: isSales ? BondItemType.debtor : BondItemType.creditor, amount: gifts, account: AccountModel(), oppositeAccount: AccountModel(), note: "")
       ];
       // TODO: Ahmad
-      bonds[settlementAccount] = [BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: gifts, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
+      bonds[settlementAccount] = [EntryBondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: gifts, account: AccountModel(), oppositeAccount: AccountModel(), note: "")];
     }
 
     if (discount > 0 && billModelAccounts.containsKey(BillAccounts.discounts)) {
       AccountModel discountsAccount = billModelAccounts[BillAccounts.discounts]!;
       bonds[discountsAccount] = [
         // TODO: Ahmad
-        BondItemModel(bondItemType: isSales ? BondItemType.debtor : BondItemType.creditor, amount: discount, account: AccountModel(), oppositeAccount: AccountModel(), note: "")
+        EntryBondItemModel(bondItemType: isSales ? BondItemType.debtor : BondItemType.creditor, amount: discount, account: AccountModel(), oppositeAccount: AccountModel(), note: "")
       ];
     }
 
@@ -139,7 +139,7 @@ class EntryBondController extends GetxController {
       AccountModel additionsAccount = billModelAccounts[BillAccounts.additions]!;
       bonds[additionsAccount] = [
         // TODO: Ahmad
-        BondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: addition, account: AccountModel(), oppositeAccount: AccountModel(), note: "")
+        EntryBondItemModel(bondItemType: isSales ? BondItemType.creditor : BondItemType.debtor, amount: addition, account: AccountModel(), oppositeAccount: AccountModel(), note: "")
       ];
     }
   }
@@ -148,7 +148,7 @@ class EntryBondController extends GetxController {
   List<DataGridRow> buildBondDataGridRows() {
     return bondModel.bonds.entries.expand<DataGridRow>((entry) {
       AccountModel account = entry.key;
-      List<BondItemModel> bondItems = entry.value;
+      List<EntryBondItemModel> bondItems = entry.value;
 
       return bondItems.map<DataGridRow>((bondItem) {
         return DataGridRow(cells: [
