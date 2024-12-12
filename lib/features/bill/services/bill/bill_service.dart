@@ -12,9 +12,10 @@ import '../../../bond/controllers/entryBond/entry_bond_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
+import '../../data/models/invoice_record_model.dart';
 
 class BillService {
-  final IPlutoController plutoController;
+  final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
   BillService(this.plutoController, this.billController);
@@ -43,7 +44,7 @@ class BillService {
       billGiftsTotal: plutoController.computeGifts,
       billDiscountsTotal: plutoController.computeDiscounts,
       billAdditionsTotal: plutoController.computeAdditions,
-      billRecordsItems: plutoController.generateBillRecords,
+      billRecordsItems: plutoController.generateRecords,
     );
   }
 

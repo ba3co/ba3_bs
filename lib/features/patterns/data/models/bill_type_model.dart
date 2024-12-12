@@ -125,7 +125,7 @@ class BillTypeModel implements PlutoAdaptable {
     PlutoColumn(title:'color' ,field: 'color',type: PlutoColumnType.text())
     : color,
     PlutoColumn(title: 'accounts' ,field: 'accounts' ,type: PlutoColumnType.text())
-   : accounts?.map((key, value) => MapEntry(key.label, value.toPlutoGridFormat())),
+   : accounts?.map((account, accountModel) => MapEntry(account.label, accountModel.toPlutoGridFormat())),
       };
 }
 

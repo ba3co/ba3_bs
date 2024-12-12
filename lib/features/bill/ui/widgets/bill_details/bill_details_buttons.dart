@@ -78,7 +78,7 @@ class BillDetailsButtons extends StatelessWidget {
             onPressed: () async {
               billDetailsController.printBill(
                 billNumber: billModel.billDetails.billNumber!,
-                invRecords: billDetailsPlutoController.generateBillRecords,
+                invRecords: billDetailsPlutoController.generateRecords,
               );
             },
           ),

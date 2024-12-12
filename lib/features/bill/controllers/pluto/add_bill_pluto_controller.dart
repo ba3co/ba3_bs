@@ -1,7 +1,6 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,7 @@ import '../../services/pluto/bill_pluto_context_menu.dart';
 import '../../services/pluto/bill_pluto_grid_service.dart';
 import '../../services/pluto/bill_pluto_utils.dart';
 
-class AddBillPlutoController extends IPlutoController {
+class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   // Services
   late final BillPlutoGridService _gridService;
   late final BillPlutoCalculator _calculator;
@@ -77,7 +76,7 @@ class AddBillPlutoController extends IPlutoController {
   double get computeDiscounts => _calculator.computeDiscounts(_plutoUtils, computeWithVatTotal);
 
   @override
-  List<InvoiceRecordModel> get generateBillRecords {
+  List<InvoiceRecordModel> get generateRecords {
     mainTableStateManager.setShowLoading(true);
 
     final materialController = Get.find<MaterialController>();
@@ -318,22 +317,6 @@ class AddBillPlutoController extends IPlutoController {
         update();
       });
 
-  void clearAdditionsDiscountsCells() {
-    for (int i = 1; i < AppConstants.additionsDiscountsRows.length; i++) {
-      _clearRowCells(AppConstants.additionsDiscountsRows[i]);
-    }
-  }
-
-  void _clearRowCells(PlutoRow row) {
-    _clearCellValue(row, AppConstants.discount);
-    _clearCellValue(row, AppConstants.addition);
-  }
-
-  void _clearCellValue(PlutoRow row, String cellKey) {
-    final cell = row.cells[cellKey];
-    if (cell?.value.isNotEmpty ?? false) cell?.value = '';
-  }
-
   void resetAllTables() {
     // Clear all material and additions/discounts records in InvoicePlutoController
     prepareMaterialsRows([]);
@@ -344,12 +327,7 @@ class AddBillPlutoController extends IPlutoController {
   @override
   void onClose() {
     super.onClose();
-    clearAdditionsDiscountsCells();
   }
-
-  @override
-  // TODO: implement generateBondRecords
-  List<PayItem> get generateBondRecords => throw UnimplementedError();
 }
 
 // 530

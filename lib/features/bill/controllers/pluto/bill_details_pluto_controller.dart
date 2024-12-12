@@ -15,7 +15,7 @@ import '../../services/pluto/bill_pluto_context_menu.dart';
 import '../../services/pluto/bill_pluto_grid_service.dart';
 import '../../services/pluto/bill_pluto_utils.dart';
 
-class BillDetailsPlutoController extends IPlutoController {
+class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   // Services
   late final BillPlutoGridService _gridService;
   late final BillPlutoCalculator _calculator;
@@ -73,7 +73,7 @@ class BillDetailsPlutoController extends IPlutoController {
   double get computeDiscounts => _calculator.computeDiscounts(_plutoUtils, computeWithVatTotal);
 
   @override
-  List<InvoiceRecordModel> get generateBillRecords {
+  List<InvoiceRecordModel> get generateRecords {
     mainTableStateManager.setShowLoading(true);
 
     final materialController = Get.find<MaterialController>();
@@ -309,26 +309,9 @@ class BillDetailsPlutoController extends IPlutoController {
         update();
       });
 
-  void clearAdditionsDiscountsCells() {
-    for (int i = 1; i < AppConstants.additionsDiscountsRows.length; i++) {
-      _clearRowCells(AppConstants.additionsDiscountsRows[i]);
-    }
-  }
-
-  void _clearRowCells(PlutoRow row) {
-    _clearCellValue(row, AppConstants.discount);
-    _clearCellValue(row, AppConstants.addition);
-  }
-
-  void _clearCellValue(PlutoRow row, String cellKey) {
-    final cell = row.cells[cellKey];
-    if (cell?.value.isNotEmpty ?? false) cell?.value = '';
-  }
-
   @override
   void onClose() {
     super.onClose();
-    clearAdditionsDiscountsCells(); // Clear cell values when the controller is closed
   }
 
   @override

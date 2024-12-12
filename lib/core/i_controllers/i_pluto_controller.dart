@@ -1,10 +1,7 @@
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../features/bill/data/models/invoice_record_model.dart';
-import '../../features/bond/data/models/pay_item_model.dart';
-
-abstract class IPlutoController extends GetxController {
+abstract class IPlutoController<T> extends GetxController {
   /// Main table's state manager.
   PlutoGridStateManager get mainTableStateManager;
 
@@ -42,11 +39,7 @@ abstract class IPlutoController extends GetxController {
   double get calculateFinalTotal;
 
   /// Generates a list of invoice records from the table data.
-  List<InvoiceRecordModel> get generateBillRecords;
-
-
-  /// Generates a list of bond records from the table data.
-  List<PayItem> get generateBondRecords;
+  List<T> get generateRecords;
 
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField);
 

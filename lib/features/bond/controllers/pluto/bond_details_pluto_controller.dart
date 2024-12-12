@@ -1,6 +1,5 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
-import 'package:ba3_bs/features/bill/data/models/invoice_record_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +12,7 @@ import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../data/models/pay_item_model.dart';
 
-class BondDetailsPlutoController extends IPlutoController {
+class BondDetailsPlutoController extends IPlutoController<PayItem> {
   // Columns and rows
   late List<PlutoColumn> mainTableColumns = PayItem().toPlutoGridFormat(bondType).keys.toList();
 
@@ -37,7 +36,7 @@ class BondDetailsPlutoController extends IPlutoController {
   void _handleColumnUpdate(String columnField) {
     String correctedText =
         AppServiceUtils.extractNumbersAndCalculate(mainTableStateManager.currentRow?.cells[columnField]?.value);
-    if (columnField ==AppConstants.entryCredit) {
+    if (columnField == AppConstants.entryCredit) {
       clearFiledInRow(AppConstants.entryDebit);
       updateCellValue(columnField, correctedText);
     } else if (columnField == AppConstants.entryDebit) {
@@ -49,8 +48,6 @@ class BondDetailsPlutoController extends IPlutoController {
   }
 
   void clearFiledInRow(String filedName) {
-
-
     updateCellValue(filedName, '0');
   }
 
@@ -154,23 +151,23 @@ class BondDetailsPlutoController extends IPlutoController {
     mainTableStateManager.appendRows(newRows);
   }*/
 
-
   @override
-  List<PayItem> get generateBondRecords {
+  List<PayItem> get generateRecords {
     mainTableStateManager.setShowLoading(true);
     final payItems = mainTableStateManager.rows
         .where(
-          (element) => Get.find<AccountsController>().getAccountIdByName(element.cells[AppConstants.entryAccountGuid]?.value) != '',
+          (element) =>
+              Get.find<AccountsController>().getAccountIdByName(element.cells[AppConstants.entryAccountGuid]?.value) !=
+              '',
         )
         .map((row) {
-          return _processBondRow(row: row.toJson(),
-
+          return _processBondRow(
+            row: row.toJson(),
           );
         })
         .whereType<PayItem>()
         .toList();
     if (bondDetailsController.bondType == BondType.receiptVoucher) {
-
       // payItems.add(EntryBondItemModel(
       //   bondItemType: BondItemType.creditor,
       //   note: bondDetailsController.noteController.text,
@@ -189,21 +186,12 @@ class BondDetailsPlutoController extends IPlutoController {
     return payItems;
   }
 
-  PayItem? _processBondRow({
-    required Map<String, dynamic> row
-  }) {
-    return _createBondRecord(
-       row: row
-    );
-
-    return null;
+  PayItem? _processBondRow({required Map<String, dynamic> row}) {
+    return _createBondRecord(row: row);
   }
 
   // Helper method to create an BondItemModel from a row
-  PayItem _createBondRecord({
-    required Map<String, dynamic> row
-  }) =>
-      PayItem.fromJsonPluto(row:row);
+  PayItem _createBondRecord({required Map<String, dynamic> row}) => PayItem.fromJsonPluto(row: row);
 
   void updateCellValue(String field, dynamic value) {
     if (mainTableStateManager.currentRow!.cells[field] != null) {
@@ -305,10 +293,6 @@ class BondDetailsPlutoController extends IPlutoController {
   double get computeWithVatTotal => throw UnimplementedError();
 
   @override
-  // TODO: implement generateBillRecords
-  List<InvoiceRecordModel> get generateBillRecords => throw UnimplementedError();
-
-  @override
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) {
     // TODO: implement moveToNextRow
   }
@@ -320,8 +304,5 @@ class BondDetailsPlutoController extends IPlutoController {
 
   void onRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {}
 
-  prepareBondMaterialsRows(List<PayItem> bondItems) {
-
-
-  }
+  prepareBondMaterialsRows(List<PayItem> bondItems) {}
 }

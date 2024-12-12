@@ -1,5 +1,3 @@
-import 'package:pluto_grid/pluto_grid.dart';
-
 import '../helper/enums/enums.dart';
 
 abstract class AppConstants {
@@ -324,7 +322,6 @@ abstract class AppConstants {
   static const String discountAccountType = 'discountAccountType';
   static const String additionAccountType = 'additionAccountType';
 
-
   ///Pay Items
   //////////////////////////////////////////////////////////////
   static const String entryAccountGuid = 'EntryAccountGuid';
@@ -339,9 +336,6 @@ abstract class AppConstants {
   static const String entryNumber = 'EntryNumber';
   static const String entryCustomerGuid = 'EntryCustomerGuid';
   static const String entryType = 'EntryType';
-
-
-
 
   /// Bond
   //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,55 +353,6 @@ abstract class AppConstants {
   static const String paySkip = 'PaySkip';
   static const String prParentType = 'ErParentType';
   static const String payItems = 'PayItems';
-
-  static final List<PlutoColumn> additionsDiscountsColumns = [
-    PlutoColumn(
-      title: AppConstants.account,
-      field: AppConstants.id,
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: AppConstants.discountAr,
-      field: AppConstants.discount,
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: AppConstants.discountRatioAr,
-      field: AppConstants.discountRatio,
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: AppConstants.additionAr,
-      field: AppConstants.addition,
-      type: PlutoColumnType.text(),
-    ),
-    PlutoColumn(
-      title: AppConstants.additionRatioAr,
-      field: AppConstants.additionRatio,
-      type: PlutoColumnType.text(),
-    ),
-  ];
-
-  static List<PlutoRow> additionsDiscountsRows = [
-    PlutoRow(
-      cells: {
-        AppConstants.id: PlutoCell(value: ''),
-        AppConstants.discount: PlutoCell(value: ''),
-        AppConstants.discountRatio: PlutoCell(value: ''),
-        AppConstants.addition: PlutoCell(value: ''),
-        AppConstants.additionRatio: PlutoCell(value: ''),
-      },
-    ),
-    PlutoRow(
-      cells: {
-        AppConstants.id: PlutoCell(value: ''),
-        AppConstants.discount: PlutoCell(value: ''),
-        AppConstants.discountRatio: PlutoCell(value: ''),
-        AppConstants.addition: PlutoCell(value: ''),
-        AppConstants.additionRatio: PlutoCell(value: ''),
-      },
-    )
-  ];
 
   static const double bottomWindowWidth = 200;
   static const double bottomWindowHeight = 40;

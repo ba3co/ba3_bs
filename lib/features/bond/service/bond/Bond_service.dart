@@ -1,6 +1,8 @@
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:get/get.dart';
+
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../controllers/bonds/bond_controller.dart';
@@ -8,7 +10,7 @@ import '../../controllers/bonds/bond_search_controller.dart';
 import '../../data/models/bond_model.dart';
 
 class BondService {
-  final IPlutoController plutoController;
+  final IPlutoController<PayItem> plutoController;
   final BondDetailsController bondController;
 
   BondService(this.plutoController, this.bondController);
@@ -26,11 +28,12 @@ class BondService {
       note: note,
       payAccountGuid: payAccountGuid,
       payDate: payDate,
-      bondRecordsItems: plutoController.generateBondRecords,
+      bondRecordsItems: plutoController.generateRecords,
     );
   }
 
-  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController, [fromBondById]) async {
+  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController,
+      [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
       await Get.find<AllBondsController>().fetchAllBonds();
