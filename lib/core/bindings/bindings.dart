@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo_without_result.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -33,7 +32,7 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
-import '../services/firebase/implementations/datasource_repo_with_result.dart';
+import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/translation/implementations/dio_client.dart';
@@ -55,16 +54,16 @@ class AppBindings extends Bindings {
     final userManagementRepo = UserManagementRepository(UserManagementService());
 
     // Instantiate PatternsDataSource and FirebaseRepositoryConcrete of BillTypeModel
-    final DataSourceRepositoryWithoutResult<BillTypeModel> patternsFirebaseRepo = DataSourceRepositoryWithoutResult(
-      PatternsDataSource(firestore),
+    final DataSourceRepository<BillTypeModel> patternsFirebaseRepo = DataSourceRepository(
+      PatternsDataSource(databaseService: fireStoreService),
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BillModel
-    final DataSourceRepositoryWithResult<BillModel> billsFirebaseRepo =
-        DataSourceRepositoryWithResult(BillsDataSource(databaseService: fireStoreService));
+    final DataSourceRepository<BillModel> billsFirebaseRepo =
+        DataSourceRepository(BillsDataSource(databaseService: fireStoreService));
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
-    final DataSourceRepositoryWithResult<BondModel> bondsFirebaseRepo = DataSourceRepositoryWithResult(
+    final DataSourceRepository<BondModel> bondsFirebaseRepo = DataSourceRepository(
       BondsDataSource(databaseService: fireStoreService),
     );
 

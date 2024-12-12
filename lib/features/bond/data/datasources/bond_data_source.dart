@@ -1,14 +1,12 @@
-
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
-import '../../../../core/services/firebase/interfaces/database_with_result_base.dart';
+import '../../../../core/services/firebase/interfaces/datasource_base.dart';
 import '../models/bond_model.dart';
 
-class BondsDataSource extends DatabaseWithResultBase<BondModel> with FirebaseSequentialNumberDatabase {
+class BondsDataSource extends DatasourceBase<BondModel> with FirebaseSequentialNumberDatabase {
   BondsDataSource({required super.databaseService});
 
-
   @override
-  String get path => 'bonds';
+  String get path => 'bonds'; // Collection name in Firestore
 
   @override
   Future<List<BondModel>> fetchAll() async {
@@ -40,7 +38,7 @@ class BondsDataSource extends DatabaseWithResultBase<BondModel> with FirebaseSeq
 
       return newBillModel;
     } else {
-      await databaseService.update(path: path, documentId: item.payGuid!, data: item.toJson());
+      await databaseService.update(path: path, documentId: item.payGuid, data: item.toJson());
       return item;
     }
   }

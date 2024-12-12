@@ -1,17 +1,15 @@
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-import '../../../../core/services/firebase/implementations/datasource_repo_with_result.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../data/models/bond_model.dart';
 
-
 class AllBondsController extends GetxController {
-  final DataSourceRepositoryWithResult<BondModel> _billsFirebaseRepo;
+  final DataSourceRepository<BondModel> _billsFirebaseRepo;
   final JsonExportRepository<BondModel> _jsonExportRepo;
 
   AllBondsController(this._billsFirebaseRepo, this._jsonExportRepo);
-
 
   navigateToBondDetails() {
     // Get.lazyPut(() => BondDetailsPlutoController(this, bondType), fenix: true);

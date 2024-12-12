@@ -1,10 +1,8 @@
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-abstract class IPlutoController<T> extends GetxController {
-  /// Main table's state manager.
-  PlutoGridStateManager get mainTableStateManager;
+import 'i_table_pluto_controller.dart';
 
+abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
   /// State manager for additions and discounts.
   PlutoGridStateManager get additionsDiscountsStateManager;
 
@@ -37,9 +35,6 @@ abstract class IPlutoController<T> extends GetxController {
 
   /// Calculates the final total after applying discounts and additions.
   double get calculateFinalTotal;
-
-  /// Generates a list of invoice records from the table data.
-  List<T> get generateRecords;
 
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField);
 

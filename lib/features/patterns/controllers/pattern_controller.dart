@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo_without_result.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +6,12 @@ import 'package:get/get.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/interfaces/i_store_selection_handler.dart';
+import '../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 
 class PatternController extends GetxController with AppValidator implements IStoreSelectionHandler {
-  final DataSourceRepositoryWithoutResult<BillTypeModel> _repository;
+  final DataSourceRepository<BillTypeModel> _repository;
 
   PatternController(this._repository);
 

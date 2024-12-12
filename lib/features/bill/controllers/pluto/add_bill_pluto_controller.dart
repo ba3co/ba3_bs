@@ -22,9 +22,9 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   late final BillPlutoContextMenu _contextMenu;
 
   // Columns and rows
-  List<PlutoColumn> mainTableColumns = InvoiceRecordModel().toEditedMap().keys.toList();
+  List<PlutoColumn> recordsTableColumns = InvoiceRecordModel().toEditedMap().keys.toList();
 
-  List<PlutoRow> mainTableRows = [];
+  List<PlutoRow> recordsTableRows = [];
 
   //List<PlutoRow> additionsDiscountsRows = AppConstants.additionsDiscountsRows;
 
@@ -36,7 +36,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   // State managers
   @override
-  PlutoGridStateManager mainTableStateManager =
+  PlutoGridStateManager recordsTableStateManager =
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   @override
@@ -77,16 +77,16 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   @override
   List<InvoiceRecordModel> get generateRecords {
-    mainTableStateManager.setShowLoading(true);
+    recordsTableStateManager.setShowLoading(true);
 
     final materialController = Get.find<MaterialController>();
 
-    final invoiceRecords = mainTableStateManager.rows
+    final invoiceRecords = recordsTableStateManager.rows
         .map((row) => _processInvoiceRow(row, materialController))
         .whereType<InvoiceRecordModel>()
         .toList();
 
-    mainTableStateManager.setShowLoading(false);
+    recordsTableStateManager.setShowLoading(false);
     return invoiceRecords;
   }
 
@@ -112,14 +112,14 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   onMainTableLoaded(PlutoGridOnLoadedEvent event) {
-    mainTableStateManager = event.stateManager;
+    recordsTableStateManager = event.stateManager;
 
-    final newRows = mainTableStateManager.getNewRows(count: 30);
-    mainTableStateManager.appendRows(newRows);
+    final newRows = recordsTableStateManager.getNewRows(count: 30);
+    recordsTableStateManager.appendRows(newRows);
 
-    if (mainTableStateManager.rows.isNotEmpty && mainTableStateManager.rows.first.cells.length > 1) {
-      final secondCell = mainTableStateManager.rows.first.cells.entries.elementAt(1).value;
-      mainTableStateManager.setCurrentCell(secondCell, 0);
+    if (recordsTableStateManager.rows.isNotEmpty && recordsTableStateManager.rows.first.cells.length > 1) {
+      final secondCell = recordsTableStateManager.rows.first.cells.entries.elementAt(1).value;
+      recordsTableStateManager.setCurrentCell(secondCell, 0);
 
       FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
     }
@@ -140,7 +140,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
-    if (mainTableStateManager.currentRow == null) return;
+    if (recordsTableStateManager.currentRow == null) return;
     final String field = event.column.field;
 
     // Extract and calculate values
@@ -187,7 +187,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   String _extractCellValueAsNumber(String field) {
-    final cellValue = mainTableStateManager.currentRow!.cells[field]?.value?.toString() ?? '';
+    final cellValue = recordsTableStateManager.currentRow!.cells[field]?.value?.toString() ?? '';
     return AppServiceUtils.extractNumbersAndCalculate(cellValue);
   }
 
@@ -285,23 +285,23 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
       InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
 
   void prepareMaterialsRows(List<InvoiceRecordModel> invRecords) {
-    mainTableStateManager.removeAllRows();
+    recordsTableStateManager.removeAllRows();
 
-    final newRows = mainTableStateManager.getNewRows(count: 30);
+    final newRows = recordsTableStateManager.getNewRows(count: 30);
 
     if (invRecords.isNotEmpty) {
-      mainTableRows = _gridService.convertRecordsToRows(invRecords);
+      recordsTableRows = _gridService.convertRecordsToRows(invRecords);
 
-      mainTableStateManager.appendRows(mainTableRows);
+      recordsTableStateManager.appendRows(recordsTableRows);
     }
 
-    mainTableStateManager.appendRows(newRows);
+    recordsTableStateManager.appendRows(newRows);
   }
 
   void prepareAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
 
-    final newRows = mainTableStateManager.getNewRows(count: 2);
+    final newRows = recordsTableStateManager.getNewRows(count: 2);
 
     if (additionsDiscountsRecords.isNotEmpty) {
       additionsDiscountsRows = _gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);

@@ -10,7 +10,7 @@ class BondPlutoGridService {
     this.controller,
   );
 
-  PlutoGridStateManager get mainTableStateManager => controller.mainTableStateManager;
+  PlutoGridStateManager get mainTableStateManager => controller.recordsTableStateManager;
 
   void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
     stateManager.changeCellValue(
@@ -58,7 +58,8 @@ class BondPlutoGridService {
     updateSelectedRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecQuantity, quantity);
   }
 
-  void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow currentRow, String field, dynamic value) {
+  void updateSelectedRowCellValue(
+      PlutoGridStateManager stateManager, PlutoRow currentRow, String field, dynamic value) {
     if (currentRow.cells.containsKey(field)) {
       // Update the cell value in the previous row.
       stateManager.changeCellValue(

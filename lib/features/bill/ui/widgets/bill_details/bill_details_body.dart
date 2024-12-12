@@ -40,8 +40,8 @@ class BillDetailsBody extends StatelessWidget {
                   return FocusScope(
                     autofocus: true,
                     child: PlutoWithEdite(
-                      columns: billDetailsPlutoController.mainTableColumns,
-                      rows: billDetailsPlutoController.mainTableRows,
+                      columns: billDetailsPlutoController.recordsTableColumns,
+                      rows: billDetailsPlutoController.recordsTableRows,
                       onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
                         billDetailsPlutoController.onMainTableRowSecondaryTap(event, context);
                       },

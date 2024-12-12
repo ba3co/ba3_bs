@@ -1,9 +1,9 @@
 import 'i_database_service.dart';
 
-abstract class DatabaseWithResultBase<T> {
+abstract class DatasourceBase<T> {
   final IDatabaseService<Map<String, dynamic>> databaseService;
 
-  DatabaseWithResultBase({required this.databaseService});
+  DatasourceBase({required this.databaseService});
 
   // Path getter to be overridden by subclasses
   String get path;

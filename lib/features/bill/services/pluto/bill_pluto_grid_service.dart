@@ -14,7 +14,7 @@ class BillPlutoGridService {
 
   BillPlutoGridService(this.controller);
 
-  PlutoGridStateManager get mainTableStateManager => controller.mainTableStateManager;
+  PlutoGridStateManager get mainTableStateManager => controller.recordsTableStateManager;
 
   PlutoGridStateManager get additionsDiscountsStateManager => controller.additionsDiscountsStateManager;
 

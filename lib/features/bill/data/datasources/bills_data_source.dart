@@ -1,14 +1,14 @@
 // BillsDataSource Implementation
-import 'package:ba3_bs/core/services/firebase/interfaces/database_with_result_base.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
 
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
 import '../models/bill_model.dart';
 
-class BillsDataSource extends DatabaseWithResultBase<BillModel> with FirebaseSequentialNumberDatabase {
+class BillsDataSource extends DatasourceBase<BillModel> with FirebaseSequentialNumberDatabase {
   BillsDataSource({required super.databaseService});
 
   @override
-  String get path => 'bills';
+  String get path => 'bills'; // Collection name in Firestore
 
   @override
   Future<List<BillModel>> fetchAll() async {
@@ -40,7 +40,7 @@ class BillsDataSource extends DatabaseWithResultBase<BillModel> with FirebaseSeq
 
       return newBillModel;
     } else {
-      await databaseService.update(path: path, documentId: item.billId!, data: item.toJson());
+      await databaseService.update(path: path, documentId: item.billId, data: item.toJson());
       return item;
     }
   }

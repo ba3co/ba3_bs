@@ -32,7 +32,7 @@ class BillPlutoContextMenu {
         itemLabelBuilder: (type) =>
             '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
         onSelected: (PriceType type) {
-          final PlutoRow selectedRow = controller.mainTableStateManager.rows[index];
+          final PlutoRow selectedRow = controller.recordsTableStateManager.rows[index];
           final int quantity = AppServiceUtils.getItemQuantity(selectedRow, AppConstants.invRecQuantity);
 
           gridService.updateInvoiceValuesBySubTotal(
@@ -85,8 +85,8 @@ class BillPlutoContextMenu {
   }
 
   void _deleteRow(int rowIdx) {
-    final rowToRemove = controller.mainTableStateManager.rows[rowIdx];
-    controller.mainTableStateManager.removeRows([rowToRemove]);
+    final rowToRemove = controller.recordsTableStateManager.rows[rowIdx];
+    controller.recordsTableStateManager.removeRows([rowToRemove]);
     OverlayService.back();
     controller.update();
   }

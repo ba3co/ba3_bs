@@ -9,8 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/mixin/floating_window_mixin.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/firebase/implementations/datasource_repo_with_result.dart';
-import '../../../../core/services/firebase/implementations/datasource_repo_without_result.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -21,8 +20,8 @@ import 'bill_search_controller.dart';
 
 class AllBillsController extends GetxController with FloatingWindowMixin {
   // Repositories
-  final DataSourceRepositoryWithoutResult<BillTypeModel> _patternsFirebaseRepo;
-  final DataSourceRepositoryWithResult<BillModel> _billsFirebaseRepo;
+  final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
+  final DataSourceRepository<BillModel> _billsFirebaseRepo;
   final JsonExportRepository<BillModel> _jsonExportRepo;
 
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);

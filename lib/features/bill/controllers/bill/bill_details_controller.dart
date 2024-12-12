@@ -2,7 +2,7 @@ import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo_with_result.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
@@ -29,7 +29,7 @@ import '../pluto/bill_details_pluto_controller.dart';
 class BillDetailsController extends IBillController with AppValidator implements IStoreSelectionHandler {
   // Repositories
 
-  final DataSourceRepositoryWithResult<BillModel> _billsFirebaseRepo;
+  final DataSourceRepository<BillModel> _billsFirebaseRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
 

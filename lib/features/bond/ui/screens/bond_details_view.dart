@@ -31,9 +31,7 @@ class BondDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GetBuilder<BondSearchController>(
-
         tag: tag,
         builder: (_) {
           final BondModel currentBond = bondSearchController.getCurrentBond;
@@ -41,92 +39,110 @@ class BondDetailsView extends StatelessWidget {
           return GetBuilder<BondDetailsController>(
               tag: tag,
               builder: (bondDetailsController) {
-
-            return Scaffold(
-              appBar: BondDetailsAppBar(bondDetailsController: bondDetailsController, bondSearchController: bondSearchController, bondTypeModel: currentBond.payTypeGuid!),
-              body: Directionality(
-                textDirection: TextDirection.rtl,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      BondDetailsHeader(bondDetailsController: bondDetailsController),
-                      Expanded(child: GetBuilder<BondDetailsPlutoController>(builder: (bondController) {
-                        return FocusScope(
-                          autofocus: true,
-                          child: PlutoWithEdite(
-                            columns: bondController.mainTableColumns,
-                            rows: bondController.mainTableRows,
-                            onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
-                              bondController.onRowSecondaryTap(event, context);
-                            },
-                            onChanged: bondController.onMainTableStateManagerChanged,
-                            onLoaded: bondController.onMainTableLoaded,
-                            shortCut: customPlutoShortcut(const EnterAction()),
-                            evenRowColor: bondController.color,
-                          ),
-                        );
-                      })),
-
-                      GetBuilder<BondDetailsPlutoController>(builder: (bondRecordPlutoController) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              width: 350,
-                              child: Row(
-                                children: [
-                                  const SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        "المجموع",
-                                      )),
-                                  Container(
-                                      width: 120,
-                                      color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
-                                      padding: const EdgeInsets.all(5),
-                                      child: Text(bondRecordPlutoController.calcDebitTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
-                                  const SizedBox(width: 10),
-                                  Container(
-                                      width: 120,
-                                      color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
-                                      padding: const EdgeInsets.all(5),
-                                      child: Text(bondRecordPlutoController.calcCreditTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
-                                ],
+                return Scaffold(
+                  appBar: BondDetailsAppBar(
+                      bondDetailsController: bondDetailsController,
+                      bondSearchController: bondSearchController,
+                      bondTypeModel: currentBond.payTypeGuid!),
+                  body: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          BondDetailsHeader(bondDetailsController: bondDetailsController),
+                          Expanded(child: GetBuilder<BondDetailsPlutoController>(builder: (bondController) {
+                            return FocusScope(
+                              autofocus: true,
+                              child: PlutoWithEdite(
+                                columns: bondController.recordsTableColumns,
+                                rows: bondController.recordsTableRows,
+                                onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
+                                  bondController.onRowSecondaryTap(event, context);
+                                },
+                                onChanged: bondController.onMainTableStateManagerChanged,
+                                onLoaded: bondController.onMainTableLoaded,
+                                shortCut: customPlutoShortcut(const EnterAction()),
+                                evenRowColor: bondController.color,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              width: 350,
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 100, child: Text("الفرق")),
-                                  Container(
-                                      width: 250,
-                                      color: bondRecordPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
-                                      padding: const EdgeInsets.all(5),
-                                      child: Text(bondRecordPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
-                                ],
-                              ),
-                            ),
-                            const Divider(),
-                            BondDetailsButtons(bondDetailsController: bondDetailsController, bondDetailsPlutoController: bondDetailsPlutoController, bondModel: currentBond, fromBondById: fromBondById, bondSearchController: bondSearchController)
-                          ],
-                        );
-                      }),
-
-
-                      BondDetailsButtons(bondDetailsController: bondDetailsController, bondDetailsPlutoController: bondDetailsPlutoController, bondModel: currentBond, fromBondById: fromBondById, bondSearchController: bondSearchController)
-
-                    ],
+                            );
+                          })),
+                          GetBuilder<BondDetailsPlutoController>(builder: (bondRecordPlutoController) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 350,
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                          width: 100,
+                                          child: Text(
+                                            "المجموع",
+                                          )),
+                                      Container(
+                                          width: 120,
+                                          color: bondRecordPlutoController.checkIfBalancedBond()
+                                              ? Colors.green
+                                              : Colors.red,
+                                          padding: const EdgeInsets.all(5),
+                                          child: Text(bondRecordPlutoController.calcDebitTotal().toStringAsFixed(2),
+                                              style: const TextStyle(color: Colors.white, fontSize: 18))),
+                                      const SizedBox(width: 10),
+                                      Container(
+                                          width: 120,
+                                          color: bondRecordPlutoController.checkIfBalancedBond()
+                                              ? Colors.green
+                                              : Colors.red,
+                                          padding: const EdgeInsets.all(5),
+                                          child: Text(bondRecordPlutoController.calcCreditTotal().toStringAsFixed(2),
+                                              style: const TextStyle(color: Colors.white, fontSize: 18))),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                SizedBox(
+                                  width: 350,
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(width: 100, child: Text("الفرق")),
+                                      Container(
+                                          width: 250,
+                                          color: bondRecordPlutoController.checkIfBalancedBond()
+                                              ? Colors.green
+                                              : Colors.red,
+                                          padding: const EdgeInsets.all(5),
+                                          child: Text(
+                                              bondRecordPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2),
+                                              style: const TextStyle(color: Colors.white, fontSize: 18))),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(),
+                                BondDetailsButtons(
+                                    bondDetailsController: bondDetailsController,
+                                    bondDetailsPlutoController: bondDetailsPlutoController,
+                                    bondModel: currentBond,
+                                    fromBondById: fromBondById,
+                                    bondSearchController: bondSearchController)
+                              ],
+                            );
+                          }),
+                          BondDetailsButtons(
+                              bondDetailsController: bondDetailsController,
+                              bondDetailsPlutoController: bondDetailsPlutoController,
+                              bondModel: currentBond,
+                              fromBondById: fromBondById,
+                              bondSearchController: bondSearchController)
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            );
-          });
+                );
+              });
         });
   }
 }

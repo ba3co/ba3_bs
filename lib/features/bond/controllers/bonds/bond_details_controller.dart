@@ -7,26 +7,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/validators/app_validator.dart';
-import '../../../../core/services/firebase/implementations/datasource_repo_with_result.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../service/bond/Bond_service.dart';
 import 'bond_search_controller.dart';
 
-class BondDetailsController extends GetxController   with AppValidator {
-  BondDetailsController(
-      this._bondsFirebaseRepo, {
-        required this.bondDetailsPlutoController,
-        required this.bondSearchController,
-        required this.bondType
-      });
+class BondDetailsController extends GetxController with AppValidator {
+  BondDetailsController(this._bondsFirebaseRepo,
+      {required this.bondDetailsPlutoController, required this.bondSearchController, required this.bondType});
 
   // Repositories
 
-  final DataSourceRepositoryWithResult<BondModel> _bondsFirebaseRepo;
+  final DataSourceRepository<BondModel> _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
   final BondSearchController bondSearchController;
-
-
 
   // Services
   late final BondService _bondService;
@@ -46,9 +40,8 @@ class BondDetailsController extends GetxController   with AppValidator {
   BondType bondType = BondType.journalVoucher;
   bool isLoading = true;
 
-
   RxBool isBondSaved = false.obs;
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -73,16 +66,12 @@ class BondDetailsController extends GetxController   with AppValidator {
     update();
   }
 
-
-
-
-
   Future<void> deleteBond(BondModel bondModel, {bool fromBondById = false}) async {
     final result = await _bondsFirebaseRepo.delete(bondModel.payGuid!);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (success) => _bondService.handleDeleteSuccess(bondModel, bondSearchController, fromBondById),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) => _bondService.handleDeleteSuccess(bondModel, bondSearchController, fromBondById),
     );
   }
 
@@ -115,8 +104,8 @@ class BondDetailsController extends GetxController   with AppValidator {
 
     // Handle the result (success or failure)
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (bondModel) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (bondModel) {
         if (existingBondModel != null) {
           _bondService.handleUpdateSuccess(bondModel, bondSearchController);
         } else {
@@ -133,27 +122,11 @@ class BondDetailsController extends GetxController   with AppValidator {
   BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
     // Create and return the bond model
     return _bondService.createBondModel(
-      bondModel: bondModel,
-      bondType: bondType,
-      payDate: bondDate,
-      payAccountGuid: accountController.text
-    );
+        bondModel: bondModel, bondType: bondType, payDate: bondDate, payAccountGuid: accountController.text);
   }
-
-
-
-
-
-
-
-
-
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
       bondDetailsPlutoController.prepareBondMaterialsRows(bondItems.itemList);
-
-
-
 
   initBondNumberController(int? bondNumber) {
     if (bondNumber != null) {
@@ -163,55 +136,36 @@ class BondDetailsController extends GetxController   with AppValidator {
     }
   }
 
-
   void updateBondDetailsOnScreen(BondModel bond, BondDetailsPlutoController bondPlutoController) {
-
     setBondDate(bond.payDate!.toDate!);
 
     initBondNumberController(bond.payNumber);
-
-
 
     prepareBondRecords(bond.payItems, bondPlutoController);
 
     bondPlutoController.update();
   }
 
-
-
-  clearControllers(){
-
+  clearControllers() {
     accountController.clear();
     noteController.clear();
   }
-
-
 
   ///controller
   TextEditingController accountController = TextEditingController();
 
   late bool isDebitOrCredit;
 
-
-
   void setBondType(BondType bondType) {
     this.bondType = bondType;
   }
 
   void setIsDebitOrCredit() {
-    if (bondType == BondType.journalVoucher||bondType == BondType.openingEntry) {
+    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) {
       isDebitOrCredit = false;
     } else {
       isDebitOrCredit = true;
     }
     update();
   }
-
-
-
-
-
-
-
-
 }

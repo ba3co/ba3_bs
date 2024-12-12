@@ -4,12 +4,12 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../interfaces/database_with_result_base.dart';
+import '../interfaces/datasource_base.dart';
 
-class DataSourceRepositoryWithResult<T> {
-  final DatabaseWithResultBase<T> _dataSource;
+class DataSourceRepository<T> {
+  final DatasourceBase<T> _dataSource;
 
-  DataSourceRepositoryWithResult(this._dataSource);
+  DataSourceRepository(this._dataSource);
 
   Future<Either<Failure, List<T>>> getAll() async {
     try {
