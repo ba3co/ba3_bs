@@ -1,6 +1,6 @@
 import 'package:pluto_grid/pluto_grid.dart';
 
-import 'i_table_pluto_controller.dart';
+import 'i_recodes_pluto_controller.dart';
 
 abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
   /// State manager for additions and discounts.

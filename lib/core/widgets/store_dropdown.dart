@@ -30,20 +30,22 @@ class StoreDropdown extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.white,
               ),
-              child: OverlayService.showDropdown<StoreAccount>(
-                value: storeSelectionHandler.selectedStore,
-                items: StoreAccount.values,
-                onChanged: storeSelectionHandler.onSelectedStoreChanged,
-                itemLabelBuilder: (store) => store.value,
-                height: AppConstants.constHeightTextField,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black38),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                onCloseCallback: () {
-                  log('StoreAccount Dropdown Overly Closed.');
-                },
-              ),
+              child: Obx(() {
+                return OverlayService.showDropdown<StoreAccount>(
+                  value: storeSelectionHandler.selectedStore.value,
+                  items: StoreAccount.values,
+                  onChanged: storeSelectionHandler.onSelectedStoreChanged,
+                  itemLabelBuilder: (store) => store.value,
+                  height: AppConstants.constHeightTextField,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black38),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  onCloseCallback: () {
+                    log('StoreAccount Dropdown Overly Closed.');
+                  },
+                );
+              }),
             ),
           ),
         ],

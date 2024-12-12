@@ -51,86 +51,103 @@ class DraggableFloatingWindow extends StatelessWidget {
                           elevation: 8,
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
-                            width: controller.width,
-                            height: controller.height,
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                            child: controller.isMinimized
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Expanded(
-                                        child: IconButton(
-                                          icon: Icon(Icons.keyboard_arrow_up, size: .026.sh),
-                                          onPressed: controller.restoreWindowFromMinimized,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: IconButton(
-                                          icon: Icon(Icons.fullscreen, size: .026.sh),
-                                          onPressed: controller.maximizeWindowFromMinimized,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: IconButton(
-                                          icon: Icon(Icons.close, size: .026.sh),
-                                          onPressed: onClose,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Column(
-                                    children: [
-                                      InkWell(
-                                        onTap: onBringToTop,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(vertical: 10),
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFF2C2C2E),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(8.0),
-                                              topRight: Radius.circular(8.0),
+                              width: controller.width,
+                              height: controller.height,
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                              child: Column(
+                                children: [
+                                  Flexible(
+                                    child: Visibility(
+                                      visible: !controller.isMinimized,
+                                      maintainState: true,
+                                      child: Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: onBringToTop,
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 10),
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFF2C2C2E),
+                                                borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(8.0),
+                                                  topRight: Radius.circular(8.0),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  const HorizontalSpace(),
+                                                  InkWell(
+                                                    onTap: onClose,
+                                                    child: const CircleAvatar(
+                                                      backgroundColor: Color(0xFFFF605C),
+                                                      radius: 7,
+                                                      child: Icon(Icons.close, color: Colors.black, size: 12),
+                                                    ),
+                                                  ),
+                                                  const HorizontalSpace(),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      controller.minimize(targetPositionRatio);
+                                                    },
+                                                    child: const CircleAvatar(
+                                                      backgroundColor: Color(0xFFFFBD44),
+                                                      radius: 7,
+                                                      child: Icon(Icons.remove, color: Colors.black, size: 12),
+                                                    ),
+                                                  ),
+                                                  const HorizontalSpace(),
+                                                  InkWell(
+                                                    onTap: controller.maximize,
+                                                    child: const CircleAvatar(
+                                                      backgroundColor: Color(0xFF00CA4E),
+                                                      radius: 7,
+                                                      child: Icon(Icons.fullscreen_outlined,
+                                                          color: Colors.black, size: 12),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              const HorizontalSpace(),
-                                              InkWell(
-                                                onTap: onClose,
-                                                child: const CircleAvatar(
-                                                  backgroundColor: Color(0xFFFF605C),
-                                                  radius: 7,
-                                                  child: Icon(Icons.close, color: Colors.black, size: 12),
-                                                ),
-                                              ),
-                                              const HorizontalSpace(),
-                                              InkWell(
-                                                onTap: () {
-                                                  controller.minimize(targetPositionRatio);
-                                                },
-                                                child: const CircleAvatar(
-                                                  backgroundColor: Color(0xFFFFBD44),
-                                                  radius: 7,
-                                                  child: Icon(Icons.remove, color: Colors.black, size: 12),
-                                                ),
-                                              ),
-                                              const HorizontalSpace(),
-                                              InkWell(
-                                                onTap: controller.maximize,
-                                                child: const CircleAvatar(
-                                                  backgroundColor: Color(0xFF00CA4E),
-                                                  radius: 7,
-                                                  child: Icon(Icons.fullscreen_outlined, color: Colors.black, size: 12),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                          Expanded(child: floatingWindowContent),
+                                        ],
                                       ),
-                                      Expanded(child: floatingWindowContent), // This stays as it is.
-                                    ],
+                                    ),
                                   ),
-                          ),
+                                  if (controller.isMinimized)
+                                    SizedBox(
+                                      width: controller.width,
+                                      height: controller.height,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Expanded(
+                                            child: IconButton(
+                                              icon: Icon(Icons.keyboard_arrow_up, size: .026.sh),
+                                              tooltip: 'اظهار',
+                                              onPressed: controller.restoreWindowFromMinimized,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: IconButton(
+                                              icon: Icon(Icons.fullscreen, size: .026.sh),
+                                              tooltip: 'تكبير',
+                                              onPressed: controller.maximizeWindowFromMinimized,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: IconButton(
+                                              icon: Icon(Icons.close, size: .026.sh),
+                                              tooltip: 'اغلاق',
+                                              onPressed: onClose,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              )),
                         ),
                       );
                     }),

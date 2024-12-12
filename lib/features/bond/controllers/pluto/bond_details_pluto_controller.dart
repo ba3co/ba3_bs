@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/i_controllers/i_table_pluto_controller.dart';
+import 'package:ba3_bs/core/i_controllers/i_recodes_pluto_controller.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:flutter/material.dart';

@@ -1,12 +1,13 @@
 import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
 
+import '../../../../core/network/api_constants.dart';
 import '../models/bill_type_model.dart';
 
 class PatternsDataSource extends DatasourceBase<BillTypeModel> {
   PatternsDataSource({required super.databaseService});
 
   @override
-  String get path => 'bill_types'; // Collection name in Firestore
+  String get path => ApiConstants.patternsPath; // Collection name in Firestore
 
   @override
   Future<List<BillTypeModel>> fetchAll() async {

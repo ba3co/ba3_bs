@@ -52,23 +52,25 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                     Expanded(
-                      child: OverlayService.showDropdown<InvPayType>(
-                        value: billDetailsController.selectedPayType,
-                        items: InvPayType.values,
-                        itemLabelBuilder: (type) => type.label,
-                        onChanged: (selectedType) {
-                          billDetailsController.onPayTypeChanged(selectedType);
-                        },
-                        height: AppConstants.constHeightTextField,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black38),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        onCloseCallback: () {
-                          log('InvPayType Dropdown Overly Closed.');
-                        },
-                      ),
+                      child: Obx(() {
+                        return OverlayService.showDropdown<InvPayType>(
+                          value: billDetailsController.selectedPayType.value,
+                          items: InvPayType.values,
+                          itemLabelBuilder: (type) => type.label,
+                          onChanged: (selectedType) {
+                            billDetailsController.onPayTypeChanged(selectedType);
+                          },
+                          height: AppConstants.constHeightTextField,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: Colors.black38),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          onCloseCallback: () {
+                            log('InvPayType Dropdown Overly Closed.');
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),

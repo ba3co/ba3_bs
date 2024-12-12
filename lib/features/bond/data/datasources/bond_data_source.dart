@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/network/api_constants.dart';
+
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
 import '../../../../core/services/firebase/interfaces/datasource_base.dart';
 import '../models/bond_model.dart';
@@ -6,7 +8,7 @@ class BondsDataSource extends DatasourceBase<BondModel> with FirebaseSequentialN
   BondsDataSource({required super.databaseService});
 
   @override
-  String get path => 'bonds'; // Collection name in Firestore
+  String get path => ApiConstants.bondsPath; // Collection name in Firestore
 
   @override
   Future<List<BondModel>> fetchAll() async {

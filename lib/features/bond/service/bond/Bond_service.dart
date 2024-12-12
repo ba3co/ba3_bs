@@ -3,7 +3,7 @@ import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/i_controllers/i_table_pluto_controller.dart';
+import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../controllers/bonds/bond_controller.dart';
 import '../../controllers/bonds/bond_search_controller.dart';

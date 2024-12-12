@@ -3,4 +3,6 @@ class ApiConstants {
   static const String translationBaseUrl = 'https://translation.googleapis.com/language/translate/v2';
 
   static const String billsPath = 'bills';
+  static const String patternsPath = 'bill_types';
+  static const String bondsPath = 'bonds';
 }

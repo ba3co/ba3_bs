@@ -6,8 +6,6 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
-
-
 class PayItems {
   final List<PayItem> itemList;
 
@@ -20,14 +18,14 @@ class PayItems {
   }
 
   Map<String, dynamic> toJson() => {
-    'Item': itemList.map((item) => item.toJson()).toList(),
-  };
+        'Item': itemList.map((item) => item.toJson()).toList(),
+      };
 
   factory PayItems.fromBondRecords(List<PayItem> bondRecords) {
     final itemList = bondRecords.map((bondRecord) {
       return PayItem(
-        entryType:bondRecord.entryType ,
-        entryNote:bondRecord.entryNote ,
+        entryType: bondRecord.entryType,
+        entryNote: bondRecord.entryNote,
         entryDate: bondRecord.entryDate,
         entryCustomerGuid: bondRecord.entryCustomerGuid,
         entryCurrencyVal: bondRecord.entryCurrencyVal,
@@ -43,9 +41,7 @@ class PayItems {
 
     return PayItems(itemList: itemList);
   }
-
 }
-
 
 class PayItem extends PlutoAdaptable<BondType> {
   final String? entryAccountGuid;
@@ -143,34 +139,41 @@ class PayItem extends PlutoAdaptable<BondType> {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([BondType? type]) {
     return {
-      PlutoColumn(title: "رقم", field: AppConstants.entryNumber, type:  PlutoColumnType.text(),readOnly: true,renderer: (rendererContext) {
-        if(rendererContext.cell.row.cells[AppConstants.entryAccountGuid]?.value!='') {
-          return Text((rendererContext.rowIdx+1).toString());
-        }
-        else{
-          return const Text("");
-        }
-
-      },): entryNumber,
-      PlutoColumn(title: "دائن", field: AppConstants.entryCredit, type: PlutoColumnType.text(), hide: type! == BondType.paymentVoucher): entryCredit,
-      PlutoColumn(title: "مدين", field: AppConstants.entryDebit, type: PlutoColumnType.text(), hide: type == BondType.receiptVoucher): entryDebit,
-      PlutoColumn(title: "الحساب", field: AppConstants.entryAccountGuid, type:PlutoColumnType.text()): entryAccountGuid,
-      PlutoColumn(title: "البيان", field: AppConstants.entryNote, type:PlutoColumnType.text()): entryNote,
+      PlutoColumn(
+        title: "رقم",
+        field: AppConstants.entryNumber,
+        type: PlutoColumnType.text(),
+        readOnly: true,
+        renderer: (rendererContext) {
+          if (rendererContext.cell.row.cells[AppConstants.entryAccountGuid]?.value != '') {
+            return Text((rendererContext.rowIdx + 1).toString());
+          } else {
+            return const Text("");
+          }
+        },
+      ): entryNumber,
+      PlutoColumn(
+          title: "دائن",
+          field: AppConstants.entryCredit,
+          type: PlutoColumnType.text(),
+          hide: type == BondType.paymentVoucher): entryCredit,
+      PlutoColumn(
+          title: "مدين",
+          field: AppConstants.entryDebit,
+          type: PlutoColumnType.text(),
+          hide: type == BondType.receiptVoucher): entryDebit,
+      PlutoColumn(title: "الحساب", field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()):
+          entryAccountGuid,
+      PlutoColumn(title: "البيان", field: AppConstants.entryNote, type: PlutoColumnType.text()): entryNote,
     };
   }
 
-
-
-
-
-  factory PayItem. fromJsonPluto({required Map<String, dynamic> row}) {
-
+  factory PayItem.fromJsonPluto({required Map<String, dynamic> row}) {
     return PayItem(
-
       entryAccountGuid: row[AppConstants.entryAccountGuid],
-      entryCredit: double.tryParse(row[AppConstants.entryCredit].toString())??0,
-      entryDebit:  double.tryParse(row[AppConstants.entryDebit].toString())??0,
-      entryNumber:int.tryParse( row[AppConstants.entryNumber].toString())??0,
+      entryCredit: double.tryParse(row[AppConstants.entryCredit].toString()) ?? 0,
+      entryDebit: double.tryParse(row[AppConstants.entryDebit].toString()) ?? 0,
+      entryNumber: int.tryParse(row[AppConstants.entryNumber].toString()) ?? 0,
       entryClass: '',
       entryCostGuid: "00000000-0000-0000-0000-000000000000",
       entryCurrencyGuid: "00000000-0000-0000-0000-000000000000",

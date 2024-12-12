@@ -7,7 +7,6 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
@@ -44,9 +43,6 @@ import '../services/translation/interfaces/i_api_client.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
-    // Initialize Firestore instance
-    var firestore = FirebaseFirestore.instance;
-
     // Initialize RemoteApiService instance
     IDatabaseService<Map<String, dynamic>> fireStoreService = FireStoreService();
 

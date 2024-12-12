@@ -40,13 +40,13 @@ class PatternController extends GetxController with AppValidator implements ISto
   final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
 
   @override
-  StoreAccount selectedStore = StoreAccount.main;
+  Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
 
   @override
   void onSelectedStoreChanged(StoreAccount? newStore) {
     if (newStore != null) {
-      selectedStore = newStore;
-      update();
+      selectedStore.value = newStore;
+      //  update();
     }
   }
 
@@ -178,7 +178,7 @@ class PatternController extends GetxController with AppValidator implements ISto
   BillTypeModel _createBillTypeModel() {
     Map<Account, AccountModel> accounts = Get.find<AccountsController>().selectedAccounts;
 
-    accounts[BillAccounts.store] = selectedStore.toStoreAccountModel;
+    accounts[BillAccounts.store] = selectedStore.value.toStoreAccountModel;
 
     return BillTypeModel(
       shortName: shortNameController.text,

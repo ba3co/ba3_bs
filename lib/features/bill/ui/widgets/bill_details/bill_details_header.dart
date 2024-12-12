@@ -33,10 +33,12 @@ class BillDetailsHeader extends StatelessWidget {
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
                 label: 'تاريخ الفاتورة',
-                child: DatePicker(
-                  initDate: billDetailsController.billDate,
-                  onDateSelected: billDetailsController.setBillDate,
-                ),
+                child: Obx(() {
+                  return DatePicker(
+                    initDate: billDetailsController.billDate.value,
+                    onDateSelected: billDetailsController.setBillDate,
+                  );
+                }),
               ),
               secondItem: StoreDropdown(
                 storeSelectionHandler: billDetailsController,

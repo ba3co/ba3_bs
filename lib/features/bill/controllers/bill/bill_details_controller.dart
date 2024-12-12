@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -55,9 +57,12 @@ class BillDetailsController extends IBillController with AppValidator implements
   final TextEditingController invReturnDateController = TextEditingController();
   final TextEditingController invReturnCodeController = TextEditingController();
 
-  late String billDate;
   AccountModel? selectedCustomerAccount;
-  InvPayType selectedPayType = InvPayType.cash;
+
+  RxString billDate = DateTime.now().toString().split(" ")[0].obs;
+
+  Rx<InvPayType> selectedPayType = InvPayType.cash.obs;
+
   BillType billType = BillType.sales;
   bool isLoading = true;
 
@@ -70,13 +75,13 @@ class BillDetailsController extends IBillController with AppValidator implements
       selectedAdditionsDiscountAccounts[key] = value;
 
   @override
-  StoreAccount selectedStore = StoreAccount.main;
+  Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
 
   @override
   void onSelectedStoreChanged(StoreAccount? newStore) {
     if (newStore != null) {
-      selectedStore = newStore;
-      update();
+      selectedStore.value = newStore;
+      //    update();
     }
   }
 
@@ -91,8 +96,6 @@ class BillDetailsController extends IBillController with AppValidator implements
   void onInit() {
     super.onInit();
     _initializeServices();
-
-    setBillDate(DateTime.now());
   }
 
   // Initializer
@@ -109,20 +112,21 @@ class BillDetailsController extends IBillController with AppValidator implements
   void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
   void setBillDate(DateTime newDate) {
-    billDate = newDate.toString().split(" ")[0];
-    update();
+    billDate.value = newDate.toString().split(" ")[0];
+    //   update();
   }
 
   void onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
-      selectedPayType = payType;
-      update();
+      selectedPayType.value = payType;
+      // update();
+      log('onPayTypeChanged');
     }
   }
 
   Future<void> printBill({required int billNumber, required List<InvoiceRecordModel> invRecords}) async {
     await Get.find<PrintingController>()
-        .startPrinting(invRecords: invRecords, billNumber: billNumber, invDate: billDate);
+        .startPrinting(invRecords: invRecords, billNumber: billNumber, invDate: billDate.value);
   }
 
   void createBond(BillTypeModel billTypeModel) {
@@ -193,17 +197,17 @@ class BillDetailsController extends IBillController with AppValidator implements
       return null;
     }
     final updatedBillTypeModel = _accountHandler.updateBillTypeAccounts(
-            billTypeModel, selectedAdditionsDiscountAccounts, selectedCustomerAccount, selectedStore) ??
+            billTypeModel, selectedAdditionsDiscountAccounts, selectedCustomerAccount, selectedStore.value) ??
         billTypeModel;
 
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
       billTypeModel: updatedBillTypeModel,
-      billDate: billDate,
+      billDate: billDate.value,
       billCustomerId: selectedCustomerAccount!.id!,
       billSellerId: sellerController.selectedSellerAccount!.costGuid!,
-      billPayType: selectedPayType.index,
+      billPayType: selectedPayType.value.index,
     );
   }
 

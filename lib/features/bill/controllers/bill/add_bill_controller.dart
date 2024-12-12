@@ -68,12 +68,12 @@ class AddBillController extends IBillController with AppValidator implements ISt
       selectedAdditionsDiscountAccounts[key] = value;
 
   @override
-  StoreAccount selectedStore = StoreAccount.main;
+  Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
 
   @override
   void onSelectedStoreChanged(StoreAccount? newStore) {
     if (newStore != null) {
-      selectedStore = newStore;
+      selectedStore.value = newStore;
       update();
     }
   }
@@ -296,7 +296,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
     _updateCachesAccount(selectedCustomerAccount, updatedAccounts);
 
-    _updateStoreAccount(selectedStore, updatedAccounts);
+    _updateStoreAccount(selectedStore.value, updatedAccounts);
 
     return billTypeModel.copyWith(accounts: updatedAccounts);
   }

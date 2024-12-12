@@ -14,11 +14,13 @@ import '../../../../core/services/json_file_operations/implementations/export/js
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
+import '../../services/bill/bill_details_screen_controllers_initialization_mixin.dart';
 import '../../services/bill/bill_utils.dart';
 import '../pluto/add_bill_pluto_controller.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends GetxController with FloatingWindowMixin {
+class AllBillsController extends GetxController
+    with FloatingWindowMixin, BillDetailsScreenControllersInitializationMixin {
   // Repositories
   final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final DataSourceRepository<BillModel> _billsFirebaseRepo;
@@ -101,7 +103,8 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
 
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) =>
+      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openBillDetailsById(String billId) {
     final BillModel billModel = getBillById(billId);
@@ -133,18 +136,12 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
-    final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
-
-    final controllers = _initializeControllers(controllerTag);
-
     final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _openBillDetailsFloatingWindow(
       context: context,
       modifiedBills: billsByCategory,
       lastBillModel: lastBillModel,
-      controllerTag: controllerTag,
-      controllers: controllers,
     );
   }
 
@@ -153,82 +150,63 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
     required BuildContext context,
     required List<BillModel> modifiedBills,
     required BillModel lastBillModel,
-    required String controllerTag,
-    required ({BillDetailsController billDetailsController, BillDetailsPlutoController billDetailsPlutoController, BillSearchController billSearchController}) controllers,
   }) {
-    controllers.billDetailsController.updateBillDetailsOnScreen(lastBillModel, controllers.billDetailsPlutoController);
+    final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
+
+    final Map<String, GetxController> controllers = initializeControllers(
+      params: {
+        'tag': controllerTag,
+        'billsFirebaseRepo': _billsFirebaseRepo,
+        'billDetailsPlutoController': BillDetailsPlutoController(),
+        'billSearchController': BillSearchController(),
+      },
+    );
+
+    final billDetailsController = controllers['billDetailsController'] as BillDetailsController;
+    final billDetailsPlutoController = controllers['billDetailsPlutoController'] as BillDetailsPlutoController;
+    final billSearchController = controllers['billSearchController'] as BillSearchController;
+
+    billDetailsController.updateBillDetailsOnScreen(lastBillModel, billDetailsPlutoController);
 
     initializeBillSearch(
       currentBill: lastBillModel,
       allBills: modifiedBills,
-      billSearchController: controllers.billSearchController,
-      billDetailsController: controllers.billDetailsController,
-      billDetailsPlutoController: controllers.billDetailsPlutoController,
+      billSearchController: billSearchController,
+      billDetailsController: billDetailsController,
+      billDetailsPlutoController: billDetailsPlutoController,
     );
 
     launchFloatingWindow(
       context: context,
-      onCloseCallback: () {
-        Get.delete<BillDetailsController>(tag: controllerTag, force: true);
-        Get.delete<BillDetailsPlutoController>(tag: controllerTag, force: true);
-        Get.delete<BillSearchController>(tag: controllerTag, force: true);
-      },
       floatingScreen: BillDetailsScreen(
         fromBillById: false,
-        billDetailsController: controllers.billDetailsController,
-        billDetailsPlutoController: controllers.billDetailsPlutoController,
-        billSearchController: controllers.billSearchController,
+        billDetailsController: billDetailsController,
+        billDetailsPlutoController: billDetailsPlutoController,
+        billSearchController: billSearchController,
         tag: controllerTag,
       ),
     );
   }
 
-  // Initializes all necessary controllers for bill details handling.
-  ({BillDetailsController billDetailsController, BillDetailsPlutoController billDetailsPlutoController, BillSearchController billSearchController}) _initializeControllers(String tag) {
-    final billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
-    final billSearchController = _initializeBillSearchController(tag);
-    final billDetailsController = _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
-
-    return (
-      billDetailsController: billDetailsController,
-      billDetailsPlutoController: billDetailsPlutoController,
-      billSearchController: billSearchController,
-    );
-  }
-
-  BillDetailsController _initializeBillDetailsController(
-    String tag,
-    BillDetailsPlutoController billDetailsPlutoController,
-    BillSearchController billSearchController,
-  ) =>
-      Get.put<BillDetailsController>(
-        BillDetailsController(_billsFirebaseRepo, billDetailsPlutoController: billDetailsPlutoController, billSearchController: billSearchController),
-        tag: tag,
-      );
-
-  BillDetailsPlutoController _initializeBillDetailsPlutoController(String tag) => Get.put<BillDetailsPlutoController>(BillDetailsPlutoController(), tag: tag);
-
-  BillSearchController _initializeBillSearchController(String tag) => Get.put<BillSearchController>(BillSearchController(), tag: tag);
-
   void _navigateToAddBill(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) {
     Get.find<BillDetailsController>().navigateToAddBillScreen(billTypeModel, addBillPlutoController);
   }
 
-  void _navigateToBillDetailsWithModel(
-    BillModel billModel,
-    List<BillModel> allBills, {
-    bool fromBillById = false,
-  }) {
-    final tag = 'AddBillController_${UniqueKey().toString()}';
+  void _navigateToBillDetailsWithModel(BillModel billModel, List<BillModel> allBills, {bool fromBillById = false}) {
+    final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
-    // Initialize the BillDetailsPlutoController
-    BillDetailsPlutoController billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
+    final Map<String, dynamic> controllers = initializeControllers(
+      params: {
+        'tag': controllerTag,
+        'billsFirebaseRepo': _billsFirebaseRepo,
+        'billDetailsPlutoController': BillDetailsPlutoController(),
+        'billSearchController': BillSearchController(),
+      },
+    );
 
-    // Initialize the BillSearchController
-    BillSearchController billSearchController = _initializeBillSearchController(tag);
-
-    // Initialize the BillDetailsController
-    BillDetailsController billDetailsController = _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
+    final billDetailsController = controllers['billDetailsController'] as BillDetailsController;
+    final billDetailsPlutoController = controllers['billDetailsPlutoController'] as BillDetailsPlutoController;
+    final billSearchController = controllers['billSearchController'] as BillSearchController;
 
     billDetailsController.updateBillDetailsOnScreen(billModel, billDetailsPlutoController);
 
@@ -245,7 +223,7 @@ class AllBillsController extends GetxController with FloatingWindowMixin {
       'billDetailsController': billDetailsController,
       'billDetailsPlutoController': billDetailsPlutoController,
       'billSearchController': billSearchController,
-      'tag': tag,
+      'tag': controllerTag,
     });
   }
 

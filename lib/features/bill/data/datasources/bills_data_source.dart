@@ -1,4 +1,5 @@
 // BillsDataSource Implementation
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
 
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
@@ -8,7 +9,7 @@ class BillsDataSource extends DatasourceBase<BillModel> with FirebaseSequentialN
   BillsDataSource({required super.databaseService});
 
   @override
-  String get path => 'bills'; // Collection name in Firestore
+  String get path => ApiConstants.billsPath; // Collection name in Firestore
 
   @override
   Future<List<BillModel>> fetchAll() async {
