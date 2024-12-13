@@ -50,6 +50,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   void setAccount(AccountModel setAccount) {
     selectedAccount = setAccount;
+bondDetailsPlutoController.setAccountGuid=setAccount.id;
   }
 
   @override
