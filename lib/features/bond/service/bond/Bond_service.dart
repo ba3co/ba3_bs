@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
 import '../../../../core/utils/app_ui_utils.dart';
-import '../../controllers/bonds/bond_controller.dart';
+import '../../controllers/bonds/all_bond_controller.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
 import '../../data/models/bond_model.dart';
 
@@ -58,7 +58,6 @@ class BondService {
   }
 
   bool validateAccount(AccountModel? customerAccount) {
-
     if (customerAccount == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!');
       return false;

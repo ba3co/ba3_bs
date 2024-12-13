@@ -11,6 +11,7 @@ class BillSearchController extends GetxController {
   late List<BillModel> bills;
   late BillModel currentBill;
   late int currentBillIndex;
+
   late BillDetailsController billDetailsController;
   late BillDetailsPlutoController billDetailsPlutoController;
 
@@ -22,12 +23,14 @@ class BillSearchController extends GetxController {
     required BillDetailsPlutoController billDetailsPlutoController,
   }) {
     bills = billsByCategory;
+
     currentBillIndex = bills.indexOf(bill);
     currentBill = bills[currentBillIndex];
 
     this.billDetailsController = billDetailsController;
     this.billDetailsPlutoController = billDetailsPlutoController;
-    _setCurrentBill(currentBillIndex );
+
+    _setCurrentBill(currentBillIndex);
 
     log('bills length ${bills.length}');
     log('currentBillIndex $currentBillIndex');

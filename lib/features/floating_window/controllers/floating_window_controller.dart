@@ -168,6 +168,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
       {required BuildContext context,
       required Widget floatingScreen,
       required Offset targetPositionRatio,
+      String? minimizedTitle,
       VoidCallback? onCloseCallback}) {
     final overlay = Overlay.of(context);
 
@@ -177,6 +178,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
       floatingScreen: floatingScreen,
       targetPositionRatio: targetPositionRatio,
       onCloseCallback: onCloseCallback,
+      minimizedTitle: minimizedTitle,
     );
   }
 

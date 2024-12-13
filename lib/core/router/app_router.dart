@@ -8,6 +8,7 @@ import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:get/get.dart';
 
 import '../../features/bill/ui/screens/bill_details_screen.dart';
+import '../../features/bond/ui/screens/bond_details_screen.dart';
 import '../../features/login/ui/screens/login_screen.dart';
 import '../../features/patterns/ui/screens/all_pattern_page.dart';
 import '../bindings/middlewares.dart';
@@ -43,6 +44,21 @@ List<GetPage<dynamic>>? appRouter = [
           tag: arguments['tag'],
         );
       }),
+
+  GetPage(
+    name: AppRoutes.bondDetailsScreen,
+    page: () {
+      final Map<String, dynamic> arguments = Get.arguments as Map<String, dynamic>;
+      return BondDetailsScreen(
+        fromBondById: arguments['fromBondById'],
+        bondDetailsController: arguments['bondDetailsController'],
+        bondDetailsPlutoController: arguments['bondDetailsPlutoController'],
+        bondSearchController: arguments['bondSearchController'],
+        tag: arguments['tag'],
+      );
+    },
+  ),
+
   // GetPage(
   //   name: AppRoutes.addBillScreen,
   //   page: () {

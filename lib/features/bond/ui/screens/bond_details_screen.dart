@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_app_bar.dart';
@@ -13,8 +12,8 @@ import 'package:get/get.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
 import '../../controllers/pluto/bond_details_pluto_controller.dart';
 
-class BondDetailsView extends StatelessWidget {
-  const BondDetailsView({
+class BondDetailsScreen extends StatelessWidget {
+  const BondDetailsScreen({
     super.key,
     required this.fromBondById,
     required this.bondDetailsController,
@@ -40,7 +39,10 @@ class BondDetailsView extends StatelessWidget {
               tag: tag,
               builder: (_) {
                 return Scaffold(
-                  appBar: BondDetailsAppBar(bondDetailsController: bondDetailsController, bondSearchController: bondSearchController, bondTypeModel: BondType.byTypeGuide(currentBond.payTypeGuid!)),
+                  appBar: BondDetailsAppBar(
+                      bondDetailsController: bondDetailsController,
+                      bondSearchController: bondSearchController,
+                      bondTypeModel: BondType.byTypeGuide(currentBond.payTypeGuid!)),
                   body: Directionality(
                     textDirection: TextDirection.rtl,
                     child: Padding(

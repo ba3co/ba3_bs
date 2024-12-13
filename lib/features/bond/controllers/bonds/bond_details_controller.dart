@@ -14,7 +14,12 @@ import '../../service/bond/Bond_service.dart';
 import 'bond_search_controller.dart';
 
 class BondDetailsController extends GetxController with AppValidator {
-  BondDetailsController(this._bondsFirebaseRepo, {required this.bondDetailsPlutoController, required this.bondSearchController, required this.bondType});
+  BondDetailsController(
+    this._bondsFirebaseRepo, {
+    required this.bondDetailsPlutoController,
+    required this.bondSearchController,
+    required this.bondType,
+  });
 
   // Repositories
 
@@ -126,20 +131,27 @@ class BondDetailsController extends GetxController with AppValidator {
   updateIsBondSaved(bool newValue) {
     isBondSaved.value = newValue;
   }
-  AccountModel? selectedCustomerAccount;
-  BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
 
+  AccountModel? selectedCustomerAccount;
+
+  BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
     // Validate customer accounts
-   if(bondSearchController.bondDetailsController.isDebitOrCredit) {
+    if (bondSearchController.bondDetailsController.isDebitOrCredit) {
       if (!_bondService.validateAccount(selectedCustomerAccount)) {
         return null;
       }
     }
     // Create and return the bond model
-    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: accountController.text, note: noteController.text);
+    return _bondService.createBondModel(
+        bondModel: bondModel,
+        bondType: bondType,
+        payDate: bondDate.value,
+        payAccountGuid: accountController.text,
+        note: noteController.text);
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
+  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
+      bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
     if (bondNumber != null) {

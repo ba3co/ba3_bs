@@ -1,14 +1,12 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/features/bond/service/bond/bond_details_screen_controllers_initialization_mixin.dart';
-import 'package:ba3_bs/features/bond/ui/screens/bond_details_view.dart';
+import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
+import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/helper/mixin/floating_window_mixin.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
-import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bond_model.dart';
@@ -17,7 +15,7 @@ import '../pluto/bond_details_pluto_controller.dart';
 import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
-class AllBondsController extends GetxController with FloatingWindowMixin, BondDetailsScreenControllersInitializationMixin {
+class AllBondsController extends FloatingBondDetailsLauncher {
   final DataSourceRepository<BondModel> _bondsFirebaseRepo;
 
   late bool isDebitOrCredit;
@@ -85,7 +83,7 @@ class AllBondsController extends GetxController with FloatingWindowMixin, BondDe
   }) {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BondController');
 
-    final Map<String, GetxController> controllers = initializeControllers(
+    final Map<String, GetxController> controllers = setupControllers(
       params: {
         'tag': controllerTag,
         'bondType': bondType,
@@ -109,7 +107,8 @@ class AllBondsController extends GetxController with FloatingWindowMixin, BondDe
 
     launchFloatingWindow(
       context: context,
-      floatingScreen: BondDetailsView(
+      minimizedTitle: BondType.byTypeGuide(lastBondModel.payTypeGuid!).value,
+      floatingScreen: BondDetailsScreen(
         fromBondById: false,
         bondDetailsController: bondDetailsController,
         bondDetailsPlutoController: bondDetailsPlutoController,
