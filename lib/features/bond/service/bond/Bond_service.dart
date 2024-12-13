@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:get/get.dart';
@@ -54,5 +55,14 @@ class BondService {
     AppUIUtils.onSuccess('تم تعديل السند بنجاح!');
 
     bondSearchController.updateBond(bondModel);
+  }
+
+  bool validateAccount(AccountModel? customerAccount) {
+
+    if (customerAccount == null) {
+      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!');
+      return false;
+    }
+    return true;
   }
 }

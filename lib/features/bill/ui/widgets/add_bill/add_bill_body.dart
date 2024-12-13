@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
 import '../../../../../core/widgets/get_products_by_enter_action.dart';
@@ -67,7 +68,8 @@ class AddBillBody extends StatelessWidget {
                   onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
                   onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
                   shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                      plutoController: addBillPlutoController, billController: addBillController, context: context)),
+                      plutoController: addBillPlutoController,                    textFieldName: AppConstants.id,
+                       context: context)),
                 ),
               );
             }),

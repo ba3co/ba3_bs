@@ -10,7 +10,7 @@ import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../data/models/pay_item_model.dart';
 
-class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
+class BondDetailsPlutoController extends IRecodesPlutoController<PayItem>  {
   // Columns and rows
   late List<PlutoColumn> recordsTableColumns = PayItem().toPlutoGridFormat(bondType).keys.toList();
 
@@ -72,6 +72,9 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   double calcCreditTotal() {
     double total = 0;
+    if(bondType == BondType.paymentVoucher){
+      return calcDebitTotal();
+    }
 
     for (var element in recordsTableStateManager.rows) {
       if (Get.find<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
@@ -84,7 +87,9 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   double calcDebitTotal() {
     double total = 0;
-
+    if(bondType == BondType.receiptVoucher){
+      return calcCreditTotal();
+    }
     for (var element in recordsTableStateManager.rows) {
       if (Get.find<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
         total += double.tryParse(element.toJson()[AppConstants.entryDebit] ?? "") ?? 0;

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -68,7 +69,7 @@ class BillDetailsBody extends StatelessWidget {
                   onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
                   shortCut: customPlutoShortcut(GetAccountsByEnterAction(
                     plutoController: billDetailsPlutoController,
-                    billController: billDetailsController,
+                    textFieldName: AppConstants.id,
                     context: context,
                   )),
                 ),

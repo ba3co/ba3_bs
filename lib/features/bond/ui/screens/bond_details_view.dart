@@ -1,9 +1,7 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/widgets/app_spacer.dart';
-import 'package:ba3_bs/core/widgets/pluto_with_edite.dart';
+
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
-import 'package:ba3_bs/features/bond/service/EnterActionShortCut.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_app_bar.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_body.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_buttons.dart';
@@ -11,9 +9,7 @@ import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_calcul
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_header.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/widgets/pluto_short_cut.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
 import '../../controllers/pluto/bond_details_pluto_controller.dart';
 

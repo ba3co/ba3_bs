@@ -81,7 +81,6 @@ class BillDetailsController extends IBillController with AppValidator implements
   void onSelectedStoreChanged(StoreAccount? newStore) {
     if (newStore != null) {
       selectedStore.value = newStore;
-      //    update();
     }
   }
 

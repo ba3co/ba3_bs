@@ -16,8 +16,7 @@ class AppUIUtils {
     } else if (isSuccess) {
       color = Colors.green;
     }
-    Fluttertoast.showToast(
-        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String getDateFromString(String input) {
@@ -48,7 +47,7 @@ class AppUIUtils {
     }
   }
 
- static void showExportSuccessDialog(String filePath,String successMessage,String title) {
+  static void showExportSuccessDialog(String filePath, String successMessage, String title) {
     AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!');
     Get.defaultDialog(
       title: 'تم تصدير الملف إلى:',
@@ -147,11 +146,40 @@ class AppUIUtils {
             )),
       );
 
-  static showSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
+  static showErrorSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
     // Close any existing SnackBar
     Get.closeCurrentSnackbar();
     // Show the new SnackBar
-    Get.snackbar(title ?? _getTitle(status), message);
+    Get.snackbar(
+      title ?? _getTitle(status),
+      message,
+      backgroundColor: const Color.fromARGB(50, 255, 0, 0),
+      icon: const Icon(
+        Icons.error_outline_outlined,
+        color: Colors.white,
+      ),
+      barBlur: 50,
+      colorText: Colors.white,
+      // overlayBlur: 2,
+      // overlayColor: const Color.fromARGB(10, 255, 0, 0),
+    );
+  }
+
+  static showSuccessSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
+    // Close any existing SnackBar
+    Get.closeCurrentSnackbar();
+    // Show the new SnackBar
+    Get.snackbar(
+      title ?? _getTitle(status),
+      message,
+      backgroundColor: const Color.fromARGB(50, 0, 255, 0),
+      icon: const Icon(
+        Icons.check,
+        color: Colors.white,
+      ),
+      barBlur: 50,
+      colorText: Colors.white,
+    );
   }
 
   static String _getTitle(NotificationStatus status) {
@@ -165,7 +193,9 @@ class AppUIUtils {
     }
   }
 
-  static onFailure(String message) => showSnackBar(message: message);
+  static onFailure(String message) => showErrorSnackBar(
+        message: message,
+      );
 
-  static onSuccess(String message) => showSnackBar(message: message, status: NotificationStatus.success);
+  static onSuccess(String message) => showSuccessSnackBar(message: message);
 }

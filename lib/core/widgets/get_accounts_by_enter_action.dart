@@ -12,16 +12,17 @@ import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/floating_window/services/overlay_service.dart';
 import '../constants/app_constants.dart';
 import '../i_controllers/i_bill_controller.dart';
+import '../i_controllers/i_recodes_pluto_controller.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   const GetAccountsByEnterAction({
     required this.plutoController,
-    required this.billController,
+    required this.textFieldName,
     required this.context,
   });
 
-  final IPlutoController plutoController;
-  final IBillController billController;
+  final IRecodesPlutoController plutoController;
+  final String textFieldName;
   final BuildContext context;
 
   @override
@@ -29,7 +30,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getAccounts(stateManager, plutoController, billController);
+    await getAccounts(stateManager, plutoController,textFieldName);
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
         row: stateManager.currentRow,
@@ -73,11 +74,12 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   /// Handles account selection and updates the grid cell value.
   Future<void> getAccounts(
     PlutoGridStateManager stateManager,
-    IPlutoController plutoController,
-    IBillController billController,
+      IRecodesPlutoController plutoController,
+      String textFieldName,
+
   ) async {
     final columnField = stateManager.currentColumn?.field;
-    if (columnField != AppConstants.id) return;
+    if (columnField != textFieldName) return;
 
     final accountsController = Get.find<AccountsController>();
     final query = stateManager.currentCell?.value ?? '';
@@ -108,7 +110,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   void _showSearchDialog({
     required List<AccountModel> searchedAccounts,
     required PlutoGridStateManager stateManager,
-    required IPlutoController controller,
+    required IRecodesPlutoController controller,
     required String columnField,
   }) {
     OverlayService.showDialog(
@@ -131,7 +133,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   void updateWithSelectedAccount(
     AccountModel? accountModel,
     PlutoGridStateManager stateManager,
-    IPlutoController plutoController,
+      IRecodesPlutoController plutoController,
     String columnField,
   ) {
     if (accountModel != null) {
@@ -144,16 +146,6 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     plutoController.update();
   }
 
-  /// Updates the selected additions or discounts account based on the column field.
-  // void _updateSelectedAccount(PlutoRow? currentRow, AccountModel accountModel, IBillController billController) {
-  //   final Key? cellAccountKey = currentRow?.cells[AppConstants.id]?.key;
-  //
-  //   if (cellAccountKey == const Key(AppConstants.discountAccountKey)) {
-  //     billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.discounts, accountModel);
-  //   } else {
-  //     billController.updateSelectedAdditionsDiscountAccounts(BillAccounts.additions, accountModel);
-  //   }
-  // }
 
   /// Updates the value of the current cell.
   void _updateCellValue(PlutoGridStateManager stateManager, String? columnField, String? newValue) {

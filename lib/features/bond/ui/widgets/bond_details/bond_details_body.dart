@@ -1,14 +1,14 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
-import '../../../../../core/widgets/app_spacer.dart';
+import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
 import '../../../../../core/widgets/pluto_short_cut.dart';
 import '../../../../../core/widgets/pluto_with_edite.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/pluto/bond_details_pluto_controller.dart';
-import '../../../service/EnterActionShortCut.dart';
 
 class BondDetailsBody extends StatelessWidget {
   const BondDetailsBody({super.key, required this.bondTypeModel, required this.bondDetailsController, required this.bondDetailsPlutoController, required this.tag});
@@ -34,7 +34,7 @@ class BondDetailsBody extends StatelessWidget {
               },
               onChanged: bondDetailsPlutoController.onMainTableStateManagerChanged,
               onLoaded: bondDetailsPlutoController.onMainTableLoaded,
-              shortCut: customPlutoShortcut(EnterAction(bondDetailsPlutoController, context)),
+              shortCut: customPlutoShortcut(GetAccountsByEnterAction(plutoController:  bondDetailsPlutoController,context:  context,textFieldName: AppConstants.entryAccountGuid)),
               evenRowColor: bondDetailsPlutoController.color,
             ),
           );

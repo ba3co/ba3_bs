@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../accounts/data/models/account_model.dart';
 import '../../service/bond/Bond_service.dart';
 import 'bond_search_controller.dart';
 
@@ -16,8 +17,6 @@ class BondDetailsController extends GetxController with AppValidator {
   BondDetailsController(this._bondsFirebaseRepo, {required this.bondDetailsPlutoController, required this.bondSearchController, required this.bondType});
 
   // Repositories
-
-
 
   final DataSourceRepository<BondModel> _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
@@ -30,7 +29,7 @@ class BondDetailsController extends GetxController with AppValidator {
   final TextEditingController bondNumberController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
 
-  late String bondDate;
+  RxString bondDate = DateTime.now().toString().split(" ")[0].obs;
   bool isLoading = true;
   RxBool isBondSaved = false.obs;
 
@@ -64,7 +63,7 @@ class BondDetailsController extends GetxController with AppValidator {
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   void setBondDate(DateTime newDate) {
-    bondDate = newDate.toString().split(" ")[0];
+    bondDate.value = newDate.toString().split(" ")[0];
     update();
   }
 
@@ -86,23 +85,28 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> _saveOrUpdateBond({required BondType bondType, BondModel? existingBondModel}) async {
-
     // Validate the form first
     if (!validateForm()) return;
 
- if(!bondDetailsPlutoController.checkIfBalancedBond())return ;
+    if (!bondDetailsPlutoController.checkIfBalancedBond()) {
+      AppUIUtils.onFailure('يجب موازنة السند من فضلك!');
+      return;
+    }
 
     // Create the bond model from the provided data
     final updatedBondModel = _createBondModelFromBondData(bondType, existingBondModel);
 
     // Handle null bond model
     if (updatedBondModel == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
+      AppUIUtils.onFailure('من فضلك يرجى اضافة الحساب!');
       return;
     }
 
     // Ensure there are bond items
-    if (updatedBondModel.payItems.itemList.isEmpty) return;
+    if (updatedBondModel.payItems.itemList.isEmpty) {
+      AppUIUtils.onFailure('من فضلك يرجى اضافة حقول للسند');
+      return;
+    }
     // Save the bond to Firestore
     final result = await _bondsFirebaseRepo.save(updatedBondModel);
 
@@ -122,17 +126,22 @@ class BondDetailsController extends GetxController with AppValidator {
   updateIsBondSaved(bool newValue) {
     isBondSaved.value = newValue;
   }
-
+  AccountModel? selectedCustomerAccount;
   BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
 
+    // Validate customer accounts
+   if(bondSearchController.bondDetailsController.isDebitOrCredit) {
+      if (!_bondService.validateAccount(selectedCustomerAccount)) {
+        return null;
+      }
+    }
     // Create and return the bond model
-    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate, payAccountGuid: accountController.text,note: noteController.text);
+    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: accountController.text, note: noteController.text);
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
-
     if (bondNumber != null) {
       bondNumberController.text = bondNumber.toString();
     } else {

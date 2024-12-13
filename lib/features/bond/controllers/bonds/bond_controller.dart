@@ -17,13 +17,15 @@ import '../pluto/bond_details_pluto_controller.dart';
 import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
-class AllBondsController extends GetxController with FloatingWindowMixin,BondDetailsScreenControllersInitializationMixin {
+class AllBondsController extends GetxController with FloatingWindowMixin, BondDetailsScreenControllersInitializationMixin {
   final DataSourceRepository<BondModel> _bondsFirebaseRepo;
 
   late bool isDebitOrCredit;
   List<BondModel> bonds = [];
   bool isLoading = true;
+
   AllBondsController(this._bondsFirebaseRepo);
+
   // Services
   late final BondUtils _bondUtils;
 
@@ -31,7 +33,7 @@ class AllBondsController extends GetxController with FloatingWindowMixin,BondDet
   void _initializeServices() {
     _bondUtils = BondUtils();
   }
-  
+
   @override
   void onInit() {
     super.onInit();
@@ -47,18 +49,15 @@ class AllBondsController extends GetxController with FloatingWindowMixin,BondDet
     final result = await _bondsFirebaseRepo.getAll();
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedBonds) => bonds.assignAll(fetchedBonds),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBonds) => bonds.assignAll(fetchedBonds),
     );
 
     isLoading = false;
     update();
   }
 
-  List<BondModel> getBondsByType(String bondTypeId) =>
-      bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
-
-
+  List<BondModel> getBondsByType(String bondTypeId) => bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel) async {
     await fetchAllBonds();
@@ -69,15 +68,14 @@ class AllBondsController extends GetxController with FloatingWindowMixin,BondDet
 
     final BondModel lastBondModel = _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
 
-
     _openBondDetailsFloatingWindow(
       context: context,
       modifiedBonds: bondsByCategory,
       lastBondModel: lastBondModel,
       bondType: bondTypeModel,
-
     );
   }
+
   // Opens the 'Bond Details' floating window.
   void _openBondDetailsFloatingWindow({
     required BuildContext context,
@@ -90,18 +88,16 @@ class AllBondsController extends GetxController with FloatingWindowMixin,BondDet
     final Map<String, GetxController> controllers = initializeControllers(
       params: {
         'tag': controllerTag,
-        'bondType':bondType,
+        'bondType': bondType,
         'bondsFirebaseRepo': _bondsFirebaseRepo,
         'bondDetailsPlutoController': BondDetailsPlutoController(bondType),
         'bondSearchController': BondSearchController(),
-        'lastBondModel':lastBondModel
       },
     );
 
     final bondDetailsController = controllers['bondDetailsController'] as BondDetailsController;
     final bondDetailsPlutoController = controllers['bondDetailsPlutoController'] as BondDetailsPlutoController;
     final bondSearchController = controllers['bondSearchController'] as BondSearchController;
-
 
     initializeBondSearch(
       currentBond: lastBondModel,
@@ -122,6 +118,7 @@ class AllBondsController extends GetxController with FloatingWindowMixin,BondDet
       ),
     );
   }
+
   void initializeBondSearch({
     required BondModel currentBond,
     required List<BondModel> allBonds,
@@ -136,7 +133,7 @@ class AllBondsController extends GetxController with FloatingWindowMixin,BondDet
       bondDetailsPlutoController: bondDetailsPlutoController,
     );
   }
-} 
+}
 
 /*
 * 

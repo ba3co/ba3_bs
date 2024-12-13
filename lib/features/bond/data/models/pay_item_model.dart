@@ -142,6 +142,7 @@ class PayItem extends PlutoAdaptable<BondType> {
       PlutoColumn(
         title: "رقم",
         field: AppConstants.entryNumber,
+        width: 100,
         type: PlutoColumnType.text(),
         readOnly: true,
         renderer: (rendererContext) {

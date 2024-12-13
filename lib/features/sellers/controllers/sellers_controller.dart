@@ -130,7 +130,7 @@ class SellerController extends GetxController {
         },
       );
     } else {
-      AppUIUtils.showSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
+      AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }
   }
 }
