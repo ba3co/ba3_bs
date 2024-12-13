@@ -1,7 +1,6 @@
-
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
@@ -30,7 +29,7 @@ class BondDetailsButtons extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end,
+        crossAxisAlignment: WrapCrossAlignment.start,
         spacing: 20,
         runSpacing: 20,
         children: [
@@ -43,36 +42,28 @@ class BondDetailsButtons extends StatelessWidget {
                   onPressed: bondDetailsController.isBondSaved.value
                       ? () {}
                       : () async {
+                          await bondDetailsController.saveBond(BondType.byTypeGuide(bondModel.payTypeGuid!));
                         },
                   iconData: Icons.add_chart_outlined);
             }),
-          AppButton(
-            title: 'السند',
-            height: 20,
-            onPressed: () async {
-            },
-            iconData: Icons.file_open_outlined,
-          ),
-          if (!bondSearchController.isNew)
+          if (!bondSearchController.isNew) ...[
+            AppButton(
+              title: 'السند',
+              height: 20,
+              onPressed: () async {},
+              iconData: Icons.file_open_outlined,
+            ),
             AppButton(
               title: "تعديل",
               height: 20,
               onPressed: () async {
-
+                bondDetailsController.updateBond(
+                  bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
+                  bondModel: bondModel,
+                );
               },
               iconData: Icons.edit_outlined,
             ),
-
-          if (!bondSearchController.isNew)
-            AppButton(
-              title: 'Pdf-Email',
-              height: 20,
-              onPressed: () {
-
-              },
-              iconData: Icons.link,
-            ),
-          if (!bondSearchController.isNew)
             AppButton(
               iconData: Icons.delete_outline,
               height: 20,
@@ -82,6 +73,7 @@ class BondDetailsButtons extends StatelessWidget {
                 bondDetailsController.deleteBond(bondModel, fromBondById: fromBondById);
               },
             ),
+          ]
         ],
       ),
     );

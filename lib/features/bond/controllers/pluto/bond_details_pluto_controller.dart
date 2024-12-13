@@ -1,12 +1,10 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/i_controllers/i_recodes_pluto_controller.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
-import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -18,10 +16,10 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   List<PlutoRow> recordsTableRows = [];
 
-  final BondDetailsController bondDetailsController;
+
   final BondType bondType;
 
-  BondDetailsPlutoController(this.bondDetailsController, this.bondType);
+  BondDetailsPlutoController( this.bondType);
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
     if (recordsTableStateManager.currentRow == null) return;
@@ -65,37 +63,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     } else if (searchedAccounts.isEmpty) {
       // No matches
       updateCellValue(columnField, '');
-    } else {
-      // Multiple matches, show search dialog
-      _showSearchDialog(
-        columnField: columnField,
-        // stateManager: mainTableStateManager,
-        // controller: this,
-        searchedAccounts: searchedAccounts,
-      );
     }
-  }
-
-  void _showSearchDialog({
-    required List<AccountModel> searchedAccounts,
-    required String columnField,
-  }) {
-    Get.defaultDialog(
-      // context: context,
-      title: 'أختر الحساب',
-      content: SizedBox(
-        width: Get.width / 2,
-        height: Get.height / 2,
-        child: AccountSelectionDialogContent(
-          accounts: searchedAccounts,
-          onAccountTap: (selectedAccount) {
-            updateCellValue(columnField, selectedAccount.accName);
-
-            Get.back();
-          },
-        ),
-      ),
-    );
   }
 
   void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
@@ -126,31 +94,6 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     return total;
   }
 
-/*  setRows(List<PayItem> modelList) {
-    mainTableStateManager.removeAllRows();
-    final newRows = mainTableStateManager.getNewRows(count: 30);
-
-    if (modelList.isEmpty) {
-      mainTableStateManager.appendRows(newRows);
-      return mainTableRows;
-    } else {
-      mainTableRows = modelList.map((model) {
-        Map<PlutoColumn, dynamic> rowData = model.toPlutoGridFormatWithType(bondDetailsController.bondType);
-
-        Map<String, PlutoCell> cells = {};
-
-        rowData.forEach((key, value) {
-          cells[key.field] = PlutoCell(value: value?.toString() ?? '');
-        });
-
-        return PlutoRow(cells: cells);
-      }).toList();
-    }
-
-    mainTableStateManager.appendRows(mainTableRows);
-    mainTableStateManager.appendRows(newRows);
-  }*/
-
   @override
   List<PayItem> get generateRecords {
     recordsTableStateManager.setShowLoading(true);
@@ -167,14 +110,14 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
         })
         .whereType<PayItem>()
         .toList();
-    if (bondDetailsController.bondType == BondType.receiptVoucher) {
+    if (bondType == BondType.receiptVoucher) {
       // payItems.add(EntryBondItemModel(
       //   bondItemType: BondItemType.creditor,
       //   note: bondDetailsController.noteController.text,
       //   amount: calcCreditTotal(),
       //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
       // ));
-    } else if (bondDetailsController.bondType == BondType.paymentVoucher) {
+    } else if (bondType == BondType.paymentVoucher) {
       // payItems.add(EntryBondItemModel(
       //   bondItemType: BondItemType.debtor,
       //   note: bondDetailsController.noteController.text,
@@ -249,5 +192,26 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   void onRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {}
 
-  prepareBondMaterialsRows(List<PayItem> bondItems) {}
+  prepareBondRows(List<PayItem> itemList) {
+
+    recordsTableStateManager.removeAllRows();
+
+    final newRows = recordsTableStateManager.getNewRows(count: 30);
+
+    if (itemList.isNotEmpty) {
+      recordsTableRows = convertRecordsToRows(itemList);
+
+      recordsTableStateManager.appendRows(recordsTableRows);
+      recordsTableStateManager.appendRows(newRows);
+    } else {
+      recordsTableRows = [];
+      recordsTableStateManager.appendRows(newRows);
+    }
+  }
+  List<PlutoRow> convertRecordsToRows(List<PayItem> records) => records.map((record) {
+    final rowData = record.toPlutoGridFormat(bondType);
+    final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
+    return PlutoRow(cells: cells);
+  }).toList();
+
 }

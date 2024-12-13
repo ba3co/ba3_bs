@@ -176,7 +176,7 @@ class PayItem extends PlutoAdaptable<BondType> {
       entryNumber: int.tryParse(row[AppConstants.entryNumber].toString()) ?? 0,
       entryClass: '',
       entryCostGuid: "00000000-0000-0000-0000-000000000000",
-      entryCurrencyGuid: "00000000-0000-0000-0000-000000000000",
+      entryCurrencyGuid:"884edcde-c172-490d-a2f2-f10a0b90326a",
       entryCurrencyVal: 1,
       entryCustomerGuid: row[AppConstants.entryCustomerGuid],
       entryDate: Timestamp.now().toDate().toIso8601String(),

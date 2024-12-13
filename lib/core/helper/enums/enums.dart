@@ -146,6 +146,7 @@ enum BondType {
     from: 1,
     to: 1,
     taxType: 0,
+
   ),
   receiptVoucher(
     label: "Receipt Voucher",
@@ -154,6 +155,7 @@ enum BondType {
     from: 1,
     to: 602,
     taxType: 2,
+
   ),
   paymentVoucher(
     label: "Payment Voucher",
@@ -161,7 +163,8 @@ enum BondType {
     typeGuide: '5085dc23-1444-4e9a-9d8f-1794da9e7f96',
     from: 1,
     to: 5051,
-    taxType: 1
+    taxType: 1,
+
   ),
   journalVoucher(
     label: "Journal Voucher",
@@ -170,6 +173,7 @@ enum BondType {
     from: 1,
     to: 489,
     taxType: 1,
+
   );
 
 
@@ -180,6 +184,8 @@ enum BondType {
   final String value;
 
   final String typeGuide;
+
+
 
   const BondType({
     required this.label,

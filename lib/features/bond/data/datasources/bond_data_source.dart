@@ -35,6 +35,7 @@ class BondsDataSource extends DatasourceBase<BondModel> with FirebaseSequentialN
 
   @override
   Future<BondModel> save(BondModel item) async {
+
     if (item.payGuid == null) {
       final newBillModel = await _createNewBond(item);
 
@@ -46,7 +47,9 @@ class BondsDataSource extends DatasourceBase<BondModel> with FirebaseSequentialN
   }
 
   Future<BondModel> _createNewBond(BondModel bond) async {
-    final newBondNumber = await getNextNumber(path, bond.payTypeGuid!.name);
+    print(path);
+
+    final newBondNumber = await getNextNumber(path, bond.payTypeGuid!);
 
     final newBondJson = bond.copyWith(payNumber: newBondNumber).toJson();
 

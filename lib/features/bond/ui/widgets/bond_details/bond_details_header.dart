@@ -1,6 +1,5 @@
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';

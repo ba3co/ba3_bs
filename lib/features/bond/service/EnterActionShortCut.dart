@@ -1,17 +1,30 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../core/constants/app_constants.dart';
+import '../../../core/dialogs/account_selection_dialog_content.dart';
+import '../../accounts/controllers/accounts_controller.dart';
+import '../../accounts/data/models/account_model.dart';
+import '../../floating_window/services/overlay_service.dart';
+
 class EnterAction extends PlutoGridShortcutAction {
-  const EnterAction();
+  const EnterAction(this.plutoController, this.context);
 
+  final BondDetailsPlutoController plutoController;
 
+  final BuildContext context;
 
   @override
   void execute({
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    // await getAccounts(stateManager, plutoController, billController);
+    await getAccounts(stateManager, plutoController);
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
         row: stateManager.currentRow,
@@ -124,5 +137,96 @@ class EnterAction extends PlutoGridShortcutAction {
         );
       }
     }
+  }
+  /// Handles account selection and updates the grid cell value.
+  Future<void> getAccounts(
+      PlutoGridStateManager stateManager,
+      BondDetailsPlutoController plutoController,
+      ) async {
+    final columnField = stateManager.currentColumn?.field;
+    if (columnField != AppConstants.entryAccountGuid) return;
+
+    final accountsController = Get.find<AccountsController>();
+    final query = stateManager.currentCell?.value ?? '';
+
+    List<AccountModel> searchedAccounts = accountsController.getAccounts(query);
+    AccountModel? selectedAccountModel;
+
+    if (searchedAccounts.length == 1) {
+      // Single match
+      selectedAccountModel = searchedAccounts.first;
+      updateWithSelectedAccount(selectedAccountModel, stateManager, plutoController, columnField!);
+    } else if (searchedAccounts.isEmpty) {
+      // No matches
+      _resetCellValue(stateManager, columnField);
+
+      updateWithSelectedAccount(null, stateManager, plutoController, columnField!);
+    } else {
+      // Multiple matches, show search dialog
+      _showSearchDialog(
+        columnField: columnField!,
+        stateManager: stateManager,
+        controller: plutoController,
+        searchedAccounts: searchedAccounts,
+      );
+    }
+  }
+  void _showSearchDialog({
+    required List<AccountModel> searchedAccounts,
+    required PlutoGridStateManager stateManager,
+    required BondDetailsPlutoController controller,
+    required String columnField,
+  }) {
+    OverlayService.showDialog(
+      context: context,
+      title: 'أختر الحساب',
+      content: AccountSelectionDialogContent(
+        accounts: searchedAccounts,
+        onAccountTap: (selectedAccount) {
+          OverlayService.back();
+
+          updateWithSelectedAccount(selectedAccount, stateManager, plutoController, columnField);
+        },
+      ),
+      onCloseCallback: () {
+        log('Account Selection Dialog Closed.');
+      },
+    );
+  }
+
+  void updateWithSelectedAccount(
+      AccountModel? accountModel,
+      PlutoGridStateManager stateManager,
+      BondDetailsPlutoController plutoController,
+      String columnField,
+      ) {
+    if (accountModel != null) {
+      _updateCellValue(stateManager, columnField, accountModel.accName);
+    } else {
+      _resetCellValue(stateManager, columnField);
+    }
+
+    stateManager.notifyListeners();
+    plutoController.update();
+  }
+  /// Updates the value of the current cell.
+  void _updateCellValue(PlutoGridStateManager stateManager, String? columnField, String? newValue) {
+    stateManager.changeCellValue(
+      stateManager.currentRow!.cells[columnField]!,
+      newValue,
+      force: true,
+      callOnChangedEvent: true,
+      notify: true,
+    );
+  }
+
+  /// Resets the value of the current cell to its original state.
+  void _resetCellValue(PlutoGridStateManager stateManager, String? columnField) {
+    stateManager.changeCellValue(
+      stateManager.currentRow!.cells[columnField]!,
+      stateManager.currentCell?.value,
+      callOnChangedEvent: false,
+      notify: true,
+    );
   }
 }

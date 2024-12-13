@@ -6,7 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/helper/enums/enums.dart';
 
 class BondModel extends PlutoAdaptable {
-  final BondType? payTypeGuid;
+  final String? payTypeGuid;
   final int? payNumber;
   final String? payGuid;
   final String? payBranchGuid;
@@ -62,7 +62,7 @@ class BondModel extends PlutoAdaptable {
 
   Map<String, dynamic> toJson() {
     return {
-      'PayTypeGuid': payTypeGuid,
+      'PayTypeGuid': payTypeGuid!,
       'PayNumber': payNumber,
       'docId': payGuid,
       'PayBranchGuid': payBranchGuid,
@@ -81,11 +81,7 @@ class BondModel extends PlutoAdaptable {
   }
 
   factory BondModel.empty({required BondType bondType, int lastBondNumber = 0}) {
-    return BondModel(
-      payItems: PayItems(itemList: []),
-      payNumber: lastBondNumber + 1,
-      payTypeGuid: bondType,
-    );
+    return BondModel(payItems: PayItems(itemList: []), payNumber: lastBondNumber + 1, payTypeGuid: bondType.typeGuide, payDate: DateTime.now().toIso8601String());
   }
 
   @override
@@ -103,14 +99,29 @@ class BondModel extends PlutoAdaptable {
     required List<PayItem> bondRecordsItems,
   }) {
     final items = PayItems.fromBondRecords(bondRecordsItems);
+    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) payAccountGuid = "00000000-0000-0000-0000-000000000000";
 
     return bondModel == null
-        ? BondModel(payItems: items,)
+        ? BondModel(
+            payItems: items,
+            e: "E=2",
+            erParentType: 4,
+            payCurrencyGuid: "00000000-0000-0000-0000-000000000000",
+            payBranchGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
+            entryPostDate: Timestamp.now().toDate().toString(),
+            paySecurity: 1,
+            paySkip: 0,
+            payCurVal: 1,
+            payAccountGuid: payAccountGuid,
+            payTypeGuid: bondType.typeGuide,
+            payDate: payDate,
+            payNote: note,
+          )
         : bondModel.copyWith(
-            e: "E",
+            e: "E=2",
             erParentType: 4,
             payBranchGuid: "00000000-0000-0000-0000-000000000000",
-            payCurrencyGuid: "00000000-0000-0000-0000-000000000000",
+            payCurrencyGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
             entryPostDate: Timestamp.now().toDate().toString(),
             paySecurity: 1,
             paySkip: 0,
@@ -141,7 +152,7 @@ class BondModel extends PlutoAdaptable {
     String? e,
   }) {
     return BondModel(
-      payTypeGuid: payTypeGuid ?? this.payTypeGuid,
+      payTypeGuid: payTypeGuid?.typeGuide ?? this.payTypeGuid,
       payNumber: payNumber ?? this.payNumber,
       payGuid: payGuid ?? this.payGuid,
       payBranchGuid: payBranchGuid ?? this.payBranchGuid,

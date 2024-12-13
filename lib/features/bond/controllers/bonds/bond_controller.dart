@@ -1,302 +1,225 @@
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'dart:developer';
 
+import 'package:ba3_bs/features/bond/service/bond/bond_details_screen_controllers_initialization_mixin.dart';
+import 'package:ba3_bs/features/bond/ui/screens/bond_details_view.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/mixin/floating_window_mixin.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
+import '../../../../core/utils/app_service_utils.dart';
+import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bond_model.dart';
+import '../../service/bond/bond_utils.dart';
+import '../pluto/bond_details_pluto_controller.dart';
+import 'bond_details_controller.dart';
+import 'bond_search_controller.dart';
 
-class AllBondsController extends GetxController {
-  final DataSourceRepository<BondModel> _billsFirebaseRepo;
-  final JsonExportRepository<BondModel> _jsonExportRepo;
+class AllBondsController extends GetxController with FloatingWindowMixin,BondDetailsScreenControllersInitializationMixin {
+  final DataSourceRepository<BondModel> _bondsFirebaseRepo;
 
-  AllBondsController(this._billsFirebaseRepo, this._jsonExportRepo);
-
-  navigateToBondDetails() {
-    // Get.lazyPut(() => BondDetailsPlutoController(this, bondType), fenix: true);
-
-    // Get.to(() =>
-    // const BondDetailsView(
-    //   bondDetailsController:, fromBondById: null, bondDetailsPlutoController: null, bondSearchController: null, tag: '',
-    // ));
-  }
-
-  fetchAllBonds() {}
-} /*{
-  // Repositories
-  final FirebaseRepositoryWithResultImpl<BondModel> _billsFirebaseRepo;
-  final JsonExportRepository<BondModel> _jsonExportRepo;
-
-  AllBondsController( this._billsFirebaseRepo, this._jsonExportRepo);
-
-  // Services
-  // late final BillUtils _billUtils;
-
-  // List<BillTypeModel> billsTypes = [];
+  late bool isDebitOrCredit;
   List<BondModel> bonds = [];
   bool isLoading = true;
+  AllBondsController(this._bondsFirebaseRepo);
+  // Services
+  late final BondUtils _bondUtils;
 
   // Initializer
   void _initializeServices() {
-    // _billUtils = BillUtils();
+    _bondUtils = BondUtils();
   }
-
+  
   @override
   void onInit() {
     super.onInit();
     _initializeServices();
 
-    getAllBillTypes();
+    // getAllBondTypes();
   }
 
-  BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
+  BondModel getBondById(String bondId) => bonds.firstWhere((bond) => bond.payGuid == bondId);
 
-  Future<void> fetchBills() async {
-    log('fetchBills');
-    final result = await _billsFirebaseRepo.getAll();
+  Future<void> fetchAllBonds() async {
+    log('fetchBonds');
+    final result = await _bondsFirebaseRepo.getAll();
 
     result.fold(
           (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedBills) => bills.assignAll(fetchedBills),
+          (fetchedBonds) => bonds.assignAll(fetchedBonds),
     );
 
     isLoading = false;
     update();
   }
 
-  Future<void> getAllAccountBills(String accId) async {
-    log('fetchAccount $accId Bills');
-    final result = await _billsFirebaseRepo.getById(accId);
+  List<BondModel> getBondsByType(String bondTypeId) =>
+      bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
-    result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedBills) => bills.add(fetchedBills),
-    );
 
-    isLoading = false;
-    update();
-  }
 
-  Future<void> getAllBillTypes() async {
-    final result = await _patternsFirebaseRepo.getAll();
-
-    result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
-    );
-
-    update();
-  }
-
-  Future<void> exportBillsJsonFile() async {
-    if (bills.isEmpty) {
-      AppUIUtils.onFailure('لا توجد فواتير للتصدير');
-      return;
-    }
-
-    final result = await _jsonExportRepo.exportJsonFile(bills);
-
-    result.fold(
-          (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
-          (filePath) => _billUtils.showExportSuccessDialog(filePath),
-    );
-  }
-
-  void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
-
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
-
-  void openBillDetailsById(String billId) {
-    final BillModel billModel = getBillById(billId);
-
-    List<BillModel> billsByCategory = getBillsByType(billModel.billTypeModel.billTypeId!);
-
-    _navigateToBillDetailsWithModel(billModel, billsByCategory, fromBillById: true);
-  }
-
-  Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
-    await fetchBills();
-
-    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
-
-    if (billsByCategory.isEmpty) {
-      _navigateToAddBill(billTypeModel, addBillPlutoController);
-      return;
-    }
-
-    final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
-
-    _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
-  }
-
-  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel) async {
-    await fetchBills();
+  Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel) async {
+    await fetchAllBonds();
 
     if (!context.mounted) return;
 
-    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
+    List<BondModel> bondsByCategory = getBondsByType(bondTypeModel.typeGuide);
 
-    final String tag = AppServiceUtils.generateUniqueTag('BillDetailsController');
+    final BondModel lastBondModel = _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
 
-    final controllers = _initializeControllers(tag);
 
-    final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
-
-    _openBillDetailsFloatingWindow(
+    _openBondDetailsFloatingWindow(
       context: context,
-      modifiedBills: billsByCategory,
-      lastBillModel: lastBillModel,
-      tag: tag,
-      controllers: controllers,
+      modifiedBonds: bondsByCategory,
+      lastBondModel: lastBondModel,
+      bondType: bondTypeModel,
+
     );
   }
-
-  // Opens the 'Bill Details' floating window.
-  void _openBillDetailsFloatingWindow({
+  // Opens the 'Bond Details' floating window.
+  void _openBondDetailsFloatingWindow({
     required BuildContext context,
-    required List<BillModel> modifiedBills,
-    required BillModel lastBillModel,
-    required String tag,
-    required ({
-      BillDetailsController billDetailsController,
-      BillDetailsPlutoController billDetailsPlutoController,
-      BillSearchController billSearchController
-    }) controllers,
+    required List<BondModel> modifiedBonds,
+    required BondModel lastBondModel,
+    required BondType bondType,
   }) {
-    controllers.billDetailsController.updateBillDetailsOnScreen(lastBillModel, controllers.billDetailsPlutoController);
+    final String controllerTag = AppServiceUtils.generateUniqueTag('BondController');
 
-    initializeBillSearch(
-      currentBill: lastBillModel,
-      allBills: modifiedBills,
-      billSearchController: controllers.billSearchController,
-      billDetailsController: controllers.billDetailsController,
-      billDetailsPlutoController: controllers.billDetailsPlutoController,
-    );
-
-    createNewFloatingAddBillScreen(
-      context: context,
-      tag: tag,
-      billDetailsController: controllers.billDetailsController,
-      billDetailsPlutoController: controllers.billDetailsPlutoController,
-      billSearchController: controllers.billSearchController,
-    );
-  }
-
-
-
-  // Initializes all necessary controllers for bill details handling.
-  ({
-  BillDetailsController billDetailsController,
-  BillDetailsPlutoController billDetailsPlutoController,
-  BillSearchController billSearchController
-  }) _initializeControllers(String tag) {
-    final billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
-    final billSearchController = _initializeBillSearchController(tag);
-    final billDetailsController =
-    _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
-
-    return (
-    billDetailsController: billDetailsController,
-    billDetailsPlutoController: billDetailsPlutoController,
-    billSearchController: billSearchController,
-    );
-  }
-
-  void createNewFloatingAddBillScreen({
-    required BuildContext context,
-    required String tag,
-    required BillDetailsController billDetailsController,
-    required BillDetailsPlutoController billDetailsPlutoController,
-    required BillSearchController billSearchController,
-    bool fromBillById = false,
-  }) {
-    // Launch the floating window with the AddBillScreen
-    FloatingWindowService.launchFloatingWindow(
-      context: context,
-      onCloseContentControllerCallback: () {
-        Get.delete<BillDetailsController>(tag: tag, force: true);
-        Get.delete<BillDetailsPlutoController>(tag: tag, force: true);
-        Get.delete<BillSearchController>(tag: tag, force: true);
+    final Map<String, GetxController> controllers = initializeControllers(
+      params: {
+        'tag': controllerTag,
+        'bondType':bondType,
+        'bondsFirebaseRepo': _bondsFirebaseRepo,
+        'bondDetailsPlutoController': BondDetailsPlutoController(bondType),
+        'bondSearchController': BondSearchController(),
+        'lastBondModel':lastBondModel
       },
-      floatingWindowContent: BillDetailsScreen(
-        fromBillById: fromBillById,
-        billDetailsController: billDetailsController,
-        billDetailsPlutoController: billDetailsPlutoController,
-        billSearchController: billSearchController,
-        tag: tag,
+    );
+
+    final bondDetailsController = controllers['bondDetailsController'] as BondDetailsController;
+    final bondDetailsPlutoController = controllers['bondDetailsPlutoController'] as BondDetailsPlutoController;
+    final bondSearchController = controllers['bondSearchController'] as BondSearchController;
+
+
+    initializeBondSearch(
+      currentBond: lastBondModel,
+      allBonds: modifiedBonds,
+      bondSearchController: bondSearchController,
+      bondDetailsController: bondDetailsController,
+      bondDetailsPlutoController: bondDetailsPlutoController,
+    );
+
+    launchFloatingWindow(
+      context: context,
+      floatingScreen: BondDetailsView(
+        fromBondById: false,
+        bondDetailsController: bondDetailsController,
+        bondDetailsPlutoController: bondDetailsPlutoController,
+        bondSearchController: bondSearchController,
+        tag: controllerTag,
       ),
     );
   }
+  void initializeBondSearch({
+    required BondModel currentBond,
+    required List<BondModel> allBonds,
+    required BondSearchController bondSearchController,
+    required BondDetailsController bondDetailsController,
+    required BondDetailsPlutoController bondDetailsPlutoController,
+  }) {
+    bondSearchController.initialize(
+      bond: currentBond,
+      bondsByCategory: allBonds,
+      bondDetailsController: bondDetailsController,
+      bondDetailsPlutoController: bondDetailsPlutoController,
+    );
+  }
+} 
 
-  BillDetailsController _initializeBillDetailsController(
-      String tag,
-      BillDetailsPlutoController billDetailsPlutoController,
-      BillSearchController billSearchController,
-      ) =>
-      Get.put<BillDetailsController>(
-        BillDetailsController(_billsFirebaseRepo,
-            billDetailsPlutoController: billDetailsPlutoController, billSearchController: billSearchController),
-        tag: tag,
-      );
+/*
+* 
 
-  BillDetailsPlutoController _initializeBillDetailsPlutoController(String tag) =>
-      Get.put<BillDetailsPlutoController>(BillDetailsPlutoController(), tag: tag);
 
-  BillSearchController _initializeBillSearchController(String tag) =>
-      Get.put<BillSearchController>(BillSearchController(), tag: tag);
+  void openBondDetailsById(String bondId) {
+    final BondModel bondModel = getBondById(bondId);
 
-  void _navigateToAddBill(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) {
-    Get.find<BillDetailsController>().navigateToAddBillScreen(billTypeModel, addBillPlutoController);
+    List<BondModel> bondsByCategory = getBondsByType(bondModel.bondTypeModel.bondTypeId!);
+
+    _navigateToBondDetailsWithModel(bondModel, bondsByCategory, fromBondById: true);
   }
 
-  void _navigateToBillDetailsWithModel(
-      BillModel billModel,
-      List<BillModel> allBills, {
-        bool fromBillById = false,
-      }) {
-    final tag = 'AddBillController_${UniqueKey().toString()}';
+  Future<void> openLastBondDetails(BondTypeModel bondTypeModel, AddBondPlutoController addBondPlutoController) async {
+    await fetchAllBonds();
 
-    // Initialize the BillDetailsPlutoController
-    BillDetailsPlutoController billDetailsPlutoController = _initializeBillDetailsPlutoController(tag);
+    List<BondModel> bondsByCategory = getBondsByType(bondTypeModel.bondTypeId!);
 
-    // Initialize the BillSearchController
-    BillSearchController billSearchController = _initializeBillSearchController(tag);
+    if (bondsByCategory.isEmpty) {
+      _navigateToAddBond(bondTypeModel, addBondPlutoController);
+      return;
+    }
 
-    // Initialize the BillDetailsController
-    BillDetailsController billDetailsController =
-    _initializeBillDetailsController(tag, billDetailsPlutoController, billSearchController);
+    final BondModel lastBondModel = _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
 
-    billDetailsController.updateBillDetailsOnScreen(billModel, billDetailsPlutoController);
+    _navigateToBondDetailsWithModel(lastBondModel, bondsByCategory);
+  }
 
-    initializeBillSearch(
-      currentBill: billModel,
-      allBills: allBills,
-      billSearchController: billSearchController,
-      billDetailsController: billDetailsController,
-      billDetailsPlutoController: billDetailsPlutoController,
+  Future<void> openFloatingBondDetails(BuildContext context, BondTypeModel bondTypeModel) async {
+    await fetchAllBonds();
+
+    if (!context.mounted) return;
+
+    List<BondModel> bondsByCategory = getBondsByType(bondTypeModel.bondTypeId!);
+
+    final BondModel lastBondModel = _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
+
+    _openBondDetailsFloatingWindow(
+      context: context,
+      modifiedBonds: bondsByCategory,
+      lastBondModel: lastBondModel,
+    );
+  }
+
+  
+  void _navigateToAddBond(BondTypeModel bondTypeModel, AddBondPlutoController addBondPlutoController) {
+    Get.find<BondDetailsController>().navigateToAddBondScreen(bondTypeModel, addBondPlutoController);
+  }
+
+  void _navigateToBondDetailsWithModel(BondModel bondModel, List<BondModel> allBonds, {bool fromBondById = false}) {
+    final String controllerTag = AppServiceUtils.generateUniqueTag('BondDetailsController');
+
+    final Map<String, dynamic> controllers = initializeControllers(
+      params: {
+        'tag': controllerTag,
+        'bondsFirebaseRepo': _bondsFirebaseRepo,
+        'bondDetailsPlutoController': BondDetailsPlutoController(),
+        'bondSearchController': BondSearchController(),
+      },
     );
 
-    Get.toNamed(AppRoutes.billDetailsScreen, arguments: {
-      'fromBillById': fromBillById,
-      'billDetailsController': billDetailsController,
-      'billDetailsPlutoController': billDetailsPlutoController,
-      'billSearchController': billSearchController,
-      'tag': tag,
+    final bondDetailsController = controllers['bondDetailsController'] as BondDetailsController;
+    final bondDetailsPlutoController = controllers['bondDetailsPlutoController'] as BondDetailsPlutoController;
+    final bondSearchController = controllers['bondSearchController'] as BondSearchController;
+
+    bondDetailsController.updateBondDetailsOnScreen(bondModel, bondDetailsPlutoController);
+
+    initializeBondSearch(
+      currentBond: bondModel,
+      allBonds: allBonds,
+      bondSearchController: bondSearchController,
+      bondDetailsController: bondDetailsController,
+      bondDetailsPlutoController: bondDetailsPlutoController,
+    );
+
+    Get.toNamed(AppRoutes.bondDetailsScreen, arguments: {
+      'fromBondById': fromBondById,
+      'bondDetailsController': bondDetailsController,
+      'bondDetailsPlutoController': bondDetailsPlutoController,
+      'bondSearchController': bondSearchController,
+      'tag': controllerTag,
     });
   }
 
-  void initializeBillSearch({
-    required BillModel currentBill,
-    required List<BillModel> allBills,
-    required BillSearchController billSearchController,
-    required BillDetailsController billDetailsController,
-    required BillDetailsPlutoController billDetailsPlutoController,
-  }) {
-    billSearchController.initialize(
-      bill: currentBill,
-      billsByCategory: allBills,
-      billDetailsController: billDetailsController,
-      billDetailsPlutoController: billDetailsPlutoController,
-    );
-  }
-}*/
+ 
+*/

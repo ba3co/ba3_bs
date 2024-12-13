@@ -25,7 +25,7 @@ class BondSearchController extends GetxController {
 
     this.bondDetailsController = bondDetailsController;
     this.bondDetailsPlutoController = bondDetailsPlutoController;
-
+    _setCurrentBond(currentBondIndex);
     log('bonds length ${bonds.length}');
     log('currentBondIndex $currentBondIndex');
     log('currentBondNumber ${currentBond.payNumber}');
@@ -73,8 +73,8 @@ class BondSearchController extends GetxController {
     final message = bondNumber == null
         ? 'من فضلك أدخل رقم صحيح'
         : bondNumber < firstBondNumber
-            ? 'رقم الفاتورة غير متوفر. رقم أول فاتورة هو $firstBondNumber'
-            : 'رقم الفاتورة غير متوفر. رقم أخر فاتورة هو $lastBondNumber';
+            ? 'رقم السند غير متوفر. رقم أول سند هو $firstBondNumber'
+            : 'رقم السند غير متوفر. رقم أخر سند هو $lastBondNumber';
 
     _displayErrorMessage(message);
   }
@@ -91,7 +91,7 @@ class BondSearchController extends GetxController {
     if (bondIndex != -1) {
       _setCurrentBond(bondIndex);
     } else {
-      _displayErrorMessage('الفاتورة غير موجودة');
+      _displayErrorMessage('السند غير موجودة');
     }
   }
 
@@ -101,7 +101,7 @@ class BondSearchController extends GetxController {
     if (currentBondIndex <= bonds.length - 1) {
       _setCurrentBond(currentBondIndex);
     } else {
-      _displayErrorMessage('لا يوجد فاتورة أخرى');
+      _displayErrorMessage('لا يوجد سند أخر');
     }
   }
 
@@ -111,7 +111,7 @@ class BondSearchController extends GetxController {
     if (currentBondIndex < bonds.length - 1) {
       _setCurrentBond(currentBondIndex + 1);
     } else {
-      _displayErrorMessage('لا يوجد فاتورة أخرى');
+      _displayErrorMessage('لا يوجد سند أخرى');
     }
   }
 
@@ -121,7 +121,7 @@ class BondSearchController extends GetxController {
     if (currentBondIndex > 0) {
       _setCurrentBond(currentBondIndex - 1);
     } else {
-      _displayErrorMessage('لا يوجد فاتورة سابقة');
+      _displayErrorMessage('لا يوجد سند سابقة');
     }
   }
 

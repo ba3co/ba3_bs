@@ -287,6 +287,7 @@ class BillDetailsController extends IBillController with AppValidator implements
     } else {
       billNumberController.text = '';
     }
+
   }
 
   void initSellerAccount(String? billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId, this);

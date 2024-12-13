@@ -1,5 +1,8 @@
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
@@ -23,28 +26,32 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(centerTitle: true, title: Text(bondDetailsController.bondType.value), leading: const BackButton(), actions: [
-      IconButton(
-          onPressed: () {
-            // bondController.bondNextOrPrev(widget.bondType, true);
-            // setState(() {});
-          },
-          icon: const Icon(Icons.keyboard_double_arrow_right)),
-      SizedBox(
-        width: 100,
-        child: CustomTextFieldWithoutIcon(
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          onSubmitted: (_) {
-            // controller.getBondByCode(widget.bondType, _);
-          },
-          textEditingController: TextEditingController(),
+    return AppBar(
+      leadingWidth: 100,
+      title: Text(bondTypeModel.value),
+      actions: [
+        IconButton(
+            onPressed: () {
+              bondSearchController.previous();
+            },
+            icon: const Icon(Icons.keyboard_double_arrow_right)),
+        SizedBox(
+          width: Get.width * 0.10,
+          child: CustomTextFieldWithoutIcon(
+            isNumeric: true,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            textEditingController: bondDetailsController.bondNumberController,
+            onSubmitted: (bondNumber) {
+              bondSearchController.goToBondByNumber(bondNumber.toInt);
+            },
+          ),
         ),
-      ),
-      IconButton(
-          onPressed: () {
-            // bondController.bondNextOrPrev(widget.bondType, false);
-          },
-          icon: const Icon(Icons.keyboard_double_arrow_left)),
-    ]);
+        IconButton(
+            onPressed: () {
+              bondSearchController.next();
+            },
+            icon: const Icon(Icons.keyboard_double_arrow_left)),
+      ],
+    );
   }
 }

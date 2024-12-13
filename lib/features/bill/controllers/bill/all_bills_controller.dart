@@ -166,7 +166,6 @@ class AllBillsController extends GetxController
     final billDetailsPlutoController = controllers['billDetailsPlutoController'] as BillDetailsPlutoController;
     final billSearchController = controllers['billSearchController'] as BillSearchController;
 
-    billDetailsController.updateBillDetailsOnScreen(lastBillModel, billDetailsPlutoController);
 
     initializeBillSearch(
       currentBill: lastBillModel,

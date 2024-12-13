@@ -42,16 +42,16 @@ class BondService {
       bondSearchController.removeBond(bondModel);
     }
 
-    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
+    AppUIUtils.onSuccess('تم حذف السند بنجاح!');
   }
 
   Future<void> handleSaveSuccess(BondModel bondModel, BondDetailsController bondDetailsController) async {
-    AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+    AppUIUtils.onSuccess('تم حفظ السند بنجاح!');
     bondDetailsController.updateIsBondSaved(true);
   }
 
   void handleUpdateSuccess(BondModel bondModel, BondSearchController bondSearchController) {
-    AppUIUtils.onSuccess('تم تعديل الفاتورة بنجاح!');
+    AppUIUtils.onSuccess('تم تعديل السند بنجاح!');
 
     bondSearchController.updateBond(bondModel);
   }

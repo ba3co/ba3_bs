@@ -13,10 +13,11 @@ import '../../service/bond/Bond_service.dart';
 import 'bond_search_controller.dart';
 
 class BondDetailsController extends GetxController with AppValidator {
-  BondDetailsController(this._bondsFirebaseRepo,
-      {required this.bondDetailsPlutoController, required this.bondSearchController, required this.bondType});
+  BondDetailsController(this._bondsFirebaseRepo, {required this.bondDetailsPlutoController, required this.bondSearchController, required this.bondType});
 
   // Repositories
+
+
 
   final DataSourceRepository<BondModel> _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
@@ -27,27 +28,30 @@ class BondDetailsController extends GetxController with AppValidator {
 
   final formKey = GlobalKey<FormState>();
   final TextEditingController bondNumberController = TextEditingController();
-  final TextEditingController mobileNumberController = TextEditingController();
-  final TextEditingController storeController = TextEditingController();
-  final TextEditingController customerAccountController = TextEditingController();
-  final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
-  final TextEditingController firstPayController = TextEditingController();
-  final TextEditingController invReturnDateController = TextEditingController();
-  final TextEditingController invReturnCodeController = TextEditingController();
 
   late String bondDate;
-  BondType bondType = BondType.journalVoucher;
   bool isLoading = true;
-
   RxBool isBondSaved = false.obs;
+
+  late BondType bondType;
+
+  late bool isDebitOrCredit;
 
   @override
   void onInit() {
     super.onInit();
     _initializeServices();
+    setIsDebitOrCredit();
+  }
 
-    setBondDate(DateTime.now());
+  void setIsDebitOrCredit() {
+    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) {
+      isDebitOrCredit = false;
+    } else {
+      isDebitOrCredit = true;
+    }
+    update();
   }
 
   // Initializer
@@ -58,8 +62,6 @@ class BondDetailsController extends GetxController with AppValidator {
   bool validateForm() => formKey.currentState?.validate() ?? false;
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
-
-  void updateBondType(String bondTypeLabel) => bondType = BondType.byLabel(bondTypeLabel);
 
   void setBondDate(DateTime newDate) {
     bondDate = newDate.toString().split(" ")[0];
@@ -84,8 +86,11 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> _saveOrUpdateBond({required BondType bondType, BondModel? existingBondModel}) async {
+
     // Validate the form first
     if (!validateForm()) return;
+
+ if(!bondDetailsPlutoController.checkIfBalancedBond())return ;
 
     // Create the bond model from the provided data
     final updatedBondModel = _createBondModelFromBondData(bondType, existingBondModel);
@@ -98,7 +103,6 @@ class BondDetailsController extends GetxController with AppValidator {
 
     // Ensure there are bond items
     if (updatedBondModel.payItems.itemList.isEmpty) return;
-
     // Save the bond to Firestore
     final result = await _bondsFirebaseRepo.save(updatedBondModel);
 
@@ -120,15 +124,15 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
+
     // Create and return the bond model
-    return _bondService.createBondModel(
-        bondModel: bondModel, bondType: bondType, payDate: bondDate, payAccountGuid: accountController.text);
+    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate, payAccountGuid: accountController.text,note: noteController.text);
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
-      bondDetailsPlutoController.prepareBondMaterialsRows(bondItems.itemList);
+  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
+
     if (bondNumber != null) {
       bondNumberController.text = bondNumber.toString();
     } else {
@@ -153,19 +157,4 @@ class BondDetailsController extends GetxController with AppValidator {
 
   ///controller
   TextEditingController accountController = TextEditingController();
-
-  late bool isDebitOrCredit;
-
-  void setBondType(BondType bondType) {
-    this.bondType = bondType;
-  }
-
-  void setIsDebitOrCredit() {
-    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) {
-      isDebitOrCredit = false;
-    } else {
-      isDebitOrCredit = true;
-    }
-    update();
-  }
 }

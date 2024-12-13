@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -91,7 +92,7 @@ class AppBindings extends Bindings {
     // Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
-    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo, bondJsonExportRepo), fenix: true);
+    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo /*bondJsonExportRepo*/), fenix: true);
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
 
