@@ -12,13 +12,16 @@ class DraggableFloatingWindow extends StatelessWidget {
   final VoidCallback onBringToTop;
   final Offset targetPositionRatio;
   final Widget floatingWindowContent;
+  final String? minimizedTitle;
 
-  const DraggableFloatingWindow(
-      {super.key,
-      required this.onClose,
-      required this.onBringToTop,
-      required this.floatingWindowContent,
-      required this.targetPositionRatio});
+  const DraggableFloatingWindow({
+    super.key,
+    required this.onClose,
+    required this.onBringToTop,
+    required this.floatingWindowContent,
+    required this.targetPositionRatio,
+    this.minimizedTitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -119,31 +122,38 @@ class DraggableFloatingWindow extends StatelessWidget {
                                     SizedBox(
                                       width: controller.width,
                                       height: controller.height,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Expanded(
-                                            child: IconButton(
-                                              icon: Icon(Icons.keyboard_arrow_up, size: .026.sh),
-                                              tooltip: 'اظهار',
-                                              onPressed: controller.restoreWindowFromMinimized,
+                                      child: Tooltip(
+                                        message: minimizedTitle ?? '',
+                                        textStyle: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(fontSize: 15, color: Colors.white),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Expanded(
+                                              child: IconButton(
+                                                icon: Icon(Icons.keyboard_arrow_up, size: .026.sh),
+                                                //  tooltip: 'اظهار',
+                                                onPressed: controller.restoreWindowFromMinimized,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: IconButton(
-                                              icon: Icon(Icons.fullscreen, size: .026.sh),
-                                              tooltip: 'تكبير',
-                                              onPressed: controller.maximizeWindowFromMinimized,
+                                            Expanded(
+                                              child: IconButton(
+                                                icon: Icon(Icons.fullscreen, size: .026.sh),
+                                                //   tooltip: 'تكبير',
+                                                onPressed: controller.maximizeWindowFromMinimized,
+                                              ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            child: IconButton(
-                                              icon: Icon(Icons.close, size: .026.sh),
-                                              tooltip: 'اغلاق',
-                                              onPressed: onClose,
+                                            Expanded(
+                                              child: IconButton(
+                                                icon: Icon(Icons.close, size: .026.sh),
+                                                // tooltip: 'اغلاق',
+                                                onPressed: onClose,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                 ],

@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -17,7 +16,7 @@ import '../../features/bill/controllers/pluto/bill_details_pluto_controller.dart
 import '../../features/bill/data/datasources/bills_data_source.dart';
 import '../../features/bill/data/models/bill_model.dart';
 import '../../features/bill/services/bill/bill_json_export.dart';
-import '../../features/bond/controllers/bonds/bond_controller.dart';
+import '../../features/bond/controllers/bonds/all_bond_controller.dart';
 import '../../features/bond/controllers/entryBond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
@@ -76,6 +75,8 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => translationRepo, fenix: true);
 
     Get.lazyPut(() => billsFirebaseRepo, fenix: true);
+
+    Get.lazyPut(() => bondsFirebaseRepo, fenix: true);
 
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
     final bondJsonExportRepo = JsonExportRepository<BondModel>(BondJsonExport());

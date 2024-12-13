@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/dialogs/account_selection_dialog_content.dart';
-import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -10,8 +9,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/floating_window/services/overlay_service.dart';
-import '../constants/app_constants.dart';
-import '../i_controllers/i_bill_controller.dart';
 import '../i_controllers/i_recodes_pluto_controller.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
@@ -30,7 +27,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    await getAccounts(stateManager, plutoController,textFieldName);
+    await getAccounts(stateManager, plutoController, textFieldName);
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
         row: stateManager.currentRow,
@@ -74,9 +71,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   /// Handles account selection and updates the grid cell value.
   Future<void> getAccounts(
     PlutoGridStateManager stateManager,
-      IRecodesPlutoController plutoController,
-      String textFieldName,
-
+    IRecodesPlutoController plutoController,
+    String textFieldName,
   ) async {
     final columnField = stateManager.currentColumn?.field;
     if (columnField != textFieldName) return;
@@ -133,7 +129,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   void updateWithSelectedAccount(
     AccountModel? accountModel,
     PlutoGridStateManager stateManager,
-      IRecodesPlutoController plutoController,
+    IRecodesPlutoController plutoController,
     String columnField,
   ) {
     if (accountModel != null) {
@@ -145,7 +141,6 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
     plutoController.update();
   }
-
 
   /// Updates the value of the current cell.
   void _updateCellValue(PlutoGridStateManager stateManager, String? columnField, String? newValue) {

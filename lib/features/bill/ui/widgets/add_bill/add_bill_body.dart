@@ -68,8 +68,7 @@ class AddBillBody extends StatelessWidget {
                   onChanged: addBillPlutoController.onAdditionsDiscountsChanged,
                   onLoaded: addBillPlutoController.onAdditionsDiscountsLoaded,
                   shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                      plutoController: addBillPlutoController,                    textFieldName: AppConstants.id,
-                       context: context)),
+                      plutoController: addBillPlutoController, textFieldName: AppConstants.id, context: context)),
                 ),
               );
             }),

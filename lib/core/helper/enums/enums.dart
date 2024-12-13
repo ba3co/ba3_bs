@@ -67,17 +67,17 @@ enum InvPayType {
 enum BillType {
   sales(
     label: 'sales',
-    value: 'قاتورة مبيعات',
+    value: 'فاتورة مبيعات',
     typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
   ),
   purchase(
     label: 'purchase',
-    value: 'قاتورة مشتريات',
+    value: 'فاتورة مشتريات',
     typeGuide: "eb10653a-a43f-44e5-889d-41ce68c43ec4",
   ),
   salesReturn(
     label: 'salesReturn',
-    value: 'قاتورة مرتجع مبيع',
+    value: 'فاتورة مرتجع مبيع',
     typeGuide: "2373523c-9f23-4ce7-a6a2-6277757fc381",
   ),
   purchaseReturn(
@@ -87,12 +87,12 @@ enum BillType {
   ),
   adjustmentEntry(
     label: 'adjustmentEntry',
-    value: 'قاتورة تسوية ادخال',
+    value: 'فاتورة تسوية ادخال',
     typeGuide: "06f0e6ea-3493-480c-9e0c-573baf049605",
   ),
   outputAdjustment(
     label: 'outputAdjustment',
-    value: 'قاتورة تسوية اخراج',
+    value: 'فاتورة تسوية اخراج',
     typeGuide: "563af9aa-5d7e-470b-8c3c-fee784da810a",
   ),
   firstPeriodInventory(
@@ -138,16 +138,16 @@ enum BillType {
     );
   }
 }
+
 enum BondType {
   openingEntry(
-    label: "Opening Entry",
-    value: "القيد الافتتاحي",
-    typeGuide: "ea69ba80-662d-4fa4-90ee-4d2e1988a8ea",
-    from: 1,
-    to: 1,
-    taxType: 0,
-
-  ),
+      label: "Opening Entry",
+      value: "القيد الافتتاحي",
+      typeGuide: "ea69ba80-662d-4fa4-90ee-4d2e1988a8ea",
+      from: 1,
+      to: 1,
+      taxType: 0,
+      billTypeLabel: ''),
   receiptVoucher(
     label: "Receipt Voucher",
     value: "سند قبض",
@@ -155,7 +155,7 @@ enum BondType {
     from: 1,
     to: 602,
     taxType: 2,
-
+    billTypeLabel: 'sales',
   ),
   paymentVoucher(
     label: "Payment Voucher",
@@ -164,7 +164,7 @@ enum BondType {
     from: 1,
     to: 5051,
     taxType: 1,
-
+    billTypeLabel: 'purchase',
   ),
   journalVoucher(
     label: "Journal Voucher",
@@ -173,11 +173,10 @@ enum BondType {
     from: 1,
     to: 489,
     taxType: 1,
-
+    billTypeLabel: '',
   );
 
-
-  final int from,to,taxType;
+  final int from, to, taxType;
 
   final String label;
 
@@ -185,7 +184,7 @@ enum BondType {
 
   final String typeGuide;
 
-
+  final String billTypeLabel;
 
   const BondType({
     required this.label,
@@ -194,6 +193,7 @@ enum BondType {
     required this.from,
     required this.to,
     required this.taxType,
+    required this.billTypeLabel,
   });
 
   // Factory constructor with error handling for unmatched labels
@@ -210,6 +210,13 @@ enum BondType {
       orElse: () => throw ArgumentError('No matching BondType for guide: $typeGuide'),
     );
   }
+
+  factory BondType.byBillTypeLabel(String billTypeLabel) {
+    return BondType.values.firstWhere(
+      (type) => type.billTypeLabel == billTypeLabel,
+      orElse: () => throw ArgumentError('No matching BondType for guide: $billTypeLabel'),
+    );
+  }
 }
 
 enum BondItemType {
@@ -220,7 +227,6 @@ enum BondItemType {
 
   const BondItemType(this.label);
 }
-
 
 abstract class Account {
   String get label;

@@ -7,20 +7,19 @@ import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/helper/mixin/floating_window_mixin.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
-import '../../services/bill/bill_details_screen_controllers_initialization_mixin.dart';
 import '../../services/bill/bill_utils.dart';
+import '../../services/bill/floating_bill_details_launcher.dart';
 import '../pluto/add_bill_pluto_controller.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends GetxController
-    with FloatingWindowMixin, BillDetailsScreenControllersInitializationMixin {
+class AllBillsController extends FloatingBillDetailsLauncher {
   // Repositories
   final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final DataSourceRepository<BillModel> _billsFirebaseRepo;
@@ -119,11 +118,6 @@ class AllBillsController extends GetxController
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
-    if (billsByCategory.isEmpty) {
-      _navigateToAddBill(billTypeModel, addBillPlutoController);
-      return;
-    }
-
     final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
@@ -153,7 +147,7 @@ class AllBillsController extends GetxController
   }) {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
-    final Map<String, GetxController> controllers = initializeControllers(
+    final Map<String, GetxController> controllers = setupControllers(
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
@@ -165,7 +159,6 @@ class AllBillsController extends GetxController
     final billDetailsController = controllers['billDetailsController'] as BillDetailsController;
     final billDetailsPlutoController = controllers['billDetailsPlutoController'] as BillDetailsPlutoController;
     final billSearchController = controllers['billSearchController'] as BillSearchController;
-
 
     initializeBillSearch(
       currentBill: lastBillModel,
@@ -177,6 +170,7 @@ class AllBillsController extends GetxController
 
     launchFloatingWindow(
       context: context,
+      minimizedTitle: BillType.byLabel(lastBillModel.billTypeModel.billTypeLabel!).value,
       floatingScreen: BillDetailsScreen(
         fromBillById: false,
         billDetailsController: billDetailsController,
@@ -187,14 +181,10 @@ class AllBillsController extends GetxController
     );
   }
 
-  void _navigateToAddBill(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) {
-    Get.find<BillDetailsController>().navigateToAddBillScreen(billTypeModel, addBillPlutoController);
-  }
-
   void _navigateToBillDetailsWithModel(BillModel billModel, List<BillModel> allBills, {bool fromBillById = false}) {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
-    final Map<String, dynamic> controllers = initializeControllers(
+    final Map<String, dynamic> controllers = setupControllers(
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
@@ -206,8 +196,6 @@ class AllBillsController extends GetxController
     final billDetailsController = controllers['billDetailsController'] as BillDetailsController;
     final billDetailsPlutoController = controllers['billDetailsPlutoController'] as BillDetailsPlutoController;
     final billSearchController = controllers['billSearchController'] as BillSearchController;
-
-    billDetailsController.updateBillDetailsOnScreen(billModel, billDetailsPlutoController);
 
     initializeBillSearch(
       currentBill: billModel,
