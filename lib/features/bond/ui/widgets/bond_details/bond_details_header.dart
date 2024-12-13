@@ -27,12 +27,12 @@ class BondDetailsHeader extends StatelessWidget {
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
                   label: 'تاريخ السند',
-                  child: Obx((){
+                  child: Obx(() {
                     return DatePicker(
                       initDate: bondDetailsController.bondDate.value,
                       onDateSelected: bondDetailsController.setBondDate,
-                    );}
-                  ),
+                    );
+                  }),
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: "البيان",
@@ -44,9 +44,11 @@ class BondDetailsHeader extends StatelessWidget {
             const VerticalSpace(8),
             if (bondDetailsController.isDebitOrCredit == true) ...[
               FormFieldRow(
-                  firstItem:  SearchableAccountField(
+                  firstItem: SearchableAccountField(
+                    bondDetailsController: bondDetailsController,
+
                     validator: (value) {
-                      if(bondDetailsController.isDebitOrCredit) {
+                      if (bondDetailsController.isDebitOrCredit) {
                         return bondDetailsController.validator(value, 'الحساب');
                       }
                       return null;

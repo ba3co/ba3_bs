@@ -115,21 +115,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem>  {
         })
         .whereType<PayItem>()
         .toList();
-    if (bondType == BondType.receiptVoucher) {
-      // payItems.add(EntryBondItemModel(
-      //   bondItemType: BondItemType.creditor,
-      //   note: bondDetailsController.noteController.text,
-      //   amount: calcCreditTotal(),
-      //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
-      // ));
-    } else if (bondType == BondType.paymentVoucher) {
-      // payItems.add(EntryBondItemModel(
-      //   bondItemType: BondItemType.debtor,
-      //   note: bondDetailsController.noteController.text,
-      //   amount: calcDebitTotal(),
-      //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
-      // ));
-    }
+
     recordsTableStateManager.setShowLoading(false);
     return payItems;
   }

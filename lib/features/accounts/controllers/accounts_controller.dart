@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -51,10 +52,12 @@ class AccountsController extends GetxController {
   }
 
   List<AccountModel> searchAccountsByNameOrCode(text) {
+
     if (accounts.isEmpty) {
       log('Accounts isEmpty');
       fetchAccounts();
     }
+
     return accounts
         .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
         .toList();
@@ -92,14 +95,19 @@ class AccountsController extends GetxController {
     TextEditingController? textEditingController,
     bool fromAddBill = false,
     bool isCustomerAccount = false,
+    BondDetailsController? bondDetailsController,
     IBillController? billController,
   }) {
+
     List<AccountModel> searchedAccounts = getAccounts(query);
     AccountModel? selectedAccountModel;
+
+
 
     if (searchedAccounts.length == 1) {
       // Single match
       selectedAccountModel = searchedAccounts.first;
+      if(bondDetailsController!=null)bondDetailsController. setAccount(searchedAccounts.first);
 
       if (textEditingController != null) {
         final BillAccounts? billAccounts =
@@ -126,16 +134,22 @@ class AccountsController extends GetxController {
         context: context,
         title: 'أختر الحساب',
         content: AccountSelectionDialogContent(
-          accounts: accounts,
+          ///TODO: I change accounts:accounts to  accounts: searchedAccounts,
+          accounts: searchedAccounts,
           onAccountTap: (selectedAccount) {
             OverlayService.back();
 
             // Set the selected account to the model
             selectedAccountModel = selectedAccount;
 
+
+
             // Callback for parent function with selected account
 
             if (selectedAccountModel != null && textEditingController != null) {
+
+              if(bondDetailsController!=null)bondDetailsController. setAccount(selectedAccount);
+
               final BillAccounts? billAccounts =
                   Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
 

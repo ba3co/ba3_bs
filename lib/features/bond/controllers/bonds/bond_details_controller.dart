@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
@@ -31,8 +32,13 @@ class BondDetailsController extends GetxController with AppValidator {
   late final BondService _bondService;
 
   final formKey = GlobalKey<FormState>();
+
+  ///controller
+  final TextEditingController accountController = TextEditingController();
   final TextEditingController bondNumberController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
+
+  AccountModel? selectedAccount;
 
   RxString bondDate = DateTime.now().toString().split(" ")[0].obs;
   bool isLoading = true;
@@ -41,6 +47,10 @@ class BondDetailsController extends GetxController with AppValidator {
   late BondType bondType;
 
   late bool isDebitOrCredit;
+
+  void setAccount(AccountModel setAccount) {
+    selectedAccount = setAccount;
+  }
 
   @override
   void onInit() {
@@ -132,26 +142,18 @@ class BondDetailsController extends GetxController with AppValidator {
     isBondSaved.value = newValue;
   }
 
-  AccountModel? selectedCustomerAccount;
-
   BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
     // Validate customer accounts
     if (bondSearchController.bondDetailsController.isDebitOrCredit) {
-      if (!_bondService.validateAccount(selectedCustomerAccount)) {
+      if (!_bondService.validateAccount(selectedAccount)) {
         return null;
       }
     }
     // Create and return the bond model
-    return _bondService.createBondModel(
-        bondModel: bondModel,
-        bondType: bondType,
-        payDate: bondDate.value,
-        payAccountGuid: accountController.text,
-        note: noteController.text);
+    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
-      bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
+  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
     if (bondNumber != null) {
@@ -166,16 +168,13 @@ class BondDetailsController extends GetxController with AppValidator {
 
     initBondNumberController(bond.payNumber);
 
+    if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!=null) {
+      setAccount(AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!);
+      accountController.text = AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!.accName!;
+    }
+
     prepareBondRecords(bond.payItems, bondPlutoController);
 
     bondPlutoController.update();
   }
-
-  clearControllers() {
-    accountController.clear();
-    noteController.clear();
-  }
-
-  ///controller
-  TextEditingController accountController = TextEditingController();
 }

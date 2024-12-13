@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class PayItems {
@@ -74,7 +76,7 @@ class PayItem extends PlutoAdaptable<BondType> {
 
   factory PayItem.fromJson(Map<String, dynamic> json) {
     return PayItem(
-      entryAccountGuid: json['EntryAccountGuid'],
+      entryAccountGuid: Get.find<AccountsController>().getAccountNameById(json['EntryAccountGuid']),
       entryDate: json['EntryDate'],
       entryDebit: json['EntryDebit'].toDouble(),
       entryCredit: json['EntryCredit'].toDouble(),
@@ -91,7 +93,7 @@ class PayItem extends PlutoAdaptable<BondType> {
 
   Map<String, dynamic> toJson() {
     return {
-      'EntryAccountGuid': entryAccountGuid,
+      'EntryAccountGuid': Get.find<AccountsController>().getAccountIdByName(entryAccountGuid),
       'EntryDate': entryDate,
       'EntryDebit': entryDebit,
       'EntryCredit': entryCredit,

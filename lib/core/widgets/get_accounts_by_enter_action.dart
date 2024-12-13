@@ -27,6 +27,7 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
+
     await getAccounts(stateManager, plutoController, textFieldName);
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -75,6 +76,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     String textFieldName,
   ) async {
     final columnField = stateManager.currentColumn?.field;
+
+
     if (columnField != textFieldName) return;
 
     final accountsController = Get.find<AccountsController>();

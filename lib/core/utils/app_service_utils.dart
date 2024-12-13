@@ -185,7 +185,7 @@ class AppServiceUtils {
   static AccountModel? getAccountModelFromLabel(accLabel) => Get.find<AccountsController>()
       .accounts
       .where(
-        (element) => element.accName == accLabel,
+        (element) => element.accName == accLabel||element.id == accLabel,
       )
       .firstOrNull;
 
