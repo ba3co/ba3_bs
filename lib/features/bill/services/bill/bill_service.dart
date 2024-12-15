@@ -1,20 +1,26 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/dialogs/e_invoice_dialog_content.dart';
+import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entryBond/entry_bond_controller.dart';
+import '../../../floating_window/services/overlay_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
+import 'bill_pdf_generator.dart';
 
-class BillService {
+class BillService with PdfBase {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -49,10 +55,12 @@ class BillService {
   }
 
   void createBond({
+    required BuildContext context,
     required BillTypeModel billTypeModel,
     required AccountModel customerAccount,
   }) =>
       bondController.createBillBond(
+        context: context,
         billTypeModel: billTypeModel,
         customerAccount: customerAccount,
         vat: plutoController.computeTotalVat,
@@ -80,12 +88,12 @@ class BillService {
 
     billDetailsController.updateIsBillSaved(true);
 
-    billController.generateAndSendBillPdf(
-      recipientEmail: AppStrings.recipientEmail,
-      billModel: billModel,
+    generateAndSendPdf(
       fileName: AppStrings.bill,
-      logoSrc: AppAssets.ba3Logo,
-      fontSrc: AppAssets.notoSansArabicRegular,
+      itemModel: billModel,
+      itemModelId: billModel.billId,
+      items: billModel.items.itemList,
+      pdfGenerator: BillPdfGenerator(),
     );
   }
 
@@ -94,12 +102,28 @@ class BillService {
 
     billSearchController.updateBill(billModel);
 
-    billController.generateAndSendBillPdf(
-      recipientEmail: AppStrings.recipientEmail,
-      billModel: billModel,
+    generateAndSendPdf(
       fileName: AppStrings.bill,
-      logoSrc: AppAssets.ba3Logo,
-      fontSrc: AppAssets.notoSansArabicRegular,
+      itemModel: billModel,
+      itemModelId: billModel.billId,
+      items: billModel.items.itemList,
+      pdfGenerator: BillPdfGenerator(),
+    );
+  }
+
+  showEInvoiceDialog(BillModel billModel, BuildContext context) {
+    if (!hasModelId(billModel.billId)) return;
+
+    OverlayService.showDialog(
+      context: context,
+      title: "Invoice QR Code",
+      content: EInvoiceDialogContent(
+        billController: billController,
+        billId: billModel.billId!,
+      ),
+      onCloseCallback: () {
+        log("E-Invoice dialog closed.");
+      },
     );
   }
 }

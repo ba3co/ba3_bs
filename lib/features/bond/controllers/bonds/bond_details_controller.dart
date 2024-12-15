@@ -7,11 +7,13 @@ import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../service/bond/Bond_service.dart';
+import '../../service/bond/bond_pdf_generator.dart';
+import '../../service/bond/bond_service.dart';
 import 'bond_search_controller.dart';
 
 class BondDetailsController extends GetxController with AppValidator {
@@ -50,7 +52,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   void setAccount(AccountModel setAccount) {
     selectedAccount = setAccount;
-bondDetailsPlutoController.setAccountGuid=setAccount.id;
+    bondDetailsPlutoController.setAccountGuid = setAccount.id;
   }
 
   @override
@@ -151,10 +153,16 @@ bondDetailsPlutoController.setAccountGuid=setAccount.id;
       }
     }
     // Create and return the bond model
-    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
+    return _bondService.createBondModel(
+        bondModel: bondModel,
+        bondType: bondType,
+        payDate: bondDate.value,
+        payAccountGuid: selectedAccount!.id!,
+        note: noteController.text);
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
+  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
+      bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
     if (bondNumber != null) {
@@ -169,7 +177,7 @@ bondDetailsPlutoController.setAccountGuid=setAccount.id;
 
     initBondNumberController(bond.payNumber);
 
-    if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!=null) {
+    if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid) != null) {
       setAccount(AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!);
       accountController.text = AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!.accName!;
     }
@@ -177,5 +185,15 @@ bondDetailsPlutoController.setAccountGuid=setAccount.id;
     prepareBondRecords(bond.payItems, bondPlutoController);
 
     bondPlutoController.update();
+  }
+
+  generateAndSendBondPdf(BondModel bondModel) {
+    _bondService.generateAndSendPdf(
+      fileName: AppStrings.bond,
+      itemModel: bondModel,
+      itemModelId: bondModel.payGuid,
+      items: bondModel.payItems.itemList,
+      pdfGenerator: BondPdfGenerator(),
+    );
   }
 }

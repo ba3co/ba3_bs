@@ -1,5 +1,4 @@
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -53,7 +52,7 @@ class SearchableAccountField extends StatelessWidget {
                         isCustomerAccount: isCustomerAccount,
                         fromAddBill: fromAddBill,
                         context: context,
-                        bondDetailsController:bondDetailsController ,
+                        bondDetailsController: bondDetailsController,
                         billController: billController);
                   },
             ),

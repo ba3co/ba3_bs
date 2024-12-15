@@ -11,8 +11,8 @@ import '../../../../core/services/pdf_generator/implementations/pdf_generator_ba
 import '../../../materials/controllers/material_controller.dart';
 
 class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
-  final sellerController = Get.find<SellerController>();
-  final materialController = Get.find<MaterialController>();
+  final _sellerController = Get.find<SellerController>();
+  final _materialController = Get.find<MaterialController>();
 
   @override
   Widget buildTitle(BillModel itemModel, {Uint8List? logoUint8List, Font? font}) {
@@ -36,17 +36,17 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
       children: [
         _buildTitleText('INVOICE', 24, FontWeight.bold),
         _buildSpacing(),
-        _buildDetailRow("Bill number: ", itemModel.billDetails.billNumber.toString()),
+        _buildDetailRow('Bill number: ', itemModel.billDetails.billNumber.toString()),
         _buildSpacing(),
-        _buildDetailRow("Bill type: ", billName(itemModel), font, TextDirection.rtl),
+        _buildDetailRow('Bill type: ', billName(itemModel), font, TextDirection.rtl),
         _buildSpacing(),
-        _buildDetailRow("Bill id: ", itemModel.billId!),
+        _buildDetailRow('Bill id: ', itemModel.billId!),
         _buildSpacing(),
-        _buildDetailRow("Date of Invoice: ", itemModel.billDetails.billDate!),
+        _buildDetailRow('Date of Invoice: ', itemModel.billDetails.billDate!),
         _buildSpacing(),
         _buildDetailRow(
-          "Seller Name: ",
-          sellerController.getSellerNameById(itemModel.billDetails.billSellerId),
+          'Seller Name: ',
+          _sellerController.getSellerNameById(itemModel.billDetails.billSellerId),
           font,
           TextDirection.rtl,
         ),
@@ -82,16 +82,22 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
     final headers = ['Item Name', 'Barcode', 'Quantity', 'Unit Price', 'VAT', 'Total'];
     final data = _buildTableData(itemModel);
 
-    return TableHelper.fromTextArray(
-      headers: headers,
-      data: data,
-      headerStyle: TextStyle(fontWeight: FontWeight.bold, font: font),
-      cellStyle: TextStyle(font: font),
-      tableDirection: TextDirection.rtl,
-      headerDecoration: const BoxDecoration(color: PdfColors.grey300),
-      cellHeight: 30,
-      columnWidths: _columnWidths,
-      cellAlignments: _cellAlignments,
+    return Column(
+      children: [
+        TableHelper.fromTextArray(
+          headers: headers,
+          data: data,
+          headerStyle: TextStyle(fontWeight: FontWeight.bold, font: font),
+          cellStyle: TextStyle(font: font),
+          tableDirection: TextDirection.rtl,
+          headerDecoration: const BoxDecoration(color: PdfColors.grey300),
+          cellHeight: 30,
+          columnWidths: _columnWidths,
+          cellAlignments: _cellAlignments,
+        ),
+        Divider(),
+        buildTotal(itemModel)
+      ],
     );
   }
 
@@ -112,7 +118,7 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
 
   Widget _buildBarcode(String itemGuid) {
     final barcode = Barcode.code128();
-    final barcodeData = materialController.getMaterialBarcodeById(itemGuid);
+    final barcodeData = _materialController.getMaterialBarcodeById(itemGuid);
 
     return BarcodeWidget(
       barcode: barcode,
@@ -140,7 +146,6 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
         5: Alignment.center, // Total
       };
 
-  @override
   Widget buildTotal(BillModel itemModel) {
     final vat = itemModel.billDetails.billVatTotal ?? 0;
     final totalBeforeVat = itemModel.billDetails.billBeforeVatTotal ?? 0;

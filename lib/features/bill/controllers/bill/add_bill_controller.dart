@@ -11,7 +11,6 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_assets.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/interfaces/i_store_selection_handler.dart';
@@ -22,6 +21,7 @@ import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
+import '../../services/bill/bill_pdf_generator.dart';
 import '../../services/bill/bill_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 import 'all_bills_controller.dart';
@@ -83,6 +83,13 @@ class AddBillController extends IBillController with AppValidator implements ISt
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
     }
+  }
+
+  @override
+  Future<void> sendToEmail(
+      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
+    _billService.sendToEmail(
+        recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
   }
 
   @override
@@ -164,10 +171,10 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
   bool get _hasBillNumber => recentBillNumber != null;
 
-  void createBond(BillTypeModel billTypeModel) {
+  void createBond(BillTypeModel billTypeModel, BuildContext context) {
     if (!validateForm()) return;
 
-    _billService.createBond(billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
+    _billService.createBond(context: context, billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
   }
 
   Future<void> saveBill(BillTypeModel billTypeModel) async {
@@ -202,12 +209,12 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
     _updateAddNewBillButtonVisibility(true);
 
-    generateAndSendBillPdf(
-      recipientEmail: AppStrings.recipientEmail,
-      billModel: billModel,
+    _billService.generateAndSendPdf(
       fileName: AppStrings.bill,
-      logoSrc: AppAssets.ba3Logo,
-      fontSrc: AppAssets.notoSansArabicRegular,
+      pdfGenerator: BillPdfGenerator(),
+      itemModel: billModel,
+      itemModelId: billModel.billId,
+      items: billModel.items.itemList,
     );
   }
 

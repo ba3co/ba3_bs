@@ -43,7 +43,7 @@ class EInvoiceDialogContent extends StatelessWidget {
                   hintText: "Enter email",
                 ),
                 onSubmitted: (recipientEmail) {
-                  billController.sendBillToEmail(
+                  billController.sendToEmail(
                     recipientEmail: recipientEmail,
                     url: url,
                   );

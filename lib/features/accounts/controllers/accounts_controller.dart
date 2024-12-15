@@ -52,7 +52,6 @@ class AccountsController extends GetxController {
   }
 
   List<AccountModel> searchAccountsByNameOrCode(text) {
-
     if (accounts.isEmpty) {
       log('Accounts isEmpty');
       fetchAccounts();
@@ -98,16 +97,13 @@ class AccountsController extends GetxController {
     BondDetailsController? bondDetailsController,
     IBillController? billController,
   }) {
-
     List<AccountModel> searchedAccounts = getAccounts(query);
     AccountModel? selectedAccountModel;
-
-
 
     if (searchedAccounts.length == 1) {
       // Single match
       selectedAccountModel = searchedAccounts.first;
-      if(bondDetailsController!=null)bondDetailsController. setAccount(searchedAccounts.first);
+      if (bondDetailsController != null) bondDetailsController.setAccount(searchedAccounts.first);
 
       if (textEditingController != null) {
         final BillAccounts? billAccounts =
@@ -134,7 +130,6 @@ class AccountsController extends GetxController {
         context: context,
         title: 'أختر الحساب',
         content: AccountSelectionDialogContent(
-          ///TODO: I change accounts:accounts to  accounts: searchedAccounts,
           accounts: searchedAccounts,
           onAccountTap: (selectedAccount) {
             OverlayService.back();
@@ -142,13 +137,10 @@ class AccountsController extends GetxController {
             // Set the selected account to the model
             selectedAccountModel = selectedAccount;
 
-
-
             // Callback for parent function with selected account
 
             if (selectedAccountModel != null && textEditingController != null) {
-
-              if(bondDetailsController!=null)bondDetailsController. setAccount(selectedAccount);
+              if (bondDetailsController != null) bondDetailsController.setAccount(selectedAccount);
 
               final BillAccounts? billAccounts =
                   Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];

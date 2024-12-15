@@ -13,6 +13,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -23,6 +24,7 @@ import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/account_handler.dart';
+import '../../services/bill/bill_pdf_generator.dart';
 import '../../services/bill/bill_service.dart';
 import '../../ui/screens/add_bill_screen.dart';
 import '../pluto/add_bill_pluto_controller.dart';
@@ -92,6 +94,13 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   @override
+  Future<void> sendToEmail(
+      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
+    _billService.sendToEmail(
+        recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
+  }
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();
@@ -128,10 +137,10 @@ class BillDetailsController extends IBillController with AppValidator implements
         .startPrinting(invRecords: invRecords, billNumber: billNumber, invDate: billDate.value);
   }
 
-  void createBond(BillTypeModel billTypeModel) {
+  void createBond(BillTypeModel billTypeModel, BuildContext context) {
     if (!validateForm()) return;
 
-    _billService.createBond(billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
+    _billService.createBond(context: context, billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
   }
 
   Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
@@ -165,7 +174,7 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
 
     // Ensure there are bill items
-    if (!hasBillItems(updatedBillModel.items.itemList)) return;
+    if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
 
     // Save the bill to Firestore
     final result = await _billsFirebaseRepo.save(updatedBillModel);
@@ -286,7 +295,6 @@ class BillDetailsController extends IBillController with AppValidator implements
     } else {
       billNumberController.text = '';
     }
-
   }
 
   void initSellerAccount(String? billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId, this);
@@ -306,6 +314,20 @@ class BillDetailsController extends IBillController with AppValidator implements
     prepareAdditionsDiscountsRecords(bill, billPlutoController);
 
     billPlutoController.update();
+  }
+
+  generateAndSendBillPdf(BillModel billModel) {
+    _billService.generateAndSendPdf(
+      fileName: AppStrings.bill,
+      itemModel: billModel,
+      itemModelId: billModel.billId,
+      items: billModel.items.itemList,
+      pdfGenerator: BillPdfGenerator(),
+    );
+  }
+
+  showEInvoiceDialog(BillModel billModel, BuildContext context) {
+    _billService.showEInvoiceDialog(billModel, context);
   }
 }
 

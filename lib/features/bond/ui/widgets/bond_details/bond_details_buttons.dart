@@ -64,6 +64,15 @@ class BondDetailsButtons extends StatelessWidget {
               },
               iconData: Icons.edit_outlined,
             ),
+            if (!bondSearchController.isNew)
+              AppButton(
+                title: 'Pdf-Email',
+                height: 20,
+                onPressed: () {
+                  bondDetailsController.generateAndSendBondPdf(bondModel);
+                },
+                iconData: Icons.link,
+              ),
             AppButton(
               iconData: Icons.delete_outline,
               height: 20,

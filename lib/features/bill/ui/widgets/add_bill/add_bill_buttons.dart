@@ -47,7 +47,7 @@ class AddBillButtons extends StatelessWidget {
               title: 'السند',
               height: 20,
               onPressed: () async {
-                addBillController.createBond(billTypeModel);
+                addBillController.createBond(billTypeModel, context);
               },
               iconData: Icons.file_open_outlined),
           ...[

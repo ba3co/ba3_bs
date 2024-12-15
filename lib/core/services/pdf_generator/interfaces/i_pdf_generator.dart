@@ -21,6 +21,4 @@ abstract class IPdfGenerator<T> {
   Widget buildTitle(T itemModel, {Uint8List? logoUint8List, Font? font});
 
   Widget buildBody(T itemModel, {Font? font});
-
-  Widget buildTotal(T itemModel);
 }

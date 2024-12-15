@@ -1,14 +1,8 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/constants/app_assets.dart';
-import '../../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../../../data/models/bill_model.dart';
@@ -55,7 +49,7 @@ class BillDetailsButtons extends StatelessWidget {
             title: 'السند',
             height: 20,
             onPressed: () async {
-              billDetailsController.createBond(billModel.billTypeModel);
+              billDetailsController.createBond(billModel.billTypeModel, context);
             },
             iconData: Icons.file_open_outlined,
           ),
@@ -86,19 +80,7 @@ class BillDetailsButtons extends StatelessWidget {
             title: 'E-Invoice',
             height: 20,
             onPressed: () {
-              if (!billDetailsController.hasBillId(billModel.billId)) return;
-
-              OverlayService.showDialog(
-                context: context,
-                title: "Invoice QR Code",
-                content: EInvoiceDialogContent(
-                  billController: billDetailsController,
-                  billId: billModel.billId!,
-                ),
-                onCloseCallback: () {
-                  log("E-Invoice dialog closed.");
-                },
-              );
+              billDetailsController.showEInvoiceDialog(billModel, context);
             },
             iconData: Icons.link,
           ),
@@ -107,13 +89,7 @@ class BillDetailsButtons extends StatelessWidget {
               title: 'Pdf-Email',
               height: 20,
               onPressed: () {
-                billDetailsController.generateAndSendBillPdf(
-                  recipientEmail: AppStrings.recipientEmail,
-                  billModel: billModel,
-                  fileName: AppStrings.bill,
-                  logoSrc: AppAssets.ba3Logo,
-                  fontSrc: AppAssets.notoSansArabicRegular,
-                );
+                billDetailsController.generateAndSendBillPdf(billModel);
               },
               iconData: Icons.link,
             ),

@@ -18,9 +18,6 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
   Widget buildBody(T itemModel, {Font? font});
 
   @override
-  Widget buildTotal(T itemModel);
-
-  @override
   Widget buildFooter() => Directionality(
       textDirection: TextDirection.ltr,
       child: Column(
@@ -91,19 +88,19 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
       font = Font.ttf(fontByteData.buffer.asByteData());
     }
 
-    final titleWidget = buildTitle(itemModel, logoUint8List: logoUint8List, font: font);
-    final billWidget = buildBody(itemModel, font: font);
-    final totalWidget = buildTotal(itemModel);
+    final title = buildTitle(itemModel, logoUint8List: logoUint8List, font: font);
+    final body = buildBody(itemModel, font: font);
+    // final total = buildTotal(itemModel);
 
     _pdfDocument.addPage(MultiPage(
       build: (context) => [
-        titleWidget,
+        title,
         SizedBox(height: 0.5 * PdfPageFormat.cm),
         Text('$fileName Details'),
         SizedBox(height: 0.5 * PdfPageFormat.cm),
-        billWidget,
-        Divider(),
-        totalWidget,
+        body,
+        //     Divider(),
+        //   total,
       ],
       footer: (context) => buildFooter(),
     ));

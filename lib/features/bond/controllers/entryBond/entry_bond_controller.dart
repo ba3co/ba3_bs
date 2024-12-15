@@ -1,29 +1,21 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/core/utils/app_ui_utils.dart';
-import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
+import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/firebase/implementations/datasource_repo.dart';
-import '../../../../core/utils/app_service_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../data/models/bond_model.dart';
 import '../../data/models/bond_record_model.dart';
-import '../bonds/all_bond_controller.dart';
-import '../bonds/bond_details_controller.dart';
-import '../bonds/bond_search_controller.dart';
-import '../pluto/bond_details_pluto_controller.dart';
 
-class EntryBondController extends GetxController {
+class EntryBondController extends GetxController with FloatingLauncher {
   late EntryBondModel bondModel;
 
   // Method to create a bond based on bill type
   void createBillBond({
+    required BuildContext context,
     required BillTypeModel billTypeModel,
     required AccountModel customerAccount,
     required double total,
@@ -34,7 +26,13 @@ class EntryBondController extends GetxController {
   }) {
     _initializeBond(billTypeModel, customerAccount, total, vat, gifts, discount, addition);
 
-    _navigateToBondDetailsWithModel(BondType.byBillTypeLabel(billTypeModel.billTypeLabel!));
+    // launchFloatingWindow(
+    //   context: context,
+    //   minimizedTitle: 'سند خاص ب ${BillType.byLabel(billTypeModel.billTypeLabel!).value}',
+    //   floatingScreen: const EntryBondDetailsScreen(),
+    // );
+
+    Get.toNamed(AppRoutes.entryBondDetailsScreen);
   }
 
   void _initializeBond(BillTypeModel billTypeModel, AccountModel customerAccount, double total, double vat,
@@ -274,59 +272,9 @@ class EntryBondController extends GetxController {
             columnName: AppConstants.rowBondCreditAmount,
             value: bondItem.bondItemType == BondItemType.creditor ? bondItem.amount : 0.0,
           ),
-          DataGridCell<String>(columnName: AppConstants.rowBondDescription, value: '${account.note}'),
+          DataGridCell<String>(columnName: AppConstants.rowBondDescription, value: '${bondItem.note}'),
         ]);
       });
     }).toList();
-  }
-
-  Future<void> _navigateToBondDetailsWithModel(BondType bondType) async {
-    final AllBondsController allBondsController = Get.find<AllBondsController>();
-
-    await allBondsController.fetchAllBonds();
-
-    //  final BondModel bondModel = allBondsController.getBondById();
-
-    //  List<BondModel> bondsByCategory = allBondsController.getBondsByType(bondType.typeGuide);
-
-    List<BondModel> bondsByCategory = allBondsController.bonds;
-    log('bondsByCategory ${bondsByCategory.length}');
-
-    if (bondsByCategory.isEmpty) {
-      AppUIUtils.onFailure('لا يوجد سندات سابقة لهذا النوع');
-      return;
-    }
-
-    final String controllerTag = AppServiceUtils.generateUniqueTag('BondController');
-
-    final Map<String, GetxController> controllers = allBondsController.setupControllers(
-      params: {
-        'tag': controllerTag,
-        'bondType': bondType,
-        'bondsFirebaseRepo': Get.find<DataSourceRepository<BondModel>>(),
-        'bondDetailsPlutoController': BondDetailsPlutoController(bondType),
-        'bondSearchController': BondSearchController(),
-      },
-    );
-
-    final bondDetailsController = controllers['bondDetailsController'] as BondDetailsController;
-    final bondDetailsPlutoController = controllers['bondDetailsPlutoController'] as BondDetailsPlutoController;
-    final bondSearchController = controllers['bondSearchController'] as BondSearchController;
-
-    allBondsController.initializeBondSearch(
-      currentBond: bondsByCategory.last,
-      allBonds: bondsByCategory,
-      bondSearchController: bondSearchController,
-      bondDetailsController: bondDetailsController,
-      bondDetailsPlutoController: bondDetailsPlutoController,
-    );
-
-    Get.toNamed(AppRoutes.bondDetailsScreen, arguments: {
-      'fromBondById': false,
-      'tag': controllerTag,
-      'bondDetailsController': bondDetailsController,
-      'bondDetailsPlutoController': bondDetailsPlutoController,
-      'bondSearchController': bondSearchController,
-    });
   }
 }

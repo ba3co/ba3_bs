@@ -1,4 +1,3 @@
-
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -14,8 +13,6 @@ class BillUtils {
     bills.add(emptyBillModel);
     return emptyBillModel;
   }
-
-
 
   bool validateCustomerAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {
