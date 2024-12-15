@@ -70,6 +70,7 @@ Map<LogicalKeySet, PlutoGridShortcutAction> _buildTabKeyActions() {
 
 // Enter key actions
 Map<LogicalKeySet, PlutoGridShortcutAction> _buildEnterKeyActions(PlutoGridShortcutAction plutoGridEnterAction) {
+
   return {
     LogicalKeySet(LogicalKeyboardKey.enter): plutoGridEnterAction,
     LogicalKeySet(LogicalKeyboardKey.numpadEnter): plutoGridEnterAction,

@@ -144,6 +144,7 @@ class BondSearchController extends GetxController {
 
   /// Refreshes the screen with the current bond's details
   void _updateBondDetailsOnScreen() {
+bondDetailsPlutoController.setAccountGuid=currentBond.payGuid??'';
     bondDetailsController.updateBondDetailsOnScreen(
       currentBond,
       bondDetailsPlutoController,

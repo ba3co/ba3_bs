@@ -19,6 +19,14 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem>  {
 
   final BondType bondType;
 
+
+  String accountGuid='';
+
+
+  set setAccountGuid(accGuid){
+    accountGuid=accGuid;
+  }
+
   BondDetailsPlutoController( this.bondType);
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
@@ -109,27 +117,23 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem>  {
               '',
         )
         .map((row) {
+          print(row.cells[AppConstants.entryCredit]?.value);
+          print(row.cells[AppConstants.entryDebit]?.value);
+
           return _processBondRow(
             row: row.toJson(),
+
           );
         })
         .whereType<PayItem>()
         .toList();
-    if (bondType == BondType.receiptVoucher) {
-      // payItems.add(EntryBondItemModel(
-      //   bondItemType: BondItemType.creditor,
-      //   note: bondDetailsController.noteController.text,
-      //   amount: calcCreditTotal(),
-      //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
-      // ));
-    } else if (bondType == BondType.paymentVoucher) {
-      // payItems.add(EntryBondItemModel(
-      //   bondItemType: BondItemType.debtor,
-      //   note: bondDetailsController.noteController.text,
-      //   amount: calcDebitTotal(),
-      //   account: AppServiceUtils.getAccountModelFromLabel(bondDetailsController.accountController.text),
-      // ));
+
+    if(bondType==BondType.paymentVoucher){
+
+    }else if(bondType==BondType.receiptVoucher){
+
     }
+
     recordsTableStateManager.setShowLoading(false);
     return payItems;
   }
@@ -214,6 +218,14 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem>  {
     }
   }
   List<PlutoRow> convertRecordsToRows(List<PayItem> records) => records.map((record) {
+
+
+
+    records.removeWhere((element) {
+      print("accountGuid  $accountGuid");
+      print("element.entryAccountGuid  ${Get.find<AccountsController>().getAccountIdByName(element.entryAccountGuid)}");
+      return Get.find<AccountsController>().getAccountIdByName(element.entryAccountGuid)==accountGuid;
+    },);
     final rowData = record.toPlutoGridFormat(bondType);
     final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
     return PlutoRow(cells: cells);

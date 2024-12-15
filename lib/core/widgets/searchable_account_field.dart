@@ -1,7 +1,9 @@
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../features/bond/controllers/bonds/bond_details_controller.dart';
 import '../i_controllers/i_bill_controller.dart';
 import 'custom_text_field_with_icon.dart';
 
@@ -15,6 +17,7 @@ class SearchableAccountField extends StatelessWidget {
   final double? height;
   final double? width;
   final IBillController? billController;
+  final BondDetailsController? bondDetailsController;
 
   const SearchableAccountField({
     super.key,
@@ -27,6 +30,7 @@ class SearchableAccountField extends StatelessWidget {
     this.fromAddBill = false,
     this.height,
     this.width,
+    this.bondDetailsController,
   });
 
   @override
@@ -49,6 +53,7 @@ class SearchableAccountField extends StatelessWidget {
                         isCustomerAccount: isCustomerAccount,
                         fromAddBill: fromAddBill,
                         context: context,
+                        bondDetailsController:bondDetailsController ,
                         billController: billController);
                   },
             ),
