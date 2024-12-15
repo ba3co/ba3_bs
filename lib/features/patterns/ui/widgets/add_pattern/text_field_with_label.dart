@@ -7,12 +7,14 @@ class TextFieldWithLabel extends StatelessWidget {
   final String label;
   final TextEditingController textEditingController;
   final FormFieldValidator<String> validator;
+  final TextStyle? textStyle;
 
   const TextFieldWithLabel({
     super.key,
     required this.label,
     required this.textEditingController,
     required this.validator,
+    this.textStyle,
   });
 
   @override
@@ -23,7 +25,11 @@ class TextFieldWithLabel extends StatelessWidget {
         children: [
           SizedBox(width: 100, child: Text(label)),
           Expanded(
-            child: CustomTextFieldWithoutIcon(textEditingController: textEditingController, validator: validator),
+            child: CustomTextFieldWithoutIcon(
+              textEditingController: textEditingController,
+              validator: validator,
+              textStyle: textStyle ?? const TextStyle(fontSize: 18),
+            ),
           ),
         ],
       ),

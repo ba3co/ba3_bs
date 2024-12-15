@@ -37,6 +37,8 @@ class BillDetailsButtons extends StatelessWidget {
               return AppButton(
                   title: 'إضافة',
                   height: 20,
+                  width: 100,
+                  fontSize: 14,
                   color: billDetailsController.isBillSaved.value ? Colors.green : Colors.blue.shade700,
                   onPressed: billDetailsController.isBillSaved.value
                       ? () {}
@@ -48,6 +50,8 @@ class BillDetailsButtons extends StatelessWidget {
           AppButton(
             title: 'السند',
             height: 20,
+            width: 100,
+            fontSize: 14,
             onPressed: () async {
               billDetailsController.createBond(billModel.billTypeModel, context);
             },
@@ -57,6 +61,8 @@ class BillDetailsButtons extends StatelessWidget {
             AppButton(
               title: "تعديل",
               height: 20,
+              width: 100,
+              fontSize: 14,
               onPressed: () async {
                 billDetailsController.updateBill(
                   billModel: billModel,
@@ -69,6 +75,8 @@ class BillDetailsButtons extends StatelessWidget {
             iconData: Icons.print_outlined,
             title: 'طباعة',
             height: 20,
+            width: 100,
+            fontSize: 14,
             onPressed: () async {
               billDetailsController.printBill(
                 billNumber: billModel.billDetails.billNumber!,
@@ -79,6 +87,8 @@ class BillDetailsButtons extends StatelessWidget {
           AppButton(
             title: 'E-Invoice',
             height: 20,
+            width: 100,
+            fontSize: 14,
             onPressed: () {
               billDetailsController.showEInvoiceDialog(billModel, context);
             },
@@ -88,6 +98,8 @@ class BillDetailsButtons extends StatelessWidget {
             AppButton(
               title: 'Pdf-Email',
               height: 20,
+              width: 100,
+              fontSize: 14,
               onPressed: () {
                 billDetailsController.generateAndSendBillPdf(billModel);
               },
@@ -97,6 +109,8 @@ class BillDetailsButtons extends StatelessWidget {
             AppButton(
               iconData: Icons.delete_outline,
               height: 20,
+              width: 100,
+              fontSize: 14,
               color: Colors.red,
               title: 'حذف',
               onPressed: () async {

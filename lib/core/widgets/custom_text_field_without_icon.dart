@@ -15,6 +15,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.enabled = true,
     this.height,
     this.suffixIcon,
+    this.textStyle,
   });
 
   final TextEditingController textEditingController;
@@ -27,6 +28,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final double? height;
   final Widget? suffixIcon;
+  final TextStyle? textStyle;
 
   @override
   State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
@@ -78,6 +80,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
         onTap: () => widget.textEditingController.selection =
             TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
         inputFormatters: widget.inputFormatters,
+        style: widget.textStyle ?? const TextStyle(fontSize: 14),
         decoration: InputDecoration(
             fillColor: Colors.white,
             filled: true,

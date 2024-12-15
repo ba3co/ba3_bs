@@ -11,13 +11,14 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 
+import '../../features/accounts/controllers/account_statement_controller.dart';
 import '../../features/bill/controllers/bill/all_bills_controller.dart';
 import '../../features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import '../../features/bill/data/datasources/bills_data_source.dart';
 import '../../features/bill/data/models/bill_model.dart';
 import '../../features/bill/services/bill/bill_json_export.dart';
 import '../../features/bond/controllers/bonds/all_bond_controller.dart';
-import '../../features/bond/controllers/entryBond/entry_bond_controller.dart';
+import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/service/bond/bond_json_export.dart';
@@ -105,6 +106,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PrintingController(translationRepo), fenix: true);
 
     Get.lazyPut(() => BillSearchController(), fenix: true);
+    Get.lazyPut(() => AccountStatementController(), fenix: true);
     // Get.lazyPut(() => BondDetailsController(), fenix: true);
     // Get.lazyPut(() => BondRecordPlutoController(), fenix: true);
   }

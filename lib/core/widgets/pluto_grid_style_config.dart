@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 PlutoGridStyleConfig buildGridStyleConfig({evenRowColor}) {
-
   return PlutoGridStyleConfig(
     evenRowColor: _getEvenRowColor(evenRowColor: evenRowColor),
     columnTextStyle: _getColumnTextStyle(),
@@ -20,7 +19,7 @@ Color _getEvenRowColor({Color? evenRowColor}) {
 TextStyle _getColumnTextStyle() {
   return const TextStyle(
     color: Colors.black,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: FontWeight.bold,
   );
 }
@@ -32,11 +31,10 @@ Color _getActivatedColor() {
 TextStyle _getCellTextStyle() {
   return const TextStyle(
     color: Colors.black,
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
+    fontSize: 14,
   );
 }
 
 BorderRadius _getBorderRadius() {
-  return const BorderRadius.all(Radius.circular(15));
+  return BorderRadius.circular(5);
 }

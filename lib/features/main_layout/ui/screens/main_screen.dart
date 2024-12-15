@@ -1,9 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
-import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/styling/app_colors.dart';
@@ -41,11 +42,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     super.initState();
     if (!kIsWeb && (Platform.isWindows || Platform.isMacOS)) {
       Get.put(WindowCloseController());
-
-
-    } else {
-
-    }
+    } else {}
     allData = appLayouts.where((element) => checkMainPermission(element.role)).toList();
     tabController = TabController(length: appLayouts.length, vsync: this, initialIndex: tabIndex);
     pageController = PageController();
@@ -61,7 +58,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           body: Row(
             children: [
               Container(
-                  width:  0.3.sw ,
+                  width: 0.15.sw,
                   color: Colors.blue,
                   child: Column(
                     children: [

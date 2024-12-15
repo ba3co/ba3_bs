@@ -80,6 +80,18 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
   }
 
+  AccountModel? getAccountByName(text) {
+    final AccountModel accountModel = accounts
+        .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      return AccountModel(accName: null);
+    });
+    if (accountModel.accName == null) {
+      return null;
+    } else {
+      return accountModel;
+    }
+  }
+
   List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);
 
   List<String> getAccountChildren(String? accountId) {

@@ -19,7 +19,7 @@ class DatePicker extends StatelessWidget {
       height: AppConstants.constHeightTextField,
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(5),
           border: const Border.symmetric(vertical: BorderSide(width: 1))),
       child: InkWell(
         onTap: () {
@@ -100,7 +100,7 @@ class DatePicker extends StatelessWidget {
               const Spacer(),
               Text(
                 initDate ?? '',
-                style: const TextStyle(fontSize: 17),
+                style: const TextStyle(fontSize: 14),
               ),
               const Spacer(),
               const Icon(Icons.date_range),

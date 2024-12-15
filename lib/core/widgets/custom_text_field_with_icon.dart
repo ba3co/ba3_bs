@@ -12,6 +12,7 @@ class CustomTextFieldWithIcon extends StatefulWidget {
     this.onChanged,
     this.inputFormatters,
     this.isNumeric = false,
+    this.textStyle,
   });
 
   final TextEditingController textEditingController;
@@ -22,6 +23,8 @@ class CustomTextFieldWithIcon extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final bool isNumeric;
+
+  final TextStyle? textStyle;
 
   @override
   State<CustomTextFieldWithIcon> createState() => _CustomTextFieldWithIconState();
@@ -68,6 +71,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
       inputFormatters: widget.inputFormatters,
       onTap: () => widget.textEditingController.selection =
           TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
+      style: widget.textStyle ?? const TextStyle(fontSize: 14),
       decoration: InputDecoration(
           fillColor: Colors.white,
           filled: true,

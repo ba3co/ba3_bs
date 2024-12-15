@@ -16,6 +16,7 @@ class CustomDropdownOverly<T> extends StatefulWidget {
   final BoxDecoration? decoration;
   final int? priority;
   final VoidCallback? onCloseCallback;
+  final TextStyle? textStyle;
 
   const CustomDropdownOverly({
     super.key,
@@ -24,6 +25,7 @@ class CustomDropdownOverly<T> extends StatefulWidget {
     required this.items,
     required this.itemLabelBuilder,
     this.onChanged,
+    this.textStyle = const TextStyle(color: Colors.black),
     this.height,
     this.decoration,
     this.priority,
@@ -94,7 +96,7 @@ class _CustomDropdownOverlyState<T> extends State<CustomDropdownOverly<T>> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               widget.itemLabelBuilder(item),
-              style: const TextStyle(color: Colors.black),
+              style: widget.textStyle,
             ),
           ),
         );
@@ -141,7 +143,7 @@ class _CustomDropdownOverlyState<T> extends State<CustomDropdownOverly<T>> {
                 child: Center(
                   child: Text(
                     widget.itemLabelBuilder(widget.value),
-                    style: const TextStyle(color: Colors.black),
+                    style: widget.textStyle,
                   ),
                 ),
               ),

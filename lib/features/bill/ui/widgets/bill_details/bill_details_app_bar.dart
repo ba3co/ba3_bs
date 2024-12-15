@@ -60,11 +60,12 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                           onChanged: (selectedType) {
                             billDetailsController.onPayTypeChanged(selectedType);
                           },
+                          textStyle: const TextStyle(fontSize: 14),
                           height: AppConstants.constHeightTextField,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             border: Border.all(color: Colors.black38),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           onCloseCallback: () {
                             log('InvPayType Dropdown Overly Closed.');

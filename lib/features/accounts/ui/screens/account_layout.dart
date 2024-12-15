@@ -3,6 +3,8 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/dialogs/Account_Option_Dialog.dart';
+
 class AccountLayout extends StatelessWidget {
   const AccountLayout({super.key});
 
@@ -20,6 +22,13 @@ class AccountLayout extends StatelessWidget {
                 Get.find<AccountsController>()
                   ..fetchAccounts()
                   ..navigateToAllAccountsScreen();
+              },
+            ),
+            AppMenuItem(
+              text: 'كشف حساب',
+              onTap: () {
+                showDialog<String>(
+                    context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
               },
             ),
           ],

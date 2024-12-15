@@ -40,9 +40,7 @@ class BillDetailsHeader extends StatelessWidget {
                   );
                 }),
               ),
-              secondItem: StoreDropdown(
-                storeSelectionHandler: billDetailsController,
-              ),
+              secondItem: StoreDropdown(storeSelectionHandler: billDetailsController),
             ),
             const VerticalSpace(8),
             FormFieldRow(

@@ -35,6 +35,7 @@ class StoreDropdown extends StatelessWidget {
                   value: storeSelectionHandler.selectedStore.value,
                   items: StoreAccount.values,
                   onChanged: storeSelectionHandler.onSelectedStoreChanged,
+                  textStyle: const TextStyle(fontSize: 14),
                   itemLabelBuilder: (store) => store.value,
                   height: AppConstants.constHeightTextField,
                   decoration: BoxDecoration(

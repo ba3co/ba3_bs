@@ -20,11 +20,11 @@ class CalculationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: color,
       width: width ?? 50.0.w,
       height: height ?? 80.h,
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -32,7 +32,7 @@ class CalculationCard extends StatelessWidget {
           Center(
             child: Text(
               value,
-              style: TextStyle(fontSize: 24.sp, color: Colors.white),
+              style: TextStyle(fontSize: 20.sp, color: Colors.white),
             ),
           ),
           Expanded(

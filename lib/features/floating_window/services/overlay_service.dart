@@ -53,6 +53,7 @@ class OverlayService {
     BoxDecoration? decoration,
     int? priority,
     VoidCallback? onCloseCallback,
+    TextStyle? textStyle,
   }) {
     return CustomDropdownOverly<T>(
       value: value,
@@ -62,6 +63,7 @@ class OverlayService {
       dropdownAlignment: dropdownAlignment,
       itemLabelBuilder: itemLabelBuilder,
       onChanged: onChanged,
+      textStyle: textStyle,
       height: height,
       decoration: decoration,
       priority: priority,

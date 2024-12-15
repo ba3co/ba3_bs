@@ -1,4 +1,4 @@
-import 'package:ba3_bs/features/accounts/ui/screens/account_details_screen.dart';
+import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_screen.dart';
@@ -28,10 +28,7 @@ List<GetPage<dynamic>>? appRouter = [
     name: AppRoutes.showAllBillsScreen,
     page: () => const AllBillsScreen(),
   ),
-  GetPage(
-    name: AppRoutes.showAccountDetailsScreen,
-    page: () => AccountDetailsScreen(),
-  ),
+
   GetPage(
       name: AppRoutes.billDetailsScreen,
       middlewares: [LandscapeMiddleware()],
@@ -75,6 +72,7 @@ List<GetPage<dynamic>>? appRouter = [
       );
     },
   ),
+  GetPage(name: AppRoutes.accountStatementScreen, page: () => const AccountStatementScreen()),
 
   // GetPage(
   //   name: AppRoutes.addBillScreen,

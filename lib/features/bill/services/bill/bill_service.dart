@@ -12,7 +12,7 @@ import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../../bond/controllers/entryBond/entry_bond_controller.dart';
+import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../floating_window/services/overlay_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';

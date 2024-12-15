@@ -6,9 +6,9 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../data/models/bond_record_model.dart';
+import '../../ui/screens/entry_bond_details_screen.dart';
 
 class EntryBondController extends GetxController with FloatingLauncher {
   late EntryBondModel bondModel;
@@ -26,13 +26,13 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }) {
     _initializeBond(billTypeModel, customerAccount, total, vat, gifts, discount, addition);
 
-    // launchFloatingWindow(
-    //   context: context,
-    //   minimizedTitle: 'سند خاص ب ${BillType.byLabel(billTypeModel.billTypeLabel!).value}',
-    //   floatingScreen: const EntryBondDetailsScreen(),
-    // );
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: 'سند خاص ب ${BillType.byLabel(billTypeModel.billTypeLabel!).value}',
+      floatingScreen: const EntryBondDetailsScreen(),
+    );
 
-    Get.toNamed(AppRoutes.entryBondDetailsScreen);
+    //   Get.toNamed(AppRoutes.entryBondDetailsScreen);
   }
 
   void _initializeBond(BillTypeModel billTypeModel, AccountModel customerAccount, double total, double vat,

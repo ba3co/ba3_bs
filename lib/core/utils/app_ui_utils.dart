@@ -16,7 +16,8 @@ class AppUIUtils {
     } else if (isSuccess) {
       color = Colors.green;
     }
-    Fluttertoast.showToast(msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(
+        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String getDateFromString(String input) {
@@ -45,6 +46,18 @@ class AppUIUtils {
       // throw const FormatException("صيغة غير صحيحة");
       return DateTime.now().toString().split(" ")[0];
     }
+  }
+
+  static List<String> getDatesBetween(DateTime startDate, DateTime endDate) {
+    List<String> dates = [];
+    DateTime currentDate = startDate;
+
+    while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
+      dates.add(currentDate.toString().split(" ")[0]);
+      currentDate = currentDate.add(const Duration(days: 1));
+    }
+
+    return dates;
   }
 
   static void showExportSuccessDialog(String filePath, String successMessage, String title) {
@@ -146,7 +159,8 @@ class AppUIUtils {
             )),
       );
 
-  static showErrorSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
+  static showErrorSnackBar(
+      {String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
     // Close any existing SnackBar
     Get.closeCurrentSnackbar();
     // Show the new SnackBar
@@ -165,7 +179,8 @@ class AppUIUtils {
     );
   }
 
-  static showSuccessSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
+  static showSuccessSnackBar(
+      {String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
     // Close any existing SnackBar
     Get.closeCurrentSnackbar();
     // Show the new SnackBar

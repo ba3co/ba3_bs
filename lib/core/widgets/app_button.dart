@@ -43,7 +43,7 @@ class AppButton extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: fontSize ?? 15),
                 ),
-                Icon(iconData, size: 20, color: Colors.white),
+                Icon(iconData, size: 18, color: Colors.white),
               ],
             ),
           ),
