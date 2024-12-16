@@ -20,6 +20,7 @@ import '../../features/bond/controllers/bonds/all_bond_controller.dart';
 import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
+import '../../features/bond/data/models/entry_bond_model.dart';
 import '../../features/login/controllers/nfc_cards_controller.dart';
 import '../../features/login/controllers/user_management_controller.dart';
 import '../../features/login/data/datasources/user_management_service.dart';
@@ -30,6 +31,8 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
+import '../services/accounts_statements_data_source.dart';
+import '../services/entry_bonds_data_source.dart';
 import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
@@ -61,6 +64,16 @@ class AppBindings extends Bindings {
       BondsDataSource(databaseService: fireStoreService),
     );
 
+    // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
+    final DataSourceRepository<EntryBondModel> entryBondsFirebaseRepo = DataSourceRepository(
+      EntryBondsDataSourceDataSource(databaseService: fireStoreService),
+    );
+
+    // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
+    final AccountsStatementsRepository accountsStatementsRepo = AccountsStatementsRepository(
+      AccountsStatementsDataSource(),
+    );
+
     // Instantiate Api client, GoogleTranslationDataSource and TranslationRepository
     // final IAPiClient httpClient = HttpClient<Map<String, dynamic>>(Client());
     final IAPiClient dioClient = DioClient<Map<String, dynamic>>(Dio());
@@ -81,7 +94,8 @@ class AppBindings extends Bindings {
     // Lazy load controllers
     Get.lazyPut(() => NfcCardsController(), fenix: true);
     Get.lazyPut(() => PlutoController(), fenix: true);
-    Get.lazyPut(() => EntryBondController(), fenix: true);
+    Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
+    //Get.lazyPut(() => EntryBondController(), fenix: true);
 
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
 

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,16 +53,15 @@ class BillDetailsButtons extends StatelessWidget {
             width: 100,
             fontSize: 14,
             onPressed: () async {
+              // log(billModel.billTypeModel.toJson().toString());
+              // log("-"*30);
+              // log(billModel.billTypeModel.accounts!.map((key, value) =>MapEntry(key, value.accName) ).toString());
+              // log("-"*30);
+              // log(billModel.billDetails.toJson().toString());
+              // log("-"*30);
+              // log(billModel.items.toJson().toString());
 
-              log(billModel.billTypeModel.toJson().toString());
-              log("-"*30);
-              log(billModel.billTypeModel.accounts!.map((key, value) =>MapEntry(key, value.accName) ).toString());
-              log("-"*30);
-              log(billModel.billDetails.toJson().toString());
-              log("-"*30);
-              log(billModel.items.toJson().toString());
-
-              // billDetailsController.createBond(billModel.billTypeModel, context);
+              billDetailsController.createBond(billModel.billTypeModel, context);
             },
             iconData: Icons.file_open_outlined,
           ),

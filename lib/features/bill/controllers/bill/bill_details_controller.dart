@@ -140,7 +140,7 @@ class BillDetailsController extends IBillController with AppValidator implements
   void createBond(BillTypeModel billTypeModel, BuildContext context) {
     if (!validateForm()) return;
 
-    // _billService.createBond(context: context, billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
+    _billService.createBond(context: context, billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
   }
 
   Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {

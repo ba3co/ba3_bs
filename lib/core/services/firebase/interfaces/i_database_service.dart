@@ -5,7 +5,7 @@ abstract class IDatabaseService<T> {
 
   Future<void> delete({required String path, String? documentId});
 
-  Future<T> add({required String path, required Map<String, dynamic> data});
+  Future<T> add({required String path, String? documentId, required Map<String, dynamic> data});
 
   Future<void> update({required String path, String? documentId, required Map<String, dynamic> data});
 }

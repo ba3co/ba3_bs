@@ -14,5 +14,5 @@ abstract class DatasourceBase<T> {
 
   Future<void> delete(String id);
 
-  Future<T> save(T item);
+  Future<T> save(T item, [bool? save]);
 }

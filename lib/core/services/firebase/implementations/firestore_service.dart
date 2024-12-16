@@ -28,11 +28,17 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<Map<String, dynamic>> add({required String path, required Map<String, dynamic> data}) async {
-    final docId = _firestore.collection(path).doc().id;
+  Future<Map<String, dynamic>> add(
+      {required String path, String? documentId, required Map<String, dynamic> data}) async {
+    if (documentId == null) {
+      final docId = _firestore.collection(path).doc().id;
 
-    data['docId'] = docId;
-    await _firestore.collection(path).doc(docId).set(data);
+      data['docId'] = docId;
+
+      await _firestore.collection(path).doc(docId).set(data);
+    } else {
+      await _firestore.collection(path).doc(documentId).set(data);
+    }
 
     return data;
   }

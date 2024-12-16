@@ -28,7 +28,7 @@ class PatternsDataSource extends DatasourceBase<BillTypeModel> {
   }
 
   @override
-  Future<BillTypeModel> save(BillTypeModel item) async {
+  Future<BillTypeModel> save(BillTypeModel item, [bool? save]) async {
     if (item.billTypeId == null) {
       final data = await databaseService.add(path: path, data: item.toJson());
 

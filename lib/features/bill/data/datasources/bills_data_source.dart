@@ -35,7 +35,7 @@ class BillsDataSource extends DatasourceBase<BillModel> with FirebaseSequentialN
   }
 
   @override
-  Future<BillModel> save(BillModel item) async {
+  Future<BillModel> save(BillModel item, [bool? save]) async {
     if (item.billId == null) {
       final newBillModel = await _createNewBill(item);
 

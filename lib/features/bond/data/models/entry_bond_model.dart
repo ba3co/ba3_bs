@@ -3,19 +3,52 @@ import '../../../../core/helper/enums/enums.dart';
 /// Represents a bond entry with associated details and items.
 class EntryBondModel {
   /// List of bond items associated with this bond entry.
-  final List<EntryBondItemModel>? bonds;
+  final List<EntryBondItemModel>? items;
 
   /// Refers to the origin entity of the bond entry (e.g., billTypeId for invoices).
-  final String? originGuid;
+  final EntryBondOrigin? origin;
 
   /// Unique identifier for the bond entry, which is the same as the origin ID (e.g., billId).
   final String? id;
 
   EntryBondModel({
-    this.bonds,
-    this.originGuid,
+    this.items,
+    this.origin,
     this.id,
   });
+
+  /// Creates an instance from a JSON object.
+  factory EntryBondModel.fromJson(Map<String, dynamic> json) {
+    return EntryBondModel(
+      items: (json['items'] as List<dynamic>?)
+          ?.map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      origin: EntryBondOrigin.fromJson(json['origin']),
+      id: json['id'] as String?,
+    );
+  }
+
+  /// Converts the instance to a JSON object.
+  Map<String, dynamic> toJson() {
+    return {
+      'items': items?.map((item) => item.toJson()).toList(),
+      'origin': origin?.toJson(),
+      'id': id,
+    };
+  }
+
+  /// Creates a new instance with modified fields.
+  EntryBondModel copyWith({
+    List<EntryBondItemModel>? items,
+    EntryBondOrigin? origin,
+    String? id,
+  }) {
+    return EntryBondModel(
+      items: items ?? this.items,
+      origin: origin ?? this.origin,
+      id: id ?? this.id,
+    );
+  }
 }
 
 /// Represents a single bond item within a bond entry.
@@ -27,19 +60,230 @@ class EntryBondItemModel {
   final double? amount;
 
   /// The account related to this bond item.
-  final String? account;
+  final String? accountId;
 
   /// Additional notes or comments for this bond item.
   final String? note;
 
   /// Refers to the bond entry ID that this item belongs to.
-  final String? originGuid;
+  final String? originId;
 
   EntryBondItemModel({
     this.bondItemType,
     this.amount,
-    this.account,
+    this.accountId,
     this.note,
-    this.originGuid,
+    this.originId,
   });
+
+  /// Creates an instance from a JSON object.
+  factory EntryBondItemModel.fromJson(Map<String, dynamic> json) {
+    return EntryBondItemModel(
+      bondItemType: BondItemType.byLabel(json['bondItemType']),
+      amount: (json['amount'] as num?)?.toDouble(),
+      accountId: json['accountId'] as String?,
+      note: json['note'] as String?,
+      originId: json['originId'] as String?,
+    );
+  }
+
+  /// Converts the instance to a JSON object.
+  Map<String, dynamic> toJson() {
+    return {
+      'bondItemType': bondItemType?.label,
+      'amount': amount,
+      'accountId': accountId,
+      'note': note,
+      'originId': originId,
+    };
+  }
+
+  /// Creates a new instance with modified fields.
+  EntryBondItemModel copyWith({
+    BondItemType? bondItemType,
+    double? amount,
+    String? accountId,
+    String? note,
+    String? originId,
+  }) {
+    return EntryBondItemModel(
+      bondItemType: bondItemType ?? this.bondItemType,
+      amount: amount ?? this.amount,
+      accountId: accountId ?? this.accountId,
+      note: note ?? this.note,
+      originId: originId ?? this.originId,
+    );
+  }
 }
+
+class EntryBondOrigin {
+  final String? guide;
+  final EntryBondType? type;
+
+  EntryBondOrigin({
+    this.guide,
+    this.type,
+  });
+
+  factory EntryBondOrigin.fromJson(Map<String, dynamic> json) {
+    return EntryBondOrigin(
+      guide: json['guide'] as String?,
+      type: EntryBondType.byLabel(json['type']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'guide': guide,
+      'type': type?.label,
+    };
+  }
+
+  EntryBondOrigin copyWith({
+    String? guide,
+    EntryBondType? type,
+  }) {
+    return EntryBondOrigin(
+      guide: guide ?? this.guide,
+      type: type ?? this.type,
+    );
+  }
+}
+
+final entryBondModel = EntryBondModel(
+    id: 'Up6WalSELBYhH4DZXPVJ',
+    origin: EntryBondOrigin(
+      type: EntryBondType.bill,
+      guide: '6ed3786c-08c6-453b-afeb-a0e9075dd26d',
+    ),
+    items: [
+      EntryBondItemModel(
+        bondItemType: BondItemType.creditor,
+        amount: 120,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: 'b1e9e80b-0d23-414d-b3be-bd0aec386002',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.debtor,
+        amount: 6,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.debtor,
+        amount: 5.04,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.debtor,
+        amount: 120,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.creditor,
+        amount: 12.60,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.creditor,
+        amount: 380.95,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: '5b36c82d-9105-4177-a5c3-0f90e5857e3c',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.creditor,
+        amount: 6,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: 'a5c04527-63e8-4373-92e8-68d8f88bdb16',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.debtor,
+        amount: 12.60,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: 'e903d658-f30f-46c8-82c0-fee86256a511',
+      ),
+      EntryBondItemModel(
+        bondItemType: BondItemType.creditor,
+        amount: 5.04,
+        note: '',
+        originId: 'Up6WalSELBYhH4DZXPVJ',
+        accountId: '1a1416bb-426b-4348-98cf-f1b026cc6c7d',
+      ),
+    ]);
+
+// import '../../../../core/helper/enums/enums.dart';
+// import '../../../accounts/data/models/account_model.dart';
+//
+// class EntryBondItemModel {
+//   final BondItemType? bondItemType;
+//   final double? amount;
+//   final AccountModel? account, oppositeAccount;
+//   final String? note;
+//
+//   EntryBondItemModel({
+//     this.bondItemType,
+//     this.amount,
+//     this.account,
+//     this.oppositeAccount,
+//     this.note,
+//   });
+//
+// /* factory EntryBondItemModel.fromJson(Map<String, dynamic> json) {
+//     return EntryBondItemModel(
+//       bondItemType: BondItemType.values.firstWhere(
+//         (e) => e.label == json['bondItemType'],
+//         // orElse: () => null,
+//       ),
+//       amount: (json['amount'] as num?)?.toDouble(),
+//       account: json['account'] != null ? AppServiceUtils.getAccountModelFromLabel(json['account']) : null,
+//       oppositeAccount:
+//           json['oppositeAccount'] != null ? AppServiceUtils.getAccountModelFromLabel(json['oppositeAccount']) : null,
+//       note: json['note'],
+//     );
+//   }
+//
+//
+//
+//   factory EntryBondItemModel.fromJsonPluto({
+//     required String account,
+//     required String note,
+//     required BondItemType bondType,
+//     required double amount,
+//   }) {
+//     return EntryBondItemModel(
+//       amount: amount,
+//       account: AppServiceUtils.getAccountModelFromLabel(account),
+//       bondItemType: bondType,
+//       note: note,
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'bondItemType': bondItemType!.label, // تحويل enum إلى نص
+//       'amount': amount,
+//       'account': account?.accName, // تأكد أن AccountModel يدعم toJson
+//       'oppositeAccount': oppositeAccount?.accName,
+//       'note': note,
+//     };
+//   }*/
+// }
+//
+// class EntryBondModel {
+//   final Map<AccountModel, List<EntryBondItemModel>> bonds;
+//
+//   EntryBondModel({
+//     required this.bonds,
+//   });
+// }

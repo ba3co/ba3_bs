@@ -53,7 +53,7 @@ class BillService with PdfBase {
       billRecordsItems: plutoController.generateRecords,
     );
   }
-/*
+
   void createBond({
     required BuildContext context,
     required BillTypeModel billTypeModel,
@@ -68,7 +68,7 @@ class BillService with PdfBase {
         gifts: plutoController.computeGifts,
         discount: plutoController.computeDiscounts,
         addition: plutoController.computeAdditions,
-      );*/
+      );
 
   Future<void> handleDeleteSuccess(BillModel billModel, BillSearchController billSearchController,
       [fromBillById]) async {

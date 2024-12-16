@@ -206,6 +206,24 @@ enum BondType {
   }
 }
 
+enum EntryBondType {
+  bond('bond'),
+  bill('bill'),
+  cheque('cheque');
+
+  final String label;
+
+  const EntryBondType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory EntryBondType.byLabel(String label) {
+    return EntryBondType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching EntryBondType for label: $label'),
+    );
+  }
+}
+
 enum BondItemType {
   creditor('الدائن'),
   debtor('مدين');
@@ -213,6 +231,14 @@ enum BondItemType {
   final String label;
 
   const BondItemType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory BondItemType.byLabel(String label) {
+    return BondItemType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching BondItemType for label: $label'),
+    );
+  }
 }
 
 abstract class Account {

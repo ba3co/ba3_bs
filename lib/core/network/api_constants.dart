@@ -5,4 +5,6 @@ class ApiConstants {
   static const String billsPath = 'bills';
   static const String patternsPath = 'bill_types';
   static const String bondsPath = 'bonds';
+  static const String entryBonds = 'entry_bonds';
+  static const String accountsStatements = 'accounts_statements';
 }
