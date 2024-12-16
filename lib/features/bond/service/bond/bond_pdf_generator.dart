@@ -1,8 +1,5 @@
-import 'dart:developer';
 
-import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
@@ -11,7 +8,7 @@ import '../../../../core/services/pdf_generator/implementations/pdf_generator_ba
 import '../../data/models/bond_model.dart';
 
 class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
-  final _accountsController = Get.find<AccountsController>();
+  // final _accountsController = Get.find<AccountsController>();
 
   @override
   Widget buildTitle(BondModel itemModel, {Uint8List? logoUint8List, Font? font}) {

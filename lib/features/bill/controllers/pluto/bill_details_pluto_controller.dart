@@ -8,7 +8,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
-import '../../../bond/data/models/pay_item_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/pluto/bill_pluto_calculator.dart';
 import '../../services/pluto/bill_pluto_context_menu.dart';
@@ -309,14 +308,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         update();
       });
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
-  @override
-  // TODO: implement generateBondRecords
-  List<PayItem> get generateBondRecords => throw UnimplementedError();
+
 }
 
 // 530 - 236

@@ -9,7 +9,6 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 
 import '../../features/accounts/controllers/account_statement_controller.dart';
 import '../../features/bill/controllers/bill/all_bills_controller.dart';
@@ -21,7 +20,6 @@ import '../../features/bond/controllers/bonds/all_bond_controller.dart';
 import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
-import '../../features/bond/service/bond/bond_json_export.dart';
 import '../../features/login/controllers/nfc_cards_controller.dart';
 import '../../features/login/controllers/user_management_controller.dart';
 import '../../features/login/data/datasources/user_management_service.dart';
@@ -37,7 +35,6 @@ import '../services/firebase/implementations/firestore_service.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/translation/implementations/dio_client.dart';
 import '../services/translation/implementations/google_translation.dart';
-import '../services/translation/implementations/http_client.dart';
 import '../services/translation/implementations/translation_repo.dart';
 import '../services/translation/interfaces/i_api_client.dart';
 
@@ -65,7 +62,7 @@ class AppBindings extends Bindings {
     );
 
     // Instantiate Api client, GoogleTranslationDataSource and TranslationRepository
-    final IAPiClient httpClient = HttpClient<Map<String, dynamic>>(Client());
+    // final IAPiClient httpClient = HttpClient<Map<String, dynamic>>(Client());
     final IAPiClient dioClient = DioClient<Map<String, dynamic>>(Dio());
 
     final ITranslationService googleTranslation = GoogleTranslation(
@@ -80,7 +77,6 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => bondsFirebaseRepo, fenix: true);
 
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
-    final bondJsonExportRepo = JsonExportRepository<BondModel>(BondJsonExport());
 
     // Lazy load controllers
     Get.lazyPut(() => NfcCardsController(), fenix: true);

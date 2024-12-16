@@ -58,8 +58,8 @@ class AccountStatementController extends GetxController {
     AccountModel? accountModel = accountsController.getAccountByName(accountNameController.text);
 
     if (accountModel != null) {
-      List<String> listDate =
-          AppUIUtils.getDatesBetween(DateTime.parse(startDateController.text), DateTime.parse(endDateController.text));
+      // List<String> listDate =
+      //     AppUIUtils.getDatesBetween(DateTime.parse(startDateController.text), DateTime.parse(endDateController.text));
 
       Get.toNamed(AppRoutes.accountStatementScreen);
 

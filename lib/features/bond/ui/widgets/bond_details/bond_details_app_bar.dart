@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';

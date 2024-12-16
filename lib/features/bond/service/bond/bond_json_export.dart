@@ -1,5 +1,4 @@
 
-import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/json_file_operations/interfaces/export/json_export_service_base.dart';
 import '../../data/models/bond_model.dart';
 
@@ -76,7 +75,6 @@ class BondJsonExport extends JsonExportServiceBase<BondModel> {
     };
   }
 
-  String _bondTypeGuide(String bondLabel) => BondType.byLabel(bondLabel).typeGuide;
 
 
 }

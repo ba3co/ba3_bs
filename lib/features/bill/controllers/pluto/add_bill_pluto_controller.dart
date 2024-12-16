@@ -324,10 +324,6 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
     update();
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }
 
 // 530

@@ -32,6 +32,8 @@ class AccountsRepository {
 
   // Function to sanitize JSON string by escaping problematic characters
   String sanitizeJsonString(String jsonString) {
-    return jsonString.replaceAll('\"', '\\\"'); // Escape quotes
+
+    //TODO:i change .replaceAll('\"', '\\\"') to .replaceAll('"', '\\"')
+    return jsonString.replaceAll('"', '\\"'); // Escape quotes
   }
 }

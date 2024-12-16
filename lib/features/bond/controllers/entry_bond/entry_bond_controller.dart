@@ -7,13 +7,13 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../data/models/bond_record_model.dart';
+import '../../data/models/entry_bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
 
 class EntryBondController extends GetxController with FloatingLauncher {
   late EntryBondModel bondModel;
 
-  // Method to create a bond based on bill type
+  /*// Method to create a bond based on bill type
   void createBillBond({
     required BuildContext context,
     required BillTypeModel billTypeModel,
@@ -53,7 +53,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
   }
 
-  void createBond(BillTypeModel billTypeModel, AccountModel account, AccountModel oppositeAccount, String note) {}
+  void createEntryBond( AccountModel account, AccountModel oppositeAccount, String note) {}
 
   // Handle sales invoice creation
   void handleSales(Map<Account, AccountModel> billModelAccounts, AccountModel customerAccount, double total, double vat,
@@ -76,7 +76,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     // Create bonds for cash box if applicable
     if (billModelAccounts.containsKey(BillAccounts.caches)) {
-      AccountModel cachesAccount = billModelAccounts[BillAccounts.caches]!;
+      // AccountModel cachesAccount = billModelAccounts[BillAccounts.caches]!;
 
       bonds[customerAccount] = _createCashBoxSalesBonds(total, vat, discount, addition);
     }
@@ -108,7 +108,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     // Create bonds for cash box if applicable
     if (billModelAccounts.containsKey(BillAccounts.caches)) {
-      AccountModel cachesAccount = billModelAccounts[BillAccounts.caches]!;
+      // AccountModel cachesAccount = billModelAccounts[BillAccounts.caches]!;
 
       bonds[customerAccount] = _createCashBoxBuysBonds(total, vat, discount, addition);
     }
@@ -188,6 +188,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   // Combined method for adding optional bonds
+
   void _addOptionalBonds(Map<Account, AccountModel> billModelAccounts,
       Map<AccountModel, List<EntryBondItemModel>> bonds, double gifts, double vat, double discount, double addition,
       {bool isSales = false}) {
@@ -254,7 +255,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
       ];
     }
   }
-
 // Build DataGrid rows based on bond model
   List<DataGridRow> buildBondDataGridRows() {
     return bondModel.bonds.entries.expand<DataGridRow>((entry) {
@@ -276,5 +276,5 @@ class EntryBondController extends GetxController with FloatingLauncher {
         ]);
       });
     }).toList();
-  }
+  }*/
 }

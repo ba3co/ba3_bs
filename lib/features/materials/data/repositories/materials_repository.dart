@@ -31,6 +31,7 @@ class MaterialRepository {
 
   // Function to sanitize JSON string by escaping problematic characters
   String sanitizeJsonString(String jsonString) {
+    // ignore: unnecessary_string_escapes
     return jsonString.replaceAll('\"', '\\\"'); // Escape quotes
   }
 }
