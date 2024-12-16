@@ -1,0 +1,129 @@
+import 'dart:developer';
+
+
+import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/services/firebase/implementations/datasource_repo.dart';
+import '../../../../core/utils/app_service_utils.dart';
+import '../../../../core/utils/app_ui_utils.dart';
+import '../../data/models/cheques_model.dart';
+import '../../service/cheques/cheques_utils.dart';
+import '../../service/cheques/floating_cheques_details_launcher.dart';
+import '../../ui/screens/cheques_details_screen.dart';
+import 'cheques_details_controller.dart';
+import 'cheques_search_controller.dart';
+
+
+class AllChequesController extends FloatingChequesDetailsLauncher {
+  final DataSourceRepository<ChequesModel> _chequesFirebaseRepo;
+
+  late bool isDebitOrCredit;
+  List<ChequesModel> chequesList = [];
+  bool isLoading = true;
+
+  AllChequesController(this._chequesFirebaseRepo);
+
+  // Services
+  late final ChequesUtils _chequesUtils;
+
+  // Initializer
+  void _initializeServices() {
+    _chequesUtils = ChequesUtils();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeServices();
+
+    // getAllChequesTypes();
+  }
+
+  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.checkNumber == chequesId);
+
+  Future<void> fetchAllCheques() async {
+    log('fetchCheques');
+    final result = await _chequesFirebaseRepo.getAll();
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedCheques) => chequesList.assignAll(fetchedCheques),
+    );
+
+    isLoading = false;
+    update();
+  }
+
+  List<ChequesModel> getChequesByType(String chequesTypeId) => chequesList.where((cheques) => cheques.checkTypeGuid! == chequesTypeId).toList();
+
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel) async {
+    await fetchAllCheques();
+
+    if (!context.mounted) return;
+
+    List<ChequesModel> chequesByCategory = getChequesByType(chequesTypeModel.typeGuide);
+
+    final ChequesModel lastChequesModel = _chequesUtils.appendEmptyChequesModel(chequesByCategory, chequesTypeModel);
+
+    _openChequesDetailsFloatingWindow(
+      context: context,
+      modifiedCheques: chequesByCategory,
+      lastChequesModel: lastChequesModel,
+      chequesType: chequesTypeModel,
+    );
+  }
+
+  // Opens the 'Cheques Details' floating window.
+  void _openChequesDetailsFloatingWindow({
+    required BuildContext context,
+    required List<ChequesModel> modifiedCheques,
+    required ChequesModel lastChequesModel,
+    required ChequesType chequesType,
+  }) {
+    final String controllerTag = AppServiceUtils.generateUniqueTag('ChequesController');
+
+    final Map<String, GetxController> controllers = setupControllers(
+      params: {
+        'tag': controllerTag,
+        'ChequesType': ChequesType,
+        'ChequesFirebaseRepo': _chequesFirebaseRepo,
+        'ChequesearchController': ChequesSearchController(),
+      },
+    );
+
+    final chequesDetailsController = controllers['ChequesDetailsController'] as ChequesDetailsController;
+    final chequesSearchController = controllers['ChequesSearchController'] as ChequesSearchController;
+
+    initializeChequesSearch(
+      currentCheques: lastChequesModel,
+      allCheques: modifiedCheques,
+      chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+    );
+
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.checkTypeGuid!).value,
+      floatingScreen: ChequesDetailsScreen(
+        fromChequesById: false,
+        tag: controllerTag, chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+      ),
+    );
+  }
+
+  void initializeChequesSearch({
+    required ChequesModel currentCheques,
+    required List<ChequesModel> allCheques,
+    required ChequesSearchController chequesSearchController,
+    required ChequesDetailsController chequesDetailsController,
+  }) {
+    chequesSearchController.initialize(
+      cheques: currentCheques,
+      chequesByCategory: allCheques,
+      chequesDetailsController: chequesDetailsController,
+    );
+  }
+}
+
+

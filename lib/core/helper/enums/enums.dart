@@ -205,6 +205,55 @@ enum BondType {
     );
   }
 }
+enum ChequesType {
+
+  paidChecks(
+    label: "Paid checks",
+    value: "شيكات مدفوعة",
+    typeGuide: "fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18",
+    from: 1,
+    to: 277,
+  ),
+  insuranceChecks(
+    label: "Insurance checks",
+    value: "شيكات تأمين",
+    typeGuide: 'c27c5972-2b40-47df-8e3e-6ee29c4d5838',
+    from: 2,
+    to: 3,
+  );
+
+
+  final int from, to;
+
+  final String label;
+
+  final String value;
+
+  final String typeGuide;
+
+  const ChequesType({
+    required this.label,
+    required this.value,
+    required this.typeGuide,
+    required this.from,
+    required this.to,
+  });
+
+  // Factory constructor with error handling for unmatched labels
+  factory ChequesType.byLabel(String label) {
+    return ChequesType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching ChequesType for label: $label'),
+    );
+  }
+
+  factory ChequesType.byTypeGuide(String typeGuide) {
+    return ChequesType.values.firstWhere(
+      (type) => type.typeGuide == typeGuide,
+      orElse: () => throw ArgumentError('No matching ChequesType for guide: $typeGuide'),
+    );
+  }
+}
 
 enum EntryBondType {
   bond('bond'),

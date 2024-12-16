@@ -1,0 +1,61 @@
+import 'package:ba3_bs/core/network/api_constants.dart';
+
+import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
+import '../../../../core/services/firebase/interfaces/datasource_base.dart';
+
+import '../models/cheques_model.dart';
+
+class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequentialNumberDatabase {
+  ChequesDataSource({required super.databaseService});
+
+  @override
+  String get path => ApiConstants.chequesPath; // Collection name in Firestore
+
+  @override
+  Future<List<ChequesModel>> fetchAll() async {
+    final data = await databaseService.fetchAll(path: path);
+
+    final List<ChequesModel> chequess = data.map((item) => ChequesModel.fromJson(item)).toList();
+
+    // Sort the list by `chequesNumber` in ascending order
+    chequess.sort((a, b) => a.checkNumber!.compareTo(b.checkNumber!));
+
+    return chequess;
+  }
+
+  @override
+  Future<ChequesModel> fetchById(String id) async {
+    final item = await databaseService.fetchById(path: path, documentId: id);
+    return ChequesModel.fromJson(item);
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    await databaseService.delete(path: path, documentId: id);
+  }
+
+  @override
+  Future<ChequesModel> save(ChequesModel item) async {
+
+    if (item.checkGuid == null) {
+      final newBillModel = await _createNewCheques(item);
+
+      return newBillModel;
+    } else {
+      await databaseService.update(path: path, documentId: item.checkGuid, data: item.toJson());
+      return item;
+    }
+  }
+
+  Future<ChequesModel> _createNewCheques(ChequesModel cheques) async {
+
+
+    final newChequesNumber = await getNextNumber(path, cheques.checkTypeGuid!);
+
+    final newChequesJson = cheques.copyWith(checkNumber:newChequesNumber ).toJson();
+
+    final data = await databaseService.add(path: path, data: newChequesJson);
+
+    return ChequesModel.fromJson(data);
+  }
+}
