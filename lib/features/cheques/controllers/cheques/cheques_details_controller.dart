@@ -66,7 +66,10 @@ class ChequesDetailsController extends GetxController with AppValidator {
   }
 
   // Initializer
-  void _initializeServices() {}
+  void _initializeServices() {
+    _chequesService=ChequesService();
+
+  }
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
 
@@ -138,7 +141,15 @@ class ChequesDetailsController extends GetxController with AppValidator {
     if (!_chequesService.validateAccount(firstAccount) || !_chequesService.validateAccount(toAccount)) {
       return null;
     }
-
+print("chequesModel $chequesModel");
+print("chequesType $chequesType");
+print("toAccount ${toAccount!.id!}");
+print("chequesDate ${chequesDate.value}");
+print("chequesDate ${chequesDueDate.value}");
+print("chequesModel ${chequesNoteController.text}");
+print("chequesModel ${chequesNumController.text}");
+print("chequesModel ${chequesAmountController.text}");
+print("chequesModel ${chequesType.typeGuide}");
     // Create and return the cheques model
     return _chequesService.createChequesModel(
         chequesModel: chequesModel,

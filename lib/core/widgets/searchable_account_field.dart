@@ -1,4 +1,5 @@
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,8 @@ class SearchableAccountField extends StatelessWidget {
   final double? width;
   final IBillController? billController;
   final BondDetailsController? bondDetailsController;
+  final ChequesDetailsController? chequesDetailsController;
+  final bool isFirstAccountCheque;
 
   const SearchableAccountField({
     super.key,
@@ -30,6 +33,8 @@ class SearchableAccountField extends StatelessWidget {
     this.height,
     this.width,
     this.bondDetailsController,
+    this.chequesDetailsController,
+    this.isFirstAccountCheque=false,
   });
 
   @override
@@ -53,7 +58,10 @@ class SearchableAccountField extends StatelessWidget {
                         fromAddBill: fromAddBill,
                         context: context,
                         bondDetailsController: bondDetailsController,
-                        billController: billController);
+                        billController: billController,
+                        chequesDetailsController:chequesDetailsController,
+                      isFirstAccountCheque: isFirstAccountCheque,
+                    );
                   },
             ),
           ),

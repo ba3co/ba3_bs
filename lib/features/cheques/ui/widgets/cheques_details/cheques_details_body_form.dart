@@ -1,5 +1,8 @@
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
+import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
@@ -20,6 +23,8 @@ class AddChequeForm extends StatelessWidget {
       child: Form(
         key: chequesDetailsController.formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
@@ -47,6 +52,8 @@ class AddChequeForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
+                    validator: (value) => chequesDetailsController.validator(value, 'رقم الشيك'),
+
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
@@ -54,23 +61,26 @@ class AddChequeForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),
+                    validator: (value) => chequesDetailsController.validator(value, 'قيمة الشيك'),
+
                   ),
                 )),
             const VerticalSpace(),
             FormFieldRow(
-                firstItem: TextAndExpandedChildField(
-                  label: 'الحساب',
-                  child:CustomTextFieldWithoutIcon(
-                    textEditingController: chequesDetailsController.chequesFirstAccountController,
-                    suffixIcon: const SizedBox.shrink(),
-                  ),
+                firstItem: SearchableAccountField(
+                  label:'الحساب' ,
+                  textEditingController: chequesDetailsController.chequesFirstAccountController,
+                  validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
+                  chequesDetailsController:chequesDetailsController ,
+                  isFirstAccountCheque: true,
                 ),
-                secondItem: TextAndExpandedChildField(
+                secondItem: SearchableAccountField(
                   label: "دفع إلى",
-                  child:CustomTextFieldWithoutIcon(
-                    textEditingController: chequesDetailsController.chequesToAccountController,
-                    suffixIcon: const SizedBox.shrink(),
-                  ),
+                  textEditingController: chequesDetailsController.chequesToAccountController,
+                  validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
+                  chequesDetailsController:chequesDetailsController ,
+
+
                 )),
             const VerticalSpace(),
             FormFieldRow(
@@ -84,8 +94,6 @@ class AddChequeForm extends StatelessWidget {
                   ),
                 ),
                 secondItem:     const SizedBox()),
-
-
 
           ],
         ),

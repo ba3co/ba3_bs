@@ -12,9 +12,8 @@ import '../../controllers/cheques/cheques_search_controller.dart';
 import '../../data/models/cheques_model.dart';
 
 class ChequesService with PdfBase {
-  final ChequesDetailsController chequesController;
 
-  ChequesService(this.chequesController);
+  ChequesService();
 
   ChequesModel? createChequesModel({
     ChequesModel? chequesModel,
@@ -27,6 +26,16 @@ class ChequesService with PdfBase {
     required double chequesVal,
     required String chequesAccount2Guid,
   }) {
+    print("chequesModel $chequesModel");
+    print("chequesType $chequesType");
+    print("toAccount $chequesAccount2Guid");
+    print("chequesDate $chequesDate");
+    print("chequesDate $chequesDueDate");
+    print("chequesModel $chequesNote");
+    print("chequesModel $chequesNum");
+    print("chequesModel $chequesVal");
+    print("chequesModel $chequesTypeGuid");
+    print("chequesModel ${chequesType.typeGuide}");
     return ChequesModel.fromChequesData(
       chequesModel: chequesModel,
       chequesType: chequesType,

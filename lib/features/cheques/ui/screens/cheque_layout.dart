@@ -26,7 +26,7 @@ class _ChequeLayoutState extends State<ChequeLayout> {
         body: Column(
           children: [
             Item("إضافة شيك", () {
-              Get.find<AllChequesController>().openFloatingChequesDetails(context, ChequesType.insuranceChecks);
+              Get.find<AllChequesController>().openFloatingChequesDetails(context, ChequesType.paidChecks);
               // Get.to(() => const ChequesDetailsScreen());
             }),
             Item("الشيكات المستحقة", () {

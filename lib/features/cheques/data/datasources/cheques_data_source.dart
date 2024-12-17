@@ -49,13 +49,9 @@ class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequen
 
   Future<ChequesModel> _createNewCheques(ChequesModel cheques) async {
 
-
     final newChequesNumber = await getNextNumber(path, cheques.chequesTypeGuid!);
-
     final newChequesJson = cheques.copyWith(chequesNumber:newChequesNumber ).toJson();
-
     final data = await databaseService.add(path: path, data: newChequesJson);
-
     return ChequesModel.fromJson(data);
   }
 }

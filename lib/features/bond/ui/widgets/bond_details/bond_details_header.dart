@@ -46,7 +46,6 @@ class BondDetailsHeader extends StatelessWidget {
               FormFieldRow(
                   firstItem: SearchableAccountField(
                     bondDetailsController: bondDetailsController,
-
                     validator: (value) {
                       if (bondDetailsController.isDebitOrCredit) {
                         return bondDetailsController.validator(value, 'الحساب');
