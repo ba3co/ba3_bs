@@ -88,6 +88,27 @@ class EntryBondItemModel implements PlutoAdaptable {
     this.date,
   });
 
+  /// Factory method to create an InvoiceRecordModel from a BillItem.
+
+  // factory EntryBondItemModel.fromBillRecords(
+  //   InvoiceRecordModel record,
+  //   String? billId,
+  //   BondItemType? bondItemType,
+  //   String? accountName,
+  //   String? accountId,
+  //   String? note,
+  //   String? date,
+  // ) =>
+  //     EntryBondItemModel(
+  //       bondItemType: bondItemType,
+  //       amount: record.invRecQuantity!,
+  //       accountId: accountId,
+  //       accountName: accountName,
+  //       note: note,
+  //       originId: billId,
+  //       date: date,
+  //     );
+
   /// Creates an instance from a JSON object.
   factory EntryBondItemModel.fromJson(Map<String, dynamic> json) {
     return EntryBondItemModel(

@@ -71,7 +71,6 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
     return SizedBox(
       height: widget.height,
       child: TextFormField(
-
         maxLines: widget.maxLine,
         onChanged: widget.onChanged,
         validator: widget.validator,
@@ -105,7 +104,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
             ),
             suffixIcon: widget.suffixIcon,
             contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)),
-        textAlign: TextAlign.start,
+        textAlign: TextAlign.center,
         // Center the text horizontally
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
+import 'package:ba3_bs/features/bill/data/models/invoice_record_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -51,6 +52,247 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
 
     //   Get.toNamed(AppRoutes.entryBondDetailsScreen);
+  }
+
+  // Handle sales invoice creation
+  List<EntryBondItemModel> handleSales({
+    required String billId,
+    required Map<Account, AccountModel> billModelAccounts,
+    required AccountModel customerAccount,
+    required InvoiceRecordModel recordModel,
+    required double gifts,
+    required double discount,
+    required double addition,
+  }) {
+    List<EntryBondItemModel> entryBondItems = [];
+
+    final total = recordModel.invRecQuantity! * recordModel.invRecSubTotal!;
+    final vat = recordModel.invRecQuantity! * recordModel.invRecVat!;
+
+    final date = DateTime.now().toString().split(" ")[0];
+
+    const creditor = BondItemType.creditor;
+    const debtor = BondItemType.debtor;
+
+    // Create a main sales bond
+    if (billModelAccounts.containsKey(BillAccounts.materials)) {
+      AccountModel materialsAccount = billModelAccounts[BillAccounts.materials]!;
+
+      final materialEntryBondItem = createEntryBondItem(
+        amount: total,
+        billId: billId,
+        bondItemType: creditor,
+        accountName: materialsAccount.accName,
+        accountId: materialsAccount.id,
+        note: 'بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      );
+
+      entryBondItems.add(materialEntryBondItem);
+    }
+
+    // Create bonds for cash box if applicable
+    if (billModelAccounts.containsKey(BillAccounts.caches)) {
+      List<EntryBondItemModel> cashBoxBuysBonds = _createCashBoxBuysBonds(
+        billId: billId,
+        billModelAccounts: billModelAccounts,
+        customerAccount: customerAccount,
+        recordModel: recordModel,
+        total: total,
+        date: date,
+        gifts: gifts,
+        vat: vat,
+        discount: discount,
+        addition: addition,
+      );
+
+      entryBondItems.addAll(cashBoxBuysBonds);
+    }
+
+    // Add optional bonds for sales
+    List<EntryBondItemModel> addOptionalBonds = _addOptionalBonds(
+        billId: billId,
+        billModelAccounts: billModelAccounts,
+        customerAccount: customerAccount,
+        recordModel: recordModel,
+        date: date,
+        gifts: gifts,
+        vat: vat,
+        discount: discount,
+        addition: addition);
+
+    entryBondItems.addAll(addOptionalBonds);
+
+    return entryBondItems;
+  }
+
+  List<EntryBondItemModel> _createCashBoxBuysBonds({
+    required String billId,
+    required Map<Account, AccountModel> billModelAccounts,
+    required AccountModel customerAccount,
+    required InvoiceRecordModel recordModel,
+    required double total,
+    required String date,
+    required double gifts,
+    required double vat,
+    required double discount,
+    required double addition,
+    bool isSales = false,
+  }) {
+    const creditor = BondItemType.creditor;
+    const debtor = BondItemType.debtor;
+
+    return [
+      if (discount > 0)
+        createEntryBondItem(
+          amount: discount,
+          billId: billId,
+          bondItemType: isSales ? creditor : debtor,
+          accountName: customerAccount.accName,
+          accountId: customerAccount.id,
+          note: 'حسم عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+          date: date,
+        ),
+      if (addition > 0)
+        createEntryBondItem(
+          amount: addition,
+          billId: billId,
+          bondItemType: isSales ? debtor : creditor,
+          accountName: customerAccount.accName,
+          accountId: customerAccount.id,
+          note: 'اضافة عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+          date: date,
+        ),
+      createEntryBondItem(
+        amount: total,
+        billId: billId,
+        bondItemType: isSales ? debtor : creditor,
+        accountName: customerAccount.accName,
+        accountId: customerAccount.id,
+        note: 'بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      ),
+      createEntryBondItem(
+        amount: vat,
+        billId: billId,
+        bondItemType: isSales ? debtor : creditor,
+        accountName: customerAccount.accName,
+        accountId: customerAccount.id,
+        note: 'ضريبة بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      )
+    ];
+  }
+
+  List<EntryBondItemModel> _addOptionalBonds({
+    required String billId,
+    required Map<Account, AccountModel> billModelAccounts,
+    required AccountModel customerAccount,
+    required InvoiceRecordModel recordModel,
+    required String date,
+    required double gifts,
+    required double vat,
+    required double discount,
+    required double addition,
+    bool isSales = false,
+  }) {
+    List<EntryBondItemModel> entryBondItems = [];
+
+    const creditor = BondItemType.creditor;
+    const debtor = BondItemType.debtor;
+
+    if (vat > 0) {
+      final vatEntryBondItem = createEntryBondItem(
+        amount: vat,
+        billId: billId,
+        bondItemType: isSales ? creditor : debtor,
+        accountName: 'ضريبة القيمة المضافة',
+        accountId: 'a5c04527-63e8-4373-92e8-68d8f88bdb16',
+        note: 'ضريبة بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      );
+      entryBondItems.add(vatEntryBondItem);
+    }
+
+    if (gifts > 0 &&
+        billModelAccounts.containsKey(BillAccounts.gifts) &&
+        billModelAccounts.containsKey(BillAccounts.exchangeForGifts)) {
+      AccountModel giftsAccount = billModelAccounts[BillAccounts.gifts]!;
+      AccountModel settlementAccount = billModelAccounts[BillAccounts.exchangeForGifts]!;
+
+      final giftsEntryBondItem = createEntryBondItem(
+        amount: gifts,
+        billId: billId,
+        bondItemType: isSales ? debtor : creditor,
+        accountName: giftsAccount.accName,
+        accountId: giftsAccount.id,
+        note: 'هدايا بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      );
+      entryBondItems.add(giftsEntryBondItem);
+
+      final settlementEntryBondItem = createEntryBondItem(
+        amount: gifts,
+        billId: billId,
+        bondItemType: isSales ? creditor : debtor,
+        accountName: settlementAccount.accName,
+        accountId: settlementAccount.id,
+        note: 'مقابل هدايا بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      );
+      entryBondItems.add(settlementEntryBondItem);
+    }
+
+    if (discount > 0 && billModelAccounts.containsKey(BillAccounts.discounts)) {
+      AccountModel discountsAccount = billModelAccounts[BillAccounts.discounts]!;
+
+      final discountsEntryBondItem = createEntryBondItem(
+        amount: discount,
+        billId: billId,
+        bondItemType: isSales ? debtor : creditor,
+        accountName: discountsAccount.accName,
+        accountId: discountsAccount.id,
+        note: 'حسم بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      );
+      entryBondItems.add(discountsEntryBondItem);
+    }
+
+    if (addition > 0 && billModelAccounts.containsKey(BillAccounts.additions)) {
+      AccountModel additionsAccount = billModelAccounts[BillAccounts.additions]!;
+
+      final additionsEntryBondItem = createEntryBondItem(
+        amount: addition,
+        billId: billId,
+        bondItemType: isSales ? creditor : debtor,
+        accountName: additionsAccount.accName,
+        accountId: additionsAccount.id,
+        note: 'اضافة بيع عدد من ${recordModel.invRecProduct}${recordModel.invRecQuantity}',
+        date: date,
+      );
+      entryBondItems.add(additionsEntryBondItem);
+    }
+    return entryBondItems;
+  }
+
+  createEntryBondItem({
+    required double? amount,
+    required String? billId,
+    required BondItemType? bondItemType,
+    required String? accountName,
+    required String? accountId,
+    required String? note,
+    required String? date,
+  }) {
+    return EntryBondItemModel(
+      bondItemType: bondItemType,
+      amount: amount,
+      accountId: accountId,
+      accountName: accountName,
+      note: note,
+      originId: billId,
+      date: date,
+    );
   }
 
 //   void _initializeBond(BillTypeModel billTypeModel, AccountModel customerAccount, double total, double vat,

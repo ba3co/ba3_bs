@@ -308,8 +308,14 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         update();
       });
 
+  void generateEntryBondModel() {
+    final materialController = Get.find<MaterialController>();
 
-
+    final List<InvoiceRecordModel> invoiceRecords = recordsTableStateManager.rows
+        .map((row) => _processBillRow(row, materialController))
+        .whereType<InvoiceRecordModel>()
+        .toList();
+  }
 }
 
 // 530 - 236
