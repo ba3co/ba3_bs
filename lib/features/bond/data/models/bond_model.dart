@@ -81,7 +81,7 @@ class BondModel extends PlutoAdaptable {
   }
 
   factory BondModel.empty({required BondType bondType, int lastBondNumber = 0}) {
-    return BondModel(payItems: PayItems(itemList: []), payNumber: lastBondNumber + 1, payTypeGuid: bondType.typeGuide, payDate: DateTime.now().toIso8601String());
+    return BondModel(payAccountGuid: '',  payItems: PayItems(itemList: []), payNumber: lastBondNumber + 1, payTypeGuid: bondType.typeGuide, payDate: DateTime.now().toIso8601String());
   }
 
   @override

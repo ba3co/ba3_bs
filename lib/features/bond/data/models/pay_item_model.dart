@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -38,6 +37,7 @@ class PayItems {
         entryDebit: bondRecord.entryDebit,
         entryCredit: bondRecord.entryCredit,
         entryAccountGuid: bondRecord.entryAccountGuid,
+        entryAccountName: bondRecord.entryAccountName
       );
     }).toList();
 
@@ -47,6 +47,7 @@ class PayItems {
 
 class PayItem extends PlutoAdaptable<BondType> {
   final String? entryAccountGuid;
+  final String? entryAccountName;
   final String? entryDate;
   final double? entryDebit;
   final double? entryCredit;
@@ -61,6 +62,7 @@ class PayItem extends PlutoAdaptable<BondType> {
 
   PayItem({
     this.entryAccountGuid,
+    this.entryAccountName,
     this.entryDate,
     this.entryDebit,
     this.entryCredit,
@@ -76,7 +78,8 @@ class PayItem extends PlutoAdaptable<BondType> {
 
   factory PayItem.fromJson(Map<String, dynamic> json) {
     return PayItem(
-      entryAccountGuid: Get.find<AccountsController>().getAccountNameById(json['EntryAccountGuid']),
+      entryAccountGuid: json['EntryAccountGuid'],
+      entryAccountName: json['EntryAccountName'],
       entryDate: json['EntryDate'],
       entryDebit: json['EntryDebit'].toDouble(),
       entryCredit: json['EntryCredit'].toDouble(),
@@ -93,7 +96,8 @@ class PayItem extends PlutoAdaptable<BondType> {
 
   Map<String, dynamic> toJson() {
     return {
-      'EntryAccountGuid': Get.find<AccountsController>().getAccountIdByName(entryAccountGuid),
+      'EntryAccountGuid': entryAccountGuid,
+      'EntryAccountName': entryAccountName,
       'EntryDate': entryDate,
       'EntryDebit': entryDebit,
       'EntryCredit': entryCredit,
@@ -110,6 +114,7 @@ class PayItem extends PlutoAdaptable<BondType> {
 
   PayItem copyWith({
     String? entryAccountGuid,
+    String? entryAccountName,
     String? entryDate,
     double? entryDebit,
     double? entryCredit,
@@ -124,6 +129,7 @@ class PayItem extends PlutoAdaptable<BondType> {
   }) {
     return PayItem(
       entryAccountGuid: entryAccountGuid ?? this.entryAccountGuid,
+      entryAccountName: entryAccountName ?? this.entryAccountName,
       entryDate: entryDate ?? this.entryDate,
       entryDebit: entryDebit ?? this.entryDebit,
       entryCredit: entryCredit ?? this.entryCredit,
@@ -166,14 +172,16 @@ class PayItem extends PlutoAdaptable<BondType> {
           type: PlutoColumnType.text(),
           hide: type == BondType.receiptVoucher): entryDebit,
       PlutoColumn(title: "الحساب", field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()):
-          entryAccountGuid,
+      entryAccountName,
       PlutoColumn(title: "البيان", field: AppConstants.entryNote, type: PlutoColumnType.text()): entryNote,
     };
   }
 
-  factory PayItem.fromJsonPluto({required Map<String, dynamic> row}) {
+  factory PayItem.fromJsonPluto({required Map<String, dynamic> row,required String accId}) {
+
     return PayItem(
-      entryAccountGuid: row[AppConstants.entryAccountGuid],
+      entryAccountGuid:accId ,
+      entryAccountName:row[AppConstants.entryAccountGuid] ,
       entryCredit: double.tryParse(row[AppConstants.entryCredit].toString()) ?? 0,
       entryDebit: double.tryParse(row[AppConstants.entryDebit].toString()) ?? 0,
       entryNumber: int.tryParse(row[AppConstants.entryNumber].toString()) ?? 0,

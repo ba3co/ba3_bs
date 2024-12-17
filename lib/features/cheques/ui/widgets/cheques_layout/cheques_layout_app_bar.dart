@@ -9,7 +9,7 @@ AppBar chequesLayoutAppBar() {
   return AppBar(
     title: Column(
       children: [
-        const Text("السندات", style: TextStyle(fontWeight: FontWeight.w700)),
+        const Text("الشيكات", style: TextStyle(fontWeight: FontWeight.w700)),
         Text(
           Get.find<UserManagementController>().myUserModel?.userName ?? "",
           style: const TextStyle(color: Colors.blue, fontSize: 14),

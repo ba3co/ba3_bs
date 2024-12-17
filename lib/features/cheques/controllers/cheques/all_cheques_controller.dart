@@ -11,7 +11,7 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/cheques_model.dart';
 import '../../service/cheques/cheques_utils.dart';
 import '../../service/cheques/floating_cheques_details_launcher.dart';
-import '../../ui/screens/cheques_details_screen.dart';
+import '../../ui/screens/add_cheque.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
@@ -105,9 +105,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     launchFloatingWindow(
       context: context,
       minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.checkTypeGuid!).value,
-      floatingScreen: ChequesDetailsScreen(
-        fromChequesById: false,
-        tag: controllerTag, chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+      floatingScreen: const ChequesDetailsScreen(
+        // fromChequesById: false,
+        // tag: controllerTag, chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
       ),
     );
   }
