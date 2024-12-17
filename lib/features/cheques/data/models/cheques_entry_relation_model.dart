@@ -1,11 +1,11 @@
-class CheckEntryRelationModel {
+class ChequesEntryRelationModel {
   final String erGUID;
   final String erEntryGUID;
   final String erParentGUID;
   // final int erParentType;
   // final int erParentNumber;
 
-  const CheckEntryRelationModel({
+  const ChequesEntryRelationModel({
     required this.erGUID,
     required this.erEntryGUID,
     required this.erParentGUID,
@@ -13,8 +13,8 @@ class CheckEntryRelationModel {
     // required this.erParentNumber,
   });
 
-  factory CheckEntryRelationModel.fromJson(Map<String, dynamic> json) {
-    return CheckEntryRelationModel(
+  factory ChequesEntryRelationModel.fromJson(Map<String, dynamic> json) {
+    return ChequesEntryRelationModel(
       erGUID: json['ErGUID'] as String,
       erEntryGUID: json['ErEntryGUID'] as String,
       erParentGUID: json['ErParentGUID'] as String,
@@ -33,14 +33,14 @@ class CheckEntryRelationModel {
     };
   }
 
-  CheckEntryRelationModel copyWith({
+  ChequesEntryRelationModel copyWith({
     String? erGUID,
     String? erEntryGUID,
     String? erParentGUID,
     // int? erParentType,
     // int? erParentNumber,
   }) {
-    return CheckEntryRelationModel(
+    return ChequesEntryRelationModel(
       erGUID: erGUID ?? this.erGUID,
       erEntryGUID: erEntryGUID ?? this.erEntryGUID,
       erParentGUID: erParentGUID ?? this.erParentGUID,

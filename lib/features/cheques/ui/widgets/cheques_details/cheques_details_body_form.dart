@@ -35,8 +35,8 @@ class AddChequeForm extends StatelessWidget {
                   label: "تاريخ الاستحقاق",
                   child: Obx(() {
                     return DatePicker(
-                      initDate: chequesDetailsController.chequesDate.value,
-                      onDateSelected: chequesDetailsController.setChequesDate,
+                      initDate: chequesDetailsController.chequesDueDate.value,
+                      onDateSelected: chequesDetailsController.setChequesDueDate,
                     );
                   }),
                 )),
@@ -45,14 +45,14 @@ class AddChequeForm extends StatelessWidget {
                 firstItem: TextAndExpandedChildField(
                   label: 'رقم الشيك',
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
+                    textEditingController: chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: "قيمة الشيك",
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
+                    textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 )),
@@ -60,42 +60,38 @@ class AddChequeForm extends StatelessWidget {
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
                   label: 'الحساب',
-                  child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
+                  child:CustomTextFieldWithoutIcon(
+                    textEditingController: chequesDetailsController.chequesFirstAccountController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: "دفع إلى",
-                  child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
+                  child:CustomTextFieldWithoutIcon(
+                    textEditingController: chequesDetailsController.chequesToAccountController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 )),
             const VerticalSpace(),
             FormFieldRow(
-                firstItem: TextAndExpandedChildField(
+                firstItem:      TextAndExpandedChildField(
                   label: "البيان",
-                  child: CustomTextFieldWithoutIcon(
+                  child:CustomTextFieldWithoutIcon(
                     keyboardType: TextInputType.multiline,
-                    maxLine: 4,
-                    textEditingController: TextEditingController(),
+                    maxLine:4,
+                    textEditingController: chequesDetailsController.chequesNoteController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
-                secondItem: TextAndExpandedChildField(
-                  label: "بيان الطرف الآخر",
-                  child: CustomTextFieldWithoutIcon(
-                    keyboardType: TextInputType.multiline,
-                    maxLine: 4,
-                    textEditingController: TextEditingController(),
-                    suffixIcon: const SizedBox.shrink(),
-                  ),
-                )),
-            const VerticalSpace(),
+                secondItem:     const SizedBox()),
+
+
+
           ],
         ),
       ),
     );
+
+
   }
 }

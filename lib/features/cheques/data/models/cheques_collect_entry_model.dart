@@ -1,41 +1,41 @@
 import '../../../bond/data/models/pay_item_model.dart';
 
-class CheckCollectEntryModel {
-  final CheckEntry checkEntryModel;
+class ChequesCollectEntryModel {
+  final ChequesEntry chequesEntryModel;
   final int entryCount;
 
-  const CheckCollectEntryModel({
-    required this.checkEntryModel,
+  const ChequesCollectEntryModel({
+    required this.chequesEntryModel,
     required this.entryCount,
   });
 
-  factory CheckCollectEntryModel.fromJson(Map<String, dynamic> json) {
-    return CheckCollectEntryModel(
-      checkEntryModel: CheckEntry.fromJson(json['checkEntry']),
+  factory ChequesCollectEntryModel.fromJson(Map<String, dynamic> json) {
+    return ChequesCollectEntryModel(
+      chequesEntryModel: ChequesEntry.fromJson(json['chequesEntry']),
       entryCount: json['EntryCount'] as int,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'checkEntry': checkEntryModel.toJson(),
+      'chequesEntry': chequesEntryModel.toJson(),
       'EntryCount': entryCount,
     };
   }
 
-  CheckCollectEntryModel copyWith({
-    CheckEntry? checkEntry,
+  ChequesCollectEntryModel copyWith({
+    ChequesEntry? chequesEntry,
     int? entryCount,
   }) {
-    return CheckCollectEntryModel(
-      checkEntryModel: checkEntry ?? this.checkEntryModel,
+    return ChequesCollectEntryModel(
+      chequesEntryModel: chequesEntry ?? this.chequesEntryModel,
       entryCount: entryCount ?? this.entryCount,
     );
   }
 }
 
 
-class CheckEntry {
+class ChequesEntry {
   // final int cEntryType;
   final String cEntryTypeGuid;
   final String cEntryGuid;
@@ -53,7 +53,7 @@ class CheckEntry {
   final int cEntryNumber;
   final PayItems payItems;
 
-  const CheckEntry({
+  const ChequesEntry({
     // required this.cEntryType,
     required this.cEntryTypeGuid,
     required this.cEntryGuid,
@@ -72,8 +72,8 @@ class CheckEntry {
     required this.payItems,
   });
 
-  factory CheckEntry.fromJson(Map<String, dynamic> json) {
-    return CheckEntry(
+  factory ChequesEntry.fromJson(Map<String, dynamic> json) {
+    return ChequesEntry(
       // cEntryType: json['CEntryType'] as int,
       cEntryTypeGuid: json['CEntryTypeGuid'] as String,
       cEntryGuid: json['CEntryGuid'] as String,
@@ -114,7 +114,7 @@ class CheckEntry {
     };
   }
 
-  CheckEntry copyWith({
+  ChequesEntry copyWith({
     // int? cEntryType,
     String? cEntryTypeGuid,
     String? cEntryGuid,
@@ -132,7 +132,7 @@ class CheckEntry {
     int? cEntryNumber,
     PayItems? payItems,
   }) {
-    return CheckEntry(
+    return ChequesEntry(
       // cEntryType: cEntryType ?? this.cEntryType,
       cEntryTypeGuid: cEntryTypeGuid ?? this.cEntryTypeGuid,
       cEntryGuid: cEntryGuid ?? this.cEntryGuid,

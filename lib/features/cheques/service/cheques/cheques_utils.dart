@@ -6,7 +6,7 @@ import '../../data/models/cheques_model.dart';
 
 class ChequesUtils {
   ChequesModel appendEmptyChequesModel(List<ChequesModel> cheques, ChequesType bondTyp) {
-    final int lastBillNumber = cheques.isNotEmpty? cheques.last.checkNumber! : 0;
+    final int lastBillNumber = cheques.isNotEmpty? cheques.last.chequesNumber! : 0;
 
     final emptyBillModel = ChequesModel.empty( chequesType: bondTyp,lastChequesNumber: lastBillNumber,);
 

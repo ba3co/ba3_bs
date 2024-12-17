@@ -7,7 +7,6 @@ import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/cheques/cheques_details_controller.dart';
 import '../../../controllers/cheques/cheques_search_controller.dart';
 
-
 class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ChequesDetailsAppBar({
     super.key,
@@ -30,24 +29,6 @@ class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
       leadingWidth: 100,
       title: Text(chequesTypeModel.value),
       actions: [
-        SizedBox(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-
-              const Text("الرمز التسلسلي:"),
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: SizedBox(
-                  width: 80,
-                  child: CustomTextFieldWithoutIcon(
-                    onChanged: (_) {}, textEditingController: TextEditingController(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
         IconButton(
             onPressed: () {
               chequesSearchController.previous();
