@@ -51,21 +51,16 @@ class ChequesDetailsScreen extends StatelessWidget {
                       )),
                       const SliverFillRemaining(
                         hasScrollBody: false,
-                        child: Column(
-                          children: [
-                            Expanded(
-                                child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Divider(),
-                                        VerticalSpace(),
-                                        AddChequeButtons(),
-                                      ],
-                                    ))),
-                          ],
-                        ),
+                        child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Divider(),
+                                VerticalSpace(),
+                                AddChequeButtons(),
+                              ],
+                            )),
                       )
                     ],
                   ),
