@@ -7,23 +7,23 @@ class PlutoController extends GetxController {
   GlobalKey plutoKey = GlobalKey();
 
   /// Generates a list of PlutoColumns based on the first model in the provided list.
-  List<PlutoColumn> generateColumns(List<PlutoAdaptable> adaptableModels) {
+  List<PlutoColumn> generateColumns<T>(List<PlutoAdaptable> adaptableModels, [T? type]) {
     if (adaptableModels.isEmpty) return [];
 
-    final firstModelData = adaptableModels.first.toPlutoGridFormat();
+    final firstModelData = adaptableModels.first.toPlutoGridFormat(type);
     return firstModelData.keys.toList();
   }
 
   /// Generates a list of PlutoRows by mapping each model to its respective cells.
-  List<PlutoRow> generateRows(List<PlutoAdaptable> adaptableModels) {
+  List<PlutoRow> generateRows<T>(List<PlutoAdaptable> adaptableModels, [T? type]) {
     if (adaptableModels.isEmpty) return [];
     plutoKey = GlobalKey();
-    return adaptableModels.map(_mapModelToRow).toList();
+    return adaptableModels.map((model) => _mapModelToRow(model, type)).toList();
   }
 
   /// Converts a PlutoAdaptable model to a PlutoRow.
-  PlutoRow _mapModelToRow(PlutoAdaptable model) {
-    final cells = model.toPlutoGridFormat().map<String, PlutoCell>((key, value) {
+  PlutoRow _mapModelToRow<T>(PlutoAdaptable model, [T? type]) {
+    final cells = model.toPlutoGridFormat(type).map<String, PlutoCell>((key, value) {
       return MapEntry(key.title, PlutoCell(value: value?.toString() ?? ''));
     });
     return PlutoRow(cells: cells);

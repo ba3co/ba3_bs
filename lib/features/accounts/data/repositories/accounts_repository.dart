@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ba3_bs/features/accounts/data/datasources/accounts_json.dart';
+import 'package:ba3_bs/features/accounts/data/datasources/local/accounts_json.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/account_model.dart';
@@ -32,7 +32,6 @@ class AccountsRepository {
 
   // Function to sanitize JSON string by escaping problematic characters
   String sanitizeJsonString(String jsonString) {
-
     //TODO:i change .replaceAll('\"', '\\\"') to .replaceAll('"', '\\"')
     return jsonString.replaceAll('"', '\\"'); // Escape quotes
   }

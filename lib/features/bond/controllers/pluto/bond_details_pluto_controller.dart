@@ -38,11 +38,13 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   void _handleColumnUpdate(String columnField) {
     if (columnField == AppConstants.entryCredit) {
-      String correctedText = AppServiceUtils.extractNumbersAndCalculate(recordsTableStateManager.currentRow?.cells[columnField]?.value);
+      String correctedText =
+          AppServiceUtils.extractNumbersAndCalculate(recordsTableStateManager.currentRow?.cells[columnField]?.value);
       clearFiledInRow(AppConstants.entryDebit);
       updateCellValue(columnField, correctedText);
     } else if (columnField == AppConstants.entryDebit) {
-      String correctedText = AppServiceUtils.extractNumbersAndCalculate(recordsTableStateManager.currentRow?.cells[columnField]?.value);
+      String correctedText =
+          AppServiceUtils.extractNumbersAndCalculate(recordsTableStateManager.currentRow?.cells[columnField]?.value);
       clearFiledInRow(AppConstants.entryCredit);
       updateCellValue(columnField, correctedText);
     } else if (columnField == AppConstants.entryAccountGuid) {
@@ -104,27 +106,23 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     return total;
   }
 
-
-  generateEntryBond(){
-
-
-  }
+  generateEntryBond() {}
 
   @override
   List<PayItem> get generateRecords {
     recordsTableStateManager.setShowLoading(true);
     final accountName = Get.find<AccountsController>().getAccountNameById(accountGuid);
-    String accountId='';
+    String accountId = '';
+
     final payItems = recordsTableStateManager.rows
         .where((row) {
-
-           accountId = Get.find<AccountsController>().getAccountIdByName(
+          accountId = Get.find<AccountsController>().getAccountIdByName(
             row.cells[AppConstants.entryAccountGuid]?.value ?? '',
           );
 
           return accountId.isNotEmpty;
         })
-        .map((row) => _processBondRow(row: row.toJson(),accId:accountId ))
+        .map((row) => _processBondRow(row: row.toJson(), accId: accountId))
         .whereType<PayItem>()
         .toList();
 
@@ -145,18 +143,17 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
   }
 
   PayItem _generateOppositeItem(PayItem item, String accountName) {
-
     if (bondType == BondType.paymentVoucher) {
       return item.copyWith(
         entryAccountGuid: accountGuid,
-        entryAccountName:accountName ,
+        entryAccountName: accountName,
         entryCredit: item.entryDebit,
         entryDebit: 0,
       );
     } else if (bondType == BondType.receiptVoucher) {
       return item.copyWith(
         entryAccountGuid: accountGuid,
-        entryAccountName:accountName ,
+        entryAccountName: accountName,
         entryCredit: 0,
         entryDebit: item.entryCredit,
       );
@@ -164,13 +161,13 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     throw Exception('Unsupported bond type');
   }
 
-  PayItem? _processBondRow({required Map<String, dynamic> row,required String accId}) {
-
-    return _createBondRecord(row: row,accId: accId);
+  PayItem? _processBondRow({required Map<String, dynamic> row, required String accId}) {
+    return _createBondRecord(row: row, accId: accId);
   }
 
   // Helper method to create an BondItemModel from a row
-  PayItem _createBondRecord({required Map<String, dynamic> row,required String accId}) => PayItem.fromJsonPluto(row: row,accId: accId);
+  PayItem _createBondRecord({required Map<String, dynamic> row, required String accId}) =>
+      PayItem.fromJsonPluto(row: row, accId: accId);
 
   void updateCellValue(String field, dynamic value) {
     if (recordsTableStateManager.currentRow!.cells[field] != null) {
@@ -206,7 +203,8 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   // State managers
   @override
-  PlutoGridStateManager recordsTableStateManager = PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
+  PlutoGridStateManager recordsTableStateManager =
+      PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   Color color = Colors.red;
 

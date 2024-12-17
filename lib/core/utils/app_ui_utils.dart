@@ -145,6 +145,24 @@ class AppUIUtils {
     return "error";
   }
 
+  static String formatDecimalNumberWithCommas(double number) {
+    // ضبط الرقم العشري إلى رقمين بعد الفاصلة
+    String formattedNumber = number.toStringAsFixed(2);
+
+    // تحويل الرقم إلى سلسلة نصية وتجزئته إلى جزء صحيح وجزء عشري
+    List<String> parts = formattedNumber.split('.');
+    String integerPart = parts[0]; // الجزء الصحيح
+    String decimalPart = parts[1]; // الجزء العشري المحدد إلى رقمين
+
+    // تنسيق الجزء الصحيح باستخدام RegExp لإضافة الفاصلة كل ثلاث خانات
+    String formattedIntegerPart = integerPart.replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (Match match) => '${match[1]},',
+    );
+
+    return '$formattedIntegerPart.$decimalPart';
+  }
+
   static Widget showLoadingIndicator({
     double width = 20,
     double height = 20,

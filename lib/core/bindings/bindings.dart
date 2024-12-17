@@ -14,6 +14,8 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../../features/accounts/controllers/account_statement_controller.dart';
+import '../../features/accounts/data/datasources/remote/accounts_statements_data_source.dart';
+import '../../features/accounts/data/datasources/remote/entry_bonds_data_source.dart';
 import '../../features/bill/controllers/bill/all_bills_controller.dart';
 import '../../features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import '../../features/bill/data/datasources/bills_data_source.dart';
@@ -34,8 +36,6 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../network/api_constants.dart';
-import '../services/accounts_statements_data_source.dart';
-import '../services/entry_bonds_data_source.dart';
 import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
@@ -123,7 +123,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PrintingController(translationRepo), fenix: true);
 
     Get.lazyPut(() => BillSearchController(), fenix: true);
-    Get.lazyPut(() => AccountStatementController(), fenix: true);
+    Get.lazyPut(() => AccountStatementController(accountsStatementsRepo), fenix: true);
     // Get.lazyPut(() => BondDetailsController(), fenix: true);
     // Get.lazyPut(() => BondRecordPlutoController(), fenix: true);
   }

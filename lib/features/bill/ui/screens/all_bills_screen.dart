@@ -11,7 +11,7 @@ class AllBillsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AllBillsController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: "جميع الفواتير",
+        title: 'جميع الفواتير',
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells['billId']?.value;

@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_search_controller.dart';
@@ -11,43 +10,67 @@ import '../../../../core/widgets/app_spacer.dart';
 import '../widgets/cheques_details/cheques_details_body_form.dart';
 import '../widgets/cheques_details/cheques_details_buttons.dart';
 
-
 class ChequesDetailsScreen extends StatelessWidget {
-
   final String tag;
   final ChequesType chequesTypeModel;
   final ChequesDetailsController chequesDetailsController;
   final ChequesSearchController chequesSearchController;
 
-  const ChequesDetailsScreen({super.key, required this.tag, required this.chequesTypeModel, required this.chequesDetailsController, required this.chequesSearchController});
-
+  const ChequesDetailsScreen(
+      {super.key,
+      required this.tag,
+      required this.chequesTypeModel,
+      required this.chequesDetailsController,
+      required this.chequesSearchController});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ChequesSearchController>(
         tag: tag,
         builder: (_) {
-      return GetBuilder<ChequesDetailsController>(
-          tag: tag,
-          builder: (_) {
-        return Scaffold(
-          appBar: ChequesDetailsAppBar(chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController, chequesTypeModel: chequesTypeModel),
-          body: Column(
-            children: [
-              const ChequesDetailsHeader(),
-              const VerticalSpace(),
-              AddChequeForm(
-                chequesDetailsController: chequesDetailsController,),
-              const VerticalSpace(),
-              const Divider(),
-              const VerticalSpace(),
-              const AddChequeButtons(
-
-              ),
-            ],
-          ),
-        );
-      });
-    });
+          return GetBuilder<ChequesDetailsController>(
+              tag: tag,
+              builder: (_) {
+                return Scaffold(
+                  appBar: ChequesDetailsAppBar(
+                      chequesDetailsController: chequesDetailsController,
+                      chequesSearchController: chequesSearchController,
+                      chequesTypeModel: chequesTypeModel),
+                  body: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                          child: Column(
+                        children: [
+                          const ChequesDetailsHeader(),
+                          const VerticalSpace(),
+                          AddChequeForm(
+                            chequesDetailsController: chequesDetailsController,
+                          ),
+                          const VerticalSpace(),
+                        ],
+                      )),
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Column(
+                          children: [
+                            Expanded(
+                                child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Divider(),
+                                        VerticalSpace(),
+                                        AddChequeButtons(),
+                                      ],
+                                    ))),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              });
+        });
   }
 }

@@ -12,8 +12,8 @@ class DraggableFloatingWindow extends StatelessWidget {
   final VoidCallback onBringToTop;
   final Offset targetPositionRatio;
   final Widget floatingWindowContent;
+  final String tag;
   final String? minimizedTitle;
-
 
   const DraggableFloatingWindow({
     super.key,
@@ -21,14 +21,14 @@ class DraggableFloatingWindow extends StatelessWidget {
     required this.onBringToTop,
     required this.floatingWindowContent,
     required this.targetPositionRatio,
-
+    required this.tag,
     this.minimizedTitle,
-
   });
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<FloatingWindowController>(
+      tag: tag,
       builder: (controller) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {

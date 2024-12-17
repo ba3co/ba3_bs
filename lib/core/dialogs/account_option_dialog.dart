@@ -25,22 +25,26 @@ Dialog accountOptionDialog(BuildContext context) {
                   title: 'اسم الحساب :  ',
                   controller: controller.accountNameController,
                   onSubmitted: (text) {
-                    controller.onAccountNameControllerSubmitted(text, context);
+                    controller.onAccountNameSubmitted(text, context);
                   }),
               OptionTextWidget(
                 title: 'من تاريخ :  ',
                 controller: controller.startDateController,
-                onSubmitted: controller.onStartDateControllerSubmitted,
+                onSubmitted: controller.onStartDateSubmitted,
               ),
               OptionTextWidget(
                 title: 'الى تاريخ :  ',
                 controller: controller.endDateController,
-                onSubmitted: controller.onEndDateControllerSubmitted,
+                onSubmitted: controller.onEndDateSubmitted,
               ),
               AppButton(
                 title: 'موافق',
                 iconData: Icons.check,
-                onPressed: controller.navigateToAccountStatementScreen,
+                onPressed: () {
+                  controller
+                    ..fetchAccountEntryBondItems()
+                    ..navigateToAccountStatementScreen();
+                },
               ),
             ],
           );

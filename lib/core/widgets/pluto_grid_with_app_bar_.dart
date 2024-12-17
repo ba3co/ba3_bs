@@ -5,7 +5,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/pluto/controllers/pluto_controller.dart';
 
-class PlutoGridWithAppBar extends StatelessWidget {
+class PlutoGridWithAppBar<T> extends StatelessWidget {
   const PlutoGridWithAppBar({
     super.key,
     required this.onLoaded,
@@ -18,6 +18,8 @@ class PlutoGridWithAppBar extends StatelessWidget {
     this.onIconPressed,
     this.leadingIcon,
     this.onLeadingIconPressed,
+    this.type,
+    this.child,
   });
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -32,6 +34,8 @@ class PlutoGridWithAppBar extends StatelessWidget {
   final VoidCallback? onIconPressed;
   final IconData? leadingIcon;
   final VoidCallback? onLeadingIconPressed;
+  final T? type;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -41,32 +45,41 @@ class PlutoGridWithAppBar extends StatelessWidget {
         builder: (controller) {
           return isLoading
               ? const SizedBox()
-              : PlutoGrid(
-                  key: controller.plutoKey,
-                  onLoaded: onLoaded,
-                  onSelected: onSelected,
-                  columns: controller.generateColumns(tableSourceModels),
-                  rows: controller.generateRows(tableSourceModels),
-                  mode: PlutoGridMode.selectWithOneTap,
-                  configuration: PlutoGridConfiguration(
-                    shortcut: const PlutoGridShortcut(),
-                    style: PlutoGridStyleConfig(
-                      enableRowColorAnimation: true,
-                      evenRowColor: Colors.blueAccent.withOpacity(0.5),
-                      columnTextStyle: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
-                      activatedColor: Colors.white.withOpacity(0.5),
-                      cellTextStyle: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
-                      gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
-                      gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
-                      // gridBorderColor: Colors.transparent,
-                    ),
-                    localeText: const PlutoGridLocaleText.arabic(),
-                  ),
-                  createFooter: (stateManager) {
-                    stateManager.setPageSize(100, notify: false); // default 40
+              : Column(
+                  children: [
+                    Expanded(
+                      child: PlutoGrid(
+                        key: controller.plutoKey,
+                        onLoaded: onLoaded,
+                        onSelected: onSelected,
+                        columns: controller.generateColumns<T>(tableSourceModels, type),
+                        rows: controller.generateRows<T>(tableSourceModels, type),
+                        mode: PlutoGridMode.selectWithOneTap,
+                        configuration: PlutoGridConfiguration(
+                          shortcut: const PlutoGridShortcut(),
+                          style: PlutoGridStyleConfig(
+                            enableRowColorAnimation: true,
+                            evenRowColor: Colors.blueAccent.withAlpha(127),
+                            columnTextStyle:
+                                const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+                            activatedColor: Colors.white.withAlpha(127),
+                            cellTextStyle:
+                                const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                            gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
+                            gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
+                            // gridBorderColor: Colors.transparent,
+                          ),
+                          localeText: const PlutoGridLocaleText.arabic(),
+                        ),
+                        createFooter: (stateManager) {
+                          stateManager.setPageSize(100, notify: false); // default 40
 
-                    return PlutoPagination(stateManager);
-                  },
+                          return PlutoPagination(stateManager);
+                        },
+                      ),
+                    ),
+                    if (child != null) child!
+                  ],
                 );
         },
       ),

@@ -60,47 +60,42 @@ class AddChequeForm extends StatelessWidget {
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
                   label: 'الحساب',
-                  child:CustomTextFieldWithoutIcon(
+                  child: CustomTextFieldWithoutIcon(
                     textEditingController: TextEditingController(),
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: "دفع إلى",
-                  child:CustomTextFieldWithoutIcon(
+                  child: CustomTextFieldWithoutIcon(
                     textEditingController: TextEditingController(),
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 )),
             const VerticalSpace(),
             FormFieldRow(
-                firstItem:      TextAndExpandedChildField(
+                firstItem: TextAndExpandedChildField(
                   label: "البيان",
-                  child:CustomTextFieldWithoutIcon(
+                  child: CustomTextFieldWithoutIcon(
                     keyboardType: TextInputType.multiline,
-                    maxLine:4,
+                    maxLine: 4,
                     textEditingController: TextEditingController(),
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
-                secondItem:      TextAndExpandedChildField(
+                secondItem: TextAndExpandedChildField(
                   label: "بيان الطرف الآخر",
-                  child:CustomTextFieldWithoutIcon(
+                  child: CustomTextFieldWithoutIcon(
                     keyboardType: TextInputType.multiline,
-                    maxLine:4,
+                    maxLine: 4,
                     textEditingController: TextEditingController(),
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 )),
             const VerticalSpace(),
-
-
-
           ],
         ),
       ),
     );
-
-
   }
 }

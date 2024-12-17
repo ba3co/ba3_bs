@@ -10,9 +10,9 @@ class OverlayManager {
     required WindowPositionManager windowPositionManager,
     required Widget floatingScreen,
     required Offset targetPositionRatio,
+    required String tag,
     String? minimizedTitle,
     VoidCallback? onCloseCallback,
-
   }) {
     late OverlayEntry overlayEntry;
 
@@ -37,6 +37,7 @@ class OverlayManager {
           },
           targetPositionRatio: targetPositionRatio,
           floatingWindowContent: floatingScreen,
+          tag: tag,
           minimizedTitle: minimizedTitle,
         );
       },

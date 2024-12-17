@@ -1,4 +1,9 @@
+import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
+
 import '../../../../core/helper/enums/enums.dart';
+import '../../../accounts/controllers/accounts_controller.dart';
+import '../../../pluto/data/models/pluto_adaptable.dart';
 
 /// Represents a bond entry with associated details and items.
 class EntryBondModel {
@@ -52,7 +57,7 @@ class EntryBondModel {
 }
 
 /// Represents a single bond item within a bond entry.
-class EntryBondItemModel {
+class EntryBondItemModel implements PlutoAdaptable {
   /// Type of the bond item, defined by an enum.
   final BondItemType? bondItemType;
 
@@ -62,18 +67,25 @@ class EntryBondItemModel {
   /// The account related to this bond item.
   final String? accountId;
 
+  /// The account related to this bond item.
+  final String? accountName;
+
   /// Additional notes or comments for this bond item.
   final String? note;
 
   /// Refers to the bond entry ID that this item belongs to.
   final String? originId;
 
+  final String? date;
+
   EntryBondItemModel({
     this.bondItemType,
     this.amount,
     this.accountId,
+    this.accountName,
     this.note,
     this.originId,
+    this.date,
   });
 
   /// Creates an instance from a JSON object.
@@ -82,8 +94,10 @@ class EntryBondItemModel {
       bondItemType: BondItemType.byLabel(json['bondItemType']),
       amount: (json['amount'] as num?)?.toDouble(),
       accountId: json['accountId'] as String?,
+      accountName: json['accountName'] as String?,
       note: json['note'] as String?,
       originId: json['originId'] as String?,
+      date: json['date'] as String?,
     );
   }
 
@@ -93,8 +107,10 @@ class EntryBondItemModel {
       'bondItemType': bondItemType?.label,
       'amount': amount,
       'accountId': accountId,
+      'accountName': accountName,
       'note': note,
       'originId': originId,
+      'date': date,
     };
   }
 
@@ -103,16 +119,36 @@ class EntryBondItemModel {
     BondItemType? bondItemType,
     double? amount,
     String? accountId,
+    String? accountName,
     String? note,
     String? originId,
+    String? date,
   }) {
     return EntryBondItemModel(
       bondItemType: bondItemType ?? this.bondItemType,
       amount: amount ?? this.amount,
       accountId: accountId ?? this.accountId,
+      accountName: accountName ?? this.accountName,
       note: note ?? this.note,
       originId: originId ?? this.originId,
+      date: date ?? this.date,
     );
+  }
+
+  @override
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
+    final accountsController = Get.find<AccountsController>();
+    return {
+      PlutoColumn(title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
+      PlutoColumn(title: 'مدين', field: 'مدين', type: PlutoColumnType.text()):
+          bondItemType == BondItemType.debtor ? amount : 0,
+      PlutoColumn(title: 'دائن', field: 'دائن', type: PlutoColumnType.text()):
+          bondItemType == BondItemType.creditor ? amount : 0,
+      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()):
+          accountsController.getAccountNameById(accountId),
+      PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.text()): date,
+      PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
+    };
   }
 }
 

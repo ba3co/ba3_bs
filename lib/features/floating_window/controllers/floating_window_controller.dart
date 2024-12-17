@@ -19,7 +19,11 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
 
   FloatingWindowController({double? defaultWidth, double? defaultHeight}) {
     log('call FloatingWindowController constructor');
-    _initializeWindow(defaultHeight: defaultHeight,defaultWidth: defaultWidth);
+
+    defaultWidthRatio = defaultWidth != null ? defaultWidth / 1.sw : 0.7;
+    defaultHeightRatio = defaultHeight != null ? defaultHeight / 1.sh : 0.85;
+
+    _initializeWindow(defaultHeight: defaultHeight, defaultWidth: defaultWidth);
   }
 
   final ResizeManager resizeManager = ResizeManager(edgeSize: 8.0);
@@ -50,10 +54,18 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   final Debounce _resizeDebounce = Debounce();
   final Debounce _windowSizeChangeDebounce = Debounce();
 
-  void _initializeWindow({double? defaultWidth, double? defaultHeight}) {
+  late double defaultWidthRatio;
+  late double defaultHeightRatio;
 
-    width = defaultWidth??0.7.sw;
-    height =defaultHeight?? 0.85.sh;
+  void _initializeWindow({double? defaultWidth, double? defaultHeight}) {
+    const double minWidthRatio = 0.5;
+    const double minHeightRatio = 0.6;
+
+    final double adjustedWidthRatio = defaultWidthRatio < minWidthRatio ? minWidthRatio : defaultWidthRatio;
+    final double adjustedHeightRatio = defaultHeightRatio < minHeightRatio ? minHeightRatio : defaultHeightRatio;
+
+    width = adjustedWidthRatio.sw;
+    height = adjustedHeightRatio.sh;
 
     x = (1.sw - width) / 2;
     y = (1.sh - height) / 2;
@@ -96,14 +108,19 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   }
 
   void _updateMaximizedState(Size newParentSize) {
-    width = newParentSize.width * 0.7;
-    height = newParentSize.height * 0.85;
+    const double minWidthRatio = 0.5;
+    const double minHeightRatio = 0.6;
+
+    final double adjustedWidthRatio = defaultWidthRatio < minWidthRatio ? minWidthRatio : defaultWidthRatio;
+    final double adjustedHeightRatio = defaultHeightRatio < minHeightRatio ? minHeightRatio : defaultHeightRatio;
+
+    width = newParentSize.width * adjustedWidthRatio;
+    height = newParentSize.height * adjustedHeightRatio;
 
     x = (newParentSize.width - width) / 2;
     y = (newParentSize.height - height) / 2;
 
-    log('newParentSize width on updateForParentSizeChange: ${newParentSize.width}');
-    log('newParentSize height on updateForParentSizeChange: ${newParentSize.height}');
+    log('Parent size updated -> Width: ${newParentSize.width}, Height: ${newParentSize.height}');
   }
 
   void _updateMinimizedState(Size newParentSize, Offset positionRatio) {
@@ -169,12 +186,14 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
       {required BuildContext context,
       required Widget floatingScreen,
       required Offset targetPositionRatio,
+      required String tag,
       String? minimizedTitle,
       VoidCallback? onCloseCallback}) {
     final overlay = Overlay.of(context);
 
     overlayManager.displayOverlay(
       overlay: overlay,
+      tag: tag,
       windowPositionManager: windowPositionManager,
       floatingScreen: floatingScreen,
       targetPositionRatio: targetPositionRatio,

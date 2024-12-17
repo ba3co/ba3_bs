@@ -1,14 +1,15 @@
-
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
+import '../../../accounts/controllers/accounts_controller.dart';
 import '../../data/models/bond_model.dart';
 
 class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
-  // final _accountsController = Get.find<AccountsController>();
+  final _accountsController = Get.find<AccountsController>();
 
   @override
   Widget buildTitle(BondModel itemModel, {Uint8List? logoUint8List, Font? font}) {
@@ -88,11 +89,11 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
     return List.generate(itemModel.payItems.itemList.length, (index) {
       final item = itemModel.payItems.itemList[index];
 
-      // final accountName = _accountsController.getAccountNameById(item.entryAccountGuid);
+      final accountName = _accountsController.getAccountNameById(item.entryAccountGuid);
 
       return [
         index,
-        item.entryAccountGuid,
+        accountName,
         item.entryDebit,
         item.entryCredit,
         item.entryNote,
@@ -100,8 +101,7 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
     });
   }
 
-  Map<int, TableColumnWidth> get _columnWidths =>
-      {
+  Map<int, TableColumnWidth> get _columnWidths => {
         0: const FixedColumnWidth(50), // id
         1: const FixedColumnWidth(150), // account
         2: const FixedColumnWidth(60), // debt
@@ -109,8 +109,7 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
         4: const FixedColumnWidth(50), // nots
       };
 
-  Map<int, Alignment> get _cellAlignments =>
-      {
+  Map<int, Alignment> get _cellAlignments => {
         0: Alignment.centerLeft, // id
         1: Alignment.center, // account
         2: Alignment.center, // debt
@@ -118,8 +117,5 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
         4: Alignment.center, // nots
       };
 
-  String bondName(BondModel bondModel) =>
-      BondType
-          .byTypeGuide(bondModel.payTypeGuid!)
-          .value;
+  String bondName(BondModel bondModel) => BondType.byTypeGuide(bondModel.payTypeGuid!).value;
 }

@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/services/accounts_statements_data_source.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../accounts/data/datasources/remote/accounts_statements_data_source.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../data/models/entry_bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';

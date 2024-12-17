@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,7 +14,6 @@ import '../../service/cheques/floating_cheques_details_launcher.dart';
 import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
-
 
 class AllChequesController extends FloatingChequesDetailsLauncher {
   final DataSourceRepository<ChequesModel> _chequesFirebaseRepo;
@@ -42,7 +40,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     // getAllChequesTypes();
   }
 
-  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.checkNumber == chequesId);
+  ChequesModel getChequesById(String chequesId) =>
+      chequesList.firstWhere((cheques) => cheques.checkNumber == chequesId);
 
   Future<void> fetchAllCheques() async {
     log('fetchCheques');
@@ -57,7 +56,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     update();
   }
 
-  List<ChequesModel> getChequesByType(String chequesTypeId) => chequesList.where((cheques) => cheques.checkTypeGuid! == chequesTypeId).toList();
+  List<ChequesModel> getChequesByType(String chequesTypeId) =>
+      chequesList.where((cheques) => cheques.checkTypeGuid! == chequesTypeId).toList();
 
   Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel) async {
     await fetchAllCheques();
@@ -83,7 +83,6 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     required ChequesModel lastChequesModel,
     required ChequesType chequesType,
   }) {
-
     final String controllerTag = AppServiceUtils.generateUniqueTag('ChequesController');
 
     final Map<String, GetxController> controllers = setupControllers(
@@ -101,19 +100,20 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     initializeChequesSearch(
       currentCheques: lastChequesModel,
       allCheques: modifiedCheques,
-      chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+      chequesDetailsController: chequesDetailsController,
+      chequesSearchController: chequesSearchController,
     );
 
     launchFloatingWindow(
       context: context,
-      defaultHeight: 0.65.sh,
       defaultWidth: 0.5.sw,
+      defaultHeight: 0.6.sh,
       minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.checkTypeGuid!).value,
-      floatingScreen:  ChequesDetailsScreen(
+      floatingScreen: ChequesDetailsScreen(
         tag: controllerTag,
-        chequesTypeModel:chequesType ,
+        chequesTypeModel: chequesType,
         // fromChequesById: false,
-       chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+        chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
       ),
     );
   }
@@ -131,5 +131,3 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     );
   }
 }
-
-
