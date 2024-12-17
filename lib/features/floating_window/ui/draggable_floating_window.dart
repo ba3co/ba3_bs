@@ -14,13 +14,16 @@ class DraggableFloatingWindow extends StatelessWidget {
   final Widget floatingWindowContent;
   final String? minimizedTitle;
 
+
   const DraggableFloatingWindow({
     super.key,
     required this.onClose,
     required this.onBringToTop,
     required this.floatingWindowContent,
     required this.targetPositionRatio,
+
     this.minimizedTitle,
+
   });
 
   @override

@@ -16,6 +16,7 @@ class FloatingChequesDetailsLauncher extends GetxController with FloatingLaunche
 
     final chequesType = requireParam<ChequesType>(params, 'chequesType');
 
+
     final chequesSearchController = requireParam<ChequesSearchController>(params, 'chequesSearchController');
     final chequesFirebaseRepo = requireParam<DataSourceRepository<ChequesModel>>(params, 'chequesFirebaseRepo');
 

@@ -9,12 +9,16 @@ mixin FloatingLauncher {
     required Widget floatingScreen,
     String? minimizedTitle,
     VoidCallback? onCloseCallback,
+    double? defaultHeight,
+    double? defaultWidth,
   }) {
     FloatingWindowService.launchFloatingWindow(
       context: context,
       onCloseCallback: onCloseCallback,
       floatingScreen: floatingScreen,
       minimizedTitle: minimizedTitle,
+      defaultHeight: defaultHeight,
+      defaultWidth: defaultWidth,
     );
   }
 }

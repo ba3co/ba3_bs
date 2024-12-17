@@ -30,6 +30,24 @@ class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
       leadingWidth: 100,
       title: Text(chequesTypeModel.value),
       actions: [
+        SizedBox(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+              const Text("الرمز التسلسلي:"),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: SizedBox(
+                  width: 80,
+                  child: CustomTextFieldWithoutIcon(
+                    onChanged: (_) {}, textEditingController: TextEditingController(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
         IconButton(
             onPressed: () {
               chequesSearchController.previous();

@@ -33,6 +33,20 @@ class ChequesDetailsController extends GetxController with AppValidator {
   final TextEditingController chequesNumberController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
 
+  ///  var nameController = TextEditingController();
+  //
+  //   var numberController = TextEditingController();
+  //
+  //   var codeController = TextEditingController();
+  //
+  //   var allAmountController = TextEditingController();
+  //
+  //   var primaryController = TextEditingController();
+  //
+  //   var secondaryController = TextEditingController();
+  //
+  //   var bankController = TextEditingController();
+
   AccountModel? selectedAccount;
 
   RxString chequesDate = DateTime.now().toString().split(" ")[0].obs;

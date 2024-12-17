@@ -289,6 +289,22 @@ enum BondItemType {
     );
   }
 }
+enum ChequesStatus {
+  paid('مدفوع'),
+  notPaid('غير مدفوع');
+
+  final String label;
+
+  const ChequesStatus(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory ChequesStatus.byLabel(String label) {
+    return ChequesStatus.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching ChequesStatus for label: $label'),
+    );
+  }
+}
 
 abstract class Account {
   String get label;

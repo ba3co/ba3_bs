@@ -12,6 +12,7 @@ class OverlayManager {
     required Offset targetPositionRatio,
     String? minimizedTitle,
     VoidCallback? onCloseCallback,
+
   }) {
     late OverlayEntry overlayEntry;
 

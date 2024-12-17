@@ -3,6 +3,9 @@ import 'package:ba3_bs/core/services/translation/interfaces/i_translation_servic
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:ba3_bs/features/cheques/data/datasources/cheques_data_source.dart';
+import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -63,6 +66,9 @@ class AppBindings extends Bindings {
     final DataSourceRepository<BondModel> bondsFirebaseRepo = DataSourceRepository(
       BondsDataSource(databaseService: fireStoreService),
     );
+    final DataSourceRepository<ChequesModel> chequesFirebaseRepo = DataSourceRepository(
+      ChequesDataSource(databaseService: fireStoreService),
+    );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
     final DataSourceRepository<EntryBondModel> entryBondsFirebaseRepo = DataSourceRepository(
@@ -89,22 +95,23 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => bondsFirebaseRepo, fenix: true);
 
+    Get.lazyPut(() => chequesFirebaseRepo, fenix: true);
+
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
 
     // Lazy load controllers
     Get.lazyPut(() => NfcCardsController(), fenix: true);
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
-    //Get.lazyPut(() => EntryBondController(), fenix: true);
 
     Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 
-    // Get.lazyPut(() => BillDetailsController(billsFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
-    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo /*bondJsonExportRepo*/), fenix: true);
+    Get.lazyPut(() => AllBondsController(bondsFirebaseRepo), fenix: true);
+    Get.lazyPut(() => AllChequesController( chequesFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
 

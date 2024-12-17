@@ -214,7 +214,7 @@ class ChequesModel {
   }
 
  factory ChequesModel.empty({required ChequesType chequesType, int lastChequesNumber = 0}) {
-    return  ChequesModel(checkNumber:lastChequesNumber,checkTypeGuid: chequesType.typeGuide );
+    return  ChequesModel(checkNumber:lastChequesNumber,checkTypeGuid: chequesType.typeGuide,checkDate: DateTime.now().toString() );
   }
 
   static ChequesModel? fromChequesData({ChequesModel? chequesModel, required ChequesType chequesType, String? note, required String payAccountGuid, required String payDate}) {

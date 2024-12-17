@@ -2,6 +2,7 @@ import 'dart:developer';
 
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -11,7 +12,7 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/cheques_model.dart';
 import '../../service/cheques/cheques_utils.dart';
 import '../../service/cheques/floating_cheques_details_launcher.dart';
-import '../../ui/screens/add_cheque.dart';
+import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
@@ -82,19 +83,20 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     required ChequesModel lastChequesModel,
     required ChequesType chequesType,
   }) {
+
     final String controllerTag = AppServiceUtils.generateUniqueTag('ChequesController');
 
     final Map<String, GetxController> controllers = setupControllers(
       params: {
         'tag': controllerTag,
-        'ChequesType': ChequesType,
-        'ChequesFirebaseRepo': _chequesFirebaseRepo,
-        'ChequesearchController': ChequesSearchController(),
+        'chequesType': chequesType,
+        'chequesFirebaseRepo': _chequesFirebaseRepo,
+        'chequesSearchController': ChequesSearchController(),
       },
     );
 
-    final chequesDetailsController = controllers['ChequesDetailsController'] as ChequesDetailsController;
-    final chequesSearchController = controllers['ChequesSearchController'] as ChequesSearchController;
+    final chequesDetailsController = controllers['chequesDetailsController'] as ChequesDetailsController;
+    final chequesSearchController = controllers['chequesSearchController'] as ChequesSearchController;
 
     initializeChequesSearch(
       currentCheques: lastChequesModel,
@@ -104,10 +106,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
 
     launchFloatingWindow(
       context: context,
+      defaultHeight: 0.65.sh,
+      defaultWidth: 0.5.sw,
       minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.checkTypeGuid!).value,
-      floatingScreen: const ChequesDetailsScreen(
+      floatingScreen:  ChequesDetailsScreen(
+        tag: controllerTag,
+        chequesTypeModel:chequesType ,
         // fromChequesById: false,
-        // tag: controllerTag, chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+       chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
       ),
     );
   }

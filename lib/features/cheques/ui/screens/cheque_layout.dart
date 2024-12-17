@@ -1,8 +1,10 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/ui/widgets/cheques_layout/cheques_layout_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'add_cheque.dart';
+
 import 'all_cheques_view.dart';
 
 
@@ -24,7 +26,8 @@ class _ChequeLayoutState extends State<ChequeLayout> {
         body: Column(
           children: [
             Item("إضافة شيك", () {
-              Get.to(() => const ChequesDetailsScreen());
+              Get.find<AllChequesController>().openFloatingChequesDetails(context, ChequesType.insuranceChecks);
+              // Get.to(() => const ChequesDetailsScreen());
             }),
             Item("الشيكات المستحقة", () {
               Get.to(() => const AllCheques(isAll: false));

@@ -12,9 +12,11 @@ class FloatingWindowService {
     required Widget floatingScreen,
     String? minimizedTitle,
     VoidCallback? onCloseCallback,
+    double?  defaultWidth,
+    double? defaultHeight,
   }) {
     // Initialize the floating window controller
-    FloatingWindowController floatingWindowController = _initializeFloatingWindowController();
+    FloatingWindowController floatingWindowController = _initializeFloatingWindowController(defaultWidth: defaultWidth,defaultHeight: defaultHeight);
 
     // Get the initial target position for the floating window
     Offset targetPositionRatio = floatingWindowController.initWindowPositionManager();
@@ -26,13 +28,14 @@ class FloatingWindowService {
       targetPositionRatio: targetPositionRatio,
       onCloseCallback: onCloseCallback,
       minimizedTitle: minimizedTitle,
+
     );
   }
 
   /// Initializes and returns a new instance of [FloatingWindowController].
-  static FloatingWindowController _initializeFloatingWindowController() {
+  static FloatingWindowController _initializeFloatingWindowController({double? defaultWidth, double? defaultHeight}) {
     // Create the controller if not already created
-    Get.create(() => FloatingWindowController(), permanent: false);
+    Get.create(() => FloatingWindowController(defaultWidth: defaultWidth,defaultHeight:defaultHeight ), permanent: false);
 
     // Return the controller instance
     return Get.find<FloatingWindowController>();

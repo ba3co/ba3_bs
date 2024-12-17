@@ -17,9 +17,9 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   // Get the singleton instance of WindowPositionManager
   WindowPositionManager windowPositionManager = WindowPositionManager.instance;
 
-  FloatingWindowController() {
+  FloatingWindowController({double? defaultWidth, double? defaultHeight}) {
     log('call FloatingWindowController constructor');
-    _initializeWindow();
+    _initializeWindow(defaultHeight: defaultHeight,defaultWidth: defaultWidth);
   }
 
   final ResizeManager resizeManager = ResizeManager(edgeSize: 8.0);
@@ -50,9 +50,10 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   final Debounce _resizeDebounce = Debounce();
   final Debounce _windowSizeChangeDebounce = Debounce();
 
-  void _initializeWindow() {
-    width = 0.7.sw;
-    height = 0.85.sh;
+  void _initializeWindow({double? defaultWidth, double? defaultHeight}) {
+
+    width = defaultWidth??0.7.sw;
+    height =defaultHeight?? 0.85.sh;
 
     x = (1.sw - width) / 2;
     y = (1.sh - height) / 2;

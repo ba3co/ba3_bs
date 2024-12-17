@@ -13,6 +13,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.inputFormatters,
     this.isNumeric = false,
     this.enabled = true,
+    this.maxLine = 1,
     this.height,
     this.suffixIcon,
     this.textStyle,
@@ -29,6 +30,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final double? height;
   final Widget? suffixIcon;
   final TextStyle? textStyle;
+  final int? maxLine;
 
   @override
   State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
@@ -69,6 +71,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
     return SizedBox(
       height: widget.height,
       child: TextFormField(
+
+        maxLines: widget.maxLine,
         onChanged: widget.onChanged,
         validator: widget.validator,
         enabled: widget.enabled,
@@ -101,7 +105,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
             ),
             suffixIcon: widget.suffixIcon,
             contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)),
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.start,
         // Center the text horizontally
       ),
     );
