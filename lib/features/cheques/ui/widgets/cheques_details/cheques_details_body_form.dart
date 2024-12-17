@@ -1,5 +1,8 @@
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
+import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
@@ -20,6 +23,8 @@ class AddChequeForm extends StatelessWidget {
       child: Form(
         key: chequesDetailsController.formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
@@ -35,8 +40,8 @@ class AddChequeForm extends StatelessWidget {
                   label: "تاريخ الاستحقاق",
                   child: Obx(() {
                     return DatePicker(
-                      initDate: chequesDetailsController.chequesDate.value,
-                      onDateSelected: chequesDetailsController.setChequesDate,
+                      initDate: chequesDetailsController.chequesDueDate.value,
+                      onDateSelected: chequesDetailsController.setChequesDueDate,
                     );
                   }),
                 )),
@@ -45,57 +50,56 @@ class AddChequeForm extends StatelessWidget {
                 firstItem: TextAndExpandedChildField(
                   label: 'رقم الشيك',
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
+                    textEditingController: chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
+                    validator: (value) => chequesDetailsController.validator(value, 'رقم الشيك'),
+
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: "قيمة الشيك",
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
+                    textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),
+                    validator: (value) => chequesDetailsController.validator(value, 'قيمة الشيك'),
+
                   ),
                 )),
             const VerticalSpace(),
             FormFieldRow(
-                firstItem: TextAndExpandedChildField(
-                  label: 'الحساب',
-                  child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
-                    suffixIcon: const SizedBox.shrink(),
-                  ),
+                firstItem: SearchableAccountField(
+                  label:'الحساب' ,
+                  textEditingController: chequesDetailsController.chequesFirstAccountController,
+                  validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
+                  chequesDetailsController:chequesDetailsController ,
+                  isFirstAccountCheque: true,
                 ),
-                secondItem: TextAndExpandedChildField(
+                secondItem: SearchableAccountField(
                   label: "دفع إلى",
-                  child: CustomTextFieldWithoutIcon(
-                    textEditingController: TextEditingController(),
-                    suffixIcon: const SizedBox.shrink(),
-                  ),
+                  textEditingController: chequesDetailsController.chequesToAccountController,
+                  validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
+                  chequesDetailsController:chequesDetailsController ,
+
+
                 )),
             const VerticalSpace(),
             FormFieldRow(
-                firstItem: TextAndExpandedChildField(
+                firstItem:      TextAndExpandedChildField(
                   label: "البيان",
-                  child: CustomTextFieldWithoutIcon(
+                  child:CustomTextFieldWithoutIcon(
                     keyboardType: TextInputType.multiline,
-                    maxLine: 4,
-                    textEditingController: TextEditingController(),
+                    maxLine:4,
+                    textEditingController: chequesDetailsController.chequesNoteController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
-                secondItem: TextAndExpandedChildField(
-                  label: "بيان الطرف الآخر",
-                  child: CustomTextFieldWithoutIcon(
-                    keyboardType: TextInputType.multiline,
-                    maxLine: 4,
-                    textEditingController: TextEditingController(),
-                    suffixIcon: const SizedBox.shrink(),
-                  ),
-                )),
-            const VerticalSpace(),
+                secondItem:     const SizedBox()),
+
           ],
         ),
       ),
     );
+
+
   }
 }

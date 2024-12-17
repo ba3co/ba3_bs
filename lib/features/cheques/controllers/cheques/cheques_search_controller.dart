@@ -24,18 +24,18 @@ class ChequesSearchController extends GetxController {
     _setCurrentCheques(currentChequesIndex);
     log('cheques length ${chequesList.length}');
     log('currentChequesIndex $currentChequesIndex');
-    log('currentChequesNumber ${currentCheques.checkNumber}');
+    log('currentChequesNumber ${currentCheques.chequesNumber}');
   }
 
   /// Gets the current cheques
   ChequesModel get getCurrentCheques => chequesList[currentChequesIndex];
 
   /// Finds the index of the cheques with the given number
-  int _getChequesIndexByNumber(int? chequesNumber) => chequesList.indexWhere((cheques) => cheques.checkNumber == chequesNumber);
+  int _getChequesIndexByNumber(int? chequesNumber) => chequesList.indexWhere((cheques) => cheques.chequesNumber == chequesNumber);
 
   /// Updates the cheques in the search results if it exists
   void updateCheques(ChequesModel updatedCheques) {
-    final chequesIndex = _getChequesIndexByNumber(updatedCheques.checkNumber);
+    final chequesIndex = _getChequesIndexByNumber(updatedCheques.chequesNumber);
 
     if (chequesIndex != -1) {
       chequesList[chequesIndex] = updatedCheques;
@@ -45,7 +45,7 @@ class ChequesSearchController extends GetxController {
 
   /// Deletes the cheques in the search results if it exists
   void removeCheques(ChequesModel chequesToDelete) {
-    final chequesIndex = _getChequesIndexByNumber(chequesToDelete.checkNumber);
+    final chequesIndex = _getChequesIndexByNumber(chequesToDelete.chequesNumber);
 
     if (chequesIndex != -1) {
       chequesList.removeAt(chequesIndex);
@@ -58,13 +58,13 @@ class ChequesSearchController extends GetxController {
   /// Validates whether the given cheques number is within range
   bool _isValidChequesNumber(int? chequesNumber) =>
       chequesNumber != null &&
-      chequesNumber >= chequesList.first.checkNumber! &&
-      chequesNumber <= chequesList.last.checkNumber!;
+      chequesNumber >= chequesList.first.chequesNumber! &&
+      chequesNumber <= chequesList.last.chequesNumber!;
 
   /// Handles invalid cheques number cases by showing appropriate error messages
   void _showInvalidChequesNumberError(int? chequesNumber) {
-    final firstChequesNumber = chequesList.first.checkNumber!;
-    final lastChequesNumber = chequesList.last.checkNumber!;
+    final firstChequesNumber = chequesList.first.chequesNumber!;
+    final lastChequesNumber = chequesList.last.chequesNumber!;
 
     final message = chequesNumber == null
         ? 'من فضلك أدخل رقم صحيح'
@@ -148,7 +148,7 @@ class ChequesSearchController extends GetxController {
   /// Checks if the current cheques is the last in the list
   bool get isLast => currentChequesIndex == chequesList.length - 1;
 
-  bool get isNew => currentCheques.checkGuid == null;
+  bool get isNew => currentCheques.chequesGuid == null;
 
   /// Displays an error message
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);

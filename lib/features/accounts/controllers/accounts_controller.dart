@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/utils/app_ui_utils.dart';
+import '../../cheques/controllers/cheques/cheques_details_controller.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../../patterns/controllers/pattern_controller.dart';
 import '../data/models/account_model.dart';
@@ -106,7 +107,9 @@ class AccountsController extends GetxController {
     TextEditingController? textEditingController,
     bool fromAddBill = false,
     bool isCustomerAccount = false,
+    bool isFirstAccountCheque=false,
     BondDetailsController? bondDetailsController,
+    ChequesDetailsController? chequesDetailsController,
     IBillController? billController,
   }) {
     List<AccountModel> searchedAccounts = getAccounts(query);
@@ -116,6 +119,7 @@ class AccountsController extends GetxController {
       // Single match
       selectedAccountModel = searchedAccounts.first;
       if (bondDetailsController != null) bondDetailsController.setAccount(searchedAccounts.first);
+      if (chequesDetailsController != null) isFirstAccountCheque?chequesDetailsController.setFirstAccount(searchedAccounts.first):chequesDetailsController.setTowAccount(searchedAccounts.first);
 
       if (textEditingController != null) {
         final BillAccounts? billAccounts =
@@ -153,6 +157,7 @@ class AccountsController extends GetxController {
 
             if (selectedAccountModel != null && textEditingController != null) {
               if (bondDetailsController != null) bondDetailsController.setAccount(selectedAccount);
+              if (chequesDetailsController != null) isFirstAccountCheque?chequesDetailsController.setFirstAccount(selectedAccount):chequesDetailsController.setTowAccount(selectedAccount);
 
               final BillAccounts? billAccounts =
                   Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];

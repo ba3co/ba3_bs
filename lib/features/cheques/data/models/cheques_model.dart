@@ -1,223 +1,261 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 
-import 'check_collect_entry_model.dart';
-import 'check_entry_relation_model.dart';
+import 'cheques_collect_entry_model.dart';
+import 'cheques_entry_relation_model.dart';
 
 class ChequesModel {
-  final String? checkTypeGuid;
-  final int? checkNumber;
-  final int? checkNum;
-  final String? checkGuid;
+  final String? chequesTypeGuid;
+  final int? chequesNumber;
+  final int? chequesNum;
+  final String? chequesGuid;
+  final String? chequesDate;
+  final String? chequesDueDate;
+  final String? chequesNote;
+  final double? chequesVal;
+  final String? chequesAccount2Guid;
 
-  final String? accPtr;
-  final String? checkDate;
-  final String? checkDueDate;
-
-  final String? checkNote;
-  final double? checkVal;
-
-  //TODO
-  final String? checkCurGuid;
-
-  final String? checkAccount2Guid;
-  final String? checkCustomerGuid;
-  final CheckCollectEntryModel? checkCollectEntry;
-  final CheckEntryRelationModel? checkEntryRelation;
-
-  // final double checkCurVal;
-  // final int checkSec;
-  // final int checkPrevNum;
-  // final String checkOrgName;
-  // final String checkIntNum;
-  // final String checkIntFile;
-  // final String checkExtFile;
-  // final String checkFileDate;
-  // final String checkCost1Guid;
-  // final String checkCost2Guid;
-  // final int checkState;
-  // final String checkColDate;
-  // final String checkBankGuid;
-  // final String checkBrGuid;
-  // final int checkDir;
-  // final String checkParentGuid;
+  final ChequesCollectEntryModel? chequesCollectEntry;
+  final ChequesEntryRelationModel? chequesEntryRelation;
+  // final String? chequesCustomerGuid;
+  // final String? chequesCurGuid;
+  // final String? accPtr;
+  // final double chequesCurVal;
+  // final int chequesSec;
+  // final int chequesPrevNum;
+  // final String chequesOrgName;
+  // final String chequesIntNum;
+  // final String chequesIntFile;
+  // final String chequesExtFile;
+  // final String chequesFileDate;
+  // final String chequesCost1Guid;
+  // final String chequesCost2Guid;
+  // final int chequesState;
+  // final String chequesColDate;
+  // final String chequesBankGuid;
+  // final String chequesBrGuid;
+  // final int chequesDir;
+  // final String chequesParentGuid;
 
   const ChequesModel({
-     this.checkTypeGuid,
-     this.checkNumber,
-     this.checkNum,
-     this.checkGuid,
-     this.accPtr,
-     this.checkDate,
-     this.checkDueDate,
-     this.checkNote,
-     this.checkVal,
-     this.checkCurGuid,
-     this.checkAccount2Guid,
-     this.checkCustomerGuid,
-     this.checkCollectEntry,
-     this.checkEntryRelation,
-    // required this.checkCurVal,
-    // required this.checkSec,
-    // required this.checkPrevNum,
-    // required this.checkOrgName,
-    // required this.checkIntNum,
-    // required this.checkIntFile,
-    // required this.checkExtFile,
-    // required this.checkFileDate,
-    // required this.checkCost1Guid,
-    // required this.checkCost2Guid,
-    // required this.checkState,
-    // required this.checkColDate,
-    // required this.checkBankGuid,
-    // required this.checkBrGuid,
-    // required this.checkDir,
-    // required this.checkParentGuid,
+    this.chequesTypeGuid,
+    this.chequesNumber,
+    this.chequesNum,
+    this.chequesGuid,
+    this.chequesDate,
+    this.chequesDueDate,
+    this.chequesNote,
+    this.chequesVal,
+    this.chequesAccount2Guid,
+
+    this.chequesCollectEntry,
+    this.chequesEntryRelation,
+    // this.chequesCustomerGuid,
+    // this.accPtr,
+    // this.chequesCurGuid,
+    // required this.chequesCurVal,
+    // required this.chequesSec,
+    // required this.chequesPrevNum,
+    // required this.chequesOrgName,
+    // required this.chequesIntNum,
+    // required this.chequesIntFile,
+    // required this.chequesExtFile,
+    // required this.chequesFileDate,
+    // required this.chequesCost1Guid,
+    // required this.chequesCost2Guid,
+    // required this.chequesState,
+    // required this.chequesColDate,
+    // required this.chequesBankGuid,
+    // required this.chequesBrGuid,
+    // required this.chequesDir,
+    // required this.chequesParentGuid,
   });
 
   // fromJson constructor
   factory ChequesModel.fromJson(Map<String, dynamic> json) {
     return ChequesModel(
-      checkTypeGuid: json['CheckTypeGuid'] as String,
-      checkNumber: json['CheckNumber'] as int,
-      checkNum: json['CheckNum'] as int,
-      checkGuid: json['CheckGuid'] as String,
-      accPtr: json['AccPtr'] as String,
-      checkDate: json['CheckDate'] as String,
-      checkDueDate: json['CheckDueDate'] as String,
-      checkNote: json['CheckNote'] as String,
-      checkVal: (json['CheckVal'] as num).toDouble(),
-      checkCurGuid: json['CheckCurGuid'] as String,
-      checkAccount2Guid: json['CheckAccount2Guid'] as String,
-      checkCustomerGuid: json['CheckCustomerGuid'] as String,
-      checkCollectEntry: CheckCollectEntryModel.fromJson(json['CheckCollectEntry']),
-      checkEntryRelation: CheckEntryRelationModel.fromJson(json['CheckEntryRelation']),
-      // checkCurVal: (json['CheckCurVal'] as num).toDouble(),
-      // checkSec: json['CheckSec'] as int,
-      // checkPrevNum: json['CheckPrevNum'] as int,
-      // checkOrgName: json['CheckOrgName'] as String,
-      // checkIntNum: json['CheckIntNum'] as String,
-      // checkIntFile: json['CheckIntFile'] as String,
-      // checkExtFile: json['CheckExtFile'] as String,
-      // checkFileDate: json['CheckFileDate'] as String,
-      // checkCost1Guid: json['CheckCost1Guid'] as String,
-      // checkCost2Guid: json['CheckCost2Guid'] as String,
-      // checkState: json['CheckState'] as int,
-      // checkColDate: json['CheckColDate'] as String,
-      // checkBankGuid: json['CheckBankGuid'] as String,
-      // checkBrGuid: json['CheckBrGuid'] as String,
-      // checkDir: json['CheckDir'] as int,
-      // checkParentGuid: json['CheckParentGuid'] as String,
+      chequesTypeGuid: json['ChequesTypeGuid'] as String,
+      chequesNumber: json['ChequesNumber'] as int,
+      chequesNum: json['ChequesNum'] as int,
+      chequesGuid: json['docId'] as String,
+
+      chequesDate: json['ChequesDate'] as String,
+      chequesDueDate: json['ChequesDueDate'] as String,
+      chequesNote: json['ChequesNote'] as String,
+      chequesVal: (json['ChequesVal'] as num).toDouble(),
+
+      chequesAccount2Guid: json['ChequesAccount2Guid'] as String,
+      // chequesCollectEntry: ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']??{}),
+      // chequesEntryRelation: ChequesEntryRelationModel.fromJson(json['ChequesEntryRelation']??{}),
+      // chequesCustomerGuid: json['ChequesCustomerGuid'] as String,
+
+      // chequesCurGuid: json['ChequesCurGuid'] as String,
+      // accPtr: json['AccPtr'] as String,
+      // chequesCurVal: (json['ChequesCurVal'] as num).toDouble(),
+      // chequesSec: json['ChequesSec'] as int,
+      // chequesPrevNum: json['ChequesPrevNum'] as int,
+      // chequesOrgName: json['ChequesOrgName'] as String,
+      // chequesIntNum: json['ChequesIntNum'] as String,
+      // chequesIntFile: json['ChequesIntFile'] as String,
+      // chequesExtFile: json['ChequesExtFile'] as String,
+      // chequesFileDate: json['ChequesFileDate'] as String,
+      // chequesCost1Guid: json['ChequesCost1Guid'] as String,
+      // chequesCost2Guid: json['ChequesCost2Guid'] as String,
+      // chequesState: json['ChequesState'] as int,
+      // chequesColDate: json['ChequesColDate'] as String,
+      // chequesBankGuid: json['ChequesBankGuid'] as String,
+      // chequesBrGuid: json['ChequesBrGuid'] as String,
+      // chequesDir: json['ChequesDir'] as int,
+      // chequesParentGuid: json['ChequesParentGuid'] as String,
     );
   }
 
   // toJson method
   Map<String, dynamic> toJson() {
     return {
-      'CheckTypeGuid': checkTypeGuid,
-      'CheckNumber': checkNumber,
-      'CheckNum': checkNum,
-      'CheckGuid': checkGuid,
-      'AccPtr': accPtr,
-      'CheckDate': checkDate,
-      'CheckDueDate': checkDueDate,
-      'CheckNote': checkNote,
-      'CheckVal': checkVal,
-      'CheckCurGuid': checkCurGuid,
-      'CheckAccount2Guid': checkAccount2Guid,
-      'CheckCustomerGuid': checkCustomerGuid,
-      'CheckCollectEntry': checkCollectEntry?.toJson(),
-      'CheckEntryRelation': checkEntryRelation?.toJson(),
-      // 'CheckCurVal': checkCurVal,
-      // 'CheckSec': checkSec,
-      // 'CheckPrevNum': checkPrevNum,
-      // 'CheckOrgName': checkOrgName,
-      // 'CheckIntNum': checkIntNum,
-      // 'CheckIntFile': checkIntFile,
-      // 'CheckExtFile': checkExtFile,
-      // 'CheckFileDate': checkFileDate,
-      // 'CheckCost1Guid': checkCost1Guid,
-      // 'CheckCost2Guid': checkCost2Guid,
-      // 'CheckState': checkState,
-      // 'CheckColDate': checkColDate,
-      // 'CheckBankGuid': checkBankGuid,
-      // 'CheckBrGuid': checkBrGuid,
-      // 'CheckDir': checkDir,
-      // 'CheckParentGuid': checkParentGuid,
+      'ChequesTypeGuid': chequesTypeGuid,
+      'ChequesNumber': chequesNumber,
+      'ChequesNum': chequesNum,
+      'docId': chequesGuid,
+
+      'ChequesDate': chequesDate,
+      'ChequesDueDate': chequesDueDate,
+      'ChequesNote': chequesNote,
+      'ChequesVal': chequesVal,
+
+      'ChequesAccount2Guid': chequesAccount2Guid,
+
+      // 'ChequesCollectEntry': chequesCollectEntry?.toJson()??{},
+      // 'ChequesEntryRelation': chequesEntryRelation?.toJson()??{},
+      // 'ChequesCustomerGuid': chequesCustomerGuid,
+      // 'ChequesCurGuid': chequesCurGuid,
+      // 'AccPtr': accPtr,
+      // 'ChequesCurVal': chequesCurVal,
+      // 'ChequesSec': chequesSec,
+      // 'ChequesPrevNum': chequesPrevNum,
+      // 'ChequesOrgName': chequesOrgName,
+      // 'ChequesIntNum': chequesIntNum,
+      // 'ChequesIntFile': chequesIntFile,
+      // 'ChequesExtFile': chequesExtFile,
+      // 'ChequesFileDate': chequesFileDate,
+      // 'ChequesCost1Guid': chequesCost1Guid,
+      // 'ChequesCost2Guid': chequesCost2Guid,
+      // 'ChequesState': chequesState,
+      // 'ChequesColDate': chequesColDate,
+      // 'ChequesBankGuid': chequesBankGuid,
+      // 'ChequesBrGuid': chequesBrGuid,
+      // 'ChequesDir': chequesDir,
+      // 'ChequesParentGuid': chequesParentGuid,
     };
   }
 
   // copyWith method
   ChequesModel copyWith({
-    String? checkTypeGuid,
-    int? checkNumber,
-    int? checkNum,
-    String? checkGuid,
-    String? accPtr,
-    String? checkDate,
-    String? checkDueDate,
-    String? checkNote,
-    double? checkVal,
-    String? checkCurGuid,
-    String? checkAccount2Guid,
-    String? checkCustomerGuid,
-    CheckCollectEntryModel? checkCollectEntry,
-    CheckEntryRelationModel? checkEntryRelation,
-    // String? checkParentGuid,
-    // String? checkBrGuid,
-    // int? checkDir,
-    // String? checkColDate,
-    // String? checkBankGuid,
-    // double? checkCurVal,
-    // int? checkSec,
-    // int? checkPrevNum,
-    // String? checkOrgName,
-    // String? checkIntNum,
-    // String? checkIntFile,
-    // String? checkExtFile,
-    // String? checkFileDate,
-    // String? checkCost1Guid,
-    // int? checkState,
-    // String? checkCost2Guid,
+    String? chequesTypeGuid,
+    int? chequesNumber,
+    int? chequesNum,
+    String? chequesGuid,
+    String? chequesDate,
+    String? chequesDueDate,
+    String? chequesNote,
+    double? chequesVal,
+    String? chequesAccount2Guid,
+    ChequesCollectEntryModel? chequesCollectEntry,
+    ChequesEntryRelationModel? chequesEntryRelation,
+    // String? chequesCustomerGuid,
+    // String? accPtr,
+    // String? chequesCurGuid,
+    // String? chequesParentGuid,
+    // String? chequesBrGuid,
+    // int? chequesDir,
+    // String? chequesColDate,
+    // String? chequesBankGuid,
+    // double? chequesCurVal,
+    // int? chequesSec,
+    // int? chequesPrevNum,
+    // String? chequesOrgName,
+    // String? chequesIntNum,
+    // String? chequesIntFile,
+    // String? chequesExtFile,
+    // String? chequesFileDate,
+    // String? chequesCost1Guid,
+    // int? chequesState,
+    // String? chequesCost2Guid,
   }) {
     return ChequesModel(
-      checkTypeGuid: checkTypeGuid ?? this.checkTypeGuid,
-      checkNumber: checkNumber ?? this.checkNumber,
-      checkNum: checkNum ?? this.checkNum,
-      checkGuid: checkGuid ?? this.checkGuid,
-      accPtr: accPtr ?? this.accPtr,
-      checkDate: checkDate ?? this.checkDate,
-      checkDueDate: checkDueDate ?? this.checkDueDate,
-      checkNote: checkNote ?? this.checkNote,
-      checkVal: checkVal ?? this.checkVal,
-      checkCurGuid: checkCurGuid ?? this.checkCurGuid,
-      checkAccount2Guid: checkAccount2Guid ?? this.checkAccount2Guid,
-      checkCustomerGuid: checkCustomerGuid ?? this.checkCustomerGuid,
-      checkCollectEntry: checkCollectEntry ?? this.checkCollectEntry,
-      checkEntryRelation: checkEntryRelation ?? this.checkEntryRelation,
-      // checkParentGuid: checkParentGuid ?? this.checkParentGuid,
-      // checkDir: checkDir ?? this.checkDir,
-      // checkBrGuid: checkBrGuid ?? this.checkBrGuid,
-      // checkColDate: checkColDate ?? this.checkColDate,
-      // checkBankGuid: checkBankGuid ?? this.checkBankGuid,
-      // checkCurVal: checkCurVal ?? this.checkCurVal,
-      // checkSec: checkSec ?? this.checkSec,
-      // checkPrevNum: checkPrevNum ?? this.checkPrevNum,
-      // checkOrgName: checkOrgName ?? this.checkOrgName,
-      // checkIntNum: checkIntNum ?? this.checkIntNum,
-      // checkIntFile: checkIntFile ?? this.checkIntFile,
-      // checkExtFile: checkExtFile ?? this.checkExtFile,
-      // checkFileDate: checkFileDate ?? this.checkFileDate,
-      // checkCost1Guid: checkCost1Guid ?? this.checkCost1Guid,
-      // checkCost2Guid: checkCost2Guid ?? this.checkCost2Guid,
-      // checkState: checkState ?? this.checkState,
+      chequesTypeGuid: chequesTypeGuid ?? this.chequesTypeGuid,
+      chequesNumber: chequesNumber ?? this.chequesNumber,
+      chequesNum: chequesNum ?? this.chequesNum,
+      chequesGuid: chequesGuid ?? this.chequesGuid,
+
+      chequesDate: chequesDate ?? this.chequesDate,
+      chequesDueDate: chequesDueDate ?? this.chequesDueDate,
+      chequesNote: chequesNote ?? this.chequesNote,
+      chequesVal: chequesVal ?? this.chequesVal,
+
+      chequesAccount2Guid: chequesAccount2Guid ?? this.chequesAccount2Guid,
+
+      chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
+      chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
+      // chequesCustomerGuid: chequesCustomerGuid ?? this.chequesCustomerGuid,
+      // chequesCurGuid: chequesCurGuid ?? this.chequesCurGuid,
+      // accPtr: accPtr ?? this.accPtr,
+      // chequesParentGuid: chequesParentGuid ?? this.chequesParentGuid,
+      // chequesDir: chequesDir ?? this.chequesDir,
+      // chequesBrGuid: chequesBrGuid ?? this.chequesBrGuid,
+      // chequesColDate: chequesColDate ?? this.chequesColDate,
+      // chequesBankGuid: chequesBankGuid ?? this.chequesBankGuid,
+      // chequesCurVal: chequesCurVal ?? this.chequesCurVal,
+      // chequesSec: chequesSec ?? this.chequesSec,
+      // chequesPrevNum: chequesPrevNum ?? this.chequesPrevNum,
+      // chequesOrgName: chequesOrgName ?? this.chequesOrgName,
+      // chequesIntNum: chequesIntNum ?? this.chequesIntNum,
+      // chequesIntFile: chequesIntFile ?? this.chequesIntFile,
+      // chequesExtFile: chequesExtFile ?? this.chequesExtFile,
+      // chequesFileDate: chequesFileDate ?? this.chequesFileDate,
+      // chequesCost1Guid: chequesCost1Guid ?? this.chequesCost1Guid,
+      // chequesCost2Guid: chequesCost2Guid ?? this.chequesCost2Guid,
+      // chequesState: chequesState ?? this.chequesState,
     );
   }
 
- factory ChequesModel.empty({required ChequesType chequesType, int lastChequesNumber = 0}) {
-    return  ChequesModel(checkNumber:lastChequesNumber,checkTypeGuid: chequesType.typeGuide,checkDate: DateTime.now().toString() );
+  factory ChequesModel.empty({required ChequesType chequesType, int lastChequesNumber = 0}) {
+    return ChequesModel(
+      chequesNumber: lastChequesNumber,
+      chequesTypeGuid: chequesType.typeGuide,
+      chequesDate: DateTime.now().toString(),
+      chequesDueDate: DateTime.now().toString(),
+    );
   }
 
-  static ChequesModel? fromChequesData({ChequesModel? chequesModel, required ChequesType chequesType, String? note, required String payAccountGuid, required String payDate}) {
-    return null;
+  static ChequesModel? fromChequesData({
+    ChequesModel? chequesModel,
+    required ChequesType chequesType,
+    required String chequesTypeGuid,
+    required int chequesNum,
+    required String chequesDate,
+    required String chequesDueDate,
+    required String chequesNote,
+    required double chequesVal,
+    required String chequesAccount2Guid,
+  }) {
+    return chequesModel == null
+        ? ChequesModel(
+            chequesDate: chequesDate,
+            chequesTypeGuid: chequesTypeGuid,
+            chequesAccount2Guid: chequesAccount2Guid,
+            chequesDueDate: chequesDueDate,
+            chequesNum: chequesNum,
+            chequesVal: chequesVal,
+            chequesNote: chequesNote,
+          )
+        : chequesModel.copyWith(
+            chequesDate: chequesDate,
+            chequesTypeGuid: chequesTypeGuid,
+            chequesAccount2Guid: chequesAccount2Guid,
+            chequesDueDate: chequesDueDate,
+            chequesNum: chequesNum,
+            chequesVal: chequesVal,
+            chequesNote: chequesNote,
+          );
   }
 }

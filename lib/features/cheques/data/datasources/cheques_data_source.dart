@@ -18,7 +18,7 @@ class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequen
     final List<ChequesModel> chequesList = data.map((item) => ChequesModel.fromJson(item)).toList();
 
     // Sort the list by `chequesNumber` in ascending order
-    chequesList.sort((a, b) => a.checkNumber!.compareTo(b.checkNumber!));
+    chequesList.sort((a, b) => a.chequesNumber!.compareTo(b.chequesNumber!));
 
     return chequesList;
   }
@@ -37,25 +37,21 @@ class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequen
   @override
   Future<ChequesModel> save(ChequesModel item,[bool? save]) async {
 
-    if (item.checkGuid == null) {
+    if (item.chequesGuid == null) {
       final newBillModel = await _createNewCheques(item);
 
       return newBillModel;
     } else {
-      await databaseService.update(path: path, documentId: item.checkGuid, data: item.toJson());
+      await databaseService.update(path: path, documentId: item.chequesGuid, data: item.toJson());
       return item;
     }
   }
 
   Future<ChequesModel> _createNewCheques(ChequesModel cheques) async {
 
-
-    final newChequesNumber = await getNextNumber(path, cheques.checkTypeGuid!);
-
-    final newChequesJson = cheques.copyWith(checkNumber:newChequesNumber ).toJson();
-
+    final newChequesNumber = await getNextNumber(path, cheques.chequesTypeGuid!);
+    final newChequesJson = cheques.copyWith(chequesNumber:newChequesNumber ).toJson();
     final data = await databaseService.add(path: path, data: newChequesJson);
-
     return ChequesModel.fromJson(data);
   }
 }

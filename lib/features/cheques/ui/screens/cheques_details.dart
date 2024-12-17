@@ -18,10 +18,10 @@ class ChequesDetailsScreen extends StatelessWidget {
 
   const ChequesDetailsScreen(
       {super.key,
-      required this.tag,
-      required this.chequesTypeModel,
-      required this.chequesDetailsController,
-      required this.chequesSearchController});
+        required this.tag,
+        required this.chequesTypeModel,
+        required this.chequesDetailsController,
+        required this.chequesSearchController});
 
   @override
   Widget build(BuildContext context) {
@@ -40,25 +40,25 @@ class ChequesDetailsScreen extends StatelessWidget {
                     slivers: [
                       SliverToBoxAdapter(
                           child: Column(
-                        children: [
-                          const ChequesDetailsHeader(),
-                          const VerticalSpace(),
-                          AddChequeForm(
-                            chequesDetailsController: chequesDetailsController,
-                          ),
-                          const VerticalSpace(),
-                        ],
-                      )),
-                      const SliverFillRemaining(
+                            children: [
+                              const ChequesDetailsHeader(),
+                              const VerticalSpace(20),
+                              AddChequeForm(
+                                chequesDetailsController: chequesDetailsController,
+                              ),
+                              const VerticalSpace(),
+                            ],
+                          )),
+                       SliverFillRemaining(
                         hasScrollBody: false,
                         child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Divider(),
-                                VerticalSpace(),
-                                AddChequeButtons(),
+                                const Divider(),
+                                const VerticalSpace(),
+                                AddChequeButtons(chequesDetailsController: chequesDetailsController, chequesType: chequesTypeModel,),
                               ],
                             )),
                       )
