@@ -81,16 +81,31 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
   }
 
-  AccountModel? getAccountByName(text) {
-    final AccountModel accountModel = accounts
-        .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
-      return AccountModel(accName: null);
-    });
-    if (accountModel.accName == null) {
-      return null;
-    } else {
-      return accountModel;
+  AccountModel? getAccountModelByName(text) {
+    if(!(text==null||text=='')) {
+      final AccountModel accountModel = accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+        return AccountModel(accName: null);
+      });
+      if (accountModel.accName == null) {
+        return null;
+      } else {
+        return accountModel;
+      }
     }
+    return null;
+  }
+  AccountModel? getAccountModelById(id) {
+    if(!(id==null||id=='')) {
+      final AccountModel accountModel = accounts.firstWhere((item) => item.id == id, orElse: () {
+        return AccountModel(accName: null);
+      });
+      if (accountModel.accName == null) {
+        return null;
+      } else {
+        return accountModel;
+      }
+    }
+    return null;
   }
 
   List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);

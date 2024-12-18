@@ -1,4 +1,6 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 
 import 'package:get/get.dart';
 
@@ -12,7 +14,6 @@ import '../../controllers/cheques/cheques_search_controller.dart';
 import '../../data/models/cheques_model.dart';
 
 class ChequesService with PdfBase {
-
   ChequesService();
 
   ChequesModel? createChequesModel({
@@ -25,18 +26,10 @@ class ChequesService with PdfBase {
     required String chequesNote,
     required double chequesVal,
     required String chequesAccount2Guid,
+    required String accPtr,
   }) {
-    print("chequesModel $chequesModel");
-    print("chequesType $chequesType");
-    print("toAccount $chequesAccount2Guid");
-    print("chequesDate $chequesDate");
-    print("chequesDate $chequesDueDate");
-    print("chequesModel $chequesNote");
-    print("chequesModel $chequesNum");
-    print("chequesModel $chequesVal");
-    print("chequesModel $chequesTypeGuid");
-    print("chequesModel ${chequesType.typeGuide}");
     return ChequesModel.fromChequesData(
+      accPtr: accPtr,
       chequesModel: chequesModel,
       chequesType: chequesType,
       chequesNote: chequesNote,
@@ -46,6 +39,22 @@ class ChequesService with PdfBase {
       chequesAccount2Guid: chequesAccount2Guid,
       chequesTypeGuid: chequesTypeGuid,
       chequesDate: chequesDate,
+    );
+  }
+
+  BondModel createBondModel({
+    required BondType bondType,
+    required String payAccountGuid,
+    required String payDate,
+    required String note,
+    required List<PayItem> bondRecordsItems,
+  }) {
+    return BondModel.fromBondData(
+      payAccountGuid: payAccountGuid,
+      bondType: bondType,
+      payDate: payDate,
+      bondRecordsItems: bondRecordsItems,
+      note: note,
     );
   }
 

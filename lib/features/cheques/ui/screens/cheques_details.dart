@@ -1,6 +1,7 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_search_controller.dart';
+import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/cheques/ui/widgets/cheques_details/cheques_details_app_bar.dart';
 import 'package:ba3_bs/features/cheques/ui/widgets/cheques_details/cheques_details_header.dart';
 import 'package:flutter/material.dart';
@@ -16,40 +17,34 @@ class ChequesDetailsScreen extends StatelessWidget {
   final ChequesDetailsController chequesDetailsController;
   final ChequesSearchController chequesSearchController;
 
-  const ChequesDetailsScreen(
-      {super.key,
-        required this.tag,
-        required this.chequesTypeModel,
-        required this.chequesDetailsController,
-        required this.chequesSearchController});
+  const ChequesDetailsScreen({super.key, required this.tag, required this.chequesTypeModel, required this.chequesDetailsController, required this.chequesSearchController});
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ChequesSearchController>(
         tag: tag,
         builder: (_) {
+          final ChequesModel currentCheques = chequesSearchController.getCurrentCheques;
+
           return GetBuilder<ChequesDetailsController>(
               tag: tag,
               builder: (_) {
                 return Scaffold(
-                  appBar: ChequesDetailsAppBar(
-                      chequesDetailsController: chequesDetailsController,
-                      chequesSearchController: chequesSearchController,
-                      chequesTypeModel: chequesTypeModel),
+                  appBar: ChequesDetailsAppBar(chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController, chequesTypeModel: chequesTypeModel),
                   body: CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
                           child: Column(
-                            children: [
-                              const ChequesDetailsHeader(),
-                              const VerticalSpace(20),
-                              AddChequeForm(
-                                chequesDetailsController: chequesDetailsController,
-                              ),
-                              const VerticalSpace(),
-                            ],
-                          )),
-                       SliverFillRemaining(
+                        children: [
+                          const ChequesDetailsHeader(),
+                          const VerticalSpace(20),
+                          AddChequeForm(
+                            chequesDetailsController: chequesDetailsController,
+                          ),
+                          const VerticalSpace(),
+                        ],
+                      )),
+                      SliverFillRemaining(
                         hasScrollBody: false,
                         child: Align(
                             alignment: Alignment.bottomCenter,
@@ -58,7 +53,12 @@ class ChequesDetailsScreen extends StatelessWidget {
                               children: [
                                 const Divider(),
                                 const VerticalSpace(),
-                                AddChequeButtons(chequesDetailsController: chequesDetailsController, chequesType: chequesTypeModel,),
+                                AddChequeButtons(
+                                  chequesDetailsController: chequesDetailsController,
+                                  chequesSearchController: chequesSearchController,
+                                  chequesType: chequesTypeModel,
+                                  chequesModel: currentCheques,
+                                ),
                               ],
                             )),
                       )

@@ -79,7 +79,7 @@ class AccountStatementController extends GetxController {
 
   // Fetch bond items for the selected account
   Future<void> fetchAccountEntryBondItems() async {
-    final accountModel = _accountsController.getAccountByName(accountNameController.text);
+    final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
     if (accountModel == null) {
       _showErrorSnackBar("خطأ إدخال", "يرجى إدخال اسم الحساب");
       return;

@@ -1,6 +1,8 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,7 @@ import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../bond/data/models/pay_item_model.dart';
 import '../../service/cheques/cheques_service.dart';
 import 'cheques_search_controller.dart';
 
@@ -36,13 +39,13 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   final TextEditingController chequesAmountController = TextEditingController();
 
-  final TextEditingController chequesFirstAccountController = TextEditingController();
+  final TextEditingController chequesAccPtrController = TextEditingController();
 
   final TextEditingController chequesToAccountController = TextEditingController();
 
   final TextEditingController chequesNoteController = TextEditingController();
 
-  AccountModel? firstAccount, toAccount;
+  AccountModel? chequesAccPtr, chequesToAccountModel;
 
   RxString chequesDate = DateTime.now().toString().split(" ")[0].obs, chequesDueDate = DateTime.now().toString().split(" ")[0].obs;
   bool isLoading = true;
@@ -51,12 +54,13 @@ class ChequesDetailsController extends GetxController with AppValidator {
   late ChequesType chequesType;
 
   void setFirstAccount(AccountModel setAccount) {
-    firstAccount = setAccount;
+    chequesAccPtr = setAccount;
+    chequesAccPtrController.text = setAccount.accName ?? '';
   }
 
   void setTowAccount(AccountModel setAccount) {
-    toAccount = setAccount;
-    chequesToAccountController.text=setAccount.accName!;
+    chequesToAccountModel = setAccount;
+    chequesToAccountController.text = setAccount.accName ?? '';
   }
 
   @override
@@ -67,8 +71,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   // Initializer
   void _initializeServices() {
-    _chequesService=ChequesService();
-
+    _chequesService = ChequesService();
   }
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
@@ -138,29 +141,39 @@ class ChequesDetailsController extends GetxController with AppValidator {
   ChequesModel? _createChequesModelFromChequesData(ChequesType chequesType, [ChequesModel? chequesModel]) {
     // Validate customer accounts
 
-    if (!_chequesService.validateAccount(firstAccount) || !_chequesService.validateAccount(toAccount)) {
+    if (!_chequesService.validateAccount(chequesAccPtr) || !_chequesService.validateAccount(chequesToAccountModel)) {
       return null;
     }
-print("chequesModel $chequesModel");
-print("chequesType $chequesType");
-print("toAccount ${toAccount!.id!}");
-print("chequesDate ${chequesDate.value}");
-print("chequesDate ${chequesDueDate.value}");
-print("chequesModel ${chequesNoteController.text}");
-print("chequesModel ${chequesNumController.text}");
-print("chequesModel ${chequesAmountController.text}");
-print("chequesModel ${chequesType.typeGuide}");
+
     // Create and return the cheques model
     return _chequesService.createChequesModel(
         chequesModel: chequesModel,
         chequesType: chequesType,
-        chequesAccount2Guid: toAccount!.id!,
+        chequesAccount2Guid: chequesToAccountModel!.id!,
+        accPtr: chequesAccPtr!.id!,
         chequesDate: chequesDate.value,
         chequesDueDate: chequesDueDate.value,
         chequesNote: chequesNoteController.text,
         chequesNum: int.parse(chequesNumController.text),
         chequesVal: double.parse(chequesAmountController.text),
         chequesTypeGuid: chequesType.typeGuide);
+  }
+
+  BondModel _createBondModelFromBondData({
+    required BondType bondType,
+    required String payAccountGuid,
+    required String payDate,
+    required String note,
+    required List<PayItem> bondRecordsItems,
+  }) {
+    // Create and return the cheques model
+    return _chequesService.createBondModel(
+      payAccountGuid: payAccountGuid,
+      note: note,
+      payDate: payDate,
+      bondType: bondType,
+      bondRecordsItems: bondRecordsItems,
+    );
   }
 
   initChequesNumberController(int? chequesNumber) {
@@ -176,8 +189,21 @@ print("chequesModel ${chequesType.typeGuide}");
   ) {
     setChequesDate(cheques.chequesDate!.toDate!);
     setChequesDueDate(cheques.chequesDueDate!.toDate!);
-    setTowAccount(Get.find<AccountsController>().getAccountByName("اوراق الدفع")!);
 
+    setTowAccount(Get.find<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
+    setFirstAccount(Get.find<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
+    stChequesFormDate(cheques);
     initChequesNumberController(cheques.chequesNumber);
+  }
+
+  void stChequesFormDate(ChequesModel cheques) {
+    chequesNoteController.text = cheques.chequesNote ?? '';
+    chequesNumController.text = (cheques.chequesNum ?? '').toString();
+    chequesAmountController.text = (cheques.chequesVal ?? '').toString();
+  }
+
+  void savePayCheques(ChequesModel chequesModel)async {
+
+
   }
 }

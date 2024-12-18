@@ -1,8 +1,10 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
 import '../../../../core/services/firebase/interfaces/datasource_base.dart';
 
+import '../../../bond/data/models/bond_model.dart';
 import '../models/cheques_model.dart';
 
 class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequentialNumberDatabase {
@@ -54,4 +56,25 @@ class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequen
     final data = await databaseService.add(path: path, data: newChequesJson);
     return ChequesModel.fromJson(data);
   }
+
+  // Future<BondModel> saveBond(BondModel item) async {
+  //   if (item.payGuid == null) {
+  //     final newBillModel = await _createNewBond(item);
+  //
+  //     return newBillModel;
+  //   } else {
+  //     await databaseService.update(path: ApiConstants.bondsChequesPath, documentId: item.payGuid, data: item.toJson());
+  //     return item;
+  //   }
+  // }
+  //
+  // Future<BondModel> _createNewBond(BondModel bond) async {
+  //   final newBondNumber = await getNextNumber(path, bond.payTypeGuid!);
+  //
+  //   final newBondJson = bond.copyWith(payNumber: newBondNumber).toJson();
+  //
+  //   final data = await databaseService.add(path: ApiConstants.bondsChequesPath, data: newBondJson);
+  //
+  //   return BondModel.fromJson(data);
+  // }
 }

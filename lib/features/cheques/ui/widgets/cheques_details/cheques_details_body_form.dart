@@ -53,7 +53,6 @@ class AddChequeForm extends StatelessWidget {
                     textEditingController: chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
                     validator: (value) => chequesDetailsController.validator(value, 'رقم الشيك'),
-
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
@@ -62,44 +61,39 @@ class AddChequeForm extends StatelessWidget {
                     textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),
                     validator: (value) => chequesDetailsController.validator(value, 'قيمة الشيك'),
-
                   ),
                 )),
             const VerticalSpace(),
             FormFieldRow(
                 firstItem: SearchableAccountField(
-                  label:'الحساب' ,
-                  textEditingController: chequesDetailsController.chequesFirstAccountController,
-                  validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
-                  chequesDetailsController:chequesDetailsController ,
-                  isFirstAccountCheque: true,
+                  label: 'الحساب',
+                  textEditingController: chequesDetailsController.chequesToAccountController,
+                  validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
+                  chequesDetailsController: chequesDetailsController,
+
                 ),
                 secondItem: SearchableAccountField(
                   label: "دفع إلى",
-                  textEditingController: chequesDetailsController.chequesToAccountController,
-                  validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
-                  chequesDetailsController:chequesDetailsController ,
-
-
+                  textEditingController: chequesDetailsController.chequesAccPtrController,
+                  validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
+                  chequesDetailsController: chequesDetailsController,
+                  isFirstAccountCheque: true,
                 )),
             const VerticalSpace(),
             FormFieldRow(
-                firstItem:      TextAndExpandedChildField(
+                firstItem: TextAndExpandedChildField(
                   label: "البيان",
-                  child:CustomTextFieldWithoutIcon(
+                  child: CustomTextFieldWithoutIcon(
                     keyboardType: TextInputType.multiline,
-                    maxLine:4,
+                    maxLine: 4,
                     textEditingController: chequesDetailsController.chequesNoteController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
-                secondItem:     const SizedBox()),
-
+                secondItem: const SizedBox()),
           ],
         ),
       ),
     );
-
-
   }
 }
