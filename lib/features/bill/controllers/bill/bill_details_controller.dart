@@ -101,6 +101,11 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   @override
+  set updateIsBillSaved(bool newValue) {
+    isBillSaved.value = newValue;
+  }
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();
@@ -119,7 +124,7 @@ class BillDetailsController extends IBillController with AppValidator implements
 
   void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
-  void setBillDate(DateTime newDate) {
+  set setBillDate(DateTime newDate) {
     billDate.value = newDate.toString().split(" ")[0];
     //   update();
   }
@@ -183,17 +188,14 @@ class BillDetailsController extends IBillController with AppValidator implements
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (billModel) {
-        if (existingBillModel != null) {
-          _billService.handleUpdateSuccess(billModel, billSearchController);
-        } else {
-          _billService.handleSaveSuccess(billModel, this);
-        }
+        _billService.handleSaveOrUpdateSuccess(
+          billModel: billModel,
+          discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,
+          billSearchController: billSearchController,
+          isSave: existingBillModel == null,
+        );
       },
     );
-  }
-
-  updateIsBillSaved(bool newValue) {
-    isBillSaved.value = newValue;
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
@@ -302,7 +304,7 @@ class BillDetailsController extends IBillController with AppValidator implements
   void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
-    setBillDate(bill.billDetails.billDate!.toDate!);
+    setBillDate = bill.billDetails.billDate!.toDate!;
 
     initBillNumberController(bill.billDetails.billNumber);
 

@@ -93,6 +93,9 @@ class AddBillController extends IBillController with AppValidator implements ISt
   }
 
   @override
+  set updateIsBillSaved(bool newValue) {}
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();

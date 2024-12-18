@@ -13,13 +13,9 @@ class EntryBondModel {
   /// Refers to the origin entity of the bond entry (e.g., billTypeId for invoices).
   final EntryBondOrigin? origin;
 
-  /// Unique identifier for the bond entry, which is the same as the origin ID (e.g., billId).
-  final String? id;
-
   EntryBondModel({
     this.items,
     this.origin,
-    this.id,
   });
 
   /// Creates an instance from a JSON object.
@@ -29,7 +25,6 @@ class EntryBondModel {
           ?.map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>))
           .toList(),
       origin: EntryBondOrigin.fromJson(json['origin']),
-      id: json['id'] as String?,
     );
   }
 
@@ -38,7 +33,6 @@ class EntryBondModel {
     return {
       'items': items?.map((item) => item.toJson()).toList(),
       'origin': origin?.toJson(),
-      'id': id,
     };
   }
 
@@ -46,12 +40,10 @@ class EntryBondModel {
   EntryBondModel copyWith({
     List<EntryBondItemModel>? items,
     EntryBondOrigin? origin,
-    String? id,
   }) {
     return EntryBondModel(
       items: items ?? this.items,
       origin: origin ?? this.origin,
-      id: id ?? this.id,
     );
   }
 }
@@ -87,27 +79,6 @@ class EntryBondItemModel implements PlutoAdaptable {
     this.originId,
     this.date,
   });
-
-  /// Factory method to create an InvoiceRecordModel from a BillItem.
-
-  // factory EntryBondItemModel.fromBillRecords(
-  //   InvoiceRecordModel record,
-  //   String? billId,
-  //   BondItemType? bondItemType,
-  //   String? accountName,
-  //   String? accountId,
-  //   String? note,
-  //   String? date,
-  // ) =>
-  //     EntryBondItemModel(
-  //       bondItemType: bondItemType,
-  //       amount: record.invRecQuantity!,
-  //       accountId: accountId,
-  //       accountName: accountName,
-  //       note: note,
-  //       originId: billId,
-  //       date: date,
-  //     );
 
   /// Creates an instance from a JSON object.
   factory EntryBondItemModel.fromJson(Map<String, dynamic> json) {
@@ -174,110 +145,121 @@ class EntryBondItemModel implements PlutoAdaptable {
 }
 
 class EntryBondOrigin {
-  final String? guide;
-  final EntryBondType? type;
+  /// Unique identifier for the bond entry, which is the same as the origin ID (e.g., billId).
+  final String? originId;
+
+  /// Refers to the origin entity type id of the bond entry (e.g., billTypeId for bills).
+  final String? originTypeId;
+
+  /// Refers to the type of the bond entry (bond, bill, cheque).
+  final EntryBondType? originType;
 
   EntryBondOrigin({
-    this.guide,
-    this.type,
+    this.originId,
+    this.originTypeId,
+    this.originType,
   });
 
   factory EntryBondOrigin.fromJson(Map<String, dynamic> json) {
     return EntryBondOrigin(
-      guide: json['guide'] as String?,
-      type: EntryBondType.byLabel(json['type']),
+      originId: json['originId'] as String?,
+      originTypeId: json['originTypeId'] as String?,
+      originType: EntryBondType.byLabel(json['originType']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'guide': guide,
-      'type': type?.label,
+      'originId': originId,
+      'originTypeId': originTypeId,
+      'originType': originType?.label,
     };
   }
 
   EntryBondOrigin copyWith({
-    String? guide,
-    EntryBondType? type,
+    String? originId,
+    String? originTypeId,
+    EntryBondType? originType,
   }) {
     return EntryBondOrigin(
-      guide: guide ?? this.guide,
-      type: type ?? this.type,
+      originId: originId ?? this.originId,
+      originTypeId: originTypeId ?? this.originTypeId,
+      originType: originType ?? this.originType,
     );
   }
 }
 
-final entryBondModel = EntryBondModel(
-    id: 'Up6WalSELBYhH4DZXPVJ',
-    origin: EntryBondOrigin(
-      type: EntryBondType.bill,
-      guide: '6ed3786c-08c6-453b-afeb-a0e9075dd26d',
-    ),
-    items: [
-      EntryBondItemModel(
-        bondItemType: BondItemType.creditor,
-        amount: 120,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: 'b1e9e80b-0d23-414d-b3be-bd0aec386002',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.debtor,
-        amount: 6,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.debtor,
-        amount: 5.04,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.debtor,
-        amount: 120,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.creditor,
-        amount: 12.60,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.creditor,
-        amount: 380.95,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: '5b36c82d-9105-4177-a5c3-0f90e5857e3c',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.creditor,
-        amount: 6,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: 'a5c04527-63e8-4373-92e8-68d8f88bdb16',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.debtor,
-        amount: 12.60,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: 'e903d658-f30f-46c8-82c0-fee86256a511',
-      ),
-      EntryBondItemModel(
-        bondItemType: BondItemType.creditor,
-        amount: 5.04,
-        note: '',
-        originId: 'Up6WalSELBYhH4DZXPVJ',
-        accountId: '1a1416bb-426b-4348-98cf-f1b026cc6c7d',
-      ),
-    ]);
+// final entryBondModel = EntryBondModel(
+//     id: 'Up6WalSELBYhH4DZXPVJ',
+//     origin: EntryBondOrigin(
+//       originType: EntryBondType.bill,
+//       originTypeId: '6ed3786c-08c6-453b-afeb-a0e9075dd26d',
+//     ),
+//     items: [
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.creditor,
+//         amount: 120,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: 'b1e9e80b-0d23-414d-b3be-bd0aec386002',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.debtor,
+//         amount: 6,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.debtor,
+//         amount: 5.04,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.debtor,
+//         amount: 120,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.creditor,
+//         amount: 12.60,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.creditor,
+//         amount: 380.95,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: '5b36c82d-9105-4177-a5c3-0f90e5857e3c',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.creditor,
+//         amount: 6,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: 'a5c04527-63e8-4373-92e8-68d8f88bdb16',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.debtor,
+//         amount: 12.60,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: 'e903d658-f30f-46c8-82c0-fee86256a511',
+//       ),
+//       EntryBondItemModel(
+//         bondItemType: BondItemType.creditor,
+//         amount: 5.04,
+//         note: '',
+//         originId: 'Up6WalSELBYhH4DZXPVJ',
+//         accountId: '1a1416bb-426b-4348-98cf-f1b026cc6c7d',
+//       ),
+//     ]);
 
 // import '../../../../core/helper/enums/enums.dart';
 // import '../../../accounts/data/models/account_model.dart';

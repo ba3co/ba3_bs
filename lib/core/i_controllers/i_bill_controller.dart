@@ -11,4 +11,6 @@ abstract class IBillController extends GetxController {
 
   Future<void> sendToEmail(
       {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments});
+
+  set updateIsBillSaved(bool newValue);
 }

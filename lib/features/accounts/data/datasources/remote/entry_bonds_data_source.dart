@@ -35,12 +35,12 @@ class EntryBondsDataSourceDataSource extends DatasourceBase<EntryBondModel> {
   Future<EntryBondModel> save(EntryBondModel item, [bool? save]) async {
     if (save == true) {
       log('save: $save');
-      final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
+      final data = await databaseService.add(path: path, documentId: item.origin?.originId, data: item.toJson());
 
       return EntryBondModel.fromJson(data);
     } else {
       log('save: $save');
-      await databaseService.update(path: path, documentId: item.id, data: item.toJson());
+      await databaseService.update(path: path, documentId: item.origin?.originId, data: item.toJson());
       return item;
     }
   }

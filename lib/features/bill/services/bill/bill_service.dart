@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
-import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -17,10 +17,12 @@ import '../../../floating_window/services/overlay_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
+import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
+import 'bill_bond_service.dart';
 import 'bill_pdf_generator.dart';
 
-class BillService with PdfBase {
+class BillService with PdfBase, BillBondService {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -83,10 +85,21 @@ class BillService with PdfBase {
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
   }
 
-  Future<void> handleSaveSuccess(BillModel billModel, BillDetailsController billDetailsController) async {
-    AppUIUtils.onSuccess('تم حفظ الفاتورة بنجاح!');
+  Future<void> handleSaveOrUpdateSuccess({
+    required BillModel billModel,
+    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
+    required BillSearchController billSearchController,
+    required bool isSave,
+  }) async {
+    final successMessage = isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
 
-    billDetailsController.updateIsBillSaved(true);
+    AppUIUtils.onSuccess(successMessage);
+
+    if (isSave) {
+      billController.updateIsBillSaved = true;
+    } else {
+      billSearchController.updateBill(billModel);
+    }
 
     generateAndSendPdf(
       fileName: AppStrings.bill,
@@ -95,19 +108,13 @@ class BillService with PdfBase {
       items: billModel.items.itemList,
       pdfGenerator: BillPdfGenerator(),
     );
-  }
 
-  void handleUpdateSuccess(BillModel billModel, BillSearchController billSearchController) {
-    AppUIUtils.onSuccess('تم تعديل الفاتورة بنجاح!');
-
-    billSearchController.updateBill(billModel);
-
-    generateAndSendPdf(
-      fileName: AppStrings.bill,
-      itemModel: billModel,
-      itemModelId: billModel.billId,
-      items: billModel.items.itemList,
-      pdfGenerator: BillPdfGenerator(),
+    bondController.saveBillEntryBondModel(
+      entryBondModel: createEntryBondModel(
+        originType: EntryBondType.bill,
+        billModel: billModel,
+        discountsAndAdditions: discountsAndAdditions,
+      ),
     );
   }
 

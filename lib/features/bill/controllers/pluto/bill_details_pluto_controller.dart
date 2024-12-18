@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
+import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/pluto/bill_pluto_calculator.dart';
 import '../../services/pluto/bill_pluto_context_menu.dart';
@@ -85,6 +87,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     recordsTableStateManager.setShowLoading(false);
     return invoiceRecords;
   }
+
+  Map<Account, List<DiscountAdditionAccountModel>> get generateDiscountsAndAdditions =>
+      _gridService.collectDiscountsAndAdditions(_plutoUtils);
 
   @override
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) =>
@@ -307,15 +312,6 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
         update();
       });
-
-  void generateEntryBondModel() {
-    final materialController = Get.find<MaterialController>();
-
-    final List<InvoiceRecordModel> invoiceRecords = recordsTableStateManager.rows
-        .map((row) => _processBillRow(row, materialController))
-        .whereType<InvoiceRecordModel>()
-        .toList();
-  }
 }
 
 // 530 - 236

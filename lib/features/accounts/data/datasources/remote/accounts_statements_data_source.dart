@@ -9,8 +9,6 @@ import '../../../../../core/network/error/failure.dart';
 import '../../../../bond/data/models/entry_bond_model.dart';
 
 class AccountsStatementsDataSource {
-  AccountsStatementsDataSource();
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   CollectionReference get _accountsStatementsCollection => _firestore.collection(ApiConstants.accountsStatements);
@@ -18,8 +16,10 @@ class AccountsStatementsDataSource {
   /// Add a new bond entry to Firestore under a specific account
   Future<void> add(String accountId, EntryBondModel entryBond) async {
     try {
-      final docRef =
-          _accountsStatementsCollection.doc(accountId).collection(ApiConstants.entryBondsItems).doc(entryBond.id);
+      final docRef = _accountsStatementsCollection
+          .doc(accountId)
+          .collection(ApiConstants.entryBondsItems)
+          .doc(entryBond.origin?.originId);
 
       final items =
           entryBond.items?.where((item) => item.accountId == accountId).map((item) => item.toJson()).toList() ?? [];
@@ -56,8 +56,8 @@ class AccountsStatementsDataSource {
     }
   }
 
-  /// Fetch a specific bond entry under a specific account by bondId
-  Future<EntryBondModel?> fetchById(String accountId, String bondId) async {
+  /// Fetch a specific bond entry items under a specific account by origin id created from it
+  Future<List<EntryBondItemModel>?> fetchById(String accountId, String bondId) async {
     try {
       final docRef = _accountsStatementsCollection.doc(accountId).collection(ApiConstants.entryBondsItems).doc(bondId);
       final docSnapshot = await docRef.get();
@@ -71,7 +71,7 @@ class AccountsStatementsDataSource {
         return EntryBondItemModel.fromJson(item as Map<String, dynamic>);
       }).toList();
 
-      return EntryBondModel(id: bondId, items: items);
+      return items;
     } catch (e) {
       throw Exception('Failed to fetch bond by ID: $e');
     }
@@ -132,7 +132,7 @@ class AccountsStatementsRepository {
     }
   }
 
-  Future<Either<Failure, EntryBondModel?>> getBondById(String accountId, String bondId) async {
+  Future<Either<Failure, List<EntryBondItemModel>?>> getBondById(String accountId, String bondId) async {
     try {
       final data = await _dataSource.fetchById(accountId, bondId);
 

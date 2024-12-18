@@ -36,7 +36,9 @@ class BillDetailsHeader extends StatelessWidget {
                 child: Obx(() {
                   return DatePicker(
                     initDate: billDetailsController.billDate.value,
-                    onDateSelected: billDetailsController.setBillDate,
+                    onDateSelected: (date) {
+                      billDetailsController.setBillDate = date;
+                    },
                   );
                 }),
               ),
