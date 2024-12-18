@@ -72,8 +72,11 @@ class BillService with PdfBase, BillBondService {
         addition: plutoController.computeAdditions,
       );
 
-  Future<void> handleDeleteSuccess(BillModel billModel, BillSearchController billSearchController,
-      [fromBillById]) async {
+  Future<void> handleDeleteSuccess({
+    required BillModel billModel,
+    required BillSearchController billSearchController,
+    bool fromBillById = false,
+  }) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
       await Get.find<AllBillsController>().fetchAllBills();
@@ -83,6 +86,8 @@ class BillService with PdfBase, BillBondService {
     }
 
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
+
+    bondController.deleteBillEntryBondModel(billId: billModel.billId!);
   }
 
   Future<void> handleSaveOrUpdateSuccess({

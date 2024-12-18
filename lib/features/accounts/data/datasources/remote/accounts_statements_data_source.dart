@@ -89,9 +89,10 @@ class AccountsStatementsDataSource {
   }
 
   /// Delete a specific bond entry under a given account by bondId
-  Future<void> delete(String accountId, String bondId) async {
+  Future<void> delete(String accountId, String originId) async {
     try {
-      final docRef = _accountsStatementsCollection.doc(accountId).collection(ApiConstants.entryBondsItems).doc(bondId);
+      final docRef =
+          _accountsStatementsCollection.doc(accountId).collection(ApiConstants.entryBondsItems).doc(originId);
       await docRef.delete();
     } catch (e) {
       throw Exception('Failed to delete bond: $e');
@@ -163,9 +164,9 @@ class AccountsStatementsRepository {
     }
   }
 
-  Future<Either<Failure, Unit>> deleteBond(String accountId, String bondId) async {
+  Future<Either<Failure, Unit>> deleteBond(String accountId, String originId) async {
     try {
-      await _dataSource.delete(accountId, bondId);
+      await _dataSource.delete(accountId, originId);
       return const Right(unit);
     } catch (e) {
       log('Error in deleteBond: $e');

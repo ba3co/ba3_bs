@@ -34,6 +34,57 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
+  // Method to create a bond based on bill type
+  void deleteBillEntryBondModel({required String billId}) async {
+    final result = await _entryBondsFirebaseRepo.getById(billId);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (entryBondModel) async {
+        final List<Future<void>> deletedTasks = [];
+        final errors = <String>[]; // Collect error messages.
+
+        final entryBondModelAccountsToRemove = getEntryBondModelAccountsToRemove(entryBondModel);
+
+        for (final accountId in entryBondModelAccountsToRemove) {
+          deletedTasks.add(
+            _accountsStatementsRepo.deleteBond(accountId, billId).then((deleteResult) {
+              deleteResult.fold(
+                (failure) => errors.add(failure.message), // Collect errors.
+                (_) {},
+              );
+            }),
+          );
+        }
+
+        await Future.wait(deletedTasks);
+
+        if (errors.isNotEmpty) {
+          AppUIUtils.onFailure('Some deletions failed: ${errors.join(', ')}');
+        }
+
+        final deleteBondResult = await _entryBondsFirebaseRepo.delete(billId);
+        deleteBondResult.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (_) {},
+        );
+      },
+    );
+  }
+
+  List<String> getEntryBondModelAccountsToRemove(EntryBondModel entryBondModel) {
+    final accountsIds = <String>{}; // Use a Set to ensure unique account IDs.
+
+    // Iterate through each EntryBondItemModel in the items list.
+    for (final item in entryBondModel.items ?? []) {
+      if (item.accountId != null) {
+        accountsIds.add(item.accountId!);
+      }
+    }
+
+    return accountsIds.toList(); // Convert the Set back to a List.
+  }
+
 // Method to create a bond based on bill type
   void createBillBond({
     required BuildContext context,

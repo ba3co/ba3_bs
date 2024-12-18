@@ -153,7 +153,11 @@ class BillDetailsController extends IBillController with AppValidator implements
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _billService.handleDeleteSuccess(billModel, billSearchController, fromBillById),
+      (success) => _billService.handleDeleteSuccess(
+        billModel: billModel,
+        billSearchController: billSearchController,
+        fromBillById: fromBillById,
+      ),
     );
   }
 
