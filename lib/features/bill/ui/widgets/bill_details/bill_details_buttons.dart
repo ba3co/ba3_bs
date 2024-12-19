@@ -53,7 +53,7 @@ class BillDetailsButtons extends StatelessWidget {
             width: 100,
             fontSize: 14,
             onPressed: () async {
-              billDetailsController.createBond(billModel, context);
+              billDetailsController.createEntryBond(billModel, context);
             },
             iconData: Icons.file_open_outlined,
           ),
@@ -79,7 +79,7 @@ class BillDetailsButtons extends StatelessWidget {
             fontSize: 14,
             onPressed: () async {
               billDetailsController.printBill(
-                billNumber: billModel.billDetails.billNumber!,
+                billModel: billModel,
                 invRecords: billDetailsPlutoController.generateRecords,
               );
             },

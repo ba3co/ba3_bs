@@ -137,15 +137,17 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
-  Future<void> printBill({required int billNumber, required List<InvoiceRecordModel> invRecords}) async {
+  Future<void> printBill({required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
+    if (!_billService.hasModelId(billModel.billId)) return;
+
     await Get.find<PrintingController>()
-        .startPrinting(invRecords: invRecords, billNumber: billNumber, invDate: billDate.value);
+        .startPrinting(invRecords: invRecords, billNumber: billModel.billDetails.billNumber!, invDate: billDate.value);
   }
 
-  void createBond(BillModel billModel, BuildContext context) {
+  void createEntryBond(BillModel billModel, BuildContext context) {
     if (!validateForm()) return;
 
-    _billService.createBond(
+    _billService.launchFloatingEntryBondDetailsScreen(
       context: context,
       billModel: billModel,
       discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,

@@ -57,11 +57,13 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
     );
   }
 
-  void createBond({
+  void launchFloatingEntryBondDetailsScreen({
     required BuildContext context,
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
   }) {
+    if (!hasModelId(billModel.billId)) return;
+
     final entryBondModel = createEntryBondModel(
       originType: EntryBondType.bill,
       billModel: billModel,

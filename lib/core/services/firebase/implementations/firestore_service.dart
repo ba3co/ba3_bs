@@ -47,4 +47,29 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   Future<void> update({required String path, String? documentId, required Map<String, dynamic> data}) async {
     await _firestore.collection(path).doc(documentId).update(data);
   }
+
+  @override
+  Future<List<Map<String, dynamic>>> addAll({
+    required String path,
+    required List<Map<String, dynamic>> data,
+  }) async {
+    final batch = _firestore.batch();
+    final addedItems = <Map<String, dynamic>>[];
+
+    for (final item in data) {
+      // Assign docId only if it is null
+      final docId = item['docId'] ?? _firestore.collection(path).doc().id;
+      if (item['docId'] == null) {
+        item['docId'] = docId;
+      }
+      final docRef = _firestore.collection(path).doc(docId);
+      batch.set(docRef, item);
+
+      // Collect the item with its final docId
+      addedItems.add(item);
+    }
+
+    await batch.commit();
+    return addedItems;
+  }
 }

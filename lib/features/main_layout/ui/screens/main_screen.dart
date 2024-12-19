@@ -111,7 +111,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 child: Column(children: [
                   Expanded(
                       child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(0),
                     child: appLayouts[tabIndex].layout,
                   ))
                 ]),

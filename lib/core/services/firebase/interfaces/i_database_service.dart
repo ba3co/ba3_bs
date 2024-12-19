@@ -8,4 +8,6 @@ abstract class IDatabaseService<T> {
   Future<T> add({required String path, String? documentId, required Map<String, dynamic> data});
 
   Future<void> update({required String path, String? documentId, required Map<String, dynamic> data});
+
+  Future<List<Map<String, dynamic>>> addAll({required String path, required List<Map<String, dynamic>> data});
 }

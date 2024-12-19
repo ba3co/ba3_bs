@@ -44,4 +44,20 @@ class EntryBondsDataSourceDataSource extends DatasourceBase<EntryBondModel> {
       return item;
     }
   }
+
+// @override
+// Future<List<EntryBondModel>> saveAll(List<EntryBondModel> items) async {
+//   final savedData = await databaseService.addAll(
+//     path: path,
+//     data: items
+//         .map((item) => {
+//               ...item.toJson(),
+//               'docId': item.origin?.originId, // Add the docId directly during mapping
+//             })
+//         .toList(),
+//   );
+//
+//   // Convert the saved data to a list of EntryBondModel
+//   return savedData.map(EntryBondModel.fromJson).toList();
+// }
 }
