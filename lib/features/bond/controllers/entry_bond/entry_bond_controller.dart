@@ -68,7 +68,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   List<String> getEntryBondModelAccountsToRemove(EntryBondModel entryBondModel) {
-    final accountsIds = <String>{}; // Use a Set to ensure unique account IDs.
+    final Set<String> accountsIds = <String>{}; // Use a Set to ensure unique account IDs.
 
     // Iterate through each EntryBondItemModel in the items list.
     for (final item in entryBondModel.items ?? []) {
