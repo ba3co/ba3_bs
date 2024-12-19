@@ -5,5 +5,6 @@ class AppStrings {
 
   static const String bond = 'bond';
   static const String chequeToAccountId = '7d471b63-4499-4c2f-ba99-21912c8b98b5';
+  static const String chequeToAccountName = 'اوراق الدفع';
 
 }
