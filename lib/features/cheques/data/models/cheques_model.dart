@@ -15,12 +15,15 @@ class ChequesModel {
   final double? chequesVal;
   final String? chequesAccount2Guid;
 
+  final String? accPtr;
+  final String? accPtrName;
+  final String? chequesAccount2Name;
   final ChequesCollectEntryModel? chequesCollectEntry;
   final ChequesEntryRelationModel? chequesEntryRelation;
 
   // final String? chequesCustomerGuid;
   // final String? chequesCurGuid;
-  final String? accPtr;
+
 
   // final double chequesCurVal;
   // final int chequesSec;
@@ -48,11 +51,15 @@ class ChequesModel {
     this.chequesDueDate,
     this.chequesNote,
     this.chequesVal,
-    this.chequesAccount2Guid,
+
     this.chequesCollectEntry,
     this.chequesEntryRelation,
-    // this.chequesCustomerGuid,
     this.accPtr,
+    this.chequesAccount2Guid,
+    this.chequesAccount2Name,
+    this.accPtrName,
+    // this.chequesCustomerGuid,
+
     // this.chequesCurGuid,
     // required this.chequesCurVal,
     // required this.chequesSec,
@@ -75,24 +82,26 @@ class ChequesModel {
   // fromJson constructor
   factory ChequesModel.fromJson(Map<String, dynamic> json) {
     return ChequesModel(
-      chequesTypeGuid: json['ChequesTypeGuid'] as String,
-      chequesNumber: json['ChequesNumber'] as int,
-      chequesNum: json['ChequesNum'] as int,
-      chequesGuid: json['docId'] as String,
+      chequesTypeGuid: json['ChequesTypeGuid'] as String?,
+      chequesNumber: json['ChequesNumber'] as int?,
+      chequesNum: json['ChequesNum'] as int?,
+      chequesGuid: json['docId'] as String?,
+      accPtrName: json['AccPtrName'] as String?,
+      chequesAccount2Name: json['ChequesAccount2Name'] as String?,
 
-      chequesDate: json['ChequesDate'] as String,
-      chequesDueDate: json['ChequesDueDate'] as String,
-      chequesNote: json['ChequesNote'] as String,
+      chequesDate: json['ChequesDate'] as String?,
+      chequesDueDate: json['ChequesDueDate'] as String?,
+      chequesNote: json['ChequesNote'] as String?,
       chequesVal: (json['ChequesVal'] as num).toDouble(),
 
-      chequesAccount2Guid: json['ChequesAccount2Guid'] as String,
+      chequesAccount2Guid: json['ChequesAccount2Guid'] as String?,
       chequesCollectEntry: json['ChequesCollectEntry'] != null ? ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']) : null,
       chequesEntryRelation: json['chequesEntryRelation'] != null ? ChequesEntryRelationModel.fromJson(json['chequesEntryRelation']) : null,
 
       // chequesCustomerGuid: json['ChequesCustomerGuid'] as String,
 
       // chequesCurGuid: json['ChequesCurGuid'] as String,
-      accPtr: json['AccPtr'] as String,
+      accPtr: json['AccPtr'] as String?,
       // chequesCurVal: (json['ChequesCurVal'] as num).toDouble(),
       // chequesSec: json['ChequesSec'] as int,
       // chequesPrevNum: json['ChequesPrevNum'] as int,
@@ -126,10 +135,11 @@ class ChequesModel {
       'ChequesAccount2Guid': chequesAccount2Guid,
       'ChequesCollectEntry': chequesCollectEntry?.toJson(),
       'ChequesEntryRelation': chequesEntryRelation?.toJson(),
-
+      'AccPtr': accPtr,
+      'AccPtrName': accPtrName,
+      'ChequesAccount2Name': chequesAccount2Name,
       // 'ChequesCustomerGuid': chequesCustomerGuid,
       // 'ChequesCurGuid': chequesCurGuid,
-      'AccPtr': accPtr,
       // 'ChequesCurVal': chequesCurVal,
       // 'ChequesSec': chequesSec,
       // 'ChequesPrevNum': chequesPrevNum,
@@ -162,8 +172,11 @@ class ChequesModel {
     String? chequesAccount2Guid,
     ChequesCollectEntryModel? chequesCollectEntry,
     ChequesEntryRelationModel? chequesEntryRelation,
-    // String? chequesCustomerGuid,
     String? accPtr,
+    String? accPtrName,
+    String? chequesAccount2Name,
+    // String? chequesCustomerGuid,
+
     // String? chequesCurGuid,
     // String? chequesParentGuid,
     // String? chequesBrGuid,
@@ -187,19 +200,18 @@ class ChequesModel {
       chequesNumber: chequesNumber ?? this.chequesNumber,
       chequesNum: chequesNum ?? this.chequesNum,
       chequesGuid: chequesGuid ?? this.chequesGuid,
-
       chequesDate: chequesDate ?? this.chequesDate,
       chequesDueDate: chequesDueDate ?? this.chequesDueDate,
       chequesNote: chequesNote ?? this.chequesNote,
       chequesVal: chequesVal ?? this.chequesVal,
-
       chequesAccount2Guid: chequesAccount2Guid ?? this.chequesAccount2Guid,
-
       chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
       chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
+      accPtr: accPtr ?? this.accPtr,
+      accPtrName: accPtrName ?? this.accPtrName,
+      chequesAccount2Name: chequesAccount2Name ?? this.chequesAccount2Name,
       // chequesCustomerGuid: chequesCustomerGuid ?? this.chequesCustomerGuid,
       // chequesCurGuid: chequesCurGuid ?? this.chequesCurGuid,
-      accPtr: accPtr ?? this.accPtr,
       // chequesParentGuid: chequesParentGuid ?? this.chequesParentGuid,
       // chequesDir: chequesDir ?? this.chequesDir,
       // chequesBrGuid: chequesBrGuid ?? this.chequesBrGuid,
@@ -224,6 +236,7 @@ class ChequesModel {
       chequesNumber: lastChequesNumber + 1,
       chequesTypeGuid: chequesType.typeGuide,
       chequesAccount2Guid: AppStrings.chequeToAccountId,
+      accPtrName:AppStrings.chequeToAccountName ,
       chequesDate: DateTime.now().toString(),
       chequesDueDate: DateTime.now().toString(),
     );
@@ -240,6 +253,8 @@ class ChequesModel {
     required double chequesVal,
     required String chequesAccount2Guid,
     required String accPtr,
+    required String accPtrName,
+    required String chequesAccount2Name,
   }) {
     return chequesModel == null
         ? ChequesModel(
@@ -251,6 +266,8 @@ class ChequesModel {
             chequesVal: chequesVal,
             chequesNote: chequesNote,
             accPtr: accPtr,
+      accPtrName: accPtrName,
+      chequesAccount2Name: chequesAccount2Name,
           )
         : chequesModel.copyWith(
             chequesDate: chequesDate,
@@ -260,6 +277,8 @@ class ChequesModel {
             chequesNum: chequesNum,
             chequesVal: chequesVal,
             accPtr: accPtr,
+            accPtrName: accPtrName,
+            chequesAccount2Name: chequesAccount2Name,
             chequesNote: chequesNote,
           );
   }

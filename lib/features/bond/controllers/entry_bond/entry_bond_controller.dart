@@ -14,7 +14,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   EntryBondController(this._entryBondsFirebaseRepo, this._accountsStatementsRepo);
 
   // Method to create a bond based on bill type
-  void saveBillEntryBondModel({
+  void saveEntryBondModel({
     required EntryBondModel entryBondModel,
   }) async {
     final result = await _entryBondsFirebaseRepo.save(entryBondModel, true);
@@ -30,8 +30,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   // Method to create a bond based on bill type
-  void deleteBillEntryBondModel({required String billId}) async {
-    final result = await _entryBondsFirebaseRepo.getById(billId);
+  void deleteEntryBondModel({required String entryId}) async {
+    final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -43,7 +43,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
         for (final accountId in entryBondModelAccountsToRemove) {
           deletedTasks.add(
-            _accountsStatementsRepo.deleteBond(accountId, billId).then((deleteResult) {
+            _accountsStatementsRepo.deleteBond(accountId, entryId).then((deleteResult) {
               deleteResult.fold(
                 (failure) => errors.add(failure.message), // Collect errors.
                 (_) {},
@@ -58,7 +58,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
           AppUIUtils.onFailure('Some deletions failed: ${errors.join(', ')}');
         }
 
-        final deleteBondResult = await _entryBondsFirebaseRepo.delete(billId);
+        final deleteBondResult = await _entryBondsFirebaseRepo.delete(entryId);
         deleteBondResult.fold(
           (failure) => AppUIUtils.onFailure(failure.message),
           (_) {},
@@ -68,7 +68,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   List<String> getEntryBondModelAccountsToRemove(EntryBondModel entryBondModel) {
-    final accountsIds = <String>{}; // Use a Set to ensure unique account IDs.
+    final Set<String> accountsIds = <String>{}; // Use a Set to ensure unique account IDs.
 
     // Iterate through each EntryBondItemModel in the items list.
     for (final item in entryBondModel.items ?? []) {

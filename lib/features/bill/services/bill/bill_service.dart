@@ -92,7 +92,7 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
 
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
 
-    bondController.deleteBillEntryBondModel(billId: billModel.billId!);
+    bondController.deleteEntryBondModel(entryId: billModel.billId!);
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -119,7 +119,7 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
       pdfGenerator: BillPdfGenerator(),
     );
 
-    bondController.saveBillEntryBondModel(
+    bondController.saveEntryBondModel(
       entryBondModel: createEntryBondModel(
         originType: EntryBondType.bill,
         billModel: billModel,

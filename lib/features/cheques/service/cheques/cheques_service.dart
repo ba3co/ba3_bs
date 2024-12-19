@@ -7,13 +7,15 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../controllers/cheques/all_cheques_controller.dart';
 import '../../controllers/cheques/cheques_details_controller.dart';
 import '../../controllers/cheques/cheques_search_controller.dart';
 
 import '../../data/models/cheques_model.dart';
+import 'cheques_bond_service.dart';
 
-class ChequesService with PdfBase {
+class ChequesService with PdfBase, ChequesBondService {
   ChequesService();
 
   ChequesModel? createChequesModel({
@@ -27,8 +29,12 @@ class ChequesService with PdfBase {
     required double chequesVal,
     required String chequesAccount2Guid,
     required String accPtr,
+    required String accPtrName,
+    required String chequesAccount2Name,
   }) {
     return ChequesModel.fromChequesData(
+      chequesAccount2Name: chequesAccount2Name,
+      accPtrName: accPtrName,
       accPtr: accPtr,
       chequesModel: chequesModel,
       chequesType: chequesType,
@@ -42,21 +48,7 @@ class ChequesService with PdfBase {
     );
   }
 
-  BondModel createBondModel({
-    required BondType bondType,
-    required String payAccountGuid,
-    required String payDate,
-    required String note,
-    required List<PayItem> bondRecordsItems,
-  }) {
-    return BondModel.fromBondData(
-      payAccountGuid: payAccountGuid,
-      bondType: bondType,
-      payDate: payDate,
-      bondRecordsItems: bondRecordsItems,
-      note: note,
-    );
-  }
+  EntryBondController get bondController => Get.find<EntryBondController>();
 
   Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
@@ -70,16 +62,36 @@ class ChequesService with PdfBase {
     AppUIUtils.onSuccess('تم حذف الشيك بنجاح!');
   }
 
-  Future<void> handleSaveSuccess(ChequesModel chequesModel, ChequesDetailsController chequesDetailsController) async {
-    AppUIUtils.onSuccess('تم حفظ الشيك بنجاح!');
+  Future<void> handleSaveOrUpdateSuccess({
+    required ChequesModel chequesModel,
+    required ChequesDetailsController chequesDetailsController,
+    required ChequesSearchController chequesSearchController,
+    required bool isSave,
+  }) async {
+    final successMessage = isSave ? 'تم حفظ الشيك بنجاح!' : 'تم تعديل الشيك بنجاح!';
 
-    chequesDetailsController.updateIsChequesSaved(true);
-  }
+    AppUIUtils.onSuccess(successMessage);
 
-  void handleUpdateSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController) {
-    AppUIUtils.onSuccess('تم تعديل الشيك بنجاح!');
+    if (isSave) {
+      chequesDetailsController.updateIsChequesSaved(true);
+    } else {
+      chequesSearchController.updateCheques(chequesModel);
+    }
 
-    chequesSearchController.updateCheques(chequesModel);
+    // generateAndSendPdf(
+    //   fileName: AppStrings.bill,
+    //   itemModel: billModel,
+    //   itemModelId: billModel.billId,
+    //   items: billModel.items.itemList,
+    //   pdfGenerator: BillPdfGenerator(),
+    // );
+
+    bondController.saveEntryBondModel(
+      entryBondModel: createEntryBondModel(
+        originType: EntryBondType.cheque,
+        chequesModel: chequesModel,
+      ),
+    );
   }
 
   bool validateAccount(AccountModel? customerAccount) {

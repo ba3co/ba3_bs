@@ -11,6 +11,7 @@ import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/data/models/pay_item_model.dart';
 import '../../service/cheques/cheques_service.dart';
 import 'cheques_search_controller.dart';
@@ -46,6 +47,8 @@ class ChequesDetailsController extends GetxController with AppValidator {
   final TextEditingController chequesNoteController = TextEditingController();
 
   AccountModel? chequesAccPtr, chequesToAccountModel;
+
+  EntryBondController get bondController => Get.find<EntryBondController>();
 
   RxString chequesDate = DateTime.now().toString().split(" ")[0].obs, chequesDueDate = DateTime.now().toString().split(" ")[0].obs;
   bool isLoading = true;
@@ -125,11 +128,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (chequesModel) {
-        if (existingChequesModel != null) {
-          _chequesService.handleUpdateSuccess(chequesModel, chequesSearchController);
-        } else {
-          _chequesService.handleSaveSuccess(chequesModel, this);
-        }
+        _chequesService.handleSaveOrUpdateSuccess(chequesModel: chequesModel, chequesSearchController: chequesSearchController, isSave: existingChequesModel == null, chequesDetailsController: this);
       },
     );
   }
@@ -147,6 +146,8 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
     // Create and return the cheques model
     return _chequesService.createChequesModel(
+        accPtrName: chequesAccPtr!.accName!,
+        chequesAccount2Name: chequesToAccountModel!.accName!,
         chequesModel: chequesModel,
         chequesType: chequesType,
         chequesAccount2Guid: chequesToAccountModel!.id!,
@@ -157,23 +158,6 @@ class ChequesDetailsController extends GetxController with AppValidator {
         chequesNum: int.parse(chequesNumController.text),
         chequesVal: double.parse(chequesAmountController.text),
         chequesTypeGuid: chequesType.typeGuide);
-  }
-
-  BondModel _createBondModelFromBondData({
-    required BondType bondType,
-    required String payAccountGuid,
-    required String payDate,
-    required String note,
-    required List<PayItem> bondRecordsItems,
-  }) {
-    // Create and return the cheques model
-    return _chequesService.createBondModel(
-      payAccountGuid: payAccountGuid,
-      note: note,
-      payDate: payDate,
-      bondType: bondType,
-      bondRecordsItems: bondRecordsItems,
-    );
   }
 
   initChequesNumberController(int? chequesNumber) {
@@ -202,8 +186,5 @@ class ChequesDetailsController extends GetxController with AppValidator {
     chequesAmountController.text = (cheques.chequesVal ?? '').toString();
   }
 
-  void savePayCheques(ChequesModel chequesModel)async {
-
-
-  }
+  void savePayCheques(ChequesModel chequesModel) async {}
 }
