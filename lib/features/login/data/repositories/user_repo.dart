@@ -14,7 +14,7 @@ class UserManagementRepository {
   Map<String, UserModel> allUsers = {};
 
   // Get all roles
-  Future<Either<Failure, Map<String, RoleModel>>> getAllRoles() async {
+  Future<Either<Failure, Map<String, OldRoleModel>>> getAllRoles() async {
     try {
       final allRoles = await _userService.fetchAllRoles();
       return Right(allRoles);
@@ -66,7 +66,7 @@ class UserManagementRepository {
   }
 
   // Add or update a role
-  Future<Either<Failure, Unit>> saveRole(RoleModel role) async {
+  Future<Either<Failure, Unit>> saveRole(OldRoleModel role) async {
     try {
       await _userService.saveRole(role);
       return const Right(unit);

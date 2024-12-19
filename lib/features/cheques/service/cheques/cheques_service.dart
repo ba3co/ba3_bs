@@ -1,7 +1,4 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
-import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
-
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -11,7 +8,6 @@ import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../controllers/cheques/all_cheques_controller.dart';
 import '../../controllers/cheques/cheques_details_controller.dart';
 import '../../controllers/cheques/cheques_search_controller.dart';
-
 import '../../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 
@@ -50,7 +46,8 @@ class ChequesService with PdfBase, ChequesBondService {
 
   EntryBondController get bondController => Get.find<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
+      [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await Get.find<AllChequesController>().fetchAllCheques();

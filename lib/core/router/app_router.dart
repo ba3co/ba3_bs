@@ -5,12 +5,13 @@ import 'package:ba3_bs/features/main_layout/ui/screens/main_screen.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_page.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
+import 'package:ba3_bs/features/users_management/ui/screens/all_user_screen.dart';
 import 'package:get/get.dart';
 
 import '../../features/bill/ui/screens/bill_details_screen.dart';
 import '../../features/bond/ui/screens/bond_details_screen.dart';
 import '../../features/login/ui/screens/login_screen.dart';
-import '../../features/patterns/ui/screens/all_pattern_page.dart';
+import '../../features/patterns/ui/screens/all_pattern_screen.dart';
 import '../bindings/middlewares.dart';
 import 'app_routes.dart';
 
@@ -20,7 +21,7 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.loginScreen, page: () => const LoginScreen()),
   GetPage(name: AppRoutes.patternsScreen, page: () => const PatternLayout()),
   GetPage(name: AppRoutes.addPatternsScreen, page: () => const AddPatternPage()),
-  GetPage(name: AppRoutes.showAllPatternsScreen, page: () => const AllPatternPage()),
+  GetPage(name: AppRoutes.showAllPatternsScreen, page: () => const AllPatternScreen()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
   GetPage(
@@ -73,19 +74,8 @@ List<GetPage<dynamic>>? appRouter = [
   ),
   GetPage(name: AppRoutes.accountStatementScreen, page: () => const AccountStatementScreen()),
 
-  // GetPage(
-  //   name: AppRoutes.addBillScreen,
-  //   page: () {
-  //     final Map arguments = Get.arguments as Map;
-  //     final BillTypeModel billTypeModel = arguments['billTypeModel'];
-  //     final bool fromBillDetails = arguments['fromBillDetails'];
-  //     final bool fromBillById = arguments['fromBillById'];
-  //
-  //     return AddBillScreen(
-  //       billTypeModel: billTypeModel,
-  //       fromBillDetails: fromBillDetails,
-  //       fromBillById: fromBillById,
-  //     );
-  //   },
-  // )
+  GetPage(
+    name: AppRoutes.showAllUsersScreen,
+    page: () => const AllUserScreen(),
+  ),
 ];

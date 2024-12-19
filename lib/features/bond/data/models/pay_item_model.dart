@@ -4,7 +4,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class PayItems {
@@ -25,20 +24,19 @@ class PayItems {
   factory PayItems.fromBondRecords(List<PayItem> bondRecords) {
     final itemList = bondRecords.map((bondRecord) {
       return PayItem(
-        entryType: bondRecord.entryType,
-        entryNote: bondRecord.entryNote,
-        entryDate: bondRecord.entryDate,
-        entryCustomerGuid: bondRecord.entryCustomerGuid,
-        entryCurrencyVal: bondRecord.entryCurrencyVal,
-        entryCurrencyGuid: bondRecord.entryCurrencyGuid,
-        entryCostGuid: bondRecord.entryCostGuid,
-        entryClass: bondRecord.entryClass,
-        entryNumber: bondRecord.entryNumber,
-        entryDebit: bondRecord.entryDebit,
-        entryCredit: bondRecord.entryCredit,
-        entryAccountGuid: bondRecord.entryAccountGuid,
-        entryAccountName: bondRecord.entryAccountName
-      );
+          entryType: bondRecord.entryType,
+          entryNote: bondRecord.entryNote,
+          entryDate: bondRecord.entryDate,
+          entryCustomerGuid: bondRecord.entryCustomerGuid,
+          entryCurrencyVal: bondRecord.entryCurrencyVal,
+          entryCurrencyGuid: bondRecord.entryCurrencyGuid,
+          entryCostGuid: bondRecord.entryCostGuid,
+          entryClass: bondRecord.entryClass,
+          entryNumber: bondRecord.entryNumber,
+          entryDebit: bondRecord.entryDebit,
+          entryCredit: bondRecord.entryCredit,
+          entryAccountGuid: bondRecord.entryAccountGuid,
+          entryAccountName: bondRecord.entryAccountName);
     }).toList();
 
     return PayItems(itemList: itemList);
@@ -172,22 +170,21 @@ class PayItem extends PlutoAdaptable<BondType> {
           type: PlutoColumnType.text(),
           hide: type == BondType.receiptVoucher): entryDebit,
       PlutoColumn(title: "الحساب", field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()):
-      entryAccountName,
+          entryAccountName,
       PlutoColumn(title: "البيان", field: AppConstants.entryNote, type: PlutoColumnType.text()): entryNote,
     };
   }
 
-  factory PayItem.fromJsonPluto({required Map<String, dynamic> row,required String accId}) {
-
+  factory PayItem.fromJsonPluto({required Map<String, dynamic> row, required String accId}) {
     return PayItem(
-      entryAccountGuid:accId ,
-      entryAccountName:row[AppConstants.entryAccountGuid] ,
+      entryAccountGuid: accId,
+      entryAccountName: row[AppConstants.entryAccountGuid],
       entryCredit: double.tryParse(row[AppConstants.entryCredit].toString()) ?? 0,
       entryDebit: double.tryParse(row[AppConstants.entryDebit].toString()) ?? 0,
       entryNumber: int.tryParse(row[AppConstants.entryNumber].toString()) ?? 0,
       entryClass: '',
       entryCostGuid: "00000000-0000-0000-0000-000000000000",
-      entryCurrencyGuid:"884edcde-c172-490d-a2f2-f10a0b90326a",
+      entryCurrencyGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
       entryCurrencyVal: 1,
       entryCustomerGuid: row[AppConstants.entryCustomerGuid],
       entryDate: Timestamp.now().toDate().toIso8601String(),

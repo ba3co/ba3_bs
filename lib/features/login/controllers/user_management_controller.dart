@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ba3_bs/features/login/data/models/role_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,8 +12,8 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/utils/generate_id.dart';
+import '../../users_management/data/models/role_model.dart';
 import '../data/models/card_model.dart';
-import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
 import '../data/repositories/user_repo.dart';
 import 'nfc_cards_controller.dart';
@@ -28,7 +29,36 @@ class UserManagementController extends GetxController {
   TextEditingController nameController = TextEditingController();
   TextEditingController pinController = TextEditingController();
 
-  Map<String, RoleModel> allRoles = {};
+  Map<String, OldRoleModel> allRoles = {};
+
+  List<RoleModel> roles = [
+    RoleModel(
+      roleId: 'sellersRoleId',
+      roleName: 'sellers',
+      roles: {},
+    ),
+    RoleModel(
+      roleId: 'readRoleId',
+      roleName: 'read',
+      roles: {},
+    ),
+    RoleModel(
+      roleId: 'adminRoleId',
+      roleName: 'admin',
+      roles: {},
+    ),
+    RoleModel(
+      roleId: 'noRoleId',
+      roleName: 'no role',
+      roles: {},
+    ),
+    RoleModel(
+      roleId: 'cashierRoleId',
+      roleName: 'كاشير',
+      roles: {},
+    ),
+  ];
+
   Map<String, UserModel> allUserList = {};
 
   UserManagementStatus? userStatus;
@@ -37,6 +67,8 @@ class UserManagementController extends GetxController {
   String? cardNumber;
   UserModel? myUserModel;
   UserModel? initAddUserModel;
+
+  final bool isAdmin = true;
 
   initUser([String? userId]) {
     if (userId == null) {
@@ -133,6 +165,10 @@ class UserManagementController extends GetxController {
     }
   }
 
+  void navigateToLAllUsersScreen() {
+    Get.toNamed(AppRoutes.showAllUsersScreen);
+  }
+
   Future<void> _handleNoMatch() async {
     userStatus = null; // Setting userStatus to null in case of no match
     if (Get.currentRoute != AppRoutes.loginScreen) {
@@ -170,7 +206,7 @@ class UserManagementController extends GetxController {
     );
   }
 
-  RoleModel? roleModel;
+  OldRoleModel? roleModel;
 
   void addRole() async {
     roleModel?.roleId ??= generateId(RecordType.role);

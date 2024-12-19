@@ -11,18 +11,19 @@ class UserManagementService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Fetch all roles from Firestore
-  Future<Map<String, RoleModel>> fetchAllRoles() async {
+  Future<Map<String, OldRoleModel>> fetchAllRoles() async {
     final rolesSnapshot = await _firestore.collection(AppConstants.roleCollection).get();
-    final Map<String, RoleModel> roles = {};
+    final Map<String, OldRoleModel> roles = {};
     for (var element in rolesSnapshot.docs) {
-      roles[element.id] = RoleModel.fromJson(element.data());
+      roles[element.id] = OldRoleModel.fromJson(element.data());
     }
     return roles;
   }
 
   // Fetch user by PIN
   Future<UserModel?> fetchUserByPin(String userPin) async {
-    final userSnapshot = await _firestore.collection(AppConstants.usersCollection).where('userPin', isEqualTo: userPin).get();
+    final userSnapshot =
+        await _firestore.collection(AppConstants.usersCollection).where('userPin', isEqualTo: userPin).get();
     if (userSnapshot.docs.isNotEmpty) {
       return UserModel.fromJson(userSnapshot.docs.first.data());
     }
@@ -53,8 +54,11 @@ class UserManagementService {
   }
 
   // Add or update a role
-  Future<void> saveRole(RoleModel role) {
-    return _firestore.collection(AppConstants.roleCollection).doc(role.roleId).set(role.toJson(), SetOptions(merge: true));
+  Future<void> saveRole(OldRoleModel role) {
+    return _firestore
+        .collection(AppConstants.roleCollection)
+        .doc(role.roleId)
+        .set(role.toJson(), SetOptions(merge: true));
   }
 
   // Log user's time report

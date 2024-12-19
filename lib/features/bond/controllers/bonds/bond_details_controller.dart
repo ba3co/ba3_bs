@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -135,7 +133,6 @@ class BondDetailsController extends GetxController with AppValidator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (bondModel) {
-
         if (existingBondModel != null) {
           _bondService.handleUpdateSuccess(bondModel, bondSearchController);
         } else {

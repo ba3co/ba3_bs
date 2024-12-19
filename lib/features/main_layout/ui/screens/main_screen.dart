@@ -15,6 +15,8 @@ import '../../../cheques/ui/screens/cheque_layout.dart';
 import '../../../login/controllers/user_management_controller.dart';
 import '../../../materials/ui/screens/materials_layout.dart';
 import '../../../patterns/ui/screens/pattern_layout.dart';
+import '../../../users_management/data/models/role_model.dart';
+import '../../../users_management/ui/screens/user_management_layout.dart';
 import '../../controllers/window_close_controller.dart';
 import '../widgets/drawer_list_tile.dart';
 
@@ -26,15 +28,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  List<({String name, Widget layout, String role})> appLayouts = [
-    (name: 'الفواتير', layout: const BillLayout(), role: AppConstants.roleViewInvoice),
-    (name: 'أنماط البيع', layout: const PatternLayout(), role: AppConstants.roleViewPattern),
-    (name: "المواد", layout: const MaterialLayout(), role: AppConstants.roleViewMaterial),
-    (name: 'الحسابات', layout: const AccountLayout(), role: AppConstants.roleViewAccount),
-    (name: 'السندات', layout: const BondLayout(), role: AppConstants.roleViewAccount),
-    (name: 'الشيكات', layout: const ChequeLayout(), role: AppConstants.roleViewCheques),
+  List<({String name, Widget layout, RoleItemType role})> appLayouts = [
+    (name: 'الفواتير', layout: const BillLayout(), role: RoleItemType.viewBill),
+    (name: 'أنماط البيع', layout: const PatternLayout(), role: RoleItemType.viewPattern),
+    (name: "المواد", layout: const MaterialLayout(), role: RoleItemType.viewProduct),
+    (name: 'الحسابات', layout: const AccountLayout(), role: RoleItemType.viewAccount),
+    (name: 'السندات', layout: const BondLayout(), role: RoleItemType.viewBond),
+    (name: 'الشيكات', layout: const ChequeLayout(), role: RoleItemType.viewCheques),
+    (name: "إدارة المستخدمين", layout: const UserManagementLayout(), role: RoleItemType.viewUserManagement),
   ];
-  List<({String name, Widget layout, String role})> allData = [];
+  List<({String name, Widget layout, RoleItemType role})> allData = [];
   late PageController pageController;
   late TabController tabController;
   int tabIndex = 0;

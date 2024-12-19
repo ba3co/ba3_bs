@@ -5,8 +5,8 @@ import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 import '../../controllers/pattern_controller.dart';
 import 'add_pattern_page.dart';
 
-class AllPatternPage extends StatelessWidget {
-  const AllPatternPage({super.key});
+class AllPatternScreen extends StatelessWidget {
+  const AllPatternScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

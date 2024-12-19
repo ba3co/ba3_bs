@@ -23,8 +23,6 @@ class BillPlutoUtils {
         return double.tryParse(materialModel.wholesalePrice ?? '') ?? 0;
       case PriceType.retail:
         return double.tryParse(materialModel.retailPrice ?? '') ?? 0;
-      default:
-        throw ArgumentError('Unknown price method: $type');
     }
   }
 

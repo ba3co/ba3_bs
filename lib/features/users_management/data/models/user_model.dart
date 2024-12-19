@@ -1,20 +1,21 @@
 class UserModel {
-  String? userId, userName, userPin, userRole, userSellerId, userStatus;
-  List? userFaceId = [];
-  List<DateTime>? userDateList = [];
-  List<DateTime>? logInDateList = [];
-  List<DateTime>? logOutDateList = [];
-  List<int>? userTimeList = [];
+  final String? userId;
+  final String? userName;
+  final String? userPassword;
+  final String? userRole;
+  final String? userSellerId;
+  final List<DateTime>? userDateList;
+
+  final List<DateTime>? logInDateList;
+
+  final List<DateTime>? logOutDateList;
 
   UserModel({
     this.userId,
     this.userName,
-    this.userPin,
+    this.userPassword,
     this.userRole,
     this.userSellerId,
-    this.userFaceId,
-    this.userStatus,
-    this.userTimeList,
     this.userDateList,
     this.logInDateList,
     this.logOutDateList,
@@ -25,11 +26,8 @@ class UserModel {
       'userId': userId,
       'userSellerId': userSellerId,
       'userName': userName,
-      'userPin': userPin,
+      'userPassword': userPassword,
       'userRole': userRole,
-      "userFaceId": userFaceId,
-      "userStatus": userStatus,
-      "userTimeList": userTimeList,
       "userDateList": userDateList,
       "logOutDateList": logOutDateList,
       "logInDateList": logInDateList,
@@ -37,7 +35,6 @@ class UserModel {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-
     List<DateTime> userDateList = [];
     List<DateTime> logInDateList = [];
     List<DateTime> logOutDateList = [];
@@ -80,11 +77,8 @@ class UserModel {
       userId: json['userId'],
       userSellerId: json['userSellerId'],
       userName: json['userName'],
-      userPin: json['userPin'],
+      userPassword: json['userPassword'],
       userRole: json['userRole'],
-      userFaceId: json['userFaceId'],
-      userStatus: json['userStatus'],
-      userTimeList: userTimeList,
       userDateList: userDateList,
       logInDateList: logInDateList,
       logOutDateList: logOutDateList,

@@ -1,8 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -12,7 +10,6 @@ import '../../../../core/services/firebase/implementations/datasource_repo.dart'
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
-import '../../../bond/data/models/pay_item_model.dart';
 import '../../service/cheques/cheques_service.dart';
 import 'cheques_search_controller.dart';
 
@@ -50,7 +47,8 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   EntryBondController get bondController => Get.find<EntryBondController>();
 
-  RxString chequesDate = DateTime.now().toString().split(" ")[0].obs, chequesDueDate = DateTime.now().toString().split(" ")[0].obs;
+  RxString chequesDate = DateTime.now().toString().split(" ")[0].obs,
+      chequesDueDate = DateTime.now().toString().split(" ")[0].obs;
   bool isLoading = true;
   RxBool isChequesSaved = false.obs;
 
@@ -128,7 +126,11 @@ class ChequesDetailsController extends GetxController with AppValidator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (chequesModel) {
-        _chequesService.handleSaveOrUpdateSuccess(chequesModel: chequesModel, chequesSearchController: chequesSearchController, isSave: existingChequesModel == null, chequesDetailsController: this);
+        _chequesService.handleSaveOrUpdateSuccess(
+            chequesModel: chequesModel,
+            chequesSearchController: chequesSearchController,
+            isSave: existingChequesModel == null,
+            chequesDetailsController: this);
       },
     );
   }

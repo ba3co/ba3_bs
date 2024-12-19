@@ -1,8 +1,6 @@
-import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
@@ -70,7 +68,6 @@ class AddChequeForm extends StatelessWidget {
                   textEditingController: chequesDetailsController.chequesToAccountController,
                   validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
                   chequesDetailsController: chequesDetailsController,
-
                 ),
                 secondItem: SearchableAccountField(
                   label: "دفع إلى",
