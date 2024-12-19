@@ -142,10 +142,14 @@ class BillDetailsController extends IBillController with AppValidator implements
         .startPrinting(invRecords: invRecords, billNumber: billNumber, invDate: billDate.value);
   }
 
-  void createBond(BillTypeModel billTypeModel, BuildContext context) {
+  void createBond(BillModel billModel, BuildContext context) {
     if (!validateForm()) return;
 
-    _billService.createBond(context: context, billTypeModel: billTypeModel, customerAccount: selectedCustomerAccount!);
+    _billService.createBond(
+      context: context,
+      billModel: billModel,
+      discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,
+    );
   }
 
   Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {

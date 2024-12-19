@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 
 import '../../features/bill/ui/screens/bill_details_screen.dart';
 import '../../features/bond/ui/screens/bond_details_screen.dart';
-import '../../features/bond/ui/screens/entry_bond_details_screen.dart';
 import '../../features/login/ui/screens/login_screen.dart';
 import '../../features/patterns/ui/screens/all_pattern_page.dart';
 import '../bindings/middlewares.dart';
@@ -43,7 +42,7 @@ List<GetPage<dynamic>>? appRouter = [
         );
       }),
 
-  GetPage(name: AppRoutes.entryBondDetailsScreen, page: () => const EntryBondDetailsScreen()),
+  // GetPage(name: AppRoutes.entryBondDetailsScreen, page: () => const EntryBondDetailsScreen()),
 
   GetPage(
     name: AppRoutes.bondDetailsScreen,

@@ -1,17 +1,12 @@
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/datasources/remote/accounts_statements_data_source.dart';
-import '../../../accounts/data/models/account_model.dart';
-import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/entry_bond_model.dart';
 
 class EntryBondController extends GetxController with FloatingLauncher {
-  late EntryBondModel bondModel;
-
   final DataSourceRepository<EntryBondModel> _entryBondsFirebaseRepo;
 
   final AccountsStatementsRepository _accountsStatementsRepo;
@@ -83,39 +78,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
 
     return accountsIds.toList(); // Convert the Set back to a List.
-  }
-
-// Method to create a bond based on bill type
-  void createBillBond({
-    required BuildContext context,
-    required BillTypeModel billTypeModel,
-    required AccountModel customerAccount,
-    required double total,
-    required double vat,
-    required double gifts,
-    required double discount,
-    required double addition,
-  }) async {
-    // _initializeBond(billTypeModel, customerAccount, total, vat, gifts, discount, addition);
-
-    // final result = await _entryBondsFirebaseRepo.save(entryBondModel, true);
-    //
-    // result.fold(
-    //   (failure) => AppUIUtils.onFailure(failure.message),
-    //   (entryBondModel) async {
-    //     for (final item in entryBondModel.items!) {
-    //       await _accountsStatementsRepo.addBond(item.accountId!, entryBondModel);
-    //     }
-    //   },
-    // );
-    //
-    // launchFloatingWindow(
-    //   context: context,
-    //   minimizedTitle: 'سند خاص ب ${BillType.byLabel(billTypeModel.billTypeLabel!).value}',
-    //   floatingScreen: const EntryBondDetailsScreen(),
-    // );
-
-    //   Get.toNamed(AppRoutes.entryBondDetailsScreen);
   }
 
 //   void _initializeBond(BillTypeModel billTypeModel, AccountModel customerAccount, double total, double vat,
@@ -339,26 +301,4 @@ class EntryBondController extends GetxController with FloatingLauncher {
 //     }
 //   }
 //
-// // Build DataGrid rows based on bond model
-//   List<DataGridRow> buildBondDataGridRows() {
-//     return bondModel.bonds.entries.expand<DataGridRow>((entry) {
-//       AccountModel account = entry.key;
-//       List<EntryBondItemModel> bondItems = entry.value;
-//
-//       return bondItems.map<DataGridRow>((bondItem) {
-//         return DataGridRow(cells: [
-//           DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: account.accName),
-//           DataGridCell<double>(
-//             columnName: AppConstants.rowBondDebitAmount,
-//             value: bondItem.bondItemType == BondItemType.debtor ? bondItem.amount : 0.0,
-//           ),
-//           DataGridCell<double>(
-//             columnName: AppConstants.rowBondCreditAmount,
-//             value: bondItem.bondItemType == BondItemType.creditor ? bondItem.amount : 0.0,
-//           ),
-//           DataGridCell<String>(columnName: AppConstants.rowBondDescription, value: '${bondItem.note}'),
-//         ]);
-//       });
-//     }).toList();
-//   }
 }

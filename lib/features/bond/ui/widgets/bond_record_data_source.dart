@@ -1,35 +1,40 @@
+import 'package:ba3_bs/core/helper/extensions/entry_bond_model_ectensions.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class BondDataGridSource extends DataGridSource {
-  BondDataGridSource() {
-    // Initialize data rows when creating the data source
-    //  _dataGridRows = Get.find<EntryBondController>().buildBondDataGridRows();
-  }
+import '../../../../core/constants/app_constants.dart';
+import '../../data/models/entry_bond_model.dart';
 
-  List<DataGridRow> _dataGridRows = [];
+class BondDataGridSource extends DataGridSource {
+  final EntryBondModel entryBondModel;
+
+  BondDataGridSource({required this.entryBondModel});
 
   @override
-  List<DataGridRow> get rows => _dataGridRows;
+  List<DataGridRow> get rows => entryBondModel.bondDataGridRows;
 
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
     return DataGridRowAdapter(
-      cells: row.getCells().map<Widget>((dataGridCell) {
-        return Container(
-          alignment: Alignment.center,
-          color: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            dataGridCell.value == null
-                ? ''
-                : dataGridCell.value is double
-                    ? dataGridCell.value.toStringAsFixed(2)
-                    : dataGridCell.value.toString(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        );
-      }).toList(),
+      cells: row
+          .getCells()
+          .map<Widget>((dataGridCell) => Container(
+                alignment: dataGridCell.columnName == AppConstants.rowBondDescription
+                    ? Alignment.centerRight
+                    : Alignment.center,
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  textAlign: TextAlign.right,
+                  dataGridCell.value == null
+                      ? ''
+                      : dataGridCell.value is double
+                          ? dataGridCell.value.toStringAsFixed(2)
+                          : dataGridCell.value.toString(),
+                  //     overflow: TextOverflow.ellipsis,
+                ),
+              ))
+          .toList(),
     );
   }
 

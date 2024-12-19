@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -11,8 +12,8 @@ import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
-import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
+import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
@@ -22,7 +23,7 @@ import '../../data/models/invoice_record_model.dart';
 import 'bill_bond_service.dart';
 import 'bill_pdf_generator.dart';
 
-class BillService with PdfBase, BillBondService {
+class BillService with PdfBase, BillBondService, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -58,19 +59,21 @@ class BillService with PdfBase, BillBondService {
 
   void createBond({
     required BuildContext context,
-    required BillTypeModel billTypeModel,
-    required AccountModel customerAccount,
-  }) =>
-      bondController.createBillBond(
-        context: context,
-        billTypeModel: billTypeModel,
-        customerAccount: customerAccount,
-        vat: plutoController.computeTotalVat,
-        total: plutoController.computeBeforeVatTotal,
-        gifts: plutoController.computeGifts,
-        discount: plutoController.computeDiscounts,
-        addition: plutoController.computeAdditions,
-      );
+    required BillModel billModel,
+    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
+  }) {
+    final entryBondModel = createEntryBondModel(
+      originType: EntryBondType.bill,
+      billModel: billModel,
+      discountsAndAdditions: discountsAndAdditions,
+    );
+
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: 'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
+      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+    );
+  }
 
   Future<void> handleDeleteSuccess({
     required BillModel billModel,

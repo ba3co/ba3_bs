@@ -53,15 +53,7 @@ class BillDetailsButtons extends StatelessWidget {
             width: 100,
             fontSize: 14,
             onPressed: () async {
-              // log(billModel.billTypeModel.toJson().toString());
-              // log("-"*30);
-              // log(billModel.billTypeModel.accounts!.map((key, value) =>MapEntry(key, value.accName) ).toString());
-              // log("-"*30);
-              // log(billModel.billDetails.toJson().toString());
-              // log("-"*30);
-              // log(billModel.items.toJson().toString());
-
-              billDetailsController.createBond(billModel.billTypeModel, context);
+              billDetailsController.createBond(billModel, context);
             },
             iconData: Icons.file_open_outlined,
           ),
