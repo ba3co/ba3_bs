@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
+import '../../../controllers/cheques/cheques_details_controller.dart';
 
 class ChequesDetailsHeader extends StatelessWidget {
   const ChequesDetailsHeader({
     super.key,
-    // required this.chequesDetailsController,
+    required this.chequesDetailsController,
   });
 
-  // final ChequesDetailsController chequesDetailsController;
+  final ChequesDetailsController chequesDetailsController;
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +17,10 @@ class ChequesDetailsHeader extends StatelessWidget {
       label: 'الحالة ',
       child: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            color: Colors.red, border: Border.all(color: Colors.white), borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(color: chequesDetailsController.isPayed! ? Colors.green : Colors.red, border: Border.all(color: Colors.white), borderRadius: BorderRadius.circular(4)),
         child: Center(
             child: Text(
-          ChequesStatus.notPaid.label,
+          chequesDetailsController.isPayed! ? ChequesStatus.paid.label : ChequesStatus.notPaid.label,
           style: const TextStyle(color: Colors.white),
         )),
       ),

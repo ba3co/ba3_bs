@@ -21,23 +21,30 @@ class _ChequeLayoutState extends State<ChequeLayout> {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar:chequesLayoutAppBar(),
-        body: Column(
-          children: [
-            Item("إضافة شيك", () {
-              Get.find<AllChequesController>().openFloatingChequesDetails(context, ChequesType.paidChecks);
-              // Get.to(() => const ChequesDetailsScreen());
-            }),
-            Item("الشيكات المستحقة", () {
-              Get.to(() => const AllCheques(isAll: false));
-            }),
-            Item("معاينة الشيكات", () {
-              Get.to(() => const AllCheques(isAll: true));
-            }),
-          ],
-        ),
-      ),
+      child: GetBuilder<AllChequesController>(builder: (controller) {
+        return Scaffold(
+          appBar: chequesLayoutAppBar(),
+          body: Column(
+            children: [
+              Item("إضافة شيك", () {
+                controller.openFloatingChequesDetails(context, ChequesType.paidChecks);
+                // Get.to(() => const ChequesDetailsScreen());
+              }),
+              Item("الشيكات المستحقة", () {
+                controller
+                  ..fetchAllCheques()
+                  ..navigateToChequesScreen(onlyDues:true);
+
+              }),
+              Item("معاينة الشيكات", () {
+                controller
+                  ..fetchAllCheques()
+                  ..navigateToChequesScreen(onlyDues:false);
+              }),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -52,10 +59,10 @@ class _ChequeLayoutState extends State<ChequeLayout> {
             padding: const EdgeInsets.all(30.0),
             child: Center(
                 child: Text(
-              text,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textDirection: TextDirection.rtl,
-            ))),
+                  text,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  textDirection: TextDirection.rtl,
+                ))),
       ),
     );
   }

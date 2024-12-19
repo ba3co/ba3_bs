@@ -98,9 +98,11 @@ class DatePicker extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              Text(
-                initDate ?? '',
-                style: const TextStyle(fontSize: 14),
+              Expanded(
+                child: Text(
+                  initDate ?? '',
+                  style: const TextStyle(fontSize: 14),
+                ),
               ),
               const Spacer(),
               const Icon(Icons.date_range),

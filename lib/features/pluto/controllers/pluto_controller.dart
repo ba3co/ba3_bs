@@ -24,7 +24,7 @@ class PlutoController extends GetxController {
   /// Converts a PlutoAdaptable model to a PlutoRow.
   PlutoRow _mapModelToRow<T>(PlutoAdaptable model, [T? type]) {
     final cells = model.toPlutoGridFormat(type).map<String, PlutoCell>((key, value) {
-      return MapEntry(key.title, PlutoCell(value: value?.toString() ?? ''));
+      return MapEntry(key.field, PlutoCell(value: value?.toString() ?? ''));
     });
     return PlutoRow(cells: cells);
   }

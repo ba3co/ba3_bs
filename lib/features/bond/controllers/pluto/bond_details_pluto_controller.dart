@@ -230,12 +230,12 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     final newRows = recordsTableStateManager.getNewRows(count: 30);
 
     if (itemList.isNotEmpty) {
-      itemList.removeWhere(
-        (element) {
-          return element.entryAccountGuid == accountGuid;
-        },
-      );
-      recordsTableRows = convertRecordsToRows(itemList);
+      // itemList.removeWhere(
+      //   (element) {
+      //     return element.entryAccountGuid == accountGuid;
+      //   },
+      // );
+      recordsTableRows = convertRecordsToRows(itemList.where((element) =>  !(element.entryAccountGuid == accountGuid),).toList());
 
       recordsTableStateManager.appendRows(recordsTableRows);
       recordsTableStateManager.appendRows(newRows);

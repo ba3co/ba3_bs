@@ -16,5 +16,5 @@ class AppRoutes {
   static const String bondDetailsScreen = '/bondDetailsScreen';
   static const String entryBondDetailsScreen = '/entryBondDetailsScreen';
   static const String accountStatementScreen = '/accountStatementScreen';
-  static const String showAllUsersScreen = '/showAllUsersScreen';
+  static const String showAllChequesScreen = '/showAllChequesScreen';
 }

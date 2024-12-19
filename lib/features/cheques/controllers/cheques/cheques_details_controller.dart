@@ -44,6 +44,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
   final TextEditingController chequesNoteController = TextEditingController();
 
   AccountModel? chequesAccPtr, chequesToAccountModel;
+  bool? isPayed;
 
   EntryBondController get bondController => Get.find<EntryBondController>();
 
@@ -68,6 +69,10 @@ class ChequesDetailsController extends GetxController with AppValidator {
   void onInit() {
     super.onInit();
     _initializeServices();
+  }
+
+  void setIsPayed(bool pay) {
+    isPayed = pay;
   }
 
   // Initializer
@@ -135,6 +140,23 @@ class ChequesDetailsController extends GetxController with AppValidator {
     );
   }
 
+  void launchEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
+    if (!validateForm()) return;
+
+    _chequesService.launchChequesEntryBondScreen(
+      chequesModel: chequesModel,
+      context: context,
+    );
+  }
+  void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
+    if (!validateForm()) return;
+
+    _chequesService.launchChequesPayEntryBondScreen(
+      chequesModel: chequesModel,
+      context: context,
+    );
+  }
+
   updateIsChequesSaved(bool newValue) {
     isChequesSaved.value = newValue;
   }
@@ -148,6 +170,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
     // Create and return the cheques model
     return _chequesService.createChequesModel(
+        isPayed: isPayed!,
         accPtrName: chequesAccPtr!.accName!,
         chequesAccount2Name: chequesToAccountModel!.accName!,
         chequesModel: chequesModel,
@@ -175,7 +198,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
   ) {
     setChequesDate(cheques.chequesDate!.toDate!);
     setChequesDueDate(cheques.chequesDueDate!.toDate!);
-
+    setIsPayed(cheques.isPayed ?? false);
     setTowAccount(Get.find<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
     setFirstAccount(Get.find<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
     stChequesFormDate(cheques);
@@ -188,5 +211,13 @@ class ChequesDetailsController extends GetxController with AppValidator {
     chequesAmountController.text = (cheques.chequesVal ?? '').toString();
   }
 
-  void savePayCheques(ChequesModel chequesModel) async {}
+  void savePayCheques(ChequesModel chequesModel) async {
+    setIsPayed(true);
+    _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+  }
+
+  void saveClearPayCheques(ChequesModel chequesModel) {
+    setIsPayed(false);
+    _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+  }
 }

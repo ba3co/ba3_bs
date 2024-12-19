@@ -3,22 +3,45 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_pdf_generator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../controllers/bonds/all_bond_controller.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
+import '../../controllers/entry_bond/entry_bond_controller.dart';
 import '../../data/models/bond_model.dart';
+import '../../ui/screens/entry_bond_details_screen.dart';
+import 'bond_entryBond_service.dart';
 
-class BondService with PdfBase {
+class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
   final IRecodesPlutoController<PayItem> plutoController;
   final BondDetailsController bondController;
 
   BondService(this.plutoController, this.bondController);
+  EntryBondController get entryBondController => Get.find<EntryBondController>();
+
+
+  void launchBondEntryBondScreen({
+    required BuildContext context,
+    required BondModel bondModel,
+  }) {
+    final entryBondModel = createEntryBondModel(
+      originType: EntryBondType.cheque,
+      bondModel: bondModel,
+
+    );
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: 'سند خاص ب ${BondType.byTypeGuide(bondModel.payTypeGuid!).value}',
+      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+    );
+  }
 
   BondModel? createBondModel({
     BondModel? bondModel,
@@ -50,9 +73,46 @@ class BondService with PdfBase {
     }
 
     AppUIUtils.onSuccess('تم حذف السند بنجاح!');
+
+    entryBondController.deleteEntryBondModel(entryId: bondModel.payGuid!);
+
   }
 
-  Future<void> handleSaveSuccess(BondModel bondModel, BondDetailsController bondDetailsController) async {
+
+  Future<void> handleSaveOrUpdateSuccess({
+    required BondModel bondModel,
+    required BondDetailsController bondDetailsController,
+    required BondSearchController bondSearchController,
+    required bool isSave,
+  }) async {
+    final successMessage = isSave ? 'تم حفظ السند بنجاح!' : 'تم تعديل السند بنجاح!';
+
+    AppUIUtils.onSuccess(successMessage);
+
+    if (isSave) {
+      bondDetailsController.updateIsBondSaved(true);
+    } else {
+      bondSearchController.updateBond(bondModel);
+    }
+
+    generateAndSendPdf(
+      fileName: AppStrings.bond,
+      itemModel: bondModel,
+      itemModelId: bondModel.payGuid,
+      items: bondModel.payItems.itemList,
+      pdfGenerator: BondPdfGenerator(),
+    );
+
+    entryBondController.saveEntryBondModel(
+      entryBondModel: createEntryBondModel(
+        originType: EntryBondType.bond,
+         bondModel: bondModel,
+      ),
+    );
+  }
+
+
+/*  Future<void> handleSaveSuccess(BondModel bondModel, BondDetailsController bondDetailsController) async {
     AppUIUtils.onSuccess('تم حفظ السند بنجاح!');
 
     bondDetailsController.updateIsBondSaved(true);
@@ -78,7 +138,7 @@ class BondService with PdfBase {
       items: bondModel.payItems.itemList,
       pdfGenerator: BondPdfGenerator(),
     );
-  }
+  }*/
 
   bool validateAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {

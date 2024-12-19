@@ -1,10 +1,15 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:flutter/material.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import 'cheques_collect_entry_model.dart';
 import 'cheques_entry_relation_model.dart';
 
-class ChequesModel {
+class ChequesModel implements PlutoAdaptable {
   final String? chequesTypeGuid;
   final int? chequesNumber;
   final int? chequesNum;
@@ -14,16 +19,16 @@ class ChequesModel {
   final String? chequesNote;
   final double? chequesVal;
   final String? chequesAccount2Guid;
-
   final String? accPtr;
   final String? accPtrName;
   final String? chequesAccount2Name;
   final ChequesCollectEntryModel? chequesCollectEntry;
   final ChequesEntryRelationModel? chequesEntryRelation;
 
+  final bool? isPayed;
+
   // final String? chequesCustomerGuid;
   // final String? chequesCurGuid;
-
 
   // final double chequesCurVal;
   // final int chequesSec;
@@ -51,13 +56,13 @@ class ChequesModel {
     this.chequesDueDate,
     this.chequesNote,
     this.chequesVal,
-
     this.chequesCollectEntry,
     this.chequesEntryRelation,
     this.accPtr,
     this.chequesAccount2Guid,
     this.chequesAccount2Name,
     this.accPtrName,
+    this.isPayed,
     // this.chequesCustomerGuid,
 
     // this.chequesCurGuid,
@@ -102,6 +107,7 @@ class ChequesModel {
 
       // chequesCurGuid: json['ChequesCurGuid'] as String,
       accPtr: json['AccPtr'] as String?,
+      isPayed: json['IsPayed'] as bool?,
       // chequesCurVal: (json['ChequesCurVal'] as num).toDouble(),
       // chequesSec: json['ChequesSec'] as int,
       // chequesPrevNum: json['ChequesPrevNum'] as int,
@@ -136,6 +142,7 @@ class ChequesModel {
       'ChequesCollectEntry': chequesCollectEntry?.toJson(),
       'ChequesEntryRelation': chequesEntryRelation?.toJson(),
       'AccPtr': accPtr,
+      'IsPayed': isPayed,
       'AccPtrName': accPtrName,
       'ChequesAccount2Name': chequesAccount2Name,
       // 'ChequesCustomerGuid': chequesCustomerGuid,
@@ -169,6 +176,7 @@ class ChequesModel {
     String? chequesDueDate,
     String? chequesNote,
     double? chequesVal,
+    bool? isPayed,
     String? chequesAccount2Guid,
     ChequesCollectEntryModel? chequesCollectEntry,
     ChequesEntryRelationModel? chequesEntryRelation,
@@ -210,6 +218,7 @@ class ChequesModel {
       accPtr: accPtr ?? this.accPtr,
       accPtrName: accPtrName ?? this.accPtrName,
       chequesAccount2Name: chequesAccount2Name ?? this.chequesAccount2Name,
+      isPayed: isPayed ?? this.isPayed,
       // chequesCustomerGuid: chequesCustomerGuid ?? this.chequesCustomerGuid,
       // chequesCurGuid: chequesCurGuid ?? this.chequesCurGuid,
       // chequesParentGuid: chequesParentGuid ?? this.chequesParentGuid,
@@ -236,7 +245,8 @@ class ChequesModel {
       chequesNumber: lastChequesNumber + 1,
       chequesTypeGuid: chequesType.typeGuide,
       chequesAccount2Guid: AppStrings.chequeToAccountId,
-      accPtrName:AppStrings.chequeToAccountName ,
+      accPtrName: AppStrings.chequeToAccountName,
+      isPayed: false,
       chequesDate: DateTime.now().toString(),
       chequesDueDate: DateTime.now().toString(),
     );
@@ -255,6 +265,7 @@ class ChequesModel {
     required String accPtr,
     required String accPtrName,
     required String chequesAccount2Name,
+    required bool isPayed,
   }) {
     return chequesModel == null
         ? ChequesModel(
@@ -266,8 +277,9 @@ class ChequesModel {
             chequesVal: chequesVal,
             chequesNote: chequesNote,
             accPtr: accPtr,
-      accPtrName: accPtrName,
-      chequesAccount2Name: chequesAccount2Name,
+            accPtrName: accPtrName,
+            chequesAccount2Name: chequesAccount2Name,
+            isPayed: isPayed,
           )
         : chequesModel.copyWith(
             chequesDate: chequesDate,
@@ -277,9 +289,35 @@ class ChequesModel {
             chequesNum: chequesNum,
             chequesVal: chequesVal,
             accPtr: accPtr,
+            isPayed: isPayed,
             accPtrName: accPtrName,
             chequesAccount2Name: chequesAccount2Name,
             chequesNote: chequesNote,
           );
+  }
+
+  @override
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
+    return {
+      PlutoColumn(title: "رقم القيد", field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true): chequesGuid,
+      PlutoColumn(title: "الرقم التسلسلي", field: AppConstants.chequesNumber, type: PlutoColumnType.number()): chequesNumber,
+      PlutoColumn(title: "رقم الشيك", field: AppConstants.chequesNum, type: PlutoColumnType.number()): chequesNumber,
+      PlutoColumn(
+          title: "قيمة الشيك",
+          field: AppConstants.chequesVal,
+
+          type: PlutoColumnType.currency(
+            format: '#,##0.00 AED',
+            locale: 'en_AE',
+            symbol: 'AED',
+
+          )): chequesVal,
+      PlutoColumn(title: "الحساب", field: AppConstants.chequesAccount2Guid, type: PlutoColumnType.text()): chequesAccount2Name,
+      PlutoColumn(title: "دفع الى", field: AppConstants.accPtr, type: PlutoColumnType.text()): accPtrName,
+      PlutoColumn(title: "تاريخ التحرير", field: AppConstants.chequesDate, type: PlutoColumnType.date()): chequesDate.toDate,
+      PlutoColumn(title: "تاريخ الاستحقاق", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()): chequesDueDate.toDate,
+      PlutoColumn(title: "البيان", field: AppConstants.chequesNote, type: PlutoColumnType.text()): chequesNote,
+      PlutoColumn(title: "الحالة", field: AppConstants.isPayed, type: PlutoColumnType.text(),): isPayed! ? ChequesStatus.paid.label : ChequesStatus.notPaid.label,
+    };
   }
 }
