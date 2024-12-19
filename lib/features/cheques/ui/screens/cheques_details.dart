@@ -36,7 +36,7 @@ class ChequesDetailsScreen extends StatelessWidget {
                       SliverToBoxAdapter(
                           child: Column(
                         children: [
-                          const ChequesDetailsHeader(),
+                           ChequesDetailsHeader(chequesDetailsController:chequesDetailsController ,),
                           const VerticalSpace(20),
                           AddChequeForm(
                             chequesDetailsController: chequesDetailsController,

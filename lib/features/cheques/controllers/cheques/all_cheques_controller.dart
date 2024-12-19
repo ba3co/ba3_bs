@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -130,6 +131,11 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
       chequesDetailsController: chequesDetailsController,
     );
   }
+
+
+  void navigateToChequesScreen({required bool onlyDues}) => Get.toNamed(AppRoutes.showAllChequesScreen,arguments:onlyDues );
+
+
 }
 
 

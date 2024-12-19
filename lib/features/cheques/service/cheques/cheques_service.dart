@@ -25,7 +25,22 @@ class ChequesService with PdfBase, ChequesBondService,FloatingLauncher {
     required BuildContext context,
     required ChequesModel chequesModel,
   }) {
-    final entryBondModel = createEntryBondModel(
+    final entryBondModel = createNormalEntryBondModel(
+      originType: EntryBondType.cheque,
+      chequesModel: chequesModel,
+    );
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: 'سند خاص ب ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value}',
+      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+    );
+  }
+
+  void launchChequesPayEntryBondScreen({
+    required BuildContext context,
+    required ChequesModel chequesModel,
+  }) {
+    final entryBondModel = createPayEntryBondModel(
       originType: EntryBondType.cheque,
       chequesModel: chequesModel,
     );

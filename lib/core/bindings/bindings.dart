@@ -115,6 +115,7 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
 
+
     Get.lazyPut(() => MaterialController(MaterialRepository()), fenix: true);
     Get.lazyPut(() => AccountsController(AccountsRepository()), fenix: true);
     Get.lazyPut(() => AccountsController(AccountsRepository()), fenix: true);

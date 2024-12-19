@@ -138,10 +138,18 @@ class ChequesDetailsController extends GetxController with AppValidator {
     );
   }
 
-  void createEntryBond(ChequesModel chequesModel, BuildContext context) {
+  void launchEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
     _chequesService.launchChequesEntryBondScreen(
+      chequesModel: chequesModel,
+      context: context,
+    );
+  }
+  void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
+    if (!validateForm()) return;
+
+    _chequesService.launchChequesPayEntryBondScreen(
       chequesModel: chequesModel,
       context: context,
     );
@@ -203,6 +211,11 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void savePayCheques(ChequesModel chequesModel) async {
     setIsPayed(true);
+    _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+  }
+
+  void saveClearPayCheques(ChequesModel chequesModel) {
+    setIsPayed(false);
     _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
   }
 }

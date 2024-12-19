@@ -62,21 +62,28 @@ class AddChequeButtons extends StatelessWidget {
           ),
           AppButton(
             onPressed: () {
-              chequesDetailsController.createEntryBond(chequesModel, context);
+              chequesDetailsController.launchEntryBondWindow(chequesModel, context);
             },
             title: "السند",
             iconData: Icons.view_list_outlined,
           ),
           AppButton(
             onPressed: () async {
-              chequesDetailsController.savePayCheques(chequesModel);
+              chequesDetailsController.isPayed! ?
+              chequesDetailsController.saveClearPayCheques(chequesModel)
+              :chequesDetailsController.savePayCheques(chequesModel);
             },
-            title: "دفع",
+            title: chequesDetailsController.isPayed!?"تراجع عن الدفع":"دفع",
             color: Colors.black,
             iconData: Icons.paid,
           ),
+          if(chequesDetailsController.isPayed!)
           AppButton(
-            onPressed: () {},
+            onPressed: () {
+
+              chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
+
+            },
             title: "سند الدفع",
             iconData: Icons.view_list_outlined,
           ),
