@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -25,7 +26,7 @@ mixin ChequesBondService {
   }) {
     List<EntryBondItemModel> itemBonds = [];
     final date = _currentDate;
-    final note = "سند ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}";
+    final note = "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}";
     final amount = chequesModel.chequesVal;
     final originId = chequesModel.chequesGuid;
 
@@ -38,7 +39,6 @@ mixin ChequesBondService {
       date: date,
       originId: originId,
     ));
-
     itemBonds.add(EntryBondItemModel(
       note: note,
       amount: amount,
@@ -48,6 +48,26 @@ mixin ChequesBondService {
       date: date,
       originId: originId,
     ));
+    if(chequesModel.isPayed!){
+      itemBonds.add(EntryBondItemModel(
+        note: note,
+        amount: amount,
+        bondItemType: BondItemType.debtor,
+        accountId: chequesModel.chequesAccount2Guid,
+        accountName: chequesModel.chequesAccount2Name,
+        date: date,
+        originId: originId,
+      ));
+      itemBonds.add(EntryBondItemModel(
+        note: note,
+        amount: amount,
+        bondItemType: BondItemType.creditor,
+        accountId: AppStrings.bankAccountId,
+        accountName: AppStrings.bankToAccountName,
+        date: date,
+        originId: originId,
+      ));
+    }
 
     return itemBonds;
   }

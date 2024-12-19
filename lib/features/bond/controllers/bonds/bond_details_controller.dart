@@ -135,13 +135,17 @@ class BondDetailsController extends GetxController with AppValidator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (bondModel) {
-
-        if (existingBondModel != null) {
-          _bondService.handleUpdateSuccess(bondModel, bondSearchController);
-        } else {
-          _bondService.handleSaveSuccess(bondModel, this);
-        }
+        _bondService.handleSaveOrUpdateSuccess(bondModel: bondModel, bondSearchController: bondSearchController, isSave: existingBondModel == null, bondDetailsController: this);
       },
+    );
+  }
+
+  void createEntryBond(BondModel bondModel, BuildContext context) {
+    if (!validateForm()) return;
+
+    _bondService.launchBondEntryBondScreen(
+      bondModel: bondModel,
+      context: context,
     );
   }
 
@@ -158,16 +162,10 @@ class BondDetailsController extends GetxController with AppValidator {
     }
     // Create and return the bond model
 
-    return _bondService.createBondModel(
-        bondModel: bondModel,
-        bondType: bondType,
-        payDate: bondDate.value,
-        payAccountGuid: selectedAccount!.id!,
-        note: noteController.text);
+    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
-      bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
+  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
     if (bondNumber != null) {

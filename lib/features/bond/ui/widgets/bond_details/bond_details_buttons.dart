@@ -50,7 +50,9 @@ class BondDetailsButtons extends StatelessWidget {
             AppButton(
               title: 'السند',
               height: 20,
-              onPressed: () async {},
+              onPressed: () async {
+                bondDetailsController.createEntryBond(bondModel, context);
+              },
               iconData: Icons.file_open_outlined,
             ),
             AppButton(

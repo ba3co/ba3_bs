@@ -61,7 +61,9 @@ class AddChequeButtons extends StatelessWidget {
             color: Colors.red,
           ),
           AppButton(
-            onPressed: () {},
+            onPressed: () {
+              chequesDetailsController.createEntryBond(chequesModel, context);
+            },
             title: "السند",
             iconData: Icons.view_list_outlined,
           ),

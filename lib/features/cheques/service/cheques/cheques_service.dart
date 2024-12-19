@@ -1,13 +1,16 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
+import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../controllers/cheques/all_cheques_controller.dart';
 import '../../controllers/cheques/cheques_details_controller.dart';
 import '../../controllers/cheques/cheques_search_controller.dart';
@@ -15,8 +18,23 @@ import '../../controllers/cheques/cheques_search_controller.dart';
 import '../../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 
-class ChequesService with PdfBase, ChequesBondService {
+class ChequesService with PdfBase, ChequesBondService,FloatingLauncher {
   ChequesService();
+
+  void launchChequesEntryBondScreen({
+    required BuildContext context,
+    required ChequesModel chequesModel,
+  }) {
+    final entryBondModel = createEntryBondModel(
+      originType: EntryBondType.cheque,
+      chequesModel: chequesModel,
+    );
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: 'سند خاص ب ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value}',
+      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+    );
+  }
 
   ChequesModel? createChequesModel({
     ChequesModel? chequesModel,
@@ -31,6 +49,7 @@ class ChequesService with PdfBase, ChequesBondService {
     required String accPtr,
     required String accPtrName,
     required String chequesAccount2Name,
+    required bool isPayed,
   }) {
     return ChequesModel.fromChequesData(
       chequesAccount2Name: chequesAccount2Name,
@@ -45,10 +64,11 @@ class ChequesService with PdfBase, ChequesBondService {
       chequesAccount2Guid: chequesAccount2Guid,
       chequesTypeGuid: chequesTypeGuid,
       chequesDate: chequesDate,
+      isPayed: isPayed,
     );
   }
 
-  EntryBondController get bondController => Get.find<EntryBondController>();
+  EntryBondController get entryBondController => Get.find<EntryBondController>();
 
   Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
@@ -58,6 +78,7 @@ class ChequesService with PdfBase, ChequesBondService {
     } else {
       chequesSearchController.removeCheques(chequesModel);
     }
+    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!);
 
     AppUIUtils.onSuccess('تم حذف الشيك بنجاح!');
   }
@@ -86,7 +107,7 @@ class ChequesService with PdfBase, ChequesBondService {
     //   pdfGenerator: BillPdfGenerator(),
     // );
 
-    bondController.saveEntryBondModel(
+    entryBondController.saveEntryBondModel(
       entryBondModel: createEntryBondModel(
         originType: EntryBondType.cheque,
         chequesModel: chequesModel,
