@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -5,7 +6,7 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
-class BillTypeModel implements PlutoAdaptable {
+class BillTypeModel extends PlutoAdaptable with EquatableMixin{
   final String? billTypeId;
   final String? shortName;
   final String? fullName;
@@ -120,6 +121,19 @@ class BillTypeModel implements PlutoAdaptable {
         PlutoColumn(title: 'accounts', field: 'accounts', type: PlutoColumnType.text()):
             accounts?.map((account, accountModel) => MapEntry(account.label, accountModel.toPlutoGridFormat())),
       };
+
+  @override
+  List<Object?> get props => [
+    billTypeId,
+    shortName,
+    fullName,
+    latinShortName,
+    latinFullName,
+    billTypeLabel,
+    color,
+    accounts,
+    discountAdditionAccounts,
+  ];
 }
 
 // Utility function to get an Account object from a string

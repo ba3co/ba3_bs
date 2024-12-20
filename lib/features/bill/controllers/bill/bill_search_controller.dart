@@ -23,8 +23,7 @@ class BillSearchController extends GetxController {
     required BillDetailsPlutoController billDetailsPlutoController,
   }) {
     bills = billsByCategory;
-
-    currentBillIndex = bills.indexOf(bill);
+    currentBillIndex = bills.indexWhere((current) =>current.billId==bill.billId||current==bill ,);
     currentBill = bills[currentBillIndex];
 
     this.billDetailsController = billDetailsController;

@@ -1,4 +1,6 @@
-class BillDetails {
+import 'package:equatable/equatable.dart';
+
+class BillDetails extends Equatable {
   final String? billGuid;
   final int? billPayType;
   final int? billNumber;
@@ -13,7 +15,7 @@ class BillDetails {
   final double? billDiscountsTotal;
   final double? billAdditionsTotal;
 
-  BillDetails({
+  const BillDetails({
     this.billGuid,
     this.billPayType,
     this.billNumber,
@@ -121,4 +123,21 @@ class BillDetails {
         billGiftsTotal: billGiftsTotal ?? this.billGiftsTotal,
         billAdditionsTotal: billAdditionsTotal ?? this.billAdditionsTotal,
       );
+
+  @override
+  List<Object?> get props => [
+        billGuid,
+        billPayType,
+        billNumber,
+        billDate,
+        note,
+        billCustomerId,
+        billSellerId,
+        billTotal,
+        billVatTotal,
+        billBeforeVatTotal,
+        billGiftsTotal,
+        billDiscountsTotal,
+        billAdditionsTotal,
+      ];
 }

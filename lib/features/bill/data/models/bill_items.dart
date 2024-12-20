@@ -1,9 +1,11 @@
+import 'package:equatable/equatable.dart';
+
 import 'invoice_record_model.dart';
 
-class BillItems {
+class BillItems extends Equatable {
   final List<BillItem> itemList;
 
-  BillItems({required this.itemList});
+  const BillItems({required this.itemList});
 
   factory BillItems.fromJson(Map<String, dynamic> json) {
     var itemsJson = json['Item'] as List<dynamic>;
@@ -46,9 +48,13 @@ class BillItems {
 
   List<InvoiceRecordModel> get _materialRecords =>
       itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
+
+  @override
+  List<Object?> get props => [itemList];
+
 }
 
-class BillItem {
+class BillItem  extends Equatable{
   final String itemGuid;
   final String itemName;
   final int itemQuantity;
@@ -58,7 +64,7 @@ class BillItem {
   final int? itemGiftsNumber;
   final double? itemGiftsPrice;
 
-  BillItem({
+  const BillItem({
     required this.itemGuid,
     required this.itemName,
     required this.itemQuantity,
@@ -111,4 +117,16 @@ class BillItem {
         itemGiftsNumber: itemGiftsNumber ?? this.itemGiftsNumber,
         itemGiftsPrice: itemGiftsPrice ?? this.itemGiftsPrice,
       );
+  @override
+  List<Object?> get props => [
+    itemGuid,
+    itemName,
+    itemQuantity,
+    itemTotalPrice,
+    itemSubTotalPrice,
+    itemVatPrice,
+    itemGiftsNumber,
+    itemGiftsPrice,
+  ];
+
 }

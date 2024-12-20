@@ -20,7 +20,7 @@ class BondSearchController extends GetxController {
     required BondDetailsPlutoController bondDetailsPlutoController,
   }) {
     bonds = bondsByCategory;
-    currentBondIndex = bonds.indexOf(bond);
+    currentBondIndex = bonds.indexWhere((current) =>current.payGuid==bond.payGuid||current==bond ,);
     currentBond = bonds[currentBondIndex];
 
     this.bondDetailsController = bondDetailsController;

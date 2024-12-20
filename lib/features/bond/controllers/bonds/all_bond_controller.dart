@@ -57,12 +57,12 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
   List<BondModel> getBondsByType(String bondTypeId) => bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
-  Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel, List<BondModel>? allBond}) async {
+  Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel}) async {
     await fetchAllBonds();
 
     if (!context.mounted) return;
 
-    List<BondModel> bondsByCategory = allBond ?? getBondsByType(bondTypeModel.typeGuide);
+    List<BondModel> bondsByCategory =  getBondsByType(bondModel?.payTypeGuid??bondTypeModel.typeGuide);
 
     final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
 
@@ -74,11 +74,22 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     );
   }
 
-  void openBondDetailsById(String bondId, BuildContext context) {
-    final BondModel bondModel = getBondById(bondId);
-    List<BondModel> bondByCategory = getBondsByType(bondModel.payTypeGuid!);
+  void openBondDetailsById(String bondId, BuildContext context)async {
+    final BondModel bondModel = await fetchChequesById(bondId);
+    if (!context.mounted) return;
+    openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), bondModel: bondModel);
+  }
 
-    openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), bondModel: bondModel, allBond: bondByCategory);
+  Future<BondModel> fetchChequesById(String bondId)async {
+    late BondModel bondModel;
+
+    final result = await _bondsFirebaseRepo.getById(bondId);
+
+    result.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedBonds) => bondModel=fetchedBonds,
+    );
+    return bondModel;
   }
 
   // Opens the 'Bond Details' floating window.

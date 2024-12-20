@@ -17,7 +17,7 @@ class ChequesSearchController extends GetxController {
     required ChequesDetailsController chequesDetailsController,
   }) {
     chequesList = chequesByCategory;
-    currentChequesIndex = chequesList.indexOf(cheques);
+    currentChequesIndex = chequesList.indexWhere((current) =>current.chequesGuid==cheques.chequesGuid||current==cheques ,);
     currentCheques = chequesList[currentChequesIndex];
     this.chequesDetailsController = chequesDetailsController;
     _setCurrentCheques(currentChequesIndex);

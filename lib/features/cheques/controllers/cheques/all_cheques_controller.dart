@@ -49,7 +49,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedCheques) => chequesList.assignAll(fetchedCheques),
+      (fetchedCheques) => chequesList=fetchedCheques,
     );
 
     isLoading = false;
@@ -58,12 +58,12 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
 
   List<ChequesModel> getChequesByType(String chequesTypeId) => chequesList.where((cheques) => cheques.chequesTypeGuid! == chequesTypeId).toList();
 
-  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel, List<ChequesModel>? allCheques}) async {
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel}) async {
     await fetchAllCheques();
 
     if (!context.mounted) return;
 
-    List<ChequesModel> chequesByCategory = allCheques ?? getChequesByType(chequesTypeModel.typeGuide);
+    List<ChequesModel> chequesByCategory =  getChequesByType(chequesModel?.chequesTypeGuid??chequesTypeModel.typeGuide);
 
     final ChequesModel lastChequesModel = chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesByCategory, chequesTypeModel);
 
@@ -132,10 +132,21 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
 
   void navigateToChequesScreen({required bool onlyDues}) => Get.toNamed(AppRoutes.showAllChequesScreen, arguments: onlyDues);
 
-  void openChequesDetailsById(String chequesId, BuildContext context) {
-    final ChequesModel chequesModel = getChequesById(chequesId);
-    List<ChequesModel> chequesByCategory = getChequesByType(chequesModel.chequesTypeGuid!);
+  void openChequesDetailsById(String chequesId, BuildContext context) async{
+    final ChequesModel chequesModel = await fetchChequesById(chequesId);
+    if (!context.mounted) return;
+    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel);
+  }
 
-    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel, allCheques: chequesByCategory);
+  Future<ChequesModel> fetchChequesById(String chequesId)async {
+    late ChequesModel chequesModel;
+
+    final result = await _chequesFirebaseRepo.getById(chequesId);
+
+    result.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedCheques) => chequesModel=fetchedCheques,
+    );
+    return chequesModel;
   }
 }
