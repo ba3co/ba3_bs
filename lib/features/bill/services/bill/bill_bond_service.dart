@@ -31,7 +31,7 @@ mixin BillBondService {
     final billType = BillType.byLabel(billModel.billTypeModel.billTypeLabel!);
     final isSales = billType == BillType.sales;
 
-    final date = _currentDate;
+    final date = billModel.billDetails.billDate!;
 
     final itemBonds = _generateBillItemBonds(
       billId: billModel.billId!,
@@ -52,8 +52,6 @@ mixin BillBondService {
 
     return [...itemBonds, ...adjustmentBonds];
   }
-
-  String get _currentDate => DateTime.now().toString().split(" ")[0];
 
   List<EntryBondItemModel> _generateBillItemBonds({
     required String billId,

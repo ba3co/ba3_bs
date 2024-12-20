@@ -30,7 +30,11 @@ class UserManagementLayout extends StatelessWidget {
                             onTap: () {
                               userManagementController.navigateToLAllUsersScreen();
                             }),
-                        AppMenuItem(text: 'إدارة الصلاحيات', onTap: () {}),
+                        AppMenuItem(
+                            text: 'إدارة الصلاحيات',
+                            onTap: () {
+                              userManagementController.navigateToLAllPermissionsScreen();
+                            }),
                       ],
                     ),
             ),

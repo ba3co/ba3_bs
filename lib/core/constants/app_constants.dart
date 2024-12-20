@@ -354,24 +354,21 @@ abstract class AppConstants {
   static const String prParentType = 'ErParentType';
   static const String payItems = 'PayItems';
 
-
-
-
   /// Cheques
   //////////////////////////////////////////////////////////////////////////////////////////////////////
-  static const String chequesTypeGuid="chequesTypeGuid";
-  static const String chequesNumber="chequesNumber";
-  static const String chequesNum="chequesNum";
-  static const String chequesGuid="chequesGuid";
-  static const String chequesDate="chequesDate";
-  static const String chequesDueDate="chequesDueDate";
-  static const String chequesNote="chequesNote";
-  static const String chequesVal="chequesVal";
-  static const String chequesAccount2Guid="chequesAccount2Guid";
-  static const String accPtr="accPtr";
-  static const String accPtrName="accPtrName";
-  static const String chequesAccount2Name="chequesAccount2Name";
-  static const String isPayed="isPayed";
+  static const String chequesTypeGuid = "chequesTypeGuid";
+  static const String chequesNumber = "chequesNumber";
+  static const String chequesNum = "chequesNum";
+  static const String chequesGuid = "chequesGuid";
+  static const String chequesDate = "chequesDate";
+  static const String chequesDueDate = "chequesDueDate";
+  static const String chequesNote = "chequesNote";
+  static const String chequesVal = "chequesVal";
+  static const String chequesAccount2Guid = "chequesAccount2Guid";
+  static const String accPtr = "accPtr";
+  static const String accPtrName = "accPtrName";
+  static const String chequesAccount2Name = "chequesAccount2Name";
+  static const String isPayed = "isPayed";
 
   static const double bottomWindowWidth = 200;
   static const double bottomWindowHeight = 40;

@@ -98,3 +98,148 @@ enum RoleItem {
     );
   }
 }
+
+class RolesConfig {
+  static final adminRoles = {
+    RoleItemType.viewBill: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewBond: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewAccount: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewProduct: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewStore: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewPattern: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewCheques: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewSeller: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewReport: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewImport: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewTarget: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewTask: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewInventory: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewUserManagement: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewDue: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewStatistics: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewTimer: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewDataBase: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewCard: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+    RoleItemType.viewHome: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+      RoleItem.userAdmin,
+    ],
+  };
+}

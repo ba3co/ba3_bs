@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../login/controllers/user_management_controller.dart';
+import '../../../../login/controllers/user_management_controller.dart';
 
 class TimeDetailsScreen extends StatefulWidget {
   final String oldKey;

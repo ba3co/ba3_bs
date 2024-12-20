@@ -20,30 +20,67 @@ class AppUIUtils {
         msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
+  static String convertArabicNumbers(String input) {
+    // Check if the input contains any non-Arabic characters
+    final nonArabicRegex = RegExp(r'[^٠-٩]'); // Matches any character that is not an Arabic numeral
+
+    // If the input contains any non-Arabic characters, return it unchanged
+    if (nonArabicRegex.hasMatch(input)) {
+      return input;
+    }
+
+    // Mapping of Arabic numerals to Western numerals
+    const arabicToWestern = {
+      '٠': '0',
+      '١': '1',
+      '٢': '2',
+      '٣': '3',
+      '٤': '4',
+      '٥': '5',
+      '٦': '6',
+      '٧': '7',
+      '٨': '8',
+      '٩': '9',
+    };
+
+    // Process the input and replace only Arabic numerals
+    return input.split('').map((char) {
+      return arabicToWestern[char] ?? char; // Replace Arabic numerals, keep others unchanged
+    }).join('');
+  }
+
   static String getDateFromString(String input) {
+    // Convert Arabic numbers in the input to Western numbers
+    input = convertArabicNumbers(input);
+
     DateTime now = DateTime.now();
     List<String> parts = input.split('-');
 
-    if (parts.length == 3) {
-      // صيغة اليوم-الشهر-السنة: 15-5-2023
-      int day = int.parse(parts[0]);
-      int month = int.parse(parts[1]);
-      int year = int.parse(parts[2]);
-      return DateTime(year, month, day).toString().split(" ")[0];
-    } else if (parts.length == 2) {
-      // صيغة اليوم-الشهر: 15-5
-      int day = int.parse(parts[0]);
-      int month = int.parse(parts[1]);
-      int year = now.year;
-      return DateTime(year, month, day).toString().split(" ")[0];
-    } else if (parts.length == 1) {
-      // صيغة اليوم فقط: 15
-      int day = int.parse(parts[0]);
-      int month = now.month;
-      int year = now.year;
-      return DateTime(year, month, day).toString().split(" ")[0];
-    } else {
-      // throw const FormatException("صيغة غير صحيحة");
+    try {
+      if (parts.length == 3) {
+        // Format: day-month-year (e.g., 15-5-2023)
+        int day = int.parse(parts[0]);
+        int month = int.parse(parts[1]);
+        int year = int.parse(parts[2]);
+        return DateTime(year, month, day).toString().split(" ")[0];
+      } else if (parts.length == 2) {
+        // Format: day-month (e.g., 15-5)
+        int day = int.parse(parts[0]);
+        int month = int.parse(parts[1]);
+        int year = now.year;
+        return DateTime(year, month, day).toString().split(" ")[0];
+      } else if (parts.length == 1) {
+        // Format: day only (e.g., 15)
+        int day = int.parse(parts[0]);
+        int month = now.month;
+        int year = now.year;
+        return DateTime(year, month, day).toString().split(" ")[0];
+      } else {
+        // Invalid format, return today's date
+        return DateTime.now().toString().split(" ")[0];
+      }
+    } catch (e) {
+      // Handle parsing errors and return today's date
       return DateTime.now().toString().split(" ")[0];
     }
   }
@@ -143,6 +180,22 @@ class AppUIUtils {
         return "الإدارة";
     }
     return "error";
+  }
+
+  static String getNameOfRoleFromEnum(String type) {
+    switch (type) {
+      case AppConstants.roleUserRead:
+        return "قراءة البيانات";
+      case AppConstants.roleUserWrite:
+        return "كتابة البيانات";
+      case AppConstants.roleUserUpdate:
+        return "تعديل البيانات";
+      case AppConstants.roleUserDelete:
+        return "حذف البيانات";
+      case AppConstants.roleUserAdmin:
+        return "إدارة البيانات";
+    }
+    return type;
   }
 
   static String formatDecimalNumberWithCommas(double number) {

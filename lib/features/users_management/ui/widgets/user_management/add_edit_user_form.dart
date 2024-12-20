@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../login/controllers/user_management_controller.dart';
-import '../../../sellers/controllers/sellers_controller.dart';
+import '../../../../login/controllers/user_management_controller.dart';
+import '../../../../sellers/controllers/sellers_controller.dart';
 
 class AddEditUserForm extends StatelessWidget {
   const AddEditUserForm({
@@ -30,7 +30,7 @@ class AddEditUserForm extends StatelessWidget {
               Expanded(
                 child: TextFormField(
                   decoration: const InputDecoration(filled: true, fillColor: Colors.white),
-                  controller: userManagementController.nameController,
+                  controller: userManagementController.userNameController,
                   onChanged: (newValue) {
                     userManagementController.initAddUserModel?.userName = newValue;
                   },

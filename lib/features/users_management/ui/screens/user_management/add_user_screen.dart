@@ -1,12 +1,12 @@
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
-import 'package:ba3_bs/features/users_management/ui/screens/time_details_screen.dart';
+import 'package:ba3_bs/features/users_management/ui/screens/user_management/time_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/widgets/app_button.dart';
-import '../../../login/controllers/user_management_controller.dart';
-import '../widgets/add_edit_user_form.dart';
+import '../../../../../core/widgets/app_button.dart';
+import '../../../../login/controllers/user_management_controller.dart';
+import '../../widgets/user_management/add_edit_user_form.dart';
 
 class AddUserScreen extends StatelessWidget {
   const AddUserScreen({super.key});
@@ -56,7 +56,7 @@ class AddUserScreen extends StatelessWidget {
                         child: AppButton(
                           title: controller.initAddUserModel?.userId == null ? 'إضافة' : 'تعديل',
                           onPressed: () {
-                            if (controller.nameController.text.isEmpty) {
+                            if (controller.userNameController.text.isEmpty) {
                               Get.snackbar("خطأ", 'يرجى كتابة الاسم');
                             } else if (controller.pinController.text.length != 6) {
                               Get.snackbar("خطأ", "يرجى كتابة كلمة السر");

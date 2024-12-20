@@ -18,4 +18,6 @@ class AppRoutes {
   static const String accountStatementScreen = '/accountStatementScreen';
   static const String showAllChequesScreen = '/showAllChequesScreen';
   static const String showAllUsersScreen = '/showAllUsersScreen';
+  static const String showAllPermissionsScreen = '/showAllPermissionsScreen';
+  static const String addRoleScreen = '/addRoleScreen';
 }

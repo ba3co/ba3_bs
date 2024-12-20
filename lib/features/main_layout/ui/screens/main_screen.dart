@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:tab_container/tab_container.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../accounts/ui/screens/account_layout.dart';
 import '../../../bill/ui/screens/bill_layout.dart';

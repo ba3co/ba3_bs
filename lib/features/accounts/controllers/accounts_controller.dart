@@ -81,9 +81,10 @@ class AccountsController extends GetxController {
     return accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
   }
 
-  AccountModel? getAccountModelByName(text) {
-    if(!(text==null||text=='')) {
-      final AccountModel accountModel = accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+  AccountModel? getAccountModelByName(String text) {
+    if (text != '') {
+      final AccountModel accountModel = accounts
+          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -94,8 +95,9 @@ class AccountsController extends GetxController {
     }
     return null;
   }
+
   AccountModel? getAccountModelById(id) {
-    if(!(id==null||id=='')) {
+    if (!(id == null || id == '')) {
       final AccountModel accountModel = accounts.firstWhere((item) => item.id == id, orElse: () {
         return AccountModel(accName: null);
       });
@@ -122,7 +124,7 @@ class AccountsController extends GetxController {
     TextEditingController? textEditingController,
     bool fromAddBill = false,
     bool isCustomerAccount = false,
-    bool isFirstAccountCheque=false,
+    bool isFirstAccountCheque = false,
     BondDetailsController? bondDetailsController,
     ChequesDetailsController? chequesDetailsController,
     IBillController? billController,
@@ -134,7 +136,11 @@ class AccountsController extends GetxController {
       // Single match
       selectedAccountModel = searchedAccounts.first;
       if (bondDetailsController != null) bondDetailsController.setAccount(searchedAccounts.first);
-      if (chequesDetailsController != null) isFirstAccountCheque?chequesDetailsController.setFirstAccount(searchedAccounts.first):chequesDetailsController.setTowAccount(searchedAccounts.first);
+      if (chequesDetailsController != null) {
+        isFirstAccountCheque
+            ? chequesDetailsController.setFirstAccount(searchedAccounts.first)
+            : chequesDetailsController.setTowAccount(searchedAccounts.first);
+      }
 
       if (textEditingController != null) {
         final BillAccounts? billAccounts =
@@ -172,7 +178,11 @@ class AccountsController extends GetxController {
 
             if (selectedAccountModel != null && textEditingController != null) {
               if (bondDetailsController != null) bondDetailsController.setAccount(selectedAccount);
-              if (chequesDetailsController != null) isFirstAccountCheque?chequesDetailsController.setFirstAccount(selectedAccount):chequesDetailsController.setTowAccount(selectedAccount);
+              if (chequesDetailsController != null) {
+                isFirstAccountCheque
+                    ? chequesDetailsController.setFirstAccount(selectedAccount)
+                    : chequesDetailsController.setTowAccount(selectedAccount);
+              }
 
               final BillAccounts? billAccounts =
                   Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];

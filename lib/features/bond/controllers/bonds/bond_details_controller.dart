@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -135,7 +133,11 @@ class BondDetailsController extends GetxController with AppValidator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (bondModel) {
-        _bondService.handleSaveOrUpdateSuccess(bondModel: bondModel, bondSearchController: bondSearchController, isSave: existingBondModel == null, bondDetailsController: this);
+        _bondService.handleSaveOrUpdateSuccess(
+            bondModel: bondModel,
+            bondSearchController: bondSearchController,
+            isSave: existingBondModel == null,
+            bondDetailsController: this);
       },
     );
   }
@@ -162,10 +164,16 @@ class BondDetailsController extends GetxController with AppValidator {
     }
     // Create and return the bond model
 
-    return _bondService.createBondModel(bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
+    return _bondService.createBondModel(
+        bondModel: bondModel,
+        bondType: bondType,
+        payDate: bondDate.value,
+        payAccountGuid: selectedAccount!.id!,
+        note: noteController.text);
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) => bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
+  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
+      bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
     if (bondNumber != null) {

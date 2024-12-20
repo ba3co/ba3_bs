@@ -26,16 +26,26 @@ class UserManagementController extends GetxController {
     initAllUser();
   }
 
-  TextEditingController nameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
   TextEditingController pinController = TextEditingController();
 
   Map<String, OldRoleModel> allRoles = {};
+
+  RoleModel? roleModel;
 
   List<RoleModel> roles = [
     RoleModel(
       roleId: 'sellersRoleId',
       roleName: 'sellers',
-      roles: {},
+      roles: {
+        RoleItemType.viewBill: [
+          RoleItem.userRead,
+          RoleItem.userWrite,
+          RoleItem.userUpdate,
+          RoleItem.userDelete,
+          RoleItem.userAdmin,
+        ],
+      },
     ),
     RoleModel(
       roleId: 'readRoleId',
@@ -45,7 +55,7 @@ class UserManagementController extends GetxController {
     RoleModel(
       roleId: 'adminRoleId',
       roleName: 'admin',
-      roles: {},
+      roles: RolesConfig.adminRoles,
     ),
     RoleModel(
       roleId: 'noRoleId',
@@ -70,15 +80,27 @@ class UserManagementController extends GetxController {
 
   final bool isAdmin = true;
 
+  Map<RoleItemType, List<RoleItem>> rolesMap = {};
+  TextEditingController roleNameController = TextEditingController();
+
   initUser([String? userId]) {
     if (userId == null) {
-      nameController.clear();
+      userNameController.clear();
       pinController.clear();
       initAddUserModel = UserModel();
     } else {
       initAddUserModel = UserModel.fromJson(allUserList[userId]!.toJson());
-      nameController.text = initAddUserModel?.userName ?? "";
+      userNameController.text = initAddUserModel?.userName ?? "";
       pinController.text = initAddUserModel?.userPin ?? "";
+    }
+  }
+
+  initRole(RoleModel? role) {
+    if (role != null) {
+      roleModel = role;
+      rolesMap = role.roles;
+
+      userNameController.text = role.roleName ?? "";
     }
   }
 
@@ -165,8 +187,17 @@ class UserManagementController extends GetxController {
     }
   }
 
+  void navigateToAddRoleScreen([RoleModel? roleModel]) {
+    initRole(roleModel);
+    Get.toNamed(AppRoutes.addRoleScreen);
+  }
+
   void navigateToLAllUsersScreen() {
     Get.toNamed(AppRoutes.showAllUsersScreen);
+  }
+
+  void navigateToLAllPermissionsScreen() {
+    Get.toNamed(AppRoutes.showAllPermissionsScreen);
   }
 
   Future<void> _handleNoMatch() async {
@@ -206,11 +237,11 @@ class UserManagementController extends GetxController {
     );
   }
 
-  OldRoleModel? roleModel;
+  OldRoleModel? oldRoleModel;
 
   void addRole() async {
-    roleModel?.roleId ??= generateId(RecordType.role);
-    final result = await _userRepository.saveRole(roleModel!);
+    oldRoleModel?.roleId ??= generateId(RecordType.role);
+    final result = await _userRepository.saveRole(oldRoleModel!);
     result.fold(
       (failure) => Get.snackbar("Error", failure.message),
       (success) => Get.snackbar("Success", "Role saved successfully!"),

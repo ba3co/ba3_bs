@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/widgets/app_button.dart';
-import '../../../login/controllers/user_management_controller.dart';
-import 'add_user_screen.dart';
+import '../../../../../core/widgets/app_button.dart';
+import '../../../../login/controllers/user_management_controller.dart';
 
-class AllUserScreen extends StatelessWidget {
-  const AllUserScreen({super.key});
+class AllPermissionsScreen extends StatelessWidget {
+  const AllPermissionsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,38 +14,32 @@ class AllUserScreen extends StatelessWidget {
         Expanded(
           child: Directionality(
             textDirection: TextDirection.rtl,
-            child: GetBuilder<UserManagementController>(
-              builder: (controller) {
-                return Scaffold(
-                  appBar: AppBar(
-                    title: const Text("إدارة المستخدمين"),
-                    actions: [
-                      AppButton(
-                          title: "إضافة",
-                          onPressed: () {
-                            Get.find<UserManagementController>().initUser();
-                            Get.to(() => const AddUserScreen());
-                          },
-                          iconData: Icons.add),
-                      const SizedBox(
-                        width: 10,
-                      )
-                    ],
-                  ),
-                  body: Padding(
+            child: Scaffold(
+                appBar: AppBar(
+                  title: const Text("إدارة الصلاحيات"),
+                  actions: [
+                    AppButton(
+                        title: "إضافة",
+                        onPressed: () {
+                          Get.find<UserManagementController>().navigateToAddRoleScreen();
+                        },
+                        iconData: Icons.add),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+                body: GetBuilder<UserManagementController>(builder: (controller) {
+                  return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
                       width: double.infinity,
                       child: Wrap(
                         children: List.generate(
-                          controller.allUserList.values.length,
+                          controller.roles.length,
                           (index) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.find<UserManagementController>()
-                                    .initUser(controller.allUserList.values.toList()[index].userId);
-                                Get.to(() => const AddUserScreen());
+                                controller.navigateToAddRoleScreen(controller.roles[index]);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(4),
@@ -57,7 +50,7 @@ class AllUserScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text(
-                                      controller.allUserList.values.toList()[index].userName ?? "",
+                                      controller.roles[index].roleName ?? "",
                                       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                                     ),
                                   ],
@@ -68,10 +61,16 @@ class AllUserScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                  //       return ListView.builder(
+                  //         itemCount: controller.allRole.length,
+                  //         itemBuilder: (context,index){
+                  //         return InkWell(onTap: (){
+                  //           Get.to(()=>AddRoleView(oldKey:controller.allRole.keys.toList()[index] ,));
+                  //         },child: Text(controller.allRole.values.toList()[index].roleName??"error"));
+                  // },
+                  // );
+                })),
           ),
         ),
       ],

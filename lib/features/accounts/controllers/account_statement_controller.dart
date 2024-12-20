@@ -28,6 +28,7 @@ class AccountStatementController extends GetxController {
 
   // Data
   final List<EntryBondItemModel> entryBondItems = [];
+  List<EntryBondItemModel> filteredEntryBondItems = [];
 
   // State variables
   bool isLoading = true;
@@ -59,8 +60,10 @@ class AccountStatementController extends GetxController {
 
   // Event Handlers
   void onAccountNameSubmitted(String text, BuildContext context) {
+    accountNameController.text = AppUIUtils.convertArabicNumbers(text);
+
     _accountsController.openAccountSelectionDialog(
-      query: text,
+      query: accountNameController.text,
       context: context,
       textEditingController: accountNameController,
     );
@@ -104,7 +107,7 @@ class AccountStatementController extends GetxController {
     final DateTime startDate = dateFormat.parse(startDateController.text);
     final DateTime endDate = dateFormat.parse(endDateController.text);
 
-    return entryBondItems.where((item) {
+    filteredEntryBondItems = entryBondItems.where((item) {
       final String? entryBondItemDateStr = item.date; // Ensure `date` is the correct field
       //  final String? entryBondItemDateStr = '2024-12-15'; // Ensure `date` is the correct field
       if (entryBondItemDateStr == null) return false;
@@ -120,6 +123,8 @@ class AccountStatementController extends GetxController {
       return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
           entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
+
+    return filteredEntryBondItems;
   }
 
   /// Navigation handler
@@ -129,6 +134,20 @@ class AccountStatementController extends GetxController {
 
   /// Calculates debit, credit, and total values
   void _calculateValues() {
+    if (filteredEntryBondItems.isEmpty) {
+      _resetValues();
+    } else {
+      _updateValues();
+    }
+  }
+
+  _resetValues() {
+    totalValue = 0.0;
+    debitValue = 0.0;
+    creditValue = 0.0;
+  }
+
+  _updateValues() {
     debitValue = _calculateSum(BondItemType.debtor);
     creditValue = _calculateSum(BondItemType.creditor);
 
