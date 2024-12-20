@@ -17,7 +17,9 @@ class AccountStatementScreen extends StatelessWidget {
         return PlutoGridWithAppBar(
           title: controller.screenTitle,
           onLoaded: (e) {},
-          onSelected: (p0) {},
+          onSelected: (p0) {
+
+          },
           isLoading: controller.isLoading,
           tableSourceModels: controller.filterByDate(),
           child: Padding(

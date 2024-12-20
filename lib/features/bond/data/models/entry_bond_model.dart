@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -21,9 +22,7 @@ class EntryBondModel {
   /// Creates an instance from a JSON object.
   factory EntryBondModel.fromJson(Map<String, dynamic> json) {
     return EntryBondModel(
-      items: (json['items'] as List<dynamic>?)
-          ?.map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>))
-          .toList(),
+      items: (json['items'] as List<dynamic>?)?.map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>)).toList(),
       origin: EntryBondOrigin.fromJson(json['origin']),
     );
   }
@@ -131,14 +130,40 @@ class EntryBondItemModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     final accountsController = Get.find<AccountsController>();
     return {
-      PlutoColumn(title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
-      PlutoColumn(title: 'مدين', field: 'مدين', type: PlutoColumnType.text()):
-          bondItemType == BondItemType.debtor ? amount : 0,
-      PlutoColumn(title: 'دائن', field: 'دائن', type: PlutoColumnType.text()):
-          bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()):
-          accountsController.getAccountNameById(accountId),
-      PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.text()): date,
+      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
+      PlutoColumn(
+        width: 50,
+        title: '',
+        field: 'رقم السطر',
+        type: PlutoColumnType.number(),
+        renderer: (rendererContext) {
+          return Text(
+            (rendererContext.rowIdx + 1).toString(),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          );
+        },
+      ): '',
+      PlutoColumn(
+          title: 'مدين',
+          field: 'مدين',
+          type: PlutoColumnType.currency(
+            format: '#,##0.00 AED',
+            locale: 'en_AE',
+            symbol: 'AED',
+          )): bondItemType == BondItemType.debtor ? amount : 0,
+      PlutoColumn(
+          title: 'دائن',
+          field: 'دائن',
+          type: PlutoColumnType.currency(
+            format: '#,##0.00 AED',
+            locale: 'en_AE',
+            symbol: 'AED',
+          )): bondItemType == BondItemType.creditor ? amount : 0,
+      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()): accountsController.getAccountNameById(accountId),
+      PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
     };
   }

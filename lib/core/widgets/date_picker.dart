@@ -97,15 +97,14 @@ class DatePicker extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Spacer(),
               Expanded(
                 child: Text(
                   initDate ?? '',
+                  textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 14),
                 ),
               ),
-              const Spacer(),
-              const Icon(Icons.date_range),
+              const Icon(Icons.date_range,color: Colors.blue,size: 18,),
             ],
           ),
         ),

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,6 @@ import '../../service/cheques/floating_cheques_details_launcher.dart';
 import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
-
 
 class AllChequesController extends FloatingChequesDetailsLauncher {
   final DataSourceRepository<ChequesModel> _chequesFirebaseRepo;
@@ -43,7 +41,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     // getAllChequesTypes();
   }
 
-  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.chequesNumber == chequesId);
+  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
 
   Future<void> fetchAllCheques() async {
     log('fetchCheques');
@@ -60,14 +58,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
 
   List<ChequesModel> getChequesByType(String chequesTypeId) => chequesList.where((cheques) => cheques.chequesTypeGuid! == chequesTypeId).toList();
 
-  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel) async {
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel, List<ChequesModel>? allCheques}) async {
     await fetchAllCheques();
 
     if (!context.mounted) return;
 
-    List<ChequesModel> chequesByCategory = getChequesByType(chequesTypeModel.typeGuide);
+    List<ChequesModel> chequesByCategory = allCheques ?? getChequesByType(chequesTypeModel.typeGuide);
 
-    final ChequesModel lastChequesModel = _chequesUtils.appendEmptyChequesModel(chequesByCategory, chequesTypeModel);
+    final ChequesModel lastChequesModel = chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesByCategory, chequesTypeModel);
 
     _openChequesDetailsFloatingWindow(
       context: context,
@@ -84,7 +82,6 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     required ChequesModel lastChequesModel,
     required ChequesType chequesType,
   }) {
-
     final String controllerTag = AppServiceUtils.generateUniqueTag('ChequesController');
 
     final Map<String, GetxController> controllers = setupControllers(
@@ -102,7 +99,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     initializeChequesSearch(
       currentCheques: lastChequesModel,
       allCheques: modifiedCheques,
-      chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+      chequesDetailsController: chequesDetailsController,
+      chequesSearchController: chequesSearchController,
     );
 
     launchFloatingWindow(
@@ -110,11 +108,11 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
       defaultHeight: 0.65.sh,
       defaultWidth: 0.5.sw,
       minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.chequesTypeGuid!).value,
-      floatingScreen:  ChequesDetailsScreen(
+      floatingScreen: ChequesDetailsScreen(
         tag: controllerTag,
-        chequesTypeModel:chequesType ,
+        chequesTypeModel: chequesType,
         // fromChequesById: false,
-       chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
+        chequesDetailsController: chequesDetailsController, chequesSearchController: chequesSearchController,
       ),
     );
   }
@@ -132,10 +130,12 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     );
   }
 
+  void navigateToChequesScreen({required bool onlyDues}) => Get.toNamed(AppRoutes.showAllChequesScreen, arguments: onlyDues);
 
-  void navigateToChequesScreen({required bool onlyDues}) => Get.toNamed(AppRoutes.showAllChequesScreen,arguments:onlyDues );
+  void openChequesDetailsById(String chequesId, BuildContext context) {
+    final ChequesModel chequesModel = getChequesById(chequesId);
+    List<ChequesModel> chequesByCategory = getChequesByType(chequesModel.chequesTypeGuid!);
 
-
+    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel, allCheques: chequesByCategory);
+  }
 }
-
-

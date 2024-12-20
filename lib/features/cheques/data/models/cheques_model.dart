@@ -22,8 +22,8 @@ class ChequesModel implements PlutoAdaptable {
   final String? accPtr;
   final String? accPtrName;
   final String? chequesAccount2Name;
-  final ChequesCollectEntryModel? chequesCollectEntry;
-  final ChequesEntryRelationModel? chequesEntryRelation;
+  // final ChequesCollectEntryModel? chequesCollectEntry;
+  // final ChequesEntryRelationModel? chequesEntryRelation;
 
   final bool? isPayed;
 
@@ -56,8 +56,8 @@ class ChequesModel implements PlutoAdaptable {
     this.chequesDueDate,
     this.chequesNote,
     this.chequesVal,
-    this.chequesCollectEntry,
-    this.chequesEntryRelation,
+    // this.chequesCollectEntry,
+    // this.chequesEntryRelation,
     this.accPtr,
     this.chequesAccount2Guid,
     this.chequesAccount2Name,
@@ -100,8 +100,8 @@ class ChequesModel implements PlutoAdaptable {
       chequesVal: (json['ChequesVal'] as num).toDouble(),
 
       chequesAccount2Guid: json['ChequesAccount2Guid'] as String?,
-      chequesCollectEntry: json['ChequesCollectEntry'] != null ? ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']) : null,
-      chequesEntryRelation: json['chequesEntryRelation'] != null ? ChequesEntryRelationModel.fromJson(json['chequesEntryRelation']) : null,
+      // chequesCollectEntry: json['ChequesCollectEntry'] != null ? ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']) : null,
+      // chequesEntryRelation: json['chequesEntryRelation'] != null ? ChequesEntryRelationModel.fromJson(json['chequesEntryRelation']) : null,
 
       // chequesCustomerGuid: json['ChequesCustomerGuid'] as String,
 
@@ -139,8 +139,8 @@ class ChequesModel implements PlutoAdaptable {
       'ChequesNote': chequesNote,
       'ChequesVal': chequesVal,
       'ChequesAccount2Guid': chequesAccount2Guid,
-      'ChequesCollectEntry': chequesCollectEntry?.toJson(),
-      'ChequesEntryRelation': chequesEntryRelation?.toJson(),
+      // 'ChequesCollectEntry': chequesCollectEntry?.toJson(),
+      // 'ChequesEntryRelation': chequesEntryRelation?.toJson(),
       'AccPtr': accPtr,
       'IsPayed': isPayed,
       'AccPtrName': accPtrName,
@@ -178,8 +178,8 @@ class ChequesModel implements PlutoAdaptable {
     double? chequesVal,
     bool? isPayed,
     String? chequesAccount2Guid,
-    ChequesCollectEntryModel? chequesCollectEntry,
-    ChequesEntryRelationModel? chequesEntryRelation,
+    // ChequesCollectEntryModel? chequesCollectEntry,
+    // ChequesEntryRelationModel? chequesEntryRelation,
     String? accPtr,
     String? accPtrName,
     String? chequesAccount2Name,
@@ -213,8 +213,8 @@ class ChequesModel implements PlutoAdaptable {
       chequesNote: chequesNote ?? this.chequesNote,
       chequesVal: chequesVal ?? this.chequesVal,
       chequesAccount2Guid: chequesAccount2Guid ?? this.chequesAccount2Guid,
-      chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
-      chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
+      // chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
+      // chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
       accPtr: accPtr ?? this.accPtr,
       accPtrName: accPtrName ?? this.accPtrName,
       chequesAccount2Name: chequesAccount2Name ?? this.chequesAccount2Name,

@@ -19,7 +19,6 @@ class ChequesSearchController extends GetxController {
     chequesList = chequesByCategory;
     currentChequesIndex = chequesList.indexOf(cheques);
     currentCheques = chequesList[currentChequesIndex];
-
     this.chequesDetailsController = chequesDetailsController;
     _setCurrentCheques(currentChequesIndex);
     log('cheques length ${chequesList.length}');
