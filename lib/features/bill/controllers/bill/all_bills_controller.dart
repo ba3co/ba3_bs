@@ -47,7 +47,10 @@ class AllBillsController extends FloatingBillDetailsLauncher {
     fetchBillTypes();
   }
 
-  BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
+  BillModel getBillById(String billId) {
+
+    return bills.firstWhere((bill) => bill.billId == billId);
+  }
 
   Future<void> fetchAllBills() async {
     log('fetchBills');
@@ -105,12 +108,15 @@ class AllBillsController extends FloatingBillDetailsLauncher {
   List<BillModel> getBillsByType(String billTypeId) =>
       bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
-  void openBillDetailsById(String billId) {
+  void openBillDetailsById(String billId,BuildContext context) async{
+    await fetchAllBills();
     final BillModel billModel = getBillById(billId);
 
     List<BillModel> billsByCategory = getBillsByType(billModel.billTypeModel.billTypeId!);
 
-    _navigateToBillDetailsWithModel(billModel, billsByCategory, fromBillById: true);
+
+    openFloatingBillDetails(context,billModel.billTypeModel , billModel: billModel, allBills: billsByCategory);
+    // _navigateToBillDetailsWithModel(billModel, billsByCategory, fromBillById: true);
   }
 
   Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
@@ -123,14 +129,14 @@ class AllBillsController extends FloatingBillDetailsLauncher {
     _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
   }
 
-  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel) async {
-    await fetchAllBills();
+  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel,{BillModel? billModel,    List<BillModel>? allBills}) async {
+    // await fetchAllBills();
 
     if (!context.mounted) return;
 
-    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
+    List<BillModel> billsByCategory = allBills??getBillsByType(billTypeModel.billTypeId!);
 
-    final BillModel lastBillModel = _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
+    final BillModel lastBillModel = billModel??_billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _openBillDetailsFloatingWindow(
       context: context,
