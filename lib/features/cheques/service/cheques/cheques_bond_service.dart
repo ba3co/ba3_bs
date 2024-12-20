@@ -54,7 +54,7 @@ mixin ChequesBondService {
       ),
       items: _generatePayEntryBond(
         chequesModel: chequesModel,
-        note:  "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
+        note:  "سند قيد لدفع ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
         amount: chequesModel.chequesVal!,
         date: chequesModel.chequesDate??_currentDate,
         originId: chequesModel.chequesGuid!
@@ -66,7 +66,7 @@ mixin ChequesBondService {
     required ChequesModel chequesModel,
   }) {
     List<EntryBondItemModel> itemBonds = [];
-    final date = _currentDate;
+    final date = chequesModel.chequesDate??_currentDate;
     final note = "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}";
     final amount = chequesModel.chequesVal;
     final originId = chequesModel.chequesGuid;

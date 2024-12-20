@@ -1,4 +1,10 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
@@ -26,6 +32,17 @@ class EntryBondController extends GetxController with FloatingLauncher {
         }
       },
     );
+  }
+
+  Future<EntryBondModel> getEntryBondModelById({required String entryId}) async {
+    late EntryBondModel currentEntryModel;
+
+    final result = await _entryBondsFirebaseRepo.getById(entryId);
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (entryBondModel) => currentEntryModel = entryBondModel,
+    );
+    return currentEntryModel;
   }
 
   // Method to create a bond based on bill type
@@ -77,6 +94,21 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
 
     return accountsIds.toList(); // Convert the Set back to a List.
+  }
+
+  void openOriginForEntryBond(EntryBondModel entryBondModel, BuildContext context) {
+    switch (entryBondModel.origin!.originType!) {
+      case EntryBondType.bond:
+        Get.find<AllBondsController>().openBondDetailsById(entryBondModel.origin!.originId!, context);
+        break;
+      case EntryBondType.bill:
+        Get.find<AllBillsController>().openBillDetailsById(entryBondModel.origin!.originId!, context);
+        break;
+      case EntryBondType.cheque:
+        Get.find<AllChequesController>().openChequesDetailsById(entryBondModel.origin!.originId!, context);
+
+        break;
+    }
   }
 
 //   void _initializeBond(BillTypeModel billTypeModel, AccountModel customerAccount, double total, double vat,

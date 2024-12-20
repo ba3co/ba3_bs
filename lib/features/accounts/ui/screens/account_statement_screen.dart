@@ -17,8 +17,9 @@ class AccountStatementScreen extends StatelessWidget {
         return PlutoGridWithAppBar(
           title: controller.screenTitle,
           onLoaded: (e) {},
-          onSelected: (p0) {
-
+          onSelected: (event) {
+            String originId = event.row?.cells['originId']?.value;
+            controller.launchBondEntryBondScreen(context: context, originId: originId);
           },
           isLoading: controller.isLoading,
           tableSourceModels: controller.filterByDate(),

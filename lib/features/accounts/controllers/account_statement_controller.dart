@@ -4,14 +4,17 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../bond/data/models/entry_bond_model.dart';
+import '../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../data/datasources/remote/accounts_statements_data_source.dart';
 
-class AccountStatementController extends GetxController {
+class AccountStatementController extends GetxController with FloatingLauncher {
   // Dependencies
   final AccountsStatementsRepository _accountsStatementsRepo;
   final AccountsController _accountsController = Get.find<AccountsController>();
@@ -120,8 +123,7 @@ class AccountStatementController extends GetxController {
         return false; // Skip invalid date formats
       }
 
-      return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
-          entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
+      return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) && entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
 
     return filteredEntryBondItems;
@@ -160,13 +162,23 @@ class AccountStatementController extends GetxController {
     });
   }
 
-  String get screenTitle =>
-      'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
+  String get screenTitle => 'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
 
   // Helper Methods
   static String get _formattedToday => DateTime.now().toString().split(" ")[0];
 
   void _showErrorSnackBar(String title, String message) {
     Get.snackbar(title, message, icon: const Icon(Icons.error_outline));
+  }
+
+  void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
+    late EntryBondModel entryBondModel;
+    entryBondModel = await Get.find<EntryBondController>().getEntryBondModelById(entryId: originId);
+    if (!context.mounted) return;
+    launchFloatingWindow(
+      context: context,
+      minimizedTitle: 'سند خاص ب ${entryBondModel.origin!.originType!.label}',
+      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+    );
   }
 }

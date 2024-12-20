@@ -19,7 +19,7 @@ class AllBillsTypesList extends StatelessWidget {
           .map((billTypeModel) => BillITypeItemWidget(
                 bill: billTypeModel,
                 onPressed: () {
-                  allBillsController.openFloatingBillDetails(context, billTypeModel);
+                  allBillsController..fetchAllBills()..openFloatingBillDetails(context, billTypeModel);
                 },
               ))
           .toList(),

@@ -1,4 +1,8 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -52,6 +56,12 @@ class EntryBondDetailsScreen extends StatelessWidget {
               ),
             ],
           )),
+          AppButton(
+              title: "عرض الاصل",
+              onPressed: () {
+                Get.find<EntryBondController>().openOriginForEntryBond(entryBondModel,context);
+              },
+              iconData: Icons.keyboard_return)
         ],
       ),
     );

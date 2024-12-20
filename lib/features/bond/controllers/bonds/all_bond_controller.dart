@@ -57,14 +57,14 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
   List<BondModel> getBondsByType(String bondTypeId) => bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
-  Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel) async {
+  Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel, List<BondModel>? allBond}) async {
     await fetchAllBonds();
 
     if (!context.mounted) return;
 
-    List<BondModel> bondsByCategory = getBondsByType(bondTypeModel.typeGuide);
+    List<BondModel> bondsByCategory = allBond ?? getBondsByType(bondTypeModel.typeGuide);
 
-    final BondModel lastBondModel = _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
+    final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
 
     _openBondDetailsFloatingWindow(
       context: context,
@@ -72,6 +72,13 @@ class AllBondsController extends FloatingBondDetailsLauncher {
       lastBondModel: lastBondModel,
       bondType: bondTypeModel,
     );
+  }
+
+  void openBondDetailsById(String bondId, BuildContext context) {
+    final BondModel bondModel = getBondById(bondId);
+    List<BondModel> bondByCategory = getBondsByType(bondModel.payTypeGuid!);
+
+    openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), bondModel: bondModel, allBond: bondByCategory);
   }
 
   // Opens the 'Bond Details' floating window.
