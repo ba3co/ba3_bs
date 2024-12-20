@@ -1,11 +1,11 @@
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
-import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pluto_grid/pluto_grid.dart';
+
 
 import '../../../../core/helper/enums/enums.dart';
 
-class BondModel extends PlutoAdaptable {
+class BondModel  {
   final String? payTypeGuid;
   final int? payNumber;
   final String? payGuid;
@@ -84,11 +84,7 @@ class BondModel extends PlutoAdaptable {
     return BondModel(payAccountGuid: '',  payItems: PayItems(itemList: []), payNumber: lastBondNumber + 1, payTypeGuid: bondType.typeGuide, payDate: DateTime.now().toIso8601String());
   }
 
-  @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
-    // TODO: implement toPlutoGridFormat
-    throw UnimplementedError();
-  }
+
 
   factory BondModel.fromBondData({
     BondModel? bondModel,

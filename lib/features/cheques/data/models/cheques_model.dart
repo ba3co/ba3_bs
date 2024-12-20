@@ -3,11 +3,11 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
-import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import 'cheques_collect_entry_model.dart';
-import 'cheques_entry_relation_model.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
+
+
 
 class ChequesModel implements PlutoAdaptable {
   final String? chequesTypeGuid;
@@ -300,6 +300,7 @@ class ChequesModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
       PlutoColumn(title: "رقم القيد", field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true): chequesGuid,
+      plutoAutoIdColumn(): '',
       PlutoColumn(title: "الرقم التسلسلي", field: AppConstants.chequesNumber, type: PlutoColumnType.number()): chequesNumber,
       PlutoColumn(title: "رقم الشيك", field: AppConstants.chequesNum, type: PlutoColumnType.number()): chequesNumber,
       PlutoColumn(

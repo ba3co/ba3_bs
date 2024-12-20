@@ -37,7 +37,7 @@ mixin ChequesBondService {
         chequesModel: chequesModel,
         note:  "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
         amount: chequesModel.chequesVal!,
-        date: _currentDate,
+        date:chequesModel.chequesDate?? _currentDate,
         originId: chequesModel.chequesGuid!
       ),
     );
@@ -56,7 +56,7 @@ mixin ChequesBondService {
         chequesModel: chequesModel,
         note:  "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
         amount: chequesModel.chequesVal!,
-        date: _currentDate,
+        date: chequesModel.chequesDate??_currentDate,
         originId: chequesModel.chequesGuid!
       ),
     );

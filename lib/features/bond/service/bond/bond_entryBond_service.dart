@@ -31,7 +31,7 @@ mixin BondEntryBondService {
 
       itemBonds.add(EntryBondItemModel(
         originId: originId,
-        date: date,
+        date: bondModel.payDate??date,
          note: note,
         accountName: element.entryAccountName,
         accountId: element.entryAccountGuid,

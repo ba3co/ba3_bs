@@ -4,6 +4,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class PayItems {
@@ -145,8 +146,9 @@ class PayItem extends PlutoAdaptable<BondType> {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([BondType? type]) {
     return {
+
       PlutoColumn(
-        title: "رقم",
+        title: "رقم ",
         field: AppConstants.entryNumber,
         width: 100,
         type: PlutoColumnType.text(),

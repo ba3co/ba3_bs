@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
@@ -46,7 +47,7 @@ class BondsDataSource extends DatasourceBase<BondModel> with FirebaseSequentialN
   }
 
   Future<BondModel> _createNewBond(BondModel bond) async {
-    final newBondNumber = await getNextNumber(path, bond.payTypeGuid!);
+    final newBondNumber = await getNextNumber(path, BondType.byTypeGuide(bond.payTypeGuid!).value);
 
     final newBondJson = bond.copyWith(payNumber: newBondNumber).toJson();
 

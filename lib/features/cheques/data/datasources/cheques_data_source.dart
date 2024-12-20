@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
@@ -47,7 +48,7 @@ class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequen
   }
 
   Future<ChequesModel> _createNewCheques(ChequesModel cheques) async {
-    final newChequesNumber = await getNextNumber(path, cheques.chequesTypeGuid!);
+    final newChequesNumber = await getNextNumber(path, ChequesType.byTypeGuide(cheques.chequesTypeGuid!).value);
     final newChequesJson = cheques.copyWith(chequesNumber: newChequesNumber).toJson();
     final data = await databaseService.add(path: path, data: newChequesJson);
     return ChequesModel.fromJson(data);

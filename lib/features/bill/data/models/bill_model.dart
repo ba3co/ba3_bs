@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import 'bill_details.dart';
 import 'bill_items.dart';
@@ -147,7 +148,8 @@ class BillModel implements PlutoAdaptable {
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) => {
-        PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text()): billId ?? '',
+        PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text(),hide: true): billId ?? '',
+    plutoAutoIdColumn(): '',
         PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.text()):
             billDetails.billNumber ?? '',
         PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.text()): billDetails.billDate ?? '',

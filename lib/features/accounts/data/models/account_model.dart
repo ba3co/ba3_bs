@@ -4,6 +4,8 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../core/widgets/pluto_auto_id_column.dart';
+
 class AccountModel implements PlutoAdaptable {
   String? id;
   String? accName;
@@ -191,6 +193,7 @@ class AccountModel implements PlutoAdaptable {
     return {
       PlutoColumn(field:  'الرقم التعريفي',type: PlutoColumnType.text(), title: 'الرقم التعريفي')
           : id,
+      plutoAutoIdColumn(): '',
       PlutoColumn(field:   'رقم الحساب',type: PlutoColumnType.text(), title:  'رقم الحساب')
           : accNumber,PlutoColumn(field:  'رمز الحساب',type: PlutoColumnType.text(), title: 'رمز الحساب')
           : accCode,PlutoColumn(field:  'اسم الحساب',type: PlutoColumnType.text(), title: 'اسم الحساب')
