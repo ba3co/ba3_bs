@@ -4,7 +4,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 class PayItems {

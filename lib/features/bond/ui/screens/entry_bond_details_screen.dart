@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/widgets/grid_column_item.dart';
 import '../../data/models/entry_bond_model.dart';
-import '../widgets/bond_record_data_source.dart';
+import '../widgets/entry_bond_details/bond_record_data_source.dart';
 
 class EntryBondDetailsScreen extends StatelessWidget {
   const EntryBondDetailsScreen({super.key, required this.entryBondModel});

@@ -151,7 +151,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
       );
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) => {
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([void type]) => {
         PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text(), hide: true): billId ?? '',
         plutoAutoIdColumn(): '',
         PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.text()): billDetails.billNumber ?? '',

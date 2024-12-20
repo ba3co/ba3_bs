@@ -24,11 +24,11 @@ class ChequesCollectEntryModel {
   }
 
   ChequesCollectEntryModel copyWith({
-    ChequesEntry? chequesEntry,
+    ChequesEntry? chequesEntryModel,
     int? entryCount,
   }) {
     return ChequesCollectEntryModel(
-      chequesEntryModel: chequesEntry ?? this.chequesEntryModel,
+      chequesEntryModel: chequesEntryModel ?? this.chequesEntryModel,
       entryCount: entryCount ?? this.entryCount,
     );
   }

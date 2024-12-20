@@ -1,6 +1,4 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
-import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';

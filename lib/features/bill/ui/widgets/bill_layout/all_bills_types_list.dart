@@ -1,8 +1,6 @@
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
+import 'package:ba3_bs/core/widgets/item_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'bill_type_item_widget.dart';
 
 class AllBillsTypesList extends StatelessWidget {
   const AllBillsTypesList({super.key, required this.allBillsController});
@@ -11,18 +9,30 @@ class AllBillsTypesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
+    return Column(
+      children: [
+        ...allBillsController.billsTypes
+            .map((billTypeModel) => ItemWidget(
+          text: billTypeModel.fullName!,
+          onTap: () {
+            allBillsController..fetchAllBills()..openFloatingBillDetails(context, billTypeModel);
+          },
+        ))
+
+      ],
+    );
+   /* return Wrap(
       alignment: WrapAlignment.spaceEvenly,
       spacing: 10.w,
       runSpacing: 10.0.h,
       children: allBillsController.billsTypes
-          .map((billTypeModel) => BillITypeItemWidget(
-                bill: billTypeModel,
-                onPressed: () {
+          .map((billTypeModel) => ItemWidget(
+                text: billTypeModel.billTypeLabel!,
+                onTap: () {
                   allBillsController..fetchAllBills()..openFloatingBillDetails(context, billTypeModel);
                 },
               ))
           .toList(),
-    );
+    );*/
   }
 }

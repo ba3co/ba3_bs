@@ -17,7 +17,7 @@ import '../../controllers/bonds/bond_search_controller.dart';
 import '../../controllers/entry_bond/entry_bond_controller.dart';
 import '../../data/models/bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
-import 'bond_entryBond_service.dart';
+import 'bond_entry_bond_service.dart';
 
 class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
   final IRecodesPlutoController<PayItem> plutoController;

@@ -4,7 +4,7 @@ import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/bond_layout_app_bar.
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
-import '../widgets/bond_layout/bond_type_item_widget.dart';
+import '../../../../core/widgets/item_widget.dart';
 
 class BondLayout extends StatelessWidget {
   const BondLayout({super.key});
@@ -21,11 +21,11 @@ class BondLayout extends StatelessWidget {
               (bondType) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: BondTypeItemWidget(
-                    onPressed: () {
+                  child: ItemWidget(
+                    onTap: () {
                       controller.openFloatingBondDetails(context, bondType);
                     },
-                    bond: bondType,
+                    text: bondType.value,
                   ),
                 );
               },

@@ -22,7 +22,7 @@ class AccountStatementScreen extends StatelessWidget {
             controller.launchBondEntryBondScreen(context: context, originId: originId);
           },
           isLoading: controller.isLoading,
-          tableSourceModels: controller.filterByDate(),
+          tableSourceModels: controller.filteredEntryBondItems,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(

@@ -2,10 +2,8 @@ import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../widgets/bill_layout/all_bills_types_list.dart';
+import '../../../../core/widgets/item_widget.dart';
 import '../widgets/bill_layout/bill_layout_app_bar.dart';
-import '../widgets/bill_layout/display_all_billIs_button.dart.dart';
 
 class BillLayout extends StatelessWidget {
   const BillLayout({super.key});
@@ -18,17 +16,35 @@ class BillLayout extends StatelessWidget {
         appBar: billLayoutAppBar(),
         body: GetBuilder<AllBillsController>(
             builder: (controller) => ListView(
-                  padding: const EdgeInsets.all(15.0),
+                  // padding: const EdgeInsets.all(15.0),
                   children: [
-                    AllBillsTypesList(allBillsController: controller),
-                    const VerticalSpace(20),
-                    DisplayAllBillsButton(
+                    // AllBillsTypesList(allBillsController: controller),
+                    ...controller.billsTypes
+                        .map((billTypeModel) => ItemWidget(
+                      text: billTypeModel.fullName!,
+                      color: Color(billTypeModel.color!),
+                      onTap: () {
+                        controller..fetchAllBills()..openFloatingBillDetails(context, billTypeModel);
+                      },
+                    )),
+
+                    const VerticalSpace(),
+                    ItemWidget(
+                      text: "عرض جميع الفواتير",
                       onTap: () {
                         controller
                           ..fetchAllBills()
                           ..navigateToAllBillsScreen();
                       },
                     ),
+
+                    /*DisplayAllBillsButton(
+                      onTap: () {
+                        controller
+                          ..fetchAllBills()
+                          ..navigateToAllBillsScreen();
+                      },
+                    ),*/
                   ],
                 )),
       ),
