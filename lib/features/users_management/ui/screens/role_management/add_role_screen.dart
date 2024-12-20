@@ -1,14 +1,13 @@
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../login/controllers/user_management_controller.dart';
+import '../../../controllers/user_management_controller.dart';
 import '../../../data/models/role_model.dart';
 
 class AddRoleScreen extends StatelessWidget {
-  const AddRoleScreen({super.key, this.roleModel});
-
-  final RoleModel? roleModel;
+  const AddRoleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +19,16 @@ class AddRoleScreen extends StatelessWidget {
             child: GetBuilder<UserManagementController>(builder: (controller) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(controller.oldRoleModel?.roleName ?? "دور جديد"),
+                  title: Text(controller.roleModel?.roleName ?? 'دور جديد'),
                   actions: [
                     AppButton(
-                        title: controller.oldRoleModel?.roleId == null ? "إضافة" : "تعديل",
-                        onPressed: () {
-                          if (controller.oldRoleModel?.roleName?.isNotEmpty ?? false) {
-                            controller.addRole();
-                          }
-                        },
-                        iconData: controller.oldRoleModel?.roleId == null ? Icons.add : Icons.edit),
-                    const SizedBox(width: 10),
+                      title: controller.roleModel?.roleId == null ? 'إضافة' : 'تعديل',
+                      onPressed: () {
+                        controller.saveOrUpdateRole(existingRoleModel: controller.roleModel);
+                      },
+                      iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
+                    ),
+                    const HorizontalSpace(),
                   ],
                 ),
                 body: Padding(
@@ -38,34 +36,79 @@ class AddRoleScreen extends StatelessWidget {
                   child: ListView(
                     children: [
                       const Text(
-                        "الاسم",
+                        'الاسم',
                         style: TextStyle(fontSize: 16),
                       ),
-                      Container(
-                        color: Colors.grey.shade200,
-                        child: TextFormField(
-                          controller: controller.roleNameController,
+                      Form(
+                        key: controller.roleFormKey,
+                        child: Container(
+                          color: Colors.grey.shade200,
+                          child: TextFormField(
+                            controller: controller.roleNameController,
+                            validator: (value) => controller.validator(value, 'أسم الصلاحية'),
+                          ),
                         ),
                       ),
-                      for (final role in RoleItemType.values)
+                      const VerticalSpace(20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'تحديد الكل',
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              icon: Icon(controller.areAllRolesSelected() ? Icons.clear_all : Icons.select_all),
+                              onPressed: () {
+                                // Toggle select/deselect all roles
+                                if (controller.areAllRolesSelected()) {
+                                  controller.deselectAllRoles();
+                                } else {
+                                  controller.selectAllRoles();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      for (final roleType in RoleItemType.values)
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                role.value,
-                                style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    roleType.value,
+                                    style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      controller.areAllRolesSelectedForType(roleType)
+                                          ? Icons.clear_all_outlined
+                                          : Icons.select_all_outlined,
+                                    ),
+                                    onPressed: () {
+                                      // Toggle select/deselect all roles under this RoleItemType
+                                      if (controller.areAllRolesSelectedForType(roleType)) {
+                                        controller.deselectAllRolesForType(roleType);
+                                      } else {
+                                        controller.selectAllRolesForType(roleType);
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 50),
                                 child: Column(
                                   children: [
-                                    checkBoxWidget(role, RoleItem.userRead, controller),
-                                    checkBoxWidget(role, RoleItem.userWrite, controller),
-                                    checkBoxWidget(role, RoleItem.userUpdate, controller),
-                                    checkBoxWidget(role, RoleItem.userDelete, controller),
-                                    checkBoxWidget(role, RoleItem.userAdmin, controller),
+                                    for (final roleItem in RoleItem.values)
+                                      checkBoxWidget(roleType, roleItem, controller),
                                   ],
                                 ),
                               ),
@@ -88,31 +131,34 @@ class AddRoleScreen extends StatelessWidget {
       children: [
         StatefulBuilder(builder: (context, setState) {
           return Checkbox(
-              fillColor: WidgetStatePropertyAll(Colors.blue.shade800),
-              checkColor: Colors.white,
-              overlayColor: const WidgetStatePropertyAll(Colors.white),
-              side: const BorderSide(color: Colors.black),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5), side: const BorderSide(color: Colors.white)),
-              value: (controller.rolesMap[key]?.contains(roleItem) ?? false),
-              onChanged: (newValue) {
-                if (newValue!) {
-                  if (controller.rolesMap[key] == null) {
-                    controller.rolesMap[key] = [roleItem];
-                  } else {
-                    controller.rolesMap[key]?.add(roleItem);
-                  }
+            fillColor: WidgetStatePropertyAll(Colors.blue.shade800),
+            checkColor: Colors.white,
+            overlayColor: const WidgetStatePropertyAll(Colors.white),
+            side: const BorderSide(color: Colors.black),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+              side: const BorderSide(color: Colors.white),
+            ),
+            value: (controller.rolesMap[key]?.contains(roleItem) ?? false),
+            onChanged: (newValue) {
+              if (newValue!) {
+                if (controller.rolesMap[key] == null) {
+                  controller.rolesMap[key] = [roleItem];
                 } else {
-                  controller.rolesMap[key]?.remove(roleItem);
+                  controller.rolesMap[key]?.add(roleItem);
                 }
+              } else {
+                controller.rolesMap[key]?.remove(roleItem);
+              }
 
-                setState(() {});
-              });
+              setState(() {});
+            },
+          );
         }),
         Text(
           roleItem.value,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        )
+        ),
       ],
     );
   }

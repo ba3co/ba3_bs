@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../login/controllers/user_management_controller.dart';
+import '../../../controllers/user_management_controller.dart';
 import '../../widgets/user_management/add_edit_user_form.dart';
 
 class AddUserScreen extends StatelessWidget {

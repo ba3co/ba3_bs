@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ba3_bs/features/login/data/models/role_model.dart';
+import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,65 +10,38 @@ import 'package:pinput/pinput.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/router/app_routes.dart';
+import '../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/utils/generate_id.dart';
-import '../../users_management/data/models/role_model.dart';
-import '../data/models/card_model.dart';
-import '../data/models/user_model.dart';
-import '../data/repositories/user_repo.dart';
-import 'nfc_cards_controller.dart';
+import '../../login/controllers/nfc_cards_controller.dart';
+import '../../login/data/models/card_model.dart';
+import '../../login/data/models/user_model.dart';
+import '../../login/data/repositories/user_repo.dart';
+import '../data/models/role_model.dart';
 
-class UserManagementController extends GetxController {
+class UserManagementController extends GetxController with AppValidator {
   final UserManagementRepository _userRepository;
 
-  UserManagementController(this._userRepository) {
-    getAllRoles();
-    initAllUser();
+  final DataSourceRepository<RoleModel> _rolesFirebaseRepo;
+
+  UserManagementController(this._userRepository, this._rolesFirebaseRepo) {
+    // getAllRoles();
+    // initAllUser();
   }
+
+  // Services
+  late final RoleService _roleService;
 
   TextEditingController userNameController = TextEditingController();
   TextEditingController pinController = TextEditingController();
 
-  Map<String, OldRoleModel> allRoles = {};
+  Map<String, OldRoleModel> oldAllRoles = {};
+
+  List<RoleModel> allRoles = [];
 
   RoleModel? roleModel;
-
-  List<RoleModel> roles = [
-    RoleModel(
-      roleId: 'sellersRoleId',
-      roleName: 'sellers',
-      roles: {
-        RoleItemType.viewBill: [
-          RoleItem.userRead,
-          RoleItem.userWrite,
-          RoleItem.userUpdate,
-          RoleItem.userDelete,
-          RoleItem.userAdmin,
-        ],
-      },
-    ),
-    RoleModel(
-      roleId: 'readRoleId',
-      roleName: 'read',
-      roles: {},
-    ),
-    RoleModel(
-      roleId: 'adminRoleId',
-      roleName: 'admin',
-      roles: RolesConfig.adminRoles,
-    ),
-    RoleModel(
-      roleId: 'noRoleId',
-      roleName: 'no role',
-      roles: {},
-    ),
-    RoleModel(
-      roleId: 'cashierRoleId',
-      roleName: 'كاشير',
-      roles: {},
-    ),
-  ];
 
   Map<String, UserModel> allUserList = {};
 
@@ -81,7 +55,24 @@ class UserManagementController extends GetxController {
   final bool isAdmin = true;
 
   Map<RoleItemType, List<RoleItem>> rolesMap = {};
+
+  final roleFormKey = GlobalKey<FormState>();
   TextEditingController roleNameController = TextEditingController();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeServices();
+  }
+
+  // Initializer
+  void _initializeServices() {
+    _roleService = RoleService();
+  }
+
+  bool validateForm() => roleFormKey.currentState?.validate() ?? false;
+
+  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   initUser([String? userId]) {
     if (userId == null) {
@@ -100,22 +91,63 @@ class UserManagementController extends GetxController {
       roleModel = role;
       rolesMap = role.roles;
 
-      userNameController.text = role.roleName ?? "";
+      roleNameController.text = role.roleName ?? '';
+    } else {
+      roleModel = null;
+      rolesMap = {};
+
+      roleNameController.text = '';
     }
+  }
+
+  // Check if all roles are selected
+  bool areAllRolesSelected() {
+    return RoleItemType.values.every((type) => rolesMap[type]?.length == RoleItem.values.length);
+  }
+
+  // Check if all roles are selected for a specific RoleItemType
+  bool areAllRolesSelectedForType(RoleItemType type) {
+    return rolesMap[type]?.length == RoleItem.values.length;
+  }
+
+  // Select all roles
+  void selectAllRoles() {
+    for (final type in RoleItemType.values) {
+      rolesMap[type] = RoleItem.values.toList();
+    }
+    update();
+  }
+
+  // Deselect all roles
+  void deselectAllRoles() {
+    rolesMap.clear();
+    update();
+  }
+
+  // Select all roles for a specific RoleItemType
+  void selectAllRolesForType(RoleItemType type) {
+    rolesMap[type] = RoleItem.values.toList();
+    update();
+  }
+
+  // Deselect all roles for a specific RoleItemType
+  void deselectAllRolesForType(RoleItemType type) {
+    rolesMap[type] = [];
+    update();
   }
 
   // Fetch roles using the repository
   Future<void> getAllRoles() async {
-    final result = await _userRepository.getAllRoles();
+    final result = await _rolesFirebaseRepo.getAll();
+
     result.fold(
-      (failure) => Get.snackbar("Error", failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedRoles) {
         allRoles = fetchedRoles;
       },
     );
-    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
-          (value) => update(),
-        );
+
+    update();
   }
 
   void checkUserStatus() async {
@@ -249,6 +281,46 @@ class UserManagementController extends GetxController {
     update();
   }
 
+  Future<void> saveOrUpdateRole({RoleModel? existingRoleModel}) async {
+    // Validate the form first
+    if (!validateForm()) return;
+
+    // Create the role model from the provided data
+    final updatedRoleModel =
+        _createRoleModel(existingRoleModel: existingRoleModel, roles: rolesMap, roleName: roleNameController.text);
+
+    // Handle null role model
+    if (updatedRoleModel == null) {
+      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات!');
+      return;
+    }
+
+    // Save the role to Firestore
+    final result = await _rolesFirebaseRepo.save(updatedRoleModel);
+
+    // Handle the result (success or failure)
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+    );
+  }
+
+  RoleModel? _createRoleModel({
+    required Map<RoleItemType, List<RoleItem>> roles,
+    required String roleName,
+    RoleModel? existingRoleModel,
+  }) {
+    if (rolesMap.isEmpty) {
+      return null;
+    }
+
+    return _roleService.createRoleModel(
+      roleModel: existingRoleModel,
+      roles: roles,
+      roleName: roleName,
+    );
+  }
+
   void startTimeReport({required String userId, DateTime? customDate}) async {
     final result = await _userRepository.startTimeReport(userId, customDate: customDate);
     result.fold(
@@ -326,7 +398,7 @@ UserModel getUserModelById(id) {
 bool checkPermission(role, page) {
   UserManagementController userManagementViewController = Get.find<UserManagementController>();
   Map<String, List<String>>? userRole =
-      userManagementViewController.allRoles[userManagementViewController.myUserModel?.userRole]?.roles;
+      userManagementViewController.oldAllRoles[userManagementViewController.myUserModel?.userRole]?.roles;
   if (userRole?[page]?.contains(role) ?? false) {
     return true;
   } else {
@@ -337,7 +409,7 @@ bool checkPermission(role, page) {
 bool checkMainPermission(role) {
   UserManagementController userManagementViewController = Get.find<UserManagementController>();
   Map<String, List<String>>? userRole =
-      userManagementViewController.allRoles[userManagementViewController.myUserModel?.userRole]?.roles;
+      userManagementViewController.oldAllRoles[userManagementViewController.myUserModel?.userRole]?.roles;
   if (userRole?[role]?.isNotEmpty ?? false) {
     return true;
   } else {
@@ -348,7 +420,7 @@ bool checkMainPermission(role) {
 Future<bool> hasPermissionForOperation(role, page) async {
   UserManagementController userManagementViewController = Get.find<UserManagementController>();
   Map<String, List<String>>? userRole =
-      userManagementViewController.allRoles[userManagementViewController.myUserModel?.userRole]?.roles;
+      userManagementViewController.oldAllRoles[userManagementViewController.myUserModel?.userRole]?.roles;
   String error = "";
   // _ndefWrite();
   if (userRole?[page]?.contains(role) ?? false) {
@@ -380,7 +452,7 @@ Future<bool> hasPermissionForOperation(role, page) async {
               if (cardViewController.allCards.containsKey(cardId)) {
                 CardModel cardModel = cardViewController.allCards[cardId]!;
                 Map<String, List<String>>? newUserRole =
-                    userManagementViewController.allRoles[getUserModelById(cardModel.userId).userRole]?.roles;
+                    userManagementViewController.oldAllRoles[getUserModelById(cardModel.userId).userRole]?.roles;
                 if (newUserRole?[page]?.contains(role) ?? false) {
                   Get.back(result: true);
                   NfcManager.instance.stopSession();
@@ -414,7 +486,7 @@ Future<bool> hasPermissionForOperation(role, page) async {
                             .firstWhereOrNull((element) => element.userPin == inputPin);
                         if (user != null) {
                           Map<String, List<String>>? newUserRole =
-                              userManagementViewController.allRoles[user.userRole]?.roles;
+                              userManagementViewController.oldAllRoles[user.userRole]?.roles;
                           if (newUserRole?[page]?.contains(role) ?? false) {
                             Get.back(result: true);
                             NfcManager.instance.stopSession();

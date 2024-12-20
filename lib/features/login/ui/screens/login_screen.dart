@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/app_spacer.dart';
+import '../../../users_management/controllers/user_management_controller.dart';
 import '../../controllers/nfc_cards_controller.dart';
-import '../../controllers/user_management_controller.dart';
 import '../widgets/loading_indicator.dart';
 import '../widgets/login_header_text.dart';
 import '../widgets/pin_input_fields.dart';

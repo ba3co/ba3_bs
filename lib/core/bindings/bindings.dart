@@ -10,6 +10,8 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
+import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -27,7 +29,6 @@ import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
 import '../../features/login/controllers/nfc_cards_controller.dart';
-import '../../features/login/controllers/user_management_controller.dart';
 import '../../features/login/data/datasources/user_management_service.dart';
 import '../../features/login/data/repositories/user_repo.dart';
 import '../../features/materials/data/repositories/materials_repository.dart';
@@ -35,6 +36,7 @@ import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
+import '../../features/users_management/controllers/user_management_controller.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
@@ -66,8 +68,13 @@ class AppBindings extends Bindings {
     final DataSourceRepository<BondModel> bondsFirebaseRepo = DataSourceRepository(
       BondsDataSource(databaseService: fireStoreService),
     );
+
     final DataSourceRepository<ChequesModel> chequesFirebaseRepo = DataSourceRepository(
       ChequesDataSource(databaseService: fireStoreService),
+    );
+
+    final DataSourceRepository<RoleModel> rolesFirebaseRepo = DataSourceRepository(
+      RolesDataSource(databaseService: fireStoreService),
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
@@ -104,17 +111,15 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
 
-    Get.lazyPut(() => UserManagementController(userManagementRepo), fenix: true);
+    Get.lazyPut(() => UserManagementController(userManagementRepo, rolesFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 
-
     Get.lazyPut(() => AllBillsController(patternsFirebaseRepo, billsFirebaseRepo, billJsonExportRepo), fenix: true);
     Get.lazyPut(() => AllBondsController(bondsFirebaseRepo), fenix: true);
-    Get.lazyPut(() => AllChequesController( chequesFirebaseRepo), fenix: true);
+    Get.lazyPut(() => AllChequesController(chequesFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => BillDetailsPlutoController(), fenix: true);
-
 
     Get.lazyPut(() => MaterialController(MaterialRepository()), fenix: true);
     Get.lazyPut(() => AccountsController(AccountsRepository()), fenix: true);
@@ -125,7 +130,5 @@ class AppBindings extends Bindings {
 
     Get.lazyPut(() => BillSearchController(), fenix: true);
     Get.lazyPut(() => AccountStatementController(accountsStatementsRepo), fenix: true);
-    // Get.lazyPut(() => BondDetailsController(), fenix: true);
-    // Get.lazyPut(() => BondRecordPlutoController(), fenix: true);
   }
 }

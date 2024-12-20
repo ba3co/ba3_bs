@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/router/app_routes.dart';
-import '../../../../login/controllers/user_management_controller.dart';
+import '../../../../users_management/controllers/user_management_controller.dart';
 
 AppBar chequesLayoutAppBar() {
   return AppBar(

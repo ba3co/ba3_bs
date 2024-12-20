@@ -93,7 +93,9 @@ class AccountStatementController extends GetxController {
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedItems) {
         entryBondItems.assignAll(fetchedItems);
-        _calculateValues();
+        filterByDate();
+
+        _calculateValues(filteredEntryBondItems);
       },
     );
 
@@ -101,7 +103,7 @@ class AccountStatementController extends GetxController {
     update();
   }
 
-  List<EntryBondItemModel> filterByDate() {
+  void filterByDate() {
     final DateFormat dateFormat = DateFormat('dd-MM-yyyy'); // Match your date format
 
     final DateTime startDate = dateFormat.parse(startDateController.text);
@@ -123,8 +125,6 @@ class AccountStatementController extends GetxController {
       return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
           entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
-
-    return filteredEntryBondItems;
   }
 
   /// Navigation handler
@@ -133,11 +133,11 @@ class AccountStatementController extends GetxController {
   }
 
   /// Calculates debit, credit, and total values
-  void _calculateValues() {
-    if (filteredEntryBondItems.isEmpty) {
+  void _calculateValues(List<EntryBondItemModel> items) {
+    if (items.isEmpty) {
       _resetValues();
     } else {
-      _updateValues();
+      _updateValues(items);
     }
   }
 
@@ -147,18 +147,17 @@ class AccountStatementController extends GetxController {
     creditValue = 0.0;
   }
 
-  _updateValues() {
-    debitValue = _calculateSum(BondItemType.debtor);
-    creditValue = _calculateSum(BondItemType.creditor);
+  _updateValues(List<EntryBondItemModel> items) {
+    debitValue = _calculateSum(items: items, type: BondItemType.debtor);
+    creditValue = _calculateSum(items: items, type: BondItemType.creditor);
 
     totalValue = debitValue - creditValue;
   }
 
-  double _calculateSum(BondItemType type) {
-    return entryBondItems.fold(0.0, (sum, item) {
-      return item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum;
-    });
-  }
+  double _calculateSum({required List<EntryBondItemModel> items, required BondItemType type}) => items.fold(
+        0.0,
+        (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
+      );
 
   String get screenTitle =>
       'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';

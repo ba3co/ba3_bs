@@ -12,7 +12,7 @@ class RoleModel {
   // Convert RoleModel object to JSON
   Map<String, dynamic> toJson() {
     return {
-      'roleId': roleId,
+      'docId': roleId,
       'roleName': roleName,
       'roles': roles.map((roleItemType, roleItems) {
         // Convert RoleItemType to its string value, and map RoleItem list to their string values
@@ -24,7 +24,7 @@ class RoleModel {
   // Create RoleModel object from JSON
   factory RoleModel.fromJson(Map<String, dynamic> json) {
     return RoleModel(
-      roleId: json['roleId'],
+      roleId: json['docId'],
       roleName: json['roleName'],
       roles: (json['roles'] as Map<String, dynamic>?)?.map((key, value) {
             // Convert the string key to RoleItemType and map each RoleItem string back to the enum
@@ -36,6 +36,19 @@ class RoleModel {
             );
           }) ??
           {},
+    );
+  }
+
+  // CopyWith method to create a new RoleModel with specific changes
+  RoleModel copyWith({
+    String? roleId,
+    String? roleName,
+    Map<RoleItemType, List<RoleItem>>? roles,
+  }) {
+    return RoleModel(
+      roleId: roleId ?? this.roleId,
+      roleName: roleName ?? this.roleName,
+      roles: roles ?? this.roles,
     );
   }
 }
@@ -241,5 +254,57 @@ class RolesConfig {
       RoleItem.userDelete,
       RoleItem.userAdmin,
     ],
+  };
+
+  // Seller roles (similar to admin but potentially with fewer permissions)
+  static final sellerRoles = {
+    RoleItemType.viewBill: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+      RoleItem.userUpdate,
+      RoleItem.userDelete,
+    ],
+    RoleItemType.viewProduct: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+    ],
+    RoleItemType.viewStore: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+    ],
+    RoleItemType.viewSeller: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+    ],
+    // Define other role types here as per the seller's responsibilities...
+  };
+
+  // Cashier roles (could have limited access compared to admin or seller)
+  static final cashierRoles = {
+    RoleItemType.viewBill: [
+      RoleItem.userRead,
+      RoleItem.userWrite,
+    ],
+    RoleItemType.viewStore: [
+      RoleItem.userRead,
+    ],
+    // Define other role types here specific to cashier responsibilities...
+  };
+
+  // Read-only roles (could have minimal permissions, only read access)
+  static final readOnlyRoles = {
+    RoleItemType.viewBill: [
+      RoleItem.userRead,
+    ],
+    RoleItemType.viewProduct: [
+      RoleItem.userRead,
+    ],
+    RoleItemType.viewStore: [
+      RoleItem.userRead,
+    ],
+    RoleItemType.viewSeller: [
+      RoleItem.userRead,
+    ],
+    // Add other read-only permissions here...
   };
 }

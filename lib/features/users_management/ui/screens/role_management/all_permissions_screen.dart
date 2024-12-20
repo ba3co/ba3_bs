@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../login/controllers/user_management_controller.dart';
+import '../../../controllers/user_management_controller.dart';
 
 class AllPermissionsScreen extends StatelessWidget {
   const AllPermissionsScreen({super.key});
@@ -16,10 +16,10 @@ class AllPermissionsScreen extends StatelessWidget {
             textDirection: TextDirection.rtl,
             child: Scaffold(
                 appBar: AppBar(
-                  title: const Text("إدارة الصلاحيات"),
+                  title: const Text('إدارة الصلاحيات'),
                   actions: [
                     AppButton(
-                        title: "إضافة",
+                        title: 'إضافة',
                         onPressed: () {
                           Get.find<UserManagementController>().navigateToAddRoleScreen();
                         },
@@ -34,12 +34,12 @@ class AllPermissionsScreen extends StatelessWidget {
                       width: double.infinity,
                       child: Wrap(
                         children: List.generate(
-                          controller.roles.length,
+                          controller.allRoles.length,
                           (index) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                controller.navigateToAddRoleScreen(controller.roles[index]);
+                                controller.navigateToAddRoleScreen(controller.allRoles[index]);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(4),
@@ -50,7 +50,7 @@ class AllPermissionsScreen extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Text(
-                                      controller.roles[index].roleName ?? "",
+                                      controller.allRoles[index].roleName ?? '',
                                       style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                                     ),
                                   ],

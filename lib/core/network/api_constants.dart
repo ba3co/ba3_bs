@@ -9,7 +9,6 @@ class ApiConstants {
   static const String entryBonds = 'entry_bonds';
   static const String accountsStatements = 'accounts_statements';
   static const String chequesPath = 'cheques';
-
-
   static const String entryBondsItems = 'entry_bonds_items';
+  static const String roles = 'roles';
 }

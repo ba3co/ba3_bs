@@ -3,8 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-import '../../controllers/user_management_controller.dart';
-
+import '../../../users_management/controllers/user_management_controller.dart';
 
 class PinInputFields extends StatelessWidget {
   const PinInputFields({super.key, required this.controller});
@@ -30,6 +29,5 @@ class PinInputFields extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
         ));
-
   }
 }

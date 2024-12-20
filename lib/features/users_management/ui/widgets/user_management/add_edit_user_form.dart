@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../login/controllers/user_management_controller.dart';
 import '../../../../sellers/controllers/sellers_controller.dart';
+import '../../../controllers/user_management_controller.dart';
 
 class AddEditUserForm extends StatelessWidget {
   const AddEditUserForm({
@@ -76,7 +76,7 @@ class AddEditUserForm extends StatelessWidget {
                   child: DropdownButton<String>(
                     icon: const SizedBox(),
                     value: userManagementController.initAddUserModel?.userRole,
-                    items: userManagementController.roles
+                    items: userManagementController.allRoles
                         .map((role) => DropdownMenuItem(value: role.roleId, child: Text(role.roleName!)))
                         .toList(),
                     onChanged: (newValue) {

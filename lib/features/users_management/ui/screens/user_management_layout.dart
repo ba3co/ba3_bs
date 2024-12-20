@@ -1,4 +1,4 @@
-import 'package:ba3_bs/features/login/controllers/user_management_controller.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -33,7 +33,9 @@ class UserManagementLayout extends StatelessWidget {
                         AppMenuItem(
                             text: 'إدارة الصلاحيات',
                             onTap: () {
-                              userManagementController.navigateToLAllPermissionsScreen();
+                              userManagementController
+                                ..getAllRoles()
+                                ..navigateToLAllPermissionsScreen();
                             }),
                       ],
                     ),

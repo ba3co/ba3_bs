@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../login/controllers/user_management_controller.dart';
+import '../../../controllers/user_management_controller.dart';
 import 'add_user_screen.dart';
 
 class AllUserScreen extends StatelessWidget {
@@ -19,10 +19,10 @@ class AllUserScreen extends StatelessWidget {
               builder: (controller) {
                 return Scaffold(
                   appBar: AppBar(
-                    title: const Text("إدارة المستخدمين"),
+                    title: const Text('إدارة المستخدمين'),
                     actions: [
                       AppButton(
-                          title: "إضافة",
+                          title: 'إضافة',
                           onPressed: () {
                             Get.find<UserManagementController>().initUser();
                             Get.to(() => const AddUserScreen());
