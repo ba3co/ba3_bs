@@ -5,17 +5,17 @@ class DrawerListTile extends StatelessWidget {
     super.key,
     required this.title,
     required this.index,
-    required this.press,
+    required this.onTap,
   });
 
   final String title;
   final int index;
-  final VoidCallback press;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: press,
+      onTap: onTap,
       child: Directionality(
           textDirection: TextDirection.rtl,
           child: Center(

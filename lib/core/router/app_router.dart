@@ -6,6 +6,7 @@ import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_page.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/role_management/add_role_screen.dart';
+import 'package:ba3_bs/features/users_management/ui/screens/user_management/add_user_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/user_management/all_user_screen.dart';
 import 'package:get/get.dart';
 
@@ -94,5 +95,9 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.addRoleScreen,
     page: () => const AddRoleScreen(),
+  ),
+  GetPage(
+    name: AppRoutes.addUserScreen,
+    page: () => const AddUserScreen(),
   ),
 ];

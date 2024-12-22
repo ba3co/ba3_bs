@@ -1,6 +1,8 @@
 abstract class IDatabaseService<T> {
   Future<List<T>> fetchAll({required String path});
 
+  Future<List<T>> fetchByField({required String path, required String field, required String value});
+
   Future<T> fetchById({required String path, String? documentId});
 
   Future<void> delete({required String path, String? documentId});

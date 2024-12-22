@@ -13,6 +13,13 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> fetchByField(
+      {required String path, required String field, required String value}) async {
+    final snapshot = await _firestore.collection(path).where(field, isEqualTo: value).get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
+
+  @override
   Future<Map<String, dynamic>> fetchById({required String path, String? documentId}) async {
     final doc = await _firestore.collection(path).doc(documentId).get();
     if (doc.exists) {

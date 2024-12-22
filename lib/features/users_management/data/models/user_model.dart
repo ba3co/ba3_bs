@@ -2,7 +2,7 @@ class UserModel {
   final String? userId;
   final String? userName;
   final String? userPassword;
-  final String? userRole;
+  final String? userRoleId;
   final String? userSellerId;
   final List<DateTime>? userDateList;
 
@@ -14,7 +14,7 @@ class UserModel {
     this.userId,
     this.userName,
     this.userPassword,
-    this.userRole,
+    this.userRoleId,
     this.userSellerId,
     this.userDateList,
     this.logInDateList,
@@ -23,11 +23,11 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      'docId': userId,
       'userSellerId': userSellerId,
       'userName': userName,
       'userPassword': userPassword,
-      'userRole': userRole,
+      'userRoleId': userRoleId,
       "userDateList": userDateList,
       "logOutDateList": logOutDateList,
       "logInDateList": logInDateList,
@@ -38,7 +38,7 @@ class UserModel {
     List<DateTime> userDateList = [];
     List<DateTime> logInDateList = [];
     List<DateTime> logOutDateList = [];
-    List<int> userTimeList = [];
+
     if (json['userDateList'] != null) {
       for (var element in (json['userDateList'] as List<dynamic>)) {
         if (element.runtimeType == DateTime) {
@@ -67,21 +67,38 @@ class UserModel {
       }
     }
 
-    if (json['userTimeList'] != null) {
-      for (var element in (json['userTimeList'] as List<dynamic>)) {
-        userTimeList.add(int.parse(element.toString()));
-      }
-    }
-
     return UserModel(
-      userId: json['userId'],
+      userId: json['docId'],
       userSellerId: json['userSellerId'],
       userName: json['userName'],
       userPassword: json['userPassword'],
-      userRole: json['userRole'],
+      userRoleId: json['userRoleId'],
       userDateList: userDateList,
       logInDateList: logInDateList,
       logOutDateList: logOutDateList,
+    );
+  }
+
+  /// Creates a copy of this UserModel with updated fields.
+  UserModel copyWith({
+    String? userId,
+    String? userName,
+    String? userPassword,
+    String? userRoleId,
+    String? userSellerId,
+    List<DateTime>? userDateList,
+    List<DateTime>? logInDateList,
+    List<DateTime>? logOutDateList,
+  }) {
+    return UserModel(
+      userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
+      userPassword: userPassword ?? this.userPassword,
+      userRoleId: userRoleId ?? this.userRoleId,
+      userSellerId: userSellerId ?? this.userSellerId,
+      userDateList: userDateList ?? this.userDateList,
+      logInDateList: logInDateList ?? this.logInDateList,
+      logOutDateList: logOutDateList ?? this.logOutDateList,
     );
   }
 }

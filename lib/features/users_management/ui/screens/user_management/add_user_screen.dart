@@ -42,7 +42,6 @@ class AddUserScreen extends StatelessWidget {
                 ),
                 body: Center(
                   child: Column(
-                    // shrinkWrap: true,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
@@ -52,25 +51,13 @@ class AddUserScreen extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(bottom: .15 * 1.sh),
+                        padding: EdgeInsets.only(bottom: .15.sh),
                         child: AppButton(
-                          title: controller.initAddUserModel?.userId == null ? 'إضافة' : 'تعديل',
+                          title: controller.roleModel?.roleId == null ? 'إضافة' : 'تعديل',
                           onPressed: () {
-                            if (controller.userNameController.text.isEmpty) {
-                              Get.snackbar("خطأ", 'يرجى كتابة الاسم');
-                            } else if (controller.pinController.text.length != 6) {
-                              Get.snackbar("خطأ", "يرجى كتابة كلمة السر");
-                            } else if (controller.initAddUserModel?.userSellerId == null) {
-                              Get.snackbar("خطأ", "يرجى اختيار البائع");
-                            } else if (controller.initAddUserModel?.userRole == null) {
-                              Get.snackbar("خطأ", "يرجى اختيار الصلاحيات");
-                            } else {
-                              controller.addUser();
-                              Get.snackbar("تمت العملية بنجاح",
-                                  controller.initAddUserModel?.userId == null ? "تم اضافة الحساب" : "تم تعديل الحساب");
-                            }
+                            controller.saveOrUpdateUser(existingUserModel: controller.userModel);
                           },
-                          iconData: controller.initAddUserModel?.userId == null ? Icons.add : Icons.edit,
+                          iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
                           color: controller.initAddUserModel?.userId == null ? null : Colors.green,
                         ),
                       )

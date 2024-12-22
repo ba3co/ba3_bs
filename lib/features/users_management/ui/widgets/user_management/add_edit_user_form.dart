@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../../../sellers/controllers/sellers_controller.dart';
 import '../../../controllers/user_management_controller.dart';
@@ -17,110 +21,96 @@ class AddEditUserForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      spacing: 15,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(
-          width: 300,
-          child: Row(
+        Form(
+          key: userManagementController.userFormKey,
+          child: Column(
+            spacing: 15,
             children: [
-              const SizedBox(width: 70, child: Text('اسم الحساب')),
-              const SizedBox(
-                width: 30,
-              ),
-              Expanded(
+              SizedBox(
+                width: .3.sw,
                 child: TextFormField(
-                  decoration: const InputDecoration(filled: true, fillColor: Colors.white),
+                  decoration: const InputDecoration(
+                    label: Text('اسم الحساب'),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   controller: userManagementController.userNameController,
-                  onChanged: (newValue) {
-                    userManagementController.initAddUserModel?.userName = newValue;
-                  },
+                  validator: (value) => userManagementController.validator(value, 'اسم الحساب'),
                 ),
               ),
-            ],
-          ),
-        ),
-        SizedBox(
-          width: 300,
-          child: Row(
-            children: [
-              const SizedBox(width: 70, child: Text('كلمة السر')),
-              const SizedBox(
-                width: 30,
-              ),
-              Expanded(
+              SizedBox(
+                width: .3.sw,
                 child: TextFormField(
-                  decoration: const InputDecoration(filled: true, fillColor: Colors.white),
+                  decoration: const InputDecoration(
+                    label: Text('كلمة السر'),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
                   ],
-                  controller: userManagementController.pinController,
-                  onChanged: (newValue) {
-                    userManagementController.initAddUserModel?.userPin = newValue;
-                  },
+                  controller: userManagementController.passController,
+                  validator: (value) => userManagementController.validator(value, 'كلمة السر'),
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(
-          width: 300,
-          child: Row(
-            children: [
-              const SizedBox(width: 70, child: Text('الصلاحيات')),
-              const SizedBox(
-                width: 30,
+        Obx(() {
+          return SizedBox(
+            width: .3.sw,
+            child: Container(
+              color: Colors.white,
+              child: DropdownButton<String>(
+                hint: const Text('الصلاحيات'),
+                icon: const SizedBox(),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                value: userManagementController.selectedRoleId.value,
+                items: userManagementController.allRoles
+                    .map(
+                      (role) => DropdownMenuItem(
+                        value: role.roleId,
+                        child: Text(role.roleName!),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (role) {
+                  log('selectedRoleId $role');
+                  userManagementController.setRoleId = role;
+                },
               ),
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                  child: DropdownButton<String>(
-                    icon: const SizedBox(),
-                    value: userManagementController.initAddUserModel?.userRole,
-                    items: userManagementController.allRoles
-                        .map((role) => DropdownMenuItem(value: role.roleId, child: Text(role.roleName!)))
-                        .toList(),
-                    onChanged: (newValue) {
-                      userManagementController.initAddUserModel?.userRole = newValue;
-                      userManagementController.update();
-                    },
-                  ),
-                ),
+            ),
+          );
+        }),
+        Obx(() {
+          return SizedBox(
+            width: .3.sw,
+            child: Container(
+              color: Colors.white,
+              child: DropdownButton<String>(
+                hint: const Text('البائع'),
+                icon: const SizedBox(),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                value: userManagementController.selectedSellerId.value,
+                items: sellerController.sellers
+                    .map(
+                      (seller) => DropdownMenuItem(
+                        value: seller.costGuid,
+                        child: Text(seller.costName ?? ''),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (sellerId) {
+                  log('selectedSellerId $sellerId');
+                  userManagementController.setSellerId = sellerId;
+                },
               ),
-            ],
-          ),
-        ),
-        SizedBox(
-          width: 300,
-          child: Row(
-            children: [
-              const SizedBox(width: 70, child: Text('البائع')),
-              const SizedBox(
-                width: 30,
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                  child: DropdownButton<String>(
-                    icon: const SizedBox(),
-                    value: userManagementController.initAddUserModel?.userSellerId,
-                    items: sellerController.sellers
-                        .map(
-                          (seller) => DropdownMenuItem(
-                            value: seller.costGuid,
-                            child: Text(seller.costName ?? ''),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (newValue) {
-                      userManagementController.initAddUserModel?.userSellerId = newValue;
-                      userManagementController.update();
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }),
       ],
     );
   }

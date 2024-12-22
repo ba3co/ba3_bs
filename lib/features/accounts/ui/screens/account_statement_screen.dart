@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/features/accounts/controllers/account_statement_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -14,6 +16,8 @@ class AccountStatementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AccountStatementController>(
       builder: (controller) {
+        log('AccountStatementController isLoading ${controller.isLoading}');
+        log('AccountStatementController filteredEntryBondItems length ${controller.filteredEntryBondItems.length}');
         return PlutoGridWithAppBar(
           title: controller.screenTitle,
           onLoaded: (e) {},

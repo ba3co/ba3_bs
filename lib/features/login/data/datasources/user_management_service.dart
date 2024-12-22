@@ -21,11 +21,11 @@ class UserManagementService {
   }
 
   // Fetch user by PIN
-  Future<UserModel?> fetchUserByPin(String userPin) async {
+  Future<OldUserModel?> fetchUserByPin(String userPin) async {
     final userSnapshot =
         await _firestore.collection(AppConstants.usersCollection).where('userPin', isEqualTo: userPin).get();
     if (userSnapshot.docs.isNotEmpty) {
-      return UserModel.fromJson(userSnapshot.docs.first.data());
+      return OldUserModel.fromJson(userSnapshot.docs.first.data());
     }
     return null;
   }
@@ -40,16 +40,16 @@ class UserManagementService {
   }
 
   // Fetch user by ID
-  Future<UserModel?> fetchUserById(String? userId) async {
+  Future<OldUserModel?> fetchUserById(String? userId) async {
     final userDoc = await _firestore.collection(AppConstants.usersCollection).doc(userId).get();
     if (userDoc.exists) {
-      return UserModel.fromJson(userDoc.data()!);
+      return OldUserModel.fromJson(userDoc.data()!);
     }
     return null;
   }
 
   // Add or update a user
-  Future<void> saveUser(UserModel user) {
+  Future<void> saveUser(OldUserModel user) {
     return _firestore.collection(AppConstants.usersCollection).doc(user.userId).set(user.toJson());
   }
 

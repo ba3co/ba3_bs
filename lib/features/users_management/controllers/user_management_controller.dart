@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/features/login/data/models/role_model.dart';
@@ -20,37 +21,39 @@ import '../../login/data/models/card_model.dart';
 import '../../login/data/models/user_model.dart';
 import '../../login/data/repositories/user_repo.dart';
 import '../data/models/role_model.dart';
+import '../data/models/user_model.dart';
 
 class UserManagementController extends GetxController with AppValidator {
   final UserManagementRepository _userRepository;
 
   final DataSourceRepository<RoleModel> _rolesFirebaseRepo;
+  final DataSourceRepository<UserModel> _usersFirebaseRepo;
 
-  UserManagementController(this._userRepository, this._rolesFirebaseRepo) {
-    // getAllRoles();
-    // initAllUser();
-  }
+  UserManagementController(this._userRepository, this._rolesFirebaseRepo, this._usersFirebaseRepo);
 
   // Services
   late final RoleService _roleService;
 
+  final userFormKey = GlobalKey<FormState>();
   TextEditingController userNameController = TextEditingController();
-  TextEditingController pinController = TextEditingController();
+  TextEditingController passController = TextEditingController();
 
   Map<String, OldRoleModel> oldAllRoles = {};
 
   List<RoleModel> allRoles = [];
+  List<UserModel> allUsers = [];
 
   RoleModel? roleModel;
+  UserModel? userModel;
 
-  Map<String, UserModel> allUserList = {};
+  Map<String, OldUserModel> allUserList = {};
 
   UserManagementStatus? userStatus;
 
   String? userPin;
   String? cardNumber;
-  UserModel? myUserModel;
-  UserModel? initAddUserModel;
+  OldUserModel? myUserModel;
+  OldUserModel? initAddUserModel;
 
   final bool isAdmin = true;
 
@@ -58,6 +61,9 @@ class UserManagementController extends GetxController with AppValidator {
 
   final roleFormKey = GlobalKey<FormState>();
   TextEditingController roleNameController = TextEditingController();
+
+  RxnString selectedSellerId = RxnString();
+  RxnString selectedRoleId = RxnString();
 
   @override
   void onInit() {
@@ -70,19 +76,29 @@ class UserManagementController extends GetxController with AppValidator {
     _roleService = RoleService();
   }
 
-  bool validateForm() => roleFormKey.currentState?.validate() ?? false;
+  bool validateRoleForm() => roleFormKey.currentState?.validate() ?? false;
+
+  bool validateUserForm() => userFormKey.currentState?.validate() ?? false;
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
-  initUser([String? userId]) {
-    if (userId == null) {
-      userNameController.clear();
-      pinController.clear();
-      initAddUserModel = UserModel();
+  initUser(UserModel? user) {
+    if (user != null) {
+      userModel = user;
+
+      selectedSellerId.value = user.userSellerId!;
+      selectedRoleId.value = user.userRoleId!;
+
+      userNameController.text = user.userName ?? '';
+      passController.text = user.userPassword ?? '';
     } else {
-      initAddUserModel = UserModel.fromJson(allUserList[userId]!.toJson());
-      userNameController.text = initAddUserModel?.userName ?? "";
-      pinController.text = initAddUserModel?.userPin ?? "";
+      userModel = null;
+
+      selectedSellerId.value = null; // Now valid with RxnString
+      selectedRoleId.value = null; // Now valid with RxnString
+
+      userNameController.clear();
+      passController.clear();
     }
   }
 
@@ -96,9 +112,11 @@ class UserManagementController extends GetxController with AppValidator {
       roleModel = null;
       rolesMap = {};
 
-      roleNameController.text = '';
+      roleNameController.clear();
     }
   }
+
+  RoleModel getRoleById(String id) => allRoles.firstWhere((role) => role.roleId == id);
 
   // Check if all roles are selected
   bool areAllRolesSelected() {
@@ -138,12 +156,28 @@ class UserManagementController extends GetxController with AppValidator {
 
   // Fetch roles using the repository
   Future<void> getAllRoles() async {
+    log('getAllRoles');
     final result = await _rolesFirebaseRepo.getAll();
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedRoles) {
         allRoles = fetchedRoles;
+      },
+    );
+
+    update();
+  }
+
+  // Fetch roles using the repository
+  Future<void> getAllUsers() async {
+    log('getAllUsers');
+    final result = await _usersFirebaseRepo.getAll();
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedUsers) {
+        allUsers = fetchedUsers;
       },
     );
 
@@ -171,7 +205,7 @@ class UserManagementController extends GetxController with AppValidator {
 
     if (querySnapshot.docs.isNotEmpty) {
       if (userStatus != UserManagementStatus.login) {
-        myUserModel = UserModel.fromJson(querySnapshot.docs.first.data());
+        myUserModel = OldUserModel.fromJson(querySnapshot.docs.first.data());
         userStatus = UserManagementStatus.login;
         _initializeControllers();
       }
@@ -201,7 +235,7 @@ class UserManagementController extends GetxController with AppValidator {
     final userSnapshot = await FirebaseFirestore.instance.collection(AppConstants.usersCollection).doc(userId).get();
 
     if (userSnapshot.exists) {
-      myUserModel = UserModel.fromJson(userSnapshot.data()!);
+      myUserModel = OldUserModel.fromJson(userSnapshot.data()!);
       userStatus = UserManagementStatus.login;
       _initializeControllers();
     }
@@ -222,6 +256,11 @@ class UserManagementController extends GetxController with AppValidator {
   void navigateToAddRoleScreen([RoleModel? roleModel]) {
     initRole(roleModel);
     Get.toNamed(AppRoutes.addRoleScreen);
+  }
+
+  void navigateToAddUserScreen([UserModel? userModel]) {
+    initUser(userModel);
+    Get.toNamed(AppRoutes.addUserScreen);
   }
 
   void navigateToLAllUsersScreen() {
@@ -253,7 +292,7 @@ class UserManagementController extends GetxController with AppValidator {
     FirebaseFirestore.instance.collection(AppConstants.usersCollection).snapshots().listen((event) {
       allUserList.clear();
       for (var element in event.docs) {
-        allUserList[element.id] = UserModel.fromJson(element.data());
+        allUserList[element.id] = OldUserModel.fromJson(element.data());
       }
       update();
     });
@@ -281,9 +320,17 @@ class UserManagementController extends GetxController with AppValidator {
     update();
   }
 
+  set setSellerId(String? sellerId) {
+    selectedSellerId.value = sellerId;
+  }
+
+  set setRoleId(String? roleId) {
+    selectedRoleId.value = roleId;
+  }
+
   Future<void> saveOrUpdateRole({RoleModel? existingRoleModel}) async {
     // Validate the form first
-    if (!validateForm()) return;
+    if (!validateRoleForm()) return;
 
     // Create the role model from the provided data
     final updatedRoleModel =
@@ -318,6 +365,55 @@ class UserManagementController extends GetxController with AppValidator {
       roleModel: existingRoleModel,
       roles: roles,
       roleName: roleName,
+    );
+  }
+
+  Future<void> saveOrUpdateUser({UserModel? existingUserModel}) async {
+    // Validate the form first
+    if (!validateUserForm()) return;
+
+    // Create the role model from the provided data
+    final updatedUserModel = _createUserModel(
+      userModel: existingUserModel,
+      userName: userNameController.text,
+      userPassword: passController.text,
+      userRoleId: selectedRoleId.value,
+      userSellerId: selectedSellerId.value,
+    );
+
+    // Handle null role model
+    if (updatedUserModel == null) {
+      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
+      return;
+    }
+
+    // Save the role to Firestore
+    final result = await _usersFirebaseRepo.save(updatedUserModel);
+
+    // Handle the result (success or failure)
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+    );
+  }
+
+  UserModel? _createUserModel({
+    UserModel? userModel,
+    required String userName,
+    required String userPassword,
+    String? userRoleId,
+    String? userSellerId,
+  }) {
+    if (userRoleId == null || userSellerId == null) {
+      return null;
+    }
+
+    return _roleService.createUserModel(
+      userModel: userModel,
+      userName: userName,
+      userPassword: userPassword,
+      userRoleId: userRoleId,
+      userSellerId: userSellerId,
     );
   }
 
@@ -390,7 +486,7 @@ getUserNameById(id) {
   return userManagementViewController.allUserList[id]?.userName;
 }
 
-UserModel getUserModelById(id) {
+OldUserModel getUserModelById(id) {
   UserManagementController userManagementViewController = Get.find<UserManagementController>();
   return userManagementViewController.allUserList[id]!;
 }
@@ -481,7 +577,7 @@ Future<bool> hasPermissionForOperation(role, page) async {
                       length: 6,
                       obscureText: true,
                       onCompleted: (inputPin) {
-                        UserModel? user = userManagementViewController.allUserList.values
+                        OldUserModel? user = userManagementViewController.allUserList.values
                             .toList()
                             .firstWhereOrNull((element) => element.userPin == inputPin);
                         if (user != null) {

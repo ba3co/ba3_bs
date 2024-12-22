@@ -11,7 +11,7 @@ class UserManagementRepository {
 
   UserManagementRepository(this._userService);
 
-  Map<String, UserModel> allUsers = {};
+  Map<String, OldUserModel> allUsers = {};
 
   // Get all roles
   Future<Either<Failure, Map<String, OldRoleModel>>> getAllRoles() async {
@@ -24,15 +24,15 @@ class UserManagementRepository {
   }
 
   // Initialize or reset a user (for adding or editing)
-  UserModel initializeUser({String? userId}) {
+  OldUserModel initializeUser({String? userId}) {
     if (userId != null && allUsers.containsKey(userId)) {
-      return UserModel.fromJson(allUsers[userId]!.toJson());
+      return OldUserModel.fromJson(allUsers[userId]!.toJson());
     }
-    return UserModel();
+    return OldUserModel();
   }
 
   // Check user by PIN and update the user status
-  Future<Either<Failure, UserModel?>> checkUserByPin(String userPin) async {
+  Future<Either<Failure, OldUserModel?>> checkUserByPin(String userPin) async {
     try {
       final user = await _userService.fetchUserByPin(userPin);
       return Right(user);
@@ -42,7 +42,7 @@ class UserManagementRepository {
   }
 
   // Check card number and get the associated user
-  Future<Either<Failure, UserModel?>> checkCard(String cardNumber) async {
+  Future<Either<Failure, OldUserModel?>> checkCard(String cardNumber) async {
     try {
       final card = await _userService.fetchCardByNumber(cardNumber);
       if (card != null) {
@@ -56,7 +56,7 @@ class UserManagementRepository {
   }
 
   // Add or update a user
-  Future<Either<Failure, Unit>> saveUser(UserModel user) async {
+  Future<Either<Failure, Unit>> saveUser(OldUserModel user) async {
     try {
       await _userService.saveUser(user);
       return const Right(unit);

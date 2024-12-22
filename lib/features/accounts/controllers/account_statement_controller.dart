@@ -35,7 +35,7 @@ class AccountStatementController extends GetxController with FloatingLauncher {
   List<EntryBondItemModel> filteredEntryBondItems = [];
 
   // State variables
-  bool isLoading = true;
+  bool isLoading = false;
 
   double totalValue = 0.0;
   double debitValue = 0.0;
@@ -92,6 +92,9 @@ class AccountStatementController extends GetxController with FloatingLauncher {
       return;
     }
 
+    isLoading = true;
+    update();
+
     final result = await _accountsStatementsRepo.getAllBonds(accountModel.id!);
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -115,7 +118,6 @@ class AccountStatementController extends GetxController with FloatingLauncher {
 
     filteredEntryBondItems = entryBondItems.where((item) {
       final String? entryBondItemDateStr = item.date; // Ensure `date` is the correct field
-      //  final String? entryBondItemDateStr = '2024-12-15'; // Ensure `date` is the correct field
       if (entryBondItemDateStr == null) return false;
 
       DateTime? entryBondItemDate;

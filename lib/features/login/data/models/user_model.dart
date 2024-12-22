@@ -1,4 +1,4 @@
-class UserModel {
+class OldUserModel {
   String? userId, userName, userPin, userRole, userSellerId, userStatus;
   List? userFaceId = [];
   List<DateTime>? userDateList = [];
@@ -6,7 +6,7 @@ class UserModel {
   List<DateTime>? logOutDateList = [];
   List<int>? userTimeList = [];
 
-  UserModel({
+  OldUserModel({
     this.userId,
     this.userName,
     this.userPin,
@@ -22,7 +22,7 @@ class UserModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      'docId': userId,
       'userSellerId': userSellerId,
       'userName': userName,
       'userPin': userPin,
@@ -36,8 +36,7 @@ class UserModel {
     };
   }
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-
+  factory OldUserModel.fromJson(Map<String, dynamic> json) {
     List<DateTime> userDateList = [];
     List<DateTime> logInDateList = [];
     List<DateTime> logOutDateList = [];
@@ -76,8 +75,8 @@ class UserModel {
       }
     }
 
-    return UserModel(
-      userId: json['userId'],
+    return OldUserModel(
+      userId: json['docId'],
       userSellerId: json['userSellerId'],
       userName: json['userName'],
       userPin: json['userPin'],

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -30,11 +31,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   List<({String name, Widget layout, RoleItemType role})> appLayouts = [
     (name: 'الفواتير', layout: const BillLayout(), role: RoleItemType.viewBill),
     (name: 'أنماط البيع', layout: const PatternLayout(), role: RoleItemType.viewPattern),
-    (name: "المواد", layout: const MaterialLayout(), role: RoleItemType.viewProduct),
+    (name: 'المواد', layout: const MaterialLayout(), role: RoleItemType.viewProduct),
     (name: 'الحسابات', layout: const AccountLayout(), role: RoleItemType.viewAccount),
     (name: 'السندات', layout: const BondLayout(), role: RoleItemType.viewBond),
     (name: 'الشيكات', layout: const ChequeLayout(), role: RoleItemType.viewCheques),
-    (name: "إدارة المستخدمين", layout: const UserManagementLayout(), role: RoleItemType.viewUserManagement),
+    (name: 'إدارة المستخدمين', layout: const UserManagementLayout(), role: RoleItemType.viewUserManagement),
   ];
   List<({String name, Widget layout, RoleItemType role})> allData = [];
   late PageController pageController;
@@ -93,10 +94,17 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               return DrawerListTile(
                                 index: index,
                                 title: appLayouts[index].name,
-                                press: () {
+                                onTap: () {
                                   tabController.animateTo(index);
                                   tabIndex = index;
                                   setState(() {});
+
+                                  if (appLayouts[index].name == 'إدارة المستخدمين') {
+                                    log('UserManagementLayout');
+                                    Get.find<UserManagementController>()
+                                      ..getAllRoles()
+                                      ..getAllUsers();
+                                  }
                                 },
                               );
                             },

@@ -12,6 +12,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
 import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
+import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -37,6 +38,7 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/users_management/controllers/user_management_controller.dart';
+import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
@@ -77,6 +79,10 @@ class AppBindings extends Bindings {
       RolesDataSource(databaseService: fireStoreService),
     );
 
+    final DataSourceRepository<UserModel> usersFirebaseRepo = DataSourceRepository(
+      UsersDataSource(databaseService: fireStoreService),
+    );
+
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
     final DataSourceRepository<EntryBondModel> entryBondsFirebaseRepo = DataSourceRepository(
       EntryBondsDataSourceDataSource(databaseService: fireStoreService),
@@ -111,7 +117,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
 
-    Get.lazyPut(() => UserManagementController(userManagementRepo, rolesFirebaseRepo), fenix: true);
+    Get.lazyPut(() => UserManagementController(userManagementRepo, rolesFirebaseRepo, usersFirebaseRepo), fenix: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 

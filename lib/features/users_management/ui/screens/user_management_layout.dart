@@ -10,6 +10,7 @@ class UserManagementLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserManagementController userManagementController = Get.find<UserManagementController>();
+
     return Column(
       children: [
         Expanded(
@@ -33,9 +34,7 @@ class UserManagementLayout extends StatelessWidget {
                         AppMenuItem(
                             text: 'إدارة الصلاحيات',
                             onTap: () {
-                              userManagementController
-                                ..getAllRoles()
-                                ..navigateToLAllPermissionsScreen();
+                              userManagementController.navigateToLAllPermissionsScreen();
                             }),
                       ],
                     ),

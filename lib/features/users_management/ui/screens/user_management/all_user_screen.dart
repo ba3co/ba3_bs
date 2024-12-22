@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/user_management_controller.dart';
-import 'add_user_screen.dart';
 
 class AllUserScreen extends StatelessWidget {
   const AllUserScreen({super.key});
@@ -24,8 +23,7 @@ class AllUserScreen extends StatelessWidget {
                       AppButton(
                           title: 'إضافة',
                           onPressed: () {
-                            Get.find<UserManagementController>().initUser();
-                            Get.to(() => const AddUserScreen());
+                            Get.find<UserManagementController>().navigateToAddUserScreen();
                           },
                           iconData: Icons.add),
                       const SizedBox(
@@ -39,28 +37,24 @@ class AllUserScreen extends StatelessWidget {
                       width: double.infinity,
                       child: Wrap(
                         children: List.generate(
-                          controller.allUserList.values.length,
+                          controller.allUsers.length,
                           (index) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
                                 Get.find<UserManagementController>()
-                                    .initUser(controller.allUserList.values.toList()[index].userId);
-                                Get.to(() => const AddUserScreen());
+                                    .navigateToAddUserScreen(controller.allUsers[index]);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(4),
+                                alignment: Alignment.center,
                                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
                                 height: 140,
                                 width: 140,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      controller.allUserList.values.toList()[index].userName ?? "",
-                                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
+                                child: Text(
+                                  controller.allUsers[index].userName ?? '',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
