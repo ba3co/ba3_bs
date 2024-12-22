@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class BillDetails extends Equatable {
+class BillDetails with EquatableMixin {
   final String? billGuid;
   final int? billPayType;
   final int? billNumber;

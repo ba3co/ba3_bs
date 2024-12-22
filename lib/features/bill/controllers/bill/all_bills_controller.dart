@@ -105,15 +105,6 @@ class AllBillsController extends FloatingBillDetailsLauncher {
   List<BillModel> getBillsByType(String billTypeId) =>
       bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
-  void openBillDetailsById(String billId,BuildContext context) async{
-    final BillModel billModel =await fetchBillById(billId);
-
-    if (!context.mounted) return;
-
-    openFloatingBillDetails(context,billModel.billTypeModel , billModel: billModel,);
-    // _navigateToBillDetailsWithModel(billModel, billsByCategory, fromBillById: true);
-  }
-
   Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
     await fetchAllBills();
 
@@ -124,14 +115,23 @@ class AllBillsController extends FloatingBillDetailsLauncher {
     _navigateToBillDetailsWithModel(lastBillModel, billsByCategory);
   }
 
-  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel,{BillModel? billModel}) async {
+  void openBillDetailsById(String billId, BuildContext context) async {
+    final BillModel billModel = await fetchBillById(billId);
+
+    if (!context.mounted) return;
+
+    openFloatingBillDetails(context, billModel.billTypeModel, billModel: billModel);
+  }
+
+  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel,
+      {BillModel? billModel}) async {
     await fetchAllBills();
 
     if (!context.mounted) return;
 
-    List<BillModel> billsByCategory = getBillsByType(billModel?.billTypeModel.billTypeId ??billTypeModel.billTypeId!);
+    List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
-    final BillModel lastBillModel = billModel??_billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
+    final BillModel lastBillModel = billModel ?? _billUtils.appendEmptyBillModel(billsByCategory, billTypeModel);
 
     _openBillDetailsFloatingWindow(
       context: context,
@@ -230,14 +230,14 @@ class AllBillsController extends FloatingBillDetailsLauncher {
     );
   }
 
-  Future<BillModel> fetchBillById(String billId)async {
-   late BillModel billModel;
+  Future<BillModel> fetchBillById(String billId) async {
+    late BillModel billModel;
 
     final result = await _billsFirebaseRepo.getById(billId);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedBill) => billModel=fetchedBill,
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBill) => billModel = fetchedBill,
     );
     return billModel;
   }

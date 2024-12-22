@@ -6,6 +6,7 @@ import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controll
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/datasources/remote/accounts_statements_data_source.dart';
@@ -33,15 +34,13 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
-  Future<EntryBondModel> getEntryBondModelById({required String entryId}) async {
-    late EntryBondModel currentEntryModel;
-
+  Future<EntryBondModel> getEntryBondById({required String entryId}) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
-    result.fold(
+
+    return result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (entryBondModel) => currentEntryModel = entryBondModel,
+      (entryBondModel) => entryBondModel,
     );
-    return currentEntryModel;
   }
 
   // Method to create a bond based on bill type
@@ -95,18 +94,22 @@ class EntryBondController extends GetxController with FloatingLauncher {
     return accountsIds.toList(); // Convert the Set back to a List.
   }
 
-  void openOriginForEntryBond(EntryBondModel entryBondModel, BuildContext context) {
-    switch (entryBondModel.origin!.originType!) {
-      case EntryBondType.bond:
-        Get.find<AllBondsController>().openBondDetailsById(entryBondModel.origin!.originId!, context);
-        break;
-      case EntryBondType.bill:
-        Get.find<AllBillsController>().openBillDetailsById(entryBondModel.origin!.originId!, context);
-        break;
-      case EntryBondType.cheque:
-        Get.find<AllChequesController>().openChequesDetailsById(entryBondModel.origin!.originId!, context);
+  void openEntryBondOrigin(EntryBondModel entryBondModel, BuildContext context) {
+    final origin = entryBondModel.origin;
+    if (origin == null || origin.originType == null || origin.originId == null) {
+      // Handle the case where origin details are missing
+      return;
+    }
 
-        break;
+    final actions = {
+      EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(origin.originId!, context),
+      EntryBondType.bill: () => read<AllBillsController>().openBillDetailsById(origin.originId!, context),
+      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(origin.originId!, context),
+    };
+
+    final action = actions[origin.originType];
+    if (action != null) {
+      action();
     }
   }
 }

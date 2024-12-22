@@ -1,10 +1,11 @@
 import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/grid_column_item.dart';
 import '../../data/models/entry_bond_model.dart';
 import '../widgets/entry_bond_details/bond_record_data_source.dart';
@@ -30,6 +31,7 @@ class EntryBondDetailsScreen extends StatelessWidget {
             editingGestureType: EditingGestureType.tap,
             navigationMode: GridNavigationMode.cell,
             columnWidthMode: ColumnWidthMode.fill,
+            rowHeight: 65,
             allowSwiping: false,
             swipeMaxOffset: 200,
             columns: <GridColumn>[
@@ -56,11 +58,13 @@ class EntryBondDetailsScreen extends StatelessWidget {
             ],
           )),
           AppButton(
-              title: "عرض الاصل",
-              onPressed: () {
-                Get.find<EntryBondController>().openOriginForEntryBond(entryBondModel,context);
-              },
-              iconData: Icons.keyboard_return)
+            title: "عرض الاصل",
+            onPressed: () {
+              read<EntryBondController>().openEntryBondOrigin(entryBondModel, context);
+            },
+            iconData: Icons.keyboard_return,
+          ),
+          const VerticalSpace()
         ],
       ),
     );

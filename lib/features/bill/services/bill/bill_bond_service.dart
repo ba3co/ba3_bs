@@ -140,7 +140,7 @@ mixin BillBondService {
       bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
       accountName: materialAccount.accName,
       accountId: materialAccount.id,
-      note: 'بيع عدد $quantity من $name',
+      note: '${getNote(isSales)} عدد $quantity من $name',
       date: date,
     );
   }
@@ -162,7 +162,7 @@ mixin BillBondService {
         bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
         accountName: customerAccount.accName,
         accountId: customerAccount.id,
-        note: 'بيع عدد ${item.itemQuantity} من ${item.itemName}',
+        note: '${getNote(isSales)} عدد ${item.itemQuantity} من ${item.itemName}',
         date: date,
       ),
       _createBondItem(
@@ -171,7 +171,7 @@ mixin BillBondService {
         bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
         accountName: customerAccount.accName,
         accountId: customerAccount.id,
-        note: 'ضريبة بيع عدد ${item.itemQuantity} من ${item.itemName}',
+        note: 'ضريبة ${getNote(isSales)} عدد ${item.itemQuantity} من ${item.itemName}',
         date: date,
       ),
     ];
@@ -191,7 +191,7 @@ mixin BillBondService {
       bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
       accountName: 'ضريبة القيمة المضافة',
       accountId: 'a5c04527-63e8-4373-92e8-68d8f88bdb16',
-      note: 'ضريبة بيع عدد $quantity من $name',
+      note: 'ضريبة ${getNote(isSales)} عدد $quantity من $name',
       date: date,
     );
   }
@@ -225,7 +225,7 @@ mixin BillBondService {
         bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
         accountName: giftAccount.accName,
         accountId: giftAccount.id,
-        note: 'هدايا بيع عدد $giftCount من $name',
+        note: 'هدايا ${getNote(isSales)} عدد $giftCount من $name',
         date: date,
       ),
       _createBondItem(
@@ -234,7 +234,7 @@ mixin BillBondService {
         bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
         accountName: settlementAccount.accName,
         accountId: settlementAccount.id,
-        note: 'مقابل هدايا بيع عدد $giftCount من $name',
+        note: 'مقابل هدايا ${getNote(isSales)} عدد $giftCount من $name',
         date: date,
       ),
     ];
@@ -254,7 +254,7 @@ mixin BillBondService {
           billId: billId,
           date: date,
           customerAccount: customerAccount,
-          notePrefix: 'حسم بيع',
+          notePrefix: 'حسم ${getNote(isSales)}',
           positiveBondType: isSales ? BondItemType.debtor : BondItemType.creditor,
           oppositeBondType: isSales ? BondItemType.creditor : BondItemType.debtor,
         ),
@@ -264,7 +264,7 @@ mixin BillBondService {
           billId: billId,
           date: date,
           customerAccount: customerAccount,
-          notePrefix: 'اضافة بيع',
+          notePrefix: 'اضافة ${getNote(isSales)}',
           positiveBondType: isSales ? BondItemType.creditor : BondItemType.debtor,
           oppositeBondType: isSales ? BondItemType.debtor : BondItemType.creditor,
         ),
@@ -321,4 +321,12 @@ mixin BillBondService {
         originId: billId,
         date: date,
       );
+
+  String getNote(bool isSales) {
+    if (isSales) {
+      return 'بيع';
+    } else {
+      return 'شراء';
+    }
+  }
 }

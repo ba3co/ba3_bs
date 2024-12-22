@@ -23,7 +23,8 @@ class BillSearchController extends GetxController {
     required BillDetailsPlutoController billDetailsPlutoController,
   }) {
     bills = billsByCategory;
-    currentBillIndex = bills.indexWhere((current) =>current.billId==bill.billId||current==bill ,);
+
+    currentBillIndex = bills.indexWhere((current) => current.billId == bill.billId || current == bill);
     currentBill = bills[currentBillIndex];
 
     this.billDetailsController = billDetailsController;
@@ -31,9 +32,7 @@ class BillSearchController extends GetxController {
 
     _setCurrentBill(currentBillIndex);
 
-    log('bills length ${bills.length}');
-    log('currentBillIndex $currentBillIndex');
-    log('currentBillNumber ${currentBill.billDetails.billNumber}');
+    log('bills length ${bills.length}, currentBillIndex $currentBillIndex, currentBillNumber ${currentBill.billDetails.billNumber}');
   }
 
   /// Gets the current bill

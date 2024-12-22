@@ -1,5 +1,5 @@
-import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/core/widgets/item_widget.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
 
 class AllBillsTypesList extends StatelessWidget {
@@ -11,28 +11,15 @@ class AllBillsTypesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ...allBillsController.billsTypes
-            .map((billTypeModel) => ItemWidget(
-          text: billTypeModel.fullName!,
-          onTap: () {
-            allBillsController..fetchAllBills()..openFloatingBillDetails(context, billTypeModel);
-          },
-        ))
-
+        ...allBillsController.billsTypes.map((billTypeModel) => ItemWidget(
+              text: billTypeModel.fullName!,
+              onTap: () {
+                allBillsController
+                  ..fetchAllBills()
+                  ..openFloatingBillDetails(context, billTypeModel);
+              },
+            ))
       ],
     );
-   /* return Wrap(
-      alignment: WrapAlignment.spaceEvenly,
-      spacing: 10.w,
-      runSpacing: 10.0.h,
-      children: allBillsController.billsTypes
-          .map((billTypeModel) => ItemWidget(
-                text: billTypeModel.billTypeLabel!,
-                onTap: () {
-                  allBillsController..fetchAllBills()..openFloatingBillDetails(context, billTypeModel);
-                },
-              ))
-          .toList(),
-    );*/
   }
 }

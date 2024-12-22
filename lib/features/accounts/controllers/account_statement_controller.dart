@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -125,7 +126,8 @@ class AccountStatementController extends GetxController with FloatingLauncher {
         return false; // Skip invalid date formats
       }
 
-      return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) && entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
+      return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+          entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
   }
 
@@ -161,7 +163,8 @@ class AccountStatementController extends GetxController with FloatingLauncher {
         (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
       );
 
-  String get screenTitle => 'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
+  String get screenTitle =>
+      'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
 
   // Helper Methods
   static String get _formattedToday => DateTime.now().toString().split(" ")[0];
@@ -171,8 +174,8 @@ class AccountStatementController extends GetxController with FloatingLauncher {
   }
 
   void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
-    late EntryBondModel entryBondModel;
-    entryBondModel = await Get.find<EntryBondController>().getEntryBondModelById(entryId: originId);
+    EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(entryId: originId);
+
     if (!context.mounted) return;
     launchFloatingWindow(
       context: context,
