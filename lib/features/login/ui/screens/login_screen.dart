@@ -48,17 +48,6 @@ class LoginScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    // GetBuilder<UserManagementController>(
-                    //   builder: (controller) {
-                    //     if (Get.isRegistered<GlobalController>()) {
-                    //       GlobalController globalModel = Get.find<GlobalController>();
-                    //       return Obx(
-                    //         () => Text("${globalModel.count} / ${globalModel.allCountOfInvoice}"),
-                    //       );
-                    //     }
-                    //     return const SizedBox();
-                    //   },
-                    // ),
                   ],
                 ),
               ],

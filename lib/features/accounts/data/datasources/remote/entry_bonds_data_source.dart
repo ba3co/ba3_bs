@@ -5,8 +5,8 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 
-class EntryBondsDataSourceDataSource extends DatasourceBase<EntryBondModel> {
-  EntryBondsDataSourceDataSource({required super.databaseService});
+class EntryBondsDataSource extends DatasourceBase<EntryBondModel> {
+  EntryBondsDataSource({required super.databaseService});
 
   @override
   String get path => ApiConstants.entryBonds; // Collection name in Firestore

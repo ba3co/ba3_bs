@@ -44,6 +44,7 @@ class AddEditUserForm extends StatelessWidget {
               SizedBox(
                 width: .3.sw,
                 child: TextFormField(
+                  maxLength: 6,
                   decoration: const InputDecoration(
                     label: Text('كلمة السر'),
                     filled: true,

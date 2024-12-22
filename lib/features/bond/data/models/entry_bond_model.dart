@@ -14,10 +14,7 @@ class EntryBondModel {
   /// Refers to the origin entity of the bond entry (e.g., billTypeId for invoices).
   final EntryBondOrigin? origin;
 
-  EntryBondModel({
-    this.items,
-    this.origin,
-  });
+  EntryBondModel({this.items, this.origin});
 
   /// Creates an instance from a JSON object.
   factory EntryBondModel.fromJson(Map<String, dynamic> json) {

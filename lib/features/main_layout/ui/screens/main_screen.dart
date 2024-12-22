@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -98,13 +97,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   tabController.animateTo(index);
                                   tabIndex = index;
                                   setState(() {});
-
-                                  if (appLayouts[index].name == 'إدارة المستخدمين') {
-                                    log('UserManagementLayout');
-                                    Get.find<UserManagementController>()
-                                      ..getAllRoles()
-                                      ..getAllUsers();
-                                  }
                                 },
                               );
                             },

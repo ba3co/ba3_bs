@@ -6,6 +6,16 @@ mixin AppValidator {
     return null;
   }
 
+  String? isPinValid(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      return 'ادخل $fieldName!';
+    }
+    if (value.trim().length != 6) {
+      return 'أدخل 6 أرقام !';
+    }
+    return null;
+  }
+
   String? isFirstNameValid(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'First name is required!';

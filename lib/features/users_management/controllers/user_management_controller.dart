@@ -14,6 +14,7 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
+import '../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../../core/utils/generate_id.dart';
 import '../../login/controllers/nfc_cards_controller.dart';
@@ -27,7 +28,8 @@ class UserManagementController extends GetxController with AppValidator {
   final UserManagementRepository _userRepository;
 
   final DataSourceRepository<RoleModel> _rolesFirebaseRepo;
-  final DataSourceRepository<UserModel> _usersFirebaseRepo;
+
+  final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
 
   UserManagementController(this._userRepository, this._rolesFirebaseRepo, this._usersFirebaseRepo);
 
@@ -50,7 +52,7 @@ class UserManagementController extends GetxController with AppValidator {
 
   UserManagementStatus? userStatus;
 
-  String? userPin;
+  String? userPassword;
   String? cardNumber;
   OldUserModel? myUserModel;
   OldUserModel? initAddUserModel;
@@ -68,6 +70,9 @@ class UserManagementController extends GetxController with AppValidator {
   @override
   void onInit() {
     super.onInit();
+    getAllRoles();
+    getAllUsers();
+
     _initializeServices();
   }
 
@@ -80,7 +85,7 @@ class UserManagementController extends GetxController with AppValidator {
 
   bool validateUserForm() => userFormKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) => isPinValid(value, fieldName);
 
   initUser(UserModel? user) {
     if (user != null) {
@@ -185,7 +190,7 @@ class UserManagementController extends GetxController with AppValidator {
   }
 
   void checkUserStatus() async {
-    if (userPin != null) {
+    if (userPassword != null) {
       debugPrint('userPin != null');
       await _checkUserByPin();
     } else if (cardNumber != null) {
@@ -197,21 +202,27 @@ class UserManagementController extends GetxController with AppValidator {
     }
   }
 
-  Future<void> _checkUserByPin() async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection(AppConstants.usersCollection)
-        .where('userPin', isEqualTo: userPin)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
+  void _handleGetUserPinSuccess(List<UserModel> fetchedUsers) async {
+    if (fetchedUsers.isNotEmpty) {
       if (userStatus != UserManagementStatus.login) {
-        myUserModel = OldUserModel.fromJson(querySnapshot.docs.first.data());
-        userStatus = UserManagementStatus.login;
-        _initializeControllers();
+        userModel = fetchedUsers.first;
+
+        // userStatus = UserManagementStatus.login;
+
+        // update();
+
+        Get.offAllNamed(AppRoutes.mainLayout);
       }
     } else {
       await _handleNoMatch();
     }
+  }
+
+  Future<void> _checkUserByPin() async {
+    final result = await _usersFirebaseRepo.fetchWhere(field: 'userPassword', value: userPassword);
+
+    result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message), (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers));
   }
 
   Future<void> _checkUserByCard() async {
@@ -237,7 +248,6 @@ class UserManagementController extends GetxController with AppValidator {
     if (userSnapshot.exists) {
       myUserModel = OldUserModel.fromJson(userSnapshot.data()!);
       userStatus = UserManagementStatus.login;
-      _initializeControllers();
     }
   }
 
@@ -276,16 +286,10 @@ class UserManagementController extends GetxController with AppValidator {
     if (Get.currentRoute != AppRoutes.loginScreen) {
       _navigateToLogin();
     } else {
-      Get.snackbar("error", "not matched");
+      AppUIUtils.onFailure('لا يوجد تطابق!');
     }
-    userPin = null;
+    userPassword = null;
     cardNumber = null;
-  }
-
-  void _initializeControllers() {
-    // Get.put(GlobalController(), permanent: true);
-    // Get.put(ChangesController(), permanent: true);
-    update();
   }
 
   void initAllUser() {

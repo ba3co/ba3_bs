@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/services/firebase/implementations/filterable_data_source_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -79,13 +80,13 @@ class AppBindings extends Bindings {
       RolesDataSource(databaseService: fireStoreService),
     );
 
-    final DataSourceRepository<UserModel> usersFirebaseRepo = DataSourceRepository(
+    final FilterableDataSourceRepository<UserModel> usersFirebaseRepo = FilterableDataSourceRepository(
       UsersDataSource(databaseService: fireStoreService),
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
     final DataSourceRepository<EntryBondModel> entryBondsFirebaseRepo = DataSourceRepository(
-      EntryBondsDataSourceDataSource(databaseService: fireStoreService),
+      EntryBondsDataSource(databaseService: fireStoreService),
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
@@ -117,7 +118,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
 
-    Get.lazyPut(() => UserManagementController(userManagementRepo, rolesFirebaseRepo, usersFirebaseRepo), fenix: true);
+    Get.put(UserManagementController(userManagementRepo, rolesFirebaseRepo, usersFirebaseRepo), permanent: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 

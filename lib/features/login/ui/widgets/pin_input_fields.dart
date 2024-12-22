@@ -16,7 +16,7 @@ class PinInputFields extends StatelessWidget {
         length: 6,
         onCompleted: (pinCode) {
           log(pinCode);
-          controller.userPin = pinCode;
+          controller.userPassword = pinCode;
           controller.checkUserStatus();
         },
         defaultPinTheme: PinTheme(

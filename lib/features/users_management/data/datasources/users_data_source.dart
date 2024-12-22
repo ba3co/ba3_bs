@@ -1,10 +1,10 @@
 // BillsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/filterable_data_source.dart';
 
 import '../models/user_model.dart';
 
-class UsersDataSource extends DatasourceBase<UserModel> {
+class UsersDataSource extends FilterableDatasource<UserModel> {
   UsersDataSource({required super.databaseService});
 
   @override
@@ -13,6 +13,15 @@ class UsersDataSource extends DatasourceBase<UserModel> {
   @override
   Future<List<UserModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
+
+    final users = data.map((item) => UserModel.fromJson(item)).toList();
+
+    return users;
+  }
+
+  @override
+  Future<List<UserModel>> fetchWhere<V>({required String field, required V value}) async {
+    final data = await databaseService.fetchWhere(path: path, field: field, value: value);
 
     final users = data.map((item) => UserModel.fromJson(item)).toList();
 

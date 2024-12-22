@@ -13,8 +13,8 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> fetchByField(
-      {required String path, required String field, required String value}) async {
+  Future<List<Map<String, dynamic>>> fetchWhere<V>(
+      {required String path, required String field, required V value}) async {
     final snapshot = await _firestore.collection(path).where(field, isEqualTo: value).get();
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
