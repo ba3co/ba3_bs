@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:ba3_bs/core/constants/app_assets.dart';
+import 'package:ba3_bs/core/styling/app_themes.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,16 +29,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  List<({String name, Widget layout, RoleItemType role})> appLayouts = [
-    (name: 'الفواتير', layout: const BillLayout(), role: RoleItemType.viewBill),
-    (name: 'أنماط البيع', layout: const PatternLayout(), role: RoleItemType.viewPattern),
-    (name: 'المواد', layout: const MaterialLayout(), role: RoleItemType.viewProduct),
-    (name: 'الحسابات', layout: const AccountLayout(), role: RoleItemType.viewAccount),
-    (name: 'السندات', layout: const BondLayout(), role: RoleItemType.viewBond),
-    (name: 'الشيكات', layout: const ChequeLayout(), role: RoleItemType.viewCheques),
-    (name: 'إدارة المستخدمين', layout: const UserManagementLayout(), role: RoleItemType.viewUserManagement),
+  List<({String name, Widget layout, RoleItemType role, String icon, String unSelectedIcon})> appLayouts = [
+    (name: 'الفواتير', layout: const BillLayout(), role: RoleItemType.viewBill, icon: AppAssets.billsIcon, unSelectedIcon: AppAssets.billsUnselectedIcon),
+    (name: 'أنماط البيع', layout: const PatternLayout(), role: RoleItemType.viewPattern, icon: AppAssets.patternsIcon, unSelectedIcon: AppAssets.patternsUnselectedIcon),
+    (name: 'المواد', layout: const MaterialLayout(), role: RoleItemType.viewProduct, icon: AppAssets.materialIcon, unSelectedIcon: AppAssets.materialUnselectedIcon),
+    (name: 'الحسابات', layout: const AccountLayout(), role: RoleItemType.viewAccount, icon: AppAssets.accountsIcon, unSelectedIcon: AppAssets.accountsUnselectedIcon),
+    (name: 'السندات', layout: const BondLayout(), role: RoleItemType.viewBond, icon: AppAssets.bondsIcon, unSelectedIcon: AppAssets.bondsUnselectedIcon),
+    (name: 'الشيكات', layout: const ChequeLayout(), role: RoleItemType.viewCheques, icon: AppAssets.chequesIcon, unSelectedIcon: AppAssets.chequesUnselectedIcon),
+    (name: 'إدارة المستخدمين', layout: const UserManagementLayout(), role: RoleItemType.viewUserManagement, icon: AppAssets.usersIcon, unSelectedIcon: AppAssets.usersUnselectedIcon),
   ];
-  List<({String name, Widget layout, RoleItemType role})> allData = [];
+  List<({String name, Widget layout, RoleItemType role, String icon, String unSelectedIcon})> allData = [];
   late PageController pageController;
   late TabController tabController;
   int tabIndex = 0;
@@ -58,57 +60,42 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: AppColors.backGroundColor,
+          backgroundColor: AppColors.whiteColor,
           body: Row(
             children: [
-              Container(
-                  width: 0.15.sw,
-                  color: Colors.blue,
-                  child: Column(
+              Column(
+                spacing: 20,
+                children: [
+                  SizedBox(
+                    height: 75,
+                    width: 0.2.sw,
+                    child: Image.asset(AppAssets.logo),
+                  ),
+                  Expanded(
+                      child: Column(
+                    spacing: 15,
                     children: [
-                      Expanded(
-                        child: TabContainer(
-                          textDirection: TextDirection.rtl,
-                          controller: tabController,
-                          tabEdge: TabEdge.right,
-                          tabsEnd: 1,
-                          tabsStart: 0,
-                          tabMaxLength: 60,
-                          tabExtent: 0.3.sw,
-                          borderRadius: BorderRadius.circular(0),
-                          tabBorderRadius: BorderRadius.circular(20),
-                          childPadding: const EdgeInsets.all(0.0),
-                          selectedTextStyle: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15.0,
-                          ),
-                          unselectedTextStyle: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13.0,
-                          ),
-                          colors: List.generate(appLayouts.length, (index) => AppColors.backGroundColor),
-                          tabs: List.generate(
-                            appLayouts.length,
-                            (index) {
-                              return DrawerListTile(
-                                index: index,
-                                title: appLayouts[index].name,
-                                onTap: () {
-                                  tabController.animateTo(index);
-                                  tabIndex = index;
-                                  setState(() {});
-                                },
-                              );
+                      ...List.generate(
+                        appLayouts.length,
+                        (index) {
+                          return DrawerListTile(
+                            index: index,
+                            tabIndex: tabIndex,
+                            title: appLayouts[index].name,
+                            icon: appLayouts[index].icon,
+                            unSelectedIcon: appLayouts[index].unSelectedIcon,
+                            onTap: () {
+                              tabController.animateTo(index);
+                              tabIndex = index;
+                              setState(() {});
                             },
-                          ),
-                          children: List.generate(
-                            appLayouts.length,
-                            (index) => const SizedBox(width: 1),
-                          ),
-                        ),
+                          );
+                        },
                       )
                     ],
-                  )),
+                  ))
+                ],
+              ),
               Expanded(
                 child: Column(children: [
                   Expanded(

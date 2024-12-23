@@ -4,6 +4,9 @@ abstract class AppConstants {
   static String dataName = '';
   static bool isFreeType = false;
 
+
+
+
   static const EnvType env = EnvType.debug; //"debug" or "release"
   static const vatGCC = 0.05;
   static const constHeightTextField = 35.0;

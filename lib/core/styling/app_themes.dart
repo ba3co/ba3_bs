@@ -1,19 +1,22 @@
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppThemes {
+
+
   static ThemeData defaultTheme = ThemeData(
-    scaffoldBackgroundColor: const Color(0xffE6E6E6),
+    scaffoldBackgroundColor:  AppColors.backGroundColor,
     fontFamily: 'Almarai',
     appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xffE6E6E6),
+        backgroundColor: AppColors.backGroundColor,
         foregroundColor: Colors.black,
-        surfaceTintColor: Color(0xffE6E6E6),
+        surfaceTintColor:  AppColors.backGroundColor,
         elevation: 0),
-    elevatedButtonTheme: ElevatedButtonThemeData(
+    elevatedButtonTheme: const ElevatedButtonThemeData(
         style: ButtonStyle(
-      foregroundColor: const WidgetStatePropertyAll(Colors.white),
-      backgroundColor: WidgetStatePropertyAll(Colors.blue.shade700),
-      elevation: const WidgetStatePropertyAll(5),
+      foregroundColor: WidgetStatePropertyAll(AppColors.whiteColor),
+      backgroundColor: WidgetStatePropertyAll(AppColors.blueColor),
+      elevation: WidgetStatePropertyAll(5),
     )),
     colorScheme: ColorScheme.fromSeed(
         primary: Colors.black, seedColor: Colors.black, surface: Colors.white),
