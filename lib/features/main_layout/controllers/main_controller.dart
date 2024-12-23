@@ -22,7 +22,15 @@ class MainController extends GetxController {
     (name: 'إدارة المستخدمين', layout: const UserManagementLayout(), role: RoleItemType.viewUserManagement, icon: AppAssets.usersIcon, unSelectedIcon: AppAssets.usersUnselectedIcon),
   ];
   List<({String name, Widget layout, RoleItemType role, String icon, String unSelectedIcon})> allData = [];
-  late PageController pageController;
+   PageController pageController= PageController();
   int tabIndex = 0;
+
+
+
+  set setIndex(int index){
+    tabIndex=index;
+    update();
+
+  }
 
 }
