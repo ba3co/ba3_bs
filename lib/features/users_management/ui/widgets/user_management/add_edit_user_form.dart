@@ -47,6 +47,7 @@ class AddEditUserForm extends StatelessWidget {
                   maxLength: 6,
                   decoration: const InputDecoration(
                     label: Text('كلمة السر'),
+                    errorMaxLines: 2,
                     filled: true,
                     fillColor: Colors.white,
                   ),

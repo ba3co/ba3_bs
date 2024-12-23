@@ -3,19 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/app_spacer.dart';
-import '../../controllers/main_controller.dart';
+import '../../controllers/main_layout_controller.dart';
 import 'drawer_list_tile.dart';
 import 'main_header.dart';
 
 class RightMainWidget extends StatelessWidget {
-  const RightMainWidget({super.key,
-    required this.mainController
-  });
-  final MainController mainController;
+  const RightMainWidget({super.key, required this.mainController});
+
+  final MainLayoutController mainController;
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Column(
         spacing: 10,

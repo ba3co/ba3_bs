@@ -1,58 +1,89 @@
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/widgets/app_spacer.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
-import '../../controllers/nfc_cards_controller.dart';
-import '../widgets/loading_indicator.dart';
 import '../widgets/login_header_text.dart';
-import '../widgets/pin_input_fields.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userManagementController = Get.find<UserManagementController>();
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
+          const LoginHeaderText(),
+          VerticalSpace(),
+          Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 15,
               children: [
-                const LoginHeaderText(),
-                Column(
-                  children: [
-                    const Center(
-                      child: Text(
-                        "ادخل الرقم السري الخاص بك",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
+                SizedBox(
+                  width: .3.sw,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      label: Text('اسم الحساب'),
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
-                    const VerticalSpace(30),
-                    SizedBox(
-                      height: 75,
-                      child: GetBuilder<UserManagementController>(
-                        builder: (controller) {
-                          return controller.userStatus != UserManagementStatus.login
-                              ? Obx(() {
-                                  final nfcController = Get.find<NfcCardsController>();
-                                  return nfcController.isNfcAvailable.value
-                                      ? const Text("يرجى تقريب بطاقة الدخول")
-                                      : PinInputFields(controller: controller);
-                                })
-                              : const LoadingIndicator();
-                        },
-                      ),
+                    controller: userManagementController.loginNameController,
+                  ),
+                ),
+                SizedBox(
+                  width: .3.sw,
+                  child: TextFormField(
+                    maxLength: 6,
+                    decoration: const InputDecoration(
+                      label: Text('كلمة السر'),
+                      errorMaxLines: 2,
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
-                  ],
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(6),
+                    ],
+                    controller: userManagementController.loginPasswordController,
+                  ),
                 ),
               ],
             ),
           ),
+          VerticalSpace(20),
+          SizedBox(
+            width: .3.sw,
+            child: ElevatedButton(
+              onPressed: () {
+                userManagementController.checkUserStatus();
+              },
+              child: Text('دخول'),
+            ),
+          )
+          // Column(
+          //   children: [
+          //     const Center(
+          //       child: Text(
+          //         "ادخل الرقم السري الخاص بك",
+          //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          //       ),
+          //     ),
+          //     const VerticalSpace(30),
+          //     SizedBox(
+          //       height: 75,
+          //       child: GetBuilder<UserManagementController>(
+          //         builder: (controller) {
+          //           return controller.userStatus != UserManagementStatus.login
+          //               ? PinInputFields(controller: controller)
+          //               : const LoadingIndicator();
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );

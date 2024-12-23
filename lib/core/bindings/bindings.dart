@@ -7,7 +7,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dar
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/datasources/cheques_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
-import 'package:ba3_bs/features/main_layout/controllers/main_controller.dart';
+import 'package:ba3_bs/features/main_layout/controllers/main_layout_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -31,7 +31,6 @@ import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
-import '../../features/login/controllers/nfc_cards_controller.dart';
 import '../../features/login/data/datasources/user_management_service.dart';
 import '../../features/login/data/repositories/user_repo.dart';
 import '../../features/materials/data/repositories/materials_repository.dart';
@@ -65,7 +64,8 @@ class AppBindings extends Bindings {
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BillModel
-    final DataSourceRepository<BillModel> billsFirebaseRepo = DataSourceRepository(BillsDataSource(databaseService: fireStoreService));
+    final DataSourceRepository<BillModel> billsFirebaseRepo =
+        DataSourceRepository(BillsDataSource(databaseService: fireStoreService));
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
     final DataSourceRepository<BondModel> bondsFirebaseRepo = DataSourceRepository(
@@ -98,7 +98,8 @@ class AppBindings extends Bindings {
     // final IAPiClient httpClient = HttpClient<Map<String, dynamic>>(Client());
     final IAPiClient dioClient = DioClient<Map<String, dynamic>>(Dio());
 
-    final ITranslationService googleTranslation = GoogleTranslation(baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
+    final ITranslationService googleTranslation = GoogleTranslation(
+        baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
 
     final TranslationRepository translationRepo = TranslationRepository(googleTranslation);
 
@@ -113,7 +114,6 @@ class AppBindings extends Bindings {
     final billJsonExportRepo = JsonExportRepository<BillModel>(BillJsonExport());
 
     // Lazy load controllers
-    Get.lazyPut(() => NfcCardsController(), fenix: true);
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
 
@@ -133,7 +133,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => SellerController(SellersRepository()), fenix: true);
 
     Get.lazyPut(() => PrintingController(translationRepo), fenix: true);
-    Get.put(MainController());
+    Get.put(MainLayoutController());
     Get.lazyPut(() => BillSearchController(), fenix: true);
     Get.lazyPut(() => AccountStatementController(accountsStatementsRepo), fenix: true);
   }

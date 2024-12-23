@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -31,17 +33,17 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
 
   EntryBondController get bondController => Get.find<EntryBondController>();
 
-  BillModel? createBillModel({
-    BillModel? billModel,
-    required BillTypeModel billTypeModel,
-    required String billCustomerId,
-    required String billSellerId,
-    required int billPayType,
-    required String billDate,
-  }) {
+  BillModel? createBillModel(
+      {BillModel? billModel,
+      required BillTypeModel billTypeModel,
+      required String billCustomerId,
+      required String billSellerId,
+      required int billPayType,
+      required String billDate}) {
     return BillModel.fromBillData(
       billModel: billModel,
       billTypeModel: billTypeModel,
+      status: RoleItemType.viewBill.status,
       note: null,
       billCustomerId: billCustomerId,
       billSellerId: billSellerId,

@@ -28,13 +28,15 @@ class DrawerListTile extends StatelessWidget {
         duration: Durations.medium2,
         width: 0.15.sw,
         padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(color: index == tabIndex ? AppColors.blueColor : AppColors.whiteColor, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(
+            color: index == tabIndex ? AppColors.blueColor : AppColors.whiteColor,
+            borderRadius: BorderRadius.circular(8)),
         alignment: Alignment.centerRight,
         child: Row(
           spacing: 8,
           children: [
             Image.asset(
-              index == tabIndex ? icon : unSelectedIcon   ,
+              index == tabIndex ? icon : unSelectedIcon,
               width: 0.035.sw,
               height: 0.035.sh,
 

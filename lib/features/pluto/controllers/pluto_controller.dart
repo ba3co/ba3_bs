@@ -17,6 +17,7 @@ class PlutoController extends GetxController {
   /// Generates a list of PlutoRows by mapping each model to its respective cells.
   List<PlutoRow> generateRows<T>(List<PlutoAdaptable> adaptableModels, [T? type]) {
     if (adaptableModels.isEmpty) return [];
+
     plutoKey = GlobalKey();
     return adaptableModels.map((model) => _mapModelToRow(model, type)).toList();
   }

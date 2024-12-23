@@ -16,6 +16,27 @@ mixin AppValidator {
     return null;
   }
 
+  String? isPasswordValid(String? value, String fieldName) {
+    const passRegex =
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$"; // Updated regex without special character requirement
+
+    if (value == null || value.trim().isEmpty) {
+      return 'ادخل $fieldName!';
+    }
+
+    final trimmedValue = value.trim();
+
+    if (trimmedValue.length != 6) {
+      return 'أدخل 6 أرقام !';
+    }
+
+    if (!RegExp(passRegex).hasMatch(trimmedValue)) {
+      return 'من فضلك تأكد من أن كلمة المرور تحتوي على حرف كبير، حرف صغير، ورقم.';
+    }
+
+    return null; // Valid password
+  }
+
   String? isFirstNameValid(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'First name is required!';
@@ -117,12 +138,6 @@ mixin AppValidator {
   }
 
   static bool isValidName(String name) => name.trim().isNotEmpty;
-
-  static bool isPasswordValid(String password) {
-    final RegExp passwordPattern = RegExp(r'^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$');
-
-    return passwordPattern.hasMatch(password);
-  }
 
   static bool isValidVerificationCode(String code) {
     final RegExp sixNumbersPattern = RegExp(r'^\d{6}$');

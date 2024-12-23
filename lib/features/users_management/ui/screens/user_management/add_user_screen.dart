@@ -24,14 +24,14 @@ class AddUserScreen extends StatelessWidget {
               child: Scaffold(
                 appBar: AppBar(
                   centerTitle: false,
-                  title: Text(controller.initAddUserModel?.userName ?? "مستخدم جديد"),
+                  title: Text(controller.userModel?.userName ?? "مستخدم جديد"),
                   actions: [
-                    if (controller.initAddUserModel?.userId != null)
+                    if (controller.userModel?.userId != null)
                       ElevatedButton(
                           onPressed: () {
                             Get.to(() => TimeDetailsScreen(
-                                  oldKey: controller.initAddUserModel!.userId!,
-                                  name: controller.initAddUserModel!.userName!,
+                                  oldKey: controller.userModel!.userId!,
+                                  name: controller.userModel!.userName!,
                                 ));
                           },
                           child: const Text('البريك')),
@@ -58,7 +58,7 @@ class AddUserScreen extends StatelessWidget {
                             controller.saveOrUpdateUser(existingUserModel: controller.userModel);
                           },
                           iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
-                          color: controller.initAddUserModel?.userId == null ? null : Colors.green,
+                          color: controller.userModel?.userId == null ? null : Colors.green,
                         ),
                       )
                     ],

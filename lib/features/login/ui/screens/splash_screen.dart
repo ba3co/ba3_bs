@@ -18,7 +18,6 @@ class SplashScreen extends StatelessWidget {
   }
 
   void _checkUserStatus() {
-    UserManagementController userManagementController = Get.find<UserManagementController>();
-    userManagementController.checkUserStatus();
+    Get.find<UserManagementController>().navigateToLogin(true);
   }
 }

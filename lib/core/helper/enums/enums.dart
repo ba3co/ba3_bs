@@ -139,6 +139,24 @@ enum BillType {
   }
 }
 
+enum Status {
+  approved('approved'),
+  canceled('canceled'),
+  pending('pending');
+
+  final String value;
+
+  const Status(this.value);
+
+  // Factory constructor to handle conversion from string to BillStatus
+  factory Status.byValue(String value) {
+    return Status.values.firstWhere(
+      (status) => status.value == value,
+      orElse: () => throw ArgumentError('No matching Status for value: $value'),
+    );
+  }
+}
+
 enum BondType {
   openingEntry(
     label: "Opening Entry",
@@ -205,8 +223,8 @@ enum BondType {
     );
   }
 }
-enum ChequesType {
 
+enum ChequesType {
   paidChecks(
     label: "Paid checks",
     value: "شيكات مدفوعة",
@@ -221,7 +239,6 @@ enum ChequesType {
     from: 2,
     to: 3,
   );
-
 
   final int from, to;
 
@@ -289,6 +306,7 @@ enum BondItemType {
     );
   }
 }
+
 enum ChequesStatus {
   paid('مدفوع'),
   notPaid('غير مدفوع');
@@ -365,7 +383,7 @@ enum BuyAccounts implements Account {
 
 enum CustomerAccount implements Account {
   cashBox('الصندوق'),
-  cashCustomer('زبون كاش'),
+  cashCustomer("زبون كاش"),
   provider('المورد');
 
   @override

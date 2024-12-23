@@ -1,24 +1,15 @@
 import 'dart:developer';
-import 'dart:io';
 
-import 'package:ba3_bs/features/login/data/models/role_model.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nfc_manager/nfc_manager.dart';
-import 'package:pinput/pinput.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
-import '../../../core/utils/generate_id.dart';
-import '../../login/controllers/nfc_cards_controller.dart';
-import '../../login/data/models/card_model.dart';
 import '../../login/data/models/user_model.dart';
 import '../../login/data/repositories/user_repo.dart';
 import '../data/models/role_model.dart';
@@ -40,22 +31,18 @@ class UserManagementController extends GetxController with AppValidator {
   TextEditingController userNameController = TextEditingController();
   TextEditingController passController = TextEditingController();
 
-  Map<String, OldRoleModel> oldAllRoles = {};
-
   List<RoleModel> allRoles = [];
   List<UserModel> allUsers = [];
 
   RoleModel? roleModel;
   UserModel? userModel;
 
-  Map<String, OldUserModel> allUserList = {};
-
   UserManagementStatus? userStatus;
 
-  String? userPassword;
-  String? cardNumber;
+  TextEditingController loginPasswordController = TextEditingController();
+  TextEditingController loginNameController = TextEditingController();
+
   OldUserModel? myUserModel;
-  OldUserModel? initAddUserModel;
 
   final bool isAdmin = true;
 
@@ -85,7 +72,7 @@ class UserManagementController extends GetxController with AppValidator {
 
   bool validateUserForm() => userFormKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) => isPinValid(value, fieldName);
+  String? validator(String? value, String fieldName) => isPasswordValid(value, fieldName);
 
   initUser(UserModel? user) {
     if (user != null) {
@@ -123,15 +110,13 @@ class UserManagementController extends GetxController with AppValidator {
 
   RoleModel getRoleById(String id) => allRoles.firstWhere((role) => role.roleId == id);
 
+  bool hasPermission(RoleItemType roleItemType) => _roleService.hasPermission(roleItemType);
+
   // Check if all roles are selected
-  bool areAllRolesSelected() {
-    return RoleItemType.values.every((type) => rolesMap[type]?.length == RoleItem.values.length);
-  }
+  bool areAllRolesSelected() => RoleItemType.values.every((type) => rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) {
-    return rolesMap[type]?.length == RoleItem.values.length;
-  }
+  bool areAllRolesSelectedForType(RoleItemType type) => rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -190,68 +175,48 @@ class UserManagementController extends GetxController with AppValidator {
   }
 
   void checkUserStatus() async {
-    if (userPassword != null) {
-      debugPrint('userPin != null');
-      await _checkUserByPin();
-    } else if (cardNumber != null) {
-      debugPrint('cardNumber != null');
-      await _checkUserByCard();
-    } else {
-      debugPrint('_navigateToLogin');
-      _navigateToLogin(true);
+    final loginName = loginNameController.text.trim();
+    final loginPassword = loginPasswordController.text.trim();
+
+    if (loginName.isEmpty || loginPassword.isEmpty) {
+      AppUIUtils.onFailure('من فضلك قم بادخال اسم الحساب و الرقم السري!');
+      return;
     }
+
+    if (loginPassword.length < 6) {
+      AppUIUtils.onFailure('من فضلك أدخل كلمة مرور مكونة من 6 أرقام على الأقل!');
+      return;
+    }
+
+    await _checkUserByPin();
   }
 
   void _handleGetUserPinSuccess(List<UserModel> fetchedUsers) async {
-    if (fetchedUsers.isNotEmpty) {
-      if (userStatus != UserManagementStatus.login) {
-        userModel = fetchedUsers.first;
-
-        // userStatus = UserManagementStatus.login;
-
-        // update();
-
-        Get.offAllNamed(AppRoutes.mainLayout);
-      }
-    } else {
+    if (fetchedUsers.isEmpty) {
       await _handleNoMatch();
+      return;
+    }
+
+    if (userStatus == UserManagementStatus.login) return;
+
+    userModel = fetchedUsers.first;
+
+    final isLoginNameMatch = userModel?.userName?.trim() == loginNameController.text;
+    if (isLoginNameMatch) {
+      Get.offAllNamed(AppRoutes.mainLayout);
     }
   }
 
   Future<void> _checkUserByPin() async {
-    final result = await _usersFirebaseRepo.fetchWhere(field: 'userPassword', value: userPassword);
+    final result = await _usersFirebaseRepo.fetchWhere(field: 'userPassword', value: loginPasswordController.text);
 
     result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message), (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers));
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers),
+    );
   }
 
-  Future<void> _checkUserByCard() async {
-    final querySnapshot =
-        await FirebaseFirestore.instance.collection("Cards").where('cardId', isEqualTo: cardNumber).get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      final cardData = querySnapshot.docs.first.data();
-      if (cardData["isDisabled"]) {
-        Get.snackbar("خطأ", "تم إلغاء تفعيل البطاقة");
-        _navigateToLogin();
-      } else {
-        await _fetchUserByCard(cardData["userId"]);
-      }
-    } else {
-      await _handleNoMatch();
-    }
-  }
-
-  Future<void> _fetchUserByCard(String userId) async {
-    final userSnapshot = await FirebaseFirestore.instance.collection(AppConstants.usersCollection).doc(userId).get();
-
-    if (userSnapshot.exists) {
-      myUserModel = OldUserModel.fromJson(userSnapshot.data()!);
-      userStatus = UserManagementStatus.login;
-    }
-  }
-
-  void _navigateToLogin([bool waitUntilFirstFrameRasterized = false]) {
+  void navigateToLogin([bool waitUntilFirstFrameRasterized = false]) {
     if (waitUntilFirstFrameRasterized) {
       WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((_) {
         userStatus = UserManagementStatus.first;
@@ -273,55 +238,20 @@ class UserManagementController extends GetxController with AppValidator {
     Get.toNamed(AppRoutes.addUserScreen);
   }
 
-  void navigateToLAllUsersScreen() {
-    Get.toNamed(AppRoutes.showAllUsersScreen);
-  }
+  void navigateToLAllUsersScreen() => Get.toNamed(AppRoutes.showAllUsersScreen);
 
-  void navigateToLAllPermissionsScreen() {
-    Get.toNamed(AppRoutes.showAllPermissionsScreen);
-  }
+  void navigateToLAllPermissionsScreen() => Get.toNamed(AppRoutes.showAllPermissionsScreen);
 
   Future<void> _handleNoMatch() async {
     userStatus = null; // Setting userStatus to null in case of no match
     if (Get.currentRoute != AppRoutes.loginScreen) {
-      _navigateToLogin();
+      navigateToLogin();
     } else {
       AppUIUtils.onFailure('لا يوجد تطابق!');
     }
-    userPassword = null;
-    cardNumber = null;
-  }
 
-  void initAllUser() {
-    FirebaseFirestore.instance.collection(AppConstants.usersCollection).snapshots().listen((event) {
-      allUserList.clear();
-      for (var element in event.docs) {
-        allUserList[element.id] = OldUserModel.fromJson(element.data());
-      }
-      update();
-    });
-  }
-
-  void addUser() async {
-    initAddUserModel?.userId ??= generateId(RecordType.user);
-    initAddUserModel?.userStatus ??= AppConstants.userStatusOnline;
-    final result = await _userRepository.saveUser(initAddUserModel!);
-    result.fold(
-      (failure) => Get.snackbar("Error", failure.message),
-      (success) => Get.snackbar("Success", "User saved successfully!"),
-    );
-  }
-
-  OldRoleModel? oldRoleModel;
-
-  void addRole() async {
-    oldRoleModel?.roleId ??= generateId(RecordType.role);
-    final result = await _userRepository.saveRole(oldRoleModel!);
-    result.fold(
-      (failure) => Get.snackbar("Error", failure.message),
-      (success) => Get.snackbar("Success", "Role saved successfully!"),
-    );
-    update();
+    loginNameController.clear();
+    loginPasswordController.clear();
   }
 
   set setSellerId(String? sellerId) {
@@ -338,7 +268,7 @@ class UserManagementController extends GetxController with AppValidator {
 
     // Create the role model from the provided data
     final updatedRoleModel =
-        _createRoleModel(existingRoleModel: existingRoleModel, roles: rolesMap, roleName: roleNameController.text);
+        _roleService.createRoleModel(roleModel: existingRoleModel, roles: rolesMap, roleName: roleNameController.text);
 
     // Handle null role model
     if (updatedRoleModel == null) {
@@ -346,29 +276,11 @@ class UserManagementController extends GetxController with AppValidator {
       return;
     }
 
-    // Save the role to Firestore
     final result = await _rolesFirebaseRepo.save(updatedRoleModel);
 
-    // Handle the result (success or failure)
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (success) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
-    );
-  }
-
-  RoleModel? _createRoleModel({
-    required Map<RoleItemType, List<RoleItem>> roles,
-    required String roleName,
-    RoleModel? existingRoleModel,
-  }) {
-    if (rolesMap.isEmpty) {
-      return null;
-    }
-
-    return _roleService.createRoleModel(
-      roleModel: existingRoleModel,
-      roles: roles,
-      roleName: roleName,
     );
   }
 
@@ -376,8 +288,8 @@ class UserManagementController extends GetxController with AppValidator {
     // Validate the form first
     if (!validateUserForm()) return;
 
-    // Create the role model from the provided data
-    final updatedUserModel = _createUserModel(
+    // Create the user model from the provided data
+    final updatedUserModel = _roleService.createUserModel(
       userModel: existingUserModel,
       userName: userNameController.text,
       userPassword: passController.text,
@@ -385,39 +297,17 @@ class UserManagementController extends GetxController with AppValidator {
       userSellerId: selectedSellerId.value,
     );
 
-    // Handle null role model
+    // Handle null user model
     if (updatedUserModel == null) {
       AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
       return;
     }
 
-    // Save the role to Firestore
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
-    // Handle the result (success or failure)
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (success) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
-    );
-  }
-
-  UserModel? _createUserModel({
-    UserModel? userModel,
-    required String userName,
-    required String userPassword,
-    String? userRoleId,
-    String? userSellerId,
-  }) {
-    if (userRoleId == null || userSellerId == null) {
-      return null;
-    }
-
-    return _roleService.createUserModel(
-      userModel: userModel,
-      userName: userName,
-      userPassword: userPassword,
-      userRoleId: userRoleId,
-      userSellerId: userSellerId,
     );
   }
 
@@ -457,183 +347,5 @@ class UserManagementController extends GetxController with AppValidator {
         (success) => Get.snackbar("Success", "Logout time logged successfully!"),
       );
     }
-  }
-}
-
-getMyUserName() {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.myUserModel?.userName;
-}
-
-getCurrentUserSellerId() {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.myUserModel?.userSellerId;
-}
-
-getMyUserUserId() {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.myUserModel?.userId;
-}
-
-List? getMyUserFaceId() {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.myUserModel?.userFaceId;
-}
-
-getMyUserRole() {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.myUserModel?.userRole;
-}
-
-getUserNameById(id) {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.allUserList[id]?.userName;
-}
-
-OldUserModel getUserModelById(id) {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  return userManagementViewController.allUserList[id]!;
-}
-
-bool checkPermission(role, page) {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  Map<String, List<String>>? userRole =
-      userManagementViewController.oldAllRoles[userManagementViewController.myUserModel?.userRole]?.roles;
-  if (userRole?[page]?.contains(role) ?? false) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-bool checkMainPermission(role) {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  Map<String, List<String>>? userRole =
-      userManagementViewController.oldAllRoles[userManagementViewController.myUserModel?.userRole]?.roles;
-  if (userRole?[role]?.isNotEmpty ?? false) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-Future<bool> hasPermissionForOperation(role, page) async {
-  UserManagementController userManagementViewController = Get.find<UserManagementController>();
-  Map<String, List<String>>? userRole =
-      userManagementViewController.oldAllRoles[userManagementViewController.myUserModel?.userRole]?.roles;
-  String error = "";
-  // _ndefWrite();
-  if (userRole?[page]?.contains(role) ?? false) {
-    debugPrint("same");
-    return true;
-  } else {
-    debugPrint("you need to evelotion");
-    bool init = false;
-    bool isNfcAvailable = (Platform.isAndroid || Platform.isIOS) && await NfcManager.instance.isAvailable();
-    var a = await Get.defaultDialog(
-        barrierDismissible: false,
-        title:
-            "احتاج الاذن\nل ${AppUIUtils.getRoleNameFromEnum(role.toString())}\nفي ${AppUIUtils.getPageNameFromEnum(page.toString())}",
-        content: StatefulBuilder(builder: (context, setstate) {
-          if (!init && isNfcAvailable) {
-            init = true;
-            NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
-              List<int> idList = tag.data["ndef"]['identifier'];
-              String id = '';
-              for (var e in idList) {
-                if (id == '') {
-                  id = e.toRadixString(16).padLeft(2, "0");
-                } else {
-                  id = "$id:${e.toRadixString(16).padLeft(2, "0")}";
-                }
-              }
-              var cardId = id.toUpperCase();
-              NfcCardsController cardViewController = Get.find<NfcCardsController>();
-              if (cardViewController.allCards.containsKey(cardId)) {
-                CardModel cardModel = cardViewController.allCards[cardId]!;
-                Map<String, List<String>>? newUserRole =
-                    userManagementViewController.oldAllRoles[getUserModelById(cardModel.userId).userRole]?.roles;
-                if (newUserRole?[page]?.contains(role) ?? false) {
-                  Get.back(result: true);
-                  NfcManager.instance.stopSession();
-                } else {
-                  error = "هذا الحساب غير مصرح له بالقيام بهذه العملية";
-                  setstate(() {});
-                }
-              } else {
-                error = "البطاقة غير موجودة";
-                setstate(() {});
-              }
-            });
-          }
-          return Column(
-            children: [
-              if (!isNfcAvailable)
-                Column(
-                  children: [
-                    Pinput(
-                      keyboardType: TextInputType.number,
-                      defaultPinTheme: PinTheme(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8), color: Colors.blue.shade400.withOpacity(0.5))),
-                      length: 6,
-                      obscureText: true,
-                      onCompleted: (inputPin) {
-                        OldUserModel? user = userManagementViewController.allUserList.values
-                            .toList()
-                            .firstWhereOrNull((element) => element.userPin == inputPin);
-                        if (user != null) {
-                          Map<String, List<String>>? newUserRole =
-                              userManagementViewController.oldAllRoles[user.userRole]?.roles;
-                          if (newUserRole?[page]?.contains(role) ?? false) {
-                            Get.back(result: true);
-                            NfcManager.instance.stopSession();
-                          } else {
-                            error = "هذا الحساب غير مصرح له بالقيام بهذه العملية";
-                            setstate(() {});
-                          }
-                        } else {
-                          error = "الحساب غير موجود";
-                          setstate(() {});
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
-                ),
-              Text(
-                error,
-                style: const TextStyle(fontSize: 22, color: Colors.red),
-              ),
-              if (error != "")
-                const SizedBox(
-                  height: 5,
-                ),
-              if (isNfcAvailable)
-                const Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                )
-            ],
-          );
-        }),
-        actions: [
-          ElevatedButton(
-              onPressed: () {
-                Get.back(result: false);
-              },
-              child: const Text("cancel"))
-        ]);
-
-    debugPrint("a:$a");
-    return a;
   }
 }

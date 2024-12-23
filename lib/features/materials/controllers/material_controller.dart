@@ -85,7 +85,6 @@ class MaterialController extends GetxController {
 
     final String matBarCode =
         materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
-    log('bar code $matBarCode');
 
     return matBarCode;
   }

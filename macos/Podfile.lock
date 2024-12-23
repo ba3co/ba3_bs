@@ -1151,7 +1151,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.36):
     - BoringSSL-GRPC/Interface (= 0.0.36)
   - BoringSSL-GRPC/Interface (0.0.36)
-  - cloud_firestore (5.5.1):
+  - cloud_firestore (5.6.0):
     - Firebase/CoreOnly (~> 11.4.0)
     - Firebase/Firestore (~> 11.4.0)
     - firebase_core
@@ -1161,7 +1161,7 @@ PODS:
   - Firebase/Firestore (11.4.2):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 11.4.0)
-  - firebase_core (3.8.1):
+  - firebase_core (3.9.0):
     - Firebase/CoreOnly (~> 11.4.0)
     - FlutterMacOS
   - FirebaseAppCheckInterop (11.6.0)
@@ -1360,9 +1360,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: d121da9ef7e2ff4cab7666e76c5a3e0915ae08c3
   BoringSSL-GRPC: ca6a8e5d04812fce8ffd6437810c2d46f925eaeb
-  cloud_firestore: 9a20a45d1f46dda8d3486bc68866e8dca2d68548
+  cloud_firestore: 0d1c982890702bf99ab2881743c35fddb66e295d
   Firebase: 7fd5466678d964be78fbf536d8a3385da19c4828
-  firebase_core: e4a35c426636a2cce00a5163df7ba69bfd0cca57
+  firebase_core: 1dfe1f4d02ad78be0277e320aa3d8384cf46231f
   FirebaseAppCheckInterop: 347aa09a805219a31249b58fc956888e9fcb314b
   FirebaseCore: 6b32c57269bd999aab34354c3923d92a6e5f3f84
   FirebaseCoreExtension: f1bc67a4702931a7caa097d8e4ac0a1b0d16720e
@@ -1384,4 +1384,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: b5ff078e9cf81bae88fdc8e0ce3668e57b68e9b6
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

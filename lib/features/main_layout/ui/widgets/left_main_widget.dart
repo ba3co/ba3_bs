@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../../controllers/main_controller.dart';
+import '../../controllers/main_layout_controller.dart';
 
 class LeftMainWidget extends StatelessWidget {
-  const LeftMainWidget({
-    super.key,
-    required this.mainController
-  });
-  final MainController mainController;
+  const LeftMainWidget({super.key, required this.mainController});
+
+  final MainLayoutController mainController;
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: PageView.builder(
-        physics: const ClampingScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         scrollDirection: Axis.vertical,
         onPageChanged: (value) {
           mainController.setIndex = value;
@@ -25,7 +24,6 @@ class LeftMainWidget extends StatelessWidget {
             transitionBuilder: (child, animation) {
               return SizeTransition(
                 sizeFactor: animation,
-
                 axis: Axis.vertical,
                 child: child,
               );
