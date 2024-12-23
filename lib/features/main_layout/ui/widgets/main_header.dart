@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,7 +16,7 @@ class MainHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 5,
+      spacing: 10,
       children: [
         Container(
           height: 0.025.sh,
@@ -35,7 +35,7 @@ class MainHeader extends StatelessWidget {
                 ),
               ),
               Text(
-                Get.find<UserManagementController>().userModel?.userName?? "",
+                read<UserManagementController>().userModel?.userName?? "",
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -48,7 +48,7 @@ class MainHeader extends StatelessWidget {
         GestureDetector(
 
           onTap: () {
-            Get.find<UserManagementController>().userStatus = UserManagementStatus.first;
+            read<UserManagementController>().userStatus = UserManagementStatus.first;
             Get.offAllNamed(AppRoutes.loginScreen);
           },
           child: Container(

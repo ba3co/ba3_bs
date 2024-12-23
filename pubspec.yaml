@@ -66,6 +66,8 @@ flutter:
         - asset: assets/fonts/notoSansArabic/NotoSansArabic-Bold.ttf
           weight: 700
 
-
+    - family: Almarai
+      fonts:
+        - asset: assets/fonts/almarai/AlmaraiRegular.ttf
 
 

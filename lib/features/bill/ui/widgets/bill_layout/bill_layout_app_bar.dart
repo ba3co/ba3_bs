@@ -1,20 +1,24 @@
+import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 
-
-import '../../../../users_management/controllers/user_management_controller.dart';
 
 AppBar billLayoutAppBar() {
   return AppBar(
-    title: Column(
-      children: [
-        const Text("الفواتير", style: TextStyle(fontWeight: FontWeight.w700)),
-        Text(
-          Get.find<UserManagementController>().myUserModel?.userName ?? "",
-          style: const TextStyle(color: Colors.blue, fontSize: 14),
-        ),
-      ],
-    ),
+    title: const Text("الفواتير", style: TextStyle(fontWeight: FontWeight.w700)),
+    actions: [
 
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: AppButton(title:  "عرض جميع الفواتير", onPressed: () {
+          read<AllBillsController>()
+            ..fetchAllBills()
+            ..navigateToAllBillsScreen();
+        }, iconData: Icons.view_list_outlined,width: 30.w,),
+      )
+
+    ],
   );
 }

@@ -1,41 +1,95 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
-import '../../../../patterns/data/models/bill_type_model.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BillITypeItemWidget extends StatelessWidget {
-  final BillTypeModel bill;
-  final VoidCallback onPressed;
+  const BillITypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white});
 
-  const BillITypeItemWidget({
-    super.key,
-    required this.bill,
-    required this.onPressed,
-  });
+  final VoidCallback onTap;
+  final String text;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        elevation: 3,
-        foregroundColor: Colors.black,
-        overlayColor: Colors.grey,
-        padding: const EdgeInsets.all(30.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Color(bill.color ?? 0xFF000000).withOpacity(0.5), width: 1.0),
-        ),
-      ),
-      child: Text(
-        bill.fullName ?? "Error",
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        textDirection: TextDirection.rtl,
-        textAlign: TextAlign.center,
-      ),
-    );
+    return SizedBox(
+        width: 380,
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                width: 220,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.only(topRight: Radius.circular(5), topLeft: Radius.circular(5)),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  text,
+                  style:AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  textDirection: TextDirection.rtl,
+                ),
+              ),
+            ),
+            Container(
+              height: 100,
+              width: 400,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), topLeft: Radius.circular(12)),
+                border: Border.all(color: color, width: 2),
+              ),
+              child: Column(
+                children: [
+                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        spacing: 5,
+                        children: [
+                          Text(
+                            'كل الفواتير :',
+                            style: AppTextStyles.headLineStyle3,
+                          ),
+                          Text(
+                            '${Random().nextInt(500000)}',
+                            style: AppTextStyles.headLineStyle3.copyWith(color: color),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        spacing: 5,
+                        children: [
+                          Text(
+                            ' فواتير اليوم :',
+                            style: AppTextStyles.headLineStyle3,
+                          ),
+                          Text(
+                            '${Random().nextInt(100)}',
+                            style: AppTextStyles.headLineStyle3.copyWith(color: color),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  AppButton(
+                    title: "جديد",
+                    onPressed: onTap,
+                    iconData: Icons.fiber_new_outlined,
+                    color: color,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ));
   }
 }
