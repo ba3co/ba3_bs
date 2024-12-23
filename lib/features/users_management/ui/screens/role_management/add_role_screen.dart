@@ -35,17 +35,14 @@ class AddRoleScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(30.0),
                   child: ListView(
                     children: [
-                      const Text(
-                        'الاسم',
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      const Text('الاسم', style: TextStyle(fontSize: 16)),
                       Form(
                         key: controller.roleFormKey,
                         child: Container(
                           color: Colors.grey.shade200,
                           child: TextFormField(
                             controller: controller.roleNameController,
-                            validator: (value) => controller.validator(value, 'أسم الصلاحية'),
+                            validator: (value) => controller.defaultValidator(value, 'أسم الصلاحية'),
                           ),
                         ),
                       ),

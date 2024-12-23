@@ -38,7 +38,7 @@ class AddEditUserForm extends StatelessWidget {
                     fillColor: Colors.white,
                   ),
                   controller: userManagementController.userNameController,
-                  validator: (value) => userManagementController.validator(value, 'اسم الحساب'),
+                  validator: (value) => userManagementController.defaultValidator(value, 'اسم الحساب'),
                 ),
               ),
               SizedBox(
@@ -55,7 +55,7 @@ class AddEditUserForm extends StatelessWidget {
                     LengthLimitingTextInputFormatter(6),
                   ],
                   controller: userManagementController.passController,
-                  validator: (value) => userManagementController.validator(value, 'كلمة السر'),
+                  validator: (value) => userManagementController.passwordValidator(value, 'كلمة السر'),
                 ),
               ),
             ],

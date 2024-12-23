@@ -72,7 +72,9 @@ class UserManagementController extends GetxController with AppValidator {
 
   bool validateUserForm() => userFormKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) => isPasswordValid(value, fieldName);
+  String? passwordValidator(String? value, String fieldName) => isPasswordValid(value, fieldName);
+
+  String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   initUser(UserModel? user) {
     if (user != null) {
