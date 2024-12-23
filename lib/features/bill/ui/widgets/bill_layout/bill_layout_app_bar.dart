@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/helper/enums/enums.dart';
-import '../../../../../core/router/app_routes.dart';
+
 import '../../../../users_management/controllers/user_management_controller.dart';
 
 AppBar billLayoutAppBar() {
@@ -16,13 +15,6 @@ AppBar billLayoutAppBar() {
         ),
       ],
     ),
-    actions: [
-      IconButton(
-          onPressed: () {
-            Get.find<UserManagementController>().userStatus = UserManagementStatus.first;
-            Get.offAllNamed(AppRoutes.loginScreen);
-          },
-          icon: const Icon(Icons.logout, color: Colors.red))
-    ],
+
   );
 }
