@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -25,7 +27,7 @@ class RightMainWidget extends StatelessWidget {
             child: Image.asset(AppAssets.logo),
           ),
           SizedBox(
-            height: 0.725.sh,
+            height:(Platform.isWindows || Platform.isMacOS)? 0.725.sh:0.610.sh,
             width: 0.15.sw,
             child: ListView.separated(
               padding: EdgeInsets.zero,

@@ -35,7 +35,7 @@ class BondDetailsBody extends StatelessWidget {
               onChanged: bondDetailsPlutoController.onMainTableStateManagerChanged,
               onLoaded: bondDetailsPlutoController.onMainTableLoaded,
               shortCut: customPlutoShortcut(GetAccountsByEnterAction(plutoController:  bondDetailsPlutoController,context:  context,textFieldName: AppConstants.entryAccountGuid)),
-              evenRowColor: Color(bondDetailsPlutoController.bondType.color),
+              evenRowColor: Color(int.parse("0xff${bondDetailsPlutoController.bondType.color}")),
             ),
           );
         },

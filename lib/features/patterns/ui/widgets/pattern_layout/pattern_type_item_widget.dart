@@ -1,12 +1,9 @@
-import 'dart:math';
-
-import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
-import 'package:ba3_bs/features/patterns/ui/widgets/pattern_layout/body_pattern_Widget.dart';
+import 'package:ba3_bs/features/patterns/ui/widgets/pattern_layout/body_pattern_widget.dart';
 import 'package:flutter/material.dart';
 
 class PatternTypeItemWidget extends StatelessWidget {

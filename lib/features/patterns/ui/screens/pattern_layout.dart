@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/patterns/controllers/pattern_controller.dart';
@@ -30,58 +29,46 @@ class PatternLayout extends StatelessWidget {
                   style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                 ),
               ),
-              bodyWidget: Column(
-                  children: [
-
-                    GetBuilder<PatternController>(
-                        builder: (controller) => SizedBox(
-                          width: 1.sw,
-                          child: Column(
-                            spacing: 10,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Wrap(
-                                spacing: 20,
-                                runSpacing: 20,
-                                alignment: WrapAlignment.start,
-                                crossAxisAlignment: WrapCrossAlignment.start,
-                                children: [
-                                  ...controller.billsTypes.map((billTypeModel) => PatternTypeItemWidget(
-                                    billTypeModel: billTypeModel,
-                                    color: Color(billTypeModel.color!),
-                                    onTap: () {
-                                      // controller
-                                      //   ..fetchAllBills()
-                                      //   ..openFloatingBillDetails(context, billTypeModel);
-                                    },
-                                  )),
-                                ],
-                              ),
-                              Center(
-                                child: AppButton(
-                                  title: "إضافة نمط",
-                                  fontSize: 13.sp,
-                                  color: AppColors.grayColor,
-                                  onPressed: () {
-                                    Get.toNamed(AppRoutes.addPatternsScreen);
-                                  },
-                                  iconData: Icons.view_list_outlined,
-                                  width: max(45.w, 140),
-                                  // width: 40.w,
-                                ),
-                              ),
-                            ],
+              bodyWidget: GetBuilder<PatternController>(
+                  builder: (controller) => SizedBox(
+                    width: 1.sw,
+                    child: Column(
+                      spacing: 10,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Wrap(
+                          spacing: 20,
+                          runSpacing: 20,
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            ...controller.billsTypes.map((billTypeModel) => PatternTypeItemWidget(
+                              billTypeModel: billTypeModel,
+                              color: Color(billTypeModel.color!),
+                              onTap: () {
+                                // controller
+                                //   ..fetchAllBills()
+                                //   ..openFloatingBillDetails(context, billTypeModel);
+                              },
+                            )),
+                          ],
+                        ),
+                        Center(
+                          child: AppButton(
+                            title: "إضافة نمط",
+                            fontSize: 13.sp,
+                            color: AppColors.grayColor,
+                            onPressed: () {
+                              Get.toNamed(AppRoutes.addPatternsScreen);
+                            },
+                            iconData: Icons.view_list_outlined,
+                            width: max(45.w, 140),
+                            // width: 40.w,
                           ),
-                        )),
-                    // AppMenuItem(
-                    //   text: "معاينة الانماط",
-                    //   onTap: () {
-                    //     read<PatternController>().getAllBillTypes();
-                    //     Get.toNamed(AppRoutes.showAllPatternsScreen);
-                    //   },
-                    // ),
-                  ],
-                ),
+                        ),
+                      ],
+                    ),
+                  )),
             ),
           ),
         ),

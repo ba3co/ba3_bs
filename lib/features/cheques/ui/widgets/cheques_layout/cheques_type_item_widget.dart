@@ -1,40 +1,39 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 class ChequesTypeItemWidget extends StatelessWidget {
-  final ChequesType cheques;
+  final String text;
   final VoidCallback onPressed;
 
   const ChequesTypeItemWidget({
     super.key,
-    required this.cheques,
+    required this.text,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        elevation: 3,
-        foregroundColor: Colors.black,
-        overlayColor: Colors.grey,
-        padding: const EdgeInsets.all(30.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Text(
-        cheques.value,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        textDirection: TextDirection.rtl,
-        textAlign: TextAlign.center,
-      ),
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+          width: 1.sw,
+           decoration: BoxDecoration(
+             color: AppColors.grayColor,
+             borderRadius: BorderRadius.circular(8)
+           ),
+          height: 100.h,
+          alignment: Alignment.center,
+
+
+          child: Text(
+            text,
+            style: AppTextStyles.headLineStyle1.copyWith(color: Colors.white,),
+            textDirection: TextDirection.rtl,
+          )),
     );
   }
 }
