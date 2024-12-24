@@ -39,7 +39,6 @@ class DrawerListTile extends StatelessWidget {
               index == tabIndex ? icon : unSelectedIcon,
               width: 0.035.sw,
               height: 0.035.sh,
-
               // color: index == tabIndex ? AppColors.whiteColor : AppColors.grayColor,
             ),
             Expanded(
