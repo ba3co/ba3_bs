@@ -1,9 +1,17 @@
+import 'dart:math';
+
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
+import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/widgets/app_button.dart';
 import '../widgets/bill_layout/bill_layout_app_bar.dart';
 import '../widgets/bill_layout/bill_type_item_widget.dart';
 
@@ -15,38 +23,77 @@ class BillLayout extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: billLayoutAppBar(),
-        body: GetBuilder<AllBillsController>(
-            builder: (controller) => Container(
-              width: 1.sw,
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-
-                spacing: 10,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 10,
-                        alignment: WrapAlignment.start,
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        children: [
-                          ...controller.billsTypes.map((billTypeModel) => BillITypeItemWidget(
-                                text: billTypeModel.fullName!,
-                                color: Color(billTypeModel.color!),
-                                onTap: () {
-                                  controller
-                                    ..fetchAllBills()
-                                    ..openFloatingBillDetails(context, billTypeModel);
-                                },
-                              )),
-                        ],
-                      ),
-
-                    ],
+          appBar: billLayoutAppBar(),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              spacing: 20,
+              children: [
+                OrganizedWidget(
+                  titleWidget: Center(
+                    child: Text(
+                      "الفواتير",
+                      style: AppTextStyles.headLineStyle1.copyWith(color: Colors.white),
+                    ),
                   ),
-            )),
-      ),
+                  bodyWidget: GetBuilder<AllBillsController>(
+                      builder: (controller) => SizedBox(
+                        width: 1.sw,
+                            child: Column(
+                              spacing: 10,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  children: [
+                                    ...controller.billsTypes.map((billTypeModel) => BillITypeItemWidget(
+                                          text: billTypeModel.fullName!,
+                                          color: Color(billTypeModel.color!),
+                                          onTap: () {
+                                            controller
+                                              ..fetchAllBills()
+                                              ..openFloatingBillDetails(context, billTypeModel);
+                                          },
+                                        )),
+                                  ],
+                                ),
+                                Row(
+
+                                  ///TODO:
+                                  children: [
+                                    AppButton(
+                                      title: 'عرض جميع الفواتير',
+                                      fontSize: 13.sp,
+                                      color: AppColors.grayColor,
+                                      onPressed: () {
+                                        read<AllBillsController>()
+                                          ..fetchAllBills()
+                                          ..navigateToAllBillsScreen();
+                                      },
+                                      iconData: Icons.view_list_outlined,
+                                      width: max(45.w, 140),
+                                      // width: 40.w,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )),
+                ),
+                OrganizedWidget(
+                    titleWidget: Center(
+                      child: Text(
+                        "انماط البيع",
+                        style: AppTextStyles.headLineStyle1.copyWith(color: Colors.white),
+                      ),
+                    ),
+                    bodyWidget: PatternLayout())
+              ],
+            ),
+          )),
     );
   }
 }

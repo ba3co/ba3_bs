@@ -1,10 +1,8 @@
 import 'dart:math';
 
-import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BillITypeItemWidget extends StatelessWidget {
   const BillITypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white});
@@ -16,7 +14,7 @@ class BillITypeItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 380,
+        width: 350,
         child: Column(
           children: [
             Align(
@@ -38,7 +36,7 @@ class BillITypeItemWidget extends StatelessWidget {
             ),
             Container(
               height: 100,
-              width: 400,
+              width: 350,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.white,

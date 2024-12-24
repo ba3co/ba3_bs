@@ -11,11 +11,7 @@ class PatternLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Directionality(
         textDirection: TextDirection.rtl,
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text("أنماط البيع"),
-          ),
-          body: Column(
+        child:  Column(
             children: [
               AppMenuItem(
                 text: "إضافة نمط",
@@ -32,6 +28,6 @@ class PatternLayout extends StatelessWidget {
               ),
             ],
           ),
-        ),
+
       );
 }
