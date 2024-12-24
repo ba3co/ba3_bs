@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import 'bill_details.dart';
@@ -186,7 +187,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: 'حساب العميل', field: 'حساب العميل', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         PlutoColumn(title: 'حساب البائع', field: 'حساب البائع', type: PlutoColumnType.text()):
-            Get.find<SellerController>().getSellerNameById(billDetails.billSellerId),
+            read<SellerController>().getSellerNameById(billDetails.billSellerId),
         PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
         PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',

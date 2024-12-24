@@ -4,12 +4,13 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../data/models/bond_model.dart';
 
 class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
-  final _accountsController = Get.find<AccountsController>();
+  final _accountsController = read<AccountsController>();
 
   @override
   Widget buildTitle(BondModel itemModel, {Uint8List? logoUint8List, Font? font}) {

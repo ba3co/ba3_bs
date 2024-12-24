@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../cheques/controllers/cheques/cheques_details_controller.dart';
@@ -144,8 +145,7 @@ class AccountsController extends GetxController with AppNavigator {
       }
 
       if (textEditingController != null) {
-        final BillAccounts? billAccounts =
-            Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
+        final BillAccounts? billAccounts = read<PatternController>().controllerToBillAccountsMap[textEditingController];
 
         if (billAccounts != null) {
           selectedAccounts[billAccounts] = selectedAccountModel;
@@ -186,7 +186,7 @@ class AccountsController extends GetxController with AppNavigator {
               }
 
               final BillAccounts? billAccounts =
-                  Get.find<PatternController>().controllerToBillAccountsMap[textEditingController];
+                  read<PatternController>().controllerToBillAccountsMap[textEditingController];
 
               if (billAccounts != null) {
                 selectedAccounts[billAccounts] = selectedAccountModel!;

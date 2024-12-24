@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -18,6 +18,6 @@ class SplashScreen extends StatelessWidget {
   }
 
   void _checkUserStatus() {
-    Get.find<UserManagementController>().navigateToLogin(true);
+    read<UserManagementController>().navigateToLogin(true);
   }
 }

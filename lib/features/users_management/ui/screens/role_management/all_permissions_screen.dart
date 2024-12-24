@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/user_management_controller.dart';
 
@@ -21,7 +22,7 @@ class AllPermissionsScreen extends StatelessWidget {
                     AppButton(
                         title: 'إضافة',
                         onPressed: () {
-                          Get.find<UserManagementController>().navigateToAddRoleScreen();
+                          read<UserManagementController>().navigateToAddRoleScreen();
                         },
                         iconData: Icons.add),
                     const SizedBox(width: 10),

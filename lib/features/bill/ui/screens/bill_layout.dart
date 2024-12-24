@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class BillLayout extends StatelessWidget {
               child: OrganizedWidget(
                 titleWidget: Align(
                   child: Text(
-                    "الفواتير",
+                    'الفواتير',
                     style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                   ),
                 ),
@@ -39,7 +40,7 @@ class BillLayout extends StatelessWidget {
                           children: [
                             Wrap(
                               spacing: 10,
-                              runSpacing: 10,
+                              runSpacing: 30,
                               alignment: WrapAlignment.center,
                               crossAxisAlignment: WrapCrossAlignment.start,
                               children: [
@@ -54,8 +55,9 @@ class BillLayout extends StatelessWidget {
                                     )),
                               ],
                             ),
+                            VerticalSpace(),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 AppButton(
                                   title: 'عرض جميع الفواتير',

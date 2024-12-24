@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -16,7 +17,7 @@ import '../../controllers/cheques/cheques_search_controller.dart';
 import '../../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 
-class ChequesService with PdfBase, ChequesBondService,FloatingLauncher {
+class ChequesService with PdfBase, ChequesBondService, FloatingLauncher {
   ChequesService();
 
   void launchChequesEntryBondScreen({
@@ -81,12 +82,13 @@ class ChequesService with PdfBase, ChequesBondService,FloatingLauncher {
     );
   }
 
-  EntryBondController get entryBondController => Get.find<EntryBondController>();
+  EntryBondController get entryBondController => read<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
+      [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
-      await Get.find<AllChequesController>().fetchAllCheques();
+      await read<AllChequesController>().fetchAllCheques();
       Get.back();
     } else {
       chequesSearchController.removeCheques(chequesModel);

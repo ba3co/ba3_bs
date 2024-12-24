@@ -3,6 +3,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
@@ -68,7 +69,7 @@ class BillDetailsHeader extends StatelessWidget {
                 textEditingController: billDetailsController.sellerAccountController,
                 validator: (value) => billDetailsController.validator(value, 'البائع'),
                 onSubmitted: (text) {
-                  Get.find<SellerController>().openSellerSelectionDialog(
+                  read<SellerController>().openSellerSelectionDialog(
                     query: text,
                     textEditingController: billDetailsController.sellerAccountController,
                     context: context,

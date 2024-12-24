@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../data/models/discount_addition_account_model.dart';
@@ -77,7 +78,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   List<InvoiceRecordModel> get generateRecords {
     recordsTableStateManager.setShowLoading(true);
 
-    final materialController = Get.find<MaterialController>();
+    final materialController = read<MaterialController>();
 
     final invoiceRecords = recordsTableStateManager.rows
         .map((row) => _processBillRow(row, materialController))
@@ -189,7 +190,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
-    final materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
+    final materialModel = read<MaterialController>().getMaterialByName(materialName);
     if (materialModel == null) return;
 
     _handleContextMenu(event, materialModel, context);

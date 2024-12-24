@@ -36,9 +36,11 @@ class UserManagementController extends GetxController with AppNavigator {
   // Data
   List<RoleModel> allRoles = [];
   List<UserModel> allUsers = [];
-  RoleModel? roleModel;
-  UserModel? userModel;
 
+  RoleModel? roleModel;
+
+  UserModel? loggedInUserModel;
+  UserModel? selectedUserModel;
   UserManagementStatus? userStatus;
 
   TextEditingController loginPasswordController = TextEditingController();
@@ -157,12 +159,14 @@ class UserManagementController extends GetxController with AppNavigator {
 
     if (userStatus == UserManagementStatus.login) return;
 
-    userModel = fetchedUsers.first;
+    loggedInUserModel = fetchedUsers.first;
 
-    final isLoginNameMatch = userModel?.userName?.trim() == loginNameController.text;
-    if (isLoginNameMatch) {
-      offAll(AppRoutes.mainLayout);
+    final isLoginNameMatch = loggedInUserModel?.userName?.trim() == loginNameController.text;
+    if (!isLoginNameMatch) {
+      AppUIUtils.onFailure('أسم المستخدم غير صحيح!');
+      return;
     }
+    offAll(AppRoutes.mainLayout);
   }
 
   Future<void> _checkUserByPin() async {
@@ -235,7 +239,10 @@ class UserManagementController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+      (success) {
+        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        getAllRoles();
+      },
     );
   }
 
@@ -262,7 +269,10 @@ class UserManagementController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+      (success) {
+        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        getAllUsers();
+      },
     );
   }
 
@@ -284,8 +294,8 @@ class UserManagementController extends GetxController with AppNavigator {
 
   // Log login time
   Future<void> logInTime() async {
-    if (userModel != null) {
-      final result = await _userRepository.logLoginTime(userModel!.userId);
+    if (loggedInUserModel != null) {
+      final result = await _userRepository.logLoginTime(loggedInUserModel!.userId);
       result.fold(
         (failure) => Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  ${failure.message} \n"),
         (success) => Get.snackbar("Success", "Login time logged successfully!"),
@@ -295,8 +305,8 @@ class UserManagementController extends GetxController with AppNavigator {
 
   // Log logout time
   Future<void> logOutTime() async {
-    if (userModel != null) {
-      final result = await _userRepository.logLogoutTime(userModel!.userId);
+    if (loggedInUserModel != null) {
+      final result = await _userRepository.logLogoutTime(loggedInUserModel!.userId);
       result.fold(
         (failure) => Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  ${failure.message} \n"),
         (success) => Get.snackbar("Success", "Logout time logged successfully!"),

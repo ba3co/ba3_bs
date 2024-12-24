@@ -35,7 +35,7 @@ class MainHeader extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  read<UserManagementController>().userModel?.userName ?? '',
+                  read<UserManagementController>().loggedInUserModel?.userName ?? '',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(

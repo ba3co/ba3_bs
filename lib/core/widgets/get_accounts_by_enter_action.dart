@@ -9,6 +9,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/floating_window/services/overlay_service.dart';
+import '../helper/extensions/getx_controller_extensions.dart';
 import '../i_controllers/i_recodes_pluto_controller.dart';
 
 class GetAccountsByEnterAction extends PlutoGridShortcutAction {
@@ -27,7 +28,6 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-
     await getAccounts(stateManager, plutoController, textFieldName);
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -77,10 +77,9 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   ) async {
     final columnField = stateManager.currentColumn?.field;
 
-
     if (columnField != textFieldName) return;
 
-    final accountsController = Get.find<AccountsController>();
+    final accountsController = read<AccountsController>();
     final query = stateManager.currentCell?.value ?? '';
 
     List<AccountModel> searchedAccounts = accountsController.getAccounts(query);

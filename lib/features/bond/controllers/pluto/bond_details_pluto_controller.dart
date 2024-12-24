@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../data/models/pay_item_model.dart';
@@ -58,7 +59,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   void setAccount(String columnField) {
     final query = recordsTableStateManager.currentCell?.value ?? '';
-    final accountsController = Get.find<AccountsController>();
+    final accountsController = read<AccountsController>();
 
     List<AccountModel> searchedAccounts = accountsController.getAccounts(query);
     AccountModel? selectedAccountModel;
@@ -84,7 +85,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     }
 
     for (var element in recordsTableStateManager.rows) {
-      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
+      if (read<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
         total += double.tryParse(element.toJson()[AppConstants.entryCredit] ?? "") ?? 0;
       }
     }
@@ -98,7 +99,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
       return calcCreditTotal();
     }
     for (var element in recordsTableStateManager.rows) {
-      if (Get.find<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
+      if (read<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
         total += double.tryParse(element.toJson()[AppConstants.entryDebit] ?? "") ?? 0;
       }
     }
@@ -111,12 +112,12 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
   @override
   List<PayItem> get generateRecords {
     recordsTableStateManager.setShowLoading(true);
-    final accountName = Get.find<AccountsController>().getAccountNameById(accountGuid);
+    final accountName = read<AccountsController>().getAccountNameById(accountGuid);
     String accountId = '';
 
     final payItems = recordsTableStateManager.rows
         .where((row) {
-          accountId = Get.find<AccountsController>().getAccountIdByName(
+          accountId = read<AccountsController>().getAccountIdByName(
             row.cells[AppConstants.entryAccountGuid]?.value ?? '',
           );
 
@@ -235,7 +236,11 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
       //     return element.entryAccountGuid == accountGuid;
       //   },
       // );
-      recordsTableRows = convertRecordsToRows(itemList.where((element) =>  !(element.entryAccountGuid == accountGuid),).toList());
+      recordsTableRows = convertRecordsToRows(itemList
+          .where(
+            (element) => !(element.entryAccountGuid == accountGuid),
+          )
+          .toList());
 
       recordsTableStateManager.appendRows(recordsTableRows);
       recordsTableStateManager.appendRows(newRows);

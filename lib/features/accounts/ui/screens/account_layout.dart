@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dialogs/Account_Option_Dialog.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 
 class AccountLayout extends StatelessWidget {
   const AccountLayout({super.key});
@@ -19,7 +20,7 @@ class AccountLayout extends StatelessWidget {
             AppMenuItem(
               text: 'معاينة الحسابات',
               onTap: () {
-                Get.find<AccountsController>()
+                read<AccountsController>()
                   ..fetchAccounts()
                   ..navigateToAllAccountsScreen();
               },

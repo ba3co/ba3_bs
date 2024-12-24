@@ -3,6 +3,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../data/models/discount_addition_account_model.dart';
@@ -175,7 +176,7 @@ class BillPlutoGridService {
 
   Map<Account, List<DiscountAdditionAccountModel>> collectDiscountsAndAdditions(BillPlutoUtils plutoUtils) {
     final accounts = <Account, List<DiscountAdditionAccountModel>>{};
-    final accountsController = Get.find<AccountsController>();
+    final accountsController = read<AccountsController>();
 
     for (final row in additionsDiscountsStateManager.rows) {
       final discountData = _extractDiscountData(plutoUtils, row);

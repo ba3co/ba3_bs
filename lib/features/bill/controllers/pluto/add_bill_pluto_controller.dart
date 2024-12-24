@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/pluto/bill_pluto_calculator.dart';
@@ -79,7 +80,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   List<InvoiceRecordModel> get generateRecords {
     recordsTableStateManager.setShowLoading(true);
 
-    final materialController = Get.find<MaterialController>();
+    final materialController = read<MaterialController>();
 
     final invoiceRecords = recordsTableStateManager.rows
         .map((row) => _processInvoiceRow(row, materialController))
@@ -195,7 +196,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
-    final materialModel = Get.find<MaterialController>().getMaterialByName(materialName);
+    final materialModel = read<MaterialController>().getMaterialByName(materialName);
     if (materialModel == null) return;
 
     _handleContextMenu(event, materialModel, context);
@@ -323,7 +324,6 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
     prepareAdditionsDiscountsRows([]);
     update();
   }
-
 }
 
 // 530

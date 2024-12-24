@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/accounts/data/models/account_model.dart';
+import '../helper/extensions/getx_controller_extensions.dart';
 
 class AppServiceUtils {
   static String formatSecretEmail(String email) {
@@ -182,16 +183,14 @@ class AppServiceUtils {
   // Generates a unique tag for identifying controllers.
   static String generateUniqueTag(String controllerName) => '${controllerName}_${UniqueKey().toString()}';
 
-  static AccountModel? getAccountModelFromLabel(accLabel) => Get.find<AccountsController>()
+  static AccountModel? getAccountModelFromLabel(accLabel) => read<AccountsController>()
       .accounts
       .where(
-        (element) => element.accName == accLabel||element.id == accLabel,
+        (element) => element.accName == accLabel || element.id == accLabel,
       )
       .firstOrNull;
 
   static String generateUniqueId() {
     return DateTime.now().microsecondsSinceEpoch.toString();
   }
-
-
 }

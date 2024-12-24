@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
@@ -127,7 +128,7 @@ class EntryBondItemModel implements PlutoAdaptable {
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
-    final accountsController = Get.find<AccountsController>();
+    final accountsController = read<AccountsController>();
     return {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
       plutoAutoIdColumn(): '',

@@ -1,8 +1,9 @@
 import 'dart:math';
 
 import 'package:ba3_bs/core/styling/app_text_style.dart';
-import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../../core/widgets/app_button.dart';
 
 class BillTypeItemWidget extends StatelessWidget {
   const BillTypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white});
@@ -15,27 +16,12 @@ class BillTypeItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
         width: 350,
-        child: Column(
+        height: 100,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                width: 220,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: const BorderRadius.only(topRight: Radius.circular(5), topLeft: Radius.circular(5)),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  text,
-                  style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
-                  textDirection: TextDirection.rtl,
-                ),
-              ),
-            ),
             Container(
-              height: 100,
+              height: 100 + 35,
               width: 350,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               decoration: BoxDecoration(
@@ -45,8 +31,8 @@ class BillTypeItemWidget extends StatelessWidget {
                 border: Border.all(color: color, width: 2),
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -78,15 +64,38 @@ class BillTypeItemWidget extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Spacer(),
-                  AppButton(
-                    title: 'جديد',
-                    onPressed: onTap,
-                    iconData: Icons.fiber_new_outlined,
-                    iconSize: 24,
-                    color: color,
-                  )
                 ],
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                width: 220,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(5)),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  text,
+                  style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  textDirection: TextDirection.rtl,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -35 / 2,
+              right: 0,
+              left: 0,
+              child: Center(
+                child: AppButton(
+                  title: 'جديد',
+                  onPressed: onTap,
+                  iconData: Icons.add,
+                  color: color,
+                ),
               ),
             ),
           ],

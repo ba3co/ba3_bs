@@ -3,6 +3,7 @@ import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../patterns/data/models/bill_type_model.dart';
 
@@ -56,7 +57,7 @@ class AddBillButtons extends StatelessWidget {
               title: 'طباعة',
               height: 20,
               onPressed: () async {
-                addBillController.printBill(Get.find<AddBillPlutoController>().generateRecords);
+                addBillController.printBill(read<AddBillPlutoController>().generateRecords);
               },
             ),
             Obx(() {

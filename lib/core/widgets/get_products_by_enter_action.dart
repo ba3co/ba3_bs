@@ -11,6 +11,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../features/floating_window/services/overlay_service.dart';
 import '../../features/materials/controllers/material_controller.dart';
 import '../dialogs/product_selection_dialog_content.dart';
+import '../helper/extensions/getx_controller_extensions.dart';
 import '../i_controllers/i_pluto_controller.dart';
 
 class GetProductByEnterAction extends PlutoGridShortcutAction {
@@ -72,7 +73,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     // Initialize variables
     final productText = stateManager.currentCell?.value ?? '';
     final productTextController = TextEditingController()..text = productText;
-    final materialController = Get.find<MaterialController>();
+    final materialController = read<MaterialController>();
 
     // Search for matching materials
     var searchedMaterials = materialController.searchOfProductByText(productText);

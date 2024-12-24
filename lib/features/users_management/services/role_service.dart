@@ -57,7 +57,7 @@ class RoleService {
   }
 
   bool hasPermission(RoleItemType roleItemType) {
-    final UserModel? userModel = userManagementController.userModel;
+    final UserModel? userModel = userManagementController.loggedInUserModel;
     // Return false if userModel or userRoleId is null
     if (userModel == null || userModel.userRoleId == null) {
       return false;

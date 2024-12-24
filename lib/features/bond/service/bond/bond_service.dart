@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
@@ -8,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
@@ -19,13 +19,13 @@ import '../../data/models/bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
 import 'bond_entry_bond_service.dart';
 
-class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
+class BondService with PdfBase, BondEntryBondService, FloatingLauncher {
   final IRecodesPlutoController<PayItem> plutoController;
   final BondDetailsController bondController;
 
   BondService(this.plutoController, this.bondController);
-  EntryBondController get entryBondController => Get.find<EntryBondController>();
 
+  EntryBondController get entryBondController => read<EntryBondController>();
 
   void launchBondEntryBondScreen({
     required BuildContext context,
@@ -34,7 +34,6 @@ class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
     final entryBondModel = createEntryBondModel(
       originType: EntryBondType.cheque,
       bondModel: bondModel,
-
     );
     launchFloatingWindow(
       context: context,
@@ -50,7 +49,6 @@ class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
     required String payDate,
     String? note,
   }) {
-
     return BondModel.fromBondData(
       bondModel: bondModel,
       bondType: bondType,
@@ -59,14 +57,13 @@ class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
       payDate: payDate,
       bondRecordsItems: plutoController.generateRecords,
     );
-
   }
 
   Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController,
       [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
-      await Get.find<AllBondsController>().fetchAllBonds();
+      await read<AllBondsController>().fetchAllBonds();
       Get.back();
     } else {
       bondSearchController.removeBond(bondModel);
@@ -75,9 +72,7 @@ class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
     AppUIUtils.onSuccess('تم حذف السند بنجاح!');
 
     entryBondController.deleteEntryBondModel(entryId: bondModel.payGuid!);
-
   }
-
 
   Future<void> handleSaveOrUpdateSuccess({
     required BondModel bondModel,
@@ -106,11 +101,10 @@ class BondService with PdfBase,BondEntryBondService,FloatingLauncher {
     entryBondController.saveEntryBondModel(
       entryBondModel: createEntryBondModel(
         originType: EntryBondType.bond,
-         bondModel: bondModel,
+        bondModel: bondModel,
       ),
     );
   }
-
 
 /*  Future<void> handleSaveSuccess(BondModel bondModel, BondDetailsController bondDetailsController) async {
     AppUIUtils.onSuccess('تم حفظ السند بنجاح!');

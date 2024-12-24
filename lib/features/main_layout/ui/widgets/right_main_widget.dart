@@ -21,7 +21,7 @@ class RightMainWidget extends StatelessWidget {
         children: [
           SizedBox(
             height: 0.15.sh,
-            width: 0.15.sw,
+            width: 0.14.sw,
             child: Image.asset(AppAssets.logo),
           ),
           SizedBox(

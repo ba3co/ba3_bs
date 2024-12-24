@@ -7,12 +7,13 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 import '../../../materials/controllers/material_controller.dart';
 
 class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
-  final _sellerController = Get.find<SellerController>();
-  final _materialController = Get.find<MaterialController>();
+  final _sellerController = read<SellerController>();
+  final _materialController = read<MaterialController>();
 
   @override
   Widget buildTitle(BillModel itemModel, {Uint8List? logoUint8List, Font? font}) {

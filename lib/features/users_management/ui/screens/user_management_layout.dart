@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_menu_item.dart';
 
 class UserManagementLayout extends StatelessWidget {
@@ -9,8 +11,8 @@ class UserManagementLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserManagementController userManagementController = Get.find<UserManagementController>();
-
+    UserManagementController userManagementController = read<UserManagementController>();
+    log('userModel ${userManagementController.loggedInUserModel?.userName}');
     return Column(
       children: [
         Expanded(

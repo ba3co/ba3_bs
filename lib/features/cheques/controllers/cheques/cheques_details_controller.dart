@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -46,7 +47,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
   AccountModel? chequesAccPtr, chequesToAccountModel;
   bool? isPayed;
 
-  EntryBondController get bondController => Get.find<EntryBondController>();
+  EntryBondController get bondController => read<EntryBondController>();
 
   RxString chequesDate = DateTime.now().toString().split(" ")[0].obs,
       chequesDueDate = DateTime.now().toString().split(" ")[0].obs;
@@ -148,6 +149,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
       context: context,
     );
   }
+
   void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
@@ -199,8 +201,8 @@ class ChequesDetailsController extends GetxController with AppValidator {
     setChequesDate(cheques.chequesDate!.toDate!);
     setChequesDueDate(cheques.chequesDueDate!.toDate!);
     setIsPayed(cheques.isPayed ?? false);
-    setTowAccount(Get.find<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
-    setFirstAccount(Get.find<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
+    setTowAccount(read<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
+    setFirstAccount(read<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
     stChequesFormDate(cheques);
     initChequesNumberController(cheques.chequesNumber);
   }

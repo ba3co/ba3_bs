@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -140,7 +141,7 @@ class BillDetailsController extends IBillController with AppValidator implements
   Future<void> printBill({required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
-    await Get.find<PrintingController>()
+    await read<PrintingController>()
         .startPrinting(invRecords: invRecords, billNumber: billModel.billDetails.billNumber!, invDate: billDate.value);
   }
 
@@ -221,7 +222,7 @@ class BillDetailsController extends IBillController with AppValidator implements
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
-    final sellerController = Get.find<SellerController>();
+    final sellerController = read<SellerController>();
 
     // Validate customer and seller accounts
     if (!_billUtils.validateCustomerAccount(selectedCustomerAccount) ||
@@ -317,7 +318,7 @@ class BillDetailsController extends IBillController with AppValidator implements
     }
   }
 
-  void initSellerAccount(String? billSellerId) => Get.find<SellerController>().initSellerAccount(billSellerId, this);
+  void initSellerAccount(String? billSellerId) => read<SellerController>().initSellerAccount(billSellerId, this);
 
   void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));

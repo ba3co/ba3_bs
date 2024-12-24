@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
+import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/services/translation/implementations/translation_repo.dart';
 import '../../../core/styling/printer_text_styles.dart';
 import '../../bill/data/models/invoice_record_model.dart';
@@ -152,7 +153,7 @@ class PrintingController extends GetxController {
     double vatAmount = 0;
     List<int> itemBytes = [];
 
-    final materialController = Get.find<MaterialController>();
+    final materialController = read<MaterialController>();
 
     for (var record in invoiceRecords) {
       final material = materialController.getMaterialById(record.invRecId!);

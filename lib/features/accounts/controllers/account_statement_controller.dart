@@ -19,7 +19,7 @@ import '../data/datasources/remote/accounts_statements_data_source.dart';
 class AccountStatementController extends GetxController with FloatingLauncher, AppNavigator {
   // Dependencies
   final AccountsStatementsRepository _accountsStatementsRepo;
-  final AccountsController _accountsController = Get.find<AccountsController>();
+  final AccountsController _accountsController = read<AccountsController>();
 
   AccountStatementController(this._accountsStatementsRepo);
 
@@ -28,10 +28,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   final groupForSearchController = TextEditingController();
   final accountNameController = TextEditingController();
   final storeForSearchController = TextEditingController();
-  final startDateController = TextEditingController()
-    ..text = _formattedToday;
-  final endDateController = TextEditingController()
-    ..text = _formattedToday;
+  final startDateController = TextEditingController()..text = _formattedToday;
+  final endDateController = TextEditingController()..text = _formattedToday;
 
   // Data
   final List<EntryBondItemModel> entryBondItems = [];
@@ -100,8 +98,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
     final result = await _accountsStatementsRepo.getAllBonds(accountModel.id!);
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedItems) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedItems) {
         entryBondItems.assignAll(fetchedItems);
         filterByDate();
 
@@ -163,10 +161,9 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     totalValue = debitValue - creditValue;
   }
 
-  double _calculateSum({required List<EntryBondItemModel> items, required BondItemType type}) =>
-      items.fold(
+  double _calculateSum({required List<EntryBondItemModel> items, required BondItemType type}) => items.fold(
         0.0,
-            (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
+        (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
       );
 
   String get screenTitle =>

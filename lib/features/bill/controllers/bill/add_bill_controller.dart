@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/interfaces/i_store_selection_handler.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -152,7 +153,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
   Future<void> printBill(List<InvoiceRecordModel> invRecords) async {
     if (!_validateBeforePrinting(invRecords)) return;
 
-    await Get.find<PrintingController>()
+    await read<PrintingController>()
         .startPrinting(invRecords: invRecords, billNumber: recentBillNumber!, invDate: billDate);
   }
 
@@ -263,7 +264,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
 
   BillModel? _createBillModelFromInvoiceData(BillTypeModel billTypeModel) {
     final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel) ?? billTypeModel;
-    final sellerController = Get.find<SellerController>();
+    final sellerController = read<SellerController>();
 
     // Validate customer and seller accounts
     if (!_validateCustomerAccount() || !_validateSellerAccount(sellerController)) {
@@ -357,7 +358,7 @@ class AddBillController extends IBillController with AppValidator implements ISt
     required BillDetailsPlutoController billDetailsPlutoController,
     required BillSearchController billSearchController,
   }) async {
-    AllBillsController allBillsController = Get.find<AllBillsController>();
+    AllBillsController allBillsController = read<AllBillsController>();
 
     await allBillsController.fetchAllBills();
 

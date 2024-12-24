@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/interfaces/i_store_selection_handler.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
@@ -13,7 +14,7 @@ import '../data/models/bill_type_model.dart';
 class PatternController extends GetxController with AppValidator implements IStoreSelectionHandler {
   final DataSourceRepository<BillTypeModel> _repository;
 
-  PatternController(this._repository){
+  PatternController(this._repository) {
     getAllBillTypes();
   }
 
@@ -178,7 +179,7 @@ class PatternController extends GetxController with AppValidator implements ISto
   }
 
   BillTypeModel _createBillTypeModel() {
-    Map<Account, AccountModel> accounts = Get.find<AccountsController>().selectedAccounts;
+    Map<Account, AccountModel> accounts = read<AccountsController>().selectedAccounts;
 
     accounts[BillAccounts.store] = selectedStore.value.toStoreAccountModel;
 

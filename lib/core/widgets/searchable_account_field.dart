@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../features/bond/controllers/bonds/bond_details_controller.dart';
+import '../helper/extensions/getx_controller_extensions.dart';
 import '../i_controllers/i_bill_controller.dart';
 import 'custom_text_field_with_icon.dart';
 
@@ -34,7 +35,7 @@ class SearchableAccountField extends StatelessWidget {
     this.width,
     this.bondDetailsController,
     this.chequesDetailsController,
-    this.isFirstAccountCheque=false,
+    this.isFirstAccountCheque = false,
   });
 
   @override
@@ -51,15 +52,15 @@ class SearchableAccountField extends StatelessWidget {
               validator: validator,
               onSubmitted: onSubmitted ??
                   (text) {
-                    Get.find<AccountsController>().openAccountSelectionDialog(
-                        query: text,
-                        textEditingController: textEditingController,
-                        isCustomerAccount: isCustomerAccount,
-                        fromAddBill: fromAddBill,
-                        context: context,
-                        bondDetailsController: bondDetailsController,
-                        billController: billController,
-                        chequesDetailsController:chequesDetailsController,
+                    read<AccountsController>().openAccountSelectionDialog(
+                      query: text,
+                      textEditingController: textEditingController,
+                      isCustomerAccount: isCustomerAccount,
+                      fromAddBill: fromAddBill,
+                      context: context,
+                      bondDetailsController: bondDetailsController,
+                      billController: billController,
+                      chequesDetailsController: chequesDetailsController,
                       isFirstAccountCheque: isFirstAccountCheque,
                     );
                   },

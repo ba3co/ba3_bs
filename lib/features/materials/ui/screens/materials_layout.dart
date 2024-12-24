@@ -1,7 +1,7 @@
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_menu_item.dart';
 
 class MaterialLayout extends StatelessWidget {
@@ -20,7 +20,7 @@ class MaterialLayout extends StatelessWidget {
             AppMenuItem(
                 text: "معاينة المواد",
                 onTap: () {
-                  Get.find<MaterialController>()
+                  read<MaterialController>()
                     ..fetchMaterials()
                     ..navigateToAllMaterialScreen();
                 }),

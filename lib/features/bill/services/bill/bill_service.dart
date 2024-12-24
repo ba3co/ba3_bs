@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
@@ -31,7 +32,7 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
 
   BillService(this.plutoController, this.billController);
 
-  EntryBondController get bondController => Get.find<EntryBondController>();
+  EntryBondController get bondController => read<EntryBondController>();
 
   BillModel? createBillModel(
       {BillModel? billModel,
@@ -86,7 +87,7 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
   }) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
-      await Get.find<AllBillsController>().fetchAllBills();
+      await read<AllBillsController>().fetchAllBills();
       Get.back();
     } else {
       billSearchController.removeBill(billModel);

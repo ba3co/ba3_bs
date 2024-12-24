@@ -2,8 +2,8 @@ import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
 import '../../../../../core/widgets/searchable_account_field.dart';
@@ -61,7 +61,7 @@ class AddBillHeader extends StatelessWidget {
                 textEditingController: addBillController.sellerAccountController,
                 validator: (value) => addBillController.validator(value, 'البائع'),
                 onSubmitted: (text) {
-                  Get.find<SellerController>().openSellerSelectionDialog(
+                  read<SellerController>().openSellerSelectionDialog(
                     query: text,
                     textEditingController: addBillController.sellerAccountController,
                     context: context,

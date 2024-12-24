@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userManagementController = Get.find<UserManagementController>();
+    final userManagementController = read<UserManagementController>();
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -68,36 +69,25 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
           VerticalSpace(20),
-          SizedBox(
-            width: .3.sw,
-            child: ElevatedButton(
-              onPressed: () {
-                userManagementController.checkUserStatus();
-              },
-              child: Text('دخول'),
+          InkWell(
+            onTap: () {
+              userManagementController.checkUserStatus();
+            },
+            child: Container(
+              height: 32.h,
+              width: .3.sw,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: AppColors.blueColor),
+              child: Text(
+                'دخول',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.whiteColor,
+                ),
+              ),
             ),
-          )
-          // Column(
-          //   children: [
-          //     const Center(
-          //       child: Text(
-          //         "ادخل الرقم السري الخاص بك",
-          //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //       ),
-          //     ),
-          //     const VerticalSpace(30),
-          //     SizedBox(
-          //       height: 75,
-          //       child: GetBuilder<UserManagementController>(
-          //         builder: (controller) {
-          //           return controller.userStatus != UserManagementStatus.login
-          //               ? PinInputFields(controller: controller)
-          //               : const LoadingIndicator();
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          ),
         ],
       ),
     );

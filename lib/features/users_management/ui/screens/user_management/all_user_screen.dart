@@ -23,7 +23,7 @@ class AllUserScreen extends StatelessWidget {
                       AppButton(
                           title: 'إضافة',
                           onPressed: () {
-                            Get.find<UserManagementController>().navigateToAddUserScreen();
+                            controller.navigateToAddUserScreen();
                           },
                           iconData: Icons.add),
                       const SizedBox(
@@ -42,8 +42,7 @@ class AllUserScreen extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
-                                Get.find<UserManagementController>()
-                                    .navigateToAddUserScreen(controller.allUsers[index]);
+                                controller.navigateToAddUserScreen(controller.allUsers[index]);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(4),

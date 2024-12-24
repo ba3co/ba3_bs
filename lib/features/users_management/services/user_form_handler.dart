@@ -18,7 +18,7 @@ class UserFormHandler with AppValidator {
 
   void init(UserModel? user) {
     if (user != null) {
-      userManagementController.userModel = user;
+      userManagementController.selectedUserModel = user;
 
       selectedSellerId.value = user.userSellerId!;
       selectedRoleId.value = user.userRoleId!;
@@ -26,7 +26,7 @@ class UserFormHandler with AppValidator {
       userNameController.text = user.userName ?? '';
       passController.text = user.userPassword ?? '';
     } else {
-      userManagementController.userModel = null;
+      userManagementController.selectedUserModel = null;
 
       selectedSellerId.value = null;
       selectedRoleId.value = null;
