@@ -8,7 +8,6 @@ import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
-import '../../../../core/widgets/item_widget.dart';
 import '../widgets/bond_layout/bond_item_widget.dart';
 
 class BondLayout extends StatelessWidget {
@@ -19,7 +18,8 @@ class BondLayout extends StatelessWidget {
     return Scaffold(
       appBar: bondLayoutAppBar(),
       body: GetBuilder<AllBondsController>(builder: (controller) {
-        return SizedBox(
+        return Container(
+          padding: EdgeInsets.all(8),
           width: 1.sw,
           child: OrganizedWidget(
             titleWidget: Align(
@@ -42,6 +42,7 @@ class BondLayout extends StatelessWidget {
                           onTap: () {
                             controller.openFloatingBondDetails(context, bondType);
                           },
+
                           bondType: bondType,
                         ),
                       );

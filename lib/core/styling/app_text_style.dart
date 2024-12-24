@@ -10,7 +10,7 @@ class AppTextStyles {
    TextStyle(  fontFamily: 'Almarai',color: AppColors.textColor, fontSize: 16.sp, fontWeight: FontWeight.w500,overflow: TextOverflow.ellipsis);
 
   static TextStyle headLineStyle1 =
-   TextStyle(  fontFamily: 'Almarai',fontSize: 26.sp, color: AppColors.textColor, fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis,);
+   TextStyle(  fontFamily: 'Almarai',fontSize: 23.sp, color: AppColors.textColor, fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis,);
 
   static TextStyle headLineStyle2 =
    TextStyle(  fontFamily: 'Almarai',fontSize: 21.sp, color: AppColors.textColor, fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis);

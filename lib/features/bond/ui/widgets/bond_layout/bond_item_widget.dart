@@ -1,7 +1,8 @@
 
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
-import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/body_bond_layout_Widget.dart';
+import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/body_bond_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -13,18 +14,19 @@ class BondItemWidget extends StatelessWidget {
   final VoidCallback onTap;
   final BondType bondType;
 
+
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: EdgeInsets.all(15),
-        width: 70.w,
+        width: 67.w,
         height: 170.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(width: 1,
-            color: Colors.cyan,
+          border: Border.all(width: 0.2,
+            color: AppColors.grayColor,
           ),
         ),
         child: Column(
@@ -52,7 +54,7 @@ class BondItemWidget extends StatelessWidget {
             BodyBondLayoutWidget(firstText: "من  ${bondType.from}", secondText: "الى  ${bondType.to}"),
             // BodyBondLayoutWidget(firstText: "العدد الكلي :", secondText: ((bondType.to-bondType.from)+1).toString()),
             Spacer(),
-            AppButton(title: "جديد", onPressed: onTap, iconData: Icons.add)
+            AppButton(title: "جديد", onPressed: onTap, iconData: Icons.add,color: Color(int.parse("0xff${bondType.color}")).withAlpha(220),)
           ],
         ));
   }

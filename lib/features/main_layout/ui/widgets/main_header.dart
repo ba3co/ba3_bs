@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,10 +18,10 @@ class MainHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 10,
+      spacing:(Platform.isWindows || Platform.isMacOS)? 10:4,
       children: [
         SizedBox(
-          height: 0.025.sh,
+          height:(Platform.isWindows || Platform.isMacOS)?  0.025.sh:0.035.sh,
           width: 0.15.sw,
           child: Row(
             children: [
@@ -54,7 +56,7 @@ class MainHeader extends StatelessWidget {
             Get.offAllNamed(AppRoutes.loginScreen);
           },
           child: Container(
-            height: 0.05.sh,
+            height: (Platform.isWindows || Platform.isMacOS)? 0.05.sh:0.06.sh,
             width: 0.15.sw,
             alignment: Alignment.center,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: AppColors.blueColor),

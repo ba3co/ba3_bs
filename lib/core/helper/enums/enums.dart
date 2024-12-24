@@ -148,7 +148,8 @@ enum BondType {
     to: 1,
     taxType: 0,
     icon: AppAssets.openingEntryIcon,
-    color: 15132399,
+    // color: 15132399,
+    color: "E6E6EF",
   ),
   receiptVoucher(
     label: "Receipt Voucher",
@@ -158,7 +159,8 @@ enum BondType {
     to: 602,
     taxType: 2,
     icon: AppAssets.receiptVoucherIcon,
-    color: 7193225,
+    // color: 7193225,
+    color: "6DC289",
   ),
   paymentVoucher(
     label: "Payment Voucher",
@@ -168,7 +170,8 @@ enum BondType {
     to: 5051,
     taxType: 1,
     icon: AppAssets.paymentVoucherIcon,
-    color: 12741997,
+    // color: 12741997,
+    color: "C26D6D",
   ),
   journalVoucher(
     label: "Journal Voucher",
@@ -178,12 +181,13 @@ enum BondType {
     to: 489,
     taxType: 1,
     icon: AppAssets.journalVoucherIcon,
-    color: 7175618,
+    color: "6D7DC2",
   );
 
-  final int from, to, taxType, color;
+  final int from, to, taxType ;
 
   final String label;
+  final String color;
 
   final String value;
 
