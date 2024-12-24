@@ -154,6 +154,18 @@ class BillDetailsController extends IBillController with AppValidator implements
     );
   }
 
+  void updateBillStatus(BillModel billModel, newStatus) async {
+    final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (updatedBillModel) {
+        AppUIUtils.onSuccess('تم القبول بنجاح');
+        billSearchController.updateBill(updatedBillModel);
+      },
+    );
+  }
+
   Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
     final result = await _billsFirebaseRepo.delete(billModel.billId!);
 

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
@@ -10,6 +11,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -22,7 +24,7 @@ import 'bill_search_controller.dart';
 class AllBillsController extends FloatingBillDetailsLauncher {
   // Repositories
   final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
-  final DataSourceRepository<BillModel> _billsFirebaseRepo;
+  final FilterableDataSourceRepository<BillModel> _billsFirebaseRepo;
   final JsonExportRepository<BillModel> _jsonExportRepo;
 
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);
@@ -31,8 +33,13 @@ class AllBillsController extends FloatingBillDetailsLauncher {
   late final BillUtils _billUtils;
 
   List<BillTypeModel> billsTypes = [];
+
   List<BillModel> bills = [];
+  List<BillModel> pendingBills = [];
+
   bool isLoading = true;
+
+  bool isPendingBillsLoading = true;
 
   // Initializer
   void _initializeBillUtilities() {
@@ -59,6 +66,18 @@ class AllBillsController extends FloatingBillDetailsLauncher {
     );
 
     isLoading = false;
+    update();
+  }
+
+  Future<void> fetchPendingBills() async {
+    final result = await _billsFirebaseRepo.fetchWhere(field: AppConstants.status, value: Status.pending.value);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedPendingBills) => pendingBills.assignAll(fetchedPendingBills),
+    );
+
+    isPendingBillsLoading = false;
     update();
   }
 
@@ -101,6 +120,8 @@ class AllBillsController extends FloatingBillDetailsLauncher {
   }
 
   void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
+
+  void navigateToPendingBillsScreen() => Get.toNamed(AppRoutes.showPendingBillsScreen);
 
   List<BillModel> getBillsByType(String billTypeId) =>
       bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();

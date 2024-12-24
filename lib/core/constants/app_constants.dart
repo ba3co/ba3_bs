@@ -4,9 +4,6 @@ abstract class AppConstants {
   static String dataName = '';
   static bool isFreeType = false;
 
-
-
-
   static const EnvType env = EnvType.debug; //"debug" or "release"
   static const vatGCC = 0.05;
   static const constHeightTextField = 35.0;
@@ -378,4 +375,7 @@ abstract class AppConstants {
 
   static const double deviceFullWidth = 1680.0;
   static const double deviceFullHeight = 930.0;
+
+  static const String status = 'status';
+  static const String userPassword = 'userPassword';
 }

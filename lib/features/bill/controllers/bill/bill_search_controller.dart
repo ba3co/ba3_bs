@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bill_model.dart';
 import '../pluto/bill_details_pluto_controller.dart';
@@ -47,8 +48,14 @@ class BillSearchController extends GetxController {
 
     if (billIndex != -1) {
       bills[billIndex] = updatedBill;
+
+      // Update the current bill if the index matches.
+      if (currentBillIndex == billIndex) {
+        currentBill = updatedBill;
+      }
+
+      update();
     }
-    update();
   }
 
   /// Deletes the bill in the search results if it exists
@@ -158,6 +165,8 @@ class BillSearchController extends GetxController {
   bool get isLast => currentBillIndex == bills.length - 1;
 
   bool get isNew => currentBill.billId == null;
+
+  bool get isPending => currentBill.status == Status.pending;
 
   /// Displays an error message
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);

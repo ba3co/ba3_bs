@@ -1,11 +1,11 @@
 // BillsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/filterable_data_source.dart';
 
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
 import '../models/bill_model.dart';
 
-class BillsDataSource extends DatasourceBase<BillModel> with FirebaseSequentialNumberDatabase {
+class BillsDataSource extends FilterableDatasource<BillModel> with FirebaseSequentialNumberDatabase {
   BillsDataSource({required super.databaseService});
 
   @override
@@ -54,5 +54,14 @@ class BillsDataSource extends DatasourceBase<BillModel> with FirebaseSequentialN
     final data = await databaseService.add(path: path, data: newBillJson);
 
     return BillModel.fromJson(data);
+  }
+
+  @override
+  Future<List<BillModel>> fetchWhere<V>({required String field, required V value}) async {
+    final data = await databaseService.fetchWhere(path: path, field: field, value: value);
+
+    final users = data.map((item) => BillModel.fromJson(item)).toList();
+
+    return users;
   }
 }

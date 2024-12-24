@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -210,7 +211,8 @@ class UserManagementController extends GetxController with AppValidator {
   }
 
   Future<void> _checkUserByPin() async {
-    final result = await _usersFirebaseRepo.fetchWhere(field: 'userPassword', value: loginPasswordController.text);
+    final result =
+        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

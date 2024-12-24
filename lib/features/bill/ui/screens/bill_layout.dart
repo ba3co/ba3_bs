@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
-import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
@@ -38,7 +37,7 @@ class BillLayout extends StatelessWidget {
                   ),
                   bodyWidget: GetBuilder<AllBillsController>(
                       builder: (controller) => SizedBox(
-                        width: 1.sw,
+                            width: 1.sw,
                             child: Column(
                               spacing: 10,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,8 +60,6 @@ class BillLayout extends StatelessWidget {
                                   ],
                                 ),
                                 Row(
-
-                                  ///TODO:
                                   children: [
                                     AppButton(
                                       title: 'عرض جميع الفواتير',
@@ -77,6 +74,22 @@ class BillLayout extends StatelessWidget {
                                       width: max(45.w, 140),
                                       // width: 40.w,
                                     ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0.r),
+                                      child: AppButton(
+                                        title: 'عرض الفواتير المعلقة',
+                                        fontSize: 13.sp,
+                                        color: AppColors.grayColor,
+                                        onPressed: () {
+                                          read<AllBillsController>()
+                                            ..fetchPendingBills()
+                                            ..navigateToPendingBillsScreen();
+                                        },
+                                        iconData: Icons.view_list_outlined,
+                                        width: max(45.w, 140),
+                                        // width: 40.w,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ],
