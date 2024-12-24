@@ -25,7 +25,7 @@ class AddEditUserForm extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Form(
-          key: userManagementController.userFormKey,
+          key: userManagementController.userFormHandler.formKey,
           child: Column(
             spacing: 15,
             children: [
@@ -37,8 +37,8 @@ class AddEditUserForm extends StatelessWidget {
                     filled: true,
                     fillColor: Colors.white,
                   ),
-                  controller: userManagementController.userNameController,
-                  validator: (value) => userManagementController.defaultValidator(value, 'اسم الحساب'),
+                  controller: userManagementController.userFormHandler.userNameController,
+                  validator: (value) => userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
                 ),
               ),
               SizedBox(
@@ -54,8 +54,8 @@ class AddEditUserForm extends StatelessWidget {
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(6),
                   ],
-                  controller: userManagementController.passController,
-                  validator: (value) => userManagementController.passwordValidator(value, 'كلمة السر'),
+                  controller: userManagementController.userFormHandler.passController,
+                  validator: (value) => userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
                 ),
               ),
             ],
@@ -70,7 +70,7 @@ class AddEditUserForm extends StatelessWidget {
                 hint: const Text('الصلاحيات'),
                 icon: const SizedBox(),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                value: userManagementController.selectedRoleId.value,
+                value: userManagementController.userFormHandler.selectedRoleId.value,
                 items: userManagementController.allRoles
                     .map(
                       (role) => DropdownMenuItem(
@@ -81,7 +81,7 @@ class AddEditUserForm extends StatelessWidget {
                     .toList(),
                 onChanged: (role) {
                   log('selectedRoleId $role');
-                  userManagementController.setRoleId = role;
+                  userManagementController.userFormHandler.setRoleId = role;
                 },
               ),
             ),
@@ -96,7 +96,7 @@ class AddEditUserForm extends StatelessWidget {
                 hint: const Text('البائع'),
                 icon: const SizedBox(),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                value: userManagementController.selectedSellerId.value,
+                value: userManagementController.userFormHandler.selectedSellerId.value,
                 items: sellerController.sellers
                     .map(
                       (seller) => DropdownMenuItem(
@@ -107,7 +107,7 @@ class AddEditUserForm extends StatelessWidget {
                     .toList(),
                 onChanged: (sellerId) {
                   log('selectedSellerId $sellerId');
-                  userManagementController.setSellerId = sellerId;
+                  userManagementController.userFormHandler.setSellerId = sellerId;
                 },
               ),
             ),

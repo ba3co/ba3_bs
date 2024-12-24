@@ -11,7 +11,7 @@ AppBar chequesLayoutAppBar() {
       children: [
         const Text("الشيكات", style: TextStyle(fontWeight: FontWeight.w700)),
         Text(
-          Get.find<UserManagementController>().myUserModel?.userName ?? "",
+          Get.find<UserManagementController>().userModel?.userName ?? '',
           style: const TextStyle(color: Colors.blue, fontSize: 14),
         ),
       ],

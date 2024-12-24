@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class AppButton extends StatelessWidget {
-  const AppButton(
-      {super.key,
-      required this.title,
-      required this.onPressed,
-      required this.iconData,
-      this.color,
-      this.width,
-      this.height,
-      this.fontSize});
+  const AppButton({
+    super.key,
+    required this.title,
+    required this.onPressed,
+    required this.iconData,
+    this.color,
+    this.width,
+    this.height,
+    this.fontSize,
+    this.iconSize,
+  });
 
   final String title;
   final Color? color;
@@ -18,6 +20,7 @@ class AppButton extends StatelessWidget {
   final double? width;
   final double? height;
   final double? fontSize;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,7 @@ class AppButton extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: fontSize ?? 15),
                 ),
-                Icon(iconData, size: 18, color: Colors.white),
+                Icon(iconData, size: iconSize ?? 18, color: Colors.white),
               ],
             ),
           ),

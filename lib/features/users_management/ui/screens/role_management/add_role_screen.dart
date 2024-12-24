@@ -37,12 +37,12 @@ class AddRoleScreen extends StatelessWidget {
                     children: [
                       const Text('الاسم', style: TextStyle(fontSize: 16)),
                       Form(
-                        key: controller.roleFormKey,
+                        key: controller.roleFormHandler.formKey,
                         child: Container(
                           color: Colors.grey.shade200,
                           child: TextFormField(
-                            controller: controller.roleNameController,
-                            validator: (value) => controller.defaultValidator(value, 'أسم الصلاحية'),
+                            controller: controller.roleFormHandler.roleNameController,
+                            validator: (value) => controller.roleFormHandler.defaultValidator(value, 'أسم الصلاحية'),
                           ),
                         ),
                       ),
@@ -136,16 +136,16 @@ class AddRoleScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
               side: const BorderSide(color: Colors.white),
             ),
-            value: (controller.rolesMap[key]?.contains(roleItem) ?? false),
+            value: (controller.roleFormHandler.rolesMap[key]?.contains(roleItem) ?? false),
             onChanged: (newValue) {
               if (newValue!) {
-                if (controller.rolesMap[key] == null) {
-                  controller.rolesMap[key] = [roleItem];
+                if (controller.roleFormHandler.rolesMap[key] == null) {
+                  controller.roleFormHandler.rolesMap[key] = [roleItem];
                 } else {
-                  controller.rolesMap[key]?.add(roleItem);
+                  controller.roleFormHandler.rolesMap[key]?.add(roleItem);
                 }
               } else {
-                controller.rolesMap[key]?.remove(roleItem);
+                controller.roleFormHandler.rolesMap[key]?.remove(roleItem);
               }
 
               setState(() {});

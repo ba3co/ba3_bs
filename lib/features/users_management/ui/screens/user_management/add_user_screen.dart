@@ -53,7 +53,7 @@ class AddUserScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(bottom: .15.sh),
                         child: AppButton(
-                          title: controller.roleModel?.roleId == null ? 'إضافة' : 'تعديل',
+                          title: controller.userModel?.userId == null ? 'إضافة' : 'تعديل',
                           onPressed: () {
                             controller.saveOrUpdateUser(existingUserModel: controller.userModel);
                           },

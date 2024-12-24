@@ -13,7 +13,7 @@ PlutoGridStyleConfig buildGridStyleConfig({evenRowColor}) {
 }
 
 Color _getEvenRowColor({Color? evenRowColor}) {
-  return evenRowColor!.withOpacity(0.8);
+  return evenRowColor!.withAlpha(204);
 }
 
 TextStyle _getColumnTextStyle() {
@@ -25,7 +25,7 @@ TextStyle _getColumnTextStyle() {
 }
 
 Color _getActivatedColor() {
-  return Colors.white.withOpacity(0.5);
+  return Colors.white.withAlpha(127);
 }
 
 TextStyle _getCellTextStyle() {

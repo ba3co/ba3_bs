@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../cheques/controllers/cheques/cheques_details_controller.dart';
 import '../../floating_window/services/overlay_service.dart';
@@ -15,7 +16,7 @@ import '../../patterns/controllers/pattern_controller.dart';
 import '../data/models/account_model.dart';
 import '../data/repositories/accounts_repository.dart';
 
-class AccountsController extends GetxController {
+class AccountsController extends GetxController with AppNavigator {
   final AccountsRepository _accountsRepository;
 
   AccountsController(this._accountsRepository);
@@ -45,11 +46,11 @@ class AccountsController extends GetxController {
   }
 
   void navigateToAllAccountsScreen() {
-    Get.toNamed(AppRoutes.showAllAccountsScreen);
+    to(AppRoutes.showAllAccountsScreen);
   }
 
   void navigateToAccountDetailsScreen(String accountId) {
-    Get.toNamed(AppRoutes.showAccountDetailsScreen, arguments: accountId);
+    to(AppRoutes.showAccountDetailsScreen, arguments: accountId);
   }
 
   List<AccountModel> searchAccountsByNameOrCode(text) {

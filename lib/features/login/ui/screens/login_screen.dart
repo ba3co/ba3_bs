@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,20 +37,33 @@ class LoginScreen extends StatelessWidget {
                 ),
                 SizedBox(
                   width: .3.sw,
-                  child: TextFormField(
-                    maxLength: 6,
-                    decoration: const InputDecoration(
-                      label: Text('كلمة السر'),
-                      errorMaxLines: 2,
-                      filled: true,
-                      fillColor: Colors.white,
+                  child: Obx(
+                    () => TextFormField(
+                      maxLength: 6,
+                      obscureText: !userManagementController.isPasswordVisible.value,
+                      decoration: InputDecoration(
+                        label: const Text('كلمة السر'),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            userManagementController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                            size: 20,
+                            color: AppColors.blueColor,
+                          ),
+                          onPressed: () {
+                            userManagementController.userFormHandler.updatePasswordVisibility();
+                          },
+                        ),
+                        errorMaxLines: 2,
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      controller: userManagementController.loginPasswordController,
                     ),
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    controller: userManagementController.loginPasswordController,
                   ),
-                ),
+                )
               ],
             ),
           ),

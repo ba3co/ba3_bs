@@ -1,22 +1,23 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
-import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
-import '../../login/data/models/user_model.dart';
 import '../../login/data/repositories/user_repo.dart';
 import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
+import '../services/role_form_handler.dart';
+import '../services/user_form_handler.dart';
 
-class UserManagementController extends GetxController with AppValidator {
+class UserManagementController extends GetxController with AppNavigator {
   final UserManagementRepository _userRepository;
 
   final DataSourceRepository<RoleModel> _rolesFirebaseRepo;
@@ -28,13 +29,13 @@ class UserManagementController extends GetxController with AppValidator {
   // Services
   late final RoleService _roleService;
 
-  final userFormKey = GlobalKey<FormState>();
-  TextEditingController userNameController = TextEditingController();
-  TextEditingController passController = TextEditingController();
+  // Form Handlers
+  late final UserFormHandler userFormHandler;
+  late final RoleFormHandler roleFormHandler;
 
+  // Data
   List<RoleModel> allRoles = [];
   List<UserModel> allUsers = [];
-
   RoleModel? roleModel;
   UserModel? userModel;
 
@@ -43,17 +44,9 @@ class UserManagementController extends GetxController with AppValidator {
   TextEditingController loginPasswordController = TextEditingController();
   TextEditingController loginNameController = TextEditingController();
 
-  OldUserModel? myUserModel;
-
   final bool isAdmin = true;
 
-  Map<RoleItemType, List<RoleItem>> rolesMap = {};
-
-  final roleFormKey = GlobalKey<FormState>();
-  TextEditingController roleNameController = TextEditingController();
-
-  RxnString selectedSellerId = RxnString();
-  RxnString selectedRoleId = RxnString();
+  RxBool isPasswordVisible = false.obs;
 
   @override
   void onInit() {
@@ -67,48 +60,8 @@ class UserManagementController extends GetxController with AppValidator {
   // Initializer
   void _initializeServices() {
     _roleService = RoleService();
-  }
-
-  bool validateRoleForm() => roleFormKey.currentState?.validate() ?? false;
-
-  bool validateUserForm() => userFormKey.currentState?.validate() ?? false;
-
-  String? passwordValidator(String? value, String fieldName) => isPasswordValid(value, fieldName);
-
-  String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
-
-  initUser(UserModel? user) {
-    if (user != null) {
-      userModel = user;
-
-      selectedSellerId.value = user.userSellerId!;
-      selectedRoleId.value = user.userRoleId!;
-
-      userNameController.text = user.userName ?? '';
-      passController.text = user.userPassword ?? '';
-    } else {
-      userModel = null;
-
-      selectedSellerId.value = null; // Now valid with RxnString
-      selectedRoleId.value = null; // Now valid with RxnString
-
-      userNameController.clear();
-      passController.clear();
-    }
-  }
-
-  initRole(RoleModel? role) {
-    if (role != null) {
-      roleModel = role;
-      rolesMap = role.roles;
-
-      roleNameController.text = role.roleName ?? '';
-    } else {
-      roleModel = null;
-      rolesMap = {};
-
-      roleNameController.clear();
-    }
+    userFormHandler = UserFormHandler();
+    roleFormHandler = RoleFormHandler();
   }
 
   RoleModel getRoleById(String id) => allRoles.firstWhere((role) => role.roleId == id);
@@ -116,34 +69,36 @@ class UserManagementController extends GetxController with AppValidator {
   bool hasPermission(RoleItemType roleItemType) => _roleService.hasPermission(roleItemType);
 
   // Check if all roles are selected
-  bool areAllRolesSelected() => RoleItemType.values.every((type) => rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() =>
+      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) => rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) =>
+      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
     for (final type in RoleItemType.values) {
-      rolesMap[type] = RoleItem.values.toList();
+      roleFormHandler.rolesMap[type] = RoleItem.values.toList();
     }
     update();
   }
 
   // Deselect all roles
   void deselectAllRoles() {
-    rolesMap.clear();
+    roleFormHandler.rolesMap.clear();
     update();
   }
 
   // Select all roles for a specific RoleItemType
   void selectAllRolesForType(RoleItemType type) {
-    rolesMap[type] = RoleItem.values.toList();
+    roleFormHandler.rolesMap[type] = RoleItem.values.toList();
     update();
   }
 
   // Deselect all roles for a specific RoleItemType
   void deselectAllRolesForType(RoleItemType type) {
-    rolesMap[type] = [];
+    roleFormHandler.rolesMap[type] = [];
     update();
   }
 
@@ -206,7 +161,7 @@ class UserManagementController extends GetxController with AppValidator {
 
     final isLoginNameMatch = userModel?.userName?.trim() == loginNameController.text;
     if (isLoginNameMatch) {
-      Get.offAllNamed(AppRoutes.mainLayout);
+      offAll(AppRoutes.mainLayout);
     }
   }
 
@@ -224,27 +179,28 @@ class UserManagementController extends GetxController with AppValidator {
     if (waitUntilFirstFrameRasterized) {
       WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((_) {
         userStatus = UserManagementStatus.first;
-        Get.offAllNamed(AppRoutes.loginScreen);
+
+        offAll(AppRoutes.loginScreen);
       });
     } else {
       userStatus = UserManagementStatus.first;
-      Get.offAllNamed(AppRoutes.loginScreen);
+      offAll(AppRoutes.loginScreen);
     }
   }
 
-  void navigateToAddRoleScreen([RoleModel? roleModel]) {
-    initRole(roleModel);
-    Get.toNamed(AppRoutes.addRoleScreen);
+  void navigateToAddRoleScreen([RoleModel? role]) {
+    roleFormHandler.init(role);
+    to(AppRoutes.addRoleScreen);
   }
 
-  void navigateToAddUserScreen([UserModel? userModel]) {
-    initUser(userModel);
-    Get.toNamed(AppRoutes.addUserScreen);
+  void navigateToAddUserScreen([UserModel? user]) {
+    userFormHandler.init(user);
+    to(AppRoutes.addUserScreen);
   }
 
-  void navigateToLAllUsersScreen() => Get.toNamed(AppRoutes.showAllUsersScreen);
+  void navigateToLAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
 
-  void navigateToLAllPermissionsScreen() => Get.toNamed(AppRoutes.showAllPermissionsScreen);
+  void navigateToLAllPermissionsScreen() => to(AppRoutes.showAllPermissionsScreen);
 
   Future<void> _handleNoMatch() async {
     userStatus = null; // Setting userStatus to null in case of no match
@@ -258,21 +214,16 @@ class UserManagementController extends GetxController with AppValidator {
     loginPasswordController.clear();
   }
 
-  set setSellerId(String? sellerId) {
-    selectedSellerId.value = sellerId;
-  }
-
-  set setRoleId(String? roleId) {
-    selectedRoleId.value = roleId;
-  }
-
   Future<void> saveOrUpdateRole({RoleModel? existingRoleModel}) async {
     // Validate the form first
-    if (!validateRoleForm()) return;
+    if (!roleFormHandler.validate()) return;
 
     // Create the role model from the provided data
-    final updatedRoleModel =
-        _roleService.createRoleModel(roleModel: existingRoleModel, roles: rolesMap, roleName: roleNameController.text);
+    final updatedRoleModel = _roleService.createRoleModel(
+      roleModel: existingRoleModel,
+      roles: roleFormHandler.rolesMap,
+      roleName: roleFormHandler.roleNameController.text,
+    );
 
     // Handle null role model
     if (updatedRoleModel == null) {
@@ -290,15 +241,15 @@ class UserManagementController extends GetxController with AppValidator {
 
   Future<void> saveOrUpdateUser({UserModel? existingUserModel}) async {
     // Validate the form first
-    if (!validateUserForm()) return;
+    if (!userFormHandler.validate()) return;
 
     // Create the user model from the provided data
     final updatedUserModel = _roleService.createUserModel(
       userModel: existingUserModel,
-      userName: userNameController.text,
-      userPassword: passController.text,
-      userRoleId: selectedRoleId.value,
-      userSellerId: selectedSellerId.value,
+      userName: userFormHandler.userNameController.text,
+      userPassword: userFormHandler.passController.text,
+      userRoleId: userFormHandler.selectedRoleId.value,
+      userSellerId: userFormHandler.selectedSellerId.value,
     );
 
     // Handle null user model
@@ -333,8 +284,8 @@ class UserManagementController extends GetxController with AppValidator {
 
   // Log login time
   Future<void> logInTime() async {
-    if (myUserModel != null) {
-      final result = await _userRepository.logLoginTime(myUserModel!.userId);
+    if (userModel != null) {
+      final result = await _userRepository.logLoginTime(userModel!.userId);
       result.fold(
         (failure) => Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  ${failure.message} \n"),
         (success) => Get.snackbar("Success", "Login time logged successfully!"),
@@ -344,12 +295,19 @@ class UserManagementController extends GetxController with AppValidator {
 
   // Log logout time
   Future<void> logOutTime() async {
-    if (myUserModel != null) {
-      final result = await _userRepository.logLogoutTime(myUserModel!.userId);
+    if (userModel != null) {
+      final result = await _userRepository.logLogoutTime(userModel!.userId);
       result.fold(
         (failure) => Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  ${failure.message} \n"),
         (success) => Get.snackbar("Success", "Logout time logged successfully!"),
       );
     }
+  }
+
+  @override
+  void onClose() {
+    userFormHandler.dispose();
+    roleFormHandler.dispose();
+    super.onClose();
   }
 }

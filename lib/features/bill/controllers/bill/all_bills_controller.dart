@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
@@ -21,7 +22,7 @@ import '../../services/bill/floating_bill_details_launcher.dart';
 import '../pluto/add_bill_pluto_controller.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends FloatingBillDetailsLauncher {
+class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   // Repositories
   final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final FilterableDataSourceRepository<BillModel> _billsFirebaseRepo;
@@ -119,9 +120,9 @@ class AllBillsController extends FloatingBillDetailsLauncher {
     );
   }
 
-  void navigateToAllBillsScreen() => Get.toNamed(AppRoutes.showAllBillsScreen);
+  void navigateToAllBillsScreen() => to(AppRoutes.showAllBillsScreen);
 
-  void navigateToPendingBillsScreen() => Get.toNamed(AppRoutes.showPendingBillsScreen);
+  void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
   List<BillModel> getBillsByType(String billTypeId) =>
       bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
@@ -227,7 +228,7 @@ class AllBillsController extends FloatingBillDetailsLauncher {
       billDetailsPlutoController: billDetailsPlutoController,
     );
 
-    Get.toNamed(AppRoutes.billDetailsScreen, arguments: {
+    to(AppRoutes.billDetailsScreen, arguments: {
       'fromBillById': fromBillById,
       'billDetailsController': billDetailsController,
       'billDetailsPlutoController': billDetailsPlutoController,

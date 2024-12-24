@@ -29,7 +29,7 @@ class BillTypeItemWidget extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   text,
-                  style:AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
                   textDirection: TextDirection.rtl,
                 ),
               ),
@@ -40,7 +40,8 @@ class BillTypeItemWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), topLeft: Radius.circular(12)),
+                borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), topLeft: Radius.circular(12)),
                 border: Border.all(color: color, width: 2),
               ),
               child: Column(
@@ -79,9 +80,10 @@ class BillTypeItemWidget extends StatelessWidget {
                   ),
                   const Spacer(),
                   AppButton(
-                    title: "جديد",
+                    title: 'جديد',
                     onPressed: onTap,
                     iconData: Icons.fiber_new_outlined,
+                    iconSize: 24,
                     color: color,
                   )
                 ],

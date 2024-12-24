@@ -4,7 +4,6 @@ import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
-import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -35,62 +34,62 @@ class BillLayout extends StatelessWidget {
                 ),
                 bodyWidget: GetBuilder<AllBillsController>(
                     builder: (controller) => Column(
-                      spacing: 10,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Wrap(
                           spacing: 10,
-                          runSpacing: 10,
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ...controller.billsTypes.map((billTypeModel) => BillTypeItemWidget(
-                                  text: billTypeModel.fullName!,
-                                  color: Color(billTypeModel.color!),
-                                  onTap: () {
-                                    controller
-                                      ..fetchAllBills()
-                                      ..openFloatingBillDetails(context, billTypeModel);
-                                  },
-                                )),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AppButton(
-                              title: 'عرض جميع الفواتير',
-                              fontSize: 13.sp,
-                              color: AppColors.grayColor,
-                              onPressed: () {
-                                read<AllBillsController>()
-                                  ..fetchAllBills()
-                                  ..navigateToAllBillsScreen();
-                              },
-                              iconData: Icons.view_list_outlined,
-                              width: max(45.w, 140),
-                              // width: 40.w,
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              children: [
+                                ...controller.billsTypes.map((billTypeModel) => BillTypeItemWidget(
+                                      text: billTypeModel.fullName!,
+                                      color: Color(billTypeModel.color!),
+                                      onTap: () {
+                                        controller
+                                          ..fetchAllBills()
+                                          ..openFloatingBillDetails(context, billTypeModel);
+                                      },
+                                    )),
+                              ],
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8.0.r),
-                              child: AppButton(
-                                title: 'عرض الفواتير المعلقة',
-                                fontSize: 13.sp,
-                                color: AppColors.grayColor,
-                                onPressed: () {
-                                  read<AllBillsController>()
-                                    ..fetchPendingBills()
-                                    ..navigateToPendingBillsScreen();
-                                },
-                                iconData: Icons.view_list_outlined,
-                                width: max(45.w, 140),
-                                // width: 40.w,
-                              ),
-                            )
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                AppButton(
+                                  title: 'عرض جميع الفواتير',
+                                  fontSize: 13.sp,
+                                  color: AppColors.grayColor,
+                                  onPressed: () {
+                                    read<AllBillsController>()
+                                      ..fetchAllBills()
+                                      ..navigateToAllBillsScreen();
+                                  },
+                                  iconData: Icons.view_list_outlined,
+                                  width: max(45.w, 140),
+                                  // width: 40.w,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0.r),
+                                  child: AppButton(
+                                    title: 'عرض الفواتير المعلقة',
+                                    fontSize: 13.sp,
+                                    color: AppColors.grayColor,
+                                    onPressed: () {
+                                      read<AllBillsController>()
+                                        ..fetchPendingBills()
+                                        ..navigateToPendingBillsScreen();
+                                    },
+                                    iconData: Icons.view_list_outlined,
+                                    width: max(45.w, 140),
+                                    // width: 40.w,
+                                  ),
+                                )
+                              ],
+                            ),
                           ],
-                        ),
-                      ],
-                    )),
+                        )),
               ),
             ),
           )),
