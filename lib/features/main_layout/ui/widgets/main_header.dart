@@ -18,35 +18,37 @@ class MainHeader extends StatelessWidget {
     return Column(
       spacing: 10,
       children: [
-        Container(
+        SizedBox(
           height: 0.025.sh,
           width: 0.15.sw,
-          alignment: Alignment.center,
-          child:  Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: Row(
             children: [
-              const Text(
-                "المستخدم :",
+              Text(
+                'المستخدم: ',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w300,
                   color: Colors.black,
                 ),
               ),
-              Text(
-                read<UserManagementController>().userModel?.userName?? "",
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.blueColor,
+              Expanded(
+                child: Text(
+                  read<UserManagementController>().userModel?.userName ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.blueColor,
+                  ),
                 ),
               ),
             ],
           ),
         ),
         GestureDetector(
-
           onTap: () {
             read<UserManagementController>().userStatus = UserManagementStatus.first;
             Get.offAllNamed(AppRoutes.loginScreen);
@@ -57,7 +59,7 @@ class MainHeader extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: AppColors.blueColor),
             child: const Text(
-              "تسجيل الخروج",
+              'تسجيل الخروج',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
