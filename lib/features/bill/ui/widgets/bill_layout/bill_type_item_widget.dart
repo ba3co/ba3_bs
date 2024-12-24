@@ -4,8 +4,8 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:flutter/material.dart';
 
-class BillITypeItemWidget extends StatelessWidget {
-  const BillITypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white});
+class BillTypeItemWidget extends StatelessWidget {
+  const BillTypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white});
 
   final VoidCallback onTap;
   final String text;

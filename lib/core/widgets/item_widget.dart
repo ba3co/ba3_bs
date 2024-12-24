@@ -13,7 +13,7 @@ class ItemWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-          width: 0.3.sw,
+          width: 1.sw,
           height: 100.h,
           alignment: Alignment.center,
           decoration: BoxDecoration(

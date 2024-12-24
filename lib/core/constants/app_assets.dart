@@ -27,5 +27,9 @@ class AppAssets {
   static const chequesUnselectedIcon = '$_baseIconsPath/cheques_unselected_icon.png';
   static const usersIcon = '$_baseIconsPath/user_icon.png';
   static const usersUnselectedIcon = '$_baseIconsPath/users_unselected_icon.png';
+  static const openingEntryIcon = '$_baseIconsPath/Opening_Entry_icon.png';
+  static const receiptVoucherIcon = '$_baseIconsPath/Receipt_Voucher_icon.png';
+  static const paymentVoucherIcon = '$_baseIconsPath/Payment_Voucher_icon.png';
+  static const journalVoucherIcon = '$_baseIconsPath/Journal_Voucher_icon.png';
 
 }

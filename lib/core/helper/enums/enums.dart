@@ -1,30 +1,12 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
+import '../../constants/app_assets.dart';
+
 enum EnvType { debug, release }
 
 enum UserManagementStatus { first, login, block, auth }
 
-enum RecordType {
-  bond,
-  invoice,
-  product,
-  account,
-  pattern,
-  undefined,
-  store,
-  cheque,
-  costCenter,
-  sellers,
-  user,
-  role,
-  task,
-  inventory,
-  entryBond,
-  accCustomer,
-  warrantyInv,
-  changes,
-  fProduct
-}
+enum RecordType { bond, invoice, product, account, pattern, undefined, store, cheque, costCenter, sellers, user, role, task, inventory, entryBond, accCustomer, warrantyInv, changes, fProduct }
 
 enum InvoiceType {
   purchase(label: 'شراء', value: 'purchase'),
@@ -165,6 +147,8 @@ enum BondType {
     from: 1,
     to: 1,
     taxType: 0,
+    icon: AppAssets.openingEntryIcon,
+    color: 15132399,
   ),
   receiptVoucher(
     label: "Receipt Voucher",
@@ -173,6 +157,8 @@ enum BondType {
     from: 1,
     to: 602,
     taxType: 2,
+    icon: AppAssets.receiptVoucherIcon,
+    color: 7193225,
   ),
   paymentVoucher(
     label: "Payment Voucher",
@@ -181,6 +167,8 @@ enum BondType {
     from: 1,
     to: 5051,
     taxType: 1,
+    icon: AppAssets.paymentVoucherIcon,
+    color: 12741997,
   ),
   journalVoucher(
     label: "Journal Voucher",
@@ -189,15 +177,18 @@ enum BondType {
     from: 1,
     to: 489,
     taxType: 1,
+    icon: AppAssets.journalVoucherIcon,
+    color: 7175618,
   );
 
-  final int from, to, taxType;
+  final int from, to, taxType, color;
 
   final String label;
 
   final String value;
 
   final String typeGuide;
+  final String icon;
 
   const BondType({
     required this.label,
@@ -206,6 +197,8 @@ enum BondType {
     required this.from,
     required this.to,
     required this.taxType,
+    required this.icon,
+    required this.color,
   });
 
   // Factory constructor with error handling for unmatched labels

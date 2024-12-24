@@ -13,7 +13,9 @@ import '../data/models/bill_type_model.dart';
 class PatternController extends GetxController with AppValidator implements IStoreSelectionHandler {
   final DataSourceRepository<BillTypeModel> _repository;
 
-  PatternController(this._repository);
+  PatternController(this._repository){
+    getAllBillTypes();
+  }
 
   TextEditingController latinShortNameController = TextEditingController();
   TextEditingController latinFullNameController = TextEditingController();
