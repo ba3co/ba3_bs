@@ -29,21 +29,22 @@ class PatternTypeDropdown extends StatelessWidget {
                 color: Colors.white,
               ),
               child: DropdownButton(
+                hint: const Text('اختار نوع النمط'),
                 dropdownColor: Colors.white,
                 focusColor: Colors.white,
                 alignment: Alignment.center,
                 underline: const SizedBox(),
                 isExpanded: true,
-                value: patternController.selectedBillType,
-                items: InvoiceType.values.map((InvoiceType type) {
-                  return DropdownMenuItem<InvoiceType>(
+                value: patternController.patternFormHandler.selectedBillPatternType,
+                items: BillPatternType.values.map((BillPatternType type) {
+                  return DropdownMenuItem<BillPatternType>(
                     value: type,
                     child: Center(
                       child: Text(type.label, textDirection: TextDirection.rtl),
                     ),
                   );
                 }).toList(),
-                onChanged: patternController.onSelectedTypeChanged,
+                onChanged: patternController.patternFormHandler.onSelectedTypeChanged,
               )),
         ],
       ),

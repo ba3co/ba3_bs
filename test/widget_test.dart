@@ -49,7 +49,7 @@ void main() {
     final roleModel = RoleModel(
       roleId: 'roleId1',
       roles: {
-        RoleItemType.viewBill: [RoleItem.userRead],
+        RoleItemType.viewBill: [RoleItem.userAdmin],
       },
     );
     final userModel = UserModel(
