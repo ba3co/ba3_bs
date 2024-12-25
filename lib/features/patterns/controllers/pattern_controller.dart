@@ -34,6 +34,8 @@ class PatternController extends GetxController with AppValidator implements ISto
 
   InvoiceType selectedBillType = InvoiceType.purchase;
 
+
+  // ignore: deprecated_member_use
   int selectedColorValue = Colors.red.value;
 
   List<BillTypeModel> billsTypes = [];

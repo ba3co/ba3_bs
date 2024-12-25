@@ -30,7 +30,7 @@ class PatternLayout extends StatelessWidget {
                 ),
               ),
               bodyWidget: GetBuilder<PatternController>(
-                  builder: (controller) => SizedBox(
+                  builder: (patternController) => SizedBox(
                     width: 1.sw,
                     child: Column(
                       spacing: 10,
@@ -42,7 +42,7 @@ class PatternLayout extends StatelessWidget {
                           alignment: WrapAlignment.center,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            ...controller.billsTypes.map((billTypeModel) => PatternTypeItemWidget(
+                            ...patternController.billsTypes.map((billTypeModel) => PatternTypeItemWidget(
                               billTypeModel: billTypeModel,
                               color: Color(billTypeModel.color!),
                               onTap: () {
@@ -59,6 +59,7 @@ class PatternLayout extends StatelessWidget {
                             fontSize: 13.sp,
                             color: AppColors.grayColor,
                             onPressed: () {
+
                               Get.toNamed(AppRoutes.addPatternsScreen);
                             },
                             iconData: Icons.view_list_outlined,

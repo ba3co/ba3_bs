@@ -4,7 +4,6 @@ import 'package:ba3_bs/core/dialogs/account_selection_dialog_content.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
