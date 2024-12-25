@@ -27,8 +27,8 @@ dependencies:
   window_manager: ^0.4.3
   native_dialog_plus: ^1.0.9
   flutter_platform_alert: ^0.6.1
-  syncfusion_flutter_datagrid: ^28.1.35
-  syncfusion_flutter_datepicker: ^28.1.35
+  syncfusion_flutter_datagrid: ^28.1.36
+  syncfusion_flutter_datepicker: ^28.1.36
   flutter_material_color_picker: ^1.2.0
   tab_container: ^3.5.3
   math_expressions: ^2.6.0
@@ -42,6 +42,7 @@ dependencies:
   pdf: ^3.11.1
   equatable: ^2.0.7
   flutter_riverpod: ^2.6.1
+  mocktail: ^1.0.4
 
 
 

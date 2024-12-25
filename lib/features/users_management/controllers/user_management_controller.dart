@@ -66,9 +66,13 @@ class UserManagementController extends GetxController with AppNavigator {
     roleFormHandler = RoleFormHandler();
   }
 
-  RoleModel getRoleById(String id) => allRoles.firstWhere((role) => role.roleId == id);
-
-  bool hasPermission(RoleItemType roleItemType) => _roleService.hasPermission(roleItemType);
+  RoleModel? getRoleById(String id) {
+    try {
+      return allRoles.firstWhere((role) => role.roleId == id);
+    } catch (e) {
+      return null;
+    }
+  }
 
   // Check if all roles are selected
   bool areAllRolesSelected() =>

@@ -1,30 +1,99 @@
-// // This is a basic Flutter widget test.
-// //
-// // To perform an interaction with a widget in your test, use the WidgetTester
-// // utility in the flutter_test package. For example, you can send tap and scroll
-// // gestures. You can also use WidgetTester to find child widgets in the widget
-// // tree, read text, and verify that the values of widget properties are correct.
-//
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
-//
-// import 'package:ba3_bs/main.dart';
-//
-// void main() {
-//   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-//     // Build our app and trigger a frame.
-//     await tester.pumpWidget(const MyApp());
-//
-//     // Verify that our counter starts at 0.
-//     expect(find.text('0'), findsOneWidget);
-//     expect(find.text('1'), findsNothing);
-//
-//     // Tap the '+' icon and trigger a frame.
-//     await tester.tap(find.byIcon(Icons.add));
-//     await tester.pump();
-//
-//     // Verify that our counter has incremented.
-//     expect(find.text('0'), findsNothing);
-//     expect(find.text('1'), findsOneWidget);
-//   });
-// }
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/filterable_data_source_repo.dart';
+import 'package:ba3_bs/features/login/data/repositories/user_repo.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
+import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
+import 'package:mocktail/mocktail.dart';
+
+// Mock Classes
+class MockUserManagementRepository extends Mock implements UserManagementRepository {}
+
+class MockDataSourceRepository<T> extends Mock implements DataSourceRepository<T> {}
+
+class MockFilterableDataSourceRepository<T> extends Mock implements FilterableDataSourceRepository<T> {}
+
+void main() {
+  late UserManagementController userManagementController;
+  late MockUserManagementRepository mockUserRepo;
+  late MockDataSourceRepository<RoleModel> mockRolesRepo;
+  late MockFilterableDataSourceRepository<UserModel> mockUsersRepo;
+
+  setUp(() {
+    // Mock the dependencies
+    mockUserRepo = MockUserManagementRepository();
+    mockRolesRepo = MockDataSourceRepository<RoleModel>();
+    mockUsersRepo = MockFilterableDataSourceRepository<UserModel>();
+
+    // Provide mock implementations for methods
+    when(() => mockRolesRepo.getAll()).thenAnswer((_) async => Right([RoleModel(roleId: 'roleId1', roles: {})]));
+    when(() => mockUsersRepo.getAll()).thenAnswer((_) async => Right([]));
+
+    // Initialize the controller with mocked dependencies
+    userManagementController = UserManagementController(mockUserRepo, mockRolesRepo, mockUsersRepo);
+
+    // Register the controller
+    Get.put(userManagementController);
+  });
+
+  tearDown(() {
+    Get.reset(); // Clean up GetX instance after each test
+  });
+
+  test('hasPermission returns true for valid RoleItemType with userAdmin permission', () {
+    // Arrange
+    final roleModel = RoleModel(
+      roleId: 'roleId1',
+      roles: {
+        RoleItemType.viewBill: [RoleItem.userRead],
+      },
+    );
+    final userModel = UserModel(
+      userId: 'userId1',
+      userName: 'testUser',
+      userRoleId: 'roleId1',
+    );
+
+    userManagementController.allRoles = [roleModel];
+    userManagementController.loggedInUserModel = userModel;
+
+    // Act
+    final hasPermission = RoleItemType.viewBill.hasPermission;
+
+    // Assert
+    expect(hasPermission, isTrue);
+  });
+
+  test('hasPermission returns false if RoleItemType does not have userAdmin permission', () {
+    // Arrange
+    final roleModel = RoleModel(
+      roleId: 'roleId1',
+      roles: {
+        RoleItemType.viewBill: [
+          RoleItem.userRead,
+          RoleItem.userUpdate,
+          RoleItem.userWrite,
+          RoleItem.userDelete,
+        ],
+      },
+    );
+    final userModel = UserModel(
+      userId: 'userId1',
+      userName: 'testUser',
+      userRoleId: 'roleId1',
+    );
+
+    userManagementController.allRoles = [roleModel];
+    userManagementController.loggedInUserModel = userModel;
+
+    // Act
+    final hasPermission = RoleItemType.viewBill.hasPermission;
+
+    // Assert
+    expect(hasPermission, isFalse);
+  });
+}
