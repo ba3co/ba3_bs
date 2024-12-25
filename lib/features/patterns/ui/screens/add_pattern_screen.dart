@@ -7,8 +7,8 @@ import '../widgets/add_pattern/add_pattern_bottom_buttons.dart';
 import '../widgets/add_pattern/add_pattern_form.dart';
 import '../widgets/add_pattern/colors_picker.dart';
 
-class AddPatternPage extends StatelessWidget {
-  const AddPatternPage({super.key});
+class AddPatternScreen extends StatelessWidget {
+  const AddPatternScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

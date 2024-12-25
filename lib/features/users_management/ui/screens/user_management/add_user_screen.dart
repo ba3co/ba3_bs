@@ -56,7 +56,7 @@ class AddUserScreen extends StatelessWidget {
                         child: AppButton(
                           title: controller.selectedUserModel?.userId == null ? 'إضافة' : 'تعديل',
                           onPressed: () {
-                            controller.saveOrUpdateUser(existingUserModel: controller.selectedUserModel);
+                            controller.saveOrUpdateUser();
                           },
                           iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
                           color: controller.selectedUserModel?.userId == null ? null : Colors.green,

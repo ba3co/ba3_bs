@@ -120,6 +120,10 @@ class AccountsController extends GetxController with AppNavigator {
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
+  set setSelectedAccounts(Map<Account, AccountModel>? accounts) {
+    selectedAccounts = accounts ?? {};
+  }
+
   void openAccountSelectionDialog({
     required String query,
     required BuildContext context,

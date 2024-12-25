@@ -1,4 +1,6 @@
 // Firebase-Specific Implementation
+import 'dart:developer';
+
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -52,6 +54,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
 
   @override
   Future<void> update({required String path, String? documentId, required Map<String, dynamic> data}) async {
+    log('update path $path, $documentId');
     await _firestore.collection(path).doc(documentId).update(data);
   }
 

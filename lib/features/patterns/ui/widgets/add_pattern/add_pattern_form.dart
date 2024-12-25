@@ -14,7 +14,7 @@ class AddPatternForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: patternController.formKey,
+      key: patternController.patternFormHandler.formKey,
       child: Wrap(
         spacing: 20,
         alignment: WrapAlignment.spaceBetween,
@@ -22,56 +22,56 @@ class AddPatternForm extends StatelessWidget {
         children: [
           TextFieldWithLabel(
             label: 'الاختصار',
-            textEditingController: patternController.shortNameController,
-            validator: (value) => patternController.validator(value, 'الاختصار'),
+            textEditingController: patternController.patternFormHandler.shortNameController,
+            validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
           ),
           TextFieldWithLabel(
             label: 'الاسم',
-            textEditingController: patternController.fullNameController,
-            validator: (value) => patternController.validator(value, 'الاسم'),
+            textEditingController: patternController.patternFormHandler.fullNameController,
+            validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
           ),
           TextFieldWithLabel(
             label: 'اختصار لاتيني',
-            textEditingController: patternController.latinShortNameController,
-            validator: (value) => patternController.validator(value, 'اختصار لاتيني'),
+            textEditingController: patternController.patternFormHandler.latinShortNameController,
+            validator: (value) => patternController.patternFormHandler.validator(value, 'اختصار لاتيني'),
           ),
           TextFieldWithLabel(
             label: 'الاسم لاتيني',
-            textEditingController: patternController.latinFullNameController,
-            validator: (value) => patternController.validator(value, 'الاسم لاتيني'),
+            textEditingController: patternController.patternFormHandler.latinFullNameController,
+            validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
           ),
           PatternTypeDropdown(patternController: patternController),
           SearchableAccountField(
             label: 'المواد',
-            textEditingController: patternController.materialsController,
-            validator: (value) => patternController.validator(value, 'المواد'),
+            textEditingController: patternController.patternFormHandler.materialsController,
+            validator: (value) => patternController.patternFormHandler.validator(value, 'المواد'),
           ),
           SearchableAccountField(
             label: 'الحسميات',
-            textEditingController: patternController.discountsController,
-            validator: (value) => patternController.validator(value, 'الحسميات'),
+            textEditingController: patternController.patternFormHandler.discountsController,
+            //  validator: (value) => patternController.patternFormHandler.validator(value, 'الحسميات'),
           ),
           SearchableAccountField(
             label: 'الاضافات',
-            textEditingController: patternController.additionsController,
-            validator: (value) => patternController.validator(value, 'الاضافات'),
+            textEditingController: patternController.patternFormHandler.additionsController,
+            //   validator: (value) => patternController.patternFormHandler.validator(value, 'الاضافات'),
           ),
           SearchableAccountField(
             label: 'النقديات',
-            textEditingController: patternController.cachesController,
-            validator: (value) => patternController.validator(value, 'النقديات'),
+            textEditingController: patternController.patternFormHandler.cachesController,
+            validator: (value) => patternController.patternFormHandler.validator(value, 'النقديات'),
           ),
           SearchableAccountField(
             label: 'الهدايا',
-            textEditingController: patternController.giftsController,
-            validator: (value) => patternController.validator(value, 'الهدايا'),
+            textEditingController: patternController.patternFormHandler.giftsController,
+            //  validator: (value) => patternController.patternFormHandler.validator(value, 'الهدايا'),
           ),
           SearchableAccountField(
             label: 'مقابل الهدايا',
-            textEditingController: patternController.exchangeForGiftsController,
-            validator: (value) => patternController.validator(value, 'مقابل الهدايا'),
+            textEditingController: patternController.patternFormHandler.exchangeForGiftsController,
+            //    validator: (value) => patternController.patternFormHandler.validator(value, 'مقابل الهدايا'),
           ),
-          StoreDropdown(storeSelectionHandler: patternController),
+          StoreDropdown(storeSelectionHandler: patternController.patternFormHandler),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
 
 import '../../../../core/network/api_constants.dart';
@@ -29,12 +31,13 @@ class PatternsDataSource extends DatasourceBase<BillTypeModel> {
 
   @override
   Future<BillTypeModel> save(BillTypeModel item, [bool? save]) async {
-    if (item.billTypeId == null) {
+    log('item ${item.id}');
+    if (item.id == null) {
       final data = await databaseService.add(path: path, data: item.toJson());
 
       return BillTypeModel.fromJson(data);
     } else {
-      await databaseService.update(path: path, documentId: item.billTypeId, data: item.toJson());
+      await databaseService.update(path: path, documentId: item.id, data: item.toJson());
       return item;
     }
   }

@@ -250,13 +250,13 @@ class UserManagementController extends GetxController with AppNavigator {
     );
   }
 
-  Future<void> saveOrUpdateUser({UserModel? existingUserModel}) async {
+  Future<void> saveOrUpdateUser() async {
     // Validate the form first
     if (!userFormHandler.validate()) return;
 
     // Create the user model from the provided data
     final updatedUserModel = _roleService.createUserModel(
-      userModel: existingUserModel,
+      userModel: selectedUserModel,
       userName: userFormHandler.userNameController.text,
       userPassword: userFormHandler.passController.text,
       userRoleId: userFormHandler.selectedRoleId.value,
