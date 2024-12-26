@@ -6,7 +6,6 @@ import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
@@ -22,9 +21,9 @@ class UserManagementController extends GetxController with AppNavigator {
 
   final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
 
-  final sharedPrefsService = read<SharedPreferencesService>();
+  final SharedPreferencesService _sharedPreferencesService;
 
-  UserManagementController(this._rolesFirebaseRepo, this._usersFirebaseRepo);
+  UserManagementController(this._rolesFirebaseRepo, this._usersFirebaseRepo, this._sharedPreferencesService);
 
   // Services
   late final RoleService _roleService;
@@ -181,7 +180,7 @@ class UserManagementController extends GetxController with AppNavigator {
       AppUIUtils.onFailure('أسم المستخدم غير صحيح!');
       return;
     }
-    sharedPrefsService.setString(AppConstants.userIdKey, loggedInUserModel?.userId ?? '');
+    _sharedPreferencesService.setString(AppConstants.userIdKey, loggedInUserModel?.userId ?? '');
     offAll(AppRoutes.mainLayout);
   }
 
@@ -196,10 +195,10 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   void navigateToLogin() async {
-    if (sharedPrefsService.getString(AppConstants.userIdKey) == null) {
+    if (_sharedPreferencesService.getString(AppConstants.userIdKey) == null) {
       offAll(AppRoutes.loginScreen);
     } else {
-      getUserById(sharedPrefsService.getString(AppConstants.userIdKey)!);
+      getUserById(_sharedPreferencesService.getString(AppConstants.userIdKey)!);
     }
   }
 
@@ -294,7 +293,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   void logOut() {
-    sharedPrefsService.remove(AppConstants.userIdKey);
+    _sharedPreferencesService.remove(AppConstants.userIdKey);
     navigateToLogin();
   }
 }

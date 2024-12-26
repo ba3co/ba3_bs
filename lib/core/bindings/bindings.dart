@@ -60,7 +60,8 @@ class AppBindings extends Bindings {
     );
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BillModel
-    final FilterableDataSourceRepository<BillModel> billsFirebaseRepo = FilterableDataSourceRepository(BillsDataSource(databaseService: fireStoreService));
+    final FilterableDataSourceRepository<BillModel> billsFirebaseRepo =
+        FilterableDataSourceRepository(BillsDataSource(databaseService: fireStoreService));
 
     // Instantiate InvoicesDataSource and FirebaseRepositoryConcrete of BondModel
     final DataSourceRepository<BondModel> bondsFirebaseRepo = DataSourceRepository(
@@ -93,11 +94,14 @@ class AppBindings extends Bindings {
     // final IAPiClient httpClient = HttpClient<Map<String, dynamic>>(Client());
     final IAPiClient dioClient = DioClient<Map<String, dynamic>>(Dio());
 
-    final ITranslationService googleTranslation = GoogleTranslation(baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
+    final ITranslationService googleTranslation = GoogleTranslation(
+        baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
 
     final TranslationRepository translationRepo = TranslationRepository(googleTranslation);
     Get.put(MainLayoutController());
-    await Get.putAsync(() => SharedPreferencesService().init());
+
+    final sharedPreferencesService = await Get.putAsync(() => SharedPreferencesService().init());
+
     Get.lazyPut(() => translationRepo, fenix: true);
 
     Get.lazyPut(() => billsFirebaseRepo, fenix: true);
@@ -112,7 +116,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
 
-    Get.put(UserManagementController(rolesFirebaseRepo, usersFirebaseRepo), permanent: true);
+    Get.put(UserManagementController(rolesFirebaseRepo, usersFirebaseRepo, sharedPreferencesService), permanent: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 

@@ -1,6 +1,7 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/filterable_data_source_repo.dart';
+import 'package:ba3_bs/core/services/get_x/shared_preferences_service.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
@@ -20,7 +21,7 @@ void main() {
   late MockDataSourceRepository<RoleModel> mockRolesRepo;
   late MockFilterableDataSourceRepository<UserModel> mockUsersRepo;
 
-  setUp(() {
+  setUp(() async {
     // Mock the dependencies
     mockRolesRepo = MockDataSourceRepository<RoleModel>();
     mockUsersRepo = MockFilterableDataSourceRepository<UserModel>();
@@ -29,8 +30,9 @@ void main() {
     when(() => mockRolesRepo.getAll()).thenAnswer((_) async => Right([RoleModel(roleId: 'roleId1', roles: {})]));
     when(() => mockUsersRepo.getAll()).thenAnswer((_) async => Right([]));
 
+    var sharedPreferencesService = await Get.putAsync(() => SharedPreferencesService().init());
     // Initialize the controller with mocked dependencies
-    userManagementController = UserManagementController( mockRolesRepo, mockUsersRepo);
+    userManagementController = UserManagementController(mockRolesRepo, mockUsersRepo, sharedPreferencesService);
 
     // Register the controller
     Get.put(userManagementController);
