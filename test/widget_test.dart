@@ -1,7 +1,6 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/filterable_data_source_repo.dart';
-import 'package:ba3_bs/features/login/data/repositories/user_repo.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
@@ -11,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Mock Classes
-class MockUserManagementRepository extends Mock implements UserManagementRepository {}
 
 class MockDataSourceRepository<T> extends Mock implements DataSourceRepository<T> {}
 
@@ -19,13 +17,11 @@ class MockFilterableDataSourceRepository<T> extends Mock implements FilterableDa
 
 void main() {
   late UserManagementController userManagementController;
-  late MockUserManagementRepository mockUserRepo;
   late MockDataSourceRepository<RoleModel> mockRolesRepo;
   late MockFilterableDataSourceRepository<UserModel> mockUsersRepo;
 
   setUp(() {
     // Mock the dependencies
-    mockUserRepo = MockUserManagementRepository();
     mockRolesRepo = MockDataSourceRepository<RoleModel>();
     mockUsersRepo = MockFilterableDataSourceRepository<UserModel>();
 
@@ -34,7 +30,7 @@ void main() {
     when(() => mockUsersRepo.getAll()).thenAnswer((_) async => Right([]));
 
     // Initialize the controller with mocked dependencies
-    userManagementController = UserManagementController(mockUserRepo, mockRolesRepo, mockUsersRepo);
+    userManagementController = UserManagementController( mockRolesRepo, mockUsersRepo);
 
     // Register the controller
     Get.put(userManagementController);

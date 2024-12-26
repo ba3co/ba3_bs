@@ -31,8 +31,6 @@ import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
-import '../../features/login/data/datasources/user_management_service.dart';
-import '../../features/login/data/repositories/user_repo.dart';
 import '../../features/materials/data/repositories/materials_repository.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
@@ -43,6 +41,7 @@ import '../../features/users_management/data/datasources/users_data_source.dart'
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
+import '../services/get_x/shared_preferences_service.dart';
 import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/translation/implementations/dio_client.dart';
 import '../services/translation/implementations/google_translation.dart';
@@ -51,12 +50,10 @@ import '../services/translation/interfaces/i_api_client.dart';
 
 class AppBindings extends Bindings {
   @override
-  void dependencies() {
+  void dependencies() async{
     // Initialize RemoteApiService instance
     IDatabaseService<Map<String, dynamic>> fireStoreService = FireStoreService();
 
-    // Initialize repositories
-    final userManagementRepo = UserManagementRepository(UserManagementService());
 
     // Instantiate PatternsDataSource and FirebaseRepositoryConcrete of BillTypeModel
     final DataSourceRepository<BillTypeModel> patternsFirebaseRepo = DataSourceRepository(
@@ -102,6 +99,7 @@ class AppBindings extends Bindings {
         baseUrl: ApiConstants.translationBaseUrl, apiKey: ApiConstants.translationApiKey, client: dioClient);
 
     final TranslationRepository translationRepo = TranslationRepository(googleTranslation);
+    await Get.putAsync(() => SharedPreferencesService().init());
 
     Get.lazyPut(() => translationRepo, fenix: true);
 
@@ -117,7 +115,7 @@ class AppBindings extends Bindings {
     Get.lazyPut(() => PlutoController(), fenix: true);
     Get.lazyPut(() => EntryBondController(entryBondsFirebaseRepo, accountsStatementsRepo), fenix: true);
 
-    Get.put(UserManagementController(userManagementRepo, rolesFirebaseRepo, usersFirebaseRepo), permanent: true);
+    Get.put(UserManagementController( rolesFirebaseRepo, usersFirebaseRepo), permanent: true);
 
     Get.lazyPut(() => PatternController(patternsFirebaseRepo), fenix: true);
 
