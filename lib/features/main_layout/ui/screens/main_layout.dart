@@ -1,8 +1,6 @@
-import 'dart:io';
 
 import 'package:ba3_bs/features/main_layout/controllers/main_layout_controller.dart';
 import 'package:ba3_bs/features/main_layout/ui/widgets/right_main_widget.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,24 +13,22 @@ class MainLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS)) {
+
       Get.put(WindowCloseController());
-    }
-    return SafeArea(
-      child: GetBuilder<MainLayoutController>(builder: (mainController) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Scaffold(
-            backgroundColor: AppColors.whiteColor,
-            body: Row(
-              children: [
-                RightMainWidget(mainController: mainController),
-                LeftMainWidget(mainController: mainController)
-              ],
-            ),
+
+    return GetBuilder<MainLayoutController>(builder: (mainController) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: AppColors.whiteColor,
+          body: Row(
+            children: [
+              RightMainWidget(mainController: mainController),
+              LeftMainWidget(mainController: mainController)
+            ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 }
