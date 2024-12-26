@@ -22,7 +22,7 @@ class UserManagementController extends GetxController with AppNavigator {
 
   final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
 
-  final prefsService = read<SharedPreferencesService>();
+  final sharedPrefsService = read<SharedPreferencesService>();
 
   UserManagementController(this._rolesFirebaseRepo, this._usersFirebaseRepo);
 
@@ -65,14 +65,21 @@ class UserManagementController extends GetxController with AppNavigator {
     roleFormHandler = RoleFormHandler();
   }
 
-  RoleModel getRoleById(String id) => allRoles.firstWhere((role) => role.roleId == id);
-
+  RoleModel? getRoleById(String id) {
+    try {
+      return allRoles.firstWhere((role) => role.roleId == id);
+    } catch (e) {
+      return null;
+    }
+  }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() =>
+      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) =>
+      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -106,8 +113,8 @@ class UserManagementController extends GetxController with AppNavigator {
     final result = await _rolesFirebaseRepo.getAll();
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedRoles) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedRoles) {
         allRoles = fetchedRoles;
       },
     );
@@ -121,8 +128,8 @@ class UserManagementController extends GetxController with AppNavigator {
     final result = await _usersFirebaseRepo.getAll();
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedUsers) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedUsers) {
         allUsers = fetchedUsers;
       },
     );
@@ -134,8 +141,8 @@ class UserManagementController extends GetxController with AppNavigator {
   Future<void> getUserById(String userId) async {
     final result = await _usersFirebaseRepo.getById(userId);
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedUser) => _handelGetUserByIdSuccess(fetchedUser),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedUser) => _handelGetUserByIdSuccess(fetchedUser),
     );
   }
 
@@ -174,24 +181,25 @@ class UserManagementController extends GetxController with AppNavigator {
       AppUIUtils.onFailure('أسم المستخدم غير صحيح!');
       return;
     }
-    prefsService.setString(AppConstants.userIdKey, loggedInUserModel?.userId ?? '');
+    sharedPrefsService.setString(AppConstants.userIdKey, loggedInUserModel?.userId ?? '');
     offAll(AppRoutes.mainLayout);
   }
 
   Future<void> _checkUserByPin() async {
-    final result = await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
+    final result =
+        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers),
     );
   }
 
   void navigateToLogin() async {
-    if (prefsService.getString(AppConstants.userIdKey) == null) {
+    if (sharedPrefsService.getString(AppConstants.userIdKey) == null) {
       offAll(AppRoutes.loginScreen);
     } else {
-      getUserById(prefsService.getString(AppConstants.userIdKey)!);
+      getUserById(sharedPrefsService.getString(AppConstants.userIdKey)!);
     }
   }
 
@@ -240,8 +248,8 @@ class UserManagementController extends GetxController with AppNavigator {
     final result = await _rolesFirebaseRepo.save(updatedRoleModel);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (success) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) {
         AppUIUtils.onSuccess('تم الحفظ بنجاح');
         getAllRoles();
       },
@@ -270,8 +278,8 @@ class UserManagementController extends GetxController with AppNavigator {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (success) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) {
         AppUIUtils.onSuccess('تم الحفظ بنجاح');
         getAllUsers();
       },
@@ -286,7 +294,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   void logOut() {
-    prefsService.remove(AppConstants.userIdKey);
+    sharedPrefsService.remove(AppConstants.userIdKey);
     navigateToLogin();
   }
 }
