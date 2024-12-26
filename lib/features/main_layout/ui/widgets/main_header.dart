@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
 
@@ -52,8 +49,7 @@ class MainHeader extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            read<UserManagementController>().userStatus = UserManagementStatus.first;
-            Get.offAllNamed(AppRoutes.loginScreen);
+            read<UserManagementController>().logOut();
           },
           child: Container(
             height: (Platform.isWindows || Platform.isMacOS)? 0.05.sh:0.06.sh,

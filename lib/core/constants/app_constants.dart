@@ -378,4 +378,7 @@ abstract class AppConstants {
 
   static const String status = 'status';
   static const String userPassword = 'userPassword';
+
+
+  static const String userIdKey = 'userIdKey';
 }
