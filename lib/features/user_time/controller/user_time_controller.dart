@@ -1,13 +1,15 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
-import 'package:ba3_bs/features/user_time/services/user_time_services.dart';
-import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/app_strings.dart';
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
+import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
+import '../../users_management/controllers/user_management_controller.dart';
 import '../../users_management/data/models/user_model.dart';
+import '../data/repositories/user_time_repo.dart';
+import '../services/user_time_services.dart';
 
 class UserTimeController extends GetxController {
   final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
@@ -17,100 +19,164 @@ class UserTimeController extends GetxController {
 
   late final UserTimeServices _userTimeServices;
 
+  Rx<String> lastEnterTime = "لم يتم تسجيل الدخول بعد".obs;
+  Rx<String> lastOutTime = "لم يتم تسجيل الخروج بعد".obs;
+
   Rx<RequestState> logInState = RequestState.initial.obs;
   Rx<RequestState> logOutState = RequestState.initial.obs;
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-
     initialize();
+  }
+
+  Future<bool> isWithinRegion() async {
+    final result = await _userTimeRepo.getCurrentLocation();
+    bool isWithinRegion = false;
+    result.fold(
+          (failure) {
+        return AppUIUtils.onFailure(failure.message);
+      },
+          (location) {
+        return isWithinRegion = _userTimeServices.isWithinRegion(location, AppStrings.targetLatitude, AppStrings.targetLongitude, AppStrings.radiusInMeters);
+      },
+    );
+
+    return isWithinRegion;
   }
 
   void initialize() {
     _userTimeServices = UserTimeServices();
+    getLastEnterTime();
+    getLastOutTime();
   }
 
-  saveLogInTime() async {
-    logInState.value = RequestState.loading;
-
-    final UserModel updatedUserModel = _userTimeServices.addLoginTimeToUserModel(read<UserManagementController>().loggedInUserModel!);
-    if (await _userTimeRepo.checkLogin()) {
-      final result = await _usersFirebaseRepo.save(updatedUserModel);
-
-      result.fold(
-        (failure) {
-          logInState.value = RequestState.error;
-          return AppUIUtils.onFailure(failure.message);
-        },
-        (fetchedUser) {
-          logInState.value = RequestState.success;
-          return AppUIUtils.onSuccess('تم تسجيل الدخول بنجاح');
-        },
-      );
+  Future<void> checkUserLog({required UserStatus logStatus, required Function(UserModel) onChecked, required String errorMessage}) async {
+    if (logStatus == UserStatus.online) {
+      logInState.value = RequestState.loading;
     } else {
-      logInState.value = RequestState.error;
-      AppUIUtils.onFailure('خطأ في المنطة الجغرافية');
+      logOutState.value = RequestState.loading;
+    }
+
+    UserModel? userModel = getUserById();
+
+    /// check if user in regin
+    if (!await isWithinRegion()) {
+      handleError('خطأ في المنطقة الجغرافية', logStatus);
+      return;
+    }
+
+    /// check if user want to login again before logout
+    /// or
+    /// check if user want to logout again before login
+    if (userModel!.userStatus != logStatus) {
+      final updatedUserModel = onChecked(userModel);
+
+      /// check if user want to log in
+      if (logStatus == UserStatus.online) {
+        _saveLogInTime(updatedUserModel);
+      } else {
+        _saveLogOutTime(updatedUserModel);
+      }
+    } else {
+      handleError(errorMessage, logStatus);
     }
   }
 
-  void saveLogOutTime() async {
-    logOutState.value = RequestState.loading;
+  UserModel? getUserById() => read<UserManagementController>().loggedInUserModel!;
 
-    final UserModel updatedUserModel = _userTimeServices.addLogOutTimeToUserModel(read<UserManagementController>().loggedInUserModel!);
-    if (await _userTimeRepo.checkLogin()) {
-      final result = await _usersFirebaseRepo.save(updatedUserModel);
+  Future<void> checkLogInAndSave() async {
+    await checkUserLog(
+      /// This is the user's status after the operation
+      logStatus: UserStatus.online,
 
-      result.fold(
-        (failure) {
-          logOutState.value = RequestState.error;
-          return AppUIUtils.onFailure(failure.message);
-        },
-        (fetchedUser) {
-          logOutState.value = RequestState.success;
-          return AppUIUtils.onSuccess('تم تسجيل الخروج بنجاح');
-        },
-      );
-    } else {
-      logOutState.value = RequestState.error;
-      AppUIUtils.onFailure('خطأ في المنطة الجغرافية');
-    }
+      /// After confirming the possibility of lo
+      onChecked: (userModel) => _userTimeServices.addLoginTimeToUserModel(
+        userModel: userModel,
+      ),
+      errorMessage: "يجب تسجيل الخروج أولا",
+    );
   }
 
-/* // Fetch roles using the repository
-  Future<void> updateUserLogin(UserModel userModel) async {
+  Future<void> checkLogOutAndSave() async {
+    await checkUserLog(
+      /// This is the user's status after the operation
+      logStatus: UserStatus.away,
 
-    final result = await _usersFirebaseRepo.save(userModel);
+      /// After confirming the possibility of lo
+      onChecked: (userModel) => _userTimeServices.addLogOutTimeToUserModel(
+        userModel: userModel,
+      ),
+      errorMessage: "يجب تسجيل الدخول أولا",
+    );
+  }
+
+  void _saveLogOutTime(UserModel updatedUserModel) async {
+    final result = await _usersFirebaseRepo.save(updatedUserModel);
+    result.fold(
+          (failure) {
+        handleError(failure.message, UserStatus.away);
+      },
+          (fetchedUser) {
+        handleSuccess('تم تسجيل الخروج بنجاح', UserStatus.away);
+        setLastOutTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
+      },
+    );
+  }
+
+  void _saveLogInTime(UserModel updatedUserModel) async {
+    final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (updatedUser)=> AppUIUtils.onSuccess('تم تسجيل الدخول بنجاح'),
+          (failure) {
+        handleError(failure.message, UserStatus.online);
+      },
+          (fetchedUser) {
+        handleSuccess('تم تسجيل الدخول بنجاح', UserStatus.online);
+
+        setLastEnterTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
+      },
     );
-
-    update();
   }
-  // Log login time
-  Future<void> logInTime() async {
-    UserModel? loggedInUserModel = read<UserManagementController>().loggedInUserModel;
-    if (loggedInUserModel != null) {
-      final result = await _userTimeServices.logLoginTime(loggedInUserModel);
-      result.fold(
-        (failure) => Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  ${failure.message} \n"),
-        (success) => Get.snackbar("Success", "Login time logged successfully!"),
-      );
+
+  getLastEnterTime() async {
+    List<DateTime> enterTimeList = _userTimeServices.getEnterTimes(getUserById()) ?? [];
+    if (enterTimeList.isNotEmpty) {
+      setLastEnterTime = AppServiceUtils.formatDateTime(enterTimeList.last);
     }
   }
 
-  // Log logout time
-  Future<void> logOutTime() async {
-    UserModel? loggedInUserModel = read<UserManagementController>().loggedInUserModel;
-    if (loggedInUserModel != null) {
-      final result = await _userTimeServices.logLogoutTime(loggedInUserModel);
-      result.fold(
-        (failure) => Get.snackbar("Error", "جرب طفي التطبيق ورجاع شغلو او تأكد من اتصال النت  ${failure.message} \n"),
-        (success) => Get.snackbar("Success", "Logout time logged successfully!"),
-      );
+  getLastOutTime() async {
+    List<DateTime> outTimeList = _userTimeServices.getOutTimes(getUserById()) ?? [];
+    if (outTimeList.isNotEmpty) {
+      setLastOutTime = AppServiceUtils.formatDateTime(outTimeList.last);
     }
-  }*/
+  }
+
+  void handleError(String errorMessage, UserStatus status) {
+    if (status == UserStatus.online) {
+      logInState.value = RequestState.error;
+    } else {
+      logOutState.value = RequestState.error;
+    }
+    AppUIUtils.onFailure(errorMessage);
+  }
+
+  void handleSuccess(String successMessage, UserStatus status) {
+    if (status == UserStatus.online) {
+      logInState.value = RequestState.success;
+    } else {
+      logOutState.value = RequestState.success;
+    }
+    AppUIUtils.onSuccess(successMessage);
+  }
+
+  set setLastEnterTime(String time) {
+    lastEnterTime.value = time;
+  }
+
+  set setLastOutTime(String time) {
+    lastOutTime.value = time;
+  }
 }
