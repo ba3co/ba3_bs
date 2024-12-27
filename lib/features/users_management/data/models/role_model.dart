@@ -70,7 +70,7 @@ enum RoleItemType {
   viewUserManagement('إدارة المستخدمين'),
   viewDue('الاستحقاق'),
   viewStatistics('التقارير'),
-  viewTimer('المؤقت'),
+  viewTime('الدوام'),
   viewDataBase('ادارة قواعد البيانات'),
   viewCard('ادارة البطاقات'),
   viewHome('الصفحة الرئيسية');
@@ -226,7 +226,7 @@ class RolesConfig {
       RoleItem.userDelete,
       RoleItem.userAdmin,
     ],
-    RoleItemType.viewTimer: [
+    RoleItemType.viewTime: [
       RoleItem.userRead,
       RoleItem.userWrite,
       RoleItem.userUpdate,

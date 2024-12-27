@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/features/user_time/ui/user_time_layout.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -69,6 +70,13 @@ class MainLayoutController extends GetxController {
         role: RoleItemType.viewUserManagement,
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon
+      ),
+      (
+      name: 'الدوام',
+      layout: const UserTimeLayout(),
+      role: RoleItemType.viewTime,
+      icon: AppAssets.usersIcon,
+      unSelectedIcon: AppAssets.usersUnselectedIcon
       ),
   ];
 
