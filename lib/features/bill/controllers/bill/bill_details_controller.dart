@@ -161,10 +161,11 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (updatedBillModel) {
-        AppUIUtils.onSuccess('تم القبول بنجاح');
-        billSearchController.updateBill(updatedBillModel);
-      },
+      (updatedBillModel) => _billService.handleUpdateBillStatusSuccess(
+        updatedBillModel: updatedBillModel,
+        discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,
+        billSearchController: billSearchController,
+      ),
     );
   }
 

@@ -34,13 +34,14 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
 
   EntryBondController get bondController => read<EntryBondController>();
 
-  BillModel? createBillModel(
-      {BillModel? billModel,
-      required BillTypeModel billTypeModel,
-      required String billCustomerId,
-      required String billSellerId,
-      required int billPayType,
-      required String billDate}) {
+  BillModel? createBillModel({
+    BillModel? billModel,
+    required BillTypeModel billTypeModel,
+    required String billCustomerId,
+    required String billSellerId,
+    required int billPayType,
+    required String billDate,
+  }) {
     return BillModel.fromBillData(
       billModel: billModel,
       billTypeModel: billTypeModel,
@@ -98,6 +99,25 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     bondController.deleteEntryBondModel(entryId: billModel.billId!);
   }
 
+  Future<void> handleUpdateBillStatusSuccess({
+    required BillModel updatedBillModel,
+    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
+    required BillSearchController billSearchController,
+  }) async {
+    AppUIUtils.onSuccess('تم القبول بنجاح');
+    billSearchController.updateBill(updatedBillModel);
+
+    if (updatedBillModel.status == Status.approved) {
+      bondController.saveEntryBondModel(
+        entryBondModel: createEntryBondModel(
+          originType: EntryBondType.bill,
+          billModel: updatedBillModel,
+          discountsAndAdditions: discountsAndAdditions,
+        ),
+      );
+    }
+  }
+
   Future<void> handleSaveOrUpdateSuccess({
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
@@ -122,13 +142,15 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
       pdfGenerator: BillPdfGenerator(),
     );
 
-    bondController.saveEntryBondModel(
-      entryBondModel: createEntryBondModel(
-        originType: EntryBondType.bill,
-        billModel: billModel,
-        discountsAndAdditions: discountsAndAdditions,
-      ),
-    );
+    if (billModel.status == Status.approved) {
+      bondController.saveEntryBondModel(
+        entryBondModel: createEntryBondModel(
+          originType: EntryBondType.bill,
+          billModel: billModel,
+          discountsAndAdditions: discountsAndAdditions,
+        ),
+      );
+    }
   }
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
