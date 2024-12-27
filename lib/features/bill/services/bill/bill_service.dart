@@ -26,7 +26,7 @@ import '../../data/models/invoice_record_model.dart';
 import 'bill_bond_service.dart';
 import 'bill_pdf_generator.dart';
 
-class BillService with PdfBase, BillBondService, FloatingLauncher {
+class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -136,13 +136,13 @@ class BillService with PdfBase, BillBondService, FloatingLauncher {
 
     OverlayService.showDialog(
       context: context,
-      title: "Invoice QR Code",
+      title: 'Invoice QR Code',
       content: EInvoiceDialogContent(
         billController: billController,
         billId: billModel.billId!,
       ),
       onCloseCallback: () {
-        log("E-Invoice dialog closed.");
+        log('E-Invoice dialog closed.');
       },
     );
   }

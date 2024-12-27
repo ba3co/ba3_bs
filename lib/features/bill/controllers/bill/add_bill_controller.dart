@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
@@ -29,7 +30,7 @@ import 'all_bills_controller.dart';
 import 'bill_details_controller.dart';
 import 'bill_search_controller.dart';
 
-class AddBillController extends IBillController with AppValidator implements IStoreSelectionHandler {
+class AddBillController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
   // Repositories
   final DataSourceRepository<BillModel> _billsFirebaseRepo;
   final AddBillPlutoController addBillPlutoController;
@@ -380,9 +381,9 @@ class AddBillController extends IBillController with AppValidator implements ISt
     }
 
     if (!fromBillDetails && billsByCategory.isNotEmpty) {
-      Get.offNamed(AppRoutes.billDetailsScreen, arguments: fromBillById);
+      replace(AppRoutes.billDetailsScreen, arguments: fromBillById);
     } else {
-      Get.back();
+      goBack();
     }
   }
 }

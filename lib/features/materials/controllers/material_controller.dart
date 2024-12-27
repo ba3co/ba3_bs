@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,7 @@ import 'package:get/get.dart';
 import '../data/models/material_model.dart';
 import '../data/repositories/materials_repository.dart';
 
-class MaterialController extends GetxController {
+class MaterialController extends GetxController with AppNavigator {
   final MaterialRepository _materialRepository;
 
   MaterialController(this._materialRepository);
@@ -35,7 +36,7 @@ class MaterialController extends GetxController {
   }
 
   void navigateToAllMaterialScreen() {
-    Get.toNamed(AppRoutes.showAllMaterialsScreen);
+    to(AppRoutes.showAllMaterialsScreen);
   }
 
   void reFetchMaterials() {

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -47,6 +48,6 @@ class FloatingWindowService {
     }
 
     // Return the controller instance
-    return Get.find<FloatingWindowController>(tag: tag);
+    return read<FloatingWindowController>(tag: tag);
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
@@ -16,7 +17,7 @@ import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
-class AllChequesController extends FloatingChequesDetailsLauncher {
+class AllChequesController extends FloatingChequesDetailsLauncher with AppNavigator {
   final DataSourceRepository<ChequesModel> _chequesFirebaseRepo;
 
   late bool isDebitOrCredit;
@@ -135,8 +136,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher {
     );
   }
 
-  void navigateToChequesScreen({required bool onlyDues}) =>
-      Get.toNamed(AppRoutes.showAllChequesScreen, arguments: onlyDues);
+  void navigateToChequesScreen({required bool onlyDues}) => to(AppRoutes.showAllChequesScreen, arguments: onlyDues);
 
   void openChequesDetailsById(String chequesId, BuildContext context) async {
     final ChequesModel chequesModel = await fetchChequesById(chequesId);

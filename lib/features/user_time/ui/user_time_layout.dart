@@ -15,14 +15,14 @@ class UserTimeLayout extends StatelessWidget {
         children: [
           Obx(() {
             return AppButton(
-              title: "دخول",
+              title: 'دخول',
               onPressed: () => userTimeController.saveLogInTime(),
               isLoading: userTimeController.logInState.value == RequestState.loading,
             );
           }),
           Obx(() {
             return AppButton(
-              title: "خروج",
+              title: 'خروج',
               onPressed: () => userTimeController.saveLogOutTime(),
               isLoading: userTimeController.logOutState.value == RequestState.loading,
             );

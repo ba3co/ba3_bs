@@ -8,17 +8,14 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
-      _checkUserStatus();
-    },);
-
+    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
+      (value) {
+        _checkUserStatus();
+      },
+    );
 
     return const Scaffold(
-      body: Center(
-        child: Text("يتم تسجيل الدخول"), // "Logging in" in Arabic
-      ),
+      body: Center(child: Text("يتم تسجيل الدخول")),
     );
   }
 
@@ -26,4 +23,3 @@ class SplashScreen extends StatelessWidget {
     read<UserManagementController>().navigateToLogin();
   }
 }
-

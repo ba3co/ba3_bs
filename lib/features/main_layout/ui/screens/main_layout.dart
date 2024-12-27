@@ -1,9 +1,9 @@
-
 import 'package:ba3_bs/features/main_layout/controllers/main_layout_controller.dart';
 import 'package:ba3_bs/features/main_layout/ui/widgets/right_main_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../controllers/window_close_controller.dart';
 import '../widgets/left_main_widget.dart';
@@ -13,8 +13,8 @@ class MainLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-      Get.put(WindowCloseController());
+    put(WindowCloseController());
+    put(MainLayoutController());
 
     return GetBuilder<MainLayoutController>(builder: (mainController) {
       return Directionality(
@@ -22,10 +22,7 @@ class MainLayout extends StatelessWidget {
         child: Scaffold(
           backgroundColor: AppColors.whiteColor,
           body: Row(
-            children: [
-              RightMainWidget(mainController: mainController),
-              LeftMainWidget(mainController: mainController)
-            ],
+            children: [RightMainWidget(mainController: mainController), LeftMainWidget(mainController: mainController)],
           ),
         ),
       );

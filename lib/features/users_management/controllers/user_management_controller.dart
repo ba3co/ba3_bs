@@ -147,6 +147,7 @@ class UserManagementController extends GetxController with AppNavigator {
 
   _handelGetUserByIdSuccess(UserModel userModel) {
     loggedInUserModel = userModel;
+
     offAll(AppRoutes.mainLayout);
   }
 

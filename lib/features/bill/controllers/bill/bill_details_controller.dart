@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
@@ -31,7 +32,7 @@ import '../../ui/screens/add_bill_screen.dart';
 import '../pluto/add_bill_pluto_controller.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
-class BillDetailsController extends IBillController with AppValidator implements IStoreSelectionHandler {
+class BillDetailsController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
   // Repositories
 
   final DataSourceRepository<BillModel> _billsFirebaseRepo;
@@ -246,12 +247,12 @@ class BillDetailsController extends IBillController with AppValidator implements
 
   void navigateToAddBillScreen(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController,
       {bool fromBillDetails = false, bool fromBillById = false}) {
-    Get.put(AddBillController(
+    put(AddBillController(
       _billsFirebaseRepo,
       addBillPlutoController: addBillPlutoController,
     )).initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
 
-    Get.toNamed(AppRoutes.addBillScreen,
+    to(AppRoutes.addBillScreen,
         arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
   }
 
@@ -288,14 +289,14 @@ class BillDetailsController extends IBillController with AppValidator implements
   AddBillController _initializeAddBillController(
       BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController, String tag) {
     // Create the AddBillController using Get
-    return Get.put<AddBillController>(
+    return put<AddBillController>(
       AddBillController(_billsFirebaseRepo, addBillPlutoController: addBillPlutoController),
       tag: tag,
     )..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
   }
 
   AddBillPlutoController _initializeAddBillPlutoController(String tag) =>
-      Get.put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
+      put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareBillMaterialsRows(billItems.getMaterialRecords);
@@ -351,5 +352,3 @@ class BillDetailsController extends IBillController with AppValidator implements
     _billService.showEInvoiceDialog(billModel, context);
   }
 }
-
-// 300 - 193

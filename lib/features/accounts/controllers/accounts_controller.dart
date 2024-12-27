@@ -50,9 +50,7 @@ class AccountsController extends GetxController with AppNavigator {
     to(AppRoutes.showAllAccountsScreen);
   }
 
-  void navigateToAccountDetailsScreen(String accountId) {
-    to(AppRoutes.showAccountDetailsScreen, arguments: accountId);
-  }
+  void navigateToAccountDetailsScreen(String accountId) {}
 
   List<AccountModel> searchAccountsByNameOrCode(text) {
     if (accounts.isEmpty) {

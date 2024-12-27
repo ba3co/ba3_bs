@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/dialogs/seller_selection_dialog_content.dart';
+import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
-class SellerController extends GetxController {
+class SellerController extends GetxController with AppNavigator {
   final SellersRepository _sellersRepository;
 
   SellerController(this._sellersRepository);
@@ -41,7 +42,7 @@ class SellerController extends GetxController {
 
   // Navigation to the screen displaying all sellers
   void navigateToAllSellersScreen() {
-    Get.toNamed(AppRoutes.showAllSellersScreen);
+    to(AppRoutes.showAllSellersScreen);
   }
 
   // Search for sellers by text query

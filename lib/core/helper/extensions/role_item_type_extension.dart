@@ -11,7 +11,7 @@ import 'getx_controller_extensions.dart';
 extension RoleItemTypeExtension on RoleItemType {
   /// Returns the [Status] based on the current [RoleItemType].
   Status get status {
-    final hasPermission = this.hasPermission;
+    final hasPermission = hasAdminPermission;
 
     if (kDebugMode) {
       log('RoleItemType: $this, hasPermission: $hasPermission');
@@ -21,9 +21,17 @@ extension RoleItemTypeExtension on RoleItemType {
   }
 
   /// Returns whether the current [RoleItemType] has permission.
-  bool get hasPermission => _checkPermissionStatus;
+  bool get hasAdminPermission => _checkPermissionStatus(RoleItem.userAdmin);
 
-  bool get _checkPermissionStatus {
+  bool get hasReadPermission => _checkPermissionStatus(RoleItem.userRead);
+
+  bool get hasWritePermission => _checkPermissionStatus(RoleItem.userWrite);
+
+  bool get hasUpdatePermission => _checkPermissionStatus(RoleItem.userUpdate);
+
+  bool get hasDeletePermission => _checkPermissionStatus(RoleItem.userDelete);
+
+  bool _checkPermissionStatus(RoleItem roleItem) {
     final userManagementController = read<UserManagementController>();
     final UserModel? userModel = userManagementController.loggedInUserModel;
 
@@ -40,6 +48,20 @@ extension RoleItemTypeExtension on RoleItemType {
     final List<RoleItem>? roleItems = roleModel.roles[this];
 
     // Check if the list contains RoleItem.userAdmin
-    return roleItems?.contains(RoleItem.userAdmin) == true;
+    return roleItems?.contains(roleItem) == true;
+  }
+}
+
+extension RolesExtension on Map<RoleItemType, List<RoleItem>> {
+  /// Checks if any [RoleItemType] has [RoleItem.userAdmin] in its list of [RoleItem].
+  bool get hasUserAdmin {
+    // Iterate over all entries in the map
+    for (MapEntry<RoleItemType, List<RoleItem>> entry in entries) {
+      // Check if the list contains RoleItem.userAdmin
+      if (entry.value.contains(RoleItem.userAdmin)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

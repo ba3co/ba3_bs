@@ -60,7 +60,7 @@ void main() {
     userManagementController.loggedInUserModel = userModel;
 
     // Act
-    final hasPermission = RoleItemType.viewBill.hasPermission;
+    final hasPermission = RoleItemType.viewBill.hasAdminPermission;
 
     // Assert
     expect(hasPermission, isTrue);
@@ -89,7 +89,7 @@ void main() {
     userManagementController.loggedInUserModel = userModel;
 
     // Act
-    final hasPermission = RoleItemType.viewBill.hasPermission;
+    final hasPermission = RoleItemType.viewBill.hasAdminPermission;
 
     // Assert
     expect(hasPermission, isFalse);

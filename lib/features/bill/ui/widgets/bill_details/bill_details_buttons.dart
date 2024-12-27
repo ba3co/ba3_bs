@@ -40,7 +40,7 @@ class BillDetailsButtons extends StatelessWidget {
         runSpacing: 20,
         children: [
           if (billSearchController.isNew) _buildAddButton(),
-          if (RoleItemType.viewBill.hasPermission) _buildApprovalOrBondButton(context),
+          if (RoleItemType.viewBill.hasAdminPermission) _buildApprovalOrBondButton(context),
           _buildPrintButton(),
           _buildEInvoiceButton(context),
           if (!billSearchController.isNew) _buildPdfEmailButton(),

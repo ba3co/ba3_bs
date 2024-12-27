@@ -6,7 +6,7 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-mixin BillBondService {
+mixin BillEntryBondCreatingService {
   EntryBondModel createEntryBondModel({
     required EntryBondType originType,
     required BillModel billModel,
