@@ -17,6 +17,8 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.height,
     this.suffixIcon,
     this.textStyle,
+    this.maxLength,
+    this.filedColor,
   });
 
   final TextEditingController textEditingController;
@@ -31,6 +33,8 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final Widget? suffixIcon;
   final TextStyle? textStyle;
   final int? maxLine;
+  final int? maxLength;
+  final Color? filedColor;
 
   @override
   State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
@@ -72,6 +76,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
       height: widget.height,
       child: TextFormField(
         maxLines: widget.maxLine,
+        maxLength: widget.maxLength,
         onChanged: widget.onChanged,
         validator: widget.validator,
         enabled: widget.enabled,
@@ -85,7 +90,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
         inputFormatters: widget.inputFormatters,
         style: widget.textStyle ?? const TextStyle(fontSize: 14),
         decoration: InputDecoration(
-            fillColor: Colors.white,
+            fillColor:widget.filedColor?? Colors.white,
             filled: true,
             isDense: true,
             border: UnderlineInputBorder(

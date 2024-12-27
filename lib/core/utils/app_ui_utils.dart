@@ -155,7 +155,7 @@ class AppUIUtils {
       case AppConstants.roleViewStatistics:
         return "التقارير";
       case AppConstants.roleViewTimer:
-        return "المؤقت";
+        return "الدوام";
       case AppConstants.roleViewDataBase:
         return "ادارة قواعد البيانات";
       case AppConstants.roleViewCard:

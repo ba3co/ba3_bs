@@ -11,16 +11,18 @@ class UserTimeLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<UserTimeController>(builder: (userTimeController) {
-      return Column(
-        children: [
-          AddTimeWidget(
-            userTimeController: userTimeController,
-          ),
-          HolidaysWidget(),
-          UserDailyTimeWidget(),
-        ],
-      );
-    });
+    return Scaffold(
+      body: GetBuilder<UserTimeController>(builder: (userTimeController) {
+        return Column(
+          children: [
+            AddTimeWidget(
+              userTimeController: userTimeController,
+            ),
+            HolidaysWidget(),
+            UserDailyTimeWidget(),
+          ],
+        );
+      }),
+    );
   }
 }

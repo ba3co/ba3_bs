@@ -74,7 +74,7 @@ class MainLayoutController extends GetxController {
       (
       name: 'الدوام',
       layout: const UserTimeLayout(),
-      role: RoleItemType.viewTime,
+      role: RoleItemType.viewUserManagement,
       icon: AppAssets.usersIcon,
       unSelectedIcon: AppAssets.usersUnselectedIcon
       ),
