@@ -3,9 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import '../../../../core/constants/app_strings.dart';
 
 class UserTimeRepository {
-
-
-
   bool isWithinRegion(Position location, double targetLatitude, double targetLongitude, double radiusInMeters) {
     double distanceInMeters = Geolocator.distanceBetween(
       location.latitude,
@@ -54,10 +51,4 @@ class UserTimeRepository {
     // Get current location
     return await Geolocator.getCurrentPosition(locationSettings: LocationSettings(accuracy: LocationAccuracy.high));
   }
-
-
-
-
-
-
 }
