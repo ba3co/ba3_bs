@@ -30,7 +30,9 @@ class UserTimeController extends GetxController {
     super.onInit();
     initialize();
   }
+  Map<String, UserWorkingHours>? get workingHours => getUserById()?.userWorkingHours;
 
+  int get workingHoursLength => workingHours?.length??0;
   Future<bool> isWithinRegion() async {
     final result = await _userTimeRepo.getCurrentLocation();
     bool isWithinRegion = false;
