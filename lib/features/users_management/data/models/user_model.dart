@@ -36,8 +36,10 @@ class UserModel {
       if (userStatus != null) 'userStatus': userStatus?.label,
       if (userHolidays != null) 'userHolidays': userHolidays?.toList(),
       if (userWorkingHours != null)
-        'userWorkingHours': Map.fromEntries(userWorkingHours!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
-      if (userTimeModel != null) "userTime": Map.fromEntries(userTimeModel!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
+        'userWorkingHours':
+            Map.fromEntries(userWorkingHours!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
+      if (userTimeModel != null)
+        "userTime": Map.fromEntries(userTimeModel!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
     };
   }
 
@@ -48,16 +50,20 @@ class UserModel {
     });
 
     Map<String, UserWorkingHours> userDailyTime = <String, UserWorkingHours>{};
-    (json['userWorkingHours'] ?? {}).forEach((k, v) {
-      userDailyTime[k] = UserWorkingHours.fromJson(v);
-    });
+
+    (json['userWorkingHours'] ?? {}).forEach(
+      (String workingHourId, dynamic userWorkingHourJson) {
+        userDailyTime[workingHourId] = UserWorkingHours.fromJson(userWorkingHourJson);
+      },
+    );
+
     return UserModel(
       userId: json['docId'],
       userSellerId: json['userSellerId'],
       userName: json['userName'],
       userPassword: json['userPassword'],
       userRoleId: json['userRoleId'],
-      userHolidays:List<String>.from(json['userHolidays']??[]) ,
+      userHolidays: List<String>.from(json['userHolidays'] ?? []),
       userWorkingHours: userDailyTime,
       userStatus: UserStatus.byLabel(json['userStatus'] ?? UserStatus.away.label),
       userTimeModel: userTimeModel,

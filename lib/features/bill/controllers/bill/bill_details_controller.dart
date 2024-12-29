@@ -320,8 +320,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     }
   }
 
-  void initSellerAccount(String? billSellerId) => read<SellerController>().initSellerAccount(billSellerId, this);
-
   void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
@@ -331,7 +329,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
 
-    initSellerAccount(bill.billDetails.billSellerId);
+    read<SellerController>().initSellerAccount(sellerId: bill.billDetails.billSellerId, billDetailsController: this);
 
     prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);

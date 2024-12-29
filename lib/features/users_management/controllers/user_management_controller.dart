@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/time_etensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
+import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class UserManagementController extends GetxController with AppNavigator {
 
   // Services
   late final RoleService _roleService;
+  late final UserService _userService;
 
   // Form Handlers
   late final UserFormHandler userFormHandler;
@@ -63,6 +65,8 @@ class UserManagementController extends GetxController with AppNavigator {
   // Initializer
   void _initializeServices() {
     _roleService = RoleService();
+    _userService = UserService();
+
     userFormHandler = UserFormHandler();
     roleFormHandler = RoleFormHandler();
   }
@@ -84,10 +88,12 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() =>
+      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) =>
+      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -195,7 +201,8 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   Future<void> _checkUserByPin() async {
-    final result = await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
+    final result =
+        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -269,7 +276,7 @@ class UserManagementController extends GetxController with AppNavigator {
     if (!userFormHandler.validate()) return;
 
     // Create the user model from the provided data
-    final updatedUserModel = _roleService.createUserModel(
+    final updatedUserModel = _userService.createUserModel(
         userModel: selectedUserModel,
         userName: userFormHandler.userNameController.text,
         userPassword: userFormHandler.passController.text,
@@ -343,7 +350,6 @@ class UserManagementController extends GetxController with AppNavigator {
               monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
               showNavigationArrow: true,
               navigationMode: DateRangePickerNavigationMode.scroll,
-
               onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
                 DateTime selectedDate = dateRangePickerSelectionChangedArgs.value as DateTime;
 
@@ -359,7 +365,6 @@ class UserManagementController extends GetxController with AppNavigator {
           ),
         ],
       ),
-
     );
   }
 }

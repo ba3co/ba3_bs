@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -88,7 +90,12 @@ class SellerController extends GetxController with AppNavigator {
     }
   }
 
-  void initSellerAccount(String? billSellerId, BillDetailsController billDetailsController) {
+  void initSellerAccount({
+    required String? sellerId,
+    required BillDetailsController billDetailsController,
+  }) {
+    final String? billSellerId = sellerId ?? read<UserManagementController>().loggedInUserModel?.userSellerId;
+
     if (billSellerId == null) {
       selectedSellerAccount = null;
 

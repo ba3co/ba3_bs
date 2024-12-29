@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -134,6 +136,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
+    log('onMainTableStateManagerChanged');
     if (recordsTableStateManager.currentRow == null) return;
     final String field = event.column.field;
 
