@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/user_time/controller/user_time_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -7,9 +8,9 @@ import '../../../../../core/widgets/organized_widget.dart';
 
 class UserDailyTimeWidget extends StatelessWidget {
   const UserDailyTimeWidget({
-    super.key,
+    super.key, required this.userTimeController,
   });
-
+final UserTimeController userTimeController;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -25,7 +26,7 @@ class UserDailyTimeWidget extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
-                itemCount: 1,
+                itemCount: userTimeController.workingHoursLength,
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,7 +34,7 @@ class UserDailyTimeWidget extends StatelessWidget {
                     SizedBox(
                         width: 0.3.sw,
                         child: Text(
-                          "12:00 AM",
+                          userTimeController.workingHours?[index.toString()]?.enterTime??'',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.headLineStyle4,
                         )),
@@ -58,7 +59,7 @@ class UserDailyTimeWidget extends StatelessWidget {
                     SizedBox(
                         width: 0.3.sw,
                         child: Text(
-                          "08:00 AM",
+                          userTimeController.workingHours?[index.toString()]?.outTime??'',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.headLineStyle4,
                         )),

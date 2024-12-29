@@ -7,6 +7,7 @@ import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
@@ -69,6 +70,10 @@ class UserManagementController extends GetxController with AppNavigator {
   Map<String, UserWorkingHours> workingHours = {};
 
   int get workingHoursLength => workingHours.length;
+
+  List<String> holidays = [];
+
+  int get holidaysLength => holidays.length;
 
   RoleModel? getRoleById(String id) {
     try {
@@ -260,20 +265,17 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   Future<void> saveOrUpdateUser() async {
-
-
     // Validate the form first
     if (!userFormHandler.validate()) return;
 
     // Create the user model from the provided data
     final updatedUserModel = _roleService.createUserModel(
-      userModel: selectedUserModel,
-      userName: userFormHandler.userNameController.text,
-      userPassword: userFormHandler.passController.text,
-      userRoleId: userFormHandler.selectedRoleId.value,
-      userSellerId: userFormHandler.selectedSellerId.value,
-      workingHour: workingHours
-    );
+        userModel: selectedUserModel,
+        userName: userFormHandler.userNameController.text,
+        userPassword: userFormHandler.passController.text,
+        userRoleId: userFormHandler.selectedRoleId.value,
+        userSellerId: userFormHandler.selectedSellerId.value,
+        workingHour: workingHours);
 
     // Handle null user model
     if (updatedUserModel == null) {
@@ -304,29 +306,60 @@ class UserManagementController extends GetxController with AppNavigator {
     navigateToLogin();
   }
 
-
-  setEnterTime(int index,Time time){
-
-
-    workingHours.values.elementAt(index).enterTime=time.formatToAmPm();
+  setEnterTime(int index, Time time) {
+    workingHours.values.elementAt(index).enterTime = time.formatToAmPm();
     update();
   }
 
-  setOutTime(int index,Time time){
-
-    workingHours.values.elementAt(index).outTime=time.formatToAmPm();
+  setOutTime(int index, Time time) {
+    workingHours.values.elementAt(index).outTime = time.formatToAmPm();
     update();
   }
 
   void addWorkingHour() {
-    workingHours[workingHoursLength.toString()] = UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
+    workingHours[workingHoursLength.toString()] =
+        UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
     update();
   }
 
   void deleteWorkingHour({required int key}) {
-
-
     workingHours.remove(key.toString());
     update();
+  }
+
+  void addHoliday() {
+    Get.defaultDialog(
+      title: 'أختر يوم',
+      content: Column(
+        children: [
+          Expanded(
+            child: SfDateRangePicker(
+              initialDisplayDate: DateTime.now(),
+              enableMultiView: true,
+              backgroundColor: Colors.transparent,
+              headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
+              navigationDirection: DateRangePickerNavigationDirection.vertical,
+              selectionMode: DateRangePickerSelectionMode.single,
+              monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
+              showNavigationArrow: true,
+              navigationMode: DateRangePickerNavigationMode.scroll,
+
+              onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                DateTime selectedDate = dateRangePickerSelectionChangedArgs.value as DateTime;
+
+                Get.back();
+              },
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text("إلغاء"),
+          ),
+        ],
+      ),
+
+    );
   }
 }
