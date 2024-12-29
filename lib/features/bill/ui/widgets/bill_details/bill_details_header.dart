@@ -50,6 +50,7 @@ class BillDetailsHeader extends StatelessWidget {
               firstItem: TextAndExpandedChildField(
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
+
                   textEditingController: billDetailsController.mobileNumberController,
                   suffixIcon: const SizedBox.shrink(),
                 ),

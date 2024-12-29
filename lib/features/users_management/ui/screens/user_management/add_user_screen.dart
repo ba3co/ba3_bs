@@ -1,5 +1,4 @@
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
-import 'package:ba3_bs/features/users_management/ui/screens/user_management/time_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,7 @@ import 'package:get/get.dart';
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/user_management_controller.dart';
-import '../../widgets/user_management/add_edit_user_form.dart';
+import '../../widgets/user_management/user_details_form_widget.dart';
 
 class AddUserScreen extends StatelessWidget {
   const AddUserScreen({super.key});
@@ -27,18 +26,18 @@ class AddUserScreen extends StatelessWidget {
                   centerTitle: false,
                   title: Text(controller.selectedUserModel?.userName ?? 'مستخدم جديد'),
                   actions: [
-                    if (controller.selectedUserModel?.userId != null)
-                      ElevatedButton(
-                          onPressed: () {
-                            Get.to(() => TimeDetailsScreen(
-                                  oldKey: controller.loggedInUserModel!.userId!,
-                                  name: controller.loggedInUserModel!.userName!,
-                                ));
-                          },
-                          child: const Text('البريك')),
-                    const SizedBox(
-                      width: 20,
-                    ),
+                    // if (controller.selectedUserModel?.userId != null)
+                    //   ElevatedButton(
+                    //       onPressed: () {
+                    //         Get.to(() => TimeDetailsScreen(
+                    //               oldKey: controller.loggedInUserModel!.userId!,
+                    //               name: controller.loggedInUserModel!.userName!,
+                    //             ));
+                    //       },
+                    //       child: const Text('البريك')),
+                    // const SizedBox(
+                    //   width: 20,
+                    // ),
                   ],
                 ),
                 body: Center(
@@ -46,7 +45,7 @@ class AddUserScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
-                        child: AddEditUserForm(
+                        child: UserDetailsForm(
                           userManagementController: userManagementViewController,
                           sellerController: sellerViewController,
                         ),
