@@ -25,11 +25,13 @@ class UserFormHandler with AppValidator {
 
       userNameController.text = user.userName ?? '';
       passController.text = user.userPassword ?? '';
+      userManagementController.workingHours=user.userWorkingHours??{};
     } else {
       userManagementController.selectedUserModel = null;
 
       selectedSellerId.value = null;
       selectedRoleId.value = null;
+      userManagementController.workingHours={};
 
       clear();
     }

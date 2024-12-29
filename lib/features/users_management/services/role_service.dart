@@ -20,13 +20,13 @@ class RoleService {
     return newRoleModel;
   }
 
-  UserModel? createUserModel({
-    UserModel? userModel,
-    required String userName,
-    required String userPassword,
-    String? userRoleId,
-    String? userSellerId,
-  }) {
+  UserModel? createUserModel(
+      {UserModel? userModel,
+      required String userName,
+      required String userPassword,
+      String? userRoleId,
+      String? userSellerId,
+      Map<String, UserWorkingHours>? workingHour}) {
     if (userRoleId == null || userSellerId == null) {
       return null;
     }
@@ -35,18 +35,18 @@ class RoleService {
 
     if (userModel == null) {
       newUserModel = UserModel(
-        userName: userName,
-        userPassword: userPassword,
-        userRoleId: userRoleId,
-        userSellerId: userSellerId,
-      );
+          userName: userName,
+          userPassword: userPassword,
+          userRoleId: userRoleId,
+          userSellerId: userSellerId,
+          userWorkingHours: workingHour);
     } else {
       newUserModel = userModel.copyWith(
-        userName: userName,
-        userPassword: userPassword,
-        userRoleId: userRoleId,
-        userSellerId: userSellerId,
-      );
+          userName: userName,
+          userPassword: userPassword,
+          userRoleId: userRoleId,
+          userSellerId: userSellerId,
+          userWorkingHours: workingHour);
     }
     return newUserModel;
   }
