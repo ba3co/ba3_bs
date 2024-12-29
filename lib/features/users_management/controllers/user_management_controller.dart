@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/time_etensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -64,6 +66,10 @@ class UserManagementController extends GetxController with AppNavigator {
     roleFormHandler = RoleFormHandler();
   }
 
+  Map<String, UserWorkingHours> workingHours = {};
+
+  int get workingHoursLength => workingHours.length;
+
   RoleModel? getRoleById(String id) {
     try {
       return allRoles.firstWhere((role) => role.roleId == id);
@@ -73,12 +79,10 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() =>
-      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) =>
-      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -186,8 +190,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   Future<void> _checkUserByPin() async {
-    final result =
-        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
+    final result = await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -256,17 +259,20 @@ class UserManagementController extends GetxController with AppNavigator {
     );
   }
 
-  Future<void> saveOrUpdateUser({UserModel? existingUserModel}) async {
+  Future<void> saveOrUpdateUser() async {
+
+
     // Validate the form first
     if (!userFormHandler.validate()) return;
 
     // Create the user model from the provided data
     final updatedUserModel = _roleService.createUserModel(
-      userModel: existingUserModel,
+      userModel: selectedUserModel,
       userName: userFormHandler.userNameController.text,
       userPassword: userFormHandler.passController.text,
       userRoleId: userFormHandler.selectedRoleId.value,
       userSellerId: userFormHandler.selectedSellerId.value,
+      workingHour: workingHours
     );
 
     // Handle null user model
@@ -296,5 +302,31 @@ class UserManagementController extends GetxController with AppNavigator {
   void logOut() {
     _sharedPreferencesService.remove(AppConstants.userIdKey);
     navigateToLogin();
+  }
+
+
+  setEnterTime(int index,Time time){
+
+
+    workingHours.values.elementAt(index).enterTime=time.formatToAmPm();
+    update();
+  }
+
+  setOutTime(int index,Time time){
+
+    workingHours.values.elementAt(index).outTime=time.formatToAmPm();
+    update();
+  }
+
+  void addWorkingHour() {
+    workingHours[workingHoursLength.toString()] = UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
+    update();
+  }
+
+  void deleteWorkingHour({required int key}) {
+
+
+    workingHours.remove(key.toString());
+    update();
   }
 }
