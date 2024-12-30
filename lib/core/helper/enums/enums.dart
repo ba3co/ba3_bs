@@ -34,7 +34,8 @@ enum BillPatternType {
   buyReturn(label: 'مرتجع شراء', value: 'purchaseReturn'),
   salesReturn(label: 'مرتجع بيع', value: 'salesReturn'),
   add(label: 'تسوية إدخال', value: 'adjustmentEntry'),
-  remove(label: 'تسوية إخراج', value: 'outputAdjustment');
+  remove(label: 'تسوية إخراج', value: 'outputAdjustment'),
+  openingStock(label: 'بضاعة اول مدة', value: 'OpeningStock');
 
   final String label;
   final String value;
