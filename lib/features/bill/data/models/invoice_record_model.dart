@@ -89,9 +89,9 @@ class InvoiceRecordModel {
       invRecId: matId,
       invRecProduct: prodName,
       invRecQuantity: quantity,
-      invRecSubTotal:AppServiceUtils.toFixedDouble(subTotal) ,
+      invRecSubTotal: AppServiceUtils.toFixedDouble(subTotal),
       invRecTotal: total,
-      invRecVat:AppServiceUtils.toFixedDouble(vat) ,
+      invRecVat: AppServiceUtils.toFixedDouble(vat),
       invRecIsLocal: map[AppConstants.invRecIsLocal],
       invRecGift: giftsNumber,
       invRecGiftTotal: giftTotal,
@@ -166,8 +166,8 @@ class InvoiceRecordModel {
   }
 
   Map<PlutoColumn, dynamic> toEditedMap() {
-    final subTotalStr =  AppServiceUtils.toFixedDouble((invRecTotal??0) / ((invRecQuantity??1) * 1.05));
-    final vat = AppServiceUtils.toFixedDouble(subTotalStr* 0.05);
+    final subTotalStr = AppServiceUtils.toFixedDouble((invRecTotal ?? 0) / ((invRecQuantity ?? 1) * 1.05));
+    final vat = AppServiceUtils.toFixedDouble(subTotalStr * 0.05);
     return {
       PlutoColumn(
         title: 'الرقم',
