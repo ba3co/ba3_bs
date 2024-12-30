@@ -280,7 +280,10 @@ class UserManagementController extends GetxController with AppNavigator {
         userPassword: userFormHandler.passController.text,
         userRoleId: userFormHandler.selectedRoleId.value,
         userSellerId: userFormHandler.selectedSellerId.value,
-        workingHour: workingHours);
+        workingHour: workingHours,
+    holidays:  holidays.toList()
+
+    );
 
     // Handle null user model
     if (updatedUserModel == null) {
@@ -338,9 +341,10 @@ class UserManagementController extends GetxController with AppNavigator {
       content: CustomDatePickerDialog(
         onClose: () {
           update();
+          Get.back();
         },
-        onTimeSelect: (time) {
-          List<DateTime> selectedDateList = time as List<DateTime>;
+        onTimeSelect: (dateRangePickerSelectionChangedArgs) {
+          final selectedDateList = dateRangePickerSelectionChangedArgs.value as List<DateTime>;
           holidays.addAll(
             selectedDateList.map((e) => e.toIso8601String().split("T")[0]),
           );

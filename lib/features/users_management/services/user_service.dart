@@ -1,13 +1,15 @@
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 
 class UserService {
-  UserModel? createUserModel(
-      {UserModel? userModel,
-      required String userName,
-      required String userPassword,
-      String? userRoleId,
-      String? userSellerId,
-      Map<String, UserWorkingHours>? workingHour}) {
+  UserModel? createUserModel({
+    UserModel? userModel,
+    required String userName,
+    required String userPassword,
+    String? userRoleId,
+    String? userSellerId,
+    Map<String, UserWorkingHours>? workingHour,
+    List<String>? holidays,
+  }) {
     if (userRoleId == null || userSellerId == null) {
       return null;
     }
@@ -20,14 +22,18 @@ class UserService {
           userPassword: userPassword,
           userRoleId: userRoleId,
           userSellerId: userSellerId,
-          userWorkingHours: workingHour);
+          userWorkingHours: workingHour,
+      userHolidays: holidays,
+      );
     } else {
       newUserModel = userModel.copyWith(
           userName: userName,
           userPassword: userPassword,
           userRoleId: userRoleId,
           userSellerId: userSellerId,
-          userWorkingHours: workingHour);
+          userWorkingHours: workingHour,
+          userHolidays:holidays
+      );
     }
     return newUserModel;
   }
