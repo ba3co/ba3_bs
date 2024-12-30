@@ -1,5 +1,9 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/vat/data/models/vat_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -123,7 +127,7 @@ mixin BillEntryBondCreatingService {
         _createVatBond(
           billId: billId,
           vat: vat,
-          name: item.itemName,
+          item: read<MaterialController>().materials.firstWhere((mat) =>mat.id==  item.itemGuid),
           quantity: item.itemQuantity,
           date: date,
           isSales: isSales,
@@ -204,7 +208,7 @@ mixin BillEntryBondCreatingService {
   EntryBondItemModel _createVatBond({
     required String billId,
     required double vat,
-    required String name,
+    required MaterialModel item,
     required int quantity,
     required String date,
     required bool isSales,
@@ -214,8 +218,8 @@ mixin BillEntryBondCreatingService {
       billId: billId,
       bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
       accountName: 'ضريبة القيمة المضافة',
-      accountId: 'a5c04527-63e8-4373-92e8-68d8f88bdb16',
-      note: 'ضريبة ${getNote(isSales)} عدد $quantity من $name',
+      accountId: VatEnums.byGuid(item.matVatGuid??"1").vatAccountGuid,
+      note: 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}',
       date: date,
     );
   }

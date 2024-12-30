@@ -2,11 +2,14 @@ class VatModel {
   final String? vatGuid;
   final double? vatRatio;
   final String? vatName;
+  final String? vatAccountGuid;
+
 
   VatModel({
     this.vatGuid,
     this.vatRatio,
     this.vatName,
+    this.vatAccountGuid,
   });
 
   // Convert RoleModel object to JSON
@@ -38,17 +41,19 @@ class VatModel {
 }
 
 enum VatEnums {
-  withVat(vatGuid: '1', vatName: 'الاساسي', vatRatio: 0.05),
-  withOutVat(vatGuid: '2', vatName: 'معفى', vatRatio: 0);
+  withVat(vatGuid: '1', vatName: 'الاساسي', vatRatio: 0.05, vatAccountGuid:  'a5c04527-63e8-4373-92e8-68d8f88bdb16'),
+  withOutVat(vatGuid: '2', vatName: 'معفى', vatRatio: 0, vatAccountGuid:  'a5c04527-63e8-4373-92e8-68d8f88bdb16');
 
   final String? vatGuid;
   final String? vatName;
+  final String? vatAccountGuid;
   final double? vatRatio;
 
   const VatEnums({
     required this.vatGuid,
     required this.vatName,
     required this.vatRatio,
+    required this.vatAccountGuid,
   });
 
 // Factory constructor with error handling for unmatched labels

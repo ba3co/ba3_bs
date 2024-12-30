@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/patterns/ui/widgets/pattern_layout/body_pattern_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class PatternTypeItemWidget extends StatelessWidget {
         width: 500,
         child: Container(
           height: 300,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: const BorderRadius.only(
@@ -27,16 +28,16 @@ class PatternTypeItemWidget extends StatelessWidget {
             border: Border.all(color: AppColors.grayColor, width: 2),
           ),
           child: Column(
-            spacing: 5,
+
             children: [
               Align(
-                alignment: Alignment.center,
+                alignment: Alignment.topCenter,
                 child: Container(
                   width: 220,
                   height: 30,
                   decoration: BoxDecoration(
                     color: color,
-                    borderRadius: const BorderRadius.only(topRight: Radius.circular(5), topLeft: Radius.circular(5)),
+                    borderRadius: const BorderRadius.only(bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)),
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -46,24 +47,31 @@ class PatternTypeItemWidget extends StatelessWidget {
                   ),
                 ),
               ),
+              const Spacer(),
               BodyPatternWidget(
                   firstText: '${BillAccounts.caches.label} :',
                   secondText: billTypeModel.accounts![BillAccounts.caches]?.accName ?? ""),
+              VerticalSpace(5),
               BodyPatternWidget(
                   firstText: '${BillAccounts.materials.label} :',
                   secondText: billTypeModel.accounts![BillAccounts.materials]?.accName ?? ""),
+              VerticalSpace(5),
               BodyPatternWidget(
                   firstText: '${BillAccounts.additions.label} :',
                   secondText: billTypeModel.accounts![BillAccounts.additions]?.accName ?? ""),
+              VerticalSpace(5),
               BodyPatternWidget(
                   firstText: '${BillAccounts.discounts.label} :',
                   secondText: billTypeModel.accounts![BillAccounts.discounts]?.accName ?? ""),
+              VerticalSpace(5),
               BodyPatternWidget(
                   firstText: '${BillAccounts.gifts.label} :',
                   secondText: billTypeModel.accounts![BillAccounts.gifts]?.accName ?? ""),
+              VerticalSpace(5),
               BodyPatternWidget(
                   firstText: "${BillAccounts.exchangeForGifts.label} :",
                   secondText: billTypeModel.accounts![BillAccounts.exchangeForGifts]?.accName ?? ""),
+              VerticalSpace(5),
               BodyPatternWidget(
                   firstText: "${BillAccounts.store.label} :",
                   secondText: billTypeModel.accounts![BillAccounts.store]?.accName ?? ""),
@@ -73,7 +81,8 @@ class PatternTypeItemWidget extends StatelessWidget {
                 onPressed: onTap,
                 iconData: Icons.mode_edit_outline_rounded,
                 color: Colors.green,
-              )
+              ),
+              VerticalSpace(),
             ],
           ),
         ));
