@@ -76,6 +76,7 @@ class AddChequeButtons extends StatelessWidget {
             title: chequesDetailsController.isPayed!?"تراجع عن الدفع":"دفع",
             color: Colors.black,
             iconData: Icons.paid,
+            width: 125,
           ),
           if(chequesDetailsController.isPayed!)
           AppButton(

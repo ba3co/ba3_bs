@@ -71,13 +71,13 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon
       ),
-      (
-      name: 'الدوام',
-      layout: const UserTimeLayout(),
-      role: RoleItemType.viewUserManagement,
-      icon: AppAssets.usersIcon,
-      unSelectedIcon: AppAssets.usersUnselectedIcon
-      ),
+    (
+    name: 'الدوام',
+    layout: const UserTimeLayout(),
+    role: RoleItemType.viewTime,
+    icon: AppAssets.usersTimeIcon,
+    unSelectedIcon: AppAssets.usersTimeUnselectedIcon
+    ),
   ];
 
   PageController pageController = PageController();

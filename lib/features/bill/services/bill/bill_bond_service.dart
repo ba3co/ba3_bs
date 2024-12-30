@@ -11,6 +11,7 @@ mixin BillEntryBondCreatingService {
     required EntryBondType originType,
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
+    required bool isView,
   }) {
     return EntryBondModel(
       origin: EntryBondOrigin(
@@ -18,13 +19,15 @@ mixin BillEntryBondCreatingService {
         originType: originType,
         originTypeId: billModel.billTypeModel.billTypeId,
       ),
-      items: generateBondItems(billModel: billModel, discountsAndAdditions: discountsAndAdditions),
+      items: generateBondItems(billModel: billModel, discountsAndAdditions: discountsAndAdditions,isView: isView),
     );
   }
 
   List<EntryBondItemModel> generateBondItems({
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
+
+    required bool isView
   }) {
     final customerAccount = billModel.billTypeModel.accounts![BillAccounts.caches]!;
 
@@ -40,6 +43,8 @@ mixin BillEntryBondCreatingService {
       billItems: billModel.items.itemList,
       date: date,
       isSales: isSales,
+      /// تطبيق خيارات معينة عند العرض
+      isView: isView
     );
 
     final adjustmentBonds = _generateAdjustmentBonds(
@@ -60,6 +65,8 @@ mixin BillEntryBondCreatingService {
     required List<BillItem> billItems,
     required String date,
     required bool isSales,
+    required bool isView,
+
   }) {
     return billItems.expand((item) {
       return [
@@ -79,6 +86,7 @@ mixin BillEntryBondCreatingService {
           item: item,
           date: date,
           isSales: isSales,
+          isView: isView
         ),
         ..._createOptionalBonds(
           billId: billId,
@@ -86,6 +94,7 @@ mixin BillEntryBondCreatingService {
           item: item,
           date: date,
           isSales: isSales,
+          isView: isView,
         ),
       ];
     }).toList();
@@ -97,13 +106,20 @@ mixin BillEntryBondCreatingService {
     required BillItem item,
     required String date,
     required bool isSales,
+    required bool isView,
   }) {
     final giftCount = item.itemGiftsNumber;
     final giftPrice = item.itemGiftsPrice;
-    final vat = item.itemVatPrice! * item.itemQuantity;
+
+
+    /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
+    final vat =isView?
+    ((double.parse(item.itemTotalPrice)/1.05)*0.05)*item.itemQuantity:
+    item.itemVatPrice! * item.itemQuantity;
+
 
     return [
-      if (vat > 0)
+  if (vat > 0)
         _createVatBond(
           billId: billId,
           vat: vat,
@@ -151,8 +167,15 @@ mixin BillEntryBondCreatingService {
     required BillItem item,
     required String date,
     required bool isSales,
+
+    required bool isView,
   }) {
-    final vat = item.itemVatPrice! * item.itemQuantity;
+    // final vat = item.itemVatPrice! * item.itemQuantity;
+
+    /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
+    final vat =isView?
+    ((double.parse(item.itemTotalPrice)/1.05)*0.05)*item.itemQuantity:
+    item.itemVatPrice! * item.itemQuantity;
     final total = item.itemSubTotalPrice! * item.itemQuantity;
 
     return [
@@ -165,6 +188,7 @@ mixin BillEntryBondCreatingService {
         note: '${getNote(isSales)} عدد ${item.itemQuantity} من ${item.itemName}',
         date: date,
       ),
+      if (vat > 0)
       _createBondItem(
         amount: vat,
         billId: billId,

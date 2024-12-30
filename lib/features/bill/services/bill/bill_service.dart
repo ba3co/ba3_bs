@@ -69,6 +69,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     if (!hasModelId(billModel.billId)) return;
 
     final entryBondModel = createEntryBondModel(
+      isView: true,
       originType: EntryBondType.bill,
       billModel: billModel,
       discountsAndAdditions: discountsAndAdditions,
@@ -110,6 +111,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     if (updatedBillModel.status == Status.approved) {
       bondController.saveEntryBondModel(
         entryBondModel: createEntryBondModel(
+          isView: false,
           originType: EntryBondType.bill,
           billModel: updatedBillModel,
           discountsAndAdditions: discountsAndAdditions,
@@ -145,6 +147,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     if (billModel.status == Status.approved) {
       bondController.saveEntryBondModel(
         entryBondModel: createEntryBondModel(
+          isView: false,
           originType: EntryBondType.bill,
           billModel: billModel,
           discountsAndAdditions: discountsAndAdditions,
