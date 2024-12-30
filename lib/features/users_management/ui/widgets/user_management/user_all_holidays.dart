@@ -1,8 +1,7 @@
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/holiday_item_widget.dart';
-import 'package:ba3_bs/features/users_management/ui/widgets/user_management/working_hour_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';
@@ -28,16 +27,18 @@ class UserAllHolidays extends StatelessWidget {
         bodyWidget: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListView.separated(
-              shrinkWrap: true,
-              itemBuilder: (context, index) => HolidayItemWidget(
-                holiday: "12-12-2024",
-
-                onDelete: () => controller.deleteWorkingHour(key: index),
-
+            SizedBox(
+              width: 1.sw,
+              height: 100,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) => HolidayItemWidget(
+                  holiday: controller.holidays.elementAt(index),
+                  onDelete: () => controller.deleteHoliday( element: controller.holidays.elementAt(index)),
+                ),
+                separatorBuilder: (context, index) => HorizontalSpace(),
+                itemCount: controller.holidaysLength,
               ),
-              separatorBuilder: (context, index) => VerticalSpace(),
-              itemCount: controller.holidaysLength,
             ),
             SizedBox(
               width: 80,

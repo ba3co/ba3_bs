@@ -1,7 +1,6 @@
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/working_hour_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/dialogs/custom_date_picker_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/time_etensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
@@ -75,7 +76,7 @@ class UserManagementController extends GetxController with AppNavigator {
 
   int get workingHoursLength => workingHours.length;
 
-  List<String> holidays = [];
+  Set<String> holidays = {};
 
   int get holidaysLength => holidays.length;
 
@@ -88,12 +89,10 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() =>
-      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) =>
-      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -201,8 +200,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   Future<void> _checkUserByPin() async {
-    final result =
-        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
+    final result = await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -337,34 +335,22 @@ class UserManagementController extends GetxController with AppNavigator {
   void addHoliday() {
     Get.defaultDialog(
       title: 'أختر يوم',
-      content: Column(
-        children: [
-          Expanded(
-            child: SfDateRangePicker(
-              initialDisplayDate: DateTime.now(),
-              enableMultiView: true,
-              backgroundColor: Colors.transparent,
-              headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
-              navigationDirection: DateRangePickerNavigationDirection.vertical,
-              selectionMode: DateRangePickerSelectionMode.single,
-              monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
-              showNavigationArrow: true,
-              navigationMode: DateRangePickerNavigationMode.scroll,
-              onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                DateTime selectedDate = dateRangePickerSelectionChangedArgs.value as DateTime;
-
-                Get.back();
-              },
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-            },
-            child: const Text("إلغاء"),
-          ),
-        ],
+      content: CustomDatePickerDialog(
+        onClose: () {
+          update();
+        },
+        onTimeSelect: (time) {
+          List<DateTime> selectedDateList = time as List<DateTime>;
+          holidays.addAll(
+            selectedDateList.map((e) => e.toIso8601String().split("T")[0]),
+          );
+        },
       ),
     );
+  }
+
+  void deleteHoliday({required String element}) {
+    holidays.remove(element);
+    update();
   }
 }

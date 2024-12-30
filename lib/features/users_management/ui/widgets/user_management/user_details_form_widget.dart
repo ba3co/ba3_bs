@@ -6,7 +6,6 @@ import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';

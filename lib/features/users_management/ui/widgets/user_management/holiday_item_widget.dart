@@ -1,10 +1,7 @@
 import 'package:ba3_bs/core/styling/app_colors.dart';
-import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
-import '../../../../../core/widgets/app_spacer.dart';
-import '../../../data/models/user_model.dart';
 
 class HolidayItemWidget extends StatelessWidget {
   const HolidayItemWidget({super.key, required this.holiday, required this.onDelete});

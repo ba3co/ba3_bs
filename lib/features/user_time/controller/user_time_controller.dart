@@ -30,18 +30,31 @@ class UserTimeController extends GetxController {
     super.onInit();
     initialize();
   }
+
   Map<String, UserWorkingHours>? get workingHours => getUserById()?.userWorkingHours;
 
-  int get workingHoursLength => workingHours?.length??0;
+  int get workingHoursLength => workingHours?.length ?? 0;
+
+  Set<String>? get userHolidays => getUserById()?.userHolidays?.toSet();
+
+  Set<String>? get userHolidaysWithDay => userHolidays
+      ?.map(
+        (date) => AppServiceUtils.getDayNameAndMonthName(date),
+      )
+      .toSet();
+
+  int get userHolidaysLength => userHolidays?.length ?? 0;
+
   Future<bool> isWithinRegion() async {
     final result = await _userTimeRepo.getCurrentLocation();
     bool isWithinRegion = false;
     result.fold(
-          (failure) {
+      (failure) {
         return AppUIUtils.onFailure(failure.message);
       },
-          (location) {
-        return isWithinRegion = _userTimeServices.isWithinRegion(location, AppStrings.targetLatitude, AppStrings.targetLongitude, AppStrings.radiusInMeters);
+      (location) {
+        return isWithinRegion =
+            _userTimeServices.isWithinRegion(location, AppStrings.targetLatitude, AppStrings.targetLongitude, AppStrings.radiusInMeters);
       },
     );
 
@@ -117,10 +130,10 @@ class UserTimeController extends GetxController {
   void _saveLogOutTime(UserModel updatedUserModel) async {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
     result.fold(
-          (failure) {
+      (failure) {
         handleError(failure.message, UserStatus.away);
       },
-          (fetchedUser) {
+      (fetchedUser) {
         handleSuccess('تم تسجيل الخروج بنجاح', UserStatus.away);
         setLastOutTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
@@ -131,10 +144,10 @@ class UserTimeController extends GetxController {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
-          (failure) {
+      (failure) {
         handleError(failure.message, UserStatus.online);
       },
-          (fetchedUser) {
+      (fetchedUser) {
         handleSuccess('تم تسجيل الدخول بنجاح', UserStatus.online);
 
         setLastEnterTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
@@ -181,4 +194,6 @@ class UserTimeController extends GetxController {
   set setLastOutTime(String time) {
     lastOutTime.value = time;
   }
+
+
 }

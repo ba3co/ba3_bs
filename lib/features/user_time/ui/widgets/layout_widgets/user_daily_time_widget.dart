@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/user_time/controller/user_time_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,7 +24,8 @@ final UserTimeController userTimeController;
           )),
           bodyWidget: Column(
             children: [
-              ListView.builder(
+              ListView.separated(
+                separatorBuilder: (context, index) => VerticalSpace(),
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
                 itemCount: userTimeController.workingHoursLength,

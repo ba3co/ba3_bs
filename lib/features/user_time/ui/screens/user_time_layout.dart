@@ -18,7 +18,7 @@ class UserTimeLayout extends StatelessWidget {
             AddTimeWidget(
               userTimeController: userTimeController,
             ),
-            HolidaysWidget(),
+            HolidaysWidget(  userTimeController: userTimeController,),
             UserDailyTimeWidget(  userTimeController: userTimeController,),
           ],
         );
