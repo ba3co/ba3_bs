@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
@@ -15,7 +16,7 @@ mixin BillEntryBondCreatingService {
     required EntryBondType originType,
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
-    required bool isView,
+    required bool isSimulatedVat,
   }) {
     return EntryBondModel(
       origin: EntryBondOrigin(
@@ -23,22 +24,22 @@ mixin BillEntryBondCreatingService {
         originType: originType,
         originTypeId: billModel.billTypeModel.billTypeId,
       ),
-      items: generateBondItems(billModel: billModel, discountsAndAdditions: discountsAndAdditions,isView: isView),
+      items: generateBondItems(
+          billModel: billModel, discountsAndAdditions: discountsAndAdditions, isSimulatedVat: isSimulatedVat),
     );
   }
 
   List<EntryBondItemModel> generateBondItems({
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
-
-    required bool isView
+    required bool isSimulatedVat,
   }) {
     final customerAccount = billModel.billTypeModel.accounts![BillAccounts.caches]!;
 
     final billType = BillType.byLabel(billModel.billTypeModel.billTypeLabel!);
     final isSales = billType == BillType.sales;
 
-    final date = billModel.billDetails.billDate!;
+    final date = billModel.billDetails.billDate!.dayMonthYear;
 
     final itemBonds = _generateBillItemBonds(
       billId: billModel.billId!,
@@ -47,8 +48,7 @@ mixin BillEntryBondCreatingService {
       billItems: billModel.items.itemList,
       date: date,
       isSales: isSales,
-      /// تطبيق خيارات معينة عند العرض
-      isView: isView
+      isSimulatedVat: isSimulatedVat,
     );
 
     final adjustmentBonds = _generateAdjustmentBonds(
@@ -69,8 +69,7 @@ mixin BillEntryBondCreatingService {
     required List<BillItem> billItems,
     required String date,
     required bool isSales,
-    required bool isView,
-
+    required bool isSimulatedVat,
   }) {
     return billItems.expand((item) {
       return [
@@ -85,20 +84,19 @@ mixin BillEntryBondCreatingService {
             isSales: isSales,
           ),
         ..._generateCustomerBonds(
-          billId: billId,
-          customerAccount: customerAccount,
-          item: item,
-          date: date,
-          isSales: isSales,
-          isView: isView
-        ),
+            billId: billId,
+            customerAccount: customerAccount,
+            item: item,
+            date: date,
+            isSales: isSales,
+            isSimulatedVat: isSimulatedVat),
         ..._createOptionalBonds(
           billId: billId,
           accounts: accounts,
           item: item,
           date: date,
           isSales: isSales,
-          isView: isView,
+          isSimulatedVat: isSimulatedVat,
         ),
       ];
     }).toList();
@@ -110,24 +108,23 @@ mixin BillEntryBondCreatingService {
     required BillItem item,
     required String date,
     required bool isSales,
-    required bool isView,
+    required bool isSimulatedVat,
   }) {
     final giftCount = item.itemGiftsNumber;
     final giftPrice = item.itemGiftsPrice;
 
-
-    /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
-    final vat =isView?
-    ((double.parse(item.itemTotalPrice)/1.05)*0.05)*item.itemQuantity:
-    item.itemVatPrice! * item.itemQuantity;
-
+    /// When isSimulatedVat is true, VAT is calculated as 5% of the total price for preview purposes only.
+    /// Otherwise, the actual VAT value is used.
+    final vat = isSimulatedVat ? _calculateSimulatedVat(item) : _calculateActualVat(item);
 
     return [
-  if (vat > 0)
+      if (vat > 0)
         _createVatBond(
           billId: billId,
           vat: vat,
-          item: read<MaterialController>().materials.firstWhere((mat) =>mat.id==  item.itemGuid),
+          item: read<MaterialController>().materials.firstWhere(
+                (mat) => mat.id == item.itemGuid,
+              ),
           quantity: item.itemQuantity,
           date: date,
           isSales: isSales,
@@ -144,6 +141,13 @@ mixin BillEntryBondCreatingService {
         ),
     ];
   }
+
+  /// Helper function for calculating simulated VAT.
+  double _calculateSimulatedVat(BillItem item) =>
+      ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
+
+  /// Helper function for calculating the actual VAT value.
+  double _calculateActualVat(BillItem item) => item.itemVatPrice! * item.itemQuantity;
 
   EntryBondItemModel _createMaterialBond({
     required String billId,
@@ -171,15 +175,12 @@ mixin BillEntryBondCreatingService {
     required BillItem item,
     required String date,
     required bool isSales,
-
-    required bool isView,
+    required bool isSimulatedVat,
   }) {
-    // final vat = item.itemVatPrice! * item.itemQuantity;
-
     /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
-    final vat =isView?
-    ((double.parse(item.itemTotalPrice)/1.05)*0.05)*item.itemQuantity:
-    item.itemVatPrice! * item.itemQuantity;
+    final vat = isSimulatedVat
+        ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity
+        : item.itemVatPrice! * item.itemQuantity;
     final total = item.itemSubTotalPrice! * item.itemQuantity;
 
     return [
@@ -193,15 +194,15 @@ mixin BillEntryBondCreatingService {
         date: date,
       ),
       if (vat > 0)
-      _createBondItem(
-        amount: vat,
-        billId: billId,
-        bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
-        accountName: customerAccount.accName,
-        accountId: customerAccount.id,
-        note: 'ضريبة ${getNote(isSales)} عدد ${item.itemQuantity} من ${item.itemName}',
-        date: date,
-      ),
+        _createBondItem(
+          amount: vat,
+          billId: billId,
+          bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
+          accountName: customerAccount.accName,
+          accountId: customerAccount.id,
+          note: 'ضريبة ${getNote(isSales)} عدد ${item.itemQuantity} من ${item.itemName}',
+          date: date,
+        ),
     ];
   }
 
@@ -218,7 +219,7 @@ mixin BillEntryBondCreatingService {
       billId: billId,
       bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
       accountName: 'ضريبة القيمة المضافة',
-      accountId: VatEnums.byGuid(item.matVatGuid??"1").vatAccountGuid,
+      accountId: VatEnums.byGuid(item.matVatGuid ?? "1").vatAccountGuid,
       note: 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}',
       date: date,
     );
