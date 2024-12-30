@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_menu_item.dart';
 
-class UserManagementLayout extends StatelessWidget {
-  const UserManagementLayout({super.key});
+class SellersLayout extends StatelessWidget {
+  const SellersLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,18 +19,16 @@ class UserManagementLayout extends StatelessWidget {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              appBar: AppBar(
-                title: const Text('الإدارة'),
-              ),
+              appBar: AppBar(title: const Text('البائعون')),
               body: Column(
                 children: [
                   AppMenuItem(
-                      text: 'إدارة المستخدمين',
+                      text: 'إضافة بائع',
                       onTap: () {
                         userManagementController.navigateToLAllUsersScreen();
                       }),
                   AppMenuItem(
-                      text: 'إدارة الصلاحيات',
+                      text: 'معاينة البائعون',
                       onTap: () {
                         userManagementController.navigateToLAllPermissionsScreen();
                       }),

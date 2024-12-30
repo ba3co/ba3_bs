@@ -17,9 +17,9 @@ class BillDetailsButtons extends StatelessWidget {
     super.key,
     required this.billDetailsController,
     required this.billDetailsPlutoController,
+    required this.billSearchController,
     required this.billModel,
     required this.fromBillById,
-    required this.billSearchController,
   });
 
   final BillDetailsController billDetailsController;
@@ -30,7 +30,7 @@ class BillDetailsButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('isPending ${billSearchController.isPending}');
+    log('isPending: ${billSearchController.isPending}');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -40,11 +40,22 @@ class BillDetailsButtons extends StatelessWidget {
         runSpacing: 20,
         children: [
           if (billSearchController.isNew) _buildAddButton(),
-          if (RoleItemType.viewBill.hasAdminPermission) _buildApprovalOrBondButton(context),
-          _buildPrintButton(),
-          _buildEInvoiceButton(context),
-          if (!billSearchController.isNew) _buildPdfEmailButton(),
-          if (!billSearchController.isNew) _buildDeleteButton(),
+          if (!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission)
+            _buildApprovalOrBondButton(context),
+          _buildActionButton(
+            title: 'طباعة',
+            icon: Icons.print_outlined,
+            onPressed: () => billDetailsController.printBill(
+              billModel: billModel,
+              invRecords: billDetailsPlutoController.generateRecords,
+            ),
+          ),
+          _buildActionButton(
+            title: 'E-Invoice',
+            icon: Icons.link,
+            onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
+          ),
+          if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
         ],
       ),
     );
@@ -52,101 +63,68 @@ class BillDetailsButtons extends StatelessWidget {
 
   Widget _buildAddButton() {
     return Obx(() {
+      final isBillSaved = billDetailsController.isBillSaved.value;
       return AppButton(
         title: 'إضافة',
         height: 20,
         width: 100,
         fontSize: 14,
-        color: billDetailsController.isBillSaved.value ? Colors.green : Colors.blue.shade700,
-        onPressed: billDetailsController.isBillSaved.value
-            ? () {}
-            : () async {
-                billDetailsController.saveBill(billModel.billTypeModel);
-              },
+        color: isBillSaved ? Colors.green : Colors.blue.shade700,
+        onPressed: isBillSaved ? () {} : () => billDetailsController.saveBill(billModel.billTypeModel),
         iconData: Icons.add_chart_outlined,
       );
     });
   }
 
   Widget _buildApprovalOrBondButton(BuildContext context) {
-    if (billSearchController.isPending) {
-      return AppButton(
-        title: 'قبول',
-        height: 20,
-        width: 100,
-        fontSize: 14,
-        onPressed: () async {
-          billDetailsController.updateBillStatus(billModel, Status.approved);
-        },
-        iconData: Icons.file_open_outlined,
-      );
-    } else {
-      return AppButton(
-        title: 'السند',
-        height: 20,
-        width: 100,
-        fontSize: 14,
-        onPressed: () async {
-          billDetailsController.createEntryBond(billModel, context);
-        },
-        iconData: Icons.file_open_outlined,
-      );
-    }
+    final isPending = billSearchController.isPending;
+    return _buildActionButton(
+      title: isPending ? 'قبول' : 'السند',
+      icon: Icons.file_open_outlined,
+      onPressed: isPending
+          ? () => billDetailsController.updateBillStatus(billModel, Status.approved)
+          : () => billDetailsController.createEntryBond(billModel, context),
+    );
   }
 
-  Widget _buildPrintButton() {
-    return AppButton(
-      iconData: Icons.print_outlined,
-      title: 'طباعة',
-      height: 20,
-      width: 100,
-      fontSize: 14,
-      onPressed: () async {
-        billDetailsController.printBill(
+  List<Widget> _buildEditDeletePdfButtons() {
+    return [
+      _buildActionButton(
+        title: 'تعديل',
+        icon: Icons.edit_outlined,
+        onPressed: () => billDetailsController.updateBill(
           billModel: billModel,
-          invRecords: billDetailsPlutoController.generateRecords,
-        );
-      },
-    );
+          billTypeModel: billModel.billTypeModel,
+        ),
+      ),
+      _buildActionButton(
+        title: 'Pdf-Email',
+        icon: Icons.link,
+        onPressed: () => billDetailsController.generateAndSendBillPdf(billModel),
+      ),
+      _buildActionButton(
+        title: 'حذف',
+        icon: Icons.delete_outline,
+        color: Colors.red,
+        onPressed: () => billDetailsController.deleteBill(billModel, fromBillById: fromBillById),
+      ),
+    ];
   }
 
-  Widget _buildEInvoiceButton(BuildContext context) {
+  Widget _buildActionButton({
+    required String title,
+    required IconData icon,
+    required VoidCallback onPressed,
+    Color? color,
+  }) {
     return AppButton(
-      title: 'E-Invoice',
+      title: title,
+      iconData: icon,
       height: 20,
       width: 100,
       fontSize: 14,
-      onPressed: () {
-        billDetailsController.showEInvoiceDialog(billModel, context);
-      },
-      iconData: Icons.link,
-    );
-  }
-
-  Widget _buildPdfEmailButton() {
-    return AppButton(
-      title: 'Pdf-Email',
-      height: 20,
-      width: 100,
-      fontSize: 14,
-      onPressed: () {
-        billDetailsController.generateAndSendBillPdf(billModel);
-      },
-      iconData: Icons.link,
-    );
-  }
-
-  Widget _buildDeleteButton() {
-    return AppButton(
-      iconData: Icons.delete_outline,
-      height: 20,
-      width: 100,
-      fontSize: 14,
-      color: Colors.red,
-      title: 'حذف',
-      onPressed: () async {
-        billDetailsController.deleteBill(billModel, fromBillById: fromBillById);
-      },
+      color: color ?? Colors.blue.shade700,
+      onPressed: onPressed,
     );
   }
 }
