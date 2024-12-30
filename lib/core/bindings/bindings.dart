@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
@@ -11,6 +12,8 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_source.dart';
+import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
 import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
@@ -98,6 +101,7 @@ class AppBindings extends Bindings {
       accountsStatementsRepo: AccountsStatementsRepository(AccountsStatementsDataSource()),
       billJsonExportRepo: JsonExportRepository<BillModel>(BillJsonExport()),
       userTimeRepo: UserTimeRepository(),
+      sellersRepo: BulkSavableDatasourceRepository(SellersDataSource(databaseService: fireStoreService)),
     );
   }
 
@@ -120,12 +124,12 @@ class AppBindings extends Bindings {
     lazyPut(BillDetailsPlutoController());
     lazyPut(MaterialController(MaterialRepository()));
     lazyPut(AccountsController(AccountsRepository()));
-    lazyPut(SellersController(SellersRepository()));
+    lazyPut(SellersController(SellersRepository(), repositories.sellersRepo));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
-    lazyPut(SellerSalesController(repositories.billsRepo));
+    lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
   }
 }
 
@@ -142,6 +146,7 @@ class _Repositories {
   final AccountsStatementsRepository accountsStatementsRepo;
   final JsonExportRepository<BillModel> billJsonExportRepo;
   final UserTimeRepository userTimeRepo;
+  final BulkSavableDatasourceRepository<SellerModel> sellersRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -155,5 +160,6 @@ class _Repositories {
     required this.accountsStatementsRepo,
     required this.billJsonExportRepo,
     required this.userTimeRepo,
+    required this.sellersRepo,
   });
 }

@@ -77,15 +77,14 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     final addedItems = <Map<String, dynamic>>[];
 
     for (final item in data) {
-      // Assign docId only if it is null
-      final docId = item['docId'] ?? _firestore.collection(path).doc().id;
-      if (item['docId'] == null) {
-        item['docId'] = docId;
-      }
+      // Ensure the document ID is set
+      final docId = item.putIfAbsent('docId', () => _firestore.collection(path).doc().id);
+
+      // Add the item to the batch
       final docRef = _firestore.collection(path).doc(docId);
       batch.set(docRef, item);
 
-      // Collect the item with its final docId
+      // Collect the processed item
       addedItems.add(item);
     }
 

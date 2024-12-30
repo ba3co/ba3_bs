@@ -5,9 +5,13 @@ class AddSellerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        title: Text('بائع جديد'),
+      ),
       body: Center(
-        child: Text('AddSellerScreen'),
+        child: Text('Add all sellers'),
       ),
     );
   }

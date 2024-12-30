@@ -7,10 +7,10 @@ import '../../../network/error/error_handler.dart';
 import '../../../network/error/failure.dart';
 import 'datasource_repo.dart';
 
-class BulkSavableDatasourceRepo<T> extends DataSourceRepository<T> {
+class BulkSavableDatasourceRepository<T> extends DataSourceRepository<T> {
   final BulkSavableDatasource<T> _bulkSavableDatasource;
 
-  BulkSavableDatasourceRepo(this._bulkSavableDatasource) : super(_bulkSavableDatasource);
+  BulkSavableDatasourceRepository(this._bulkSavableDatasource) : super(_bulkSavableDatasource);
 
   Future<Either<Failure, List<T>>> saveAll(List<T> items) async {
     try {

@@ -2,6 +2,7 @@ class ApiConstants {
   static const String translationApiKey = 'AIzaSyAil4Csq27_oCC_BzF7ZMetUEyNM665VqQ';
   static const String translationBaseUrl = 'https://translation.googleapis.com/language/translate/v2';
 
+  // COLLECTIONS
   static const String billsPath = 'bills';
   static const String patternsPath = 'bill_types';
   static const String bondsPath = 'bonds';
@@ -13,4 +14,10 @@ class ApiConstants {
   static const String roles = 'roles';
   static const String users = 'users';
   static const String sellers = 'sellers';
+
+  // FIELDS
+  static const String status = 'status';
+  static const String userPassword = 'userPassword';
+  static const String billDate = 'billDate';
+  static const String billSellerId = 'billSellerId';
 }

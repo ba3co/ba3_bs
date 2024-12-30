@@ -376,9 +376,5 @@ abstract class AppConstants {
   static const double deviceFullWidth = 1680.0;
   static const double deviceFullHeight = 930.0;
 
-  static const String status = 'status';
-  static const String userPassword = 'userPassword';
-
-
   static const String userIdKey = 'userIdKey';
 }

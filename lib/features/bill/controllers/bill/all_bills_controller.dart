@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
@@ -71,7 +72,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> fetchPendingBills() async {
-    final result = await _billsFirebaseRepo.fetchWhere(field: AppConstants.status, value: Status.pending.value);
+    final result = await _billsFirebaseRepo.fetchWhere(field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

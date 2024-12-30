@@ -1,4 +1,7 @@
 import 'package:ba3_bs/core/models/date_filter.dart';
+import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
+import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,8 +13,9 @@ import '../../bill/data/models/bill_model.dart';
 
 class SellerSalesController extends GetxController with AppNavigator {
   final FilterableDataSourceRepository<BillModel> _billsFirebaseRepo;
+  final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
-  SellerSalesController(this._billsFirebaseRepo);
+  SellerSalesController(this._billsFirebaseRepo, this._sellersFirebaseRepo);
 
   // List of bills for the seller
   final List<BillModel> sellerBills = [];
@@ -21,27 +25,45 @@ class SellerSalesController extends GetxController with AppNavigator {
 
   bool isLoading = true;
 
+  Future<void> addSeller(SellerModel seller) async {
+    final result = await _sellersFirebaseRepo.save(seller);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedSellers) {},
+    );
+  }
+
+  Future<void> addSellers(List<SellerModel> sellers) async {
+    final result = await _sellersFirebaseRepo.saveAll(sellers);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedSellers) {},
+    );
+  }
+
   Future<void> fetchSellerBillsByDate(String sellerId, DateTime specificDate) async {
     final startOfDay = specificDate.subtract(Duration(days: 30));
     final endOfDay = specificDate;
 
     final result = await _billsFirebaseRepo.fetchWhere(
-      field: 'billSellerId',
+      field: ApiConstants.billSellerId,
       value: sellerId,
-      dateFilter: DateFilter(field: 'billDate', range: DateTimeRange(start: startOfDay, end: endOfDay)),
+      dateFilter: DateFilter(field: ApiConstants.billDate, range: DateTimeRange(start: startOfDay, end: endOfDay)),
     );
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBills) => _handleGetSellerBillsStatusSuccess(fetchedBills),
+      (fetchedSellers) => _handleGetSellerBillsStatusSuccess(fetchedSellers),
     );
 
     isLoading = false;
     update();
   }
 
-  _handleGetSellerBillsStatusSuccess(List<BillModel> fetchedBills) {
-    sellerBills.assignAll(fetchedBills);
+  _handleGetSellerBillsStatusSuccess(List<BillModel> fetchedSellers) {
+    sellerBills.assignAll(fetchedSellers);
     // Update total sales
     calculateTotalSales();
   }

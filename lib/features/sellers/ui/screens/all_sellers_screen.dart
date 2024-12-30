@@ -43,11 +43,11 @@ class AllSellersScreen extends StatelessWidget {
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         Text(
-                                          controller.sellers.toList()[index].costCode?.toString() ?? "",
+                                          controller.sellers.toList()[index].costCode?.toString() ?? '',
                                           style: const TextStyle(fontSize: 24),
                                         ),
                                         Text(
-                                          controller.sellers.toList()[index].costName ?? "",
+                                          controller.sellers.toList()[index].costName ?? '',
                                           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                                         ),
                                       ],

@@ -51,9 +51,9 @@ class EntryBondController extends GetxController with FloatingLauncher {
         final List<Future<void>> deletedTasks = [];
         final errors = <String>[]; // Collect error messages.
 
-        final entryBondModelAccountsToRemove = getEntryBondModelAccountsToRemove(entryBondModel);
+        final uniqueAccountIdsFromBond = getUniqueAccountIdsFromBond(entryBondModel);
 
-        for (final accountId in entryBondModelAccountsToRemove) {
+        for (final accountId in uniqueAccountIdsFromBond) {
           deletedTasks.add(
             _accountsStatementsRepo.deleteBond(accountId, entryId).then((deleteResult) {
               deleteResult.fold(
@@ -79,7 +79,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
-  List<String> getEntryBondModelAccountsToRemove(EntryBondModel entryBondModel) {
+  List<String> getUniqueAccountIdsFromBond(EntryBondModel entryBondModel) {
     final Set<String> accountsIds = <String>{}; // Use a Set to ensure unique account IDs.
 
     // Iterate through each EntryBondItemModel in the items list.

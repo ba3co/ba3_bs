@@ -10,31 +10,22 @@ class SellersLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SellerSalesController sellerSalesController = read<SellerSalesController>();
-    return Column(
-      children: [
-        Expanded(
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              appBar: AppBar(title: const Text('البائعون')),
-              body: Column(
-                children: [
-                  AppMenuItem(
-                      text: 'إضافة بائع',
-                      onTap: () {
-                        sellerSalesController.navigateToAddSellerScreen();
-                      }),
-                  AppMenuItem(
-                      text: 'معاينة البائعون',
-                      onTap: () {
-                        sellerSalesController.navigateToAllSellersScreen();
-                      }),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+    return Scaffold(
+      appBar: AppBar(title: const Text('البائعون')),
+      body: Column(
+        children: [
+          AppMenuItem(
+              text: 'إضافة بائع',
+              onTap: () {
+                sellerSalesController.navigateToAddSellerScreen();
+              }),
+          AppMenuItem(
+              text: 'معاينة البائعون',
+              onTap: () {
+                sellerSalesController.navigateToAllSellersScreen();
+              }),
+        ],
+      ),
     );
   }
 }

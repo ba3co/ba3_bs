@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../core/dialogs/seller_selection_dialog_content.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
@@ -16,8 +17,9 @@ import '../data/repositories/sellers_repository.dart';
 
 class SellersController extends GetxController with AppNavigator {
   final SellersRepository _sellersRepository;
+  final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
-  SellersController(this._sellersRepository);
+  SellersController(this._sellersRepository, this._sellersFirebaseRepo);
 
   List<SellerModel> sellers = [];
   bool isLoading = true;
@@ -40,6 +42,24 @@ class SellersController extends GetxController with AppNavigator {
       isLoading = false;
       update();
     }
+  }
+
+  Future<void> addSeller(SellerModel seller) async {
+    final result = await _sellersFirebaseRepo.save(seller);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedSellers) {},
+    );
+  }
+
+  Future<void> addSellers() async {
+    final result = await _sellersFirebaseRepo.saveAll(sellers);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (addedSellers) => AppUIUtils.onSuccess('Add ${addedSellers.length} sellers'),
+    );
   }
 
   // Navigation to the screen displaying all sellers

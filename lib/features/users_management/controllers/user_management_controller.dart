@@ -10,6 +10,7 @@ import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/network/api_constants.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
@@ -202,7 +203,7 @@ class UserManagementController extends GetxController with AppNavigator {
 
   Future<void> _checkUserByPin() async {
     final result =
-        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
+        await _usersFirebaseRepo.fetchWhere(field: ApiConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

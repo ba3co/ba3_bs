@@ -106,7 +106,8 @@ class AccountsStatementsDataSource {
       final bondSnapshots = await bondsCollection.get();
 
       final batch = _firestore.batch();
-      for (var doc in bondSnapshots.docs) {
+
+      for (final doc in bondSnapshots.docs) {
         batch.delete(doc.reference);
       }
 

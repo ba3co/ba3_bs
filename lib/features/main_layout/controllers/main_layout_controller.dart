@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/sellers_layout.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -63,6 +64,14 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.chequesIcon,
         unSelectedIcon: AppAssets.chequesUnselectedIcon
       ),
+    if (RoleItemType.viewSellers.hasReadPermission)
+      (
+        name: 'البائعون',
+        layout: const SellersLayout(),
+        role: RoleItemType.viewSellers,
+        icon: AppAssets.accountsIcon,
+        unSelectedIcon: AppAssets.accountsUnselectedIcon
+      ),
     if (RoleItemType.viewUserManagement.hasAdminPermission)
       (
         name: 'إدارة المستخدمين',
@@ -72,11 +81,11 @@ class MainLayoutController extends GetxController {
         unSelectedIcon: AppAssets.usersUnselectedIcon
       ),
     (
-    name: 'الدوام',
-    layout: const UserTimeLayout(),
-    role: RoleItemType.viewTime,
-    icon: AppAssets.usersTimeIcon,
-    unSelectedIcon: AppAssets.usersTimeUnselectedIcon
+      name: 'الدوام',
+      layout: const UserTimeLayout(),
+      role: RoleItemType.viewTime,
+      icon: AppAssets.usersTimeIcon,
+      unSelectedIcon: AppAssets.usersTimeUnselectedIcon
     ),
   ];
 
