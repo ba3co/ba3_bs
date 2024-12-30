@@ -284,7 +284,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   // Helper method to create an InvoiceRecordModel from a row
   InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) =>
-      InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
+      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(),0);
 
   void prepareMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();

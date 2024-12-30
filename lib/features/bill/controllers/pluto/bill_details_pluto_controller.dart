@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/vat/data/models/vat_model.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -273,15 +274,15 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final materialModel = materialController.getMaterialByName(row.cells[AppConstants.invRecProduct]!.value);
 
     if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
-      return _createInvoiceRecord(row, materialModel.id!);
+      return _createInvoiceRecord(row, materialModel.id!,VatEnums.byGuid(materialModel.matVatGuid??"2").vatRatio??0);
     }
 
     return null;
   }
 
   // Helper method to create an InvoiceRecordModel from a row
-  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) =>
-      InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId,double matVat) =>
+      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(),matVat);
 
   void prepareBillMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();

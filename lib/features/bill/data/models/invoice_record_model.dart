@@ -68,17 +68,20 @@ class InvoiceRecordModel {
         AppConstants.invRecGiftTotal: invRecGiftTotal,
       };
 
-  factory InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map) {
+  factory InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map, double vatRatio) {
+    final int quantity = _parseInteger(map[AppConstants.invRecQuantity]) ?? 1;
+    final double total = _parseDouble(map[AppConstants.invRecTotal]) ?? 0;
+    final subTotal = (total / (quantity * (1 + vatRatio)));
+    final vat = subTotal * vatRatio;
     final String? prodName = map[AppConstants.invRecProduct];
     final int? giftsNumber = _parseInteger(map[AppConstants.invRecGift]);
-    final int? quantity = _parseInteger(map[AppConstants.invRecQuantity]);
-    final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
-    final double? total = _parseDouble(map[AppConstants.invRecTotal]);
-    final double? vat = _parseDouble(map[AppConstants.invRecVat]);
+
+    // final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
+    // final double? vat = _parseDouble(map[AppConstants.invRecVat]);
 
     // Calculate gift total
-    final double effectiveVat = vat ?? 0;
-    final double effectiveSubTotal = subTotal ?? 0;
+    final double effectiveVat = vat;
+    final double effectiveSubTotal = subTotal;
 
     final double? giftTotal = (giftsNumber != null) ? giftsNumber * (effectiveVat + effectiveSubTotal) : null;
 
@@ -86,9 +89,9 @@ class InvoiceRecordModel {
       invRecId: matId,
       invRecProduct: prodName,
       invRecQuantity: quantity,
-      invRecSubTotal: subTotal,
+      invRecSubTotal:AppServiceUtils.toFixedDouble(subTotal) ,
       invRecTotal: total,
-      invRecVat: vat,
+      invRecVat:AppServiceUtils.toFixedDouble(vat) ,
       invRecIsLocal: map[AppConstants.invRecIsLocal],
       invRecGift: giftsNumber,
       invRecGiftTotal: giftTotal,
@@ -112,8 +115,7 @@ class InvoiceRecordModel {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is InvoiceRecordModel && runtimeType == other.runtimeType && invRecId == other.invRecId;
+      identical(this, other) || other is InvoiceRecordModel && runtimeType == other.runtimeType && invRecId == other.invRecId;
 
   Map<String, Map<String, dynamic>> getChanges(InvoiceRecordModel other) {
     Map<String, dynamic> newChanges = {};
@@ -164,6 +166,8 @@ class InvoiceRecordModel {
   }
 
   Map<PlutoColumn, dynamic> toEditedMap() {
+    final subTotalStr =  AppServiceUtils.toFixedDouble((invRecTotal??0) / ((invRecQuantity??1) * 1.05));
+    final vat = AppServiceUtils.toFixedDouble(subTotalStr* 0.05);
     return {
       PlutoColumn(
         title: 'الرقم',
@@ -202,13 +206,13 @@ class InvoiceRecordModel {
         checkReadOnly: (row, cell) {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
-      ): invRecSubTotal,
+      ): subTotalStr,
       PlutoColumn(
         title: 'الضريبة',
         field: AppConstants.invRecVat,
         enableEditingMode: false,
         type: PlutoColumnType.text(),
-      ): invRecVat,
+      ): vat,
       PlutoColumn(
         title: 'المجموع',
         field: AppConstants.invRecTotal,
@@ -226,6 +230,10 @@ class InvoiceRecordModel {
         },
       ): invRecGift,
     };
+  }
+
+  double? calculateSubTotal({required int quantity, required double total, required double vat}) {
+    return (total / quantity) - (total / quantity) * vat;
   }
 }
 
@@ -251,8 +259,7 @@ class AdditionsDiscountsRecordModel {
     final discountTotal = billModel.billDetails.billDiscountsTotal ?? 0;
     final additionTotal = billModel.billDetails.billAdditionsTotal ?? 0;
 
-    double calculateRatio(double value, double total) =>
-        AppServiceUtils.toFixedDouble(total > 0 ? ((value / total) * 100) : 0);
+    double calculateRatio(double value, double total) => AppServiceUtils.toFixedDouble(total > 0 ? ((value / total) * 100) : 0);
 
     return AdditionsDiscountsRecordModel(
       account: billModel.billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
@@ -306,8 +313,7 @@ class AdditionsDiscountsRecordModel {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AdditionsDiscountsRecordModel && runtimeType == other.runtimeType && account == other.account;
+      identical(this, other) || other is AdditionsDiscountsRecordModel && runtimeType == other.runtimeType && account == other.account;
 
   Map<String, Map<String, dynamic>> getChanges(AdditionsDiscountsRecordModel other) {
     Map<String, dynamic> newChanges = {};
