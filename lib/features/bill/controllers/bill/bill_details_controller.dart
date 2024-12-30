@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -63,7 +63,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   AccountModel? selectedCustomerAccount;
 
-  RxString billDate = DateTime.now().toString().split(" ")[0].obs;
+  Rx<DateTime> billDate = DateTime.now().obs;
 
   Rx<InvPayType> selectedPayType = InvPayType.cash.obs;
 
@@ -127,7 +127,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
   set setBillDate(DateTime newDate) {
-    billDate.value = newDate.toString().split(" ")[0];
+    billDate.value = newDate;
     //   update();
   }
 
@@ -142,8 +142,11 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   Future<void> printBill({required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
-    await read<PrintingController>()
-        .startPrinting(invRecords: invRecords, billNumber: billModel.billDetails.billNumber!, invDate: billDate.value);
+    await read<PrintingController>().startPrinting(
+      invRecords: invRecords,
+      billNumber: billModel.billDetails.billNumber!,
+      invDate: billDate.value.dayMonthYear,
+    );
   }
 
   void createEntryBond(BillModel billModel, BuildContext context) {
@@ -224,7 +227,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
-    final sellerController = read<SellerController>();
+    final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts
     if (!_billUtils.validateCustomerAccount(selectedCustomerAccount) ||
@@ -323,13 +326,13 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
-    setBillDate = bill.billDetails.billDate!.toDate!;
+    setBillDate = bill.billDetails.billDate!;
 
     initBillNumberController(bill.billDetails.billNumber);
 
     initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
 
-    read<SellerController>().initSellerAccount(sellerId: bill.billDetails.billSellerId, billDetailsController: this);
+    read<SellersController>().initSellerAccount(sellerId: bill.billDetails.billSellerId, billDetailsController: this);
 
     prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);

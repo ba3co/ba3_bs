@@ -14,10 +14,10 @@ import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
-class SellerController extends GetxController with AppNavigator {
+class SellersController extends GetxController with AppNavigator {
   final SellersRepository _sellersRepository;
 
-  SellerController(this._sellersRepository);
+  SellersController(this._sellersRepository);
 
   List<SellerModel> sellers = [];
   bool isLoading = true;

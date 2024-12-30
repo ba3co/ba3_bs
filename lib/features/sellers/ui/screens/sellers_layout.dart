@@ -1,6 +1,4 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -11,8 +9,7 @@ class SellersLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserManagementController userManagementController = read<UserManagementController>();
-    log('userModel ${userManagementController.loggedInUserModel?.userName}');
+    final SellerSalesController sellerSalesController = read<SellerSalesController>();
     return Column(
       children: [
         Expanded(
@@ -25,12 +22,12 @@ class SellersLayout extends StatelessWidget {
                   AppMenuItem(
                       text: 'إضافة بائع',
                       onTap: () {
-                        userManagementController.navigateToLAllUsersScreen();
+                        sellerSalesController.navigateToAddSellerScreen();
                       }),
                   AppMenuItem(
                       text: 'معاينة البائعون',
                       onTap: () {
-                        userManagementController.navigateToLAllPermissionsScreen();
+                        sellerSalesController.navigateToAllSellersScreen();
                       }),
                 ],
               ),

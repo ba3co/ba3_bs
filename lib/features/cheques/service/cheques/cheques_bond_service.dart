@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -21,8 +22,6 @@ mixin ChequesBondService {
     );
   }
 
-
-
   EntryBondModel createNormalEntryBondModel({
     required EntryBondType originType,
     required ChequesModel chequesModel,
@@ -34,14 +33,15 @@ mixin ChequesBondService {
         originTypeId: chequesModel.chequesTypeGuid,
       ),
       items: _generateNormalEntryBond(
-        chequesModel: chequesModel,
-        note:  "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
-        amount: chequesModel.chequesVal!,
-        date:chequesModel.chequesDate?? _currentDate,
-        originId: chequesModel.chequesGuid!
-      ),
+          chequesModel: chequesModel,
+          note:
+              "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
+          amount: chequesModel.chequesVal!,
+          date: chequesModel.chequesDate ?? _currentDate,
+          originId: chequesModel.chequesGuid!),
     );
   }
+
   EntryBondModel createPayEntryBondModel({
     required EntryBondType originType,
     required ChequesModel chequesModel,
@@ -53,12 +53,12 @@ mixin ChequesBondService {
         originTypeId: chequesModel.chequesTypeGuid,
       ),
       items: _generatePayEntryBond(
-        chequesModel: chequesModel,
-        note:  "سند قيد لدفع ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
-        amount: chequesModel.chequesVal!,
-        date: chequesModel.chequesDate??_currentDate,
-        originId: chequesModel.chequesGuid!
-      ),
+          chequesModel: chequesModel,
+          note:
+              "سند قيد لدفع ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
+          amount: chequesModel.chequesVal!,
+          date: chequesModel.chequesDate ?? _currentDate,
+          originId: chequesModel.chequesGuid!),
     );
   }
 
@@ -66,19 +66,27 @@ mixin ChequesBondService {
     required ChequesModel chequesModel,
   }) {
     List<EntryBondItemModel> itemBonds = [];
-    final date = chequesModel.chequesDate??_currentDate;
-    final note = "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}";
+    final date = chequesModel.chequesDate ?? _currentDate;
+    final note =
+        "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}";
     final amount = chequesModel.chequesVal;
     final originId = chequesModel.chequesGuid;
-    itemBonds.addAll( _generateNormalEntryBond(chequesModel: chequesModel, note: note, originId: originId!, amount: amount!, date: date)) ;
-    if(chequesModel.isPayed!) {
-      itemBonds.addAll( _generatePayEntryBond(chequesModel: chequesModel, note: note, originId: originId, amount: amount, date: date)) ;
+    itemBonds.addAll(_generateNormalEntryBond(
+        chequesModel: chequesModel, note: note, originId: originId!, amount: amount!, date: date));
+    if (chequesModel.isPayed!) {
+      itemBonds.addAll(_generatePayEntryBond(
+          chequesModel: chequesModel, note: note, originId: originId, amount: amount, date: date));
     }
 
     return itemBonds;
   }
 
-  List<EntryBondItemModel> _generateNormalEntryBond({required ChequesModel chequesModel, required String note, required String originId, required double amount, required String date}) {
+  List<EntryBondItemModel> _generateNormalEntryBond(
+      {required ChequesModel chequesModel,
+      required String note,
+      required String originId,
+      required double amount,
+      required String date}) {
     List<EntryBondItemModel> itemBonds = [];
     itemBonds.add(EntryBondItemModel(
       note: note,
@@ -100,7 +108,13 @@ mixin ChequesBondService {
     ));
     return itemBonds;
   }
-  List<EntryBondItemModel> _generatePayEntryBond({required ChequesModel chequesModel, required String note, required String originId, required double amount, required String date}) {
+
+  List<EntryBondItemModel> _generatePayEntryBond(
+      {required ChequesModel chequesModel,
+      required String note,
+      required String originId,
+      required double amount,
+      required String date}) {
     List<EntryBondItemModel> itemBonds = [];
     itemBonds.add(EntryBondItemModel(
       note: note,
@@ -123,6 +137,5 @@ mixin ChequesBondService {
     return itemBonds;
   }
 
-
-  String get _currentDate => DateTime.now().toString().split(" ")[0];
+  String get _currentDate => DateTime.now().dayMonthYear;
 }

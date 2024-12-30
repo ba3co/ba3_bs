@@ -11,7 +11,7 @@ class UserManagementLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserManagementController userManagementController = read<UserManagementController>();
+    final UserManagementController userManagementController = read<UserManagementController>();
     log('userModel ${userManagementController.loggedInUserModel?.userName}');
     return Column(
       children: [

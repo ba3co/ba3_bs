@@ -16,64 +16,44 @@ class AddUserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserManagementController userManagementViewController = read<UserManagementController>();
-    SellerController sellerViewController = read<SellerController>();
-    return Column(
-      children: [
-        Expanded(
-          child: GetBuilder<UserManagementController>(builder: (controller) {
-            return Scaffold(
-              appBar: AppBar(
-                centerTitle: false,
-                title: Text(controller.selectedUserModel?.userName ?? 'مستخدم جديد'),
-                actions: [
-                  // if (controller.selectedUserModel?.userId != null)
-                  //   ElevatedButton(
-                  //       onPressed: () {
-                  //         Get.to(() => TimeDetailsScreen(
-                  //               oldKey: controller.loggedInUserModel!.userId!,
-                  //               name: controller.loggedInUserModel!.userName!,
-                  //             ));
-                  //       },
-                  //       child: const Text('البريك')),
-                  // const SizedBox(
-                  //   width: 20,
-                  // ),
-                ],
-              ),
-              body: Center(
-                child: ListView(
-                  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    UserDetailsForm(
-                      userManagementController: userManagementViewController,
-                      sellerController: sellerViewController,
-                    ),
-                    UserAllWorkingHour(
-                      controller: controller,
-                    ),
-                    UserAllHolidays(
-                      controller: controller,
-                    ),
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: .15.sh),
-                        child: AppButton(
-                          title: controller.selectedUserModel?.userId == null ? 'إضافة' : 'تعديل',
-                          onPressed: () {
-                            controller.saveOrUpdateUser();
-                          },
-                          iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
-                          color: controller.selectedUserModel?.userId == null ? null : Colors.green,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            );
-          }),
+    SellersController sellerViewController = read<SellersController>();
+    return GetBuilder<UserManagementController>(builder: (controller) {
+      return Scaffold(
+        appBar: AppBar(
+          centerTitle: false,
+          title: Text(controller.selectedUserModel?.userName ?? 'مستخدم جديد'),
         ),
-      ],
-    );
+        body: Center(
+          child: ListView(
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              UserDetailsForm(
+                userManagementController: userManagementViewController,
+                sellerController: sellerViewController,
+              ),
+              UserAllWorkingHour(
+                controller: controller,
+              ),
+              UserAllHolidays(
+                controller: controller,
+              ),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: .15.sh),
+                  child: AppButton(
+                    title: controller.selectedUserModel?.userId == null ? 'إضافة' : 'تعديل',
+                    onPressed: () {
+                      controller.saveOrUpdateUser();
+                    },
+                    iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
+                    color: controller.selectedUserModel?.userId == null ? null : Colors.green,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

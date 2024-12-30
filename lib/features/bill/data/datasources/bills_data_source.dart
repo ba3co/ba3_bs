@@ -1,7 +1,8 @@
 // BillsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/filterable_data_source.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/filterable_datasource.dart';
 
+import '../../../../core/models/date_filter.dart';
 import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
 import '../models/bill_model.dart';
 
@@ -57,8 +58,8 @@ class BillsDataSource extends FilterableDatasource<BillModel> with FirebaseSeque
   }
 
   @override
-  Future<List<BillModel>> fetchWhere<V>({required String field, required V value}) async {
-    final data = await databaseService.fetchWhere(path: path, field: field, value: value);
+  Future<List<BillModel>> fetchWhere<V>({required String field, required V value, DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(path: path, field: field, value: value, dateFilter: dateFilter);
 
     final users = data.map((item) => BillModel.fromJson(item)).toList();
 

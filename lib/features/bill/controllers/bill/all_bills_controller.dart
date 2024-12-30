@@ -12,7 +12,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
-import '../../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
+import '../../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';

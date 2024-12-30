@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
@@ -49,8 +50,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   EntryBondController get bondController => read<EntryBondController>();
 
-  RxString chequesDate = DateTime.now().toString().split(" ")[0].obs,
-      chequesDueDate = DateTime.now().toString().split(" ")[0].obs;
+  RxString chequesDate = DateTime.now().dayMonthYear.obs, chequesDueDate = DateTime.now().dayMonthYear.obs;
   bool isLoading = true;
   RxBool isChequesSaved = false.obs;
 
@@ -86,12 +86,12 @@ class ChequesDetailsController extends GetxController with AppValidator {
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   void setChequesDate(DateTime newDate) {
-    chequesDate.value = newDate.toString().split(" ")[0];
+    chequesDate.value = newDate.dayMonthYear;
     update();
   }
 
   void setChequesDueDate(DateTime newDate) {
-    chequesDueDate.value = newDate.toString().split(" ")[0];
+    chequesDueDate.value = newDate.dayMonthYear;
     update();
   }
 

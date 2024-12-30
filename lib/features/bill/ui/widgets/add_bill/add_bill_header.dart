@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -28,7 +29,7 @@ class AddBillHeader extends StatelessWidget {
               firstItem: TextAndExpandedChildField(
                 label: 'تاريخ الفاتورة',
                 child: DatePicker(
-                  initDate: addBillController.billDate,
+                  initDate: addBillController.billDate.dayMonthYear,
                   onDateSelected: addBillController.setBillDate,
                 ),
               ),
@@ -61,7 +62,7 @@ class AddBillHeader extends StatelessWidget {
                 textEditingController: addBillController.sellerAccountController,
                 validator: (value) => addBillController.validator(value, 'البائع'),
                 onSubmitted: (text) {
-                  read<SellerController>().openSellerSelectionDialog(
+                  read<SellersController>().openSellerSelectionDialog(
                     query: text,
                     textEditingController: addBillController.sellerAccountController,
                     context: context,

@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/services/firebase/implementations/filterable_data_source_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -9,6 +9,7 @@ import 'package:ba3_bs/features/cheques/data/datasources/cheques_data_source.dar
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
@@ -77,13 +78,14 @@ class AppBindings extends Bindings {
   IDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreService();
 
   ITranslationService _initializeTranslationService(IAPiClient dioClient) => GoogleTranslationService(
-    baseUrl: ApiConstants.translationBaseUrl,
-    apiKey: ApiConstants.translationApiKey,
-    client: dioClient,
-  );
+        baseUrl: ApiConstants.translationBaseUrl,
+        apiKey: ApiConstants.translationApiKey,
+        client: dioClient,
+      );
 
 // Repositories Initialization
-  _Repositories _initializeRepositories(IDatabaseService<Map<String, dynamic>> fireStoreService, ITranslationService translationService) {
+  _Repositories _initializeRepositories(
+      IDatabaseService<Map<String, dynamic>> fireStoreService, ITranslationService translationService) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
       patternsRepo: DataSourceRepository(PatternsDataSource(databaseService: fireStoreService)),
@@ -118,11 +120,12 @@ class AppBindings extends Bindings {
     lazyPut(BillDetailsPlutoController());
     lazyPut(MaterialController(MaterialRepository()));
     lazyPut(AccountsController(AccountsRepository()));
-    lazyPut(SellerController(SellersRepository()));
+    lazyPut(SellersController(SellersRepository()));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
+    lazyPut(SellerSalesController(repositories.billsRepo));
   }
 }
 

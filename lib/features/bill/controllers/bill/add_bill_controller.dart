@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -49,7 +50,7 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
 
-  late String billDate;
+  late DateTime billDate;
   AccountModel? selectedCustomerAccount;
 
   InvPayType selectedPayType = InvPayType.cash;
@@ -117,7 +118,7 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
   void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
   void setBillDate(DateTime newDate) {
-    billDate = newDate.toString().split(" ")[0];
+    billDate = newDate;
     update();
   }
 
@@ -155,7 +156,7 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
     if (!_validateBeforePrinting(invRecords)) return;
 
     await read<PrintingController>()
-        .startPrinting(invRecords: invRecords, billNumber: recentBillNumber!, invDate: billDate);
+        .startPrinting(invRecords: invRecords, billNumber: recentBillNumber!, invDate: billDate.dayMonthYear);
   }
 
   bool _validateBeforePrinting(List<InvoiceRecordModel> invoiceRecords) {
@@ -265,7 +266,7 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
 
   BillModel? _createBillModelFromInvoiceData(BillTypeModel billTypeModel) {
     final updatedBillTypeModel = _updateBillTypeAccounts(billTypeModel) ?? billTypeModel;
-    final sellerController = read<SellerController>();
+    final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts
     if (!_validateCustomerAccount() || !_validateSellerAccount(sellerController)) {
@@ -290,7 +291,7 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
     return true;
   }
 
-  bool _validateSellerAccount(SellerController sellerController) {
+  bool _validateSellerAccount(SellersController sellerController) {
     if (sellerController.selectedSellerAccount == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم البائع!');
       return false;

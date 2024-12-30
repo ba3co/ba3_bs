@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../models/date_filter.dart';
+
 // FirebaseFirestoreService Implementation
 class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -16,8 +18,16 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
 
   @override
   Future<List<Map<String, dynamic>>> fetchWhere<V>(
-      {required String path, required String field, required V value}) async {
-    final snapshot = await _firestore.collection(path).where(field, isEqualTo: value).get();
+      {required String path, required String field, required V value, DateFilter? dateFilter}) async {
+    Query<Map<String, dynamic>> query = _firestore.collection(path).where(field, isEqualTo: value);
+
+    if (dateFilter != null) {
+      query = query
+          .where(dateFilter.field, isGreaterThanOrEqualTo: dateFilter.range.start)
+          .where(dateFilter.field, isLessThan: dateFilter.range.end);
+    }
+
+    final snapshot = await query.get();
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 

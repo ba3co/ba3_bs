@@ -21,7 +21,7 @@ class UserDetailsForm extends StatelessWidget {
   });
 
   final UserManagementController userManagementController;
-  final SellerController sellerController;
+  final SellersController sellerController;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,8 @@ class UserDetailsForm extends StatelessWidget {
                   label: 'اسم الحساب',
                   child: CustomTextFieldWithoutIcon(
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
+                    validator: (value) =>
+                        userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
                     textEditingController: userManagementController.userFormHandler.userNameController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
@@ -52,7 +53,8 @@ class UserDetailsForm extends StatelessWidget {
                   label: 'كلمة السر',
                   child: CustomTextFieldWithoutIcon(
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
+                    validator: (value) =>
+                        userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
                     textEditingController: userManagementController.userFormHandler.passController,
                     suffixIcon: const SizedBox.shrink(),
                     maxLength: 6,

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -7,7 +8,7 @@ import '../../users_management/data/models/user_model.dart';
 class UserTimeServices {
   DateTime getCurrentTime() => Timestamp.now().toDate();
 
-  String getCurrentDayName() => getCurrentTime().toString().split(" ")[0];
+  String getCurrentDayName() => getCurrentTime().dayMonthYear;
 
   // add user logIn time
   UserModel addLoginTimeToUserModel({required UserModel userModel}) {
@@ -15,7 +16,8 @@ class UserTimeServices {
     if (userModel.userTimeModel![getCurrentDayName()] != null) {
       userModel.userTimeModel![getCurrentDayName()] = userModel.userTimeModel![getCurrentDayName()]!.copyWith(
         logInDateList: [
-          ...(userModel.userTimeModel![getCurrentDayName()]!.logInDateList ?? []), // Merge the old list with the new date
+          ...(userModel.userTimeModel![getCurrentDayName()]!.logInDateList ?? []),
+          // Merge the old list with the new date
           getCurrentTime(),
         ],
       );
@@ -34,7 +36,8 @@ class UserTimeServices {
     if (userModel.userTimeModel![getCurrentDayName()] != null) {
       userModel.userTimeModel![getCurrentDayName()] = userModel.userTimeModel![getCurrentDayName()]!.copyWith(
         logOutDateList: [
-          ...(userModel.userTimeModel![getCurrentDayName()]!.logOutDateList ?? []), // إضافة الوقت الحالي إلى القائمة الحالية
+          ...(userModel.userTimeModel![getCurrentDayName()]!.logOutDateList ?? []),
+          // إضافة الوقت الحالي إلى القائمة الحالية
           getCurrentTime(),
         ],
       );

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -62,26 +63,26 @@ class AppUIUtils {
         int day = int.parse(parts[0]);
         int month = int.parse(parts[1]);
         int year = int.parse(parts[2]);
-        return DateTime(year, month, day).toString().split(" ")[0];
+        return DateTime(year, month, day).dayMonthYear;
       } else if (parts.length == 2) {
         // Format: day-month (e.g., 15-5)
         int day = int.parse(parts[0]);
         int month = int.parse(parts[1]);
         int year = now.year;
-        return DateTime(year, month, day).toString().split(" ")[0];
+        return DateTime(year, month, day).dayMonthYear;
       } else if (parts.length == 1) {
         // Format: day only (e.g., 15)
         int day = int.parse(parts[0]);
         int month = now.month;
         int year = now.year;
-        return DateTime(year, month, day).toString().split(" ")[0];
+        return DateTime(year, month, day).dayMonthYear;
       } else {
         // Invalid format, return today's date
-        return DateTime.now().toString().split(" ")[0];
+        return DateTime.now().dayMonthYear;
       }
     } catch (e) {
       // Handle parsing errors and return today's date
-      return DateTime.now().toString().split(" ")[0];
+      return DateTime.now().dayMonthYear;
     }
   }
 
@@ -90,7 +91,7 @@ class AppUIUtils {
     DateTime currentDate = startDate;
 
     while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
-      dates.add(currentDate.toString().split(" ")[0]);
+      dates.add(currentDate.dayMonthYear);
       currentDate = currentDate.add(const Duration(days: 1));
     }
 

@@ -1,57 +1,81 @@
+import 'package:ba3_bs/core/models/date_filter.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SellerSalesController extends GetxController {
+import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/router/app_routes.dart';
+import '../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
+import '../../../core/utils/app_ui_utils.dart';
+import '../../bill/data/models/bill_model.dart';
+
+class SellerSalesController extends GetxController with AppNavigator {
+  final FilterableDataSourceRepository<BillModel> _billsFirebaseRepo;
+
+  SellerSalesController(this._billsFirebaseRepo);
+
   // List of bills for the seller
-  final RxList<Map<String, dynamic>> sellerBills = <Map<String, dynamic>>[].obs;
+  final List<BillModel> sellerBills = [];
 
   // Total sales value
   final RxDouble totalSales = 0.0.obs;
 
-  // Method to fetch bills for a specific seller
-  Future<void> fetchBills(String sellerId) async {
-    try {
-      // Simulate fetching data (replace with actual API/Firestore call)
-      final fetchedBills = await fetchSellerBillsFromDatabase(sellerId);
+  bool isLoading = true;
 
-      // Update the list of bills
-      sellerBills.assignAll(fetchedBills);
+  Future<void> fetchSellerBillsByDate(String sellerId, DateTime specificDate) async {
+    final startOfDay = specificDate.subtract(Duration(days: 30));
+    final endOfDay = specificDate;
 
-      // Update total sales
-      calculateTotalSales();
-    } catch (e) {
-      Get.snackbar("Error", "Failed to fetch bills: $e");
-    }
+    final result = await _billsFirebaseRepo.fetchWhere(
+      field: 'billSellerId',
+      value: sellerId,
+      dateFilter: DateFilter(field: 'billDate', range: DateTimeRange(start: startOfDay, end: endOfDay)),
+    );
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBills) => _handleGetSellerBillsStatusSuccess(fetchedBills),
+    );
+
+    isLoading = false;
+    update();
+  }
+
+  _handleGetSellerBillsStatusSuccess(List<BillModel> fetchedBills) {
+    sellerBills.assignAll(fetchedBills);
+    // Update total sales
+    calculateTotalSales();
   }
 
   // Method to calculate the total sales
   void calculateTotalSales() {
-    totalSales.value = sellerBills.fold(
-      0.0,
-      (sum, bill) => sum + (bill['amount'] as double),
-    );
+    totalSales.value = sellerBills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal!));
   }
 
-  // Method to filter bills by a specific criterion (e.g., date range)
-  List<Map<String, dynamic>> filterBillsByDate(DateTime startDate, DateTime endDate) {
-    return sellerBills.where((bill) {
-      final billDate = bill['date'] as DateTime;
-      return billDate.isAfter(startDate) && billDate.isBefore(endDate);
-    }).toList();
-  }
+  void navigateToAddSellerScreen() => to(AppRoutes.addSellerScreen);
 
-  // Method to handle manual addition of a bill
-  void addBill(Map<String, dynamic> newBill) {
-    sellerBills.add(newBill);
-    calculateTotalSales();
-  }
+  void navigateToAllSellersScreen() => to(AppRoutes.allSellersScreen);
 
-  // Simulated database fetch method (replace with actual implementation)
-  Future<List<Map<String, dynamic>>> fetchSellerBillsFromDatabase(String sellerId) async {
-    // Example data structure: [{'id': '1', 'amount': 100.0, 'date': DateTime.now()}, ...]
-    await Future.delayed(Duration(seconds: 1)); // Simulate delay
-    return [
-      {'id': '1', 'amount': 200.0, 'date': DateTime.now().subtract(Duration(days: 1))},
-      {'id': '2', 'amount': 150.0, 'date': DateTime.now()},
-    ];
-  }
+// // Method to filter bills by a specific criterion (e.g., date range)
+// List<Map<String, dynamic>> filterBillsByDate(DateTime startDate, DateTime endDate) {
+//   return sellerBills.where((bill) {
+//     final billDate = bill['date'] as DateTime;
+//     return billDate.isAfter(startDate) && billDate.isBefore(endDate);
+//   }).toList();
+// }
+//
+// // Method to handle manual addition of a bill
+// void addBill(Map<String, dynamic> newBill) {
+//   sellerBills.add(newBill);
+//   calculateTotalSales();
+// }
+//
+// // Simulated database fetch method (replace with actual implementation)
+// Future<List<Map<String, dynamic>>> fetchSellerBillsFromDatabase(String sellerId) async {
+//   // Example data structure: [{'id': '1', 'amount': 100.0, 'date': DateTime.now()}, ...]
+//   await Future.delayed(Duration(seconds: 1)); // Simulate delay
+//   return [
+//     {'id': '1', 'amount': 200.0, 'date': DateTime.now().subtract(Duration(days: 1))},
+//     {'id': '2', 'amount': 150.0, 'date': DateTime.now()},
+//   ];
+// }
 }

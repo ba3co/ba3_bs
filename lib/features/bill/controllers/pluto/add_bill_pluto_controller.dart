@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
@@ -284,7 +282,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   // Helper method to create an InvoiceRecordModel from a row
   InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) =>
-      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(),0);
+      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(), 0);
 
   void prepareMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();

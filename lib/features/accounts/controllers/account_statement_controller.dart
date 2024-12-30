@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
@@ -170,7 +171,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
 
   // Helper Methods
-  static String get _formattedToday => DateTime.now().toString().split(" ")[0];
+  static String get _formattedToday => DateTime.now().dayMonthYear;
 
   void _showErrorSnackBar(String title, String message) {
     Get.snackbar(title, message, icon: const Icon(Icons.error_outline));

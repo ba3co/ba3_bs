@@ -23,7 +23,7 @@ import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
-import 'bill_bond_service.dart';
+import 'bill_entry_bond_creating_service.dart';
 import 'bill_pdf_generator.dart';
 
 class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
@@ -40,7 +40,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     required String billCustomerId,
     required String billSellerId,
     required int billPayType,
-    required String billDate,
+    required DateTime billDate,
   }) {
     return BillModel.fromBillData(
       billModel: billModel,

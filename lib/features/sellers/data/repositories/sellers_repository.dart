@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:ba3_bs/features/sellers/data/datasources/sellers_json.dart';
+import 'package:ba3_bs/features/sellers/data/datasources/local/sellers_json.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/seller_model.dart';

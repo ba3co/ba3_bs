@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/datasource_repo.dart';
-import '../../../core/services/firebase/implementations/filterable_data_source_repo.dart';
+import '../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
 import '../../../core/services/get_x/shared_preferences_service.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/role_model.dart';
@@ -88,10 +88,12 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() =>
+      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) =>
+      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -199,7 +201,8 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   Future<void> _checkUserByPin() async {
-    final result = await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
+    final result =
+        await _usersFirebaseRepo.fetchWhere(field: AppConstants.userPassword, value: loginPasswordController.text);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -280,9 +283,7 @@ class UserManagementController extends GetxController with AppNavigator {
         userRoleId: userFormHandler.selectedRoleId.value,
         userSellerId: userFormHandler.selectedSellerId.value,
         workingHour: workingHours,
-    holidays:  holidays.toList()
-
-    );
+        holidays: holidays.toList());
 
     // Handle null user model
     if (updatedUserModel == null) {

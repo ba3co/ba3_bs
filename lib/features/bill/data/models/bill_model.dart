@@ -46,7 +46,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         items: const BillItems(itemList: []),
         billDetails: BillDetails(
           billPayType: InvPayType.cash.index,
-          billDate: DateTime.now().toString().split(" ")[0],
+          billDate: DateTime.now(),
           billNumber: lastBillNumber + 1,
         ),
       );
@@ -58,7 +58,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     required Status status,
     required String billSellerId,
     required int billPayType,
-    required String billDate,
+    required DateTime billDate,
     required double billGiftsTotal,
     required double billDiscountsTotal,
     required double billAdditionsTotal,
@@ -186,7 +186,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: 'حساب العميل', field: 'حساب العميل', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         PlutoColumn(title: 'حساب البائع', field: 'حساب البائع', type: PlutoColumnType.text()):
-            read<SellerController>().getSellerNameById(billDetails.billSellerId),
+            read<SellersController>().getSellerNameById(billDetails.billSellerId),
         PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
         PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',

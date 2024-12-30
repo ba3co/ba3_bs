@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
@@ -42,7 +43,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   AccountModel? selectedAccount;
 
-  RxString bondDate = DateTime.now().toString().split(" ")[0].obs;
+  RxString bondDate = DateTime.now().dayMonthYear.obs;
   bool isLoading = true;
   RxBool isBondSaved = false.obs;
 
@@ -81,7 +82,7 @@ class BondDetailsController extends GetxController with AppValidator {
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   void setBondDate(DateTime newDate) {
-    bondDate.value = newDate.toString().split(" ")[0];
+    bondDate.value = newDate.dayMonthYear;
     update();
   }
 
