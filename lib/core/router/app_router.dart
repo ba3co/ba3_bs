@@ -7,6 +7,7 @@ import 'package:ba3_bs/features/main_layout/ui/screens/main_layout.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/seller_sales_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/role_management/add_role_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/user_management/add_user_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/user_management/all_user_screen.dart';
@@ -114,5 +115,9 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.allSellersScreen,
     page: () => const AllSellersScreen(),
+  ),
+  GetPage(
+    name: AppRoutes.sellerSalesScreen,
+    page: () => const SellerSalesScreen(),
   ),
 ];

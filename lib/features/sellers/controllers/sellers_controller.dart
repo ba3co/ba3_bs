@@ -16,7 +16,7 @@ import '../data/models/seller_model.dart';
 import '../data/repositories/sellers_repository.dart';
 
 class SellersController extends GetxController with AppNavigator {
-  final SellersRepository _sellersRepository;
+  final SellersLocalRepository _sellersRepository;
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
   SellersController(this._sellersRepository, this._sellersFirebaseRepo);
@@ -29,19 +29,29 @@ class SellersController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    fetchSellers();
+    getAllSellers();
   }
 
   // Fetch sellers from the repository
-  void fetchSellers() {
-    try {
-      sellers = _sellersRepository.getAllSellers();
-    } catch (e) {
-      debugPrint('Error in fetchSellers: $e');
-    } finally {
-      isLoading = false;
-      update();
-    }
+  Future<void> getAllSellers() async {
+    final result = await _sellersFirebaseRepo.getAll();
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedSellers) {
+        sellers = fetchedSellers;
+        isLoading = false;
+        update();
+      },
+    );
+    // try {
+    //   sellers = _sellersRepository.getAllSellers();
+    // } catch (e) {
+    //   debugPrint('Error in fetchSellers: $e');
+    // } finally {
+    //   isLoading = false;
+    //   update();
+    // }
   }
 
   Future<void> addSeller(SellerModel seller) async {
@@ -69,16 +79,10 @@ class SellersController extends GetxController with AppNavigator {
 
   // Search for sellers by text query
 
-  List<SellerModel> searchSellersByNameOrCode(text) {
-    if (sellers.isEmpty) {
-      log('Accounts isEmpty');
-      fetchSellers();
-    }
-    return sellers
-        .where((item) =>
-            item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
-        .toList();
-  }
+  List<SellerModel> searchSellersByNameOrCode(text) => sellers
+      .where((item) =>
+          item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
+      .toList();
 
   List<String> getSellersNames(String query) {
     return searchSellersByNameOrCode(query).map((seller) => seller.costName!).toList();

@@ -28,6 +28,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     }
 
     final snapshot = await query.get();
+    log('snap ${snapshot.docs.map((doc) => doc.data()).toList()}');
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 

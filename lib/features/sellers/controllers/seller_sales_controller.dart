@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
@@ -43,16 +45,18 @@ class SellerSalesController extends GetxController with AppNavigator {
     );
   }
 
-  Future<void> fetchSellerBillsByDate(String sellerId, DateTime specificDate) async {
-    final startOfDay = specificDate.subtract(Duration(days: 30));
-    final endOfDay = specificDate;
+  Future<void> fetchSellerBillsByDate({required String sellerId}) async {
+    final currentDate = DateTime.now();
+    final startOfDay = currentDate.subtract(Duration(days: 30));
+    final endOfDay = currentDate;
 
+    log('message before fetchWhere');
     final result = await _billsFirebaseRepo.fetchWhere(
       field: ApiConstants.billSellerId,
       value: sellerId,
       dateFilter: DateFilter(field: ApiConstants.billDate, range: DateTimeRange(start: startOfDay, end: endOfDay)),
     );
-
+    log('message after fetchWhere');
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedSellers) => _handleGetSellerBillsStatusSuccess(fetchedSellers),
@@ -63,41 +67,22 @@ class SellerSalesController extends GetxController with AppNavigator {
   }
 
   _handleGetSellerBillsStatusSuccess(List<BillModel> fetchedSellers) {
+    log('fetchedSellers ${fetchedSellers.length}');
     sellerBills.assignAll(fetchedSellers);
     // Update total sales
     calculateTotalSales();
+
+    navigateToSellerSalesScreen();
   }
 
   // Method to calculate the total sales
   void calculateTotalSales() {
-    totalSales.value = sellerBills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal!));
+    totalSales.value = sellerBills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal ?? 0));
   }
 
   void navigateToAddSellerScreen() => to(AppRoutes.addSellerScreen);
 
   void navigateToAllSellersScreen() => to(AppRoutes.allSellersScreen);
 
-// // Method to filter bills by a specific criterion (e.g., date range)
-// List<Map<String, dynamic>> filterBillsByDate(DateTime startDate, DateTime endDate) {
-//   return sellerBills.where((bill) {
-//     final billDate = bill['date'] as DateTime;
-//     return billDate.isAfter(startDate) && billDate.isBefore(endDate);
-//   }).toList();
-// }
-//
-// // Method to handle manual addition of a bill
-// void addBill(Map<String, dynamic> newBill) {
-//   sellerBills.add(newBill);
-//   calculateTotalSales();
-// }
-//
-// // Simulated database fetch method (replace with actual implementation)
-// Future<List<Map<String, dynamic>>> fetchSellerBillsFromDatabase(String sellerId) async {
-//   // Example data structure: [{'id': '1', 'amount': 100.0, 'date': DateTime.now()}, ...]
-//   await Future.delayed(Duration(seconds: 1)); // Simulate delay
-//   return [
-//     {'id': '1', 'amount': 200.0, 'date': DateTime.now().subtract(Duration(days: 1))},
-//     {'id': '2', 'amount': 150.0, 'date': DateTime.now()},
-//   ];
-// }
+  void navigateToSellerSalesScreen() => to(AppRoutes.sellerSalesScreen);
 }

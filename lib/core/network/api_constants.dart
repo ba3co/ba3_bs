@@ -18,6 +18,6 @@ class ApiConstants {
   // FIELDS
   static const String status = 'status';
   static const String userPassword = 'userPassword';
-  static const String billDate = 'billDate';
-  static const String billSellerId = 'billSellerId';
+  static const String billDate = 'billDetails.billDate';
+  static const String billSellerId = 'billDetails.billSellerId';
 }

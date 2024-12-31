@@ -15,7 +15,7 @@ class PendingBillsScreen extends StatelessWidget {
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells['billId']?.value;
-          controller.openBillDetailsById(billId, context);
+          controller.openFloatingBillDetailsById(billId, context);
         },
         isLoading: controller.isPendingBillsLoading,
         tableSourceModels: controller.pendingBills,

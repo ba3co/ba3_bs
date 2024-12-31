@@ -108,6 +108,10 @@ class AppBindings extends Bindings {
 // Permanent Controllers Initialization
   void _initializePermanentControllers(SharedPreferencesService sharedPreferencesService, _Repositories repositories) {
     put(
+      SellersController(SellersLocalRepository(), repositories.sellersRepo),
+      permanent: true,
+    );
+    put(
       UserManagementController(repositories.rolesRepo, repositories.usersRepo, sharedPreferencesService),
       permanent: true,
     );
@@ -124,7 +128,6 @@ class AppBindings extends Bindings {
     lazyPut(BillDetailsPlutoController());
     lazyPut(MaterialController(MaterialRepository()));
     lazyPut(AccountsController(AccountsRepository()));
-    lazyPut(SellersController(SellersRepository(), repositories.sellersRepo));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));

@@ -24,4 +24,5 @@ class AppRoutes {
   static const String addUserScreen = '/addUserScreen';
   static const String allSellersScreen = '/allSellersScreen';
   static const String addSellerScreen = '/addSellerScreen';
+  static const String sellerSalesScreen = '/sellerSalesScreen';
 }

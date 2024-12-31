@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/seller_model.dart';
 
-class SellersRepository {
+class SellersLocalRepository {
   List<SellerModel> getAllSellers() {
     try {
       return sellersJsonMapper();
