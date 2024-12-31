@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:ba3_bs/core/services/json_file_operations/implementations/json_import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
@@ -14,7 +15,6 @@ import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
-import '../../../../core/services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
@@ -27,9 +27,9 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   // Repositories
   final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final FilterableDataSourceRepository<BillModel> _billsFirebaseRepo;
-  final JsonExportRepository<BillModel> _jsonExportRepo;
+  final JsonImportExportRepository<BillModel> _jsonImportExportRepo;
 
-  AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonExportRepo);
+  AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
   late final BillUtils _billUtils;
@@ -113,7 +113,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       return;
     }
 
-    final result = await _jsonExportRepo.exportJsonFile(bills);
+    final result = await _jsonImportExportRepo.exportJsonFile(bills);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
