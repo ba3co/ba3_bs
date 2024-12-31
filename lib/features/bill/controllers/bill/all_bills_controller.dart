@@ -77,8 +77,10 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedBills) {
-        print(fetchedBills.where((bill) => bill.billTypeModel.id=="5a9e7782-cde5-41db-886a-ac89732feda7",).toList().length);
-        // bills.assignAll(fetchedBills);
+        // print(fetchedBills.where((bill) => bill.billTypeModel.id=="5a9e7782-cde5-41db-886a-ac89732feda7",).toList().length);
+        bills.assignAll(fetchedBills.where(
+          (bill) => bill.billTypeModel.id == "5a9e7782-cde5-41db-886a-ac89732feda7",
+        ));
       },
     );
 
@@ -174,6 +176,18 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       modifiedBills: billsByCategory,
       lastBillModel: lastBillModel,
     );
+  }
+
+  Future<void> openFloatingOpiningBillDetails(BuildContext context, {BillModel? billModel}) async {
+    log("openFloatingOpiningBillDetails");
+    if (!context.mounted) return;
+    // final BillModel lastBillModel = billModel ?? _billUtils.appendEmptyBillModel(bills, billTypeModel);
+
+    // _openBillDetailsFloatingWindow(
+    //   context: context,
+    // modifiedBills: billsByCategory,
+    // lastBillModel: lastBillModel,
+    // );
   }
 
   // Opens the 'Bill Details' floating window.

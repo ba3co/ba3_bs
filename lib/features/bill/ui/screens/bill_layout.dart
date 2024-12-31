@@ -40,20 +40,27 @@ class BillLayout extends StatelessWidget {
                           children: [
                             Wrap(
                               spacing: 10,
-                              runSpacing: 30,
+                              runSpacing: 10,
                               alignment: WrapAlignment.center,
                               crossAxisAlignment: WrapCrossAlignment.start,
                               children: [
-                                ...controller.billsTypes.map((billTypeModel) => BillTypeItemWidget(
-                                      text: billTypeModel.fullName!,
-                                      color: Color(billTypeModel.color!),
-                                      onTap: () {
-                                        controller
-                                          ..fetchAllBills()
-                                          ..openFloatingBillDetails(context, billTypeModel);
-                                      },
-                                    )),
-                              ],
+                                ...controller.billsTypes.map(
+                                  (billTypeModel) => BillTypeItemWidget(
+                                    text: billTypeModel.fullName!,
+                                    color: Color(billTypeModel.color!),
+                                    onTap: () {
+                                      controller
+                                        ..fetchAllBills()
+                                        ..openFloatingBillDetails(context, billTypeModel);
+                                    },
+                                  ),
+                                ),
+                              ]+[BillTypeItemWidget(
+                                  color: AppColors.greenColor,
+                                  onTap: () {
+                                    controller..fetchAllOpeningBills()
+                                    ..openFloatingOpiningBillDetails(context,);
+                              }, text: "بضاعة اول مدة")],
                             ),
                             VerticalSpace(),
                             Row(
@@ -90,11 +97,12 @@ class BillLayout extends StatelessWidget {
                                 )
                               ],
                             ),
-
-                            AppButton(title: "title", onPressed: () {
-                              controller.fetchAllOpeningBills();
-
-                            },)
+                            AppButton(
+                              title: "title",
+                              onPressed: () {
+                                controller.fetchAllOpeningBills();
+                              },
+                            )
                           ],
                         )),
               ),
