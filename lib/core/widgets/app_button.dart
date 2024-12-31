@@ -7,14 +7,14 @@ class AppButton extends StatelessWidget {
     super.key,
     required this.title,
     required this.onPressed,
-     this.iconData,
+    this.iconData,
     this.isLoading = false,
-
     this.color,
     this.width,
     this.height,
     this.fontSize,
     this.iconSize,
+    this.borderRadius,
   });
 
   final String title;
@@ -27,6 +27,7 @@ class AppButton extends StatelessWidget {
   final double? iconSize;
   final bool isLoading;
 
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +35,8 @@ class AppButton extends StatelessWidget {
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(color),
           padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
-          shape: const WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5))),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: borderRadius ?? BorderRadius.all(Radius.circular(5))),
           ),
         ),
         onPressed: onPressed,
@@ -48,12 +49,12 @@ class AppButton extends StatelessWidget {
               children: [
                 isLoading
                     ? AppUIUtils.showLoadingIndicator(width: 16, height: 16)
-                    :  Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: fontSize ?? 15),
-                ),
+                    : Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: fontSize ?? 15),
+                      ),
                 if (iconData != null) Icon(iconData, size: iconSize ?? 18, color: Colors.white),
               ],
             ),

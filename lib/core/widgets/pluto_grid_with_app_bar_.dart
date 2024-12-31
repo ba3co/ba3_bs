@@ -11,7 +11,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     required this.onLoaded,
     required this.onSelected,
     this.onRowDoubleTap,
-    required this.title,
+    this.title,
     this.isLoading = false,
     required this.tableSourceModels,
     this.icon,
@@ -20,6 +20,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     this.onLeadingIconPressed,
     this.type,
     this.child,
+    this.appBar,
   });
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -27,7 +28,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   final Function(PlutoGridOnRowDoubleTapEvent)? onRowDoubleTap;
   final Function(PlutoGridOnSelectedEvent) onSelected;
 
-  final String title;
+  final String? title;
   final List<PlutoAdaptable> tableSourceModels;
   final bool isLoading;
   final IconData? icon;
@@ -36,11 +37,12 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   final VoidCallback? onLeadingIconPressed;
   final T? type;
   final Widget? child;
+  final AppBar? appBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: plutoGridAppBar(),
+      appBar: appBar ?? plutoGridAppBar(),
       body: GetBuilder<PlutoController>(
         builder: (controller) {
           return isLoading
@@ -95,7 +97,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
               icon: Icon(leadingIcon),
             )
           : null,
-      title: Text(title),
+      title: Text(title ?? ''),
       actions: [
         if (icon != null)
           IconButton(

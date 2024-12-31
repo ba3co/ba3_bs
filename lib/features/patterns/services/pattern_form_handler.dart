@@ -90,6 +90,8 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
       // Initialize the controller-to-bill-accounts map
       initializeControllerToBillAccountsMap();
 
+      accountsController.setSelectedAccounts = {};
+
       // Reset the selected bill type
       selectedBillPatternType = null;
 
