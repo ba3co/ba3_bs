@@ -22,6 +22,7 @@ class SearchableAccountField extends StatelessWidget {
   final ChequesDetailsController? chequesDetailsController;
   final bool isFirstAccountCheque;
   final bool readOnly;
+  final bool? visible;
 
   const SearchableAccountField({
     super.key,
@@ -38,38 +39,42 @@ class SearchableAccountField extends StatelessWidget {
     this.chequesDetailsController,
     this.isFirstAccountCheque = false,
     this.readOnly = false,
+    this.visible = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: width ?? Get.width * 0.45,
-      height: height,
-      child: Row(
-        children: [
-          SizedBox(width: 100, child: Text(label)),
-          Expanded(
-            child: CustomTextFieldWithIcon(
-              readOnly: readOnly,
-              textEditingController: textEditingController,
-              validator: validator,
-              onSubmitted: onSubmitted ??
-                  (text) {
-                    read<AccountsController>().openAccountSelectionDialog(
-                      query: text,
-                      textEditingController: textEditingController,
-                      isCustomerAccount: isCustomerAccount,
-                      fromAddBill: fromAddBill,
-                      context: context,
-                      bondDetailsController: bondDetailsController,
-                      billController: billController,
-                      chequesDetailsController: chequesDetailsController,
-                      isFirstAccountCheque: isFirstAccountCheque,
-                    );
-                  },
+    return Visibility(
+      visible: visible??true,
+      child: SizedBox(
+        width: width ?? Get.width * 0.45,
+        height: height,
+        child: Row(
+          children: [
+            SizedBox(width: 100, child: Text(label)),
+            Expanded(
+              child: CustomTextFieldWithIcon(
+                readOnly: readOnly,
+                textEditingController: textEditingController,
+                validator:(visible??true)? validator:null,
+                onSubmitted: onSubmitted ??
+                    (text) {
+                      read<AccountsController>().openAccountSelectionDialog(
+                        query: text,
+                        textEditingController: textEditingController,
+                        isCustomerAccount: isCustomerAccount,
+                        fromAddBill: fromAddBill,
+                        context: context,
+                        bondDetailsController: bondDetailsController,
+                        billController: billController,
+                        chequesDetailsController: chequesDetailsController,
+                        isFirstAccountCheque: isFirstAccountCheque,
+                      );
+                    },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

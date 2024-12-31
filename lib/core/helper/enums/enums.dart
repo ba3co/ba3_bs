@@ -120,6 +120,11 @@ enum BillType {
     label: 'transferOut',
     value: 'إخ.عملية مناقلة',
     typeGuide: "1e90ef6a-f7ef-484e-9035-0ab761371545",
+  ),
+  openingStock(
+    label: 'OpeningStock',
+    value: 'بضاعة أول المدة',
+    typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
   );
 
   final String label;
