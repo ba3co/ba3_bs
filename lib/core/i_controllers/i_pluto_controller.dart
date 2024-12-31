@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import 'i_recodes_pluto_controller.dart';
@@ -35,6 +36,8 @@ abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
 
   /// Calculates the final total after applying discounts and additions.
   double get calculateFinalTotal;
+
+
 
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField);
 

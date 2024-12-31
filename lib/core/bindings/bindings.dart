@@ -139,7 +139,7 @@ class AppBindings extends Bindings {
     lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billJsonImportExportRepo));
     lazyPut(AllBondsController(repositories.bondsRepo));
     lazyPut(AllChequesController(repositories.chequesRepo));
-    lazyPut(BillDetailsPlutoController());
+    lazyPut(BillDetailsPlutoController( ));
     lazyPut(MaterialController(MaterialRepository()));
     lazyPut(AccountsController(AccountsRepository()));
     lazyPut(PrintingController(repositories.translationRepo));

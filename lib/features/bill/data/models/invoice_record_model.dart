@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -165,9 +167,11 @@ class InvoiceRecordModel {
     return {"newData": newChanges, "oldData": oldChanges};
   }
 
-  Map<PlutoColumn, dynamic> toEditedMap() {
-    final subTotalStr = AppServiceUtils.toFixedDouble((invRecTotal ?? 0) / ((invRecQuantity ?? 1) * 1.05));
-    final vat = AppServiceUtils.toFixedDouble(subTotalStr * 0.05);
+  Map<PlutoColumn, dynamic> toEditedMap(BillTypeModel billTypeModel) {
+    print("billTypeModel $billTypeModel");
+
+    final subTotalStr =billTypeModel.billPatternType!.hasVat? AppServiceUtils.toFixedDouble((invRecTotal ?? 0) / ((invRecQuantity ?? 1) * 1.05)):((invRecTotal??0)/(invRecQuantity??1));
+    final vat =billTypeModel.billPatternType!.hasVat? AppServiceUtils.toFixedDouble(subTotalStr * 0.05):0;
     return {
       PlutoColumn(
         title: 'الرقم',
@@ -207,6 +211,7 @@ class InvoiceRecordModel {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): subTotalStr,
+      if(billTypeModel.billPatternType!.hasVat)
       PlutoColumn(
         title: 'الضريبة',
         field: AppConstants.invRecVat,
@@ -221,6 +226,7 @@ class InvoiceRecordModel {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecTotal,
+      if(billTypeModel.billPatternType!.hasGiftsAccount)
       PlutoColumn(
         title: 'الهدايا',
         field: AppConstants.invRecGift,

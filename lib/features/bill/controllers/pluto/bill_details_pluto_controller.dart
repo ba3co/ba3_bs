@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/vat/data/models/vat_model.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -25,9 +27,18 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   late final BillPlutoCalculator _calculator;
   late final BillPlutoUtils _plutoUtils;
   late final BillPlutoContextMenu _contextMenu;
+  final BillTypeModel? billTypeModel;
+
+  BillDetailsPlutoController({ this.billTypeModel});
+
+
+  late List<PlutoColumn> recordsTableColumns;
+
+
+
 
   // Columns and rows
-  List<PlutoColumn> recordsTableColumns = InvoiceRecordModel().toEditedMap().keys.toList();
+  // List<PlutoColumn> recordsTableColumns = InvoiceRecordModel().toEditedMap(billTypeModel!).keys.toList();
 
   List<PlutoRow> recordsTableRows = [];
 
@@ -113,6 +124,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     _calculator = BillPlutoCalculator(this);
     _plutoUtils = BillPlutoUtils(this);
     _contextMenu = BillPlutoContextMenu(this);
+
+      recordsTableColumns = InvoiceRecordModel().toEditedMap(billTypeModel!).keys.toList();
+
   }
 
   onMainTableLoaded(PlutoGridOnLoadedEvent event) {
@@ -130,6 +144,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
+
     additionsDiscountsStateManager = event.stateManager;
 
     final newRows = additionsDiscountsStateManager.getNewRows(count: 2);
@@ -155,13 +170,15 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   void _handleColumnUpdate(String columnField, int quantity, double subTotal, double total, double vat) {
     if (columnField == AppConstants.invRecSubTotal) {
-      _gridService.updateInvoiceValues(subTotal, quantity);
+      _gridService.updateInvoiceValues(subTotal, quantity,billTypeModel!);
     } else if (columnField == AppConstants.invRecTotal) {
       _gridService.updateInvoiceValuesByTotal(total, quantity);
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
       _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat);
     }
-    updateAdditionDiscountCell(computeWithVatTotal);
+    if(billTypeModel?.billPatternType?.hasDiscountsAccount??true) {
+      updateAdditionDiscountCell(computeWithVatTotal);
+    }
   }
 
   double _getSubTotal() {
@@ -222,6 +239,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
       _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
+    
+    log("onAdditionsDiscountsChanged");
     final field = event.column.field;
     final cells = event.row.cells;
     final row = event.row;
@@ -290,7 +309,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final newRows = recordsTableStateManager.getNewRows(count: 30);
 
     if (invRecords.isNotEmpty) {
-      recordsTableRows = _gridService.convertRecordsToRows(invRecords);
+      recordsTableRows = _gridService.convertRecordsToRows(invRecords,billTypeModel!);
 
       recordsTableStateManager.appendRows(recordsTableRows);
       recordsTableStateManager.appendRows(newRows);
@@ -316,6 +335,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
         update();
       });
+
+
 }
 
 // 530 - 236

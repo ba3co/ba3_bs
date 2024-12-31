@@ -16,6 +16,18 @@ extension BillPatternTypeExtension on BillPatternType {
     }
   }
 
+  bool get hasVat {
+    switch (this) {
+      case BillPatternType.purchase:
+      case BillPatternType.sales:
+      case BillPatternType.buyReturn:
+      case BillPatternType.salesReturn:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   /// Returns whether the current [BillPatternType] has cashes account.
   bool get hasCashesAccount {
     switch (this) {

@@ -303,7 +303,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareBillMaterialsRows(billItems.getMaterialRecords);
+      billDetailsPlutoController.prepareBillMaterialsRows(billItems.getMaterialRecords,);
 
   prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);

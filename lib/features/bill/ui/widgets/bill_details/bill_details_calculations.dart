@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,10 +12,12 @@ class BillDetailsCalculations extends StatelessWidget {
     super.key,
     required this.tag,
     required this.billDetailsPlutoController,
+    required this.billTypeModel,
   });
 
   final String tag;
   final BillDetailsPlutoController billDetailsPlutoController;
+  final BillTypeModel billTypeModel;
 
   @override
   Widget build(BuildContext context) {
@@ -25,24 +29,28 @@ class BillDetailsCalculations extends StatelessWidget {
         runSpacing: 10.0,
         children: [
           CalculationCard(
+            visible: billTypeModel.billPatternType!.hasVat,
             height: 60.h,
             color: Colors.blueGrey.shade400,
             value: billDetailsPlutoController.computeTotalVat.toStringAsFixed(2),
             label: 'القيمة المضافة',
           ),
           CalculationCard(
+            visible: billTypeModel.billPatternType!.hasVat,
             height: 60.h,
             color: Colors.blueGrey.shade400,
             value: billDetailsPlutoController.computeBeforeVatTotal.toStringAsFixed(2),
             label: 'المجموع قبل الضريبة',
           ),
           CalculationCard(
+            visible: billTypeModel.billPatternType!.hasVat,
             height: 60.h,
             color: Colors.grey.shade600,
             value: billDetailsPlutoController.computeWithVatTotal.toStringAsFixed(2),
             label: 'النهائي الجزئي',
           ),
           CalculationCard(
+
             width: 60.0.w,
             height: 60.h,
             color: Colors.blue,

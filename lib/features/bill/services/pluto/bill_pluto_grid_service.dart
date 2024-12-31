@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -70,14 +72,19 @@ class BillPlutoGridService {
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total);
   }
 
-  void updateInvoiceValues(double subTotal, int quantity) {
+  void updateInvoiceValues(double subTotal, int quantity, BillTypeModel billTypeModel) {
     final isZeroSubtotal = subTotal == 0;
 
     final subTotalStr = isZeroSubtotal ? '' : subTotal.toStringAsFixed(2);
-    final vat = isZeroSubtotal ? '' : (subTotal * 0.05).toStringAsFixed(2);
-    final total = isZeroSubtotal ? '' : ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2);
-
-    updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
+    final vat = isZeroSubtotal || (!billTypeModel.billPatternType!.hasVat) ? '' : (subTotal * 0.05).toStringAsFixed(2);
+    final total = isZeroSubtotal
+        ? ''
+        : billTypeModel.billPatternType!.hasVat
+            ? ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2)
+            : (subTotal * quantity).toStringAsFixed(2);
+    if (billTypeModel.billPatternType!.hasVat) {
+      updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
+    }
     updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotalStr);
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total);
     updateCellValue(mainTableStateManager, AppConstants.invRecQuantity, quantity);
@@ -113,8 +120,7 @@ class BillPlutoGridService {
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecQuantity, quantity);
   }
 
-  void updateSelectedRowCellValue(
-      PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {
+  void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {
     if (selectedRow.cells.containsKey(field)) {
       // Update the cell value in the previous row.
       stateManager.changeCellValue(
@@ -135,9 +141,7 @@ class BillPlutoGridService {
       final fields = [AppConstants.discount, AppConstants.addition];
 
       for (final field in fields) {
-        total == 0
-            ? updateAdditionsDiscountsCellValue(row.cells[field]!, '')
-            : _updateCell(field, row, total, invoiceUtils);
+        total == 0 ? updateAdditionsDiscountsCellValue(row.cells[field]!, '') : _updateCell(field, row, total, invoiceUtils);
       }
     }
   }
@@ -152,11 +156,10 @@ class BillPlutoGridService {
     updateAdditionsDiscountsCellValue(valueCell, newValue);
   }
 
-  String _getTargetField(String field) =>
-      field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
+  String _getTargetField(String field) => field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
 
-  List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records) => records.map((record) {
-        final rowData = record.toEditedMap();
+  List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records, BillTypeModel billTypeModel) => records.map((record) {
+        final rowData = record.toEditedMap(billTypeModel);
         final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);
       }).toList();

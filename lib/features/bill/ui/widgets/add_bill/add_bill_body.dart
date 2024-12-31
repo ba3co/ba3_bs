@@ -41,7 +41,7 @@ class AddBillBody extends StatelessWidget {
                   return FocusScope(
                     autofocus: true,
                     child: PlutoWithEdite(
-                      columns: addBillPlutoController.recordsTableColumns,
+                      columns: [],
                       rows: addBillPlutoController.recordsTableRows,
                       onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
                         addBillPlutoController.onMainTableRowSecondaryTap(event, context);

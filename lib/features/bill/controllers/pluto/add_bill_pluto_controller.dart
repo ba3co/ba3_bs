@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -22,7 +23,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
   late final BillPlutoContextMenu _contextMenu;
 
   // Columns and rows
-  List<PlutoColumn> recordsTableColumns = InvoiceRecordModel().toEditedMap().keys.toList();
+  // List<PlutoColumn> recordsTableColumns = InvoiceRecordModel().toEditedMap().keys.toList();
 
   List<PlutoRow> recordsTableRows = [];
 
@@ -157,7 +158,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   void _handleColumnUpdate(String columnField, int quantity, double subTotal, double total, double vat) {
     if (columnField == AppConstants.invRecSubTotal) {
-      _gridService.updateInvoiceValues(subTotal, quantity);
+      _gridService.updateInvoiceValues(subTotal, quantity,BillTypeModel());
     } else if (columnField == AppConstants.invRecTotal) {
       _gridService.updateInvoiceValuesByTotal(total, quantity);
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
@@ -290,7 +291,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
     final newRows = recordsTableStateManager.getNewRows(count: 30);
 
     if (invRecords.isNotEmpty) {
-      recordsTableRows = _gridService.convertRecordsToRows(invRecords);
+      recordsTableRows = _gridService.convertRecordsToRows(invRecords,BillTypeModel());
 
       recordsTableStateManager.appendRows(recordsTableRows);
     }
@@ -323,6 +324,10 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
     prepareAdditionsDiscountsRows([]);
     update();
   }
+
+  @override
+  // TODO: implement currentBillTypeModel
+  BillTypeModel get currentBillTypeModel => throw UnimplementedError();
 }
 
 // 530

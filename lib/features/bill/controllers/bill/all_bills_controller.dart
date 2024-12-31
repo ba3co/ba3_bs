@@ -202,7 +202,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
-        'billDetailsPlutoController': BillDetailsPlutoController(),
+        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel:lastBillModel.billTypeModel ),
         'billSearchController': BillSearchController(),
       },
     );
@@ -239,7 +239,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
-        'billDetailsPlutoController': BillDetailsPlutoController(),
+        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel:billModel.billTypeModel ),
         'billSearchController': BillSearchController(),
       },
     );

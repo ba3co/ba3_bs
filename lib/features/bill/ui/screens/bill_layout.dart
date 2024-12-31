@@ -36,12 +36,12 @@ class BillLayout extends StatelessWidget {
                 bodyWidget: GetBuilder<AllBillsController>(
                     builder: (controller) => Column(
                           spacing: 10,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Wrap(
                               spacing: 10,
                               runSpacing: 10,
-                              alignment: WrapAlignment.center,
+                              alignment: WrapAlignment.start,
                               crossAxisAlignment: WrapCrossAlignment.start,
                               children: [
                                 ...controller.billsTypes.map(
@@ -55,12 +55,7 @@ class BillLayout extends StatelessWidget {
                                     },
                                   ),
                                 ),
-                              ]+[BillTypeItemWidget(
-                                  color: AppColors.greenColor,
-                                  onTap: () {
-                                    controller..fetchAllOpeningBills()
-                                    ..openFloatingOpiningBillDetails(context,);
-                              }, text: "بضاعة اول مدة")],
+                              ],
                             ),
                             VerticalSpace(),
                             Row(
@@ -97,12 +92,7 @@ class BillLayout extends StatelessWidget {
                                 )
                               ],
                             ),
-                            AppButton(
-                              title: "title",
-                              onPressed: () {
-                                controller.fetchAllOpeningBills();
-                              },
-                            )
+
                           ],
                         )),
               ),

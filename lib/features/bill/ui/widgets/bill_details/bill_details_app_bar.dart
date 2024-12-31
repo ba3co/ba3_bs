@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -39,41 +40,44 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
           height: AppConstants.constHeightTextField,
           child: Row(
             children: [
-              SizedBox(
-                width: 250,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      width: 80,
-                      child: Text(
-                        "نوع الفاتورة" ": ",
-                        textDirection: TextDirection.rtl,
+              Visibility(
+                visible:billTypeModel.billPatternType?.hasCashesAccount ??true,
+                child: SizedBox(
+                  width: 250,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        child: Text(
+                          "نوع الفاتورة" ": ",
+                          textDirection: TextDirection.rtl,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Obx(() {
-                        return OverlayService.showDropdown<InvPayType>(
-                          value: billDetailsController.selectedPayType.value,
-                          items: InvPayType.values,
-                          itemLabelBuilder: (type) => type.label,
-                          onChanged: (selectedType) {
-                            billDetailsController.onPayTypeChanged(selectedType);
-                          },
-                          textStyle: const TextStyle(fontSize: 14),
-                          height: AppConstants.constHeightTextField,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.black38),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          onCloseCallback: () {
-                            log('InvPayType Dropdown Overly Closed.');
-                          },
-                        );
-                      }),
-                    ),
-                  ],
+                      Expanded(
+                        child: Obx(() {
+                          return OverlayService.showDropdown<InvPayType>(
+                            value: billDetailsController.selectedPayType.value,
+                            items: InvPayType.values,
+                            itemLabelBuilder: (type) => type.label,
+                            onChanged: (selectedType) {
+                              billDetailsController.onPayTypeChanged(selectedType);
+                            },
+                            textStyle: const TextStyle(fontSize: 14),
+                            height: AppConstants.constHeightTextField,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black38),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            onCloseCallback: () {
+                              log('InvPayType Dropdown Overly Closed.');
+                            },
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Row(

@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -31,6 +32,7 @@ class BillDetailsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const VerticalSpace(),
         Expanded(
           flex: 2,
           child: Container(
@@ -56,6 +58,7 @@ class BillDetailsBody extends StatelessWidget {
           ),
         ),
         const VerticalSpace(),
+        if(billTypeModel.billPatternType?.hasDiscountsAccount??true)
         GetBuilder<BillDetailsPlutoController>(
             tag: tag,
             builder: (_) {

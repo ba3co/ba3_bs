@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,7 @@ class BillDetailsHeader extends StatelessWidget {
             ),
             const VerticalSpace(8),
             FormFieldRow(
+              visible:billModel.billTypeModel.billPatternType?.hasCashesAccount ,
               firstItem: TextAndExpandedChildField(
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
