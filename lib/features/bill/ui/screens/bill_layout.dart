@@ -90,6 +90,11 @@ class BillLayout extends StatelessWidget {
                                 )
                               ],
                             ),
+
+                            AppButton(title: "title", onPressed: () {
+                              controller.fetchAllOpeningBills();
+
+                            },)
                           ],
                         )),
               ),

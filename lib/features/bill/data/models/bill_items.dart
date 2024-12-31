@@ -56,7 +56,7 @@ class BillItems extends Equatable {
 
 class BillItem  extends Equatable{
   final String itemGuid;
-  final String itemName;
+  final String? itemName;
   final int itemQuantity;
   final String itemTotalPrice;
   final double? itemSubTotalPrice;
@@ -66,7 +66,7 @@ class BillItem  extends Equatable{
 
   const BillItem({
     required this.itemGuid,
-    required this.itemName,
+     this.itemName,
     required this.itemQuantity,
     required this.itemTotalPrice,
     this.itemSubTotalPrice,

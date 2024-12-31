@@ -70,6 +70,22 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
+  Future<void> fetchAllOpeningBills() async {
+    log('fetchAllOpeningBills');
+    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bill.json');
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBills) {
+        print(fetchedBills.where((bill) => bill.billTypeModel.id=="5a9e7782-cde5-41db-886a-ac89732feda7",).toList().length);
+        // bills.assignAll(fetchedBills);
+      },
+    );
+
+    isLoading = false;
+    update();
+  }
+
   Future<void> fetchPendingBills() async {
     final result = await _billsFirebaseRepo.fetchWhere(field: ApiConstants.status, value: Status.pending.value);
 
@@ -124,8 +140,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
     await fetchAllBills();
@@ -145,8 +160,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     openFloatingBillDetails(context, billModel.billTypeModel, billModel: billModel);
   }
 
-  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel,
-      {BillModel? billModel}) async {
+  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? billModel}) async {
     await fetchAllBills();
 
     if (!context.mounted) return;

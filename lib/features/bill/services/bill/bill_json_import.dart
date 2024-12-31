@@ -5,7 +5,13 @@ class BillJsonImport extends JsonImportServiceBase<BillModel> {
   /// Converts the imported JSON structure to a list of BillModel
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
-    final List<dynamic> billsJson = jsonContent['Bill'] ?? [];
-    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
+    final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Bill'] ?? [];
+
+    List<BillModel> sss= billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
+
+
+    return sss;
   }
+
+
 }

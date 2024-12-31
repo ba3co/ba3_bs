@@ -21,7 +21,7 @@ class BillJsonExport extends JsonExportServiceBase<BillModel> {
             // Add the customer name if available
             "BillCurrencyGuid": "884edcde-c172-490d-a2f2-f10a0b90326a",
             "BillCurrencyVal": 1,
-            "BillDate": billModel.billDetails.billDate ?? "",
+            "BillDate": billModel.billDetails.billDate?.toIso8601String() ?? "",
             "BillStoreGuid": billModel.billTypeModel.accounts?[BillAccounts.store]?.id,
             "Note": billModel.billDetails.note ?? "",
             "BillCustAcc": "00000000-0000-0000-0000-000000000000",

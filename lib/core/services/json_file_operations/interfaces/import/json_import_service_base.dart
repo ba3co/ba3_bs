@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'i_json_import_service.dart';
@@ -12,7 +13,6 @@ abstract class JsonImportServiceBase<T> implements IJsonImportService<T> {
   List<T> importFromFile(String filePath) {
     final File file = File(filePath);
     final jsonContent = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
-
     return fromImportJson(jsonContent);
   }
 }
