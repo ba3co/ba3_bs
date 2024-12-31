@@ -23,8 +23,8 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
 
     if (dateFilter != null) {
       query = query
-          .where(dateFilter.field, isGreaterThanOrEqualTo: dateFilter.range.start)
-          .where(dateFilter.field, isLessThan: dateFilter.range.end);
+          .where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: dateFilter.range.start)
+          .where(dateFilter.dateFieldName, isLessThan: dateFilter.range.end);
     }
 
     final snapshot = await query.get();

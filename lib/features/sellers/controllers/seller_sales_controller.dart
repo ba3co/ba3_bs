@@ -50,13 +50,11 @@ class SellerSalesController extends GetxController with AppNavigator {
     final startOfDay = currentDate.subtract(Duration(days: 30));
     final endOfDay = currentDate;
 
-    log('message before fetchWhere');
     final result = await _billsFirebaseRepo.fetchWhere(
       field: ApiConstants.billSellerId,
       value: sellerId,
-      dateFilter: DateFilter(field: ApiConstants.billDate, range: DateTimeRange(start: startOfDay, end: endOfDay)),
+      dateFilter: DateFilter(dateFieldName: ApiConstants.billDate, range: DateTimeRange(start: startOfDay, end: endOfDay)),
     );
-    log('message after fetchWhere');
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedSellers) => _handleGetSellerBillsStatusSuccess(fetchedSellers),
@@ -67,7 +65,6 @@ class SellerSalesController extends GetxController with AppNavigator {
   }
 
   _handleGetSellerBillsStatusSuccess(List<BillModel> fetchedSellers) {
-    log('fetchedSellers ${fetchedSellers.length}');
     sellerBills.assignAll(fetchedSellers);
     // Update total sales
     calculateTotalSales();

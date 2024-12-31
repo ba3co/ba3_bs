@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DateFilter {
-  final String field;
+  final String dateFieldName;
   final DateTimeRange range;
 
-  DateFilter({required this.field, required this.range});
+  DateFilter({required this.dateFieldName, required this.range});
 }
