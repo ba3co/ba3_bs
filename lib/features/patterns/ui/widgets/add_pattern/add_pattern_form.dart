@@ -42,42 +42,42 @@ class AddPatternForm extends StatelessWidget {
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
           ),
           PatternTypeDropdown(patternController: patternController),
-          SearchableAccountField(
-            label: 'المواد',
-            visible: patternController.selectedBillPatternType?.hasMaterialAccount,
-            textEditingController: patternController.patternFormHandler.materialsController,
-            validator: (value) => patternController.patternFormHandler.validator(value, 'المواد'),
-          ),
-          SearchableAccountField(
-            label: 'الحسميات',
-            textEditingController: patternController.patternFormHandler.discountsController,
-            visible:  patternController.selectedBillPatternType?.hasDiscountsAccount,
-            //  validator: (value) => patternController.patternFormHandler.validator(value, 'الحسميات'),
-          ),
-          SearchableAccountField(
-            label: 'الاضافات',
-            visible:  patternController.selectedBillPatternType?.hasAdditionsAccount,
-            textEditingController: patternController.patternFormHandler.additionsController,
-            //   validator: (value) => patternController.patternFormHandler.validator(value, 'الاضافات'),
-          ),
-          SearchableAccountField(
-            label: 'النقديات',
-            textEditingController: patternController.patternFormHandler.cachesController,
-            visible:  patternController.selectedBillPatternType?.hasCashesAccount,
-            validator: (value) => patternController.patternFormHandler.validator(value, 'النقديات'),
-          ),
-          SearchableAccountField(
-            label: 'الهدايا',
-            visible:  patternController.selectedBillPatternType?.hasGiftsAccount,
-            textEditingController: patternController.patternFormHandler.giftsController,
-            //  validator: (value) => patternController.patternFormHandler.validator(value, 'الهدايا'),
-          ),
-          SearchableAccountField(
-            label: 'مقابل الهدايا',
-            visible:  patternController.selectedBillPatternType?.hasGiftsAccount,
-            textEditingController: patternController.patternFormHandler.exchangeForGiftsController,
-            //    validator: (value) => patternController.patternFormHandler.validator(value, 'مقابل الهدايا'),
-          ),
+          if (patternController.selectedBillPatternType?.hasMaterialAccount ?? false)
+            SearchableAccountField(
+              label: 'المواد',
+              textEditingController: patternController.patternFormHandler.materialsController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'المواد'),
+            ),
+          if (patternController.selectedBillPatternType?.hasDiscountsAccount ?? false)
+            SearchableAccountField(
+              label: 'الحسميات',
+              textEditingController: patternController.patternFormHandler.discountsController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'الحسميات'),
+            ),
+          if (patternController.selectedBillPatternType?.hasAdditionsAccount ?? false)
+            SearchableAccountField(
+              label: 'الاضافات',
+              textEditingController: patternController.patternFormHandler.additionsController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'الاضافات'),
+            ),
+          if (patternController.selectedBillPatternType?.hasCashesAccount ?? false)
+            SearchableAccountField(
+              label: 'النقديات',
+              textEditingController: patternController.patternFormHandler.cachesController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'النقديات'),
+            ),
+          if (patternController.selectedBillPatternType?.hasGiftsAccount ?? false)
+            SearchableAccountField(
+              label: 'الهدايا',
+              textEditingController: patternController.patternFormHandler.giftsController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'الهدايا'),
+            ),
+          if (patternController.selectedBillPatternType?.hasGiftsAccount ?? false)
+            SearchableAccountField(
+              label: 'مقابل الهدايا',
+              textEditingController: patternController.patternFormHandler.exchangeForGiftsController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'مقابل الهدايا'),
+            ),
           StoreDropdown(storeSelectionHandler: patternController.patternFormHandler),
         ],
       ),

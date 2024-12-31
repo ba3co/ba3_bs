@@ -45,7 +45,7 @@ class SearchableAccountField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: visible??true,
+      visible: visible ?? true,
       child: SizedBox(
         width: width ?? Get.width * 0.45,
         height: height,
@@ -56,7 +56,7 @@ class SearchableAccountField extends StatelessWidget {
               child: CustomTextFieldWithIcon(
                 readOnly: readOnly,
                 textEditingController: textEditingController,
-                validator:(visible??true)? validator:null,
+                validator: validator,
                 onSubmitted: onSubmitted ??
                     (text) {
                       read<AccountsController>().openAccountSelectionDialog(
