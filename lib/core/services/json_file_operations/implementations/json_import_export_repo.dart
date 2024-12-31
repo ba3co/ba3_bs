@@ -1,22 +1,40 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 
+import '../../../network/error/error_handler.dart';
 import '../../../network/error/failure.dart';
 import '../interfaces/export/i_json_export_repository.dart';
+import '../interfaces/export/i_json_export_service.dart';
 import '../interfaces/import/i_json_import_repository.dart';
+import '../interfaces/import/i_json_import_service.dart';
 
 class JsonImportExportRepository<T> implements IJsonImportRepository<T>, IJsonExportRepository<T> {
-  final IJsonImportRepository<T> _importRepo;
-  final IJsonExportRepository<T> _exportRepo;
+  final IJsonImportService<T> _jsonImport;
+  final IJsonExportService<T> _jsonExport;
 
-  JsonImportExportRepository(this._importRepo, this._exportRepo);
+  JsonImportExportRepository(this._jsonImport, this._jsonExport);
 
   @override
   Either<Failure, List<T>> importJsonFile(String filePath) {
-    return _importRepo.importJsonFile(filePath);
+    try {
+      List<T> itemsModels = _jsonImport.importFromFile(filePath);
+      return Right(itemsModels);
+    } catch (e) {
+      log('[$e] فشل في استيراد الملف');
+      return Left(ErrorHandler(e).failure);
+    }
   }
+
 
   @override
   Future<Either<Failure, String>> exportJsonFile(List<T> itemsModels) async {
-    return await _exportRepo.exportJsonFile(itemsModels);
+    try {
+      String filePath = await _jsonExport.exportToFile(itemsModels);
+      return Right(filePath);
+    } catch (e) {
+      log('[$e] فشل في تصدير الملف');
+      return Left(ErrorHandler(e).failure);
+    }
   }
 }
