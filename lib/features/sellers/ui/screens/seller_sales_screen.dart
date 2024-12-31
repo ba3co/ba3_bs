@@ -20,21 +20,29 @@ class SellerSalesScreen extends StatelessWidget {
         return PlutoGridWithAppBar(
           title: 'فواتير ${controller.selectedSeller!.costName}',
           appBar: AppBar(
-            title: Text('سجل مبيعات: ${controller.selectedSeller?.costName}'),
+            leadingWidth: 400,
+            leading: Row(
+              children: [
+                BackButton(),
+                const HorizontalSpace(20),
+                const Text('فلتر'),
+                const HorizontalSpace(20),
+                DateRangePicker(
+                  onSubmit: (dates) {
+                    controller.dateRange = dates;
+                    // controller.filter(dates, oldKey);
+                  },
+                ),
+              ],
+            ),
+            title: Text('سجل مبيعات ${controller.selectedSeller?.costName}'),
+            centerTitle: true,
             actions: [
-              const Text('فلتر'),
-              const HorizontalSpace(20),
-              DateRangePicker(
-                onSubmit: (dates) {
-                  // controller.dateRange = dates;
-                  // controller.filter(dates, oldKey);
-                },
-              ),
               AppButton(
                 title: 'افراغ الفلتر',
                 borderRadius: BorderRadius.circular(25),
                 onPressed: () {
-                  // controller.dateRange = null;
+                  controller.dateRange = null;
                   // controller.initSellerPage(oldKey);
                   // controller.update();
                 },

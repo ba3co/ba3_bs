@@ -27,6 +27,8 @@ class SellerSalesController extends GetxController with AppNavigator {
 
   SellerModel? selectedSeller;
 
+  List<DateTime>? dateRange = [];
+
   Future<void> addSeller(SellerModel seller) async {
     final result = await _sellersFirebaseRepo.save(seller);
 

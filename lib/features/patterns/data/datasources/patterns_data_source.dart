@@ -15,6 +15,14 @@ class PatternsDataSource extends DatasourceBase<BillTypeModel> {
   Future<List<BillTypeModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
     final billTypes = data.map((item) => BillTypeModel.fromJson(item)).toList();
+
+    // Sort the bill types by account count
+    billTypes.sort((a, b) {
+      int countA = a.accounts?.length ?? 0;
+      int countB = b.accounts?.length ?? 0;
+      return countB.compareTo(countA); // Sort in descending order
+    });
+
     return billTypes;
   }
 

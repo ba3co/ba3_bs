@@ -33,7 +33,7 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(color),
+          backgroundColor: WidgetStatePropertyAll(color ?? Colors.blue.shade700),
           padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(borderRadius: borderRadius ?? BorderRadius.all(Radius.circular(5))),
