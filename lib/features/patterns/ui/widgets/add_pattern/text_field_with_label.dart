@@ -8,6 +8,7 @@ class TextFieldWithLabel extends StatelessWidget {
   final TextEditingController textEditingController;
   final FormFieldValidator<String> validator;
   final TextStyle? textStyle;
+  final bool visible;
 
   const TextFieldWithLabel({
     super.key,
@@ -15,23 +16,27 @@ class TextFieldWithLabel extends StatelessWidget {
     required this.textEditingController,
     required this.validator,
     this.textStyle,
+    this.visible=true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: Get.width * 0.45,
-      child: Row(
-        children: [
-          SizedBox(width: 100, child: Text(label)),
-          Expanded(
-            child: CustomTextFieldWithoutIcon(
-              textEditingController: textEditingController,
-              validator: validator,
-              textStyle: textStyle ?? const TextStyle(fontSize: 18),
+    return Visibility(
+      visible:visible ,
+      child: SizedBox(
+        width: Get.width * 0.45,
+        child: Row(
+          children: [
+            SizedBox(width: 100, child: Text(label)),
+            Expanded(
+              child: CustomTextFieldWithoutIcon(
+                textEditingController: textEditingController,
+                validator: visible ? validator : null,
+                textStyle: textStyle ?? const TextStyle(fontSize: 18),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

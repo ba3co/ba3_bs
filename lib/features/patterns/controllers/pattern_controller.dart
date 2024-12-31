@@ -28,6 +28,9 @@ class PatternController extends GetxController with AppNavigator {
   // Form Handlers
   late final PatternFormHandler patternFormHandler;
 
+
+
+  BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType;
   @override
   void onInit() {
     super.onInit();
