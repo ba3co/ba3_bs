@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
@@ -27,6 +25,8 @@ class SellerSalesController extends GetxController with AppNavigator {
 
   bool isLoading = true;
 
+  SellerModel? selectedSeller;
+
   Future<void> addSeller(SellerModel seller) async {
     final result = await _sellersFirebaseRepo.save(seller);
 
@@ -45,15 +45,20 @@ class SellerSalesController extends GetxController with AppNavigator {
     );
   }
 
-  Future<void> fetchSellerBillsByDate({required String sellerId}) async {
+  set setSelectedSeller(SellerModel sellerModel) {
+    selectedSeller = sellerModel;
+  }
+
+  Future<void> fetchSellerBillsByDate({required SellerModel sellerModel}) async {
     final currentDate = DateTime.now();
     final startOfDay = currentDate.subtract(Duration(days: 30));
     final endOfDay = currentDate;
 
     final result = await _billsFirebaseRepo.fetchWhere(
       field: ApiConstants.billSellerId,
-      value: sellerId,
-      dateFilter: DateFilter(dateFieldName: ApiConstants.billDate, range: DateTimeRange(start: startOfDay, end: endOfDay)),
+      value: sellerModel.costGuid,
+      dateFilter:
+          DateFilter(dateFieldName: ApiConstants.billDate, range: DateTimeRange(start: startOfDay, end: endOfDay)),
     );
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

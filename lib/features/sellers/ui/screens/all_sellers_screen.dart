@@ -33,8 +33,10 @@ class AllSellersScreen extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell(
                                 onTap: () {
+                                  final sellerModel = controller.sellers[index];
                                   read<SellerSalesController>()
-                                      .fetchSellerBillsByDate(sellerId: controller.sellers[index].costGuid!);
+                                    ..setSelectedSeller = sellerModel
+                                    ..fetchSellerBillsByDate(sellerModel: sellerModel);
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(4),

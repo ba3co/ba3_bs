@@ -5,9 +5,11 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CustomDatePickerDialog extends StatelessWidget {
   const CustomDatePickerDialog({super.key, this.onTimeSelect, required this.onClose});
+
   final Function(DateRangePickerSelectionChangedArgs)? onTimeSelect;
 
   final VoidCallback onClose;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -17,24 +19,19 @@ class CustomDatePickerDialog extends StatelessWidget {
         children: [
           Expanded(
             child: SfDateRangePicker(
-              initialDisplayDate: DateTime.now(),
-              enableMultiView: false,
-              backgroundColor: Colors.transparent,
-              headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
-              navigationDirection: DateRangePickerNavigationDirection.vertical,
-              selectionMode: DateRangePickerSelectionMode.multiple,
-              monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
-              showNavigationArrow: true,
-              navigationMode: DateRangePickerNavigationMode.scroll,
-              onSelectionChanged: onTimeSelect
-            ),
+                initialDisplayDate: DateTime.now(),
+                enableMultiView: false,
+                backgroundColor: Colors.transparent,
+                headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
+                navigationDirection: DateRangePickerNavigationDirection.vertical,
+                selectionMode: DateRangePickerSelectionMode.multiple,
+                monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
+                showNavigationArrow: true,
+                navigationMode: DateRangePickerNavigationMode.scroll,
+                onSelectionChanged: onTimeSelect),
           ),
-
-
-          AppButton(title: 'تم',     onPressed:  onClose,)
-
+          AppButton(title: 'تم', onPressed: onClose)
         ],
-
       ),
     );
   }

@@ -1,42 +1,66 @@
 import '../enums/enums.dart';
 
 extension BillPatternTypeExtension on BillPatternType {
-
-  /// This function checks the permission status based on the [BillPatternType].
-  bool _checkPermissionStatus() {
+  /// Returns whether the current [BillPatternType] has material account.
+  bool get hasMaterialAccount {
     switch (this) {
-    case BillPatternType.purchase:
-    return true;
-    case BillPatternType.sales:
-    return true;
-
-
-    case BillPatternType.add:
+      case BillPatternType.purchase:
+      case BillPatternType.sales:
+      case BillPatternType.buyReturn:
+      case BillPatternType.salesReturn:
+      case BillPatternType.add:
       case BillPatternType.remove:
-    return false;
-
-    case BillPatternType.openingStock:
-    return false;
-
-    case BillPatternType.buyReturn:
-    case BillPatternType.salesReturn:
-    return true;
-
+        return true;
+      default:
+        return false;
     }
   }
 
-  /// Returns whether the current [BillPatternType] has material account.
-  bool get hasMaterialAccount => _checkPermissionStatus();
-
   /// Returns whether the current [BillPatternType] has cashes account.
-  bool get hasCashesAccount => _checkPermissionStatus();
+  bool get hasCashesAccount {
+    switch (this) {
+      case BillPatternType.purchase:
+      case BillPatternType.sales:
+      case BillPatternType.buyReturn:
+      case BillPatternType.salesReturn:
+      case BillPatternType.add:
+      case BillPatternType.remove:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   /// Returns whether the current [BillPatternType] has additions account.
-  bool get hasAdditionsAccount => _checkPermissionStatus();
+  bool get hasAdditionsAccount {
+    switch (this) {
+      case BillPatternType.purchase:
+      case BillPatternType.sales:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   /// Returns whether the current [BillPatternType] has discounts account.
-  bool get hasDiscountsAccount => _checkPermissionStatus();
+  bool get hasDiscountsAccount {
+    switch (this) {
+      case BillPatternType.purchase:
+      case BillPatternType.sales:
+        return true;
+      default:
+        return false;
+    }
+  }
 
   /// Returns whether the current [BillPatternType] has gifts account.
-  bool get hasGiftsAccount => _checkPermissionStatus();
+  bool get hasGiftsAccount {
+    switch (this) {
+      case BillPatternType.purchase:
+      case BillPatternType.sales:
+        return true;
+      default:
+        return false;
+    }
+  }
 }
