@@ -90,8 +90,8 @@ class MaterialController extends GetxController with AppNavigator {
     return matBarCode;
   }
 
-  MaterialModel getMaterialById(String id) {
-    return materials.firstWhere((material) => material.id == id);
+  MaterialModel? getMaterialById(String id) {
+    return materials.firstWhereOrNull((material) => material.id == id);
   }
 
   MaterialModel? getMaterialByName(name) {

@@ -93,7 +93,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   Future<void> fetchAllBillsFromLocal() async {
     log('fetchAllBillsFromLocal');
     getBillsRequestState.value=RequestState.loading;
-    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bill.json');
+    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/free_start.json');
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
