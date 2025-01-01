@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,6 +47,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
       appBar: appBar ?? plutoGridAppBar(),
       body: GetBuilder<PlutoController>(
         builder: (controller) {
+          log('controller.plutoKey = ${controller.plutoKey}');
           return isLoading
               ? const SizedBox()
               : Column(

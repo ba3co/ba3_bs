@@ -11,7 +11,7 @@ class AddSellerScreen extends StatelessWidget {
         title: Text('بائع جديد'),
       ),
       body: Center(
-        child: Text('Add all sellers'),
+        child: Text('Add new sellers'),
       ),
     );
   }

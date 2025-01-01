@@ -14,94 +14,101 @@ class SellerSalesScreen extends StatelessWidget {
   const SellerSalesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return GetBuilder<SellerSalesController>(
-      builder: (controller) {
-        return PlutoGridWithAppBar(
+  Widget build(BuildContext context) => GetBuilder<SellerSalesController>(
+        builder: (controller) => PlutoGridWithAppBar(
           title: 'فواتير ${controller.selectedSeller!.costName}',
-          appBar: AppBar(
-            leadingWidth: 400,
-            leading: Row(
-              children: [
-                BackButton(),
-                const HorizontalSpace(20),
-                const Text('فلتر'),
-                const HorizontalSpace(20),
-                DateRangePicker(
-                  onSubmit: (dates) {
-                    controller.dateRange = dates;
-                    // controller.filter(dates, oldKey);
-                  },
-                ),
-              ],
-            ),
-            title: Text('سجل مبيعات ${controller.selectedSeller?.costName}'),
-            centerTitle: true,
-            actions: [
-              AppButton(
-                title: 'افراغ الفلتر',
-                borderRadius: BorderRadius.circular(25),
-                onPressed: () {
-                  controller.dateRange = null;
-                  // controller.initSellerPage(oldKey);
-                  // controller.update();
-                },
-              ),
-              const HorizontalSpace(20),
-              AppButton(
-                title: 'تعديل',
-                borderRadius: BorderRadius.circular(25),
-                onPressed: () {
-                  // Get.to(() => AddSellerPage(
-                  //   oldKey: oldKey,
-                  // ));
-                },
-              ),
-              const HorizontalSpace(20),
-              AppButton(
-                title: 'التارغيت',
-                borderRadius: BorderRadius.circular(25),
-                onPressed: () {
-                  // Get.find<TargetController>().initSeller(oldKey!);
-                  // Get.to(() => SellerTargetPage(sellerId: oldKey!));
-                },
-              ),
-              const HorizontalSpace(20),
-            ],
-          ),
+          appBar: _buildAppBar(context, controller),
           onLoaded: (e) {},
           onSelected: (event) {
-            String billId = event.row?.cells['billId']?.value;
-            read<AllBillsController>().openFloatingBillDetailsById(billId, context);
+            final billId = event.row?.cells['billId']?.value;
+            if (billId != null) {
+              read<AllBillsController>().openFloatingBillDetailsById(billId, context);
+            }
           },
           isLoading: controller.isLoading,
-          tableSourceModels: controller.sellerBills,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'المجموع :',
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
-                    ),
-                    const HorizontalSpace(10),
-                    Text(
-                      AppUIUtils.formatDecimalNumberWithCommas(controller.totalSales.value),
-                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          tableSourceModels: controller.sellerSales,
+          child: _buildSummary(controller),
+        ),
+      );
+
+  /// Builds the app bar with title, leading and action widgets.
+  AppBar _buildAppBar(BuildContext context, SellerSalesController controller) {
+    return AppBar(
+      leadingWidth: 400,
+      leading: _buildLeadingSection(controller),
+      title: Text('سجل مبيعات ${controller.selectedSeller?.costName}'),
+      centerTitle: true,
+      actions: _buildActionButtons(),
+    );
+  }
+
+  /// Creates the leading section containing back button and date range picker.
+  Widget _buildLeadingSection(SellerSalesController controller) {
+    return Row(
+      children: [
+        const BackButton(),
+        const HorizontalSpace(20),
+        DateRangePicker(onSubmit: controller.onSubmitDateRangePicker),
+        const HorizontalSpace(20),
+        IconButton(
+          onPressed: controller.inFilterMode ? controller.clearFilter : null,
+          icon: Icon(
+            controller.inFilterMode ? Icons.filter_alt : Icons.filter_alt_off_outlined,
+            color: Colors.blue.shade700,
           ),
-        );
-      },
+          tooltip: 'افراغ الفلتر',
+        ),
+      ],
+    );
+  }
+
+  /// Generates action buttons in the app bar.
+  List<Widget> _buildActionButtons() {
+    return [
+      AppButton(
+        title: 'تعديل',
+        borderRadius: BorderRadius.circular(25),
+        onPressed: () {
+          // TODO: Add navigation logic for editing
+        },
+      ),
+      const HorizontalSpace(20),
+      AppButton(
+        title: 'التارغيت',
+        borderRadius: BorderRadius.circular(25),
+        onPressed: () {
+          // TODO: Add navigation logic for target page
+        },
+      ),
+      const HorizontalSpace(20),
+    ];
+  }
+
+  /// Builds the sales summary section showing the total sales.
+  Widget _buildSummary(SellerSalesController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'المجموع :',
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+              ),
+              const HorizontalSpace(10),
+              Text(
+                AppUIUtils.formatDecimalNumberWithCommas(controller.totalSales),
+                style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
