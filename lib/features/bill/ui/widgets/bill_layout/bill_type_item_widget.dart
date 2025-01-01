@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/app_button.dart';
 
 class BillTypeItemWidget extends StatelessWidget {
-  const BillTypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white});
+  const BillTypeItemWidget({super.key, required this.onTap, required this.text, this.color = Colors.white,  this.isLoading=false});
 
   final VoidCallback onTap;
   final String text;
   final Color color;
+ final  bool isLoading ;
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +91,7 @@ class BillTypeItemWidget extends StatelessWidget {
               left: 0,
               child: Center(
                 child: AppButton(
+                  isLoading: isLoading,
                   title: 'جديد',
                   onPressed: onTap,
                   iconData: Icons.add,

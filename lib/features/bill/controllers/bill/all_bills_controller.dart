@@ -38,8 +38,9 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   List<BillModel> bills = [];
   List<BillModel> pendingBills = [];
 
-  bool isLoading = true;
+  bool plutoGridIsLoading = true;
 
+  Rx<RequestState> getBillsRequestState = RequestState.initial.obs;
   bool isPendingBillsLoading = true;
 
   // Initializer
@@ -57,7 +58,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  /*Future<void> fetchAllBills() async {
+  Future<void> fetchAllBills() async {
     log('fetchBills');
     final result = await _billsFirebaseRepo.getAll();
 
@@ -66,12 +67,13 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       (fetchedBills) => bills.assignAll(fetchedBills),
     );
 
-    isLoading = false;
+    plutoGridIsLoading = false;
     update();
-  }*/
+  }
 
   Future<void> fetchAllOpeningBills() async {
     log('fetchAllOpeningBills');
+
     final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bill.json');
 
     result.fold(
@@ -84,22 +86,26 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       },
     );
 
-    isLoading = false;
+    plutoGridIsLoading = false;
     update();
   }
+
   Future<void> fetchAllBillsFromLocal() async {
     log('fetchAllBillsFromLocal');
+    getBillsRequestState.value=RequestState.loading;
     final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bill.json');
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedBills) {
-        log( "fetchedBills length ${fetchedBills.length}");
+        log("fetchedBills length ${fetchedBills.length}");
+
+        getBillsRequestState.value=RequestState.success;
         bills.assignAll(fetchedBills);
       },
     );
 
-    isLoading = false;
+    plutoGridIsLoading = false;
     update();
   }
 
@@ -124,7 +130,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       (fetchedBills) => bills.add(fetchedBills),
     );
 
-    isLoading = false;
+    plutoGridIsLoading = false;
     update();
   }
 
@@ -179,6 +185,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? billModel}) async {
+    plutoGridIsLoading = false;
     await fetchAllBillsFromLocal();
 
     if (!context.mounted) return;
@@ -218,7 +225,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
-        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel:lastBillModel.billTypeModel ),
+        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel: lastBillModel.billTypeModel),
         'billSearchController': BillSearchController(),
       },
     );
@@ -255,7 +262,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
-        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel:billModel.billTypeModel ),
+        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel: billModel.billTypeModel),
         'billSearchController': BillSearchController(),
       },
     );
@@ -307,8 +314,10 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     );
     return billModel;
   }
-  Future<BillModel> fetchBillByIdFromLocal(String billId) async {
 
-    return bills.firstWhere((bill) => bill.billId==billId,);
+  Future<BillModel> fetchBillByIdFromLocal(String billId) async {
+    return bills.firstWhere(
+      (bill) => bill.billId == billId,
+    );
   }
 }

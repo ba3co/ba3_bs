@@ -17,7 +17,7 @@ class AllBillsScreen extends StatelessWidget {
           String billId = event.row?.cells['billId']?.value;
           controller.openFloatingBillDetailsById(billId, context);
         },
-        isLoading: controller.isLoading,
+        isLoading: controller.plutoGridIsLoading,
         tableSourceModels: controller.bills,
         icon: Icons.outbox,
         onIconPressed: controller.exportBillsJsonFile,

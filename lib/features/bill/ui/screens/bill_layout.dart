@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
@@ -9,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../widgets/bill_layout/bill_layout_app_bar.dart';
 import '../widgets/bill_layout/bill_type_item_widget.dart';
@@ -45,14 +45,17 @@ class BillLayout extends StatelessWidget {
                               crossAxisAlignment: WrapCrossAlignment.start,
                               children: [
                                 ...controller.billsTypes.map(
-                                  (billTypeModel) => BillTypeItemWidget(
-                                    text: billTypeModel.fullName!,
-                                    color: Color(billTypeModel.color!),
-                                    onTap: () {
-                                      controller
-                                        ..fetchAllBillsFromLocal()
-                                        ..openFloatingBillDetails(context, billTypeModel);
-                                    },
+                                  (billTypeModel) => Obx(
+                                    () => BillTypeItemWidget(
+                                      text: billTypeModel.fullName!,
+                                      isLoading: controller.getBillsRequestState.value == RequestState.loading,
+                                      color: Color(billTypeModel.color!),
+                                      onTap: () {
+                                        controller
+                                          /*..fetchAllBillsFromLocal()*/
+                                          .openFloatingBillDetails(context, billTypeModel);
+                                      },
+                                    ),
                                   ),
                                 ),
                               ],
@@ -66,7 +69,7 @@ class BillLayout extends StatelessWidget {
                                   fontSize: 13.sp,
                                   color: AppColors.grayColor,
                                   onPressed: () {
-                                    read<AllBillsController>()
+                                    controller
                                       ..fetchAllBillsFromLocal()
                                       ..navigateToAllBillsScreen();
                                   },
@@ -81,7 +84,7 @@ class BillLayout extends StatelessWidget {
                                     fontSize: 13.sp,
                                     color: AppColors.grayColor,
                                     onPressed: () {
-                                      read<AllBillsController>()
+                                      controller
                                         ..fetchPendingBills()
                                         ..navigateToPendingBillsScreen();
                                     },
@@ -92,7 +95,6 @@ class BillLayout extends StatelessWidget {
                                 )
                               ],
                             ),
-
                           ],
                         )),
               ),
