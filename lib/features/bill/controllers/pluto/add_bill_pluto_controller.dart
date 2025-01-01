@@ -325,9 +325,7 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
     update();
   }
 
-  @override
-  // TODO: implement currentBillTypeModel
-  BillTypeModel get currentBillTypeModel => throw UnimplementedError();
+
 }
 
 // 530

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -89,7 +90,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
   }) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
-      await read<AllBillsController>().fetchAllBills();
+      await read<AllBillsController>().fetchAllBillsFromLocal();
       Get.back();
     } else {
       billSearchController.removeBill(billModel);
@@ -108,7 +109,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     AppUIUtils.onSuccess('تم القبول بنجاح');
     billSearchController.updateBill(updatedBillModel);
 
-    if (updatedBillModel.status == Status.approved) {
+    if (updatedBillModel.status == Status.approved&&updatedBillModel.billTypeModel.billPatternType!.hasCashesAccount) {
       bondController.saveEntryBondModel(
         entryBondModel: createEntryBondModel(
           isSimulatedVat: false,
@@ -144,7 +145,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
       pdfGenerator: BillPdfGenerator(),
     );
 
-    if (billModel.status == Status.approved) {
+    if (billModel.status == Status.approved&&billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       bondController.saveEntryBondModel(
         entryBondModel: createEntryBondModel(
           isSimulatedVat: false,

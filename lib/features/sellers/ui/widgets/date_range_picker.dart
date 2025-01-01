@@ -39,9 +39,9 @@ class _DateRangePickerState extends State<DateRangePicker> {
                     showNavigationArrow: true,
                     navigationMode: DateRangePickerNavigationMode.scroll,
                     onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                      PickerDateRange _ = dateRangePickerSelectionChangedArgs.value as PickerDateRange;
-                      if (_.startDate != null && _.endDate != null) {
-                        date = [_.startDate!, _.endDate!];
+                      PickerDateRange dateSelected = dateRangePickerSelectionChangedArgs.value as PickerDateRange;
+                      if (dateSelected.startDate != null && dateSelected.endDate != null) {
+                        date = [dateSelected.startDate!, dateSelected.endDate!];
                       }
                     },
                   ),

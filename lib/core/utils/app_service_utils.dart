@@ -168,6 +168,13 @@ class AppServiceUtils {
 
     return total - sunTotal;
   }
+  static double calcSubtotal(int? quantity, double? total) {
+    if (quantity == null || quantity == 0 || total == null || total == 0) return 0;
+
+
+
+    return total/quantity;
+  }
 
   static int getItemQuantity(PlutoRow row, String cellKey) {
     final String cellValue = row.cells[cellKey]?.value.toString() ?? '';

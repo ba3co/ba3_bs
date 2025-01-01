@@ -177,6 +177,7 @@ mixin BillEntryBondCreatingService {
     required bool isSales,
     required bool isSimulatedVat,
   }) {
+
     /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
     final vat = isSimulatedVat
         ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity

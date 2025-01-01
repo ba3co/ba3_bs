@@ -50,7 +50,6 @@ import '../network/api_constants.dart';
 import '../services/firebase/implementations/datasource_repo.dart';
 import '../services/firebase/implementations/firestore_service.dart';
 import '../services/get_x/shared_preferences_service.dart';
-import '../services/json_file_operations/implementations/export/json_export_repo.dart';
 import '../services/json_file_operations/interfaces/export/i_json_export_service.dart';
 import '../services/json_file_operations/interfaces/import/i_json_import_service.dart';
 import '../services/translation/implementations/dio_client.dart';

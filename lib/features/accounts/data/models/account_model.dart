@@ -7,34 +7,34 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 
 class AccountModel implements PlutoAdaptable {
-  String? id;
-  String? accName;
-  String? accLatinName;
-  String? accCode;
-  DateTime? accCDate;
-  DateTime? accCheckDate;
-  String? accParentGuid;
-  String? accFinalGuid;
-  int? accAccNSons;
-  double? accInitDebit;
-  double? accInitCredit;
-  double? maxDebit;
-  int? accWarn;
-  String? note;
-  int? accCurVal;
-  String? accCurGuid;
-  int? accSecurity;
-  int? accDebitOrCredit;
-  int? accType;
-  int? accState;
-  int? accIsChangableRatio;
-  String? accBranchGuid;
-  int? accNumber;
-  int? accBranchMask;
+  final  String? id;
+  final String? accName;
+  final String? accLatinName;
+  final String? accCode;
+  final  DateTime? accCDate;
+  final  DateTime? accCheckDate;
+  final String? accParentGuid;
+  final String? accFinalGuid;
+  final int? accAccNSons;
+  final double? accInitDebit;
+  final double? accInitCredit;
+  final double? maxDebit;
+  final int? accWarn;
+  final String? note;
+  final int? accCurVal;
+  final  String? accCurGuid;
+  final int? accSecurity;
+  final int? accDebitOrCredit;
+  final int? accType;
+  final int? accState;
+  final  int? accIsChangableRatio;
+  final String? accBranchGuid;
+  final int? accNumber;
+  final int? accBranchMask;
 
-  List<String>? billsId;
+  final List<String>? billsId;
 
-  AccountModel({
+ const AccountModel({
     this.id,
     this.accName,
     this.accLatinName,

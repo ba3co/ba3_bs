@@ -33,7 +33,7 @@ class BillSearchController extends GetxController {
 
     _setCurrentBill(currentBillIndex);
 
-    log('bills length ${bills.length}, currentBillIndex $currentBillIndex, currentBillNumber ${currentBill.billDetails.billNumber}');
+    // log('bills length ${bills.length}, currentBillIndex $currentBillIndex, currentBillNumber ${currentBill.billDetails.billNumber}');
   }
 
   /// Gets the current bill

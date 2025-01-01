@@ -28,6 +28,118 @@ enum RecordType {
   fProduct
 }
 
+enum BillType {
+  sales(
+    label: 'sales',
+    value: 'فاتورة مبيعات',
+    typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
+    color: 4282339765,
+      accounts: {
+        BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+        BillAccounts.additions: AccountModel(accName: "ايرادات مختلفة", id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
+        BillAccounts.discounts: AccountModel(accName: "الحسم الممنوح", id: "e903d658-f30f-46c8-82c0-fee86256a511"),
+        BillAccounts.materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
+        BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+        BillAccounts.gifts: AccountModel(accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
+        BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+      }
+  ),
+  purchase(
+    label: 'purchase',
+    value: 'فاتورة مشتريات',
+    typeGuide: "eb10653a-a43f-44e5-889d-41ce68c43ec4",
+    color: 4284513675,
+    accounts: {
+      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.additions: AccountModel(accName: "مصاريف نقل المشتريات", id: "c5cdd2bc-85c2-4f7c-a4c8-13c847794211"),
+      BillAccounts.discounts: AccountModel(accName: "الحسم المكتسب", id: "7102c69a-50f6-4489-a3e5-811bef04f26d"),
+      BillAccounts.materials: AccountModel(accName: "المشتريات", id: "4fd556cc-6408-4fe7-809a-0d35bc399c11"),
+      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.gifts: AccountModel(accName: "إكراميات وهدايا", id: "220e1101-08a3-45a8-bd66-b244a1674d36"),
+      BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+    },
+  ),
+  salesReturn(
+    label: 'salesReturn',
+    value: 'فاتورة مرتجع مبيع',
+    typeGuide: "2373523c-9f23-4ce7-a6a2-6277757fc381",
+    color: 4278228616,
+    accounts: {},
+  ),
+  purchaseReturn(
+    label: 'purchaseReturn',
+    value: 'قاتورة مرتجع شراء',
+    typeGuide: "507f9e7d-e44e-4c4e-9761-bb3cd4fc1e0d",
+    color: 4278228616,
+    accounts: {},
+  ),
+  adjustmentEntry(
+    label: 'adjustmentEntry',
+    value: 'فاتورة تسوية ادخال',
+    typeGuide: "06f0e6ea-3493-480c-9e0c-573baf049605",
+    color: 4278228616,
+    accounts: {},
+  ),
+  outputAdjustment(
+    label: 'outputAdjustment',
+    value: 'فاتورة تسوية اخراج',
+    typeGuide: "563af9aa-5d7e-470b-8c3c-fee784da810a",
+    color: 4278228616,
+    accounts: {},
+  ),
+  firstPeriodInventory(
+      label: 'firstPeriodInventory',
+      value: 'بضاعة أول المدة',
+      typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
+      color: 4287349578,
+      accounts:{}),
+  transferIn(
+      label: 'transferIn',
+      value: 'إد.عملية مناقلة',
+      typeGuide: "f0f2a5db-53ed-4e53-9686-d6a809911327",
+      color: 4278228616,
+    accounts: {}
+    ),
+  transferOut(
+    label: 'transferOut',
+    value: 'إخ.عملية مناقلة',
+    typeGuide: "1e90ef6a-f7ef-484e-9035-0ab761371545",
+    color: 4278228616,
+    accounts: {},
+  );
+
+  final String label;
+
+  final String value;
+
+  final String typeGuide;
+  final int color;
+  final Map<Account, AccountModel> accounts;
+
+  const BillType({
+    required this.label,
+    required this.value,
+    required this.typeGuide,
+    required this.color,
+    required this.accounts,
+  });
+
+  // Factory constructor with error handling for unmatched labels
+  factory BillType.byLabel(String label) {
+    return BillType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching BillType for label: $label'),
+    );
+  }
+
+  factory BillType.byTypeGuide(String typeGuide) {
+    return BillType.values.firstWhere(
+      (type) => type.typeGuide == typeGuide,
+      orElse: () => throw ArgumentError('No matching BillType for guide: $typeGuide'),
+    );
+  }
+}
+
 enum BillPatternType {
   purchase(label: 'شراء', value: 'purchase'),
   sales(label: 'مبيع', value: 'sales'),
@@ -35,7 +147,15 @@ enum BillPatternType {
   salesReturn(label: 'مرتجع بيع', value: 'salesReturn'),
   add(label: 'تسوية إدخال', value: 'adjustmentEntry'),
   remove(label: 'تسوية إخراج', value: 'outputAdjustment'),
-  openingStock(label: 'بضاعة اول مدة', value: 'OpeningStock');
+  firstPeriodInventory(label: 'بضاعة اول مدة', value: 'firstPeriodInventory'),
+  transferOut(
+    value: 'transferOut',
+    label: 'إخ.عملية مناقلة',
+  ),
+  transferIn(
+    value: 'transferIn',
+    label: 'إد.عملية مناقلة',
+  );
 
   final String label;
   final String value;
@@ -46,9 +166,17 @@ enum BillPatternType {
   });
 
   // Factory constructor with error handling for unmatched labels
-  factory BillPatternType.byValue(String label) {
+  factory BillPatternType.byValue(String value) {
     return BillPatternType.values.firstWhere(
-      (type) => type.value == label,
+      (type) => type.value == value,
+      orElse: () => throw ArgumentError('No matching BillPatternType for value: $value'),
+    );
+  }
+
+  // Factory constructor with error handling for unmatched labels
+  factory BillPatternType.byLabel(String label) {
+    return BillPatternType.values.firstWhere(
+      (type) => type.label == label,
       orElse: () => throw ArgumentError('No matching BillPatternType for label: $label'),
     );
   }
@@ -71,86 +199,6 @@ enum InvPayType {
     return InvPayType.values.firstWhere(
       (type) => type.index == index,
       orElse: () => throw ArgumentError('No matching BillType for label: $index'),
-    );
-  }
-}
-
-enum BillType {
-  sales(
-    label: 'sales',
-    value: 'فاتورة مبيعات',
-    typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
-  ),
-  purchase(
-    label: 'purchase',
-    value: 'فاتورة مشتريات',
-    typeGuide: "eb10653a-a43f-44e5-889d-41ce68c43ec4",
-  ),
-  salesReturn(
-    label: 'salesReturn',
-    value: 'فاتورة مرتجع مبيع',
-    typeGuide: "2373523c-9f23-4ce7-a6a2-6277757fc381",
-  ),
-  purchaseReturn(
-    label: 'purchaseReturn',
-    value: 'قاتورة مرتجع شراء',
-    typeGuide: "507f9e7d-e44e-4c4e-9761-bb3cd4fc1e0d",
-  ),
-  adjustmentEntry(
-    label: 'adjustmentEntry',
-    value: 'فاتورة تسوية ادخال',
-    typeGuide: "06f0e6ea-3493-480c-9e0c-573baf049605",
-  ),
-  outputAdjustment(
-    label: 'outputAdjustment',
-    value: 'فاتورة تسوية اخراج',
-    typeGuide: "563af9aa-5d7e-470b-8c3c-fee784da810a",
-  ),
-  firstPeriodInventory(
-    label: 'firstPeriodInventory',
-    value: 'بضاعة أول المدة',
-    typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
-  ),
-  transferIn(
-    label: 'transferIn',
-    value: 'إد.عملية مناقلة',
-    typeGuide: "f0f2a5db-53ed-4e53-9686-d6a809911327",
-  ),
-  transferOut(
-    label: 'transferOut',
-    value: 'إخ.عملية مناقلة',
-    typeGuide: "1e90ef6a-f7ef-484e-9035-0ab761371545",
-  ),
-  openingStock(
-    label: 'OpeningStock',
-    value: 'بضاعة أول المدة',
-    typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
-  );
-
-  final String label;
-
-  final String value;
-
-  final String typeGuide;
-
-  const BillType({
-    required this.label,
-    required this.value,
-    required this.typeGuide,
-  });
-
-  // Factory constructor with error handling for unmatched labels
-  factory BillType.byLabel(String label) {
-    return BillType.values.firstWhere(
-      (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching BillType for label: $label'),
-    );
-  }
-
-  factory BillType.byTypeGuide(String typeGuide) {
-    return BillType.values.firstWhere(
-      (type) => type.typeGuide == typeGuide,
-      orElse: () => throw ArgumentError('No matching BillType for guide: $typeGuide'),
     );
   }
 }

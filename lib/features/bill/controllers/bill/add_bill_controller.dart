@@ -362,7 +362,7 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
   }) async {
     AllBillsController allBillsController = read<AllBillsController>();
 
-    await allBillsController.fetchAllBills();
+    await allBillsController.fetchAllBillsFromLocal();
 
     resetBillForm();
 

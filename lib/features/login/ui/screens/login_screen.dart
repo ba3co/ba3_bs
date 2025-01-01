@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
 import '../widgets/login_header_text.dart';
 

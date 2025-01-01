@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
@@ -75,8 +76,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   RxBool isBillSaved = false.obs;
 
   @override
-  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
-      selectedAdditionsDiscountAccounts[key] = value;
+  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) => selectedAdditionsDiscountAccounts[key] = value;
 
   @override
   Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
@@ -96,10 +96,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   @override
-  Future<void> sendToEmail(
-      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
-    _billService.sendToEmail(
-        recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
+  Future<void> sendToEmail({required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
+    _billService.sendToEmail(recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
   }
 
   @override
@@ -230,20 +228,27 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts
-    if (!_billUtils.validateCustomerAccount(selectedCustomerAccount) ||
-        !_billUtils.validateSellerAccount(sellerController.selectedSellerAccount)) {
+    if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
+      if (!_billUtils.validateCustomerAccount(selectedCustomerAccount)) {
+        return null;
+      }
+    }
+
+    if (!_billUtils.validateSellerAccount(sellerController.selectedSellerAccount)) {
       return null;
     }
+
     final updatedBillTypeModel = _accountHandler.updateBillTypeAccounts(
             billTypeModel, selectedAdditionsDiscountAccounts, selectedCustomerAccount, selectedStore.value) ??
         billTypeModel;
+
 
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
-      billCustomerId: selectedCustomerAccount!.id!,
+      billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billSellerId: sellerController.selectedSellerAccount!.costGuid!,
       billPayType: selectedPayType.value.index,
     );
@@ -290,8 +295,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   String _generateUniqueTag() => 'AddBillController_${UniqueKey().toString()}';
 
-  AddBillController _initializeAddBillController(
-      BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController, String tag) {
+  AddBillController _initializeAddBillController(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController, String tag) {
     // Create the AddBillController using Get
     return put<AddBillController>(
       AddBillController(_billsFirebaseRepo, addBillPlutoController: addBillPlutoController),
@@ -299,11 +303,12 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     )..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
   }
 
-  AddBillPlutoController _initializeAddBillPlutoController(String tag) =>
-      put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
+  AddBillPlutoController _initializeAddBillPlutoController(String tag) => put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareBillMaterialsRows(billItems.getMaterialRecords,);
+      billDetailsPlutoController.prepareBillMaterialsRows(
+        billItems.getMaterialRecords,
+      );
 
   prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);

@@ -1,10 +1,15 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_fromat_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -100,59 +105,75 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
           );
   }
 
-  factory BillModel.fromImportedJsonFile(Map<String, dynamic> billData) => BillModel(
+  factory BillModel.fromImportedJsonFile(Map<String, dynamic> billData) {
+    DateFormat dateFormat = DateFormat('yyyy-M-d');
+
+    return BillModel(
         status: Status.approved,
+        billId: billData['B']['BillGuid'],
         billDetails: BillDetails(
           billGuid: billData['B']['BillGuid'],
           billPayType: billData['B']['BillPayType'],
           billNumber: billData['B']['BillNumber'],
-          billDate: DateTime.tryParse(billData['B']['BillDate']),
+          billDate: dateFormat.parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
           billCustomerId: billData['B']['BillCustPtr'],
           note: billData['B']['Note']?.toString(),
         ),
         billTypeModel: BillTypeModel(
-          billTypeLabel: _billTypeLabel(billData['B']['BillTypeGuid']),
-          accounts: {
-            BillAccounts.caches: AccountModel(
-              id: billData['B']['BillCustPtr'],
-              accName: billData['B']['BillCustName'],
-            ),
-            BillAccounts.store: AccountModel(id: billData['B']['BillStoreGuid']),
-          },
-          id: billData['B']['BillTypeGuid'],
-        ),
-      items: BillItems(
-        itemList: (billData['Items']['I'] is List<dynamic>)
-            ? (billData['Items']['I'] as List<dynamic>)
-            .map((item) => BillItem(
-          itemGuid: item['MatPtr'],
-          itemQuantity: (item['QtyBonus'].split(',').first as String).toInt ?? 0,
-          itemTotalPrice: item['PriceDescExtra'].split(',').first,
-          itemName: item['Note']?.toString(),
-          itemVatPrice: AppServiceUtils.calcVat(
-            item['VatRatio'],
-            (item['PriceDescExtra'].split(',').first as String).toDouble,
-          ),
-        ))
-            .toList()
-            : (billData['Items']['I'] is Map<String, dynamic>)
-            ? [
-          BillItem(
-            itemGuid: billData['Items']['I']['MatPtr'],
-            itemQuantity: (billData['Items']['I'] ['QtyBonus'].split(',').first as String).toInt ?? 0,
-            itemTotalPrice: billData['Items']['I']['PriceDescExtra'].split(',').first,
-            itemName: billData['Items']['I']['Note']?.toString(),
-            itemVatPrice: AppServiceUtils.calcVat(
-             billData['Items']['I'] ['VatRatio'],
-              (billData['Items']['I'] ['PriceDescExtra'].split(',').first as String).toDouble,
-            ),
-          )
-        ]
-            : [],
-      )
-
-  );
-
+            billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
+            accounts: {
+              BillAccounts.caches: AccountModel(
+                id: billData['B']['BillCustPtr'],
+                accName: billData['B']['BillCustName'],
+              ),
+              if(_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasMaterialAccount)
+              BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials]??AccountModel(),
+              BillAccounts.store: AccountModel(id: billData['B']['BillStoreGuid']),
+            },
+            id: billData['B']['BillTypeGuid'],
+            fullName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
+            latinFullName: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
+            billTypeId: _billTypeByGuid(billData['B']['BillTypeGuid']).typeGuide,
+            color: _billTypeByGuid(billData['B']['BillTypeGuid']).color,
+            billPatternType: _billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label)),
+        items: BillItems(
+          itemList: (billData['Items']['I'] is List<dynamic>)
+              ? (billData['Items']['I'] as List<dynamic>)
+                  .map((item) => BillItem(
+                        itemGuid: item['MatPtr'],
+                        itemQuantity: (item['QtyBonus'].split(',').first as String).toInt ?? 0,
+                        itemTotalPrice: item['PriceDescExtra'].split(',').first,
+                        itemSubTotalPrice: AppServiceUtils.calcSubtotal(
+                          (item['QtyBonus'].split(',').first as String).toInt,
+                          (item['PriceDescExtra'].split(',').first as String).toDouble,
+                        ),
+                        itemName: read<MaterialController>().getMaterialById(item['MatPtr'].toString()).matName,
+                        itemVatPrice: AppServiceUtils.calcVat(
+                          item['VatRatio'],
+                          (item['PriceDescExtra'].split(',').first as String).toDouble,
+                        ),
+                      ))
+                  .toList()
+              : (billData['Items']['I'] is Map<String, dynamic>)
+                  ? [
+                      BillItem(
+                        itemGuid: billData['Items']['I']['MatPtr'],
+                        itemQuantity: (billData['Items']['I']['QtyBonus'].split(',').first as String).toInt ?? 0,
+                        itemTotalPrice: billData['Items']['I']['PriceDescExtra'].split(',').first,
+                        itemSubTotalPrice: AppServiceUtils.calcSubtotal(
+                          (billData['Items']['I']['QtyBonus'].split(',').first as String).toInt,
+                          (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
+                        ),
+                        itemName: read<MaterialController>().getMaterialById(billData['Items']['I']['MatPtr'].toString()).matName,
+                        itemVatPrice: AppServiceUtils.calcVat(
+                          billData['Items']['I']['VatRatio'],
+                          (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
+                        ),
+                      )
+                    ]
+                  : [],
+        ));
+  }
 
   Map<String, dynamic> toJson() => {
         'docId': billId,
@@ -182,10 +203,10 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text(), hide: true): billId ?? '',
         plutoAutoIdColumn(): '',
         PlutoColumn(title: 'حالة الفاتورة', field: 'حالة الفاتورة', type: PlutoColumnType.text()): status.value,
-        PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.text()): billDetails.billNumber ?? '',
+        PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.number()): billDetails.billNumber ?? 0,
         PlutoColumn(title: 'نوع الفاتورة', field: 'نوع الفاتورة', type: PlutoColumnType.text()):
             BillType.byLabel(billTypeModel.billTypeLabel ?? '').value,
-        PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.text()): billDetails.billDate ?? '',
+        PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): billDetails.billDate?.dayMonthYear ?? '',
         PlutoColumn(title: 'مجموع الضريبة', field: 'مجموع الضريبة', type: PlutoColumnType.text()):
             AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
         PlutoColumn(title: 'المجموع قبل الضريبة', field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
@@ -234,7 +255,11 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     ];
   }
 
-  static String _billTypeLabel(String typeGuide) => BillType.byTypeGuide(typeGuide).label;
+
+  static BillType _billTypeByGuid(String typeGuide) => BillType.byTypeGuide(typeGuide);
+
+  static BillPatternType _billPatternTypeByValue(String typeGuide) => BillPatternType.byValue(typeGuide);
+
 
   Map<String, String> _createRecordRow({
     required String account,

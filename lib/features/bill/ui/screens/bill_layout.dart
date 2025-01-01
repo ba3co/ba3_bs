@@ -50,7 +50,7 @@ class BillLayout extends StatelessWidget {
                                     color: Color(billTypeModel.color!),
                                     onTap: () {
                                       controller
-                                        ..fetchAllBills()
+                                        ..fetchAllBillsFromLocal()
                                         ..openFloatingBillDetails(context, billTypeModel);
                                     },
                                   ),
@@ -67,7 +67,7 @@ class BillLayout extends StatelessWidget {
                                   color: AppColors.grayColor,
                                   onPressed: () {
                                     read<AllBillsController>()
-                                      ..fetchAllBills()
+                                      ..fetchAllBillsFromLocal()
                                       ..navigateToAllBillsScreen();
                                   },
                                   iconData: Icons.view_list_outlined,

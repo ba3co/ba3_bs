@@ -57,7 +57,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> fetchAllBills() async {
+  /*Future<void> fetchAllBills() async {
     log('fetchBills');
     final result = await _billsFirebaseRepo.getAll();
 
@@ -68,7 +68,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     isLoading = false;
     update();
-  }
+  }*/
 
   Future<void> fetchAllOpeningBills() async {
     log('fetchAllOpeningBills');
@@ -81,6 +81,21 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
         bills.assignAll(fetchedBills.where(
           (bill) => bill.billTypeModel.id == "5a9e7782-cde5-41db-886a-ac89732feda7",
         ));
+      },
+    );
+
+    isLoading = false;
+    update();
+  }
+  Future<void> fetchAllBillsFromLocal() async {
+    log('fetchAllBillsFromLocal');
+    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bill.json');
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBills) {
+        log( "fetchedBills length ${fetchedBills.length}");
+        bills.assignAll(fetchedBills);
       },
     );
 
@@ -145,7 +160,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
-    await fetchAllBills();
+    await fetchAllBillsFromLocal();
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
@@ -155,7 +170,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   void openFloatingBillDetailsById(String billId, BuildContext context) async {
-    final BillModel billModel = await fetchBillById(billId);
+    // final BillModel billModel = await fetchBillById(billId);
+    final BillModel billModel = await fetchBillByIdFromLocal(billId);
 
     if (!context.mounted) return;
 
@@ -163,7 +179,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? billModel}) async {
-    await fetchAllBills();
+    await fetchAllBillsFromLocal();
 
     if (!context.mounted) return;
 
@@ -290,5 +306,9 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       (fetchedBill) => billModel = fetchedBill,
     );
     return billModel;
+  }
+  Future<BillModel> fetchBillByIdFromLocal(String billId) async {
+
+    return bills.firstWhere((bill) => bill.billId==billId,);
   }
 }
