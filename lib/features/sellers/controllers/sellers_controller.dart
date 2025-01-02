@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../core/dialogs/seller_selection_dialog_content.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
-import '../../../core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
+import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';

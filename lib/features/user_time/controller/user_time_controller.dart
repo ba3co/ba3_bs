@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
+import '../../../core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../users_management/controllers/user_management_controller.dart';
@@ -41,13 +41,13 @@ class UserTimeController extends GetxController {
       ?.toList()
       .where(
         (element) => element.split("-")[1] == Timestamp.now().toDate().month.toString().padLeft(2, "0"),
-  )
+      )
       .toList();
 
   List<String>? get userHolidaysWithDay => userHolidays
       ?.map(
         (date) => AppServiceUtils.getDayNameAndMonthName(date),
-  )
+      )
       .toList();
 
   int get userHolidaysLength => userHolidays?.length ?? 0;

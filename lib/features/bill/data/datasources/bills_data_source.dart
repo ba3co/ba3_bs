@@ -3,7 +3,7 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/filterable_datasource.dart';
 
 import '../../../../core/models/date_filter.dart';
-import '../../../../core/services/firebase/implementations/firebase_sequential_number_database.dart';
+import '../../../../core/services/firebase/implementations/services/firebase_sequential_number_database.dart';
 import '../models/bill_model.dart';
 
 class BillsDataSource extends FilterableDatasource<BillModel> with FirebaseSequentialNumberDatabase {

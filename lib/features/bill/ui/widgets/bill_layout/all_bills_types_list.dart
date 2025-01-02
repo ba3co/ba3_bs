@@ -14,9 +14,7 @@ class AllBillsTypesList extends StatelessWidget {
         ...allBillsController.billsTypes.map((billTypeModel) => ItemWidget(
               text: billTypeModel.fullName!,
               onTap: () {
-                allBillsController
-                  ..fetchAllBills()
-                  ..openFloatingBillDetails(context, billTypeModel);
+                allBillsController.openFloatingBillDetails(context, billTypeModel);
               },
             ))
       ],

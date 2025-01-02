@@ -3,7 +3,7 @@ class ApiConstants {
   static const String translationBaseUrl = 'https://translation.googleapis.com/language/translate/v2';
 
   // COLLECTIONS
-  static const String billsPath = 'bills';
+  static const String billsPath = 'new bills';
   static const String patternsPath = 'bill_types';
   static const String bondsPath = 'bonds';
   static const String bondsChequesPath = 'bondsCheques';

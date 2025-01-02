@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/bond_layout_app_bar.dart';
@@ -16,8 +15,8 @@ class BondLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AllBondsController>(builder: (controller){
-        return Scaffold(
+    return GetBuilder<AllBondsController>(builder: (controller) {
+      return Scaffold(
         appBar: bondLayoutAppBar(controller),
         body: Container(
           padding: EdgeInsets.all(8),
@@ -36,24 +35,23 @@ class BondLayout extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: BondType.values.toList().map(
-                        (bondType) {
+                    (bondType) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: BondItemWidget(
                           onTap: () {
                             controller.openFloatingBondDetails(context, bondType);
                           },
-
                           bondType: bondType,
                         ),
                       );
                     },
                   ).toList(),
                 ),
-
               ],
             ),
-          ),),
+          ),
+        ),
       );
     });
   }

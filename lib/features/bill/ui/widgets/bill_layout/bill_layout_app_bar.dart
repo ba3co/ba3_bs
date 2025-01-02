@@ -1,22 +1,17 @@
-
 import 'package:flutter/material.dart';
 
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/bill/all_bills_controller.dart';
 
-
-AppBar billLayoutAppBar(AllBillsController controller) {
+AppBar billLayoutAppBar() {
   return AppBar(
-    // title: const Text(
-    //   "الفواتير و انماط البيع",
-    //   style: TextStyle(fontWeight: FontWeight.w700),
-    // ),
     actions: [
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: AppButton(
-          title: "تحميل الفواتير",
-          onPressed: () =>controller.fetchAllBillsFromLocal(),
+          title: 'تحميل الفواتير',
+          onPressed: () => read<AllBillsController>().fetchAllBillsFromLocal(),
         ),
       ),
     ],

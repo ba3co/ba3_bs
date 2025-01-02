@@ -1,7 +1,8 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/features/pluto/controllers/pluto_controller.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +11,13 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/services/firebase/implementations/filterable_datasource_repo.dart';
+import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/data/models/bill_model.dart';
+import '../../patterns/data/models/bill_type_model.dart';
 
 class SellerSalesController extends GetxController with AppNavigator {
-  final FilterableDataSourceRepository<BillModel> _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
   SellerSalesController(this._billsFirebaseRepo, this._sellersFirebaseRepo);
@@ -92,6 +94,7 @@ class SellerSalesController extends GetxController with AppNavigator {
     final endOfDay = currentDate;
 
     final result = await _billsFirebaseRepo.fetchWhere(
+      itemTypeModel: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
       value: sellerModel.costGuid,
       dateFilter: DateFilter(

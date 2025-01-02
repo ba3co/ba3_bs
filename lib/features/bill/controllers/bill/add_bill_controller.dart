@@ -5,8 +5,7 @@ import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
-import 'package:ba3_bs/core/router/app_routes.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/datasource_repo.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/add_bill_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -26,10 +25,6 @@ import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/bill_pdf_generator.dart';
 import '../../services/bill/bill_service.dart';
-import '../pluto/bill_details_pluto_controller.dart';
-import 'all_bills_controller.dart';
-import 'bill_details_controller.dart';
-import 'bill_search_controller.dart';
 
 class AddBillController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
   // Repositories
@@ -352,39 +347,39 @@ class AddBillController extends IBillController with AppValidator, AppNavigator 
     }
   }
 
-  Future<void> onBackPressed({
-    required String billTypeId,
-    required bool fromBillDetails,
-    required bool fromBillById,
-    required BillDetailsController billDetailsController,
-    required BillDetailsPlutoController billDetailsPlutoController,
-    required BillSearchController billSearchController,
-  }) async {
-    AllBillsController allBillsController = read<AllBillsController>();
-
-    await allBillsController.fetchAllBills();
-
-    resetBillForm();
-
-    List<BillModel> billsByCategory = allBillsController.getBillsByType(billTypeId);
-
-    if (billsByCategory.isNotEmpty) {
-      final BillModel lastBill = billsByCategory.last;
-
-      billDetailsController.updateBillDetailsOnScreen(lastBill, billDetailsPlutoController);
-
-      billSearchController.initialize(
-        billsByCategory: billsByCategory,
-        bill: lastBill,
-        billDetailsController: billDetailsController,
-        billDetailsPlutoController: billDetailsPlutoController,
-      );
-    }
-
-    if (!fromBillDetails && billsByCategory.isNotEmpty) {
-      replace(AppRoutes.billDetailsScreen, arguments: fromBillById);
-    } else {
-      goBack();
-    }
-  }
+// Future<void> onBackPressed({
+//   required String billTypeId,
+//   required bool fromBillDetails,
+//   required bool fromBillById,
+//   required BillDetailsController billDetailsController,
+//   required BillDetailsPlutoController billDetailsPlutoController,
+//   required BillSearchController billSearchController,
+// }) async {
+//   AllBillsController allBillsController = read<AllBillsController>();
+//
+//   await allBillsController.fetchAllBillsByType();
+//
+//   resetBillForm();
+//
+//   List<BillModel> billsByCategory = allBillsController.getBillsByType(billTypeId);
+//
+//   if (billsByCategory.isNotEmpty) {
+//     final BillModel lastBill = billsByCategory.last;
+//
+//     billDetailsController.updateBillDetailsOnScreen(lastBill, billDetailsPlutoController);
+//
+//     billSearchController.initialize(
+//       billsByCategory: billsByCategory,
+//       bill: lastBill,
+//       billDetailsController: billDetailsController,
+//       billDetailsPlutoController: billDetailsPlutoController,
+//     );
+//   }
+//
+//   if (!fromBillDetails && billsByCategory.isNotEmpty) {
+//     replace(AppRoutes.billDetailsScreen, arguments: fromBillById);
+//   } else {
+//     goBack();
+//   }
+// }
 }

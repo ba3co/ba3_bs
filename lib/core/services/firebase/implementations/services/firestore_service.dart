@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../models/date_filter.dart';
+import '../../../../models/date_filter.dart';
 
 // FirebaseFirestoreService Implementation
 class FireStoreService extends IDatabaseService<Map<String, dynamic>> {

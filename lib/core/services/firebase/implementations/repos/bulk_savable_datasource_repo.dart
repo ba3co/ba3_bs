@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../../network/error/error_handler.dart';
-import '../../../network/error/failure.dart';
+import '../../../../network/error/error_handler.dart';
+import '../../../../network/error/failure.dart';
 import 'datasource_repo.dart';
 
 class BulkSavableDatasourceRepository<T> extends DataSourceRepository<T> {

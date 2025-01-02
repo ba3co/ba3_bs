@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:xml/src/xml/nodes/document.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/json_file_operations/interfaces/import/json_import_service_base.dart';
@@ -12,8 +9,8 @@ class BillJsonImport extends JsonImportServiceBase<BillModel> {
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Bill'] ?? [];
 
-    List<BillModel> sss= billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
-
+    List<BillModel> sss =
+        billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
 
     return sss;
   }
@@ -23,7 +20,8 @@ class BillJsonImport extends JsonImportServiceBase<BillModel> {
     final billsXml = document.findAllElements('Bill');
 
     List<BillModel> bills = billsXml.map((billElement) {
-      Map<String,dynamic> billJson = {'B': {
+      Map<String, dynamic> billJson = {
+        'B': {
           'BillTypeGuid': billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
           'BillGuid': billElement.findElements('B').single.findElements('BillGuid').single.text,
           'BillBranch': billElement.findElements('B').single.findElements('BillBranch').single.text,
@@ -90,7 +88,4 @@ class BillJsonImport extends JsonImportServiceBase<BillModel> {
 
     return bills;
   }
-
-
-
 }

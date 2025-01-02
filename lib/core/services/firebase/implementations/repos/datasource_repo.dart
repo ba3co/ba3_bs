@@ -4,7 +4,7 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:ba3_bs/core/network/error/failure.dart';
 import 'package:dartz/dartz.dart';
 
-import '../interfaces/datasource_base.dart';
+import '../../interfaces/datasource_base.dart';
 
 class DataSourceRepository<T> {
   final DatasourceBase<T> _dataSource;

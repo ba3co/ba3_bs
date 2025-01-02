@@ -1,0 +1,66 @@
+import 'dart:developer';
+
+import 'package:dartz/dartz.dart';
+
+import '../../../../models/date_filter.dart';
+import '../../../../network/error/error_handler.dart';
+import '../../../../network/error/failure.dart';
+import '../../interfaces/compound_datasource_base.dart';
+
+class CompoundDatasourceRepository<T, ItemTypeModel> {
+  final CompoundDatasourceBase<T, ItemTypeModel> _dataSource;
+
+  CompoundDatasourceRepository(this._dataSource);
+
+  Future<Either<Failure, List<T>>> getAll(ItemTypeModel itemTypeModel) async {
+    try {
+      final items = await _dataSource.fetchAll(itemTypeModel: itemTypeModel);
+      return Right(items); // Return list of items
+    } catch (e) {
+      log('Error: $e');
+      return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
+
+  Future<Either<Failure, List<T>>> fetchWhere<V>(
+      {required ItemTypeModel itemTypeModel, required String field, required V value, DateFilter? dateFilter}) async {
+    try {
+      final savedItems = await _dataSource.fetchWhere(
+          itemTypeModel: itemTypeModel, field: field, value: value, dateFilter: dateFilter);
+      return Right(savedItems); // Return the list of saved items
+    } catch (e) {
+      log('Error in fetchWhere: $e');
+      return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
+
+  Future<Either<Failure, T>> getById({required String id, required ItemTypeModel itemTypeModel}) async {
+    try {
+      final item = await _dataSource.fetchById(id: id, itemTypeModel: itemTypeModel);
+      return Right(item); // Return the found item
+    } catch (e) {
+      log('Error: $e');
+      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
+    }
+  }
+
+  Future<Either<Failure, Unit>> delete(T item) async {
+    try {
+      await _dataSource.delete(item: item);
+      return const Right(unit); // Return success
+    } catch (e) {
+      log('Error: $e');
+      return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
+
+  Future<Either<Failure, T>> save(T item, {bool? save}) async {
+    try {
+      final savedItem = await _dataSource.save(item: item, save: save);
+      return Right(savedItem); // Return success
+    } catch (e) {
+      log('Error in save: $e');
+      return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
+}

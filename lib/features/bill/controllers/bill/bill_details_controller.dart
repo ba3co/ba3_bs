@@ -6,8 +6,6 @@ import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/datasource_repo.dart';
-import 'package:ba3_bs/features/bill/controllers/bill/add_bill_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
@@ -18,10 +16,9 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/router/app_routes.dart';
+import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../../floating_window/services/floating_window_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
@@ -29,14 +26,12 @@ import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_pdf_generator.dart';
 import '../../services/bill/bill_service.dart';
-import '../../ui/screens/add_bill_screen.dart';
-import '../pluto/add_bill_pluto_controller.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
   // Repositories
 
-  final DataSourceRepository<BillModel> _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
 
@@ -76,7 +71,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   RxBool isBillSaved = false.obs;
 
   @override
-  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) => selectedAdditionsDiscountAccounts[key] = value;
+  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
+      selectedAdditionsDiscountAccounts[key] = value;
 
   @override
   Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
@@ -96,8 +92,10 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   @override
-  Future<void> sendToEmail({required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
-    _billService.sendToEmail(recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
+  Future<void> sendToEmail(
+      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
+    _billService.sendToEmail(
+        recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
   }
 
   @override
@@ -171,7 +169,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
-    final result = await _billsFirebaseRepo.delete(billModel.billId!);
+    final result = await _billsFirebaseRepo.delete(billModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -242,7 +240,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
             billTypeModel, selectedAdditionsDiscountAccounts, selectedCustomerAccount, selectedStore.value) ??
         billTypeModel;
 
-
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
@@ -253,57 +250,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       billPayType: selectedPayType.value.index,
     );
   }
-
-  void navigateToAddBillScreen(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController,
-      {bool fromBillDetails = false, bool fromBillById = false}) {
-    put(AddBillController(
-      _billsFirebaseRepo,
-      addBillPlutoController: addBillPlutoController,
-    )).initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
-
-    to(AppRoutes.addBillScreen,
-        arguments: {'billTypeModel': billTypeModel, 'fromBillDetails': fromBillDetails, 'fromBillById': fromBillById});
-  }
-
-  void createNewFloatingAddBillScreen(
-    BillTypeModel billTypeModel,
-    BuildContext context, {
-    bool fromBillDetails = false,
-    bool fromBillById = false,
-  }) {
-    final String tag = _generateUniqueTag();
-
-    // Initialize the AddBillPlutoController
-    AddBillPlutoController addBillPlutoController = _initializeAddBillPlutoController(tag);
-
-    // Initialize the AddBillController
-    AddBillController addBillController = _initializeAddBillController(billTypeModel, addBillPlutoController, tag);
-
-    // Launch the floating window with the AddBillScreen
-    FloatingWindowService.launchFloatingWindow(
-      context: context,
-      floatingScreen: AddBillScreen(
-        billTypeModel: billTypeModel,
-        fromBillDetails: fromBillDetails,
-        fromBillById: fromBillById,
-        addBillController: addBillController,
-        addBillPlutoController: addBillPlutoController,
-        tag: tag,
-      ),
-    );
-  }
-
-  String _generateUniqueTag() => 'AddBillController_${UniqueKey().toString()}';
-
-  AddBillController _initializeAddBillController(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController, String tag) {
-    // Create the AddBillController using Get
-    return put<AddBillController>(
-      AddBillController(_billsFirebaseRepo, addBillPlutoController: addBillPlutoController),
-      tag: tag,
-    )..initCustomerAccount(billTypeModel.accounts?[BillAccounts.caches]);
-  }
-
-  AddBillPlutoController _initializeAddBillPlutoController(String tag) => put<AddBillPlutoController>(AddBillPlutoController(), tag: tag);
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareBillMaterialsRows(

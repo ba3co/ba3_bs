@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/services/firebase/implementations/datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/json_import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -26,7 +26,7 @@ class AllBondsController extends FloatingBondDetailsLauncher {
   List<BondModel> bonds = [];
   bool isLoading = true;
 
-  AllBondsController(this._bondsFirebaseRepo,this._jsonImportExportRepo);
+  AllBondsController(this._bondsFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
   late final BondUtils _bondUtils;
@@ -58,6 +58,7 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     isLoading = false;
     update();
   }
+
   Future<void> fetchAllBondsLocal() async {
     log('fetchAllBondsLocal');
 
@@ -69,9 +70,9 @@ class AllBondsController extends FloatingBondDetailsLauncher {
       // /Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json
 
       result.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedBonds) {
-          log( 'bonds.length ${bonds.length}');
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedBonds) {
+          log('bonds.length ${bonds.length}');
 
           bonds.assignAll(fetchedBonds);
         },
@@ -79,7 +80,6 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     } else {
       // User canceled the picker
     }
-
 
     isLoading = false;
     update();

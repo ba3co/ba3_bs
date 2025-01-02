@@ -1,4 +1,5 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 
 import '../../constants/app_assets.dart';
 
@@ -30,10 +31,10 @@ enum RecordType {
 
 enum BillType {
   sales(
-    label: 'sales',
-    value: 'فاتورة مبيعات',
-    typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
-    color: 4282339765,
+      label: 'sales',
+      value: 'فاتورة مبيعات',
+      typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
+      color: 4282339765,
       accounts: {
         BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
         BillAccounts.additions: AccountModel(accName: "ايرادات مختلفة", id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
@@ -42,8 +43,7 @@ enum BillType {
         BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
         BillAccounts.gifts: AccountModel(accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
         BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
-      }
-  ),
+      }),
   purchase(
     label: 'purchase',
     value: 'فاتورة مشتريات',
@@ -92,14 +92,13 @@ enum BillType {
       value: 'بضاعة أول المدة',
       typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
       color: 4287349578,
-      accounts:{}),
+      accounts: {}),
   transferIn(
       label: 'transferIn',
       value: 'إد.عملية مناقلة',
       typeGuide: "f0f2a5db-53ed-4e53-9686-d6a809911327",
       color: 4278228616,
-    accounts: {}
-    ),
+      accounts: {}),
   transferOut(
     label: 'transferOut',
     value: 'إخ.عملية مناقلة',
@@ -138,6 +137,8 @@ enum BillType {
       orElse: () => throw ArgumentError('No matching BillType for guide: $typeGuide'),
     );
   }
+
+  BillTypeModel get billTypeModel => BillTypeModel(billTypeId: typeGuide, billTypeLabel: label);
 }
 
 enum BillPatternType {

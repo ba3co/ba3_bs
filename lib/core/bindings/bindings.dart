@@ -1,5 +1,5 @@
-import 'package:ba3_bs/core/services/firebase/implementations/bulk_savable_datasource_repo.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/filterable_datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/json_import_export_repo.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
@@ -30,7 +30,7 @@ import '../../features/accounts/data/datasources/remote/accounts_statements_data
 import '../../features/accounts/data/datasources/remote/entry_bonds_data_source.dart';
 import '../../features/bill/controllers/bill/all_bills_controller.dart';
 import '../../features/bill/controllers/pluto/bill_details_pluto_controller.dart';
-import '../../features/bill/data/datasources/bills_data_source.dart';
+import '../../features/bill/data/datasources/bills_compound_data_source.dart';
 import '../../features/bill/data/models/bill_model.dart';
 import '../../features/bill/services/bill/bill_json_export.dart';
 import '../../features/bond/controllers/bonds/all_bond_controller.dart';
@@ -49,8 +49,11 @@ import '../../features/users_management/controllers/user_management_controller.d
 import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
-import '../services/firebase/implementations/datasource_repo.dart';
-import '../services/firebase/implementations/firestore_service.dart';
+import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../services/firebase/implementations/repos/datasource_repo.dart';
+import '../services/firebase/implementations/services/compound_firestore_service.dart';
+import '../services/firebase/implementations/services/firestore_service.dart';
+import '../services/firebase/interfaces/i_compound_database_service.dart';
 import '../services/get_x/shared_preferences_service.dart';
 import '../services/json_file_operations/interfaces/export/i_json_export_service.dart';
 import '../services/json_file_operations/interfaces/import/i_json_import_service.dart';
@@ -66,6 +69,7 @@ class AppBindings extends Bindings {
     final dioClient = _initializeDioClient();
     final sharedPreferencesService = await _initializeSharedPreferencesService();
     final fireStoreService = _initializeFireStoreService();
+    final compoundFireStoreService = _initializeCompoundFireStoreService();
     final translationService = _initializeTranslationService(dioClient);
     final billJsonImport = BillJsonImport();
     final billJsonExport = BillJsonExport();
@@ -75,6 +79,7 @@ class AppBindings extends Bindings {
 // Initialize repositories
     final repositories = _initializeRepositories(
         fireStoreService: fireStoreService,
+        compoundFireStoreService: compoundFireStoreService,
         translationService: translationService,
         billJsonImportService: billJsonImport,
         billJsonExportService: billJsonExport,
@@ -96,6 +101,8 @@ class AppBindings extends Bindings {
 
   IDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreService();
 
+  ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService() => CompoundFireStoreService();
+
   ITranslationService _initializeTranslationService(IAPiClient dioClient) => GoogleTranslationService(
         baseUrl: ApiConstants.translationBaseUrl,
         apiKey: ApiConstants.translationApiKey,
@@ -105,6 +112,7 @@ class AppBindings extends Bindings {
 // Repositories Initialization
   _Repositories _initializeRepositories({
     required IDatabaseService<Map<String, dynamic>> fireStoreService,
+    required ICompoundDatabaseService<Map<String, dynamic>> compoundFireStoreService,
     required ITranslationService translationService,
     required IJsonImportService<BillModel> billJsonImportService,
     required IJsonExportService<BillModel> billJsonExportService,
@@ -114,7 +122,8 @@ class AppBindings extends Bindings {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
       patternsRepo: DataSourceRepository(PatternsDataSource(databaseService: fireStoreService)),
-      billsRepo: FilterableDataSourceRepository(BillsDataSource(databaseService: fireStoreService)),
+      billsRepo:
+          CompoundDatasourceRepository(BillCompoundDataSource(compoundDatabaseService: compoundFireStoreService)),
       bondsRepo: DataSourceRepository(BondsDataSource(databaseService: fireStoreService)),
       chequesRepo: DataSourceRepository(ChequesDataSource(databaseService: fireStoreService)),
       rolesRepo: DataSourceRepository(RolesDataSource(databaseService: fireStoreService)),
@@ -145,10 +154,11 @@ class AppBindings extends Bindings {
     lazyPut(PlutoController());
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
     lazyPut(PatternController(repositories.patternsRepo));
-    lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billJsonImportExportRepo));
+    lazyPut(
+        AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billJsonImportExportRepo));
     lazyPut(AllBondsController(repositories.bondsRepo ,repositories.bondJsonImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo));
-    lazyPut(BillDetailsPlutoController( ));
+    lazyPut(BillDetailsPlutoController());
     lazyPut(MaterialController(MaterialRepository()));
     lazyPut(AccountsController(AccountsRepository()));
     lazyPut(PrintingController(repositories.translationRepo));
@@ -163,7 +173,7 @@ class AppBindings extends Bindings {
 class _Repositories {
   final TranslationRepository translationRepo;
   final DataSourceRepository<BillTypeModel> patternsRepo;
-  final FilterableDataSourceRepository<BillModel> billsRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel> billsRepo;
   final DataSourceRepository<BondModel> bondsRepo;
   final DataSourceRepository<ChequesModel> chequesRepo;
   final DataSourceRepository<RoleModel> rolesRepo;

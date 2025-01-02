@@ -21,86 +21,83 @@ class BillLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: GetBuilder<AllBillsController>(
-        builder: (controller) => Scaffold(
-            appBar: billLayoutAppBar(controller),
-            body: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                child: OrganizedWidget(
-                  titleWidget: Align(
-                    child: Text(
-                      'الفواتير',
-                      style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
-                    ),
-                  ),
-                  bodyWidget: Column(
-                    spacing: 10,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        alignment: WrapAlignment.start,
-                        crossAxisAlignment: WrapCrossAlignment.start,
-                        children: [
-                          ...controller.billsTypes.map(
-                            (billTypeModel) => Obx(
-                              () => BillTypeItemWidget(
-                                text: billTypeModel.fullName!,
-                                isLoading: controller.getBillsRequestState.value == RequestState.loading,
-                                color: Color(billTypeModel.color!),
-                                onTap: () {
-                                  controller
-                                      /*..fetchAllBillsFromLocal()*/
-                                      .openFloatingBillDetails(context, billTypeModel);
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      VerticalSpace(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          AppButton(
-                            title: 'عرض جميع الفواتير',
-                            fontSize: 13.sp,
-                            color: AppColors.grayColor,
-                            onPressed: () {
-                              controller
-                                ..fetchAllBills()
-                                ..navigateToAllBillsScreen();
-                            },
-                            iconData: Icons.view_list_outlined,
-                            width: max(45.w, 140),
-                            // width: 40.w,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0.r),
-                            child: AppButton(
-                              title: 'عرض الفواتير المعلقة',
-                              fontSize: 13.sp,
-                              color: AppColors.grayColor,
-                              onPressed: () {
-                                controller
-                                  ..fetchPendingBills()
-                                  ..navigateToPendingBillsScreen();
-                              },
-                              iconData: Icons.view_list_outlined,
-                              width: max(45.w, 140),
-                              // width: 40.w,
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
+      child: Scaffold(
+          appBar: billLayoutAppBar(),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: OrganizedWidget(
+                titleWidget: Align(
+                  child: Text(
+                    'الفواتير',
+                    style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                   ),
                 ),
+                bodyWidget: GetBuilder<AllBillsController>(
+                    builder: (controller) => Column(
+                          spacing: 10,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              alignment: WrapAlignment.start,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              children: [
+                                ...controller.billsTypes.map(
+                                  (billTypeModel) => Obx(
+                                    () => BillTypeItemWidget(
+                                      text: billTypeModel.fullName!,
+                                      isLoading: controller.getBillsRequestState.value == RequestState.loading,
+                                      color: Color(billTypeModel.color!),
+                                      onTap: () {
+                                        controller.openFloatingBillDetails(context, billTypeModel);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            VerticalSpace(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // AppButton(
+                                //   title: 'عرض جميع الفواتير',
+                                //   fontSize: 13.sp,
+                                //   color: AppColors.grayColor,
+                                //   onPressed: () {
+                                //     controller
+                                //       ..fetchAllBillsFromLocal()
+                                //       ..navigateToAllBillsScreen();
+                                //   },
+                                //   iconData: Icons.view_list_outlined,
+                                //   width: max(45.w, 140),
+                                //   // width: 40.w,
+                                // ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0.r),
+                                  child: AppButton(
+                                    title: 'عرض الفواتير المعلقة',
+                                    fontSize: 13.sp,
+                                    color: AppColors.grayColor,
+                                    onPressed: () {
+                                      controller
+                                        ..fetchPendingBills(BillType.sales.billTypeModel)
+                                        ..navigateToPendingBillsScreen();
+                                    },
+                                    iconData: Icons.view_list_outlined,
+                                    width: max(45.w, 140),
+                                    // width: 40.w,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        )),
               ),
-            )),
-      ),
+            ),
+          )),
     );
   }
 }

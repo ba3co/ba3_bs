@@ -7,7 +7,7 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/services/firebase/implementations/datasource_repo.dart';
+import '../../../core/services/firebase/implementations/repos/datasource_repo.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 import '../services/pattern_form_handler.dart';
@@ -28,9 +28,8 @@ class PatternController extends GetxController with AppNavigator {
   // Form Handlers
   late final PatternFormHandler patternFormHandler;
 
-
-
   BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType;
+
   @override
   void onInit() {
     super.onInit();
@@ -81,13 +80,22 @@ class PatternController extends GetxController with AppNavigator {
         break;
       case BillPatternType.firstPeriodInventory:
         fillControllers(
-            shortName: 'القيد الافتتاحي', fullName: 'بضاعة اول مدة', latinShortName: 'Add', latinFullName: 'first Period Inventory');
+            shortName: 'القيد الافتتاحي',
+            fullName: 'بضاعة اول مدة',
+            latinShortName: 'Add',
+            latinFullName: 'first Period Inventory');
       case BillPatternType.transferOut:
         fillControllers(
-            shortName: 'القيد الافتتاحي', fullName: 'بضاعة اول مدة', latinShortName: 'Add', latinFullName: 'first Period Inventory');
+            shortName: 'القيد الافتتاحي',
+            fullName: 'بضاعة اول مدة',
+            latinShortName: 'Add',
+            latinFullName: 'first Period Inventory');
       case BillPatternType.transferIn:
         fillControllers(
-            shortName: 'القيد الافتتاحي', fullName: 'بضاعة اول مدة', latinShortName: 'Add', latinFullName: 'first Period Inventory');
+            shortName: 'القيد الافتتاحي',
+            fullName: 'بضاعة اول مدة',
+            latinShortName: 'Add',
+            latinFullName: 'first Period Inventory');
     }
   }
 

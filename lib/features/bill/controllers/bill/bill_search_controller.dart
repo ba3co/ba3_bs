@@ -18,14 +18,14 @@ class BillSearchController extends GetxController {
 
   /// Initializes the bill search with the given bills and current bill
   void initialize({
-    required List<BillModel> billsByCategory,
-    required BillModel bill,
+    required List<BillModel> allBills,
+    required BillModel currentBill,
     required BillDetailsController billDetailsController,
     required BillDetailsPlutoController billDetailsPlutoController,
   }) {
-    bills = billsByCategory;
+    bills = allBills;
 
-    currentBillIndex = bills.indexWhere((current) => current.billId == bill.billId || current == bill);
+    currentBillIndex = bills.indexWhere((current) => current.billId == currentBill.billId || current == currentBill);
     currentBill = bills[currentBillIndex];
 
     this.billDetailsController = billDetailsController;
