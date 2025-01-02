@@ -169,8 +169,19 @@ class InvoiceRecordModel {
 
   Map<PlutoColumn, dynamic> toEditedMap(BillTypeModel billTypeModel) {
 
-    final subTotalStr =billTypeModel.billPatternType!.hasVat? AppServiceUtils.toFixedDouble((invRecTotal ?? 0) / ((invRecQuantity ?? 1) * 1.05)):((invRecTotal??0)/(invRecQuantity??1));
-    final vat =billTypeModel.billPatternType!.hasVat? AppServiceUtils.toFixedDouble(subTotalStr * 0.05):0;
+    final double total = invRecTotal ?? 0;
+    final int quantity = invRecQuantity ?? 1;
+    final bool hasVat = billTypeModel.billPatternType?.hasVat ?? false;
+
+    final double subTotalStr = (quantity > 0)
+        ? (hasVat
+        ? AppServiceUtils.toFixedDouble(total / (quantity * 1.05))
+        : total / quantity)
+        : total;
+
+    final double vat = (quantity > 0 && hasVat)
+        ? AppServiceUtils.toFixedDouble(subTotalStr * 0.05)
+        : 0;
     return {
       PlutoColumn(
         title: 'الرقم',

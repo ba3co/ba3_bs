@@ -90,7 +90,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
   }) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
-      await read<AllBillsController>().fetchAllBillsFromLocal();
+      await read<AllBillsController>().fetchAllBills();
       Get.back();
     } else {
       billSearchController.removeBill(billModel);

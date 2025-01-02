@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 
@@ -16,14 +17,25 @@ class JsonImportExportRepository<T> implements IJsonImportRepository<T>, IJsonEx
   JsonImportExportRepository(this._jsonImport, this._jsonExport);
 
   @override
-  Either<Failure, List<T>> importJsonFile(String filePath) {
-    // try {
+  Either<Failure, List<T>> importJsonFileJson(File filePath) {
+    try {
       List<T> itemsModels = _jsonImport.importFromFile(filePath);
       return Right(itemsModels);
-    // } catch (e) {
-    //   log('[$e] فشل في استيراد الملف');
-    //   return Left(ErrorHandler(e).failure);
-    // }
+    } catch (e) {
+      log('[$e] فشل في استيراد الملف');
+      return Left(ErrorHandler(e).failure);
+    }
+  }
+
+  @override
+  Either<Failure, List<T>> importJsonFileXml(File filePath) {
+    try {
+      List<T> itemsModels = _jsonImport.importFromXmlFile(filePath);
+      return Right(itemsModels);
+    } catch (e) {
+      log('[$e] فشل في استيراد الملف');
+      return Left(ErrorHandler(e).failure);
+    }
   }
 
 

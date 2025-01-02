@@ -113,21 +113,31 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billId: billData['B']['BillGuid'],
         billDetails: BillDetails(
           billGuid: billData['B']['BillGuid'],
-          billPayType: billData['B']['BillPayType'],
-          billNumber: billData['B']['BillNumber'],
+          billPayType: int.parse(billData['B']['BillPayType']),
+          billNumber: int.parse(billData['B']['BillNumber']),
           billDate: dateFormat.parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
           billCustomerId: billData['B']['BillCustPtr'],
-          note: billData['B']['Note']?.toString(),
+          note: billData['B']['Note'].toString(),
         ),
         billTypeModel: BillTypeModel(
             billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
             accounts: {
+
               BillAccounts.caches: AccountModel(
                 id: billData['B']['BillCustPtr'],
                 accName: billData['B']['BillCustName'],
               ),
-              if(_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasMaterialAccount)
-              BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials]??AccountModel(),
+              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasMaterialAccount)
+                BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials] ?? AccountModel(),
+              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasGiftsAccount)
+                BillAccounts.gifts:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.gifts]!,
+              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasGiftsAccount)
+                BillAccounts.exchangeForGifts:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.exchangeForGifts]!,
+              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasDiscountsAccount)
+                BillAccounts.discounts:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.discounts]!,
+              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasAdditionsAccount)
+                BillAccounts.additions:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.additions]!,
+
               BillAccounts.store: AccountModel(id: billData['B']['BillStoreGuid']),
             },
             id: billData['B']['BillTypeGuid'],
@@ -147,9 +157,14 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                           (item['QtyBonus'].split(',').first as String).toInt,
                           (item['PriceDescExtra'].split(',').first as String).toDouble,
                         ),
-                        itemName: read<MaterialController>().getMaterialById(item['MatPtr'].toString())?.matName,
+                        itemGiftsPrice: AppServiceUtils.calcSubtotal(
+                          (item['QtyBonus'].split(',')[1] as String).toInt,
+                          (item['PriceDescExtra'].split(',').first as String).toDouble,
+                        ),
+                        itemGiftsNumber: (item['QtyBonus'].split(',')[1] as String).toInt,
+                        itemName: read<MaterialController>().getMaterialNameById(item['MatPtr'].toString()),
                         itemVatPrice: AppServiceUtils.calcVat(
-                          item['VatRatio'],
+                          int.parse(item['VatRatio']),
                           (item['PriceDescExtra'].split(',').first as String).toDouble,
                         ),
                       ))
@@ -164,7 +179,12 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                           (billData['Items']['I']['QtyBonus'].split(',').first as String).toInt,
                           (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
                         ),
-                        itemName: read<MaterialController>().getMaterialById(billData['Items']['I']['MatPtr'].toString())?.matName,
+                        itemGiftsPrice: AppServiceUtils.calcSubtotal(
+                          (billData['Items']['I']['QtyBonus'].split(',').second as String).toInt,
+                          (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
+                        ),
+                        itemGiftsNumber: (billData['Items']['I']['QtyBonus'].split(',').second as String).toInt,
+                        itemName: read<MaterialController>().getMaterialNameById(billData['Items']['I']['MatPtr'].toString()),
                         itemVatPrice: AppServiceUtils.calcVat(
                           billData['Items']['I']['VatRatio'],
                           (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
@@ -255,11 +275,9 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     ];
   }
 
-
   static BillType _billTypeByGuid(String typeGuide) => BillType.byTypeGuide(typeGuide);
 
   static BillPatternType _billPatternTypeByValue(String typeGuide) => BillPatternType.byValue(typeGuide);
-
 
   Map<String, String> _createRecordRow({
     required String account,

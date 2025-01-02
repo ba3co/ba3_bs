@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -58,17 +60,26 @@ class AllBondsController extends FloatingBondDetailsLauncher {
   }
   Future<void> fetchAllBondsLocal() async {
     log('fetchAllBondsLocal');
-    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json');
 
+    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBonds) {
-        log( 'bonds.length ${bonds.length}');
+    if (resultFile != null) {
+      File file = File(resultFile.files.single.path!);
+      final result = _jsonImportExportRepo.importJsonFileJson(file);
+      // /Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json
 
-        bonds.assignAll(fetchedBonds);
-      },
-    );
+      result.fold(
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedBonds) {
+          log( 'bonds.length ${bonds.length}');
+
+          bonds.assignAll(fetchedBonds);
+        },
+      );
+    } else {
+      // User canceled the picker
+    }
+
 
     isLoading = false;
     update();
@@ -77,8 +88,8 @@ class AllBondsController extends FloatingBondDetailsLauncher {
   List<BondModel> getBondsByType(String bondTypeId) => bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel}) async {
-    await fetchAllBondsLocal();
-    // await fetchAllBonds();
+    // await fetchAllBondsLocal();
+    await fetchAllBonds();
 
     if (!context.mounted) return;
 

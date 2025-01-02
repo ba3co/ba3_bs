@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/bond_layout_app_bar.dart';
@@ -15,10 +16,10 @@ class BondLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: bondLayoutAppBar(),
-      body: GetBuilder<AllBondsController>(builder: (controller) {
-        return Container(
+    return GetBuilder<AllBondsController>(builder: (controller){
+        return Scaffold(
+        appBar: bondLayoutAppBar(controller),
+        body: Container(
           padding: EdgeInsets.all(8),
           width: 1.sw,
           child: OrganizedWidget(
@@ -48,13 +49,12 @@ class BondLayout extends StatelessWidget {
                       );
                     },
                   ).toList(),
-                )
+                ),
 
               ],
             ),
-          ),
-        );
-      }),
-    );
+          ),),
+      );
+    });
   }
 }

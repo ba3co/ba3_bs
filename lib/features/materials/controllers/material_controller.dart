@@ -74,9 +74,9 @@ class MaterialController extends GetxController with AppNavigator {
     return searchedMaterials;
   }
 
-  String getMaterialNameById(String? id) {
+  String? getMaterialNameById(String? id) {
     if (id == null || id.isEmpty) return '';
-    return materials.firstWhere((material) => material.id == id).matName ?? '';
+    return materials.firstWhereOrNull((material) => material.id == id)?.matName ?? "not fond this material";
   }
 
   String getMaterialBarcodeById(String? id) {
@@ -93,6 +93,7 @@ class MaterialController extends GetxController with AppNavigator {
   MaterialModel? getMaterialById(String id) {
     return materials.firstWhereOrNull((material) => material.id == id);
   }
+
 
   MaterialModel? getMaterialByName(name) {
     if (name != null && name != " " && name != "") {

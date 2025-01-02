@@ -57,8 +57,8 @@ class BondService with PdfBase, BondEntryBondService, FloatingLauncher {
       [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
-      // await read<AllBondsController>().fetchAllBonds();
-      await read<AllBondsController>().fetchAllBondsLocal();
+      await read<AllBondsController>().fetchAllBonds();
+      // await read<AllBondsController>().fetchAllBondsLocal();
       Get.back();
     } else {
       bondSearchController.removeBond(bondModel);

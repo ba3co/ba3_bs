@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/json_import_export_repo.dart';
@@ -6,6 +7,7 @@ import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -71,39 +73,32 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
-  Future<void> fetchAllOpeningBills() async {
-    log('fetchAllOpeningBills');
 
-    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bill.json');
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBills) {
-        // print(fetchedBills.where((bill) => bill.billTypeModel.id=="5a9e7782-cde5-41db-886a-ac89732feda7",).toList().length);
-        bills.assignAll(fetchedBills.where(
-          (bill) => bill.billTypeModel.id == "5a9e7782-cde5-41db-886a-ac89732feda7",
-        ));
-      },
-    );
-
-    plutoGridIsLoading = false;
-    update();
-  }
 
   Future<void> fetchAllBillsFromLocal() async {
     log('fetchAllBillsFromLocal');
-    getBillsRequestState.value=RequestState.loading;
-    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/free_start.json');
+    // getBillsRequestState.value=RequestState.loading;
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBills) {
-        log("fetchedBills length ${fetchedBills.length}");
 
-        getBillsRequestState.value=RequestState.success;
-        bills.assignAll(fetchedBills);
-      },
-    );
+    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+
+    if (resultFile != null) {
+      File file = File(resultFile.files.single.path!);
+      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      // '/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/free_start.json'
+      result.fold(
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedBills) {
+          log("fetchedBills length ${fetchedBills.length}");
+
+          getBillsRequestState.value=RequestState.success;
+          bills.assignAll(fetchedBills);
+        },
+      );
+    } else {
+      // User canceled the picker
+    }
+ 
 
     plutoGridIsLoading = false;
     update();
@@ -166,7 +161,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   Future<void> openLastBillDetails(BillTypeModel billTypeModel, AddBillPlutoController addBillPlutoController) async {
-    await fetchAllBillsFromLocal();
+    await fetchAllBills();
 
     List<BillModel> billsByCategory = getBillsByType(billTypeModel.billTypeId!);
 
@@ -186,7 +181,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? billModel}) async {
     plutoGridIsLoading = false;
-    await fetchAllBillsFromLocal();
+
+    await fetchAllBills();
 
     if (!context.mounted) return;
 
