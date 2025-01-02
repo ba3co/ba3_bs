@@ -139,6 +139,7 @@ enum BillType {
   }
 
   BillTypeModel get billTypeModel => BillTypeModel(billTypeId: typeGuide, billTypeLabel: label);
+  BillPatternType get billPatternType => BillPatternType.byValue( label);
 }
 
 enum BillPatternType {

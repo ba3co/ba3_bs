@@ -144,9 +144,9 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   List<BillModel> getBillsByType(String billTypeId) =>
       bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
-  void openFloatingBillDetailsById(String billId, BuildContext context) async {
+  void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
-    final BillModel billModel = await fetchBillByIdFromLocal(billId);
+    final BillModel billModel = await fetchBillById(billId,BillType.sales.billTypeModel);
 
     if (!context.mounted) return;
 
@@ -241,9 +241,5 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     return billModel;
   }
 
-  Future<BillModel> fetchBillByIdFromLocal(String billId) async {
-    return bills.firstWhere(
-      (bill) => bill.billId == billId,
-    );
-  }
+
 }

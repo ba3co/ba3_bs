@@ -230,9 +230,9 @@ mixin BillEntryBondCreatingService {
   }
 
   bool _shouldHandleGifts(Map<Account, AccountModel> accounts, int? giftCount, double? giftPrice) {
-    log('giftCount $giftCount');
+ /*   log('giftCount $giftCount');
     log('giftPrice $giftPrice');
-    log('accounts ${accounts.values}');
+    log('accounts ${accounts.values}');*/
     return giftCount != null &&
         giftCount > 0 &&
         giftPrice != null &&

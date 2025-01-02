@@ -127,15 +127,15 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                 id: billData['B']['BillCustPtr'],
                 accName: billData['B']['BillCustName'],
               ),
-              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasMaterialAccount)
-                BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials] ?? AccountModel(),
-              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasGiftsAccount)
+              if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasMaterialAccount)
+                BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials]!,
+              if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
                 BillAccounts.gifts:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.gifts]!,
-              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasGiftsAccount)
+              if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
                 BillAccounts.exchangeForGifts:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.exchangeForGifts]!,
-              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasDiscountsAccount)
+              if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasDiscountsAccount)
                 BillAccounts.discounts:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.discounts]!,
-              if (_billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label).hasAdditionsAccount)
+              if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
                 BillAccounts.additions:_billTypeByGuid(billData['B']['BillTypeGuid']).accounts[ BillAccounts.additions]!,
 
               BillAccounts.store: AccountModel(id: billData['B']['BillStoreGuid']),
@@ -145,7 +145,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
             latinFullName: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
             billTypeId: _billTypeByGuid(billData['B']['BillTypeGuid']).typeGuide,
             color: _billTypeByGuid(billData['B']['BillTypeGuid']).color,
-            billPatternType: _billPatternTypeByValue(_billTypeByGuid(billData['B']['BillTypeGuid']).label)),
+            billPatternType: _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),
         items: BillItems(
           itemList: (billData['Items']['I'] is List<dynamic>)
               ? (billData['Items']['I'] as List<dynamic>)
@@ -247,6 +247,8 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
         PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',
+        PlutoColumn(title: 'billType', field: 'billType', type: PlutoColumnType.text()): billTypeModel.toJson() ?? '',
+
       };
 
   List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;
@@ -277,7 +279,6 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
 
   static BillType _billTypeByGuid(String typeGuide) => BillType.byTypeGuide(typeGuide);
 
-  static BillPatternType _billPatternTypeByValue(String typeGuide) => BillPatternType.byValue(typeGuide);
 
   Map<String, String> _createRecordRow({
     required String account,

@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 
 class PendingBillsScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class PendingBillsScreen extends StatelessWidget {
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells['billId']?.value;
-          controller.openFloatingBillDetailsById(billId, context);
+          controller.openFloatingBillDetailsById(billId, context,BillType.sales.billTypeModel);
         },
         isLoading: controller.isPendingBillsLoading,
         tableSourceModels: controller.pendingBills,

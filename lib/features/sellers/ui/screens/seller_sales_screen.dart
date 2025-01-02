@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 import '../../../bill/controllers/bill/all_bills_controller.dart';
@@ -21,8 +25,11 @@ class SellerSalesScreen extends StatelessWidget {
           onLoaded: (e) {},
           onSelected: (event) {
             final billId = event.row?.cells['billId']?.value;
+
+            // print( (billTypeName as Map<String,dynamic>));
+
             if (billId != null) {
-              read<AllBillsController>().openFloatingBillDetailsById(billId, context);
+              read<AllBillsController>().openFloatingBillDetailsById(billId, context,BillType.sales.billTypeModel);
             }
           },
           isLoading: controller.isLoading,
