@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -89,6 +91,25 @@ class PayItem extends PlutoAdaptable<BondType> {
       entryNumber: json['EntryNumber'],
       entryCustomerGuid: json['EntryCustomerGuid'],
       entryType: json['EntryType'],
+
+    );
+  }
+  factory PayItem.fromJsonFile(Map<String, dynamic> json) {
+    return PayItem(
+      entryAccountGuid: json['EntryAccountGuid'],
+      entryAccountName: read<AccountsController>().getAccountNameById(json['EntryAccountGuid']) ,
+      entryDate: json['EntryDate'],
+      entryDebit: json['EntryDebit'].toDouble(),
+      entryCredit: json['EntryCredit'].toDouble(),
+      entryNote: json['EntryNote'].toString(),
+      entryCurrencyGuid: json['EntryCurrencyGuid'],
+      entryCurrencyVal: json['EntryCurrencyVal'].toDouble(),
+      entryCostGuid: json['EntryCostGuid'],
+      entryClass: json['EntryClass'],
+      entryNumber: json['EntryNumber'],
+      entryCustomerGuid: json['EntryCustomerGuid'],
+      entryType: json['EntryType'],
+
     );
   }
 

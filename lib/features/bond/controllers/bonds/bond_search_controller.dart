@@ -26,9 +26,7 @@ class BondSearchController extends GetxController {
     this.bondDetailsController = bondDetailsController;
     this.bondDetailsPlutoController = bondDetailsPlutoController;
     _setCurrentBond(currentBondIndex);
-    log('bonds length ${bonds.length}');
-    log('currentBondIndex $currentBondIndex');
-    log('currentBondNumber ${currentBond.payNumber}');
+
   }
 
   /// Gets the current bond

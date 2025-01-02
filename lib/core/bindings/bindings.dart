@@ -7,6 +7,7 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_json_import.dart';
+import 'package:ba3_bs/features/bond/service/bond/bond_json_import.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/datasources/cheques_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
@@ -37,6 +38,7 @@ import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bond_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
+import '../../features/bond/service/bond/bond_json_export.dart';
 import '../../features/materials/data/repositories/materials_repository.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
@@ -67,13 +69,18 @@ class AppBindings extends Bindings {
     final translationService = _initializeTranslationService(dioClient);
     final billJsonImport = BillJsonImport();
     final billJsonExport = BillJsonExport();
+    final bondJsonImport = BondJsonImport();
+    final bondJsonExport = BondJsonExport();
 
 // Initialize repositories
     final repositories = _initializeRepositories(
         fireStoreService: fireStoreService,
         translationService: translationService,
-        jsonImportService: billJsonImport,
-        jsonExportService: billJsonExport);
+        billJsonImportService: billJsonImport,
+        billJsonExportService: billJsonExport,
+    bondJsonExportService: bondJsonExport,
+      bondJsonImportService: bondJsonImport
+    );
 
 // Permanent Controllers
     _initializePermanentControllers(sharedPreferencesService, repositories);
@@ -99,8 +106,10 @@ class AppBindings extends Bindings {
   _Repositories _initializeRepositories({
     required IDatabaseService<Map<String, dynamic>> fireStoreService,
     required ITranslationService translationService,
-    required IJsonImportService<BillModel> jsonImportService,
-    required IJsonExportService<BillModel> jsonExportService,
+    required IJsonImportService<BillModel> billJsonImportService,
+    required IJsonExportService<BillModel> billJsonExportService,
+    required IJsonImportService<BondModel> bondJsonImportService,
+    required IJsonExportService<BondModel> bondJsonExportService,
   }) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
@@ -112,9 +121,10 @@ class AppBindings extends Bindings {
       usersRepo: FilterableDataSourceRepository(UsersDataSource(databaseService: fireStoreService)),
       entryBondsRepo: DataSourceRepository(EntryBondsDataSource(databaseService: fireStoreService)),
       accountsStatementsRepo: AccountsStatementsRepository(AccountsStatementsDataSource()),
-      billJsonImportExportRepo: JsonImportExportRepository(jsonImportService, jsonExportService),
+      billJsonImportExportRepo: JsonImportExportRepository(billJsonImportService, billJsonExportService),
       userTimeRepo: UserTimeRepository(),
       sellersRepo: BulkSavableDatasourceRepository(SellersDataSource(databaseService: fireStoreService)),
+      bondJsonImportExportRepo: JsonImportExportRepository(bondJsonImportService, bondJsonExportService),
     );
   }
 
@@ -136,7 +146,7 @@ class AppBindings extends Bindings {
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
     lazyPut(PatternController(repositories.patternsRepo));
     lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billJsonImportExportRepo));
-    lazyPut(AllBondsController(repositories.bondsRepo));
+    lazyPut(AllBondsController(repositories.bondsRepo ,repositories.bondJsonImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo));
     lazyPut(BillDetailsPlutoController( ));
     lazyPut(MaterialController(MaterialRepository()));
@@ -161,6 +171,7 @@ class _Repositories {
   final DataSourceRepository<EntryBondModel> entryBondsRepo;
   final AccountsStatementsRepository accountsStatementsRepo;
   final JsonImportExportRepository<BillModel> billJsonImportExportRepo;
+  final JsonImportExportRepository<BondModel> bondJsonImportExportRepo;
   final UserTimeRepository userTimeRepo;
   final BulkSavableDatasourceRepository<SellerModel> sellersRepo;
 
@@ -177,5 +188,6 @@ class _Repositories {
     required this.billJsonImportExportRepo,
     required this.userTimeRepo,
     required this.sellersRepo,
+    required this.bondJsonImportExportRepo
   });
 }

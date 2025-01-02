@@ -73,7 +73,7 @@ class AccountsController extends GetxController with AppNavigator {
 
   String getAccountNameById(String? accountId) {
     if (accountId == null || accountId.isEmpty) return '';
-    return accounts.where((account) => account.id == accountId).firstOrNull?.accName ?? '';
+    return accounts.where((account) => account.id == accountId).firstOrNull?.accName ?? accountId;
   }
 
   String getAccountIdByName(String? accountName) {

@@ -1,15 +1,15 @@
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 
 import '../../../../core/services/json_file_operations/interfaces/export/json_export_service_base.dart';
-import '../../data/models/bond_model.dart';
 
 class BondJsonExport extends JsonExportServiceBase<BondModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
   @override
   Map<String, dynamic> toExportJson(List<BondModel> itemsModels) {
     return {
-      "Pay": itemsModels.map((billModel) {
+/*      "Bill": itemsModels.map((billModel) {
         return <String, dynamic>{
-          /*      "p": {
+          "B": {
             "BillTypeGuid": _billTypeGuide(billModel.billTypeModel.billTypeLabel!),
             "BillGuid": billModel.billDetails.billGuid,
             "BillBranch": "",
@@ -21,7 +21,7 @@ class BondJsonExport extends JsonExportServiceBase<BondModel> {
             // Add the customer name if available
             "BillCurrencyGuid": "884edcde-c172-490d-a2f2-f10a0b90326a",
             "BillCurrencyVal": 1,
-            "BillDate": billModel.billDetails.billDate ?? "",
+            "BillDate": billModel.billDetails.billDate?.toIso8601String() ?? "",
             "BillStoreGuid": billModel.billTypeModel.accounts?[BillAccounts.store]?.id,
             "Note": billModel.billDetails.note ?? "",
             "BillCustAcc": "00000000-0000-0000-0000-000000000000",
@@ -45,9 +45,9 @@ class BondJsonExport extends JsonExportServiceBase<BondModel> {
             "VATAccGUID": "",
             "DIscCard": "",
             "BillAddressGUID": "00000000-0000-0000-0000-000000000000"
-          },*/
+          },
           "Disc": "", // Discount details if any
-/*          "Items": {
+          "Items": {
             "I": billModel.items.itemList
                 .map((item) => {
                       "MatPtr": item.itemGuid,
@@ -69,12 +69,16 @@ class BondJsonExport extends JsonExportServiceBase<BondModel> {
                       "SoType": 0
                     })
                 .toList(),
-          }*/
+          }
         };
-      }).toList(),
+      }).toList(),*/
     };
   }
 
+/*  String _billTypeGuide(String billLabel) => BillType.byLabel(billLabel).typeGuide;
 
-
+  int _calcVatRatio(double? vat, double? sunTotal) {
+    if (vat == null || vat == 0 || sunTotal == null || sunTotal == 0) return 0;
+    return ((vat / sunTotal) * 100).round();
+  }*/
 }

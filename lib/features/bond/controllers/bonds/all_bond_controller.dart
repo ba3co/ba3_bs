@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/firebase/implementations/datasource_repo.dart';
+import '../../../../core/services/json_file_operations/implementations/json_import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bond_model.dart';
@@ -17,12 +18,13 @@ import 'bond_search_controller.dart';
 
 class AllBondsController extends FloatingBondDetailsLauncher {
   final DataSourceRepository<BondModel> _bondsFirebaseRepo;
+  final JsonImportExportRepository<BondModel> _jsonImportExportRepo;
 
   late bool isDebitOrCredit;
   List<BondModel> bonds = [];
   bool isLoading = true;
 
-  AllBondsController(this._bondsFirebaseRepo);
+  AllBondsController(this._bondsFirebaseRepo,this._jsonImportExportRepo);
 
   // Services
   late final BondUtils _bondUtils;
@@ -54,11 +56,29 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     isLoading = false;
     update();
   }
+  Future<void> fetchAllBondsLocal() async {
+    log('fetchAllBondsLocal');
+    final result = _jsonImportExportRepo.importJsonFile('/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json');
+
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBonds) {
+        log( 'bonds.length ${bonds.length}');
+
+        bonds.assignAll(fetchedBonds);
+      },
+    );
+
+    isLoading = false;
+    update();
+  }
 
   List<BondModel> getBondsByType(String bondTypeId) => bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel}) async {
-    await fetchAllBonds();
+    await fetchAllBondsLocal();
+    // await fetchAllBonds();
 
     if (!context.mounted) return;
 
