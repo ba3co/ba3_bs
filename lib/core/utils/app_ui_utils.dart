@@ -223,12 +223,7 @@ class AppUIUtils {
     Color? color = Colors.white,
   }) =>
       Center(
-        child: SizedBox(
-            width: width,
-            height: height,
-            child: CircularProgressIndicator(
-              color: color,
-            )),
+        child: SizedBox(width: width, height: height, child: CircularProgressIndicator(color: color)),
       );
 
   static showErrorSnackBar(

@@ -1,3 +1,4 @@
+import '../../../models/count_query_filter.dart';
 import '../../../models/date_filter.dart';
 
 abstract class ICompoundDatabaseService<T> {
@@ -44,5 +45,12 @@ abstract class ICompoundDatabaseService<T> {
     required String rootDocumentId,
     required String subcollectionPath,
     String? subDocumentId,
+  });
+
+  Future<int> countDocuments({
+    required String rootCollectionPath,
+    required String rootDocumentId,
+    required String subcollectionPath,
+    CountQueryFilter? countQueryFilter,
   });
 }

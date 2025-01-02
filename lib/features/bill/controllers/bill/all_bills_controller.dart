@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/models/count_query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/json_import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -37,12 +38,18 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   List<BillTypeModel> billsTypes = [];
 
   List<BillModel> bills = [];
+
   List<BillModel> pendingBills = [];
+
+  final pendingBillsCountsByType = <BillTypeModel, int>{};
 
   bool plutoGridIsLoading = true;
 
-  Rx<RequestState> getBillsRequestState = RequestState.initial.obs;
+  Rx<RequestState> getBillsByTypeRequestState = RequestState.initial.obs;
+
   bool isPendingBillsLoading = true;
+
+  Rx<RequestState> getBillsTypesRequestState = RequestState.initial.obs;
 
   // Initializer
   void _initializeBillUtilities() {
@@ -54,8 +61,10 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     super.onInit();
     _initializeBillUtilities();
 
-    fetchBillTypes();
+    fetchBillsTypes();
   }
+
+  int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
@@ -87,7 +96,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
         (fetchedBills) {
           log("fetchedBills length ${fetchedBills.length}");
 
-          getBillsRequestState.value = RequestState.success;
+          getBillsByTypeRequestState.value = RequestState.success;
           bills.assignAll(fetchedBills);
         },
       );
@@ -112,15 +121,56 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
-  Future<void> fetchBillTypes() async {
+  Future<void> fetchBillsTypes() async {
+    getBillsTypesRequestState.value = RequestState.loading;
+
     final result = await _patternsFirebaseRepo.getAll();
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
+      (fetchedBillTypes) => _handleFetchBillTypesSuccess(fetchedBillTypes),
     );
+  }
 
-    update();
+  Future<void> _handleFetchBillTypesSuccess(List<BillTypeModel> fetchedBillTypes) async {
+    billsTypes.assignAll(fetchedBillTypes);
+
+    await fetchPendingBillsCountsByTypes(fetchedBillTypes);
+
+    await Future.delayed(Duration(seconds: 1));
+
+    getBillsTypesRequestState.value = RequestState.success;
+  }
+
+  Future<void> fetchPendingBillsCountsByTypes(List<BillTypeModel> fetchedBillTypes) async {
+    final List<Future<void>> fetchTasks = [];
+    final errors = <String>[]; // Collect error messages.
+
+    for (final billTypeModel in fetchedBillTypes) {
+      fetchTasks.add(
+        _billsFirebaseRepo
+            .count(
+                itemTypeModel: billTypeModel,
+                countQueryFilter: CountQueryFilter(
+                  field: ApiConstants.status,
+                  value: Status.pending.value,
+                ))
+            .then((result) {
+          result.fold(
+            (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+            (count) => pendingBillsCountsByType[billTypeModel] = count,
+          );
+        }),
+      );
+    }
+
+    // Wait for all tasks to complete.
+    await Future.wait(fetchTasks);
+
+    // Handle errors if any.
+    if (errors.isNotEmpty) {
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+    }
   }
 
   Future<void> exportBillsJsonFile() async {
@@ -146,7 +196,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
-    final BillModel billModel = await fetchBillById(billId,BillType.sales.billTypeModel);
+    final BillModel billModel = await fetchBillById(billId, BillType.sales.billTypeModel);
 
     if (!context.mounted) return;
 
@@ -240,6 +290,4 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     );
     return billModel;
   }
-
-
 }

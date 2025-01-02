@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 
+import '../../../../models/count_query_filter.dart';
 import '../../../../models/date_filter.dart';
 import '../../../../network/error/error_handler.dart';
 import '../../../../network/error/failure.dart';
@@ -61,6 +62,16 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     } catch (e) {
       log('Error in save: $e');
       return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
+
+  Future<Either<Failure, int>> count({required ItemTypeModel itemTypeModel, CountQueryFilter? countQueryFilter}) async {
+    try {
+      final count = await _dataSource.countDocuments(itemTypeModel: itemTypeModel, countQueryFilter: countQueryFilter);
+      return Right(count); // Return the found item
+    } catch (e) {
+      log('Error in count: $e');
+      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
 }

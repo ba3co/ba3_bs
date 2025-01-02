@@ -1,3 +1,4 @@
+import '../../../models/count_query_filter.dart';
 import '../../../models/date_filter.dart';
 import '../implementations/services/firebase_sequential_number_database.dart';
 import '../implementations/services/firestore_path_helper.dart';
@@ -26,4 +27,9 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
   Future<void> delete({required T item});
 
   Future<T> save({required T item, bool? save});
+
+  Future<int> countDocuments({
+    required ItemTypeModel itemTypeModel,
+    CountQueryFilter? countQueryFilter,
+  });
 }

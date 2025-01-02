@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../models/count_query_filter.dart';
 import '../../../../models/date_filter.dart';
 import '../../interfaces/i_compound_database_service.dart';
 
@@ -130,5 +131,34 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     final docRef =
         _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath).doc(subDocumentId);
     await docRef.delete();
+  }
+
+  @override
+  Future<int> countDocuments({
+    required String rootCollectionPath,
+    required String rootDocumentId,
+    required String subcollectionPath,
+    CountQueryFilter? countQueryFilter,
+  }) async {
+    // Start with the base query as a Query<Map<String, dynamic>>
+    Query<Map<String, dynamic>> query =
+        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath);
+
+    // Apply the filter if provided
+    if (countQueryFilter != null) {
+      query = query.where(
+        countQueryFilter.field,
+        isEqualTo: countQueryFilter.value,
+      );
+    }
+
+    // Convert the query to a count query
+    final countQuery = query.count();
+
+    // Execute the count query
+    final countSnapshot = await countQuery.get();
+
+    // Return the count
+    return countSnapshot.count ?? 0;
   }
 }

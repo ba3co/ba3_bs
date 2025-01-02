@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
 
+import '../../../../core/models/count_query_filter.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../models/bill_model.dart';
 
@@ -109,5 +110,20 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     );
 
     return BillModel.fromJson(data);
+  }
+
+  @override
+  Future<int> countDocuments({required BillTypeModel itemTypeModel, CountQueryFilter? countQueryFilter}) async {
+    final rootDocumentId = getRootDocumentId(itemTypeModel);
+    final subcollectionPath = getSubcollectionPath(itemTypeModel);
+
+    final count = await compoundDatabaseService.countDocuments(
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: rootDocumentId,
+      subcollectionPath: subcollectionPath,
+      countQueryFilter: countQueryFilter,
+    );
+
+    return count;
   }
 }
