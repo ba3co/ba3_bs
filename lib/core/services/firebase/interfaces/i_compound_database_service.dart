@@ -57,6 +57,10 @@ abstract class ICompoundDatabaseService<T> {
   Future<List<T>> saveAll({
     required List<T> items,
     required String rootCollectionPath,
+    required String rootDocumentId,
+    required String subCollectionPath,
 
   });
+
+
 }

@@ -1,4 +1,3 @@
-// BillsDataSource Implementation
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -146,17 +145,38 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<List<BillModel>> saveAll(List<BillModel> items) async {
+  Future<Map<BillTypeModel, List<BillModel>>> saveAllNested(
+      { required List<BillTypeModel> itemTypes, required List<BillModel> items}) async {
+    final billsByType = <BillTypeModel, List<BillModel>>{};
+
+    final List<Future<void>> fetchTasks = [];
+    // Create tasks to fetch all bills for each type
+
+    for (final billTypeModel in itemTypes) {
+      fetchTasks.add(
+        saveAll(itemTypeModel: billTypeModel, items: items).then((result) {
+          billsByType[billTypeModel] = result;
+        }),
+      );
+    }
+    // Wait for all tasks to complete
+    await Future.wait(fetchTasks);
+
+    return billsByType;
+  }
+
+  @override
+  Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemTypeModel}) async {
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
-      items: items
-          .map((item) => {
-                ...item.toJson(),
-                'docId': item.billId,
-                'rootDocumentId': getRootDocumentId(item.billTypeModel),
-                'subCollectionPath': getSubCollectionPath(item.billTypeModel)
-              })
-          .toList(),
+      subCollectionPath: getRootDocumentId(itemTypeModel),
+      rootDocumentId: getSubCollectionPath(itemTypeModel),
+      items: items.map((item) {
+        return {
+          ...item.toJson(),
+          'docId': item.billId,
+        };
+      }).toList(),
     );
 
     return savedData.map(BillModel.fromJson).toList();

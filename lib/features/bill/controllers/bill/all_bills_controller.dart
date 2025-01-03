@@ -118,7 +118,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
           log("bills.first.toJson()  ${bills.where(
                 (element) => element.billDetails.billNumber == 55,
               ).first.toJson()}");
-          // _billsFirebaseRepo.saveAll(fetchedBills);
+          // _billsFirebaseRepo.saveAllNested(fetchedBills,billsTypes);
         },
       );
     } else {

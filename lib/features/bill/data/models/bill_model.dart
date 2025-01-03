@@ -181,12 +181,12 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billGiftsTotal: billGiftsTotal,
         billTotal: billTotal,
         billVatTotal: billVatTotal,
+         billDiscountsTotal: 0,billAdditionsTotal: 0,
+         billBeforeVatTotal: billTotal-billVatTotal,
         note: billData['B']['Note'].toString(),
       ),
       billTypeModel: BillTypeModel(
           billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
-          latinShortName:_billTypeByGuid(billData['B']['BillTypeGuid']).billTypeModel.latinShortName ,
-          shortName:_billTypeByGuid(billData['B']['BillTypeGuid']).billTypeModel.shortName ,
           accounts: {
             BillAccounts.caches: AccountModel(
               id: billData['B']['BillCustPtr'],
@@ -206,7 +206,9 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
           },
           id: billData['B']['BillTypeGuid'],
           fullName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
-          latinFullName: _billTypeByGuid(billData['B']['BillTypeGuid']).billTypeModel.latinFullName,
+          latinFullName: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
+          latinShortName:_billTypeByGuid(billData['B']['BillTypeGuid']).label ,
+           shortName:_billTypeByGuid(billData['B']['BillTypeGuid']).value ,
           billTypeId: _billTypeByGuid(billData['B']['BillTypeGuid']).typeGuide,
           color: _billTypeByGuid(billData['B']['BillTypeGuid']).color,
           billPatternType: _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),

@@ -147,6 +147,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<List<Map<String, dynamic>>> saveAll({
     required List<Map<String, dynamic>> items,
     required String rootCollectionPath,
+    required String rootDocumentId,
+    required String subCollectionPath,
   }) async {
     final batch = _firestore.batch();
     final addedItems = <Map<String, dynamic>>[];
@@ -154,10 +156,10 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     for (final item in items) {
       // Ensure the document ID is set
       final docId = item.putIfAbsent('docId',
-          () => _firestore.collection(rootCollectionPath).doc(item["rootDocumentId"]).collection(item["subCollectionPath"]).doc().id);
+          () => _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id);
 
       // Add the item to the batch
-      final docRef = _firestore.collection(rootCollectionPath).doc(item["rootDocumentId"]).collection(item["subCollectionPath"]).doc(docId);
+      final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
       batch.set(docRef, item);
 
       // Collect the processed item
@@ -167,4 +169,6 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     await batch.commit();
     return addedItems;
   }
+
+
 }

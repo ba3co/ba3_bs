@@ -152,8 +152,17 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<List<ChequesModel>> saveAll(List<ChequesModel> items) {
+  Future<List<ChequesModel>> saveAll({required List<ChequesModel> items, required ChequesType itemTypeModel}) {
     // TODO: implement saveAll
     throw UnimplementedError();
   }
+
+  @override
+  Future<Map<ChequesType, List<ChequesModel>>> saveAllNested({required List<ChequesType> itemTypes, required List<ChequesModel> items}) {
+    // TODO: implement saveAllNested
+    throw UnimplementedError();
+  }
+
+
+
 }

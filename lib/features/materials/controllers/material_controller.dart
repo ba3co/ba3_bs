@@ -68,11 +68,11 @@ class MaterialController extends GetxController with AppNavigator {
 
     materials.assignAll(fetchedMaterial);
 
-    final result = await _materialsFirebaseRepo.saveAll(fetchedMaterial);
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterial) => log('savedMaterial ${savedMaterial.length}'),
-    );
+    // final result = await _materialsFirebaseRepo.saveAll(fetchedMaterial);
+    // result.fold(
+    //   (failure) => AppUIUtils.onFailure(failure.message),
+    //   (savedMaterial) => log('savedMaterial ${savedMaterial.length}'),
+    // );
 
     saveAllMaterialsRequestState.value = RequestState.success;
   }
