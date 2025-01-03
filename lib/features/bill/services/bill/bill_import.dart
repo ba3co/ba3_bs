@@ -1,9 +1,9 @@
 import 'package:xml/xml.dart';
 
-import '../../../../core/services/json_file_operations/interfaces/import/json_import_service_base.dart';
+import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
 import '../../data/models/bill_model.dart';
 
-class BillJsonImport extends JsonImportServiceBase<BillModel> {
+class BillImport extends ImportServiceBase<BillModel> {
   /// Converts the imported JSON structure to a list of BillModel
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {

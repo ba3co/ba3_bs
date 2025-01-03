@@ -4,13 +4,13 @@ import 'package:ba3_bs/core/network/error/error_handler.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../network/error/failure.dart';
-import '../../interfaces/export/i_json_export_repository.dart';
-import '../../interfaces/export/i_json_export_service.dart';
+import '../../interfaces/export/i_export_repository.dart';
+import '../../interfaces/export/i_export_service.dart';
 
-class JsonExportRepository<T> implements IJsonExportRepository<T> {
-  final IJsonExportService<T> _jsonExport;
+class ExportRepository<T> implements IExportRepository<T> {
+  final IExportService<T> _jsonExport;
 
-  JsonExportRepository(this._jsonExport);
+  ExportRepository(this._jsonExport);
 
   @override
   Future<Either<Failure, String>> exportJsonFile(List<T> itemsModels) async {

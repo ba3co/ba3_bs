@@ -5,16 +5,16 @@ import 'package:dartz/dartz.dart';
 
 import '../../../network/error/error_handler.dart';
 import '../../../network/error/failure.dart';
-import '../interfaces/export/i_json_export_repository.dart';
-import '../interfaces/export/i_json_export_service.dart';
-import '../interfaces/import/i_json_import_repository.dart';
-import '../interfaces/import/i_json_import_service.dart';
+import '../interfaces/export/i_export_repository.dart';
+import '../interfaces/export/i_export_service.dart';
+import '../interfaces/import/i_import_repository.dart';
+import '../interfaces/import/i_import_service.dart';
 
-class JsonImportExportRepository<T> implements IJsonImportRepository<T>, IJsonExportRepository<T> {
-  final IJsonImportService<T> _jsonImport;
-  final IJsonExportService<T> _jsonExport;
+class ImportExportRepository<T> implements IImportRepository<T>, IExportRepository<T> {
+  final IImportService<T> _jsonImport;
+  final IExportService<T> _jsonExport;
 
-  JsonImportExportRepository(this._jsonImport, this._jsonExport);
+  ImportExportRepository(this._jsonImport, this._jsonExport);
 
   @override
   Either<Failure, List<T>> importJsonFileJson(File filePath) {

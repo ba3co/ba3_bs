@@ -7,7 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../../../core/services/json_file_operations/implementations/json_import_export_repo.dart';
+import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/material_model.dart';
 import '../data/repositories/materials_repository.dart';
@@ -15,7 +15,7 @@ import '../data/repositories/materials_repository.dart';
 class MaterialController extends GetxController with AppNavigator {
   final MaterialRepository _materialRepository;
 
-  final JsonImportExportRepository<MaterialModel> _jsonImportExportRepo;
+  final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
 
   MaterialController(this._materialRepository,this._jsonImportExportRepo);
 

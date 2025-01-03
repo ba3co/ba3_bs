@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:xml/xml.dart';
 
-import 'i_json_import_service.dart';
+import 'i_import_service.dart';
 
-abstract class JsonImportServiceBase<T> implements IJsonImportService<T> {
+abstract class ImportServiceBase<T> implements IImportService<T> {
   /// Abstract method to be implemented by subclasses for JSON parsing
   @override
   List<T> fromImportJson(Map<String, dynamic> json);

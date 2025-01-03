@@ -1,8 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,7 +23,9 @@ import '../data/repositories/accounts_repository.dart';
 class AccountsController extends GetxController with AppNavigator {
   final AccountsRepository _accountsRepository;
 
-  AccountsController(this._accountsRepository);
+  final ImportExportRepository<AccountModel> _jsonImportExportRepo;
+
+  AccountsController(this._accountsRepository,this._jsonImportExportRepo);
 
   List<AccountModel> accounts = [];
 
@@ -31,10 +36,33 @@ class AccountsController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    fetchAccounts();
+    // fetchAccounts();
   }
 
   // Fetch materials from the repository
+
+
+  Future<void> fetchAllAccountsFromLocal() async {
+    log('fetchAllAccountsFromLocal');
+
+    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+
+    if (resultFile != null) {
+      File file = File(resultFile.files.single.path!);
+      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      result.fold(
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedAccounts) {
+          log("fetchedAccounts length ${fetchedAccounts.length}");
+          log(fetchedAccounts.last.toJson().toString());
+
+          accounts.assignAll(fetchedAccounts);
+        },
+      );
+    }
+
+    update();
+  }
   void fetchAccounts() {
     try {
       accounts = _accountsRepository.getAllAccounts();

@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
-import '../../../../core/services/json_file_operations/implementations/json_import_export_repo.dart';
+import '../../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bond_model.dart';
@@ -20,7 +20,7 @@ import 'bond_search_controller.dart';
 
 class AllBondsController extends FloatingBondDetailsLauncher {
   final CompoundDatasourceRepository<BondModel,BondType> _bondsFirebaseRepo;
-  final JsonImportExportRepository<BondModel> _jsonImportExportRepo;
+  final ImportExportRepository<BondModel> _jsonImportExportRepo;
 
   late bool isDebitOrCredit;
   List<BondModel> bonds = [];
@@ -65,13 +65,13 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importJsonFileJson(file);
-      // /Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json
+      final result = _jsonImportExportRepo.importJsonFileXml(file);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBonds) {
           log('bonds.length ${bonds.length}');
+          log('bonds.lastOrNull ${bonds.firstOrNull?.toJson()}');
 
           bonds.assignAll(fetchedBonds);
         },
