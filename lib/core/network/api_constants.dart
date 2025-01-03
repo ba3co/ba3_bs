@@ -14,6 +14,7 @@ class ApiConstants {
   static const String roles = 'roles';
   static const String users = 'users';
   static const String sellers = 'sellers';
+  static const String taxPath = 'texes';
 
   // FIELDS
   static const String status = 'status';

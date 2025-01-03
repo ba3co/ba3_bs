@@ -15,32 +15,33 @@ class AccountImport extends ImportServiceBase<AccountModel> {
   List<AccountModel> fromImportXml(XmlDocument document) {
     final accountNodes = document.findAllElements('A');
     DateFormat dateFormat = DateFormat('dd-MM-yyyy');
-    return accountNodes.map((node) {
+    return accountNodes.where((account) => account.getElement('AccName')?.text!='',).map((account) {
+
       return AccountModel(
-        id: node.getElement('AccPtr')?.text,
-        accName: node.getElement('AccName')?.text,
-        accLatinName: node.getElement('AccLatinName')?.text,
-        accCode: node.getElement('AccCode')?.text,
-        accCDate: dateFormat.tryParse(node.getElement('AccCDate')?.text ?? ''),
-        accCheckDate: dateFormat.tryParse(node.getElement('AccCheckDate')?.text ?? ''),
-        accParentGuid: node.getElement('AccParentGuid')?.text,
-        accFinalGuid: node.getElement('AccFinalGuid')?.text,
-        accAccNSons: int.tryParse(node.getElement('AccAccNSons')?.text ?? '0'),
-        accInitDebit: double.tryParse(node.getElement('AccInitDebit')?.text ?? '0'),
-        accInitCredit: double.tryParse(node.getElement('AccInitCredit')?.text ?? '0'),
-        maxDebit: double.tryParse(node.getElement('MaxDebit')?.text ?? '0'),
-        accWarn: int.tryParse(node.getElement('AccWarn')?.text.toString() ?? '0'),
-        note: node.getElement('Note')?.text,
-        accCurVal: int.tryParse(node.getElement('AccCurVal')?.text ?? '0'),
-        accCurGuid: node.getElement('AccCurGuid')?.text,
-        accSecurity: int.tryParse(node.getElement('AccSecurity')?.text ?? '0'),
-        accDebitOrCredit: int.tryParse(node.getElement('AccDebitOrCredit')?.text ?? '0'),
-        accType: int.tryParse(node.getElement('AccType')?.text ?? '0'),
-        accState: int.tryParse(node.getElement('AccState')?.text ?? '0'),
-        accIsChangableRatio: int.tryParse(node.getElement('AccIsChangableRatio')?.text ?? '0'),
-        accBranchGuid: node.getElement('AccBranchGuid')?.text,
-        accNumber: int.tryParse(node.getElement('AccNumber')?.text ?? '0'),
-        accBranchMask: int.tryParse(node.getElement('AccBranchMask')?.text ?? '0'),
+        id: account.getElement('AccPtr')?.text,
+        accName: account.getElement('AccName')?.text,
+        accLatinName: account.getElement('AccLatinName')?.text,
+        accCode: account.getElement('AccCode')?.text,
+        accCDate: dateFormat.tryParse(account.getElement('AccCDate')?.text ?? ''),
+        accCheckDate: dateFormat.tryParse(account.getElement('AccCheckDate')?.text ?? ''),
+        accParentGuid: account.getElement('AccParentGuid')?.text,
+        accFinalGuid: account.getElement('AccFinalGuid')?.text,
+        accAccNSons: int.parse(account.getElement('AccAccNSons')?.text ?? '0'),
+        accInitDebit: double.parse(account.getElement('AccInitDebit')?.text ?? '0'),
+        accInitCredit: double.parse(account.getElement('AccInitCredit')?.text ?? '0'),
+        maxDebit: double.parse(account.getElement('MaxDebit')?.text ?? '0'),
+        accWarn: double.parse(account.getElement('AccWarn')?.text.toString() ?? '0').toInt(),
+        note: account.getElement('Note')?.text,
+        accCurVal: int.parse(account.getElement('AccCurVal')?.text ?? '0'),
+        accCurGuid: account.getElement('AccCurGuid')?.text,
+        accSecurity: int.parse(account.getElement('AccSecurity')?.text ?? '0'),
+        accDebitOrCredit: int.parse(account.getElement('AccDebitOrCredit')?.text ?? '0'),
+        accType: int.parse(account.getElement('AccType')?.text ?? '0'),
+        accState: int.parse(account.getElement('AccState')?.text ?? '0'),
+        accIsChangableRatio: int.parse(account.getElement('AccIsChangableRatio')?.text ?? '0'),
+        accBranchGuid: account.getElement('AccBranchGuid')?.text,
+        accNumber: int.parse(account.getElement('AccNumber')?.text ?? '0'),
+        accBranchMask: int.parse(account.getElement('AccBranchMask')?.text ?? '0'),
       );
     }).toList();
   }

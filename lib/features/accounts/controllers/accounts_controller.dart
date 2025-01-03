@@ -84,7 +84,7 @@ class AccountsController extends GetxController with AppNavigator {
   List<AccountModel> searchAccountsByNameOrCode(text) {
     if (accounts.isEmpty) {
       log('Accounts isEmpty');
-      fetchAccounts();
+      // fetchAccounts();
     }
 
     return accounts

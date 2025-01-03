@@ -5,7 +5,7 @@ import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
-import 'package:ba3_bs/features/vat/data/models/vat_model.dart';
+import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -222,7 +222,10 @@ mixin BillEntryBondCreatingService {
       billId: billId,
       bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
       accountName: 'ضريبة القيمة المضافة',
-      accountId: VatEnums.byGuid(item.matVatGuid ?? "1").vatAccountGuid,
+
+      //TODO:
+      // change tax  guid
+      accountId: VatEnums.byGuid(item.matVatGuid ?? "1").taxAccountGuid,
       note: 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}',
       date: date,
     );

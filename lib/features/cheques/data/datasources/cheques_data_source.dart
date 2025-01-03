@@ -54,24 +54,5 @@ class ChequesDataSource extends DatasourceBase<ChequesModel> with FirebaseSequen
     return ChequesModel.fromJson(data);
   }
 
-// Future<BondModel> saveBond(BondModel item) async {
-//   if (item.payGuid == null) {
-//     final newBillModel = await _createNewBond(item);
-//
-//     return newBillModel;
-//   } else {
-//     await databaseService.update(path: ApiConstants.bondsChequesPath, documentId: item.payGuid, data: item.toJson());
-//     return item;
-//   }
-// }
-//
-// Future<BondModel> _createNewBond(BondModel bond) async {
-//   final newBondNumber = await getNextNumber(path, bond.payTypeGuid!);
-//
-//   final newBondJson = bond.copyWith(payNumber: newBondNumber).toJson();
-//
-//   final data = await databaseService.add(path: ApiConstants.bondsChequesPath, data: newBondJson);
-//
-//   return BondModel.fromJson(data);
-// }
+
 }

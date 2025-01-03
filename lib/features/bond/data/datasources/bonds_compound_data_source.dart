@@ -83,8 +83,7 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
     final rootDocumentId = getRootDocumentId(bondType);
     final subCollectionPath = getSubCollectionPath(bondType);
     if (item.payGuid == null) {
-      final newBondModel =
-          await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
+      final newBondModel = await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
       return newBondModel;
     } else {
       await compoundDatabaseService.update(
@@ -98,8 +97,7 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
     }
   }
 
-  Future<BondModel> _createNewBond(
-      {required BondModel bond, required String rootDocumentId, required String subCollectionPath}) async {
+  Future<BondModel> _createNewBond({required BondModel bond, required String rootDocumentId, required String subCollectionPath}) async {
     BondType bondType = BondType.byTypeGuide(bond.payTypeGuid!);
     final newBondNumber = await getNextNumber(rootCollectionPath, bondType.label);
 
@@ -131,9 +129,22 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   @override
-  Future<Map<BondType, List<BondModel>>> fetchAllNested(
-      {required String rootCollectionPath, required List<BondType> itemTypes}) {
-    // TODO: implement fetchAllNested
-    throw UnimplementedError();
+  Future<Map<BondType, List<BondModel>>> fetchAllNested({required String rootCollectionPath, required List<BondType> itemTypes}) async {
+    final bondsByType = <BondType, List<BondModel>>{};
+
+    final List<Future<void>> fetchTasks = [];
+    // Create tasks to fetch all bills for each type
+
+    for (final bondTypeModel in itemTypes) {
+      fetchTasks.add(
+        fetchAll(itemTypeModel: bondTypeModel).then((result) {
+          bondsByType[bondTypeModel] = result;
+        }),
+      );
+    }
+    // Wait for all tasks to complete
+    await Future.wait(fetchTasks);
+
+    return bondsByType;
   }
 }

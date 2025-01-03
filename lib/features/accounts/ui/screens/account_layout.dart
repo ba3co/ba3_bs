@@ -30,8 +30,8 @@ class AccountLayout extends StatelessWidget {
               text: 'معاينة الحسابات',
               onTap: () {
                 read<AccountsController>()
-                  ..fetchAccounts()
-                  ..navigateToAllAccountsScreen();
+                  /*..fetchAccounts()
+                  .*/.navigateToAllAccountsScreen();
               },
             ),
             AppMenuItem(

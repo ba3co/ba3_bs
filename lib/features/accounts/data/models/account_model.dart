@@ -14,6 +14,7 @@ class AccountModel implements PlutoAdaptable {
   final  DateTime? accCDate;
   final  DateTime? accCheckDate;
   final String? accParentGuid;
+  final String? accParentName;
   final String? accFinalGuid;
   final int? accAccNSons;
   final double? accInitDebit;
@@ -60,6 +61,7 @@ class AccountModel implements PlutoAdaptable {
     this.accNumber,
     this.accBranchMask,
     this.billsId,
+    this.accParentName,
   });
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
@@ -88,6 +90,7 @@ class AccountModel implements PlutoAdaptable {
       accBranchGuid: json['AccBranchGuid'],
       accNumber: json['AccNumber'],
       accBranchMask: json['AccBranchMask'],
+      accParentName: json['accParentName'],
       billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHfavRu"],
     );
   }
@@ -118,6 +121,7 @@ class AccountModel implements PlutoAdaptable {
       'AccBranchGuid': accBranchGuid,
       'AccNumber': accNumber,
       'AccBranchMask': accBranchMask,
+      'accParentName': read<AccountsController>().getAccountNameById(accParentGuid),
       'billsId': billsId?.toList() ?? [],
     };
   }
@@ -155,6 +159,7 @@ class AccountModel implements PlutoAdaptable {
     int? accState,
     int? accIsChangableRatio,
     String? accBranchGuid,
+    String? accParentName,
     int? accNumber,
     int? accBranchMask,
   }) {
@@ -183,6 +188,7 @@ class AccountModel implements PlutoAdaptable {
       accBranchGuid: accBranchGuid ?? this.accBranchGuid,
       accNumber: accNumber ?? this.accNumber,
       accBranchMask: accBranchMask ?? this.accBranchMask,
+      accParentName: accParentName ?? this.accParentName,
     );
   }
 
