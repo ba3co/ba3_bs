@@ -130,4 +130,11 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
 
     return count;
   }
+
+  @override
+  Future<Map<ChequesType, List<ChequesModel>>> fetchAllNested(
+      {required String rootCollectionPath, required List<ChequesType> itemTypes}) {
+    // TODO: implement fetchAllNested
+    throw UnimplementedError();
+  }
 }

@@ -15,6 +15,11 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
 
   Future<List<T>> fetchAll({required ItemTypeModel itemTypeModel});
 
+  Future<Map<ItemTypeModel, List<T>>> fetchAllNested({
+    required String rootCollectionPath,
+    required List<ItemTypeModel> itemTypes,
+  });
+
   Future<List<T>> fetchWhere<V>({
     required ItemTypeModel itemTypeModel,
     required String field,
@@ -28,8 +33,5 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
 
   Future<T> save({required T item, bool? save});
 
-  Future<int> countDocuments({
-    required ItemTypeModel itemTypeModel,
-    CountQueryFilter? countQueryFilter,
-  });
+  Future<int> countDocuments({required ItemTypeModel itemTypeModel, CountQueryFilter? countQueryFilter});
 }

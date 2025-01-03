@@ -129,4 +129,11 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
 
     return count;
   }
+
+  @override
+  Future<Map<BondType, List<BondModel>>> fetchAllNested(
+      {required String rootCollectionPath, required List<BondType> itemTypes}) {
+    // TODO: implement fetchAllNested
+    throw UnimplementedError();
+  }
 }

@@ -126,4 +126,27 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
 
     return count;
   }
+
+  @override
+  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested({
+    required String rootCollectionPath,
+    required List<BillTypeModel> itemTypes,
+  }) async {
+    final billsByType = <BillTypeModel, List<BillModel>>{};
+
+    final List<Future<void>> fetchTasks = [];
+    // Create tasks to fetch all bills for each type
+
+    for (final billTypeModel in itemTypes) {
+      fetchTasks.add(
+        fetchAll(itemTypeModel: billTypeModel).then((result) {
+          billsByType[billTypeModel] = result;
+        }),
+      );
+    }
+    // Wait for all tasks to complete
+    await Future.wait(fetchTasks);
+
+    return billsByType;
+  }
 }
