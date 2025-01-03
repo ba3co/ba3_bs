@@ -6,7 +6,7 @@ import '../../../../core/models/date_filter.dart';
 import '../../../../core/services/firebase/interfaces/compound_datasource_base.dart';
 import '../models/bond_model.dart';
 
-class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType> {
+class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType> {
   BondCompoundDataSource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bonds", "bonds")
@@ -21,7 +21,7 @@ class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
     );
 
     final bonds = data.map((item) => BondModel.fromJson(item)).toList();
@@ -37,7 +37,7 @@ class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemTypeModel),
-        subcollectionPath: getSubCollectionPath(itemTypeModel),
+        subCollectionPath: getSubCollectionPath(itemTypeModel),
         field: field,
         value: value,
         dateFilter: dateFilter);
@@ -55,7 +55,7 @@ class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType
     final data = await compoundDatabaseService.fetchById(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       subDocumentId: id,
     );
 
@@ -64,33 +64,33 @@ class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType
 
   @override
   Future<void> delete({required BondModel item}) async {
-    BondType bondType=BondType.byTypeGuide(item.payTypeGuid!);
+    BondType bondType = BondType.byTypeGuide(item.payTypeGuid!);
     final rootDocumentId = getRootDocumentId(bondType);
     final subCollectionPath = getSubCollectionPath(bondType);
 
     await compoundDatabaseService.delete(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       subDocumentId: item.payGuid!,
     );
   }
 
   @override
   Future<BondModel> save({required BondModel item, bool? save}) async {
-    BondType bondType=BondType.byTypeGuide(item.payTypeGuid!);
+    BondType bondType = BondType.byTypeGuide(item.payTypeGuid!);
 
     final rootDocumentId = getRootDocumentId(bondType);
     final subCollectionPath = getSubCollectionPath(bondType);
     if (item.payGuid == null) {
       final newBondModel =
-      await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
+          await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
       return newBondModel;
     } else {
       await compoundDatabaseService.update(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
-        subcollectionPath: subCollectionPath,
+        subCollectionPath: subCollectionPath,
         subDocumentId: item.payGuid!,
         data: item.toJson(),
       );
@@ -100,16 +100,15 @@ class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType
 
   Future<BondModel> _createNewBond(
       {required BondModel bond, required String rootDocumentId, required String subCollectionPath}) async {
-
-    BondType bondType=BondType.byTypeGuide(bond.payTypeGuid!);
+    BondType bondType = BondType.byTypeGuide(bond.payTypeGuid!);
     final newBondNumber = await getNextNumber(rootCollectionPath, bondType.label);
 
-    final newBondJson = bond.copyWith(payNumber: newBondNumber,payTypeGuid:bondType ).toJson();
+    final newBondJson = bond.copyWith(payNumber: newBondNumber, payTypeGuid: bondType).toJson();
 
     final data = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       data: newBondJson,
     );
 
@@ -117,14 +116,14 @@ class BondCompoundDataSource  extends CompoundDatasourceBase<BondModel, BondType
   }
 
   @override
-  Future<int> countDocuments({required BondType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter})async {
+  Future<int> countDocuments({required BondType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 
     final count = await compoundDatabaseService.countDocuments(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       countQueryFilter: countQueryFilter,
     );
 

@@ -11,10 +11,10 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<List<Map<String, dynamic>>> fetchAll({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
   }) async {
     final querySnapshot =
-        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath).get();
+        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).get();
     return (await querySnapshot).docs.map((doc) => doc.data()).toList();
   }
 
@@ -22,7 +22,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<List<Map<String, dynamic>>> fetchWhere<V>({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     required String field,
     required V value,
     DateFilter? dateFilter,
@@ -31,7 +31,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     Query<Map<String, dynamic>> query = _firestore
         .collection(rootCollectionPath)
         .doc(rootDocumentId)
-        .collection(subcollectionPath)
+        .collection(subCollectionPath)
         .where(field, isEqualTo: value);
 
     // Apply date filter if provided
@@ -66,13 +66,13 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<Map<String, dynamic>> fetchById({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
   }) async {
     final docSnapshot = await _firestore
         .collection(rootCollectionPath)
         .doc(rootDocumentId)
-        .collection(subcollectionPath)
+        .collection(subCollectionPath)
         .doc(subDocumentId)
         .get();
     if (docSnapshot.exists) {
@@ -86,12 +86,12 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<Map<String, dynamic>> add({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
     required Map<String, dynamic> data,
   }) async {
     if (subDocumentId == null) {
-      final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath).doc();
+      final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc();
 
       data['docId'] = docRef.id;
 
@@ -100,7 +100,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
       await _firestore
           .collection(rootCollectionPath)
           .doc(rootDocumentId)
-          .collection(subcollectionPath)
+          .collection(subCollectionPath)
           .doc(subDocumentId)
           .set(data);
     }
@@ -112,12 +112,12 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<void> update({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
     required Map<String, dynamic> data,
   }) async {
     final docRef =
-        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath).doc(subDocumentId);
+        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(subDocumentId);
     await docRef.update(data);
   }
 
@@ -125,11 +125,11 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<void> delete({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
   }) async {
     final docRef =
-        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath).doc(subDocumentId);
+        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(subDocumentId);
     await docRef.delete();
   }
 
@@ -137,12 +137,12 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<int> countDocuments({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     CountQueryFilter? countQueryFilter,
   }) async {
     // Start with the base query as a Query<Map<String, dynamic>>
     Query<Map<String, dynamic>> query =
-        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subcollectionPath);
+        _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath);
 
     // Apply the filter if provided
     if (countQueryFilter != null) {

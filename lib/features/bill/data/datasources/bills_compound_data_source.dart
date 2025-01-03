@@ -22,7 +22,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subcollectionPath,
+      subCollectionPath: subcollectionPath,
     );
 
     final bills = data.map((item) => BillModel.fromJson(item)).toList();
@@ -38,7 +38,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemTypeModel),
-        subcollectionPath: getSubCollectionPath(itemTypeModel),
+        subCollectionPath: getSubCollectionPath(itemTypeModel),
         field: field,
         value: value,
         dateFilter: dateFilter);
@@ -56,7 +56,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final data = await compoundDatabaseService.fetchById(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subcollectionPath,
+      subCollectionPath: subcollectionPath,
       subDocumentId: id,
     );
 
@@ -71,7 +71,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     await compoundDatabaseService.delete(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subcollectionPath,
+      subCollectionPath: subcollectionPath,
       subDocumentId: item.billId!,
     );
   }
@@ -88,7 +88,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
       await compoundDatabaseService.update(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
-        subcollectionPath: subcollectionPath,
+        subCollectionPath: subcollectionPath,
         subDocumentId: item.billId!,
         data: item.toJson(),
       );
@@ -105,7 +105,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final data = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subcollectionPath,
+      subCollectionPath: subcollectionPath,
       data: newBillJson,
     );
 
@@ -120,7 +120,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final count = await compoundDatabaseService.countDocuments(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       countQueryFilter: countQueryFilter,
     );
 

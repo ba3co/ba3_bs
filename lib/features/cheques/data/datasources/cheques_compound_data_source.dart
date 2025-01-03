@@ -6,7 +6,7 @@ import '../../../../core/models/date_filter.dart';
 import '../../../../core/services/firebase/interfaces/compound_datasource_base.dart';
 import '../models/cheques_model.dart';
 
-class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, ChequesType> {
+class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, ChequesType> {
   ChequesCompoundDataSource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "chequess", "chequess")
@@ -21,7 +21,7 @@ class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, Ch
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
     );
 
     final chequesList = data.map((item) => ChequesModel.fromJson(item)).toList();
@@ -37,7 +37,7 @@ class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, Ch
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemTypeModel),
-        subcollectionPath: getSubCollectionPath(itemTypeModel),
+        subCollectionPath: getSubCollectionPath(itemTypeModel),
         field: field,
         value: value,
         dateFilter: dateFilter);
@@ -55,7 +55,7 @@ class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, Ch
     final data = await compoundDatabaseService.fetchById(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       subDocumentId: id,
     );
 
@@ -64,33 +64,33 @@ class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, Ch
 
   @override
   Future<void> delete({required ChequesModel item}) async {
-    ChequesType chequesType=ChequesType.byTypeGuide(item.chequesTypeGuid!);
+    ChequesType chequesType = ChequesType.byTypeGuide(item.chequesTypeGuid!);
     final rootDocumentId = getRootDocumentId(chequesType);
     final subCollectionPath = getSubCollectionPath(chequesType);
 
     await compoundDatabaseService.delete(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       subDocumentId: item.chequesGuid!,
     );
   }
 
   @override
   Future<ChequesModel> save({required ChequesModel item, bool? save}) async {
-    ChequesType chequesType=ChequesType.byTypeGuide(item.chequesTypeGuid!);
+    ChequesType chequesType = ChequesType.byTypeGuide(item.chequesTypeGuid!);
 
     final rootDocumentId = getRootDocumentId(chequesType);
     final subCollectionPath = getSubCollectionPath(chequesType);
     if (item.chequesGuid == null) {
       final newChequesModel =
-      await _createNewCheques(cheques: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
+          await _createNewCheques(cheques: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
       return newChequesModel;
     } else {
       await compoundDatabaseService.update(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
-        subcollectionPath: subCollectionPath,
+        subCollectionPath: subCollectionPath,
         subDocumentId: item.chequesGuid!,
         data: item.toJson(),
       );
@@ -100,16 +100,16 @@ class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, Ch
 
   Future<ChequesModel> _createNewCheques(
       {required ChequesModel cheques, required String rootDocumentId, required String subCollectionPath}) async {
-
-    ChequesType chequesType=ChequesType.byTypeGuide(cheques.chequesTypeGuid!);
+    ChequesType chequesType = ChequesType.byTypeGuide(cheques.chequesTypeGuid!);
     final newChequesNumber = await getNextNumber(rootCollectionPath, chequesType.label);
 
-    final newChequesJson = cheques.copyWith(chequesNumber: newChequesNumber,chequesTypeGuid:chequesType.typeGuide ).toJson();
+    final newChequesJson =
+        cheques.copyWith(chequesNumber: newChequesNumber, chequesTypeGuid: chequesType.typeGuide).toJson();
 
     final data = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       data: newChequesJson,
     );
 
@@ -117,14 +117,14 @@ class ChequesCompoundDataSource  extends CompoundDatasourceBase<ChequesModel, Ch
   }
 
   @override
-  Future<int> countDocuments({required ChequesType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async{
+  Future<int> countDocuments({required ChequesType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 
     final count = await compoundDatabaseService.countDocuments(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subCollectionPath,
+      subCollectionPath: subCollectionPath,
       countQueryFilter: countQueryFilter,
     );
 

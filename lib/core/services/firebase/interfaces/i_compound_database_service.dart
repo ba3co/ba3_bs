@@ -5,7 +5,7 @@ abstract class ICompoundDatabaseService<T> {
   Future<T> add({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
     required T data,
   });
@@ -13,13 +13,13 @@ abstract class ICompoundDatabaseService<T> {
   Future<List<T>> fetchAll({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
   });
 
   Future<List<Map<String, dynamic>>> fetchWhere<V>({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     required String field,
     required V value,
     DateFilter? dateFilter,
@@ -28,14 +28,14 @@ abstract class ICompoundDatabaseService<T> {
   Future<T> fetchById({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
   });
 
   Future<void> update({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
     required T data,
   });
@@ -43,14 +43,14 @@ abstract class ICompoundDatabaseService<T> {
   Future<void> delete({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     String? subDocumentId,
   });
 
   Future<int> countDocuments({
     required String rootCollectionPath,
     required String rootDocumentId,
-    required String subcollectionPath,
+    required String subCollectionPath,
     CountQueryFilter? countQueryFilter,
   });
 }
