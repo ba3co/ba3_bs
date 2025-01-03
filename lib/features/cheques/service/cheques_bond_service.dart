@@ -2,8 +2,8 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 
-import '../../../../core/helper/enums/enums.dart';
-import '../../../bond/data/models/entry_bond_model.dart';
+import '../../../core/helper/enums/enums.dart';
+import '../../bond/data/models/entry_bond_model.dart';
 
 mixin ChequesBondService {
   EntryBondModel createEntryBondModel({

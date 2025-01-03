@@ -1,8 +1,8 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
-import '../../../accounts/data/models/account_model.dart';
-import '../../../sellers/data/models/seller_model.dart';
-import '../../data/models/cheques_model.dart';
+import '../../accounts/data/models/account_model.dart';
+import '../../sellers/data/models/seller_model.dart';
+import '../data/models/cheques_model.dart';
 
 class ChequesUtils {
   ChequesModel appendEmptyChequesModel(List<ChequesModel> cheques, ChequesType bondTyp) {

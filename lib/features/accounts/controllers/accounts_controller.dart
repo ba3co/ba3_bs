@@ -36,6 +36,7 @@ class AccountsController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
+    log("onInit account");
     // fetchAccounts();
   }
 

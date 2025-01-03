@@ -14,8 +14,8 @@ import '../../../../core/services/json_file_operations/implementations/import_ex
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/cheques_model.dart';
-import '../../service/cheques/cheques_utils.dart';
-import '../../service/cheques/floating_cheques_details_launcher.dart';
+import '../../service/cheques_utils.dart';
+import '../../service/floating_cheques_details_launcher.dart';
 import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
