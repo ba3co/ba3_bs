@@ -53,4 +53,10 @@ abstract class ICompoundDatabaseService<T> {
     required String subCollectionPath,
     CountQueryFilter? countQueryFilter,
   });
+
+  Future<List<T>> saveAll({
+    required List<T> items,
+    required String rootCollectionPath,
+
+  });
 }

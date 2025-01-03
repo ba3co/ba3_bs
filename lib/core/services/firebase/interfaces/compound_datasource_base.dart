@@ -34,4 +34,7 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
   Future<T> save({required T item, bool? save});
 
   Future<int> countDocuments({required ItemTypeModel itemTypeModel, CountQueryFilter? countQueryFilter});
+
+  Future<List<T>> saveAll(List<T> items,);
+
 }

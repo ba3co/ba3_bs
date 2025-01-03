@@ -111,7 +111,7 @@ class MaterialModel implements PlutoAdaptable {
   // Factory constructor to create an instance from JSON
   factory MaterialModel.fromJson(Map<String, dynamic> json) {
     return MaterialModel(
-      id: json['mptr']?.toString(),
+      id: json['docId']?.toString(),
       matCode: json['MatCode'],
       matName: json['MatName']?.toString(),
       matBarCode: json['MatBarCode']?.toString(),
@@ -167,7 +167,7 @@ class MaterialModel implements PlutoAdaptable {
 
   // toJson method
   Map<String, dynamic> toJson() => {
-        'mptr': id,
+        'docId': id,
         'MatCode': matCode,
         'MatName': matName,
         'MatBarCode': matBarCode,

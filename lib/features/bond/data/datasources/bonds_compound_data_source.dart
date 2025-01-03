@@ -147,4 +147,10 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
 
     return bondsByType;
   }
+
+  @override
+  Future<List<BondModel>> saveAll(List<BondModel> items) {
+    // TODO: implement saveAll
+    throw UnimplementedError();
+  }
 }

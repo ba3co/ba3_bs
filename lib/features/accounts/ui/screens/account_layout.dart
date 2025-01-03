@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/dialogs/Account_Option_Dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/widgets/app_button.dart';
 
 class AccountLayout extends StatelessWidget {
   const AccountLayout({super.key});
@@ -15,30 +14,32 @@ class AccountLayout extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text('الحسابات'),        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: AppButton(
-              title: 'تحميل الحسابات',
-              onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
+        appBar: AppBar(
+          title: const Text('الحسابات'),
+/*          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AppButton(
+                title: 'تحميل الحسابات',
+                onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
+              ),
             ),
-          ),
-        ],),
+          ],*/
+        ),
         body: Column(
           children: [
             AppMenuItem(
               text: 'معاينة الحسابات',
               onTap: () {
                 read<AccountsController>()
-                  /*..fetchAccounts()
-                  .*/.navigateToAllAccountsScreen();
+                  ..fetchAccounts()
+                  ..navigateToAllAccountsScreen();
               },
             ),
             AppMenuItem(
               text: 'كشف حساب',
               onTap: () {
-                showDialog<String>(
-                    context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
+                showDialog<String>(context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
               },
             ),
           ],

@@ -15,7 +15,17 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
   @override
   List<MaterialModel> fromImportXml(XmlDocument document) {
     final materialsXml = document.findAllElements('M');
+    final materialsGccXml = document.findAllElements('GCCMaterialTax');
+    List<GccMatTax> gcc = materialsGccXml.map(
+      (gccMat) {
+        String getText(String tagName) {
+          final elements = gccMat.findElements(tagName);
+          return elements.isEmpty ? '' : elements.first.text;
+        }
 
+        return GccMatTax(vat: getText('GCCMaterialTaxRatio'), guid: getText('GCCMaterialTaxMatGUID'));
+      },
+    ).toList();
     List<MaterialModel> materials = materialsXml.map((materialElement) {
       String? getText(String tagName) {
         final elements = materialElement.findElements(tagName);
@@ -94,5 +104,11 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
 
     return materials;
   }
+}
 
+class GccMatTax {
+  final String vat;
+  final String guid;
+
+  GccMatTax({required this.vat, required this.guid});
 }

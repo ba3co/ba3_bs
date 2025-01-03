@@ -9,10 +9,7 @@ class BillImport extends ImportServiceBase<BillModel> {
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Bill'] ?? [];
 
-    List<BillModel> sss =
-        billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
-
-    return sss;
+    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
   }
 
   @override
@@ -20,6 +17,8 @@ class BillImport extends ImportServiceBase<BillModel> {
     final billsXml = document.findAllElements('Bill');
 
     List<BillModel> bills = billsXml.map((billElement) {
+
+
       Map<String, dynamic> billJson = {
         'B': {
           'BillTypeGuid': billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
@@ -61,6 +60,7 @@ class BillImport extends ImportServiceBase<BillModel> {
 
       final itemsElement = billElement.findElements('Items').single;
       final itemsJson = itemsElement.findElements('I').map((iElement) {
+
         return {
           'MatPtr': iElement.findElements('MatPtr').single.text,
           'QtyBonus': iElement.findElements('QtyBonus').single.text,
@@ -83,6 +83,7 @@ class BillImport extends ImportServiceBase<BillModel> {
       }).toList();
 
       billJson['Items'] = {"I": itemsJson};
+
       return BillModel.fromImportedJsonFile(billJson);
     }).toList();
 

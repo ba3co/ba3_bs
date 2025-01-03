@@ -81,8 +81,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final rootDocumentId = getRootDocumentId(item.billTypeModel);
     final subcollectionPath = getSubCollectionPath(item.billTypeModel);
     if (item.billId == null) {
-      final newBillModel =
-          await _createNewBill(bill: item, rootDocumentId: rootDocumentId, subcollectionPath: subcollectionPath);
+      final newBillModel = await _createNewBill(bill: item, rootDocumentId: rootDocumentId, subcollectionPath: subcollectionPath);
       return newBillModel;
     } else {
       await compoundDatabaseService.update(
@@ -96,8 +95,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     }
   }
 
-  Future<BillModel> _createNewBill(
-      {required BillModel bill, required String rootDocumentId, required String subcollectionPath}) async {
+  Future<BillModel> _createNewBill({required BillModel bill, required String rootDocumentId, required String subcollectionPath}) async {
     final newBillNumber = await getNextNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
 
     final newBillJson = bill.copyWith(billDetails: bill.billDetails.copyWith(billNumber: newBillNumber)).toJson();
@@ -148,5 +146,22 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     await Future.wait(fetchTasks);
 
     return billsByType;
+  }
+
+  @override
+  Future<List<BillModel>> saveAll(List<BillModel> items) async {
+    final savedData = await compoundDatabaseService.saveAll(
+      rootCollectionPath: rootCollectionPath,
+      items: items
+          .map((item) => {
+                ...item.toJson(),
+                'docId': item.billId,
+                'rootDocumentId': getRootDocumentId(item.billTypeModel),
+                'subCollectionPath': getSubCollectionPath(item.billTypeModel)
+              })
+          .toList(),
+    );
+
+    return savedData.map(BillModel.fromJson).toList();
   }
 }

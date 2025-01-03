@@ -26,7 +26,8 @@ class MaterialController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    fetchMaterials();
+    log("MaterialController  onInit");
+    // fetchMaterials();
   }
 
   // Fetch materials from the repository

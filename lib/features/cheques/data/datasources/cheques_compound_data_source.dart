@@ -151,4 +151,10 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
 
     return chequesMapByType;
   }
+
+  @override
+  Future<List<ChequesModel>> saveAll(List<ChequesModel> items) {
+    // TODO: implement saveAll
+    throw UnimplementedError();
+  }
 }

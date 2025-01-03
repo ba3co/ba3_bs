@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_source.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -159,6 +160,7 @@ class AppBindings extends Bindings {
       chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
       userTimeRepo: UserTimeRepository(),
       sellersRepo: BulkSavableDatasourceRepository(SellersDataSource(databaseService: fireStoreService)),
+      accountsRep: BulkSavableDatasourceRepository(AccountsDataSource(databaseService: fireStoreService)),
       bondImportExportRepo: ImportExportRepository(bondImportService, bondExportService),
       materialImportExportRepo: ImportExportRepository(materialImportService, materialExportService),
       accountImportExportRepo: ImportExportRepository(accountImportService, accountExportService),
@@ -175,6 +177,9 @@ class AppBindings extends Bindings {
       UserManagementController(repositories.rolesRepo, repositories.usersRepo, sharedPreferencesService),
       permanent: true,
     );
+
+    put(MaterialController(MaterialRepository(), repositories.materialImportExportRepo),     permanent: true,);
+
   }
 
 // Lazy Controllers Initialization
@@ -186,8 +191,7 @@ class AppBindings extends Bindings {
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo,repositories.chequesImportExportRepo));
     lazyPut(BillDetailsPlutoController());
-    lazyPut(MaterialController(MaterialRepository(), repositories.materialImportExportRepo));
-    lazyPut(AccountsController(AccountsRepository(), repositories.accountImportExportRepo));
+    lazyPut(AccountsController(AccountsRepository(), repositories.accountImportExportRepo,repositories.accountsRep));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
@@ -214,6 +218,7 @@ class _Repositories {
   final ImportExportRepository<ChequesModel> chequesImportExportRepo;
   final UserTimeRepository userTimeRepo;
   final BulkSavableDatasourceRepository<SellerModel> sellersRepo;
+  final BulkSavableDatasourceRepository<AccountModel> accountsRep;
 
   _Repositories({
     required this.translationRepo,
@@ -232,5 +237,6 @@ class _Repositories {
     required this.materialImportExportRepo,
     required this.accountImportExportRepo,
     required this.chequesImportExportRepo,
+    required this.accountsRep,
   });
 }

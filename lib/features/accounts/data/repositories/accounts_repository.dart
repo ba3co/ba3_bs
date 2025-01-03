@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/account_model.dart';
 
-class AccountsRepository {
+class AccountsRepository  {
   List<AccountModel> getAllAccounts() {
     try {
       return accountsJsonMapper();

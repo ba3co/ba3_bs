@@ -13,6 +13,7 @@ import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../cheques/controllers/cheques/cheques_details_controller.dart';
 import '../../floating_window/services/overlay_service.dart';
@@ -23,9 +24,11 @@ import '../data/repositories/accounts_repository.dart';
 class AccountsController extends GetxController with AppNavigator {
   final AccountsRepository _accountsRepository;
 
+  final BulkSavableDatasourceRepository<AccountModel> _accountsFirebaseRepo;
+
   final ImportExportRepository<AccountModel> _jsonImportExportRepo;
 
-  AccountsController(this._accountsRepository,this._jsonImportExportRepo);
+  AccountsController(this._accountsRepository, this._jsonImportExportRepo, this._accountsFirebaseRepo);
 
   List<AccountModel> accounts = [];
 
@@ -36,12 +39,29 @@ class AccountsController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    log("onInit account");
-    // fetchAccounts();
+    // log("onInit account");
+    fetchAccounts();
   }
 
   // Fetch materials from the repository
 
+  Future<void> addAccount(AccountModel seller) async {
+    final result = await _accountsFirebaseRepo.save(seller);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedAccounts) {},
+    );
+  }
+
+  Future<void> addAccounts(List<AccountModel> accounts) async {
+    final result = await _accountsFirebaseRepo.saveAll(accounts);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedAccounts) {},
+    );
+  }
 
   Future<void> fetchAllAccountsFromLocal() async {
     log('fetchAllAccountsFromLocal');
@@ -52,27 +72,30 @@ class AccountsController extends GetxController with AppNavigator {
       File file = File(resultFile.files.single.path!);
       final result = _jsonImportExportRepo.importJsonFileXml(file);
       result.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedAccounts) {
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedAccounts) {
           log("fetchedAccounts length ${fetchedAccounts.length}");
           log(fetchedAccounts.last.toJson().toString());
 
           accounts.assignAll(fetchedAccounts);
+          addAccounts(accounts);
         },
       );
     }
 
     update();
   }
-  void fetchAccounts() {
-    try {
-      accounts = _accountsRepository.getAllAccounts();
-    } catch (e) {
-      debugPrint('Error in fetchAccounts($e)');
-    } finally {
-      isLoading = false;
-      update();
-    }
+
+  void fetchAccounts() async {
+    final result = await _accountsFirebaseRepo.getAll();
+
+    result.fold(
+      (error) => AppUIUtils.onFailure(error.message),
+      (fetchedAccount) => accounts = fetchedAccount,
+    );
+
+    isLoading = false;
+    update();
   }
 
   void navigateToAllAccountsScreen() {
@@ -87,9 +110,7 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts
-        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
-        .toList();
+    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -112,8 +133,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel = accounts
-          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel =
+          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -216,8 +237,7 @@ class AccountsController extends GetxController with AppNavigator {
                     : chequesDetailsController.setTowAccount(selectedAccount);
               }
 
-              final BillAccounts? billAccounts =
-                  read<PatternController>().controllerToBillAccountsMap[textEditingController];
+              final BillAccounts? billAccounts = read<PatternController>().controllerToBillAccountsMap[textEditingController];
 
               if (billAccounts != null) {
                 selectedAccounts[billAccounts] = selectedAccountModel!;

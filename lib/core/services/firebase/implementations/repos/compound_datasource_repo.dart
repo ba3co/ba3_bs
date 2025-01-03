@@ -74,4 +74,14 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
+
+  Future<Either<Failure, List<T>>> saveAll(List<T> items) async {
+    try {
+      final savedItems = await _dataSource.saveAll(items);
+      return Right(savedItems); // Return the list of saved items
+    } catch (e) {
+      log('Error in fetchWhere: $e');
+      return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
 }

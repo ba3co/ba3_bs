@@ -16,7 +16,6 @@ class AccountImport extends ImportServiceBase<AccountModel> {
     final accountNodes = document.findAllElements('A');
     DateFormat dateFormat = DateFormat('dd-MM-yyyy');
     return accountNodes.where((account) => account.getElement('AccName')?.text!='',).map((account) {
-
       return AccountModel(
         id: account.getElement('AccPtr')?.text,
         accName: account.getElement('AccName')?.text,

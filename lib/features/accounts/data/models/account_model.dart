@@ -33,7 +33,7 @@ class AccountModel implements PlutoAdaptable {
   final int? accNumber;
   final int? accBranchMask;
 
-  final List<String>? billsId;
+  // final List<String>? billsId;
 
  const AccountModel({
     this.id,
@@ -60,7 +60,7 @@ class AccountModel implements PlutoAdaptable {
     this.accBranchGuid,
     this.accNumber,
     this.accBranchMask,
-    this.billsId,
+    // this.billsId,
     this.accParentName,
   });
 
@@ -91,7 +91,7 @@ class AccountModel implements PlutoAdaptable {
       accNumber: json['AccNumber'],
       accBranchMask: json['AccBranchMask'],
       accParentName: json['accParentName'],
-      billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHfavRu"],
+      // billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHfavRu"],
     );
   }
 
@@ -121,8 +121,8 @@ class AccountModel implements PlutoAdaptable {
       'AccBranchGuid': accBranchGuid,
       'AccNumber': accNumber,
       'AccBranchMask': accBranchMask,
-      'accParentName': read<AccountsController>().getAccountNameById(accParentGuid),
-      'billsId': billsId?.toList() ?? [],
+      'accParentName': accParentName,
+      // 'billsId': billsId?.toList() ?? [],
     };
   }
 
@@ -206,7 +206,7 @@ class AccountModel implements PlutoAdaptable {
       PlutoColumn(field: 'Debit Or Credit', type: PlutoColumnType.text(), title: 'Debit Or Credit'):
           AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),
       PlutoColumn(field: 'حساب الاب', type: PlutoColumnType.text(), title: 'حساب الاب'):
-          read<AccountsController>().getAccountNameById(accParentGuid),
+        accParentName,
       PlutoColumn(field: 'الاولاد', type: PlutoColumnType.text(), title: 'الاولاد'):
           read<AccountsController>().getAccountChildren(id).join(' , '),
     };
