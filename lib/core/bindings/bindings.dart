@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
@@ -9,15 +10,16 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dar
 import 'package:ba3_bs/features/bill/services/bill/bill_json_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_json_import.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
-import 'package:ba3_bs/features/cheques/data/datasources/cheques_data_source.dart';
+import 'package:ba3_bs/features/cheques/data/datasources/cheques_compound_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/materials/service/material_json_export.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_source.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
-import 'package:ba3_bs/features/sellers/data/repositories/sellers_repository.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
 import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -35,11 +37,12 @@ import '../../features/bill/data/models/bill_model.dart';
 import '../../features/bill/services/bill/bill_json_export.dart';
 import '../../features/bond/controllers/bonds/all_bond_controller.dart';
 import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
-import '../../features/bond/data/datasources/bond_data_source.dart';
+import '../../features/bond/data/datasources/bonds_compound_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
 import '../../features/bond/service/bond/bond_json_export.dart';
 import '../../features/materials/data/repositories/materials_repository.dart';
+import '../../features/materials/service/material_json_import.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
@@ -75,6 +78,8 @@ class AppBindings extends Bindings {
     final billJsonExport = BillJsonExport();
     final bondJsonImport = BondJsonImport();
     final bondJsonExport = BondJsonExport();
+    final materialJsonImport = MaterialJsonImport();
+    final materialJsonExport = MaterialJsonExport();
 
 // Initialize repositories
     final repositories = _initializeRepositories(
@@ -84,7 +89,8 @@ class AppBindings extends Bindings {
         billJsonImportService: billJsonImport,
         billJsonExportService: billJsonExport,
     bondJsonExportService: bondJsonExport,
-      bondJsonImportService: bondJsonImport
+      bondJsonImportService: bondJsonImport,
+      materialJsonExportService: materialJsonExport,materialJsonImportService: materialJsonImport
     );
 
 // Permanent Controllers
@@ -118,14 +124,16 @@ class AppBindings extends Bindings {
     required IJsonExportService<BillModel> billJsonExportService,
     required IJsonImportService<BondModel> bondJsonImportService,
     required IJsonExportService<BondModel> bondJsonExportService,
+    required IJsonImportService<MaterialModel> materialJsonImportService,
+    required IJsonExportService<MaterialModel> materialJsonExportService,
   }) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
       patternsRepo: DataSourceRepository(PatternsDataSource(databaseService: fireStoreService)),
       billsRepo:
           CompoundDatasourceRepository(BillCompoundDataSource(compoundDatabaseService: compoundFireStoreService)),
-      bondsRepo: DataSourceRepository(BondsDataSource(databaseService: fireStoreService)),
-      chequesRepo: DataSourceRepository(ChequesDataSource(databaseService: fireStoreService)),
+      bondsRepo: CompoundDatasourceRepository(BondCompoundDataSource(compoundDatabaseService: compoundFireStoreService)),
+      chequesRepo: CompoundDatasourceRepository(ChequesCompoundDataSource(compoundDatabaseService: compoundFireStoreService)),
       rolesRepo: DataSourceRepository(RolesDataSource(databaseService: fireStoreService)),
       usersRepo: FilterableDataSourceRepository(UsersDataSource(databaseService: fireStoreService)),
       entryBondsRepo: DataSourceRepository(EntryBondsDataSource(databaseService: fireStoreService)),
@@ -134,13 +142,14 @@ class AppBindings extends Bindings {
       userTimeRepo: UserTimeRepository(),
       sellersRepo: BulkSavableDatasourceRepository(SellersDataSource(databaseService: fireStoreService)),
       bondJsonImportExportRepo: JsonImportExportRepository(bondJsonImportService, bondJsonExportService),
+      materialJsonImportExportRepo: JsonImportExportRepository(materialJsonImportService, materialJsonExportService),
     );
   }
 
 // Permanent Controllers Initialization
   void _initializePermanentControllers(SharedPreferencesService sharedPreferencesService, _Repositories repositories) {
     put(
-      SellersController(SellersLocalRepository(), repositories.sellersRepo),
+      SellersController( repositories.sellersRepo),
       permanent: true,
     );
     put(
@@ -159,7 +168,7 @@ class AppBindings extends Bindings {
     lazyPut(AllBondsController(repositories.bondsRepo ,repositories.bondJsonImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo));
     lazyPut(BillDetailsPlutoController());
-    lazyPut(MaterialController(MaterialRepository()));
+    lazyPut(MaterialController(MaterialRepository(),repositories.materialJsonImportExportRepo));
     lazyPut(AccountsController(AccountsRepository()));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
@@ -174,14 +183,15 @@ class _Repositories {
   final TranslationRepository translationRepo;
   final DataSourceRepository<BillTypeModel> patternsRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> billsRepo;
-  final DataSourceRepository<BondModel> bondsRepo;
-  final DataSourceRepository<ChequesModel> chequesRepo;
+  final CompoundDatasourceRepository<BondModel,BondType> bondsRepo;
+  final CompoundDatasourceRepository<ChequesModel,ChequesType> chequesRepo;
   final DataSourceRepository<RoleModel> rolesRepo;
   final FilterableDataSourceRepository<UserModel> usersRepo;
   final DataSourceRepository<EntryBondModel> entryBondsRepo;
   final AccountsStatementsRepository accountsStatementsRepo;
   final JsonImportExportRepository<BillModel> billJsonImportExportRepo;
   final JsonImportExportRepository<BondModel> bondJsonImportExportRepo;
+  final JsonImportExportRepository<MaterialModel> materialJsonImportExportRepo;
   final UserTimeRepository userTimeRepo;
   final BulkSavableDatasourceRepository<SellerModel> sellersRepo;
 
@@ -198,6 +208,7 @@ class _Repositories {
     required this.billJsonImportExportRepo,
     required this.userTimeRepo,
     required this.sellersRepo,
-    required this.bondJsonImportExportRepo
+    required this.bondJsonImportExportRepo,
+    required this.materialJsonImportExportRepo
   });
 }

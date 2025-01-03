@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/validators/app_validator.dart';
-import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
@@ -24,7 +24,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   // Repositories
 
-  final DataSourceRepository<ChequesModel> _chequesFirebaseRepo;
+  final CompoundDatasourceRepository<ChequesModel,ChequesType> _chequesFirebaseRepo;
   final ChequesSearchController chequesSearchController;
 
   // Services
@@ -96,7 +96,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> deleteCheques(ChequesModel chequesModel, {bool fromChequesById = false}) async {
-    final result = await _chequesFirebaseRepo.delete(chequesModel.chequesGuid!);
+    final result = await _chequesFirebaseRepo.delete(chequesModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

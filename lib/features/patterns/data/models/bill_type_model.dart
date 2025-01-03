@@ -103,6 +103,8 @@ class BillTypeModel extends PlutoAdaptable with EquatableMixin {
     String? billTypeLabel,
     int? color,
     String? store,
+
+    BillPatternType? billPatternType,
     Map<Account, AccountModel>? accounts,
     Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts,
   }) =>
@@ -117,6 +119,7 @@ class BillTypeModel extends PlutoAdaptable with EquatableMixin {
         color: color ?? this.color,
         accounts: accounts ?? this.accounts,
         discountAdditionAccounts: discountAdditionAccounts ?? this.discountAdditionAccounts,
+        billPatternType: billPatternType??this.billPatternType
       );
 
   @override

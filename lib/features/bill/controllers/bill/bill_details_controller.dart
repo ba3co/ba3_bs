@@ -243,6 +243,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
+      billNote: noteController.text,
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
       billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
@@ -278,6 +279,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate = bill.billDetails.billDate!;
+
+    noteController.text=bill.billDetails.note??'';
 
     initBillNumberController(bill.billDetails.billNumber);
 

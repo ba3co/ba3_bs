@@ -318,6 +318,7 @@ class ChequesModel implements PlutoAdaptable {
       PlutoColumn(title: "تاريخ التحرير", field: AppConstants.chequesDate, type: PlutoColumnType.date()): chequesDate.toDate,
       PlutoColumn(title: "تاريخ الاستحقاق", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()): chequesDueDate.toDate,
       PlutoColumn(title: "البيان", field: AppConstants.chequesNote, type: PlutoColumnType.text()): chequesNote,
+      PlutoColumn(title: "نوع الشيك", field: AppConstants.chequesTypeGuid, type: PlutoColumnType.text()):ChequesType.byTypeGuide(chequesTypeGuid!).value ,
       PlutoColumn(title: "الحالة", field: AppConstants.isPayed, type: PlutoColumnType.text(),): isPayed! ? ChequesStatus.paid.label : ChequesStatus.notPaid.label,
     };
   }

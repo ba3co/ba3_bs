@@ -101,9 +101,9 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
 
     final actions = {
-      EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(origin.originId!, context),
+      EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(origin.originId!, context,BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
       EntryBondType.bill: () => read<AllBillsController>().openFloatingBillDetailsById(origin.originId!, context,BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
-      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(origin.originId!, context),
+      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(origin.originId!, context,ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];

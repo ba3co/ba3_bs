@@ -247,7 +247,6 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
         PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',
-        PlutoColumn(title: 'billType', field: 'billType', type: PlutoColumnType.text()): billTypeModel.toJson() ?? '',
 
       };
 

@@ -225,7 +225,7 @@ enum Status {
 
 enum BondType {
   openingEntry(
-    label: "Opening Entry",
+    label: "Opening_Entry",
     value: "القيد الافتتاحي",
     typeGuide: "ea69ba80-662d-4fa4-90ee-4d2e1988a8ea",
     from: 1,
@@ -236,7 +236,7 @@ enum BondType {
     color: "E6E6EF",
   ),
   receiptVoucher(
-    label: "Receipt Voucher",
+    label: "Receipt_Voucher",
     value: "سند قبض",
     typeGuide: "3dbab874-6002-413b-9a6b-9a216f338097",
     from: 1,
@@ -247,7 +247,7 @@ enum BondType {
     color: "6DC289",
   ),
   paymentVoucher(
-    label: "Payment Voucher",
+    label: "Payment_Voucher",
     value: "سند دفع",
     typeGuide: '5085dc23-1444-4e9a-9d8f-1794da9e7f96',
     from: 1,
@@ -258,7 +258,7 @@ enum BondType {
     color: "C26D6D",
   ),
   journalVoucher(
-    label: "Journal Voucher",
+    label: "Journal_Voucher",
     value: "سند يومية",
     typeGuide: "2a550cb5-4e91-4e68-bacc-a0e7dcbbf1de",
     from: 1,
@@ -307,14 +307,14 @@ enum BondType {
 
 enum ChequesType {
   paidChecks(
-    label: "Paid checks",
+    label: "Paid_checks",
     value: "شيكات مدفوعة",
     typeGuide: "fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18",
     from: 1,
     to: 277,
   ),
   insuranceChecks(
-    label: "Insurance checks",
+    label: "Insurance_checks",
     value: "شيكات تأمين",
     typeGuide: 'c27c5972-2b40-47df-8e3e-6ee29c4d5838',
     from: 2,

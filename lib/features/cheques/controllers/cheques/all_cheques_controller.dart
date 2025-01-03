@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,7 +8,6 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/cheques_model.dart';
@@ -18,7 +18,7 @@ import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
 class AllChequesController extends FloatingChequesDetailsLauncher with AppNavigator {
-  final DataSourceRepository<ChequesModel> _chequesFirebaseRepo;
+  final CompoundDatasourceRepository<ChequesModel,ChequesType> _chequesFirebaseRepo;
 
   late bool isDebitOrCredit;
   List<ChequesModel> chequesList = [];
@@ -45,9 +45,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
   ChequesModel getChequesById(String chequesId) =>
       chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
 
-  Future<void> fetchAllCheques() async {
+  Future<void> fetchAllChequesByType(ChequesType itemTypeModel) async {
     log('fetchCheques');
-    final result = await _chequesFirebaseRepo.getAll();
+    final result = await _chequesFirebaseRepo.getAll(itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -58,24 +58,22 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     update();
   }
 
-  List<ChequesModel> getChequesByType(String chequesTypeId) =>
-      chequesList.where((cheques) => cheques.chequesTypeGuid! == chequesTypeId).toList();
+
 
   Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel,
       {ChequesModel? chequesModel}) async {
-    await fetchAllCheques();
+    await fetchAllChequesByType(chequesTypeModel);
 
     if (!context.mounted) return;
 
-    List<ChequesModel> chequesByCategory =
-        getChequesByType(chequesModel?.chequesTypeGuid ?? chequesTypeModel.typeGuide);
+
 
     final ChequesModel lastChequesModel =
-        chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesByCategory, chequesTypeModel);
+        chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
 
     _openChequesDetailsFloatingWindow(
       context: context,
-      modifiedCheques: chequesByCategory,
+      modifiedCheques: chequesList,
       lastChequesModel: lastChequesModel,
       chequesType: chequesTypeModel,
     );
@@ -138,18 +136,18 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
   void navigateToChequesScreen({required bool onlyDues}) => to(AppRoutes.showAllChequesScreen, arguments: onlyDues);
 
-  void openChequesDetailsById(String chequesId, BuildContext context) async {
-    final ChequesModel chequesModel = await fetchChequesById(chequesId);
+  void openChequesDetailsById(String chequesId, BuildContext context,ChequesType itemTypeModel) async {
+    final ChequesModel chequesModel = await fetchChequesById(chequesId,itemTypeModel);
     if (!context.mounted) return;
 
     openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
         chequesModel: chequesModel);
   }
 
-  Future<ChequesModel> fetchChequesById(String chequesId) async {
+  Future<ChequesModel> fetchChequesById(String chequesId,ChequesType itemTypeModel) async {
     late ChequesModel chequesModel;
 
-    final result = await _chequesFirebaseRepo.getById(chequesId);
+    final result = await _chequesFirebaseRepo.getById(id: chequesId,itemTypeModel: itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

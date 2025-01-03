@@ -88,7 +88,7 @@ class ChequesService with PdfBase, ChequesBondService, FloatingLauncher {
       [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
-      await read<AllChequesController>().fetchAllCheques();
+      await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
       Get.back();
     } else {
       chequesSearchController.removeCheques(chequesModel);

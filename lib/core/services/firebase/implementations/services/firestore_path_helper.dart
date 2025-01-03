@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
+
 import '../../../../../features/patterns/data/models/bill_type_model.dart';
 
 mixin FirestorePathHelper<ItemTypeModel> {
@@ -7,14 +9,27 @@ mixin FirestorePathHelper<ItemTypeModel> {
     if (typeModel is BillTypeModel) {
       return typeModel.billTypeId ?? (throw ArgumentError('billTypeId is required for BillTypeModel.'));
     }
+    if (typeModel is BondType) {
+      return typeModel.typeGuide;
+    }
+    if (typeModel is ChequesType) {
+      return typeModel.typeGuide;
+    }
+
     throw ArgumentError('Unsupported typeModel for getRootDocumentId.');
   }
 
   /// Retrieves the sub-collection path based on the model type.
   /// Example: "purchase", "sales"
-  String getSubcollectionPath(ItemTypeModel typeModel) {
+  String getSubCollectionPath(ItemTypeModel typeModel) {
     if (typeModel is BillTypeModel) {
       return typeModel.billTypeLabel ?? (throw ArgumentError('billTypeLabel is required for BillTypeModel.'));
+    }
+    if (typeModel is BondType) {
+      return typeModel.label ;
+    }
+    if (typeModel is ChequesType) {
+      return typeModel.label;
     }
     throw ArgumentError('Unsupported typeModel for getSubcollectionPath.');
   }

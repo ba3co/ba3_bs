@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_menu_item.dart';
 
 class MaterialLayout extends StatelessWidget {
@@ -14,6 +15,15 @@ class MaterialLayout extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("المواد"),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AppButton(
+                title: 'تحميل المواد',
+                onPressed: () => read<MaterialController>().fetchAllMaterialFromLocal(),
+              ),
+            ),
+          ],
         ),
         body: Column(
           children: [

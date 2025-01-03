@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/widgets/pluto_grid_with_app_bar_.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,8 @@ class AllCheques extends StatelessWidget {
           onSelected: (event) {
 
             String chequesId = event.row?.cells[AppConstants.chequesGuid]?.value;
-            logic.openChequesDetailsById(chequesId,context);
+
+            logic.openChequesDetailsById(chequesId,context,ChequesType.paidChecks);
           },
           isLoading: logic.isLoading,
           title: !onlyDues ? "جميع الشيكات" : "الشيكات المستحقة",

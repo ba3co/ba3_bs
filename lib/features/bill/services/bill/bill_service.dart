@@ -40,6 +40,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     required BillTypeModel billTypeModel,
     required String billCustomerId,
     required String billSellerId,
+    required String? billNote,
     required int billPayType,
     required DateTime billDate,
   }) {
@@ -47,7 +48,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
       billModel: billModel,
       billTypeModel: billTypeModel,
       status: RoleItemType.viewBill.status,
-      note: null,
+      note: billNote,
       billCustomerId: billCustomerId,
       billSellerId: billSellerId,
       billPayType: billPayType,

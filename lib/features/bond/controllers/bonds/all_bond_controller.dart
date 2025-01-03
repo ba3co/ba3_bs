@@ -8,7 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/json_import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -19,7 +19,7 @@ import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
 class AllBondsController extends FloatingBondDetailsLauncher {
-  final DataSourceRepository<BondModel> _bondsFirebaseRepo;
+  final CompoundDatasourceRepository<BondModel,BondType> _bondsFirebaseRepo;
   final JsonImportExportRepository<BondModel> _jsonImportExportRepo;
 
   late bool isDebitOrCredit;
@@ -41,14 +41,13 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     super.onInit();
     _initializeServices();
 
-    // getAllBondTypes();
   }
 
   BondModel getBondById(String bondId) => bonds.firstWhere((bond) => bond.payGuid == bondId);
 
-  Future<void> fetchAllBonds() async {
-    log('fetchBonds');
-    final result = await _bondsFirebaseRepo.getAll();
+  Future<void> fetchAllBondsByType(BondType itemTypeModel) async {
+    log('fetchAllBondsByType');
+    final result = await _bondsFirebaseRepo.getAll(itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -85,37 +84,35 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     update();
   }
 
-  List<BondModel> getBondsByType(String bondTypeId) => bonds.where((bond) => bond.payTypeGuid! == bondTypeId).toList();
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel}) async {
     // await fetchAllBondsLocal();
-    await fetchAllBonds();
+    await fetchAllBondsByType(bondTypeModel);
 
     if (!context.mounted) return;
 
-    List<BondModel> bondsByCategory = getBondsByType(bondModel?.payTypeGuid ?? bondTypeModel.typeGuide);
 
-    final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bondsByCategory, bondTypeModel);
+    final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bonds, bondTypeModel);
 
     _openBondDetailsFloatingWindow(
       context: context,
-      modifiedBonds: bondsByCategory,
+      modifiedBonds: bonds,
       lastBondModel: lastBondModel,
       bondType: bondTypeModel,
     );
   }
 
-  void openBondDetailsById(String bondId, BuildContext context) async {
-    final BondModel bondModel = await fetchBondsById(bondId);
+  void openBondDetailsById(String bondId, BuildContext context,BondType itemTypeModel) async {
+    final BondModel bondModel = await fetchBondsById(bondId,itemTypeModel);
     if (!context.mounted) return;
 
     openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), bondModel: bondModel);
   }
 
-  Future<BondModel> fetchBondsById(String bondId) async {
+  Future<BondModel> fetchBondsById(String bondId,BondType itemTypeModel) async {
     late BondModel bondModel;
 
-    final result = await _bondsFirebaseRepo.getById(bondId);
+    final result = await _bondsFirebaseRepo.getById(id: bondId,itemTypeModel: itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

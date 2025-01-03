@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/validators/app_validator.dart';
-import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../service/bond/bond_pdf_generator.dart';
@@ -27,7 +27,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   // Repositories
 
-  final DataSourceRepository<BondModel> _bondsFirebaseRepo;
+  final CompoundDatasourceRepository<BondModel,BondType> _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
   final BondSearchController bondSearchController;
 
@@ -87,7 +87,7 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> deleteBond(BondModel bondModel, {bool fromBondById = false}) async {
-    final result = await _bondsFirebaseRepo.delete(bondModel.payGuid!);
+    final result = await _bondsFirebaseRepo.delete(bondModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

@@ -1,17 +1,23 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
+import '../../../core/services/json_file_operations/implementations/json_import_export_repo.dart';
+import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/material_model.dart';
 import '../data/repositories/materials_repository.dart';
 
 class MaterialController extends GetxController with AppNavigator {
   final MaterialRepository _materialRepository;
 
-  MaterialController(this._materialRepository);
+  final JsonImportExportRepository<MaterialModel> _jsonImportExportRepo;
+
+  MaterialController(this._materialRepository,this._jsonImportExportRepo);
 
   List<MaterialModel> materials = [];
 
@@ -33,6 +39,32 @@ class MaterialController extends GetxController with AppNavigator {
       isLoading = false;
       update();
     }
+  }
+
+
+  Future<void> fetchAllMaterialFromLocal() async {
+    log('fetchAllMaterialFromLocal');
+
+    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+
+    if (resultFile != null) {
+      File file = File(resultFile.files.single.path!);
+      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      // /Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json
+
+      result.fold(
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedMaterial) {
+          log('fetchedMaterial.length ${fetchedMaterial.length}');
+          materials.assignAll(fetchedMaterial);
+        },
+      );
+    } else {
+      // User canceled the picker
+    }
+
+    isLoading = false;
+    update();
   }
 
   void navigateToAllMaterialScreen() {

@@ -17,7 +17,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   @override
   Future<List<BillModel>> fetchAll({required BillTypeModel itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubcollectionPath(itemTypeModel);
+    final subcollectionPath = getSubCollectionPath(itemTypeModel);
 
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
@@ -38,7 +38,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemTypeModel),
-        subcollectionPath: getSubcollectionPath(itemTypeModel),
+        subcollectionPath: getSubCollectionPath(itemTypeModel),
         field: field,
         value: value,
         dateFilter: dateFilter);
@@ -51,7 +51,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   @override
   Future<BillModel> fetchById({required String id, required BillTypeModel itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubcollectionPath(itemTypeModel);
+    final subcollectionPath = getSubCollectionPath(itemTypeModel);
 
     final data = await compoundDatabaseService.fetchById(
       rootCollectionPath: rootCollectionPath,
@@ -66,7 +66,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   @override
   Future<void> delete({required BillModel item}) async {
     final rootDocumentId = getRootDocumentId(item.billTypeModel);
-    final subcollectionPath = getSubcollectionPath(item.billTypeModel);
+    final subcollectionPath = getSubCollectionPath(item.billTypeModel);
 
     await compoundDatabaseService.delete(
       rootCollectionPath: rootCollectionPath,
@@ -79,7 +79,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   @override
   Future<BillModel> save({required BillModel item, bool? save}) async {
     final rootDocumentId = getRootDocumentId(item.billTypeModel);
-    final subcollectionPath = getSubcollectionPath(item.billTypeModel);
+    final subcollectionPath = getSubCollectionPath(item.billTypeModel);
     if (item.billId == null) {
       final newBillModel =
           await _createNewBill(bill: item, rootDocumentId: rootDocumentId, subcollectionPath: subcollectionPath);
@@ -115,12 +115,12 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   @override
   Future<int> countDocuments({required BillTypeModel itemTypeModel, CountQueryFilter? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubcollectionPath(itemTypeModel);
+    final subCollectionPath = getSubCollectionPath(itemTypeModel);
 
     final count = await compoundDatabaseService.countDocuments(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subcollectionPath: subcollectionPath,
+      subcollectionPath: subCollectionPath,
       countQueryFilter: countQueryFilter,
     );
 

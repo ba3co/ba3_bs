@@ -13,13 +13,13 @@ import '../../../core/services/firebase/implementations/repos/bulk_savable_datas
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
-import '../data/repositories/sellers_repository.dart';
+
 
 class SellersController extends GetxController with AppNavigator {
-  final SellersLocalRepository _sellersRepository;
+
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
-  SellersController(this._sellersRepository, this._sellersFirebaseRepo);
+  SellersController( this._sellersFirebaseRepo);
 
   List<SellerModel> sellers = [];
   bool isLoading = true;

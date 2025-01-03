@@ -1,9 +1,9 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/mixin/controller_initializer.dart';
-import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
 
 import '../../controllers/cheques/cheques_details_controller.dart';
 import '../../controllers/cheques/cheques_search_controller.dart';
@@ -17,7 +17,7 @@ class FloatingChequesDetailsLauncher extends GetxController with FloatingLaunche
     final chequesType = requireParam<ChequesType>(params, 'chequesType');
 
     final chequesSearchController = requireParam<ChequesSearchController>(params, 'chequesSearchController');
-    final chequesFirebaseRepo = requireParam<DataSourceRepository<ChequesModel>>(params, 'chequesFirebaseRepo');
+    final chequesFirebaseRepo = requireParam<CompoundDatasourceRepository<ChequesModel,ChequesType>>(params, 'chequesFirebaseRepo');
 
     final chequesSearchControllerWithTag =
         getOrCreateController<ChequesSearchController>(tag, controllerBuilder: () => chequesSearchController);

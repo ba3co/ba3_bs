@@ -29,13 +29,13 @@ class JsonImportExportRepository<T> implements IJsonImportRepository<T>, IJsonEx
 
   @override
   Either<Failure, List<T>> importJsonFileXml(File filePath) {
-    try {
+    // try {
       List<T> itemsModels = _jsonImport.importFromXmlFile(filePath);
       return Right(itemsModels);
-    } catch (e) {
-      log('[$e] فشل في استيراد الملف');
-      return Left(ErrorHandler(e).failure);
-    }
+    // } catch (e) {
+    //   log('[$e] فشل في استيراد الملف');
+    //   return Left(ErrorHandler(e).failure);
+    // }
   }
 
 
