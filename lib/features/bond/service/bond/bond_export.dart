@@ -1,11 +1,11 @@
-import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 
-import '../../../../core/services/json_file_operations/interfaces/export/json_export_service_base.dart';
+import '../../../../core/services/json_file_operations/interfaces/export/export_service_base.dart';
 
-class MaterialJsonExport extends JsonExportServiceBase<MaterialModel> {
+class BondExport extends ExportServiceBase<BondModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
   @override
-  Map<String, dynamic> toExportJson(List<MaterialModel> itemsModels) {
+  Map<String, dynamic> toExportJson(List<BondModel> itemsModels) {
     return {
 /*      "Bill": itemsModels.map((billModel) {
         return <String, dynamic>{

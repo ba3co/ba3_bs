@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:ba3_bs/core/models/count_query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/json_file_operations/implementations/json_import_export_repo.dart';
+import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
@@ -28,7 +28,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   // Repositories
   final DataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
-  final JsonImportExportRepository<BillModel> _jsonImportExportRepo;
+  final ImportExportRepository<BillModel> _jsonImportExportRepo;
 
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonImportExportRepo);
 

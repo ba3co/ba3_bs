@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:xml/xml.dart';
 
-abstract class IJsonImportService<T> {
+abstract class IImportService<T> {
   List<T> fromImportJson(Map<String, dynamic> json);
   List<T> fromImportXml(XmlDocument document);
 

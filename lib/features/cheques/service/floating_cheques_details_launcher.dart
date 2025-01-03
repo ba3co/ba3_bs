@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/mixin/controller_initializer.dart';
 
-import '../../controllers/cheques/cheques_details_controller.dart';
-import '../../controllers/cheques/cheques_search_controller.dart';
-import '../../data/models/cheques_model.dart';
+import '../controllers/cheques/cheques_details_controller.dart';
+import '../controllers/cheques/cheques_search_controller.dart';
+import '../data/models/cheques_model.dart';
 
 class FloatingChequesDetailsLauncher extends GetxController with FloatingLauncher, ControllerInitializer {
   /// Initializes and manages controllers for the Cheques Details screen with floating window capabilities.

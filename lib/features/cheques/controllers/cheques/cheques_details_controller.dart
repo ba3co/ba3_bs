@@ -12,7 +12,7 @@ import '../../../../core/services/firebase/implementations/repos/compound_dataso
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
-import '../../service/cheques/cheques_service.dart';
+import '../../service/cheques_service.dart';
 import 'cheques_search_controller.dart';
 
 class ChequesDetailsController extends GetxController with AppValidator {

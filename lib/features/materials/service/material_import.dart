@@ -1,9 +1,9 @@
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:xml/xml.dart';
 
-import '../../../../core/services/json_file_operations/interfaces/import/json_import_service_base.dart';
+import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
 
-class MaterialJsonImport extends JsonImportServiceBase<MaterialModel> {
+class MaterialImport extends ImportServiceBase<MaterialModel> {
   /// Converts the imported JSON structure to a list of BillModel
   @override
   List<MaterialModel> fromImportJson(Map<String, dynamic> jsonContent) {
@@ -24,17 +24,17 @@ class MaterialJsonImport extends JsonImportServiceBase<MaterialModel> {
 
       int? getInt(String tagName) {
         final text = getText(tagName);
-        return text == null ? null : int.tryParse(text);
+        return text == null ? null : double.parse(text.toString()).toInt();
       }
 
       double? getDouble(String tagName) {
         final text = getText(tagName);
-        return text == null ? null : double.tryParse(text);
+        return text == null ? null : double.parse(text);
       }
 
       DateTime? getDate(String tagName) {
         final text = getText(tagName);
-        return text == null ? null : DateTime.tryParse(text);
+        return text == null ? null : DateTime.parse(text);
       }
 
       return MaterialModel(
@@ -85,8 +85,8 @@ class MaterialJsonImport extends JsonImportServiceBase<MaterialModel> {
         matCompositionName: getText('MatCompositionName'),
         matCompositionLatinName: getText('MatCompositionLatinName'),
         movedComposite: getInt('MovedComposite'),
-        wholesalePrice: getText('retail2') ?? '',
-        retailPrice: getText('EndUser2') ?? '',
+        wholesalePrice: getText('Whole2') ?? '',
+        retailPrice: getText('retail2') ?? '',
         endUserPrice: getText('EndUser2') ?? '',
         matVatGuid: getText('MatVatGuid'),
       );
