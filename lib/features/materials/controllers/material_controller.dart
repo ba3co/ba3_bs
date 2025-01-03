@@ -7,6 +7,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
+import '../../../core/helper/enums/enums.dart';
+import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/material_model.dart';
@@ -16,12 +18,15 @@ class MaterialController extends GetxController with AppNavigator {
   final MaterialRepository _materialRepository;
 
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
+  final BulkSavableDatasourceRepository<MaterialModel> _materialsFirebaseRepo;
 
-  MaterialController(this._materialRepository,this._jsonImportExportRepo);
+  MaterialController(this._materialRepository, this._jsonImportExportRepo, this._materialsFirebaseRepo);
 
   List<MaterialModel> materials = [];
 
   bool isLoading = true;
+
+  Rx<RequestState> saveAllMaterialsRequestState = RequestState.initial.obs;
 
   @override
   void onInit() {
@@ -42,30 +47,34 @@ class MaterialController extends GetxController with AppNavigator {
     }
   }
 
-
   Future<void> fetchAllMaterialFromLocal() async {
-    log('fetchAllMaterialFromLocal');
-
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
       final result = _jsonImportExportRepo.importJsonFileXml(file);
-      // /Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/bond.json
 
       result.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedMaterial) {
-          log('fetchedMaterial.length ${fetchedMaterial.length}');
-          materials.assignAll(fetchedMaterial);
-        },
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedMaterial) => _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
       );
-    } else {
-      // User canceled the picker
     }
+  }
 
-    isLoading = false;
-    update();
+  _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
+    log('fetchedMaterial.last ${fetchedMaterial.last.toJson()}');
+
+    saveAllMaterialsRequestState.value = RequestState.loading;
+
+    materials.assignAll(fetchedMaterial);
+
+    final result = await _materialsFirebaseRepo.saveAll(fetchedMaterial);
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedMaterial) => log('savedMaterial ${savedMaterial.length}'),
+    );
+
+    saveAllMaterialsRequestState.value = RequestState.success;
   }
 
   void navigateToAllMaterialScreen() {
@@ -126,7 +135,6 @@ class MaterialController extends GetxController with AppNavigator {
   MaterialModel? getMaterialById(String id) {
     return materials.firstWhereOrNull((material) => material.id == id);
   }
-
 
   MaterialModel? getMaterialByName(name) {
     if (name != null && name != " " && name != "") {

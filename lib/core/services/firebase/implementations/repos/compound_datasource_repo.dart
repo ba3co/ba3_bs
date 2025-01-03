@@ -84,4 +84,14 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
+
+  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> fetchAllNested(List<ItemTypeModel> itemTypes) async {
+    try {
+      final nestedItems = await _dataSource.fetchAllNested(itemTypes: itemTypes);
+      return Right(nestedItems); // Return list of  Nested items
+    } catch (e) {
+      log('Error in fetchAllNested: $e');
+      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
+    }
+  }
 }

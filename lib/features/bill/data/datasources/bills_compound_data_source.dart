@@ -126,10 +126,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested({
-    required String rootCollectionPath,
-    required List<BillTypeModel> itemTypes,
-  }) async {
+  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested({required List<BillTypeModel> itemTypes}) async {
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
     final List<Future<void>> fetchTasks = [];

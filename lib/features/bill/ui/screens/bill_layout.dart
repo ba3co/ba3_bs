@@ -9,9 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
-import '../../../../core/network/api_constants.dart';
-import '../../../../core/services/firebase/implementations/services/compound_firestore_service.dart';
-import '../../data/datasources/bills_compound_data_source.dart';
+import '../../../tax/data/models/tax_model.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
 import '../widgets/bill_layout/bill_layout_app_bar.dart';
 
@@ -45,11 +43,7 @@ class BillLayout extends StatelessWidget {
                           billLayoutAppBar(),
                           ElevatedButton(
                               onPressed: () {
-                                BillCompoundDataSource(compoundDatabaseService: CompoundFireStoreService())
-                                    .fetchAllNested(
-                                  rootCollectionPath: ApiConstants.billsPath,
-                                  itemTypes: controller.billsTypes,
-                                );
+                                VatService().uploadVatEnumsToFirestore();
                               },
                               child: Text('data')),
                         ],

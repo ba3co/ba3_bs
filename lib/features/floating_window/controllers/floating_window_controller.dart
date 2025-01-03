@@ -83,10 +83,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
     return targetPositionRatio;
   }
 
-  void updateWindowForSizeChange({
-    required Size newParentSize,
-    required Offset positionRatio,
-  }) {
+  void updateWindowForSizeChange({required Size newParentSize, required Offset positionRatio}) {
     // Determine the debounce duration based on whether the window is minimized or maximized
     final debounceDuration = isMinimized ? const Duration(milliseconds: 80) : const Duration(milliseconds: 150);
 

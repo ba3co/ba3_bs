@@ -108,6 +108,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     }
 
     await batch.commit();
+    log('addedItems ${addedItems.length}');
     return addedItems;
   }
 }

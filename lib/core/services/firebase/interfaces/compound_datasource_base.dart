@@ -15,10 +15,7 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
 
   Future<List<T>> fetchAll({required ItemTypeModel itemTypeModel});
 
-  Future<Map<ItemTypeModel, List<T>>> fetchAllNested({
-    required String rootCollectionPath,
-    required List<ItemTypeModel> itemTypes,
-  });
+  Future<Map<ItemTypeModel, List<T>>> fetchAllNested({required List<ItemTypeModel> itemTypes});
 
   Future<List<T>> fetchWhere<V>({
     required ItemTypeModel itemTypeModel,

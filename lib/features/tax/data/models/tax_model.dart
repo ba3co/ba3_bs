@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TaxModel {
   final String? taxGuid;
   final double? taxRatio;
@@ -14,7 +16,7 @@ class TaxModel {
   // Convert RoleModel object to JSON
   Map<String, dynamic> toJson() {
     return {
-      'taxGuid': taxGuid,
+      'docId': taxGuid,
       'taxRatio': taxRatio,
       'taxName': taxName,
       'taxAccountGuid': taxAccountGuid,
@@ -24,7 +26,7 @@ class TaxModel {
   // Create RoleModel object from JSON
   factory TaxModel.fromJson(Map<String, dynamic> json) {
     return TaxModel(
-      taxGuid: json['taxGuid'],
+      taxGuid: json['docId'],
       taxRatio: json['taxRatio'],
       taxName: json['taxName'],
       taxAccountGuid: json['taxAccountGuid'],
@@ -89,3 +91,30 @@ TaxModel withOutVat = TaxModel(
   taxRatio: 0,
   taxName: 'معفى',
 );
+
+class VatService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> uploadVatEnumsToFirestore() async {
+    final vatsCollection = _firestore.collection('vats');
+
+    for (var vatEnum in VatEnums.values) {
+      final docId = vatsCollection.doc().id;
+      final vatData = {
+        'docId': docId,
+        'taxName': vatEnum.taxName,
+        'taxRatio': vatEnum.taxRatio,
+        'taxAccountGuid': vatEnum.taxAccountGuid,
+      };
+
+      try {
+        await vatsCollection
+            .doc(docId) // Use taxGuid as the document ID
+            .set(vatData);
+        print('Added ${vatEnum.taxName} to Firestore successfully.');
+      } catch (e) {
+        print('Failed to add ${vatEnum.taxName}: $e');
+      }
+    }
+  }
+}

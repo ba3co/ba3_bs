@@ -132,8 +132,7 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<Map<ChequesType, List<ChequesModel>>> fetchAllNested(
-      {required String rootCollectionPath, required List<ChequesType> itemTypes}) async{
+  Future<Map<ChequesType, List<ChequesModel>>> fetchAllNested({required List<ChequesType> itemTypes}) async {
     final chequesMapByType = <ChequesType, List<ChequesModel>>{};
 
     final List<Future<void>> fetchTasks = [];

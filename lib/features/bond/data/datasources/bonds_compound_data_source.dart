@@ -83,7 +83,8 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
     final rootDocumentId = getRootDocumentId(bondType);
     final subCollectionPath = getSubCollectionPath(bondType);
     if (item.payGuid == null) {
-      final newBondModel = await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
+      final newBondModel =
+          await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
       return newBondModel;
     } else {
       await compoundDatabaseService.update(
@@ -97,7 +98,8 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
     }
   }
 
-  Future<BondModel> _createNewBond({required BondModel bond, required String rootDocumentId, required String subCollectionPath}) async {
+  Future<BondModel> _createNewBond(
+      {required BondModel bond, required String rootDocumentId, required String subCollectionPath}) async {
     BondType bondType = BondType.byTypeGuide(bond.payTypeGuid!);
     final newBondNumber = await getNextNumber(rootCollectionPath, bondType.label);
 
@@ -129,7 +131,7 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   @override
-  Future<Map<BondType, List<BondModel>>> fetchAllNested({required String rootCollectionPath, required List<BondType> itemTypes}) async {
+  Future<Map<BondType, List<BondModel>>> fetchAllNested({required List<BondType> itemTypes}) async {
     final bondsByType = <BondType, List<BondModel>>{};
 
     final List<Future<void>> fetchTasks = [];
