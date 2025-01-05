@@ -62,12 +62,6 @@ class MaterialController extends GetxController with AppNavigator {
 
     materials.assignAll(fetchedMaterial);
 
-    // final result = await _materialsFirebaseRepo.saveAll(fetchedMaterial);
-    // result.fold(
-    //   (failure) => AppUIUtils.onFailure(failure.message),
-    //   (savedMaterial) => log('savedMaterial ${savedMaterial.length}'),
-    // );
-
     // Show progress in the UI
     FirestoreUploader firestoreUploader = FirestoreUploader();
     await firestoreUploader.sequentially(
@@ -88,8 +82,9 @@ class MaterialController extends GetxController with AppNavigator {
 
   Future<void> reloadMaterialsIfEmpty() async {
     if (materials.isEmpty) {
-      log('Fetching materials...');
+      log('Fetching materials started...');
       await fetchMaterials();
+      log('Fetching materials ended...');
     }
   }
 
@@ -99,6 +94,7 @@ class MaterialController extends GetxController with AppNavigator {
     List<MaterialModel> searchedMaterials = [];
 
     query = replaceArabicNumbersWithEnglish(query);
+
     String query2 = '';
     String query3 = '';
 

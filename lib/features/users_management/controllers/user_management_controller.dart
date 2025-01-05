@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/dialogs/custom_date_picker_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
+import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
@@ -202,8 +203,9 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   Future<void> _checkUserByPin() async {
-    final result =
-        await _usersFirebaseRepo.fetchWhere(field: ApiConstants.userPassword, value: loginPasswordController.text);
+    final result = await _usersFirebaseRepo.fetchWhere(
+      queryFilters: [QueryFilter(field: ApiConstants.userPassword, value: loginPasswordController.text)],
+    );
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

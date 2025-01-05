@@ -2,6 +2,7 @@
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 
+import '../../../../../core/models/query_filter.dart';
 import '../../../../../core/services/firebase/interfaces/queryable_savable_datasource.dart';
 import '../../models/material_model.dart';
 
@@ -49,8 +50,8 @@ class MaterialsDataSource extends QueryableSavableDatasource<MaterialModel> {
   }
 
   @override
-  Future<List<MaterialModel>> fetchWhere<V>({required String field, required V value, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, field: field, value: value, dateFilter: dateFilter);
+  Future<List<MaterialModel>> fetchWhere({required List<QueryFilter> queryFilters, DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters);
 
     final materials = data.map((item) => MaterialModel.fromJson(item)).toList();
 

@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/services/firebase/interfaces/queryable_savable_datas
 import 'package:dartz/dartz.dart';
 
 import '../../../../models/date_filter.dart';
+import '../../../../models/query_filter.dart';
 import '../../../../network/error/error_handler.dart';
 import '../../../../network/error/failure.dart';
 import 'datasource_repo.dart';
@@ -23,11 +24,9 @@ class QueryableSavableRepository<T> extends DataSourceRepository<T> {
     }
   }
 
-  Future<Either<Failure, List<T>>> fetchWhere<V>(
-      {required String field, required V value, DateFilter? dateFilter}) async {
+  Future<Either<Failure, List<T>>> fetchWhere({required List<QueryFilter> queryFilters, DateFilter? dateFilter}) async {
     try {
-      final filteredItems =
-          await _queryableSavableDatasource.fetchWhere(field: field, value: value, dateFilter: dateFilter);
+      final filteredItems = await _queryableSavableDatasource.fetchWhere(queryFilters: queryFilters);
       return Right(filteredItems); // Return the list of filtered items
     } catch (e, stackTrace) {
       log('Error in fetchWhere: $e', stackTrace: stackTrace);

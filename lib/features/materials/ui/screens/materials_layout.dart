@@ -40,7 +40,7 @@ class MaterialLayout extends StatelessWidget {
                       text: "معاينة المواد",
                       onTap: () {
                         read<MaterialController>()
-                          ..fetchMaterials()
+                          ..reloadMaterialsIfEmpty()
                           ..navigateToAllMaterialScreen();
                       }),
                 ],

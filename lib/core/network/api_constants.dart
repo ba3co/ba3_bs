@@ -23,4 +23,8 @@ class ApiConstants {
   static const String userPassword = 'userPassword';
   static const String billDate = 'billDetails.billDate';
   static const String billSellerId = 'billDetails.billSellerId';
+
+  static const String matName = 'MatName';
+  static const String matBarCode = 'MatBarCode';
+  static const String matCode = 'MatCode';
 }

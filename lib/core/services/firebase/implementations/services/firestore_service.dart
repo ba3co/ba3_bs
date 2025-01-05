@@ -1,6 +1,7 @@
 // Firebase-Specific Implementation
 import 'dart:developer';
 
+import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -17,34 +18,38 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> fetchWhere<V>(
-      {required String path, required String field, required V value, DateFilter? dateFilter}) async {
-    // Build the base query
-    Query<Map<String, dynamic>> query = _firestore.collection(path).where(field, isEqualTo: value);
+  Future<List<Map<String, dynamic>>> fetchWhere({
+    required String path,
+    required List<QueryFilter> queryFilters,
+    DateFilter? dateFilter,
+  }) async {
+    // Build the base query and apply filters
+    final query = _applyDateFilterIfNeeded(
+      _applyFilters(_firestore.collection(path), queryFilters),
+      dateFilter,
+    );
 
-    // Apply date filter if provided
-    if (dateFilter != null) {
-      query = _applyDateFilter(query, dateFilter);
-    }
-
-    // Execute the query and return results
+    // Execute the query and return the results
     final snapshot = await query.get();
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 
-// Helper method to apply the date filter to the query
-  Query<Map<String, dynamic>> _applyDateFilter(Query<Map<String, dynamic>> query, DateFilter dateFilter) {
-    // The start date/time for the range filter (inclusive).
-    final start = dateFilter.range.start;
+// Applies filters to the query
+  Query<Map<String, dynamic>> _applyFilters(
+          CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
+      queryFilters.fold<Query<Map<String, dynamic>>>(
+        collection,
+        (query, filter) => query.where(filter.field, isEqualTo: filter.value),
+      );
 
-    // Adjust the end date to include the entire day up to the last millisecond (23:59:59.999).
-    // This ensures that timestamps on the end date are not unintentionally excluded.
+// Applies the date filter if provided
+  Query<Map<String, dynamic>> _applyDateFilterIfNeeded(Query<Map<String, dynamic>> query, DateFilter? dateFilter) {
+    if (dateFilter == null) return query;
+
+    final start = dateFilter.range.start;
     final end =
         DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
 
-    // Apply the date range filters to the query.
-    // - Greater than or equal to the start ensures we capture all entries from the start date onward.
-    // - Less than or equal to the adjusted end ensures we include all entries up to the end of the specified date.
     return query
         .where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start)
         .where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
