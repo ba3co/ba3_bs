@@ -115,14 +115,11 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
           getBillsByTypeRequestState.value = RequestState.success;
           bills.assignAll(fetchedBills);
-          log("bills.first.toJson()  ${bills.where(
-                (element) => element.billDetails.billNumber == 55,
-              ).first.toJson()}");
-          // _billsFirebaseRepo.saveAllNested(fetchedBills,billsTypes);
+          log("enter saveAllNested ");
+          log("billsTypes ${billsTypes.length} ");
+          _billsFirebaseRepo.saveAllNested(fetchedBills,billsTypes);
         },
       );
-    } else {
-      // User canceled the picker
     }
 
     plutoGridIsLoading = false;

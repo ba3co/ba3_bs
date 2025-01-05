@@ -90,10 +90,11 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
 
   Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(List<T> items,List<ItemTypeModel> itemTypeModel) async {
     try {
-      final savedItems = await _dataSource.saveAllNested(items: items,  itemTypes: []);
+
+      final savedItems = await _dataSource.saveAllNested(items: items,  itemTypes: itemTypeModel);
       return Right(savedItems); // Return the list of saved items
     } catch (e) {
-      log('Error in fetchWhere: $e');
+      log('Error in saveAllNested: $e');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }

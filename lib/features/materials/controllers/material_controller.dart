@@ -62,7 +62,7 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
-    log('fetchedMaterial.last ${fetchedMaterial.last.toJson()}');
+    log('fetchedMaterial length ${fetchedMaterial.length}');
 
     saveAllMaterialsRequestState.value = RequestState.loading;
 

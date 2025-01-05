@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -153,12 +155,15 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     // Create tasks to fetch all bills for each type
 
     for (final billTypeModel in itemTypes) {
+
       fetchTasks.add(
         saveAll(itemTypeModel: billTypeModel, items: items).then((result) {
           billsByType[billTypeModel] = result;
         }),
       );
     }
+
+
     // Wait for all tasks to complete
     await Future.wait(fetchTasks);
 
@@ -167,6 +172,8 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemTypeModel}) async {
+
+
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
       subCollectionPath: getRootDocumentId(itemTypeModel),

@@ -105,13 +105,13 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
         matVatGuid: getText('MatVatGuid'),
       );
     }).toList();
-    log('material last ${materials.last.toJson()}');
-    log('material first ${materials.first.toJson()}');
+    // log('material last ${materials.last.toJson()}');
+    // log('material first ${materials.first.toJson()}');
     updateMaterialVat(materials, gcc);
 
-    log('materials ${materials.length}');
-    log('material last ${materials.last.toJson()}');
-    log('material first ${materials.first.toJson()}');
+    // log('materials ${materials.length}');
+    // log('material last ${materials.last.toJson()}');
+    // log('material first ${materials.first.toJson()}');
 
     return materials;
   }
