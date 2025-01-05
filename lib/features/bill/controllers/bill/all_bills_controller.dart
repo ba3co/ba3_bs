@@ -107,17 +107,16 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
       final result = _jsonImportExportRepo.importJsonFileXml(file);
-      // '/Users/alidabol/Library/Containers/com.ba3bs.ba3Bs/Data/Documents/free_start.json'
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBills) {
           log("fetchedBills length ${fetchedBills.length}");
-
           getBillsByTypeRequestState.value = RequestState.success;
           bills.assignAll(fetchedBills);
-          log("enter saveAllNested ");
-          log("billsTypes ${billsTypes.length} ");
-          _billsFirebaseRepo.saveAllNested(fetchedBills,billsTypes);
+          //
+          // log("${fetchedBills.where((element) => element.billTypeModel.billTypeId=='5a9e7782-cde5-41db-886a-ac89732feda7',).map((e) => e.items.itemList.length,)}");
+          _billsFirebaseRepo.save(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first,save: true);
+          // _billsFirebaseRepo.saveAllNested(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).toList(),billsTypes);
         },
       );
     }

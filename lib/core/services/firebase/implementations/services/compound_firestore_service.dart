@@ -157,20 +157,15 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     log('items: ${items.length}');
 
     for (final item in items) {
-
       // Ensure the document ID is set
-      final docId = item.putIfAbsent('docId',
-          () => _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id);
+      final docId = item.putIfAbsent(
+          'docId', () => _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id);
 
       // Add the item to the batch
       final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
-      log('rootCollectionPath  $rootCollectionPath');
-      log('rootDocumentId  $rootDocumentId');
-      log('subCollectionPath  $subCollectionPath');
-      log('docId  $docId');
 
       batch.set(docRef, item);
-
+      log('docId $docId');
       // Collect the processed item
       addedItems.add(item);
     }
@@ -180,6 +175,4 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     log("End  batch commit()");
     return addedItems;
   }
-
-
 }

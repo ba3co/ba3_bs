@@ -81,7 +81,7 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   Future<BillModel> save({required BillModel item, bool? save}) async {
     final rootDocumentId = getRootDocumentId(item.billTypeModel);
     final subcollectionPath = getSubCollectionPath(item.billTypeModel);
-    if (item.billId == null) {
+    if (item.billId == null || save == true) {
       final newBillModel = await _createNewBill(bill: item, rootDocumentId: rootDocumentId, subcollectionPath: subcollectionPath);
       return newBillModel;
     } else {
@@ -148,21 +148,27 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<Map<BillTypeModel, List<BillModel>>> saveAllNested(
-      { required List<BillTypeModel> itemTypes, required List<BillModel> items}) async {
+      {required List<BillTypeModel> itemTypes, required List<BillModel> items}) async {
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
 
     for (final billTypeModel in itemTypes) {
-
       fetchTasks.add(
-        saveAll(itemTypeModel: billTypeModel, items: items).then((result) {
+        saveAll(
+                itemTypeModel: billTypeModel,
+                items: items
+                    .where(
+                      (element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId,
+                    )
+                    .toList())
+            .then((result) {
           billsByType[billTypeModel] = result;
         }),
       );
     }
-
+    log("fetchTasks ${fetchTasks.length}");
 
     // Wait for all tasks to complete
     await Future.wait(fetchTasks);
@@ -172,8 +178,6 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemTypeModel}) async {
-
-
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
       subCollectionPath: getRootDocumentId(itemTypeModel),

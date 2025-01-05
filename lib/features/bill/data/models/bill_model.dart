@@ -181,8 +181,9 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billGiftsTotal: billGiftsTotal,
         billTotal: billTotal,
         billVatTotal: billVatTotal,
-         billDiscountsTotal: 0,billAdditionsTotal: 0,
-         billBeforeVatTotal: billTotal-billVatTotal,
+        billDiscountsTotal: 0,
+        billAdditionsTotal: 0,
+        billBeforeVatTotal: billTotal - billVatTotal,
         note: billData['B']['Note'].toString(),
       ),
       billTypeModel: BillTypeModel(
@@ -202,14 +203,15 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
               BillAccounts.discounts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!,
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
               BillAccounts.additions: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!,
-            BillAccounts.store: AccountModel(id: billData['B']['BillStoreGuid'],accName:read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid']) ),
+            BillAccounts.store: AccountModel(
+                id: billData['B']['BillStoreGuid'], accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),
           },
           id: billData['B']['BillTypeGuid'],
           fullName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
           latinFullName: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
-          latinShortName:_billTypeByGuid(billData['B']['BillTypeGuid']).label ,
-           shortName:_billTypeByGuid(billData['B']['BillTypeGuid']).value ,
-          billTypeId: _billTypeByGuid(billData['B']['BillTypeGuid']).typeGuide,
+          latinShortName: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
+          shortName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
+          billTypeId: billData['B']['BillTypeGuid'],
           color: _billTypeByGuid(billData['B']['BillTypeGuid']).color,
           billPatternType: _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),
     );
