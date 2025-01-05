@@ -91,9 +91,13 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     String? subDocumentId,
   }) async {
     // Generate or use existing document ID
-    final docId = subDocumentId ??
-        data.putIfAbsent('docId',
-            () => _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id);
+    final newDoc = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id;
+
+    // Use the provided subDocumentId or generate a new one if not provided
+    final docId = subDocumentId ?? (data['docId'] ?? newDoc);
+
+    // Ensure the docId is set in the data map if it is null
+    if (data['docId'] == null) data['docId'] = docId;
 
     final docRef =
         _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);

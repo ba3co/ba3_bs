@@ -68,8 +68,13 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   @override
   Future<Map<String, dynamic>> add(
       {required Map<String, dynamic> data, required String path, String? documentId}) async {
-    // Generate or use existing document ID
-    final docId = documentId ?? data.putIfAbsent('docId', () => _firestore.collection(path).doc().id);
+    final newDoc = _firestore.collection(path).doc().id;
+
+    // Use the provided document ID or generate a new one if not provided
+    final docId = documentId ?? (data['docId'] ?? newDoc);
+
+    // Ensure the docId is set in the data map if it is null
+    if (data['docId'] == null) data['docId'] = docId;
 
     final docRef = _firestore.collection(path).doc(docId);
 
