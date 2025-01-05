@@ -98,7 +98,7 @@ class SellersController extends GetxController with AppNavigator {
 
   // Get seller  by ID
   SellerModel getSellerById(String id) {
-    return sellers.firstWhere((seller) => seller.costGuid == id);
+    return sellers.firstWhereOrNull((seller) => seller.costGuid == id)??SellerModel(costName: '');
   }
 
   // Replace Arabic numerals with English numerals

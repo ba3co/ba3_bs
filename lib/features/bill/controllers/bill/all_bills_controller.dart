@@ -7,6 +7,7 @@ import 'package:ba3_bs/core/services/json_file_operations/implementations/import
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -113,9 +114,11 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
           log("fetchedBills length ${fetchedBills.length}");
           getBillsByTypeRequestState.value = RequestState.success;
           bills.assignAll(fetchedBills);
-          //
-          // log("${fetchedBills.where((element) => element.billTypeModel.billTypeId=='5a9e7782-cde5-41db-886a-ac89732feda7',).map((e) => e.items.itemList.length,)}");
-          _billsFirebaseRepo.save(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first,save: true);
+
+          // debugPrint("${fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first.toJson()}");
+
+          BillModel aa=fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first;
+          _billsFirebaseRepo.save(aa.copyWith(items: BillItems(itemList: aa.items.itemList.sublist(0,3000))),);
           // _billsFirebaseRepo.saveAllNested(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).toList(),billsTypes);
         },
       );

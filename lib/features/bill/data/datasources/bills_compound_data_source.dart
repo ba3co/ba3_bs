@@ -102,9 +102,11 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
     final newBillJson = bill.copyWith(billDetails: bill.billDetails.copyWith(billNumber: newBillNumber)).toJson();
 
     final data = await compoundDatabaseService.add(
+
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subcollectionPath,
+      subDocumentId: bill.billId,
       data: newBillJson,
     );
 
@@ -180,8 +182,8 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemTypeModel}) async {
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
-      subCollectionPath: getRootDocumentId(itemTypeModel),
-      rootDocumentId: getSubCollectionPath(itemTypeModel),
+      subCollectionPath: getSubCollectionPath(itemTypeModel),
+      rootDocumentId: getRootDocumentId(itemTypeModel),
       items: items.map((item) {
         return {
           ...item.toJson(),

@@ -13,6 +13,7 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
   // Path getter to be overridden by subclasses
   String get rootCollectionPath;
 
+
   Future<List<T>> fetchAll({required ItemTypeModel itemTypeModel});
 
   Future<Map<ItemTypeModel, List<T>>> fetchAllNested({required List<ItemTypeModel> itemTypes});

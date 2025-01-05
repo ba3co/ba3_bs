@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../models/count_query_filter.dart';
@@ -81,13 +82,17 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     String? subDocumentId,
     required Map<String, dynamic> data,
   }) async {
+
+
     if (subDocumentId == null) {
+
       final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc();
 
       data['docId'] = docRef.id;
 
       await docRef.set(data);
     } else {
+
       await _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(subDocumentId).set(data);
     }
 
