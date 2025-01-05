@@ -41,9 +41,9 @@ class DataSourceRepository<T> {
     }
   }
 
-  Future<Either<Failure, T>> save(T item, [bool? save]) async {
+  Future<Either<Failure, T>> save(T item) async {
     try {
-      final savedItem = await _dataSource.save(item, save);
+      final savedItem = await _dataSource.save(item);
       return Right(savedItem); // Return success
     } catch (e) {
       log('Error in save: $e');

@@ -59,8 +59,5 @@ abstract class ICompoundDatabaseService<T> {
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
-
   });
-
-
 }

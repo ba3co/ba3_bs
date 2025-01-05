@@ -26,7 +26,7 @@ mixin FirestorePathHelper<ItemTypeModel> {
       return typeModel.billTypeLabel ?? (throw ArgumentError('billTypeLabel is required for BillTypeModel.'));
     }
     if (typeModel is BondType) {
-      return typeModel.label ;
+      return typeModel.label;
     }
     if (typeModel is ChequesType) {
       return typeModel.label;

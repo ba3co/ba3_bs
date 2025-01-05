@@ -77,44 +77,37 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<ChequesModel> save({required ChequesModel item, bool? save}) async {
-    ChequesType chequesType = ChequesType.byTypeGuide(item.chequesTypeGuid!);
-
+  Future<ChequesModel> save({required ChequesModel item}) async {
+    final chequesType = ChequesType.byTypeGuide(item.chequesTypeGuid!);
     final rootDocumentId = getRootDocumentId(chequesType);
     final subCollectionPath = getSubCollectionPath(chequesType);
-    if (item.chequesGuid == null) {
-      final newChequesModel =
-          await _createNewCheques(cheques: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
-      return newChequesModel;
-    } else {
-      await compoundDatabaseService.update(
+
+    final updatedCheques = item.chequesGuid == null ? await _assignChequesNumber(item) : item;
+
+    final savedData = await _saveChequesData(
+      rootDocumentId,
+      subCollectionPath,
+      updatedCheques.chequesGuid,
+      updatedCheques.toJson(),
+    );
+
+    return item.chequesGuid == null ? ChequesModel.fromJson(savedData) : updatedCheques;
+  }
+
+  Future<ChequesModel> _assignChequesNumber(ChequesModel cheques) async {
+    final newChequesNumber = await getNextNumber(rootCollectionPath, cheques.chequesTypeGuid!);
+    return cheques.copyWith(chequesNumber: newChequesNumber);
+  }
+
+  Future<Map<String, dynamic>> _saveChequesData(
+          String rootDocumentId, String subCollectionPath, String? chequesId, Map<String, dynamic> data) async =>
+      compoundDatabaseService.add(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
         subCollectionPath: subCollectionPath,
-        subDocumentId: item.chequesGuid!,
-        data: item.toJson(),
+        subDocumentId: chequesId,
+        data: data,
       );
-      return item;
-    }
-  }
-
-  Future<ChequesModel> _createNewCheques(
-      {required ChequesModel cheques, required String rootDocumentId, required String subCollectionPath}) async {
-    ChequesType chequesType = ChequesType.byTypeGuide(cheques.chequesTypeGuid!);
-    final newChequesNumber = await getNextNumber(rootCollectionPath, chequesType.label);
-
-    final newChequesJson =
-        cheques.copyWith(chequesNumber: newChequesNumber, chequesTypeGuid: chequesType.typeGuide).toJson();
-
-    final data = await compoundDatabaseService.add(
-      rootCollectionPath: rootCollectionPath,
-      rootDocumentId: rootDocumentId,
-      subCollectionPath: subCollectionPath,
-      data: newChequesJson,
-    );
-
-    return ChequesModel.fromJson(data);
-  }
 
   @override
   Future<int> countDocuments({required ChequesType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async {
@@ -158,11 +151,9 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<Map<ChequesType, List<ChequesModel>>> saveAllNested({required List<ChequesType> itemTypes, required List<ChequesModel> items}) {
+  Future<Map<ChequesType, List<ChequesModel>>> saveAllNested(
+      {required List<ChequesType> itemTypes, required List<ChequesModel> items}) {
     // TODO: implement saveAllNested
     throw UnimplementedError();
   }
-
-
-
 }

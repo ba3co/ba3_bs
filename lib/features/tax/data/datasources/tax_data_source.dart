@@ -4,7 +4,6 @@ import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 import '../../../../core/services/firebase/implementations/services/firebase_sequential_number_database.dart';
 import '../../../../core/services/firebase/interfaces/datasource_base.dart';
 
-
 class TaxDataSource extends DatasourceBase<TaxModel> with FirebaseSequentialNumberDatabase {
   TaxDataSource({required super.databaseService});
 
@@ -35,22 +34,8 @@ class TaxDataSource extends DatasourceBase<TaxModel> with FirebaseSequentialNumb
   }
 
   @override
-  Future<TaxModel> save(TaxModel item, [bool? save]) async {
-    if (item.taxGuid == null) {
-      final newBillModel = await _createNewTax(item);
-
-      return newBillModel;
-    } else {
-      await databaseService.update(path: path, documentId: item.taxGuid, data: item.toJson());
-      return item;
-    }
-  }
-
-  Future<TaxModel> _createNewTax(TaxModel tax) async {
-
-    final data = await databaseService.add(path: path, data: tax.toJson());
+  Future<TaxModel> save(TaxModel item) async {
+    final data = await databaseService.add(path: path, documentId: item.taxGuid, data: item.toJson());
     return TaxModel.fromJson(data);
   }
-
-
 }

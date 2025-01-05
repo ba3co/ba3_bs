@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
+import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/material_model.dart';
@@ -61,6 +63,9 @@ class MaterialController extends GetxController with AppNavigator {
     }
   }
 
+  // Initialize a progress observable
+  RxDouble uploadProgress = 0.0.obs;
+
   _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
     log('fetchedMaterial length ${fetchedMaterial.length}');
 
@@ -73,6 +78,17 @@ class MaterialController extends GetxController with AppNavigator {
     //   (failure) => AppUIUtils.onFailure(failure.message),
     //   (savedMaterial) => log('savedMaterial ${savedMaterial.length}'),
     // );
+
+    // Show progress in the UI
+    FirestoreUploader firestoreUploader = FirestoreUploader();
+    await firestoreUploader.sequentially(
+      data: materials.map((item) => {...item.toJson(), 'docId': item.id}).toList(),
+      collectionPath: ApiConstants.materials,
+      onProgress: (progress) {
+        uploadProgress.value = progress; // Update progress
+        log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      },
+    );
 
     saveAllMaterialsRequestState.value = RequestState.success;
   }

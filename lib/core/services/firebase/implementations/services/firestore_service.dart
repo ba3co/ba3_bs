@@ -67,15 +67,18 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
 
   @override
   Future<Map<String, dynamic>> add(
-      {required String path, String? documentId, required Map<String, dynamic> data}) async {
-    if (documentId == null) {
-      final docId = _firestore.collection(path).doc().id;
+      {required Map<String, dynamic> data, required String path, String? documentId}) async {
+    // Generate or use existing document ID
+    final docId = documentId ?? data.putIfAbsent('docId', () => _firestore.collection(path).doc().id);
 
-      data['docId'] = docId;
+    final docRef = _firestore.collection(path).doc(docId);
 
-      await _firestore.collection(path).doc(docId).set(data);
+    final docSnapshot = await docRef.get();
+
+    if (docSnapshot.exists && documentId != null) {
+      await update(path: path, documentId: docId, data: data);
     } else {
-      await _firestore.collection(path).doc(documentId).set(data);
+      await docRef.set(data);
     }
 
     return data;
@@ -108,7 +111,6 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     }
 
     await batch.commit();
-    log('addedItems ${addedItems.length}');
     return addedItems;
   }
 }

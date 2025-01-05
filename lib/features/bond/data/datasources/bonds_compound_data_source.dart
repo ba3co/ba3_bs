@@ -77,43 +77,36 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   @override
-  Future<BondModel> save({required BondModel item, bool? save}) async {
-    BondType bondType = BondType.byTypeGuide(item.payTypeGuid!);
+  Future<BondModel> save({required BondModel item}) async {
+    final rootDocumentId = getRootDocumentId(BondType.byTypeGuide(item.payTypeGuid!));
+    final subCollectionPath = getSubCollectionPath(BondType.byTypeGuide(item.payTypeGuid!));
 
-    final rootDocumentId = getRootDocumentId(bondType);
-    final subCollectionPath = getSubCollectionPath(bondType);
-    if (item.payGuid == null) {
-      final newBondModel =
-          await _createNewBond(bond: item, rootDocumentId: rootDocumentId, subCollectionPath: subCollectionPath);
-      return newBondModel;
-    } else {
-      await compoundDatabaseService.update(
+    final updatedBond = item.payGuid == null ? await _assignBondNumber(item) : item;
+
+    final savedData = await _saveBondData(
+      rootDocumentId,
+      subCollectionPath,
+      updatedBond.payGuid,
+      updatedBond.toJson(),
+    );
+
+    return item.payGuid == null ? BondModel.fromJson(savedData) : updatedBond;
+  }
+
+  Future<BondModel> _assignBondNumber(BondModel bond) async {
+    final newBondNumber = await getNextNumber(rootCollectionPath, bond.payTypeGuid!);
+    return bond.copyWith(payNumber: newBondNumber);
+  }
+
+  Future<Map<String, dynamic>> _saveBondData(
+          String rootDocumentId, String subCollectionPath, String? bondId, Map<String, dynamic> data) async =>
+      compoundDatabaseService.add(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
         subCollectionPath: subCollectionPath,
-        subDocumentId: item.payGuid!,
-        data: item.toJson(),
+        subDocumentId: bondId,
+        data: data,
       );
-      return item;
-    }
-  }
-
-  Future<BondModel> _createNewBond(
-      {required BondModel bond, required String rootDocumentId, required String subCollectionPath}) async {
-    BondType bondType = BondType.byTypeGuide(bond.payTypeGuid!);
-    final newBondNumber = await getNextNumber(rootCollectionPath, bondType.label);
-
-    final newBondJson = bond.copyWith(payNumber: newBondNumber, payTypeGuid: bondType).toJson();
-
-    final data = await compoundDatabaseService.add(
-      rootCollectionPath: rootCollectionPath,
-      rootDocumentId: rootDocumentId,
-      subCollectionPath: subCollectionPath,
-      data: newBondJson,
-    );
-
-    return BondModel.fromJson(data);
-  }
 
   @override
   Future<int> countDocuments({required BondType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async {
@@ -150,9 +143,9 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
     return bondsByType;
   }
 
-
   @override
-  Future<Map<BondType, List<BondModel>>> saveAllNested({required List<BondType> itemTypes, required List<BondModel> items}) {
+  Future<Map<BondType, List<BondModel>>> saveAllNested(
+      {required List<BondType> itemTypes, required List<BondModel> items}) {
     // TODO: implement saveAllNested
     throw UnimplementedError();
   }
@@ -162,11 +155,4 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
     // TODO: implement saveAll
     throw UnimplementedError();
   }
-
-
-
-
-
-
-
 }

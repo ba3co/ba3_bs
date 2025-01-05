@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -78,38 +76,36 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<BillModel> save({required BillModel item, bool? save}) async {
+  Future<BillModel> save({required BillModel item}) async {
     final rootDocumentId = getRootDocumentId(item.billTypeModel);
-    final subcollectionPath = getSubCollectionPath(item.billTypeModel);
-    if (item.billId == null || save == true) {
-      final newBillModel = await _createNewBill(bill: item, rootDocumentId: rootDocumentId, subcollectionPath: subcollectionPath);
-      return newBillModel;
-    } else {
-      await compoundDatabaseService.update(
-        rootCollectionPath: rootCollectionPath,
-        rootDocumentId: rootDocumentId,
-        subCollectionPath: subcollectionPath,
-        subDocumentId: item.billId!,
-        data: item.toJson(),
-      );
-      return item;
-    }
-  }
+    final subCollectionPath = getSubCollectionPath(item.billTypeModel);
 
-  Future<BillModel> _createNewBill({required BillModel bill, required String rootDocumentId, required String subcollectionPath}) async {
-    final newBillNumber = await getNextNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
+    final updatedBill = item.billId == null ? await _assignBillNumber(item) : item;
 
-    final newBillJson = bill.copyWith(billDetails: bill.billDetails.copyWith(billNumber: newBillNumber)).toJson();
-
-    final data = await compoundDatabaseService.add(
-      rootCollectionPath: rootCollectionPath,
-      rootDocumentId: rootDocumentId,
-      subCollectionPath: subcollectionPath,
-      data: newBillJson,
+    final savedData = await _saveBillData(
+      rootDocumentId,
+      subCollectionPath,
+      updatedBill.billId,
+      updatedBill.toJson(),
     );
 
-    return BillModel.fromJson(data);
+    return item.billId == null ? BillModel.fromJson(savedData) : updatedBill;
   }
+
+  Future<BillModel> _assignBillNumber(BillModel bill) async {
+    final billNumber = await getNextNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
+    return bill.copyWith(billDetails: bill.billDetails.copyWith(billNumber: billNumber));
+  }
+
+  Future<Map<String, dynamic>> _saveBillData(
+          String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async =>
+      compoundDatabaseService.add(
+        rootCollectionPath: rootCollectionPath,
+        rootDocumentId: rootDocumentId,
+        subCollectionPath: subCollectionPath,
+        subDocumentId: billId,
+        data: data,
+      );
 
   @override
   Future<int> countDocuments({required BillTypeModel itemTypeModel, CountQueryFilter? countQueryFilter}) async {
@@ -168,7 +164,6 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
         }),
       );
     }
-    log("fetchTasks ${fetchTasks.length}");
 
     // Wait for all tasks to complete
     await Future.wait(fetchTasks);
@@ -178,10 +173,13 @@ class BillCompoundDataSource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemTypeModel}) async {
+    final rootDocumentId = getRootDocumentId(itemTypeModel);
+    final subCollectionPath = getSubCollectionPath(itemTypeModel);
+
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
-      subCollectionPath: getRootDocumentId(itemTypeModel),
-      rootDocumentId: getSubCollectionPath(itemTypeModel),
+      rootDocumentId: rootDocumentId,
+      subCollectionPath: subCollectionPath,
       items: items.map((item) {
         return {
           ...item.toJson(),

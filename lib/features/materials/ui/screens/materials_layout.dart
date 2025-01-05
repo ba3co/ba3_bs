@@ -17,6 +17,8 @@ class MaterialLayout extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Obx(() {
+        final progress = read<MaterialController>().uploadProgress.value;
+
         return Stack(
           children: [
             Scaffold(
@@ -46,7 +48,7 @@ class MaterialLayout extends StatelessWidget {
             ),
             LoadingDialog(
               isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,
-              message: 'المواد',
+              message: '${(progress * 100).toStringAsFixed(2)}% من المواد',
               fontSize: 14.sp,
             )
           ],

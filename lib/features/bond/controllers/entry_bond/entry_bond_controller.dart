@@ -21,7 +21,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
   // Method to create a bond based on bill type
   void saveEntryBondModel({required EntryBondModel entryBondModel}) async {
-    final result = await _entryBondsFirebaseRepo.save(entryBondModel, true);
+    final result = await _entryBondsFirebaseRepo.save(entryBondModel);
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (entryBondModel) async {
@@ -101,9 +101,12 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
 
     final actions = {
-      EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(origin.originId!, context,BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
-      EntryBondType.bill: () => read<AllBillsController>().openFloatingBillDetailsById(origin.originId!, context,BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
-      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(origin.originId!, context,ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bond: () => read<AllBondsController>()
+          .openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bill: () => read<AllBillsController>().openFloatingBillDetailsById(
+          origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
+      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(
+          origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];

@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
@@ -74,7 +73,7 @@ mixin BillEntryBondCreatingService {
   }) {
     return billItems.expand((item) {
       return [
-        if (accounts.containsKey(BillAccounts.materials)&&item.itemQuantity>0)
+        if (accounts.containsKey(BillAccounts.materials) && item.itemQuantity > 0)
           _createMaterialBond(
             billId: billId,
             materialAccount: accounts[BillAccounts.materials]!,
@@ -84,14 +83,14 @@ mixin BillEntryBondCreatingService {
             date: date,
             isSales: isSales,
           ),
-        if (item.itemQuantity>0)
-        ..._generateCustomerBonds(
-            billId: billId,
-            customerAccount: customerAccount,
-            item: item,
-            date: date,
-            isSales: isSales,
-            isSimulatedVat: isSimulatedVat),
+        if (item.itemQuantity > 0)
+          ..._generateCustomerBonds(
+              billId: billId,
+              customerAccount: customerAccount,
+              item: item,
+              date: date,
+              isSales: isSales,
+              isSimulatedVat: isSimulatedVat),
         ..._createOptionalBonds(
           billId: billId,
           accounts: accounts,
@@ -179,7 +178,6 @@ mixin BillEntryBondCreatingService {
     required bool isSales,
     required bool isSimulatedVat,
   }) {
-
     /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
     final vat = isSimulatedVat
         ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity
@@ -225,16 +223,13 @@ mixin BillEntryBondCreatingService {
 
       //TODO:
       // change tax  guid
-      accountId: VatEnums.byGuid(item.matVatGuid ?? "1").taxAccountGuid,
+      accountId: VatEnums.byGuid(item.matVatGuid ?? VatEnums.withVat.taxGuid!).taxAccountGuid,
       note: 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}',
       date: date,
     );
   }
 
   bool _shouldHandleGifts(Map<Account, AccountModel> accounts, int? giftCount, double? giftPrice) {
- /*   log('giftCount $giftCount');
-    log('giftPrice $giftPrice');
-    log('accounts ${accounts.values}');*/
     return giftCount != null &&
         giftCount > 0 &&
         giftPrice != null &&

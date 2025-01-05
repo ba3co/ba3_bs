@@ -3,7 +3,6 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
-
 class AccountsDataSource extends BulkSavableDatasource<AccountModel> {
   AccountsDataSource({required super.databaseService});
 
@@ -31,15 +30,10 @@ class AccountsDataSource extends BulkSavableDatasource<AccountModel> {
   }
 
   @override
-  Future<AccountModel> save(AccountModel item, [bool? save]) async {
-    if (item.id == null) {
-      final data = await databaseService.add(path: path, data: item.toJson());
+  Future<AccountModel> save(AccountModel item) async {
+    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
 
-      return AccountModel.fromJson(data);
-    } else {
-      await databaseService.update(path: path, documentId: item.id, data: item.toJson());
-      return item;
-    }
+    return AccountModel.fromJson(data);
   }
 
   @override

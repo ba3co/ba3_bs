@@ -31,15 +31,10 @@ class MaterialsDataSource extends BulkSavableDatasource<MaterialModel> {
   }
 
   @override
-  Future<MaterialModel> save(MaterialModel item, [bool? save]) async {
-    if (item.id == null) {
-      final data = await databaseService.add(path: path, data: item.toJson());
+  Future<MaterialModel> save(MaterialModel item) async {
+    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
 
-      return MaterialModel.fromJson(data);
-    } else {
-      await databaseService.update(path: path, documentId: item.id, data: item.toJson());
-      return item;
-    }
+    return MaterialModel.fromJson(data);
   }
 
   @override

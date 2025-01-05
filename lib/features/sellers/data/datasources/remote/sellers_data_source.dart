@@ -31,15 +31,10 @@ class SellersDataSource extends BulkSavableDatasource<SellerModel> {
   }
 
   @override
-  Future<SellerModel> save(SellerModel item, [bool? save]) async {
-    if (item.costGuid == null) {
-      final data = await databaseService.add(path: path, data: item.toJson());
+  Future<SellerModel> save(SellerModel item) async {
+    final data = await databaseService.add(path: path, documentId: item.costGuid, data: item.toJson());
 
-      return SellerModel.fromJson(data);
-    } else {
-      await databaseService.update(path: path, documentId: item.costGuid, data: item.toJson());
-      return item;
-    }
+    return SellerModel.fromJson(data);
   }
 
   @override

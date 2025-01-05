@@ -28,18 +28,14 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
 
   Future<void> delete({required T item});
 
-  Future<T> save({required T item, bool? save});
+  Future<T> save({required T item});
 
   Future<int> countDocuments({required ItemTypeModel itemTypeModel, CountQueryFilter? countQueryFilter});
-
-
 
   Future<List<T>> saveAll({required List<T> items, required ItemTypeModel itemTypeModel});
 
   Future<Map<ItemTypeModel, List<T>>> saveAllNested({
-
     required List<ItemTypeModel> itemTypes,
     required List<T> items,
   });
-
 }

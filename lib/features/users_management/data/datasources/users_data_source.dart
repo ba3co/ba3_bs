@@ -41,14 +41,9 @@ class UsersDataSource extends FilterableDatasource<UserModel> {
   }
 
   @override
-  Future<UserModel> save(UserModel item, [bool? save]) async {
-    if (item.userId == null) {
-      final data = await databaseService.add(path: path, documentId: item.userId, data: item.toJson());
+  Future<UserModel> save(UserModel item) async {
+    final data = await databaseService.add(path: path, documentId: item.userId, data: item.toJson());
 
-      return UserModel.fromJson(data);
-    } else {
-      await databaseService.update(path: path, documentId: item.userId, data: item.toJson());
-      return item;
-    }
+    return UserModel.fromJson(data);
   }
 }
