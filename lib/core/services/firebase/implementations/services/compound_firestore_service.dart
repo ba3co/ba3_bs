@@ -1,18 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../models/count_query_filter.dart';
 import '../../../../models/date_filter.dart';
+import '../../../../models/query_filter.dart';
 import '../../interfaces/i_compound_database_service.dart';
 
 class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dynamic>> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
-  Future<List<Map<String, dynamic>>> fetchAll({
-    required String rootCollectionPath,
-    required String rootDocumentId,
-    required String subCollectionPath,
-  }) async {
+  Future<List<Map<String, dynamic>>> fetchAll(
+      {required String rootCollectionPath, required String rootDocumentId, required String subCollectionPath}) async {
     final querySnapshot =
         _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).get();
     return (await querySnapshot).docs.map((doc) => doc.data()).toList();
@@ -150,7 +147,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
-    CountQueryFilter? countQueryFilter,
+    QueryFilter? countQueryFilter,
   }) async {
     // Start with the base query as a Query<Map<String, dynamic>>
     Query<Map<String, dynamic>> query =

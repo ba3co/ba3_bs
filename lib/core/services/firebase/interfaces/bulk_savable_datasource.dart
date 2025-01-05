@@ -6,7 +6,4 @@ abstract class SaveAllCapability<T> {
 
 abstract class BulkSavableDatasource<T> extends DatasourceBase<T> implements SaveAllCapability<T> {
   BulkSavableDatasource({required super.databaseService});
-
-  @override
-  Future<List<T>> saveAll(List<T> items);
 }

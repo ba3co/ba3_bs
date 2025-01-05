@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class TaxModel {
   final String? taxGuid;
@@ -99,30 +99,3 @@ TaxModel withOutVat = TaxModel(
   taxRatio: 0,
   taxName: 'معفى',
 );
-
-class VatService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<void> uploadVatEnumsToFirestore() async {
-    final vatsCollection = _firestore.collection('vats');
-
-    for (var vatEnum in VatEnums.values) {
-      final docId = vatsCollection.doc().id;
-      final vatData = {
-        'docId': docId,
-        'taxName': vatEnum.taxName,
-        'taxRatio': vatEnum.taxRatio,
-        'taxAccountGuid': vatEnum.taxAccountGuid,
-      };
-
-      try {
-        await vatsCollection
-            .doc(docId) // Use taxGuid as the document ID
-            .set(vatData);
-        print('Added ${vatEnum.taxName} to Firestore successfully.');
-      } catch (e) {
-        print('Failed to add ${vatEnum.taxName}: $e');
-      }
-    }
-  }
-}

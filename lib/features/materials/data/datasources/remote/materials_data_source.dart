@@ -1,10 +1,11 @@
 // MaterialsDataSource Implementation
+import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 
+import '../../../../../core/services/firebase/interfaces/queryable_savable_datasource.dart';
 import '../../models/material_model.dart';
 
-class MaterialsDataSource extends BulkSavableDatasource<MaterialModel> {
+class MaterialsDataSource extends QueryableSavableDatasource<MaterialModel> {
   MaterialsDataSource({required super.databaseService});
 
   @override
@@ -45,5 +46,14 @@ class MaterialsDataSource extends BulkSavableDatasource<MaterialModel> {
     );
 
     return savedData.map(MaterialModel.fromJson).toList();
+  }
+
+  @override
+  Future<List<MaterialModel>> fetchWhere<V>({required String field, required V value, DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(path: path, field: field, value: value, dateFilter: dateFilter);
+
+    final materials = data.map((item) => MaterialModel.fromJson(item)).toList();
+
+    return materials;
   }
 }

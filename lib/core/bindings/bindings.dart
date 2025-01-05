@@ -1,13 +1,13 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_source.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:ba3_bs/features/accounts/data/repositories/accounts_repository.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
@@ -48,7 +48,6 @@ import '../../features/bond/data/models/entry_bond_model.dart';
 import '../../features/bond/service/bond/bond_export.dart';
 import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
-import '../../features/materials/data/repositories/materials_repository.dart';
 import '../../features/materials/service/material_import.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
@@ -164,7 +163,7 @@ class AppBindings extends Bindings {
       chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
       userTimeRepo: UserTimeRepository(),
       sellersRepo: BulkSavableDatasourceRepository(SellersDataSource(databaseService: fireStoreService)),
-      materialsRepo: BulkSavableDatasourceRepository(MaterialsDataSource(databaseService: fireStoreService)),
+      materialsRepo: QueryableSavableRepository(MaterialsDataSource(databaseService: fireStoreService)),
       accountsRep: BulkSavableDatasourceRepository(AccountsDataSource(databaseService: fireStoreService)),
       bondImportExportRepo: ImportExportRepository(bondImportService, bondExportService),
       materialImportExportRepo: ImportExportRepository(materialImportService, materialExportService),
@@ -182,11 +181,6 @@ class AppBindings extends Bindings {
       UserManagementController(repositories.rolesRepo, repositories.usersRepo, sharedPreferencesService),
       permanent: true,
     );
-
-    put(
-      MaterialController(MaterialRepository(), repositories.materialImportExportRepo, repositories.materialsRepo),
-      permanent: true,
-    );
   }
 
 // Lazy Controllers Initialization
@@ -198,12 +192,13 @@ class AppBindings extends Bindings {
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
     lazyPut(BillDetailsPlutoController());
-    lazyPut(AccountsController(AccountsRepository(), repositories.accountImportExportRepo, repositories.accountsRep));
+    lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
+    lazyPut(MaterialController(repositories.materialImportExportRepo, repositories.materialsRepo));
   }
 }
 
@@ -226,7 +221,7 @@ class _Repositories {
   final UserTimeRepository userTimeRepo;
   final BulkSavableDatasourceRepository<SellerModel> sellersRepo;
   final BulkSavableDatasourceRepository<AccountModel> accountsRep;
-  final BulkSavableDatasourceRepository<MaterialModel> materialsRepo;
+  final QueryableSavableRepository<MaterialModel> materialsRepo;
 
   _Repositories({
     required this.translationRepo,

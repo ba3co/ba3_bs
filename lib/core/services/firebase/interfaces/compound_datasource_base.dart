@@ -1,5 +1,5 @@
-import '../../../models/count_query_filter.dart';
 import '../../../models/date_filter.dart';
+import '../../../models/query_filter.dart';
 import '../implementations/services/firebase_sequential_number_database.dart';
 import '../implementations/services/firestore_path_helper.dart';
 import 'i_compound_database_service.dart';
@@ -12,7 +12,6 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
 
   // Path getter to be overridden by subclasses
   String get rootCollectionPath;
-
 
   Future<List<T>> fetchAll({required ItemTypeModel itemTypeModel});
 
@@ -31,7 +30,7 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
 
   Future<T> save({required T item});
 
-  Future<int> countDocuments({required ItemTypeModel itemTypeModel, CountQueryFilter? countQueryFilter});
+  Future<int> countDocuments({required ItemTypeModel itemTypeModel, QueryFilter? countQueryFilter});
 
   Future<List<T>> saveAll({required List<T> items, required ItemTypeModel itemTypeModel});
 

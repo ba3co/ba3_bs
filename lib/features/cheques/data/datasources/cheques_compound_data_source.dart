@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/models/count_query_filter.dart';
+import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 
 import '../../../../core/models/date_filter.dart';
@@ -110,7 +110,7 @@ class ChequesCompoundDataSource extends CompoundDatasourceBase<ChequesModel, Che
       );
 
   @override
-  Future<int> countDocuments({required ChequesType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async {
+  Future<int> countDocuments({required ChequesType itemTypeModel, QueryFilter<dynamic>? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 

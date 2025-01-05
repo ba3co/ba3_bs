@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/models/count_query_filter.dart';
+import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 
 import '../../../../core/models/date_filter.dart';
@@ -109,7 +109,7 @@ class BondCompoundDataSource extends CompoundDatasourceBase<BondModel, BondType>
       );
 
   @override
-  Future<int> countDocuments({required BondType itemTypeModel, CountQueryFilter<dynamic>? countQueryFilter}) async {
+  Future<int> countDocuments({required BondType itemTypeModel, QueryFilter<dynamic>? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 

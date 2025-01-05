@@ -1,5 +1,5 @@
-import '../../../models/count_query_filter.dart';
 import '../../../models/date_filter.dart';
+import '../../../models/query_filter.dart';
 
 abstract class ICompoundDatabaseService<T> {
   Future<T> add({
@@ -51,7 +51,7 @@ abstract class ICompoundDatabaseService<T> {
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
-    CountQueryFilter? countQueryFilter,
+    QueryFilter? countQueryFilter,
   });
 
   Future<List<T>> saveAll({

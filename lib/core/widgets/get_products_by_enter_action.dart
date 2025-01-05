@@ -24,7 +24,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-  await  getProduct(stateManager, controller);
+    await getProduct(stateManager, controller);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -66,7 +66,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  Future<void> getProduct(PlutoGridStateManager stateManager, IPlutoController plutoController) async{
+  Future<void> getProduct(PlutoGridStateManager stateManager, IPlutoController plutoController) async {
     if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
 
     // Initialize variables
@@ -75,7 +75,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     final materialController = read<MaterialController>();
 
     // Search for matching materials
-    var searchedMaterials =await materialController.searchOfProductByText(productText);
+    var searchedMaterials = await materialController.searchOfProductByText(productText);
     MaterialModel? selectedMaterial;
 
     if (searchedMaterials.length == 1) {
@@ -86,9 +86,6 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       // No matches
       updateWithSelectedMaterial(null, stateManager, plutoController);
     } else {
-      // Clear focus from PlutoWithEdite before showing the dialog
-      FocusScope.of(context).unfocus();
-
       // Multiple matches, show search dialog
       _showSearchDialog(
         productTextController: productTextController,
@@ -122,7 +119,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
           OverlayService.back();
         },
-        onSubmitted: (_)async {
+        onSubmitted: (_) async {
           searchedMaterials = await materialController.searchOfProductByText(productTextController.text);
           materialController.update();
         },

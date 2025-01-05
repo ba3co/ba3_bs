@@ -96,10 +96,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> addAll({
-    required String path,
-    required List<Map<String, dynamic>> data,
-  }) async {
+  Future<List<Map<String, dynamic>>> addAll({required String path, required List<Map<String, dynamic>> data}) async {
     final batch = _firestore.batch();
     final addedItems = <Map<String, dynamic>>[];
 

@@ -4,24 +4,21 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
-import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/material_model.dart';
-import '../data/repositories/materials_repository.dart';
 
 class MaterialController extends GetxController with AppNavigator {
-  final MaterialRepository _materialRepository;
-
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
-  final BulkSavableDatasourceRepository<MaterialModel> _materialsFirebaseRepo;
+  final QueryableSavableRepository<MaterialModel> _materialsFirebaseRepo;
 
-  MaterialController(this._materialRepository, this._jsonImportExportRepo, this._materialsFirebaseRepo);
+  MaterialController(this._jsonImportExportRepo, this._materialsFirebaseRepo);
 
   List<MaterialModel> materials = [];
 
@@ -29,24 +26,16 @@ class MaterialController extends GetxController with AppNavigator {
 
   Rx<RequestState> saveAllMaterialsRequestState = RequestState.initial.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-
-    // fetchMaterials();
-  }
-
   // Fetch materials from the repository
- Future <void> fetchMaterials() async{
-
-    final  result = await _materialsFirebaseRepo.getAll();
+  Future<void> fetchMaterials() async {
+    final result = await _materialsFirebaseRepo.getAll();
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedMaterials) => materials.assignAll(fetchedMaterials),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedMaterials) => materials.assignAll(fetchedMaterials),
     );
 
-update();
+    update();
   }
 
   Future<void> fetchAllMaterialFromLocal() async {
@@ -97,15 +86,15 @@ update();
     to(AppRoutes.showAllMaterialsScreen);
   }
 
-  Future<void> reFetchMaterials()async {
+  Future<void> reloadMaterialsIfEmpty() async {
     if (materials.isEmpty) {
-      log('fetchMaterials...');
- await     fetchMaterials();
+      log('Fetching materials...');
+      await fetchMaterials();
     }
   }
 
-  Future<List<MaterialModel>> searchOfProductByText(query)async {
-  await  reFetchMaterials();
+  Future<List<MaterialModel>> searchOfProductByText(query) async {
+    await reloadMaterialsIfEmpty();
 
     List<MaterialModel> searchedMaterials = [];
 
@@ -140,7 +129,7 @@ update();
   String getMaterialBarcodeById(String? id) {
     if (id == null || id.isEmpty) return '0';
 
-    reFetchMaterials();
+    reloadMaterialsIfEmpty();
 
     final String matBarCode =
         materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';

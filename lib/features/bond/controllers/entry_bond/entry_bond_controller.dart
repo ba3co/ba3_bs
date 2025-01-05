@@ -55,12 +55,14 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
         for (final accountId in uniqueAccountIdsFromBond) {
           deletedTasks.add(
-            _accountsStatementsRepo.deleteBond(accountId, entryId).then((deleteResult) {
-              deleteResult.fold(
-                (failure) => errors.add(failure.message), // Collect errors.
-                (_) {},
-              );
-            }),
+            _accountsStatementsRepo.deleteBond(accountId, entryId).then(
+              (deleteResult) {
+                deleteResult.fold(
+                  (failure) => errors.add(failure.message), // Collect errors.
+                  (_) {},
+                );
+              },
+            ),
           );
         }
 

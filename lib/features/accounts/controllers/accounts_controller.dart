@@ -19,16 +19,13 @@ import '../../cheques/controllers/cheques/cheques_details_controller.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../../patterns/controllers/pattern_controller.dart';
 import '../data/models/account_model.dart';
-import '../data/repositories/accounts_repository.dart';
 
 class AccountsController extends GetxController with AppNavigator {
-  final AccountsRepository _accountsRepository;
-
   final BulkSavableDatasourceRepository<AccountModel> _accountsFirebaseRepo;
 
   final ImportExportRepository<AccountModel> _jsonImportExportRepo;
 
-  AccountsController(this._accountsRepository, this._jsonImportExportRepo, this._accountsFirebaseRepo);
+  AccountsController(this._jsonImportExportRepo, this._accountsFirebaseRepo);
 
   List<AccountModel> accounts = [];
 
@@ -110,7 +107,9 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
+    return accounts
+        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
+        .toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -133,8 +132,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel =
-          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel = accounts
+          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -237,7 +236,8 @@ class AccountsController extends GetxController with AppNavigator {
                     : chequesDetailsController.setTowAccount(selectedAccount);
               }
 
-              final BillAccounts? billAccounts = read<PatternController>().controllerToBillAccountsMap[textEditingController];
+              final BillAccounts? billAccounts =
+                  read<PatternController>().controllerToBillAccountsMap[textEditingController];
 
               if (billAccounts != null) {
                 selectedAccounts[billAccounts] = selectedAccountModel!;

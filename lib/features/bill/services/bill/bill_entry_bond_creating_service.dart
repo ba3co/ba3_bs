@@ -215,16 +215,18 @@ mixin BillEntryBondCreatingService {
     required String date,
     required bool isSales,
   }) {
+    final bondType = isSales ? BondItemType.creditor : BondItemType.debtor;
+    final accountId =
+        item.matVatGuid == null ? VatEnums.withVat.taxAccountGuid : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
+    final note = 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}';
+
     return _createBondItem(
       amount: vat,
       billId: billId,
-      bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
+      bondType: bondType,
       accountName: 'ضريبة القيمة المضافة',
-
-      //TODO:
-      // change tax  guid
-      accountId: VatEnums.byGuid(item.matVatGuid ?? VatEnums.withVat.taxGuid!).taxAccountGuid,
-      note: 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}',
+      accountId: accountId,
+      note: note,
       date: date,
     );
   }

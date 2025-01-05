@@ -9,7 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
-import '../../../tax/data/models/tax_model.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
 import '../widgets/bill_layout/bill_layout_app_bar.dart';
 
@@ -41,11 +40,6 @@ class BillLayout extends StatelessWidget {
                         children: [
                           AllBillsTypesList(allBillsController: controller),
                           billLayoutAppBar(),
-                          ElevatedButton(
-                              onPressed: () {
-                                VatService().uploadVatEnumsToFirestore();
-                              },
-                              child: Text('data')),
                         ],
                       ),
                     ),

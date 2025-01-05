@@ -1,8 +1,8 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../../../models/count_query_filter.dart';
 import '../../../../models/date_filter.dart';
 import '../../../../network/error/error_handler.dart';
 import '../../../../network/error/failure.dart';
@@ -55,7 +55,7 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     }
   }
 
-  Future<Either<Failure, int>> count({required ItemTypeModel itemTypeModel, CountQueryFilter? countQueryFilter}) async {
+  Future<Either<Failure, int>> count({required ItemTypeModel itemTypeModel, QueryFilter? countQueryFilter}) async {
     try {
       final count = await _dataSource.countDocuments(itemTypeModel: itemTypeModel, countQueryFilter: countQueryFilter);
       return Right(count); // Return the found item

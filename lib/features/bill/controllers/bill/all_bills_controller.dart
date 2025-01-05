@@ -1,7 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:ba3_bs/core/models/count_query_filter.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -9,6 +10,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -117,8 +119,14 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
           // debugPrint("${fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first.toJson()}");
 
-          BillModel aa=fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first;
-          _billsFirebaseRepo.save(aa.copyWith(items: BillItems(itemList: aa.items.itemList.sublist(0,3000))),);
+          BillModel aa = fetchedBills
+              .where(
+                (element) => element.billId == 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
+              )
+              .first;
+          _billsFirebaseRepo.save(
+            aa.copyWith(items: BillItems(itemList: aa.items.itemList.sublist(0, 3000))),
+          );
           // _billsFirebaseRepo.saveAllNested(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).toList(),billsTypes);
         },
       );
@@ -169,7 +177,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
         _billsFirebaseRepo
             .count(
                 itemTypeModel: billTypeModel,
-                countQueryFilter: CountQueryFilter(
+                countQueryFilter: QueryFilter(
                   field: ApiConstants.status,
                   value: Status.pending.value,
                 ))
@@ -227,6 +235,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     BillModel? billModel,
   }) async {
     plutoGridIsLoading = false;
+    read<MaterialController>().reloadMaterialsIfEmpty();
+
     await fetchAllBillsByType(billTypeModel);
 
     if (!context.mounted) return;
