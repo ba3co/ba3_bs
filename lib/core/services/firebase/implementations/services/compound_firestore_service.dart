@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../models/count_query_filter.dart';
