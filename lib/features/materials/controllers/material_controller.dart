@@ -5,7 +5,6 @@ import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
@@ -33,20 +32,21 @@ class MaterialController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    log("MaterialController  onInit");
+
     // fetchMaterials();
   }
 
   // Fetch materials from the repository
-  void fetchMaterials() {
-    try {
-      materials = _materialRepository.getAllMaterials();
-    } catch (e) {
-      debugPrint('error in fetchMaterials($e)');
-    } finally {
-      isLoading = false;
-      update();
-    }
+ Future <void> fetchMaterials() async{
+
+    final  result = await _materialsFirebaseRepo.getAll();
+
+    result.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedMaterials) => materials.assignAll(fetchedMaterials),
+    );
+
+update();
   }
 
   Future<void> fetchAllMaterialFromLocal() async {
@@ -97,15 +97,15 @@ class MaterialController extends GetxController with AppNavigator {
     to(AppRoutes.showAllMaterialsScreen);
   }
 
-  void reFetchMaterials() {
+  Future<void> reFetchMaterials()async {
     if (materials.isEmpty) {
       log('fetchMaterials...');
-      fetchMaterials();
+ await     fetchMaterials();
     }
   }
 
-  List<MaterialModel> searchOfProductByText(query) {
-    reFetchMaterials();
+  Future<List<MaterialModel>> searchOfProductByText(query)async {
+  await  reFetchMaterials();
 
     List<MaterialModel> searchedMaterials = [];
 

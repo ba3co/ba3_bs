@@ -162,7 +162,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                         (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
                       ),
                       itemGiftsNumber: (billData['Items']['I']['QtyBonus'].split(',').second as String).toInt,
-                      itemName: read<MaterialController>().getMaterialNameById(billData['Items']['I']['MatPtr'].toString()),
+                      itemName: read<MaterialController>().getMaterialNameById(billData['Items']['I']['MatPtr'].toString()).toString(),
                       itemVatPrice: AppServiceUtils.calcVat(
                         billData['Items']['I']['VatRatio'],
                         (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,

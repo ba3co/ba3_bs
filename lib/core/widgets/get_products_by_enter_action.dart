@@ -24,7 +24,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    getProduct(stateManager, controller);
+  await  getProduct(stateManager, controller);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
       stateManager.onSelected!(PlutoGridOnSelectedEvent(
@@ -66,7 +66,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  void getProduct(PlutoGridStateManager stateManager, IPlutoController plutoController) {
+  Future<void> getProduct(PlutoGridStateManager stateManager, IPlutoController plutoController) async{
     if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
 
     // Initialize variables
@@ -75,7 +75,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     final materialController = read<MaterialController>();
 
     // Search for matching materials
-    var searchedMaterials = materialController.searchOfProductByText(productText);
+    var searchedMaterials =await materialController.searchOfProductByText(productText);
     MaterialModel? selectedMaterial;
 
     if (searchedMaterials.length == 1) {
@@ -122,8 +122,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
           OverlayService.back();
         },
-        onSubmitted: (_) {
-          searchedMaterials = materialController.searchOfProductByText(productTextController.text);
+        onSubmitted: (_)async {
+          searchedMaterials = await materialController.searchOfProductByText(productTextController.text);
           materialController.update();
         },
         productTextController: productTextController,
