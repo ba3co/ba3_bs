@@ -1,30 +1,35 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 import '../../../core/dialogs/seller_selection_dialog_content.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
+import '../../../core/services/json_file_operations/implementations/import/import_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 
-
 class SellersController extends GetxController with AppNavigator {
-
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
-  SellersController( this._sellersFirebaseRepo);
+  final ImportRepository<SellerModel> _sellersImportRepo;
+
+  SellersController(this._sellersFirebaseRepo, this._sellersImportRepo);
 
   List<SellerModel> sellers = [];
   bool isLoading = true;
 
   SellerModel? selectedSellerAccount;
+  final logger = Logger();
 
   @override
   void onInit() {
@@ -44,14 +49,31 @@ class SellersController extends GetxController with AppNavigator {
         update();
       },
     );
-    // try {
-    //   sellers = _sellersRepository.getAllSellers();
-    // } catch (e) {
-    //   debugPrint('Error in fetchSellers: $e');
-    // } finally {
-    //   isLoading = false;
-    //   update();
-    // }
+  }
+
+  Future<void> fetchAllSellersFromLocal() async {
+    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+
+    if (resultFile != null) {
+      File file = File(resultFile.files.single.path!);
+      final result = _sellersImportRepo.importXmlFile(file);
+
+      result.fold(
+        (failure) {
+          logger.e("Error log", error: failure.message);
+          AppUIUtils.onFailure(failure.message);
+        },
+        (fetchedSellers) => _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
+      );
+    }
+  }
+
+  _handelFetchAllSellersFromLocalSuccess(List<SellerModel> fetchedSellers) async {
+    logger.d('fetchedSellers length ${fetchedSellers.length}');
+    logger.d('fetchedSellers first ${fetchedSellers.first.toJson()}');
+
+    sellers.assignAll(fetchedSellers);
+    //  _sellersFirebaseRepo.saveAll(fetchedSellers);
   }
 
   Future<void> addSeller(SellerModel seller) async {
@@ -98,7 +120,7 @@ class SellersController extends GetxController with AppNavigator {
 
   // Get seller  by ID
   SellerModel getSellerById(String id) {
-    return sellers.firstWhereOrNull((seller) => seller.costGuid == id)??SellerModel(costName: '');
+    return sellers.firstWhereOrNull((seller) => seller.costGuid == id) ?? SellerModel(costName: '');
   }
 
   // Replace Arabic numerals with English numerals

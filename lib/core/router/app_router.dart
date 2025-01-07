@@ -8,6 +8,7 @@ import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/seller_sales_screen.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/seller_targets_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/role_management/add_role_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/user_management/add_user_screen.dart';
 import 'package:ba3_bs/features/users_management/ui/screens/user_management/all_user_screen.dart';
@@ -33,6 +34,7 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.showAllPatternsScreen, page: () => const AllPatternScreen()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
+  GetPage(name: AppRoutes.addAccountScreen, page: () => const AddA()),
   GetPage(
     name: AppRoutes.showAllBillsScreen,
     page: () => const AllBillsScreen(),
@@ -119,5 +121,10 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.sellerSalesScreen,
     page: () => const SellerSalesScreen(),
+  ),
+
+  GetPage(
+    name: AppRoutes.sellerTargetScreen,
+    page: () => const SellerTargetScreen(),
   ),
 ];

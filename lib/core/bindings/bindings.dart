@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
+import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -53,6 +54,7 @@ import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
+import '../../features/sellers/service/seller_import.dart';
 import '../../features/user_time/controller/user_time_controller.dart';
 import '../../features/users_management/controllers/user_management_controller.dart';
 import '../../features/users_management/data/datasources/users_data_source.dart';
@@ -90,6 +92,7 @@ class AppBindings extends Bindings {
     final accountExport = AccountExport();
     final chequesImport = ChequesImport();
     final chequesExport = ChequesExport();
+    final sellersImport = SellerImport();
 
 // Initialize repositories
     final repositories = _initializeRepositories(
@@ -106,6 +109,7 @@ class AppBindings extends Bindings {
       accountImportService: accountImport,
       chequesExportService: chequesExport,
       chequesImportService: chequesImport,
+      sellersImportService: sellersImport,
     );
 
 // Permanent Controllers
@@ -145,6 +149,7 @@ class AppBindings extends Bindings {
     required IExportService<AccountModel> accountExportService,
     required IImportService<ChequesModel> chequesImportService,
     required IExportService<ChequesModel> chequesExportService,
+    required IImportService<SellerModel> sellersImportService,
   }) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
@@ -168,13 +173,14 @@ class AppBindings extends Bindings {
       bondImportExportRepo: ImportExportRepository(bondImportService, bondExportService),
       materialImportExportRepo: ImportExportRepository(materialImportService, materialExportService),
       accountImportExportRepo: ImportExportRepository(accountImportService, accountExportService),
+      sellerImportRepo: ImportRepository(sellersImportService),
     );
   }
 
 // Permanent Controllers Initialization
   void _initializePermanentControllers(SharedPreferencesService sharedPreferencesService, _Repositories repositories) {
     put(
-      SellersController(repositories.sellersRepo),
+      SellersController(repositories.sellersRepo, repositories.sellerImportRepo),
       permanent: true,
     );
     put(
@@ -216,6 +222,7 @@ class _Repositories {
   final ImportExportRepository<BillModel> billImportExportRepo;
   final ImportExportRepository<BondModel> bondImportExportRepo;
   final ImportExportRepository<MaterialModel> materialImportExportRepo;
+  final ImportRepository<SellerModel> sellerImportRepo;
   final ImportExportRepository<AccountModel> accountImportExportRepo;
   final ImportExportRepository<ChequesModel> chequesImportExportRepo;
   final UserTimeRepository userTimeRepo;
@@ -238,6 +245,7 @@ class _Repositories {
     required this.sellersRepo,
     required this.bondImportExportRepo,
     required this.materialImportExportRepo,
+    required this.sellerImportRepo,
     required this.accountImportExportRepo,
     required this.chequesImportExportRepo,
     required this.accountsRep,

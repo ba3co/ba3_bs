@@ -67,7 +67,7 @@ class AccountsController extends GetxController with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      final result = _jsonImportExportRepo.importXmlFile(file);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedAccounts) {
@@ -97,6 +97,10 @@ class AccountsController extends GetxController with AppNavigator {
 
   void navigateToAllAccountsScreen() {
     to(AppRoutes.showAllAccountsScreen);
+  }
+
+  void navigateToAddAccountScreen() {
+    to(AppRoutes.addAccountScreen);
   }
 
   void navigateToAccountDetailsScreen(String accountId) {}

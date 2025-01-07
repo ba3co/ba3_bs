@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
@@ -27,7 +26,7 @@ class SellerSalesScreen extends StatelessWidget {
             // print( (billTypeName as Map<String,dynamic>));
 
             if (billId != null) {
-              read<AllBillsController>().openFloatingBillDetailsById(billId, context,BillType.sales.billTypeModel);
+              read<AllBillsController>().openFloatingBillDetailsById(billId, context, BillType.sales.billTypeModel);
             }
           },
           isLoading: controller.isLoading,
@@ -43,7 +42,7 @@ class SellerSalesScreen extends StatelessWidget {
       leading: _buildLeadingSection(controller),
       title: Text('سجل مبيعات ${controller.selectedSeller?.costName}'),
       centerTitle: true,
-      actions: _buildActionButtons(),
+      actions: _buildActionButtons(controller),
     );
   }
 
@@ -68,7 +67,7 @@ class SellerSalesScreen extends StatelessWidget {
   }
 
   /// Generates action buttons in the app bar.
-  List<Widget> _buildActionButtons() {
+  List<Widget> _buildActionButtons(SellerSalesController controller) {
     return [
       AppButton(
         title: 'تعديل',
@@ -82,7 +81,9 @@ class SellerSalesScreen extends StatelessWidget {
         title: 'التارغيت',
         borderRadius: BorderRadius.circular(25),
         onPressed: () {
-          // TODO: Add navigation logic for target page
+          controller
+            ..calculateTotalAccessoriesMobiles()
+            ..navigateToSellerTargetScreen();
         },
       ),
       const HorizontalSpace(20),

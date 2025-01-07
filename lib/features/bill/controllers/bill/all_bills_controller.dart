@@ -73,6 +73,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;
+
   int allBillsCounts(BillTypeModel billTypeModel) => allBillsCountsByType[billTypeModel] ?? 0;
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
@@ -112,7 +113,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      final result = _jsonImportExportRepo.importXmlFile(file);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBills) {
@@ -215,8 +216,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
         )
             .then((result) {
           result.fold(
-                (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-                (count) => allBillsCountsByType[billTypeModel] = count,
+            (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+            (count) => allBillsCountsByType[billTypeModel] = count,
           );
         }),
       );
@@ -230,7 +231,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
     }
   }
-
 
   Future<void> exportBillsJsonFile() async {
     if (bills.isEmpty) {

@@ -34,6 +34,7 @@ class FirestoreUploader {
     required void Function(double progress) onProgress,
     int batchSize = 50, //Firestore batch limit
   }) async {
+    int counter = 1;
     WriteBatch batch = _firestore.batch();
 
     for (int i = 0; i < data.length; i++) {
@@ -44,12 +45,14 @@ class FirestoreUploader {
 
       // Commit batch every 50 documents or at the end
       if ((i + 1) % batchSize == 0 || i == data.length - 1) {
-        log('Start upload batch ${i + 1}');
+        log('Start upload batch $counter');
         await batch.commit();
+        log('Finish upload batch $counter');
         batch = _firestore.batch(); // Reset batch for the next set
+
+        counter++;
       }
 
-      log('Finish upload batch ${i + 1}');
       onProgress((i + 1) / data.length); // Report progress
     }
   }
