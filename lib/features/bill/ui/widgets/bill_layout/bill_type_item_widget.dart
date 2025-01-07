@@ -15,6 +15,7 @@ class BillTypeItemWidget extends StatelessWidget {
     this.color = Colors.white,
     this.isLoading = false,
     required this.pendingBillsCounts,
+    required this.allBillsCounts,
   });
 
   final VoidCallback onTap;
@@ -22,6 +23,7 @@ class BillTypeItemWidget extends StatelessWidget {
   final Color color;
   final bool isLoading;
   final int pendingBillsCounts;
+  final int allBillsCounts;
 
   final VoidCallback onPendingBillsPressed;
 
@@ -46,7 +48,7 @@ class BillTypeItemWidget extends StatelessWidget {
                 child: SizedBox(
                   width: max(.25.sw, 350),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Row(
                         spacing: 5,
@@ -55,12 +57,12 @@ class BillTypeItemWidget extends StatelessWidget {
                             'كل الفواتير:',
                           ),
                           Text(
-                            '${Random().nextInt(500000)}',
+                            '$allBillsCounts',
                             style: TextStyle(color: color),
                           ),
                         ],
                       ),
-                      Row(
+                     /* Row(
                         children: [
                           Row(
                             spacing: 5,
@@ -75,7 +77,7 @@ class BillTypeItemWidget extends StatelessWidget {
                             ],
                           ),
                         ],
-                      ),
+                      ),*/
                       InkWell(
                         onTap: onPendingBillsPressed,
                         child: Row(

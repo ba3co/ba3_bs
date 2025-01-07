@@ -24,7 +24,7 @@ dependencies:
   pinput: ^5.0.0
   dartz: ^0.10.1
   nfc_manager: ^3.5.0
-  window_manager: ^0.4.3
+  window_manager: ^0.4.0
   native_dialog_plus: ^1.0.9
   flutter_platform_alert: ^0.6.1
   syncfusion_flutter_datagrid: ^28.1.36

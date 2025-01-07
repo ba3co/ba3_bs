@@ -53,6 +53,11 @@ class MaterialModel implements PlutoAdaptable {
   final String? retailPrice;
   final String? endUserPrice;
   final String? matVatGuid;
+  final List<MatExtraBarcodeModel>? matExtraBarcode;
+
+
+
+
 
   MaterialModel({
     this.id,
@@ -106,6 +111,7 @@ class MaterialModel implements PlutoAdaptable {
     this.retailPrice,
     this.endUserPrice,
     this.matVatGuid,
+    this.matExtraBarcode,
   });
 
   // Factory constructor to create an instance from JSON
@@ -162,6 +168,7 @@ class MaterialModel implements PlutoAdaptable {
       retailPrice: json['retail2']?.toString(),
       endUserPrice: json['EndUser2']?.toString(),
       matVatGuid: json['matVatGuid']?.toString(),
+      matExtraBarcode: List.from(json['matExtraBarcode']??[]) ,
     );
   }
 
@@ -218,6 +225,7 @@ class MaterialModel implements PlutoAdaptable {
         'retail2': retailPrice,
         'EndUser2': endUserPrice,
         'matVatGuid': matVatGuid,
+        'matExtraBarcode': matExtraBarcode,
       };
 
   @override
@@ -337,6 +345,42 @@ class MaterialModel implements PlutoAdaptable {
       retailPrice: retailPrice ?? this.retailPrice,
       endUserPrice: endUserPrice ?? this.endUserPrice,
       matVatGuid: matVatGuid ?? this.matVatGuid,
+    );
+  }
+}
+
+
+class MatExtraBarcodeModel {
+  double? matUnit;
+  String? barCode;
+  bool? isDefault;
+
+  MatExtraBarcodeModel({this.matUnit, this.barCode, this.isDefault});
+
+  // Convert a MatExtraBarcodeModel into a Map. The keys must correspond to the names of the JSON attributes.
+  Map<String, dynamic> toJson() {
+    return {
+      'matUnit': matUnit,
+      'barCode': barCode,
+      'isDefault': isDefault,
+    };
+  }
+
+  // A method that converts a Map into a MatExtraBarcodeModel.
+  factory MatExtraBarcodeModel.fromJson(Map<String, dynamic> json) {
+    return MatExtraBarcodeModel(
+      matUnit: json['matUnit'],
+      barCode: json['barCode'],
+      isDefault: json['isDefault'],
+    );
+  }
+
+  // A method that creates a copy of the MatExtraBarcodeModel with the given fields replaced with new values.
+  MatExtraBarcodeModel copyWith({double? matUnit, String? barCode, bool? isDefault}) {
+    return MatExtraBarcodeModel(
+      matUnit: matUnit ?? this.matUnit,
+      barCode: barCode ?? this.barCode,
+      isDefault: isDefault ?? this.isDefault,
     );
   }
 }

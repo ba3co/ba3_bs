@@ -46,6 +46,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   List<BillModel> pendingBills = [];
 
   final pendingBillsCountsByType = <BillTypeModel, int>{};
+  final allBillsCountsByType = <BillTypeModel, int>{};
 
   bool plutoGridIsLoading = true;
 
@@ -72,6 +73,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;
+  int allBillsCounts(BillTypeModel billTypeModel) => allBillsCountsByType[billTypeModel] ?? 0;
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
@@ -165,6 +167,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     billsTypes.assignAll(fetchedBillTypes);
 
     await fetchPendingBillsCountsByTypes(fetchedBillTypes);
+    await fetchAllBillsCountsByTypes(fetchedBillTypes);
 
     getBillsTypesRequestState.value = RequestState.success;
   }
@@ -199,6 +202,35 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
       AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
     }
   }
+
+  Future<void> fetchAllBillsCountsByTypes(List<BillTypeModel> fetchedBillTypes) async {
+    final List<Future<void>> fetchTasks = [];
+    final errors = <String>[]; // Collect error messages.
+
+    for (final billTypeModel in fetchedBillTypes) {
+      fetchTasks.add(
+        _billsFirebaseRepo
+            .count(
+          itemTypeModel: billTypeModel,
+        )
+            .then((result) {
+          result.fold(
+                (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+                (count) => allBillsCountsByType[billTypeModel] = count,
+          );
+        }),
+      );
+    }
+
+    // Wait for all tasks to complete.
+    await Future.wait(fetchTasks);
+
+    // Handle errors if any.
+    if (errors.isNotEmpty) {
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+    }
+  }
+
 
   Future<void> exportBillsJsonFile() async {
     if (bills.isEmpty) {

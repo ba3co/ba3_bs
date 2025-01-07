@@ -89,13 +89,4 @@ enum VatEnums {
   }
 }
 
-TaxModel withVat = TaxModel(
-  taxGuid: '1',
-  taxRatio: 5.0,
-  taxName: 'ضريبة القيمة المضافة في رأس الخيمة',
-);
-TaxModel withOutVat = TaxModel(
-  taxGuid: '2',
-  taxRatio: 0,
-  taxName: 'معفى',
-);
+

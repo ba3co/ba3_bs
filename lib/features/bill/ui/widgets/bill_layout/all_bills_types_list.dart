@@ -27,6 +27,8 @@ class AllBillsTypesList extends StatelessWidget {
                     allBillsController.openFloatingBillDetails(context, billTypeModel);
                   },
                   pendingBillsCounts: allBillsController.pendingBillsCounts(billTypeModel),
+                  allBillsCounts: allBillsController.allBillsCounts(billTypeModel),
+
                   onPendingBillsPressed: () {
                     allBillsController
                       ..fetchPendingBills(billTypeModel)
