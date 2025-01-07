@@ -1,0 +1,45 @@
+import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
+
+import '../../../../core/network/api_constants.dart';
+import '../../../../core/services/firebase/interfaces/listen_datasource.dart';
+
+/// Implementation of ListenDatasource
+class ChangesListenDatasource<T> extends ListenableDatasource<ChangesModel> {
+  ChangesListenDatasource({required super.databaseService});
+
+  @override
+  Stream<ChangesModel> listenToDocument({required String documentId}) {
+    final documentStream = databaseService.fetchDocById(path: path, documentId: documentId);
+
+    return documentStream.map((snapshot) => ChangesModel.fromJson(snapshot.data() ?? {}));
+  }
+
+  @override
+  String get path => ApiConstants.changesPath; // Collection name in Firestore
+
+  @override
+  Future<List<ChangesModel>> fetchAll() async {
+    final data = await databaseService.fetchAll(path: path);
+    final changes = data.map((item) => ChangesModel.fromJson(item)).toList();
+
+    return changes;
+  }
+
+  @override
+  Future<ChangesModel> fetchById(String id) async {
+    final item = await databaseService.fetchById(path: path, documentId: id);
+    return ChangesModel.fromJson(item);
+  }
+
+  @override
+  Future<void> delete(String id) async {
+    await databaseService.delete(path: path, documentId: id);
+  }
+
+  @override
+  Future<ChangesModel> save(ChangesModel item) async {
+    final data = await databaseService.add(path: path, documentId: item.changeId, data: item.toJson());
+
+    return ChangesModel.fromJson(data);
+  }
+}

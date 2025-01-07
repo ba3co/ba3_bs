@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../models/date_filter.dart';
 import '../../../models/query_filter.dart';
 
@@ -11,6 +13,7 @@ abstract class IDatabaseService<T> {
 
   /// Fetches a single item of type [T] from the specified [path] by its [documentId].
   Future<T> fetchById({required String path, String? documentId});
+  Stream<DocumentSnapshot<T>>  fetchDocById({required String path, String? documentId});
 
   /// Deletes an item from the specified [path] by its [documentId].
   Future<void> delete({required String path, String? documentId});

@@ -120,4 +120,17 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     await batch.commit();
     return addedItems;
   }
+
+  @override
+  Stream<DocumentSnapshot<Map<String, dynamic>>> fetchDocById({required String path, String? documentId}) {
+    final documentStream =  _firestore.collection(path).doc(documentId).snapshots();
+
+    return documentStream.map((snapshot) {
+      if (snapshot.exists) {
+        return snapshot;
+      } else {
+        throw Exception("Document does not exist at path: $documentId");
+      }
+    });
+  }
 }
