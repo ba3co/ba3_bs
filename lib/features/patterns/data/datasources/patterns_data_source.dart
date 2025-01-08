@@ -1,9 +1,9 @@
-import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/remote_datasource_base.dart';
 
 import '../../../../core/network/api_constants.dart';
 import '../models/bill_type_model.dart';
 
-class PatternsDataSource extends DatasourceBase<BillTypeModel> {
+class PatternsDataSource extends RemoteDatasourceBase<BillTypeModel> {
   PatternsDataSource({required super.databaseService});
 
   @override

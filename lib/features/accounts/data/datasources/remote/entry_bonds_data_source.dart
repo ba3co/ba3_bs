@@ -1,9 +1,9 @@
 // EntryBondsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/datasource_base.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/remote_datasource_base.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 
-class EntryBondsDataSource extends DatasourceBase<EntryBondModel> {
+class EntryBondsDataSource extends RemoteDatasourceBase<EntryBondModel> {
   EntryBondsDataSource({required super.databaseService});
 
   @override

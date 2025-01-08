@@ -2,9 +2,9 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 
 import '../../../../core/services/firebase/implementations/services/firebase_sequential_number_database.dart';
-import '../../../../core/services/firebase/interfaces/datasource_base.dart';
+import '../../../../core/services/firebase/interfaces/remote_datasource_base.dart';
 
-class TaxDataSource extends DatasourceBase<TaxModel> with FirebaseSequentialNumberDatabase {
+class TaxDataSource extends RemoteDatasourceBase<TaxModel> with FirebaseSequentialNumberDatabase {
   TaxDataSource({required super.databaseService});
 
   @override

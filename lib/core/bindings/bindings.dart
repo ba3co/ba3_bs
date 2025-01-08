@@ -2,7 +2,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
@@ -61,7 +61,7 @@ import '../../features/users_management/data/datasources/users_data_source.dart'
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
-import '../services/firebase/implementations/repos/datasource_repo.dart';
+import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../services/firebase/implementations/services/compound_firestore_service.dart';
 import '../services/firebase/implementations/services/firestore_service.dart';
 import '../services/firebase/interfaces/i_compound_database_service.dart';
@@ -124,7 +124,7 @@ class AppBindings extends Bindings {
 
   Future<SharedPreferencesService> _initializeSharedPreferencesService() => putAsync(SharedPreferencesService().init());
 
-  IDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreService();
+  IRemoteDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreService();
 
   ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService() => CompoundFireStoreService();
 
@@ -136,7 +136,7 @@ class AppBindings extends Bindings {
 
 // Repositories Initialization
   _Repositories _initializeRepositories({
-    required IDatabaseService<Map<String, dynamic>> fireStoreService,
+    required IRemoteDatabaseService<Map<String, dynamic>> fireStoreService,
     required ICompoundDatabaseService<Map<String, dynamic>> compoundFireStoreService,
     required ITranslationService translationService,
     required IImportService<BillModel> billImportService,

@@ -19,7 +19,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
-import '../../../../core/services/firebase/implementations/repos/datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';

@@ -7,7 +7,7 @@ import '../../../../models/date_filter.dart';
 import '../../../../models/query_filter.dart';
 import '../../../../network/error/error_handler.dart';
 import '../../../../network/error/failure.dart';
-import 'datasource_repo.dart';
+import 'remote_datasource_repo.dart';
 
 class QueryableSavableRepository<T> extends DataSourceRepository<T> {
   final QueryableSavableDatasource<T> _queryableSavableDatasource;

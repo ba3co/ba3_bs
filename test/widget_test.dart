@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/get_x/shared_preferences_service.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';

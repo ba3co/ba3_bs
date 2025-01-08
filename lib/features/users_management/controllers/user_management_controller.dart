@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 
 import '../../../core/network/api_constants.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/services/firebase/implementations/repos/datasource_repo.dart';
+import '../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import '../../../core/services/get_x/shared_preferences_service.dart';
 import '../../../core/utils/app_ui_utils.dart';

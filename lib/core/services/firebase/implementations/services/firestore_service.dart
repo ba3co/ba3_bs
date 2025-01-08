@@ -2,13 +2,13 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/models/query_filter.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/i_database_service.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../models/date_filter.dart';
 
 // FirebaseFirestoreService Implementation
-class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
+class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -35,7 +35,8 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
 // Applies filters to the query
-  Query<Map<String, dynamic>> _applyFilters(CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
+  Query<Map<String, dynamic>> _applyFilters(
+          CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
       queryFilters.fold<Query<Map<String, dynamic>>>(
         collection,
         (query, filter) => query.where(filter.field, isEqualTo: filter.value),
@@ -46,9 +47,12 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     if (dateFilter == null) return query;
 
     final start = dateFilter.range.start;
-    final end = DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
+    final end =
+        DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
 
-    return query.where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start).where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
+    return query
+        .where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start)
+        .where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
   }
 
   @override
@@ -67,7 +71,8 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<Map<String, dynamic>> add({required Map<String, dynamic> data, required String path, String? documentId}) async {
+  Future<Map<String, dynamic>> add(
+      {required Map<String, dynamic> data, required String path, String? documentId}) async {
     final newDoc = _firestore.collection(path).doc().id;
 
     // Use the provided document ID or generate a new one if not provided
@@ -115,6 +120,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     await batch.commit();
     return addedItems;
   }
+
   @override
   Stream<Map<String, dynamic>> subscribeToDoc({required String path, String? documentId}) {
     if (documentId == null || documentId.isEmpty) {
@@ -134,5 +140,4 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
       throw Exception("Error listening to document: $error");
     });
   }
-
 }
