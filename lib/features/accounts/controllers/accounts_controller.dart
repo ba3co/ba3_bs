@@ -150,6 +150,8 @@ class AccountsController extends GetxController with AppNavigator {
   }
 
   AccountModel? getAccountModelById(id) {
+
+
     if (!(id == null || id == '')) {
       final AccountModel accountModel = accounts.firstWhere((item) => item.id == id, orElse: () {
         return AccountModel(accName: null);
