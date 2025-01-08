@@ -5,7 +5,10 @@ class LocalDatasourceRepo<T> {
   final LocalDatasourceBase<T> localDatasource;
   final RemoteDatasourceBase<T> remoteDatasource;
 
-  LocalDatasourceRepo({required this.localDatasource, required this.remoteDatasource});
+  LocalDatasourceRepo({
+    required this.localDatasource,
+    required this.remoteDatasource,
+  });
 
   Future<List<T>> getAll() async {
     final localData = await localDatasource.getAllData();

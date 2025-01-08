@@ -20,6 +20,7 @@ import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:ba3_bs/features/materials/service/material_export.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_source.dart';
@@ -205,6 +206,7 @@ class AppBindings extends Bindings {
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
     lazyPut(MaterialController(repositories.materialImportExportRepo, repositories.materialsRepo));
+    lazyPut(AddSellerController());
   }
 }
 

@@ -139,7 +139,8 @@ enum BillType {
   }
 
   BillTypeModel get billTypeModel => BillTypeModel(billTypeId: typeGuide, billTypeLabel: label);
-  BillPatternType get billPatternType => BillPatternType.byValue( label);
+
+  BillPatternType get billPatternType => BillPatternType.byValue(label);
 }
 
 enum BillPatternType {
@@ -483,19 +484,36 @@ enum PriceType {
   const PriceType(this.label);
 }
 
-enum UserStatus {
+enum UserWorkStatus {
   online('داخل العمل'),
   away('خارج العمل');
 
   final String label;
 
-  const UserStatus(this.label);
+  const UserWorkStatus(this.label);
 
   // Factory constructor with error handling for unmatched labels
-  factory UserStatus.byLabel(String label) {
-    return UserStatus.values.firstWhere(
+  factory UserWorkStatus.byLabel(String label) {
+    return UserWorkStatus.values.firstWhere(
       (type) => type.label == label,
       orElse: () => throw ArgumentError('No matching TimeType for label: $label'),
+    );
+  }
+}
+
+enum UserActiveStatus {
+  active('نشط'),
+  inactive('غير نشط');
+
+  final String label;
+
+  const UserActiveStatus(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory UserActiveStatus.byLabel(String label) {
+    return UserActiveStatus.values.firstWhere(
+      (status) => status.label == label,
+      orElse: () => throw ArgumentError('No matching ActiveStatus for label: $label'),
     );
   }
 }

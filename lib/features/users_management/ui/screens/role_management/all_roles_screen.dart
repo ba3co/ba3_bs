@@ -5,8 +5,8 @@ import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/user_management_controller.dart';
 
-class AllPermissionsScreen extends StatelessWidget {
-  const AllPermissionsScreen({super.key});
+class AllRolesScreen extends StatelessWidget {
+  const AllRolesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

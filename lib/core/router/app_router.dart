@@ -22,7 +22,7 @@ import '../../features/login/ui/screens/login_screen.dart';
 import '../../features/patterns/ui/screens/all_pattern_screen.dart';
 import '../../features/sellers/ui/screens/add_seller_screen.dart';
 import '../../features/sellers/ui/screens/all_sellers_screen.dart';
-import '../../features/users_management/ui/screens/role_management/all_permissions_screen.dart';
+import '../../features/users_management/ui/screens/role_management/all_roles_screen.dart';
 import '../bindings/middlewares.dart';
 import 'app_routes.dart';
 
@@ -101,7 +101,7 @@ List<GetPage<dynamic>>? appRouter = [
   ),
   GetPage(
     name: AppRoutes.showAllPermissionsScreen,
-    page: () => const AllPermissionsScreen(),
+    page: () => const AllRolesScreen(),
   ),
   GetPage(
     name: AppRoutes.addRoleScreen,
