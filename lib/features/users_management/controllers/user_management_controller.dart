@@ -156,6 +156,8 @@ class UserManagementController extends GetxController with AppNavigator {
   // Fetch roles using the repository
   Future<void> getUserById(String userId) async {
     final result = await _usersFirebaseRepo.getById(userId);
+
+
     result.fold(
       (failure) {
         offAll(AppRoutes.loginScreen);
@@ -166,9 +168,9 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   _handelGetUserByIdSuccess(UserModel userModel) {
-    loggedInUserModel = userModel;
-
-    offAll(AppRoutes.mainLayout);
+   loginNameController.text=userModel.userName??'';
+   loginPasswordController.text=userModel.userPassword??'';
+   checkUserStatus();
   }
 
   void checkUserStatus() async {
