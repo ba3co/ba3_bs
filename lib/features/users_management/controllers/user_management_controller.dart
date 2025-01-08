@@ -157,7 +157,10 @@ class UserManagementController extends GetxController with AppNavigator {
   Future<void> getUserById(String userId) async {
     final result = await _usersFirebaseRepo.getById(userId);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) {
+        offAll(AppRoutes.loginScreen);
+        return AppUIUtils.onFailure(failure.message);
+      },
       (fetchedUser) => _handelGetUserByIdSuccess(fetchedUser),
     );
   }

@@ -7,10 +7,10 @@ import '../../../../network/error/error_handler.dart';
 import '../../../../network/error/failure.dart';
 import 'remote_datasource_repo.dart';
 
-class ListenRepository<T> extends DataSourceRepository<T> {
+class ListenDataSourceRepository<T> extends DataSourceRepository<T> {
   final ListenableDatasource<T> _listenableDatasource;
 
-  ListenRepository(this._listenableDatasource) : super(_listenableDatasource);
+  ListenDataSourceRepository(this._listenableDatasource) : super(_listenableDatasource);
 
   Either<Failure, Stream<T>> listenDoc(String userId) {
     try {

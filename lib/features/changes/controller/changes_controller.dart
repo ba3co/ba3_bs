@@ -4,14 +4,14 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../core/services/firebase/implementations/repos/listen_repo.dart';
+import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../users_management/controllers/user_management_controller.dart';
 import '../../users_management/data/models/user_model.dart';
 
 import '../data/model/changes_model.dart';
 
 class ChangesController extends GetxController {
-  final ListenRepository<ChangesModel> _repository;
+  final ListenDataSourceRepository<ChangesModel> _repository;
 
   final Rx<ChangesModel?> currentChange = Rx<ChangesModel?>(null);
 
