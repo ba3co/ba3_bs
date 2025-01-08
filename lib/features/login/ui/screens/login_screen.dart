@@ -110,7 +110,7 @@ class LoginScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              VerticalDivider(),
+              VerticalDivider(color: Colors.black.withAlpha(100),),
               Expanded(child: const LoginHeaderText()),
             ],
           ),

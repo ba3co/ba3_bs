@@ -50,4 +50,8 @@ class HiveDatabaseService<T> implements ILocalDatabaseService<T> {
   Future<void> clear() async {
     await _box.clear();
   }
+
+
+
+  
 }

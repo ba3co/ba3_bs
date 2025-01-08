@@ -16,7 +16,7 @@ class ChangesListenDatasource<T> extends ListenableDatasource<ChangesModel> {
 
 
   @override
-  String get path => ApiConstants.changesPath; // Collection name in Firestore
+  String get path => ApiConstants.changes; // Collection name in Firestore
 
   @override
   Future<List<ChangesModel>> fetchAll() async {

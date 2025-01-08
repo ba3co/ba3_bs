@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
+import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 import '../../../firebase_options.dart';
+import '../../services/local_database/implementations/services/hive_adapters_registrations.dart';
 
 Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +18,8 @@ Future<void> initializeApp() async {
   }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await Hive.initializeApp();
 }
 
 Future<void> initializeWindowSettings() async {
