@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:ba3_bs/core/services/firebase/interfaces/listen_datasource.dart';
 import 'package:dartz/dartz.dart';
 
-
 import '../../../../network/error/error_handler.dart';
 import '../../../../network/error/failure.dart';
 import 'datasource_repo.dart';
@@ -13,15 +12,13 @@ class ListenRepository<T> extends DataSourceRepository<T> {
 
   ListenRepository(this._listenableDatasource) : super(_listenableDatasource);
 
-  Either<Failure, Stream<T>>listenDoc(String userId)  {
+  Either<Failure, Stream<T>> listenDoc(String userId) {
     try {
-      final savedItems =  _listenableDatasource.listenToDocument(documentId: userId);
-      return Right(savedItems); // Return the list of saved items
+      final documentStream = _listenableDatasource.subscribeToDoc(documentId: userId);
+      return Right(documentStream);
     } catch (e, stackTrace) {
-      log('Error in saveAll: $e', stackTrace: stackTrace);
-      return Left(ErrorHandler(e).failure); // Return error
+      log('Error in listenDoc: $e', stackTrace: stackTrace);
+      return Left(ErrorHandler(e).failure);
     }
   }
-
-
 }

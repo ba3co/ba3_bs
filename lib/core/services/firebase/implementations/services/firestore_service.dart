@@ -35,8 +35,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
 // Applies filters to the query
-  Query<Map<String, dynamic>> _applyFilters(
-          CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
+  Query<Map<String, dynamic>> _applyFilters(CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
       queryFilters.fold<Query<Map<String, dynamic>>>(
         collection,
         (query, filter) => query.where(filter.field, isEqualTo: filter.value),
@@ -47,12 +46,9 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     if (dateFilter == null) return query;
 
     final start = dateFilter.range.start;
-    final end =
-        DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
+    final end = DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
 
-    return query
-        .where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start)
-        .where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
+    return query.where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start).where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
   }
 
   @override
@@ -71,8 +67,7 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<Map<String, dynamic>> add(
-      {required Map<String, dynamic> data, required String path, String? documentId}) async {
+  Future<Map<String, dynamic>> add({required Map<String, dynamic> data, required String path, String? documentId}) async {
     final newDoc = _firestore.collection(path).doc().id;
 
     // Use the provided document ID or generate a new one if not provided
@@ -120,17 +115,24 @@ class FireStoreService extends IDatabaseService<Map<String, dynamic>> {
     await batch.commit();
     return addedItems;
   }
-
   @override
-  Stream<DocumentSnapshot<Map<String, dynamic>>> fetchDocById({required String path, String? documentId}) {
-    final documentStream =  _firestore.collection(path).doc(documentId).snapshots();
+  Stream<Map<String, dynamic>> subscribeToDoc({required String path, String? documentId}) {
+    if (documentId == null || documentId.isEmpty) {
+      throw ArgumentError("Document ID cannot be null or empty");
+    }
+
+    final documentStream = _firestore.collection(path).doc(documentId).snapshots();
 
     return documentStream.map((snapshot) {
       if (snapshot.exists) {
-        return snapshot;
+        return snapshot.data()!;
       } else {
         throw Exception("Document does not exist at path: $documentId");
       }
+    }).handleError((error) {
+      // Handle Firestore or network errors here
+      throw Exception("Error listening to document: $error");
     });
   }
+
 }

@@ -1,26 +1,26 @@
 class ChangesModel {
   String? changeId;
-  String? changeNumber;
   ChangeType? changeType;
   ChangeCollection? changeCollection;
-  List<String>? fags;
+  Map<String,dynamic>? change;
+
 
   ChangesModel({
     this.changeId,
     this.changeType,
     this.changeCollection,
-    this.fags,
-    this.changeNumber,
+    this.change,
+
   });
 
   // fromJson
   factory ChangesModel.fromJson(Map<String, dynamic> json) {
     return ChangesModel(
       changeId: json['changeId'] ??'',
-      changeNumber: json['changeNumber'] ??'',
+      change: json['change'] ?? {},
       changeType: json['changeType'] != null ? ChangeType.values.byName(json['changeType']) : null,
       changeCollection: json['changeCollection'] != null ? ChangeCollection.values.byName(json['changeCollection']) : null,
-      fags: List<String>.from(json['fags'] ?? []),
+
     );
   }
 
@@ -28,31 +28,31 @@ class ChangesModel {
   Map<String, dynamic> toJson() {
     return {
       'changeId': changeId,
-      'changeNumber': changeNumber,
       'changeType': changeType?.name,
       'changeCollection': changeCollection?.name,
-      'fags': fags,
+      'change': change,
+
     };
   }
 
   // copyWith
   ChangesModel copyWith({
     String? changeId,
-    String? changeNumber,
     ChangeType? changeType,
     ChangeCollection? changeCollection,
-    List<String>? fags,
+    Map<String,dynamic>? change,
+
   }) {
     return ChangesModel(
       changeId: changeId ?? this.changeId,
-      changeNumber: changeNumber ?? this.changeNumber,
       changeType: changeType ?? this.changeType,
       changeCollection: changeCollection ?? this.changeCollection,
-      fags: fags ?? this.fags,
+      change: change ?? this.change,
+
     );
   }
 }
 
 enum ChangeCollection { bills, accounts, bonds, cheques, users, materials }
 
-enum ChangeType { add, remove, update }
+enum ChangeType { addOrUpdate, remove }

@@ -8,11 +8,12 @@ class ChangesListenDatasource<T> extends ListenableDatasource<ChangesModel> {
   ChangesListenDatasource({required super.databaseService});
 
   @override
-  Stream<ChangesModel> listenToDocument({required String documentId}) {
-    final documentStream = databaseService.fetchDocById(path: path, documentId: documentId);
-
-    return documentStream.map((snapshot) => ChangesModel.fromJson(snapshot.data() ?? {}));
+  Stream<ChangesModel> subscribeToDoc({required String documentId}) {
+    return databaseService
+        .subscribeToDoc(path: path, documentId: documentId)
+        .map((data) => ChangesModel.fromJson(data));
   }
+
 
   @override
   String get path => ApiConstants.changesPath; // Collection name in Firestore
