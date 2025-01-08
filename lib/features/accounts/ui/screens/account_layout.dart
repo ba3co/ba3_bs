@@ -39,7 +39,14 @@ class AccountLayout extends StatelessWidget {
             AppMenuItem(
               text: 'كشف حساب',
               onTap: () {
-                showDialog<String>(context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
+                showDialog<String>(
+                    context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
+              },
+            ),
+            AppMenuItem(
+              text: 'اضافة حساب',
+              onTap: () {
+                read<AccountsController>().navigateToAddAccountScreen();
               },
             ),
           ],

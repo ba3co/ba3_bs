@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 
 class AddSellerScreen extends StatelessWidget {
@@ -11,7 +13,11 @@ class AddSellerScreen extends StatelessWidget {
         title: Text('بائع جديد'),
       ),
       body: Center(
-        child: Text('Add new sellers'),
+        child: ElevatedButton(
+            onPressed: () {
+              read<SellersController>().fetchAllSellersFromLocal();
+            },
+            child: Text('Add new sellers')),
       ),
     );
   }

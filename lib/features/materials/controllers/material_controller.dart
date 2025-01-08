@@ -22,7 +22,7 @@ class MaterialController extends GetxController with AppNavigator {
 
   List<MaterialModel> materials = [];
 
-  bool isLoading = true;
+  bool isLoading = false;
 
   Rx<RequestState> saveAllMaterialsRequestState = RequestState.initial.obs;
 
@@ -43,7 +43,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      final result = _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
@@ -57,6 +57,7 @@ class MaterialController extends GetxController with AppNavigator {
 
   _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
     log('fetchedMaterial length ${fetchedMaterial.length}');
+    log('fetchedMaterial first ${fetchedMaterial.first.toJson()}');
 
     saveAllMaterialsRequestState.value = RequestState.loading;
 

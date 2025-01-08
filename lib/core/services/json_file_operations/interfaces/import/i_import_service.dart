@@ -7,7 +7,7 @@ abstract class IImportService<T> {
 
   List<T> fromImportXml(XmlDocument document);
 
-  List<T> importFromFile(File filePath);
+  List<T> importFromJsonFile(File filePath);
 
   List<T> importFromXmlFile(File filePath);
 }

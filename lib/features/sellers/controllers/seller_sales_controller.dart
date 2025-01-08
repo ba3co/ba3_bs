@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
@@ -15,6 +18,7 @@ import '../../../core/services/firebase/implementations/repos/compound_datasourc
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/data/models/bill_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
+import '../ui/widgets/target_pointer_widget.dart';
 
 class SellerSalesController extends GetxController with AppNavigator {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -32,11 +36,17 @@ class SellerSalesController extends GetxController with AppNavigator {
 
   PickerDateRange? dateRange;
 
+  final GlobalKey<TargetPointerWidgetState> accessoriesKey = GlobalKey<TargetPointerWidgetState>();
+  final GlobalKey<TargetPointerWidgetState> mobilesKey = GlobalKey<TargetPointerWidgetState>();
+
   bool get inFilterMode => dateRange != null;
 
   List<BillModel> get sellerSales => inFilterMode ? filteredBills : sellerBills;
 
   double get totalSales => calculateTotalSales(sellerSales);
+
+  double totalAccessoriesSales = 0.0;
+  double totalMobilesSales = 0.0;
 
   Future<void> addSeller(SellerModel seller) async {
     final result = await _sellersFirebaseRepo.save(seller);
@@ -119,9 +129,37 @@ class SellerSalesController extends GetxController with AppNavigator {
   double calculateTotalSales(List<BillModel> bills) =>
       bills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal ?? 0));
 
+  void calculateTotalAccessoriesMobiles() {
+    // Reset totals
+    totalAccessoriesSales = 0;
+    totalMobilesSales = 0;
+
+    // Iterate through all bills
+    for (final bill in sellerBills) {
+      // Iterate through all items in each bill
+      for (final item in bill.items.itemList) {
+        if (item.itemSubTotalPrice != null) {
+          double itemTotal = item.itemTotalPrice.toDouble ?? 0;
+
+          if (item.itemSubTotalPrice! < 1000) {
+            log('${item.itemName} total price = $itemTotal');
+            totalAccessoriesSales += itemTotal;
+          } else {
+            totalMobilesSales += itemTotal;
+          }
+        }
+      }
+    }
+
+    log('totalAccessoriesSales = $totalAccessoriesSales');
+    log('totalMobilesSales = $totalMobilesSales');
+  }
+
   void navigateToAddSellerScreen() => to(AppRoutes.addSellerScreen);
 
   void navigateToAllSellersScreen() => to(AppRoutes.allSellersScreen);
 
   void navigateToSellerSalesScreen() => to(AppRoutes.sellerSalesScreen);
+
+  void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
 }

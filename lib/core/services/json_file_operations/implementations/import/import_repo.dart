@@ -14,9 +14,9 @@ class ImportRepository<T> implements IImportRepository<T> {
   ImportRepository(this._jsonImport);
 
   @override
-  Either<Failure, List<T>> importJsonFileJson(File filePath) {
+  Either<Failure, List<T>> importJsonFile(File file) {
     try {
-      List<T> itemsModels = _jsonImport.importFromFile(filePath);
+      List<T> itemsModels = _jsonImport.importFromJsonFile(file);
       return Right(itemsModels);
     } catch (e) {
       log('[$e] فشل في استيراد الملف');
@@ -25,9 +25,9 @@ class ImportRepository<T> implements IImportRepository<T> {
   }
 
   @override
-  Either<Failure, List<T>> importJsonFileXml(File filePath) {
+  Either<Failure, List<T>> importXmlFile(File file) {
     try {
-      List<T> itemsModels = _jsonImport.importFromXmlFile(filePath);
+      List<T> itemsModels = _jsonImport.importFromXmlFile(file);
       return Right(itemsModels);
     } catch (e) {
       log('[$e] فشل في استيراد الملف');

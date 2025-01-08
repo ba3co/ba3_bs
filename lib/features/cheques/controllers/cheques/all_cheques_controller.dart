@@ -21,14 +21,14 @@ import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
 class AllChequesController extends FloatingChequesDetailsLauncher with AppNavigator {
-  final CompoundDatasourceRepository<ChequesModel,ChequesType> _chequesFirebaseRepo;
+  final CompoundDatasourceRepository<ChequesModel, ChequesType> _chequesFirebaseRepo;
   final ImportExportRepository<ChequesModel> _jsonImportExportRepo;
 
   late bool isDebitOrCredit;
   List<ChequesModel> chequesList = [];
   bool isLoading = true;
 
-  AllChequesController(this._chequesFirebaseRepo,this._jsonImportExportRepo);
+  AllChequesController(this._chequesFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
   late final ChequesUtils _chequesUtils;
@@ -46,11 +46,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     // getAllChequesTypes();
   }
 
-
-
   ChequesModel getChequesById(String chequesId) =>
       chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
-
 
   Future<void> fetchAllChequesLocal() async {
     log('fetchAllChequesLocal');
@@ -59,11 +56,11 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importJsonFileXml(file);
+      final result = _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedCheques) {
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedCheques) {
           log('chequesList.length ${chequesList.length}');
           log('chequesList.firstOrNull ${chequesList.firstOrNull?.toJson()}');
 
@@ -91,15 +88,11 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     update();
   }
 
-
-
   Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel,
       {ChequesModel? chequesModel}) async {
     await fetchAllChequesByType(chequesTypeModel);
 
     if (!context.mounted) return;
-
-
 
     final ChequesModel lastChequesModel =
         chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
@@ -169,18 +162,18 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
   void navigateToChequesScreen({required bool onlyDues}) => to(AppRoutes.showAllChequesScreen, arguments: onlyDues);
 
-  void openChequesDetailsById(String chequesId, BuildContext context,ChequesType itemTypeModel) async {
-    final ChequesModel chequesModel = await fetchChequesById(chequesId,itemTypeModel);
+  void openChequesDetailsById(String chequesId, BuildContext context, ChequesType itemTypeModel) async {
+    final ChequesModel chequesModel = await fetchChequesById(chequesId, itemTypeModel);
     if (!context.mounted) return;
 
     openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
         chequesModel: chequesModel);
   }
 
-  Future<ChequesModel> fetchChequesById(String chequesId,ChequesType itemTypeModel) async {
+  Future<ChequesModel> fetchChequesById(String chequesId, ChequesType itemTypeModel) async {
     late ChequesModel chequesModel;
 
-    final result = await _chequesFirebaseRepo.getById(id: chequesId,itemTypeModel: itemTypeModel);
+    final result = await _chequesFirebaseRepo.getById(id: chequesId, itemTypeModel: itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

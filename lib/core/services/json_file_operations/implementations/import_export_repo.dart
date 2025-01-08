@@ -17,9 +17,9 @@ class ImportExportRepository<T> implements IImportRepository<T>, IExportReposito
   ImportExportRepository(this._jsonImport, this._jsonExport);
 
   @override
-  Either<Failure, List<T>> importJsonFileJson(File filePath) {
+  Either<Failure, List<T>> importJsonFile(File filePath) {
     try {
-      List<T> itemsModels = _jsonImport.importFromFile(filePath);
+      List<T> itemsModels = _jsonImport.importFromJsonFile(filePath);
       return Right(itemsModels);
     } catch (e) {
       log('[$e] فشل في استيراد الملف');
@@ -28,16 +28,15 @@ class ImportExportRepository<T> implements IImportRepository<T>, IExportReposito
   }
 
   @override
-  Either<Failure, List<T>> importJsonFileXml(File filePath) {
+  Either<Failure, List<T>> importXmlFile(File filePath) {
     // try {
-      List<T> itemsModels = _jsonImport.importFromXmlFile(filePath);
-      return Right(itemsModels);
+    List<T> itemsModels = _jsonImport.importFromXmlFile(filePath);
+    return Right(itemsModels);
     // } catch (e) {
     //   log('[$e] فشل في استيراد الملف');
     //   return Left(ErrorHandler(e).failure);
     // }
   }
-
 
   @override
   Future<Either<Failure, String>> exportJsonFile(List<T> itemsModels) async {
