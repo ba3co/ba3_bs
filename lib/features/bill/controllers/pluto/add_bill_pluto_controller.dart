@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
@@ -179,12 +179,12 @@ class AddBillPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   int _getQuantity() {
     final quantityStr = _extractCellValueAsNumber(AppConstants.invRecQuantity);
-    return (quantityStr.toDouble ?? 0).toInt();
+    return (quantityStr.toDouble ).toInt();
   }
 
   double _getVat() {
     final vatStr = _extractCellValueAsNumber(AppConstants.invRecVat);
-    return vatStr.toDouble ?? 0;
+    return vatStr.toDouble ;
   }
 
   String _extractCellValueAsNumber(String field) {

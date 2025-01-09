@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
@@ -140,7 +140,7 @@ class SellerSalesController extends GetxController with AppNavigator {
       // Iterate through all items in each bill
       for (final item in bill.items.itemList) {
         if (item.itemSubTotalPrice != null) {
-          double itemTotal = item.itemTotalPrice.toDouble ?? 0;
+          double itemTotal = item.itemTotalPrice.toDouble ;
 
           if (item.itemSubTotalPrice! < 1000) {
             log('${item.itemName} total price = $itemTotal');
