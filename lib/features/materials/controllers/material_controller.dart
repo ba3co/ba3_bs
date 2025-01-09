@@ -31,12 +31,16 @@ class MaterialController extends GetxController with AppNavigator {
 
   // Fetch materials from the repository
   Future<void> fetchMaterials() async {
-    final result = await _materialsFirebaseRepo.getAll();
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedMaterials) => materials.assignAll(fetchedMaterials),
-    );
+    final result = await _materialsHiveRepo.getAll();
+    materials.assignAll(result);
+    // result.fold(
+    //   (failure) => AppUIUtils.onFailure(failure.message),
+    //   (fetchedMaterials) {
+    //
+    //
+    //     // materials.assignAll(fetchedMaterials)
+    //   },
+    // );
 
     update();
   }
