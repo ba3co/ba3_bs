@@ -12,13 +12,15 @@ class FormFieldRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (visible??true)? Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: firstItem),
-        const HorizontalSpace(20),
-        Expanded(child: secondItem),
-      ],
-    ):SizedBox();
+    return (visible ?? true)
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: firstItem),
+              const HorizontalSpace(20),
+              Expanded(child: secondItem),
+            ],
+          )
+        : SizedBox();
   }
 }

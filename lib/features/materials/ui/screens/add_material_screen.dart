@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/widgets/custom_text_field_without_icon.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/core/widgets/searchable_material_field.dart';
-import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/core/widgets/tax_dropdown.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class AddMaterialScreen extends StatelessWidget {
   const AddMaterialScreen({super.key});
@@ -100,7 +100,10 @@ class AddMaterialScreen extends StatelessWidget {
                   )),
               FormFieldRow(
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
-                secondItem: SearchableMaterialField (label: "المجموعة",),
+                secondItem: SearchableMaterialField(
+                  label: "المجموعة",
+                  height: AppConstants.constHeightTextField,
+                ),
               ),
               Center(
                 child: Padding(
