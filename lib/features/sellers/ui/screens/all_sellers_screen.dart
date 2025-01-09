@@ -22,7 +22,7 @@ class AllSellersScreen extends StatelessWidget {
             if (controller.sellers.isEmpty) {
               return const Center(child: Text('لا يوجد بائعون بعد'));
             } else {
-              return Padding(
+              return SingleChildScrollView(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
                   width: double.infinity,

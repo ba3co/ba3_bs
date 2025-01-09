@@ -73,7 +73,7 @@ class SellersController extends GetxController with AppNavigator {
     logger.d('fetchedSellers first ${fetchedSellers.first.toJson()}');
 
     sellers.assignAll(fetchedSellers);
-    //  _sellersFirebaseRepo.saveAll(fetchedSellers);
+    _sellersFirebaseRepo.saveAll(fetchedSellers);
   }
 
   Future<void> addSeller(SellerModel seller) async {
