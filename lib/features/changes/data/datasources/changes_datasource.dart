@@ -4,7 +4,7 @@ import '../../../../core/network/api_constants.dart';
 import '../../../../core/services/firebase/interfaces/listen_datasource.dart';
 
 /// Implementation of ListenDatasource
-class ChangesListenDatasource<T> extends ListenableDatasource<ChangesModel> {
+class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   ChangesListenDatasource({required super.databaseService});
 
   @override
@@ -13,7 +13,6 @@ class ChangesListenDatasource<T> extends ListenableDatasource<ChangesModel> {
         .subscribeToDoc(path: path, documentId: documentId)
         .map((data) => ChangesModel.fromJson(data));
   }
-
 
   @override
   String get path => ApiConstants.changes; // Collection name in Firestore
@@ -42,5 +41,15 @@ class ChangesListenDatasource<T> extends ListenableDatasource<ChangesModel> {
     final data = await databaseService.add(path: path, documentId: item.changeId, data: item.toJson());
 
     return ChangesModel.fromJson(data);
+  }
+
+  @override
+  Future<List<ChangesModel>> saveAll(List<ChangesModel> items) async {
+    final savedData = await databaseService.addAll(
+      path: path,
+      data: items.map((item) => {...item.toJson(), 'docId': item.changeId}).toList(),
+    );
+
+    return savedData.map(ChangesModel.fromJson).toList();
   }
 }

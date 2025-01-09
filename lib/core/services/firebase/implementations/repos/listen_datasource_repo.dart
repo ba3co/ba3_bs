@@ -21,4 +21,14 @@ class ListenDataSourceRepository<T> extends RemoteDataSourceRepository<T> {
       return Left(ErrorHandler(e).failure);
     }
   }
+
+  Future<Either<Failure, List<T>>> saveAll(List<T> items) async {
+    try {
+      final savedItems = await _listenableDatasource.saveAll(items);
+      return Right(savedItems); // Return the list of saved items
+    } catch (e, stackTrace) {
+      log('Error in saveAll: $e', stackTrace: stackTrace);
+      return Left(ErrorHandler(e).failure); // Return error
+    }
+  }
 }

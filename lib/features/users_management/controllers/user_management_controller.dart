@@ -83,6 +83,12 @@ class UserManagementController extends GetxController with AppNavigator {
 
   int get holidaysLength => holidays.length;
 
+  List<UserModel> get userHaveChanges => allUsers
+      .where(
+        (user) => user.userId != loggedInUserModel?.userId,
+      )
+      .toList();
+
   RoleModel? getRoleById(String id) {
     try {
       return allRoles.firstWhere((role) => role.roleId == id);
@@ -155,8 +161,7 @@ class UserManagementController extends GetxController with AppNavigator {
     update();
   }
 
-  // Fetch roles using the repository
-// Fetch user by ID using the repository
+  // Fetch user by ID using the repository
   Future<void> fetchAndHandleUser(String userId) async {
     final result = await _usersFirebaseRepo.getById(userId);
 

@@ -3,18 +3,21 @@ import 'dart:io';
 
 import 'package:ba3_bs/core/dialogs/search_product_text_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
+import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
@@ -23,8 +26,13 @@ import '../data/models/material_model.dart';
 class MaterialController extends GetxController with AppNavigator {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
+  final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo);
+  MaterialController(
+    this._jsonImportExportRepo,
+    this._materialsHiveRepo,
+    this._listenDataSourceRepository,
+  );
 
   List<MaterialModel> materials = [];
   MaterialModel? selectedMaterial;
@@ -148,7 +156,8 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode =
+        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -173,8 +182,8 @@ class MaterialController extends GetxController with AppNavigator {
   void saveOrUpdateMaterial() async {
     if (!materialFromHandler.validate()) return;
 
-    // Create the user model from the provided data
-    final updatedUserModel = _materialService.createMaterialModel(
+    // Create the material model from the provided data
+    final updatedMaterialModel = _materialService.createMaterialModel(
       matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
       matGroupGuid: materialFromHandler.parentModel?.id ?? '',
       wholesalePrice: materialFromHandler.wholePriceController.text,
@@ -187,28 +196,53 @@ class MaterialController extends GetxController with AppNavigator {
       materialModel: selectedMaterial,
     );
 
-    // Handle null user model
-    if (updatedUserModel == null) {
+    // Handle null material model
+    if (updatedMaterialModel == null) {
       AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
       return;
     }
 
-    final result = await _materialsHiveRepo.save(updatedUserModel);
+    AppUIUtils.onSuccess('تم الحفظ بنجاح');
 
-    /*   result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (success) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        getAllUsers();
+    final userHaveChanges = read<UserManagementController>()
+        .userHaveChanges
+        .map(
+          (user) => ChangesModel(
+            changeId: user.userId,
+            changeType: ChangeType.addOrUpdate,
+            changeCollection: ChangeCollection.materials,
+            change: updatedMaterialModel.toJson(),
+          ),
+        )
+        .toList();
+
+    final changesResult = await _listenDataSourceRepository.saveAll(userHaveChanges);
+
+    changesResult.fold(
+      (hiveFailure) {
+        // If Hive save fails, show failure message
+        AppUIUtils.onFailure(hiveFailure.message);
       },
-    );*/
+      (_) {
+        // If both operations succeed, handle success
+        _handleSaveOrUpdateMaterialSuccess(updatedMaterialModel);
+      },
+    );
+  }
+
+  void _handleSaveOrUpdateMaterialSuccess(MaterialModel materialModel) async {
+    // If remote save succeeds, persist the data in Hive
+    final hiveResult = await _materialsHiveRepo.save(materialModel);
+
+    hiveResult.fold(
+      (hiveFailure) => AppUIUtils.onFailure(hiveFailure.message),
+      (_) {},
+    );
   }
 
   void navigateToAddMaterialScreen() {
     to(AppRoutes.addMaterialScreen);
   }
-
-
 
   void openMaterialSelectionDialog({
     required String query,

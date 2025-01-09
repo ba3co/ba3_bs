@@ -12,6 +12,8 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
+import 'package:ba3_bs/features/changes/data/datasources/changes_datasource.dart';
+import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/datasources/cheques_compound_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
@@ -63,6 +65,7 @@ import '../../features/users_management/data/datasources/users_data_source.dart'
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../services/firebase/implementations/services/compound_firestore_service.dart';
 import '../services/firebase/implementations/services/firestore_service.dart';
@@ -193,6 +196,9 @@ class AppBindings extends Bindings {
         localDatasource: MaterialsLocalDatasource(materialsHiveService),
         remoteDatasource: MaterialsRemoteDatasource(databaseService: fireStoreService),
       ),
+      listenableDatasourceRepo: ListenDataSourceRepository(
+        ChangesListenDatasource(databaseService: fireStoreService),
+      ),
     );
   }
 
@@ -222,6 +228,7 @@ class AppBindings extends Bindings {
     lazyPut(MaterialController(
       repositories.materialImportExportRepo,
       repositories.materialsLocalDatasourceRepo,
+      repositories.listenableDatasourceRepo,
     ));
     lazyPut(AddSellerController());
   }
@@ -249,6 +256,7 @@ class _Repositories {
   final BulkSavableDatasourceRepository<AccountModel> accountsRep;
   final QueryableSavableRepository<MaterialModel> materialsRemoteDatasourceRepo;
   final LocalDatasourceRepository<MaterialModel> materialsLocalDatasourceRepo;
+  final ListenDataSourceRepository<ChangesModel> listenableDatasourceRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -271,5 +279,6 @@ class _Repositories {
     required this.accountsRep,
     required this.materialsRemoteDatasourceRepo,
     required this.materialsLocalDatasourceRepo,
+    required this.listenableDatasourceRepo,
   });
 }
