@@ -5,6 +5,8 @@ import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
+import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
+import 'package:ba3_bs/features/materials/service/material_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -22,6 +24,24 @@ class MaterialController extends GetxController with AppNavigator {
   MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo);
 
   List<MaterialModel> materials = [];
+  MaterialModel? selectedMaterial;
+
+  late  MaterialFromHandler _materialFromHandler;
+  late  MaterialService _materialService;
+
+
+  @override
+  onInit(){
+    super.onInit();
+
+    _initializer();
+  }
+
+  _initializer(){
+    _materialFromHandler=MaterialFromHandler();
+    _materialService=MaterialService();
+
+  }
 
   bool isLoading = false;
 
@@ -127,8 +147,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -148,5 +167,10 @@ class MaterialController extends GetxController with AppNavigator {
     return input.replaceAllMapped(RegExp(r'[٠-٩]'), (Match match) {
       return String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
     });
+  }
+
+  void saveOrUpdateMaterial() {
+
+
   }
 }
