@@ -57,6 +57,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     minPriceController.clear();
     barcodeController.clear();
     latinNameController.clear();
+    parentController.clear();
   }
 
   bool validate() => formKey.currentState?.validate() ?? false;
@@ -71,6 +72,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     minPriceController.dispose();
     barcodeController.dispose();
     latinNameController.dispose();
+    parentController.dispose();
   }
 
   String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);

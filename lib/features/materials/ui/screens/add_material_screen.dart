@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
+import '../widgets/add_material/add_material_form.dart';
 
 class AddMaterialScreen extends StatelessWidget {
   const AddMaterialScreen({super.key});
@@ -28,75 +29,7 @@ class AddMaterialScreen extends StatelessWidget {
           child: Column(
             spacing: 20,
             children: [
-              Form(
-                  key: controller.materialFromHandler.formKey,
-                  child: Column(
-                    spacing: 20,
-                    children: [
-                      OrganizedWidget(
-                          titleWidget: Center(child: Text("معلومات المادة")),
-                          bodyWidget: Column(
-                            spacing: 8,
-                            children: [
-                              FormFieldRow(
-                                firstItem: TextAndExpandedChildField(
-                                    label: "اسم المادة",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
-                                secondItem: TextAndExpandedChildField(
-                                    label: "الاسم اللاتيني",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.latinNameController)),
-                              ),
-                              FormFieldRow(
-                                firstItem: TextAndExpandedChildField(
-                                    label: "رمز المادة",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.codeController)),
-                                secondItem: TextAndExpandedChildField(
-                                    label: "رمز الباركود",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.barcodeController)),
-                              ),
-                            ],
-                          )),
-                      OrganizedWidget(
-                          titleWidget: Center(child: Text("الاسعار")),
-                          bodyWidget: Column(
-                            spacing: 8,
-                            children: [
-                              FormFieldRow(
-                                firstItem: TextAndExpandedChildField(
-                                    label: "التكلفة",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.costPriceController)),
-                                secondItem: TextAndExpandedChildField(
-                                    label: "المفرق",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.retailPriceController)),
-                              ),
-                              FormFieldRow(
-                                firstItem: TextAndExpandedChildField(
-                                    label: "الجملة",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.wholePriceController)),
-                                secondItem: TextAndExpandedChildField(
-                                    label: " المستهلك",
-                                    child: CustomTextFieldWithoutIcon(
-                                        filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.customerPriceController)),
-                              ),
-                            ],
-                          ))
-                    ],
-                  )),
+              AddMaterialForm(controller: controller,),
               FormFieldRow(
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
@@ -130,3 +63,5 @@ class AddMaterialScreen extends StatelessWidget {
     });
   }
 }
+
+

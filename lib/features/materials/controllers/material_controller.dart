@@ -114,6 +114,7 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void navigateToAllMaterialScreen() {
+
     to(AppRoutes.showAllMaterialsScreen);
   }
 
@@ -241,7 +242,9 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void navigateToAddMaterialScreen() {
+    materialFromHandler.init(null);
     to(AppRoutes.addMaterialScreen);
+
   }
 
   void openMaterialSelectionDialog({
