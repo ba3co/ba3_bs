@@ -1,22 +1,22 @@
-import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../helper/extensions/getx_controller_extensions.dart';
 import 'custom_text_field_with_icon.dart';
 
 class SearchableMaterialField extends StatelessWidget {
   final String label;
-  final Function(String text)? onSubmitted;
+  final Function(String text) onSubmitted;
   final FormFieldValidator<String>? validator;
   final double? height;
+  final TextEditingController textController;
   final double? width;
   final bool readOnly;
 
   const SearchableMaterialField({
     super.key,
     required this.label,
-    this.onSubmitted,
+    required this.textController,
+    required this.onSubmitted,
     this.validator,
     this.height,
     this.width,
@@ -27,7 +27,7 @@ class SearchableMaterialField extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width ?? Get.width * 0.45,
-      height: height,
+      height: 34,
       child: Row(
         children: [
           SizedBox(width: 100, child: Text(label)),
@@ -35,15 +35,9 @@ class SearchableMaterialField extends StatelessWidget {
             child: CustomTextFieldWithIcon(
               readOnly: readOnly,
 
-              textEditingController: TextEditingController(),
+              textEditingController: textController,
               validator: validator,
-              onSubmitted: onSubmitted ??
-                  (text) {
-                    read<MaterialController>().openMaterialSelectionDialog(
-                      query: text,
-                      context: context,
-                    );
-                  },
+              onSubmitted: onSubmitted
             ),
           ),
         ],

@@ -11,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
-import '../../../../core/constants/app_constants.dart';
 
 class AddMaterialScreen extends StatelessWidget {
   const AddMaterialScreen({super.key});
@@ -49,19 +48,19 @@ class AddMaterialScreen extends StatelessWidget {
                                     label: "الاسم اللاتيني",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.latinNameController)),
                               ),
                               FormFieldRow(
                                 firstItem: TextAndExpandedChildField(
                                     label: "رمز المادة",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.codeController)),
                                 secondItem: TextAndExpandedChildField(
                                     label: "رمز الباركود",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.barcodeController)),
                               ),
                             ],
                           )),
@@ -75,24 +74,24 @@ class AddMaterialScreen extends StatelessWidget {
                                     label: "التكلفة",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.costPriceController)),
                                 secondItem: TextAndExpandedChildField(
                                     label: "المفرق",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.retailPriceController)),
                               ),
                               FormFieldRow(
                                 firstItem: TextAndExpandedChildField(
                                     label: "الجملة",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.wholePriceController)),
                                 secondItem: TextAndExpandedChildField(
                                     label: " المستهلك",
                                     child: CustomTextFieldWithoutIcon(
                                         filedColor: AppColors.backGroundColor,
-                                        textEditingController: controller.materialFromHandler.nameController)),
+                                        textEditingController: controller.materialFromHandler.customerPriceController)),
                               ),
                             ],
                           ))
@@ -102,7 +101,13 @@ class AddMaterialScreen extends StatelessWidget {
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
                   label: "المجموعة",
-                  height: AppConstants.constHeightTextField,
+                  textController: controller.materialFromHandler.parentController,
+                  onSubmitted: (text) {
+                    controller.selectMaterialForParent(
+                      query: text,
+                      context: context,
+                    );
+                  },
                 ),
               ),
               Center(
