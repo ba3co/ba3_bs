@@ -204,7 +204,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     AppUIUtils.onSuccess('تم الحفظ بنجاح');
 
-    final userHaveChanges = read<UserManagementController>()
+    final userChangeQueue = read<UserManagementController>()
         .userHaveChanges
         .map(
           (user) => ChangesModel(
@@ -216,7 +216,7 @@ class MaterialController extends GetxController with AppNavigator {
         )
         .toList();
 
-    final changesResult = await _listenDataSourceRepository.saveAll(userHaveChanges);
+    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
       (hiveFailure) {
