@@ -10,7 +10,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
-import '../widgets/bill_layout/bill_layout_app_bar.dart';
 
 class BillLayout extends StatelessWidget {
   const BillLayout({super.key});
@@ -39,7 +38,7 @@ class BillLayout extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AllBillsTypesList(allBillsController: controller),
-                          billLayoutAppBar(),
+                          //    if (RoleItemType.viewBill.hasAdminPermission) billLayoutAppBar(),
                         ],
                       ),
                     ),

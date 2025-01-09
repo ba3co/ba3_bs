@@ -3,8 +3,8 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
-class AccountsDataSource extends BulkSavableDatasource<AccountModel> {
-  AccountsDataSource({required super.databaseService});
+class AccountsDatasource extends BulkSavableDatasource<AccountModel> {
+  AccountsDatasource({required super.databaseService});
 
   @override
   String get path => ApiConstants.accounts; // Collection name in Firestore

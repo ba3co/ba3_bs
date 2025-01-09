@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,7 @@ class AddSellerScreen extends StatelessWidget {
           title: Text(controller.selectedSellerModel?.costName ?? 'جديد'),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -30,13 +31,12 @@ class AddSellerScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(
-                          width: 100,
-                          child: Text("الاسم"),
-                        ),
+                        Text("الاسم"),
+                        HorizontalSpace(20),
                         Expanded(
                           child: CustomTextFieldWithoutIcon(
                             textEditingController: controller.nameController,
+                            suffixIcon: const SizedBox.shrink(),
                           ),
                         ),
                       ],
@@ -47,18 +47,20 @@ class AddSellerScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(
-                          width: 100,
-                          child: Text('الرمز'),
-                        ),
+                        Text('الرمز'),
+                        HorizontalSpace(20),
                         Expanded(
-                          child: CustomTextFieldWithoutIcon(textEditingController: controller.codeController),
+                          child: CustomTextFieldWithoutIcon(
+                            textEditingController: controller.codeController,
+                            suffixIcon: const SizedBox.shrink(),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
+              Spacer(),
               Center(
                 child: Padding(
                   padding: EdgeInsets.only(bottom: .15.sh),

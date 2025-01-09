@@ -3,8 +3,8 @@ import 'package:ba3_bs/core/services/firebase/interfaces/remote_datasource_base.
 import '../../../../core/network/api_constants.dart';
 import '../models/bill_type_model.dart';
 
-class PatternsDataSource extends RemoteDatasourceBase<BillTypeModel> {
-  PatternsDataSource({required super.databaseService});
+class PatternsDatasource extends RemoteDatasourceBase<BillTypeModel> {
+  PatternsDatasource({required super.databaseService});
 
   @override
   String get path => ApiConstants.patterns; // Collection name in Firestore

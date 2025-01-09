@@ -25,7 +25,7 @@ import '../services/role_form_handler.dart';
 import '../services/user_form_handler.dart';
 
 class UserManagementController extends GetxController with AppNavigator {
-  final DataSourceRepository<RoleModel> _rolesFirebaseRepo;
+  final RemoteDataSourceRepository<RoleModel> _rolesFirebaseRepo;
 
   final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
 
@@ -92,10 +92,12 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() =>
+      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) =>
+      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -192,6 +194,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   void validateUserInputs() async {
+    debugPrint("validateUserInputs");
     final loginName = loginNameController.text.trim();
     final loginPassword = loginPasswordController.text.trim();
 
@@ -220,6 +223,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   void _handleGetUserPinSuccess(List<UserModel> fetchedUsers) async {
+    debugPrint("_handleGetUserPinSuccess");
     if (fetchedUsers.isEmpty) {
       await _handleNoMatch();
       return;
@@ -248,6 +252,7 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   void navigateToLogin() async {
+    debugPrint("navigateToLogin");
     if (_sharedPreferencesService.getString(AppConstants.userIdKey) == null) {
       offAll(AppRoutes.loginScreen);
     } else {

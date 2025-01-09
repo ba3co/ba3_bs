@@ -3,8 +3,8 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/remote_datasource_base.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 
-class RolesDataSource extends RemoteDatasourceBase<RoleModel> {
-  RolesDataSource({required super.databaseService});
+class RolesDatasource extends RemoteDatasourceBase<RoleModel> {
+  RolesDatasource({required super.databaseService});
 
   @override
   String get path => ApiConstants.roles; // Collection name in Firestore

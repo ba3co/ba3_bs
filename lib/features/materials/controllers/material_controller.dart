@@ -4,10 +4,9 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
-import 'package:ba3_bs/core/services/local_database/interfaces/local_datasource_base.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
@@ -18,10 +17,9 @@ import '../data/models/material_model.dart';
 
 class MaterialController extends GetxController with AppNavigator {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
-  final QueryableSavableRepository<MaterialModel> _materialsFirebaseRepo;
-  final LocalDatasourceRepo<MaterialModel> _materialsHiveRepo;
+  final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsFirebaseRepo, this._materialsHiveRepo);
+  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo);
 
   List<MaterialModel> materials = [];
 
@@ -29,20 +27,22 @@ class MaterialController extends GetxController with AppNavigator {
 
   Rx<RequestState> saveAllMaterialsRequestState = RequestState.initial.obs;
 
-  // Fetch materials from the repository
   Future<void> fetchMaterials() async {
-    final result = await _materialsHiveRepo.getAll();
-    materials.assignAll(result);
-    // result.fold(
-    //   (failure) => AppUIUtils.onFailure(failure.message),
-    //   (fetchedMaterials) {
-    //
-    //
-    //     // materials.assignAll(fetchedMaterials)
-    //   },
-    // );
+    try {
+      final result = await _materialsHiveRepo.getAll();
+      materials.assignAll(result);
+      update();
+    } catch (e) {
+      debugPrint("Error fetching materials: $e");
+    }
+  }
 
-    update();
+  Future<void> reloadMaterialsIfEmpty() async {
+    if (materials.isEmpty) {
+      log('Fetching materials started...');
+      await fetchMaterials();
+      log('Fetching materials ended...');
+    }
   }
 
   Future<void> fetchAllMaterialFromLocal() async {
@@ -86,14 +86,6 @@ class MaterialController extends GetxController with AppNavigator {
 
   void navigateToAllMaterialScreen() {
     to(AppRoutes.showAllMaterialsScreen);
-  }
-
-  Future<void> reloadMaterialsIfEmpty() async {
-    if (materials.isEmpty) {
-      log('Fetching materials started...');
-      await fetchMaterials();
-      log('Fetching materials ended...');
-    }
   }
 
   Future<List<MaterialModel>> searchOfProductByText(query) async {

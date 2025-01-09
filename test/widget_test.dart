@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/get_x/shared_preferences_service.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -12,7 +12,7 @@ import 'package:mocktail/mocktail.dart';
 
 // Mock Classes
 
-class MockDataSourceRepository<T> extends Mock implements DataSourceRepository<T> {}
+class MockDataSourceRepository<T> extends Mock implements RemoteDataSourceRepository<T> {}
 
 class MockFilterableDataSourceRepository<T> extends Mock implements FilterableDataSourceRepository<T> {}
 
