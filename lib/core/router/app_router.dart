@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/pending_bills_screen.dart';
 import 'package:ba3_bs/features/login/ui/screens/splash_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_layout.dart';
+import 'package:ba3_bs/features/materials/ui/screens/add_material_screen.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_screen.dart';
 import 'package:ba3_bs/features/patterns/ui/screens/pattern_layout.dart';
@@ -127,5 +128,9 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.sellerTargetScreen,
     page: () => const SellerTargetScreen(),
+  ),
+  GetPage(
+    name: AppRoutes.addMaterialScreen,
+    page: () => const AddMaterialScreen(),
   ),
 ];

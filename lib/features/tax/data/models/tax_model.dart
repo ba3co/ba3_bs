@@ -52,7 +52,7 @@ class TaxModel {
 enum VatEnums {
   withVat(
       taxGuid: 'xtc33mNeCZYR98i96pd8',
-      taxName: 'الاساسي',
+      taxName: 'ضريبة القيمة المضافة رأس الخيمة',
       taxRatio: 0.05,
       taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16'),
   withOutVat(

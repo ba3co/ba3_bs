@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/dialogs/search_product_text_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
@@ -12,6 +13,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
@@ -27,7 +29,7 @@ class MaterialController extends GetxController with AppNavigator {
   List<MaterialModel> materials = [];
   MaterialModel? selectedMaterial;
 
-  late MaterialFromHandler _materialFromHandler;
+  late MaterialFromHandler materialFromHandler;
   late MaterialService _materialService;
 
   @override
@@ -38,7 +40,7 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   _initializer() {
-    _materialFromHandler = MaterialFromHandler();
+    materialFromHandler = MaterialFromHandler();
     _materialService = MaterialService();
   }
 
@@ -169,19 +171,19 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void saveOrUpdateMaterial() async {
-    if (!_materialFromHandler.validate()) return;
+    if (!materialFromHandler.validate()) return;
 
     // Create the user model from the provided data
     final updatedUserModel = _materialService.createMaterialModel(
-     matVatGuid: _materialFromHandler.taxModel.taxGuid!,
-      matGroupGuid: _materialFromHandler.parentModel?.id??'',
-      wholesalePrice:_materialFromHandler.wholePriceController.text ,
-      retailPrice: _materialFromHandler.retailPriceController.text,
-      matName: _materialFromHandler.nameController.text,
-      matCode: _materialFromHandler.codeController.text.toInt,
-      matBarCode: _materialFromHandler.barcodeController.text,
-      endUserPrice: _materialFromHandler.customerPriceController.text,
-      matCurrencyVal: _materialFromHandler.costPriceController.text.toDouble,
+      matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
+      matGroupGuid: materialFromHandler.parentModel?.id ?? '',
+      wholesalePrice: materialFromHandler.wholePriceController.text,
+      retailPrice: materialFromHandler.retailPriceController.text,
+      matName: materialFromHandler.nameController.text,
+      matCode: materialFromHandler.codeController.text.toInt,
+      matBarCode: materialFromHandler.barcodeController.text,
+      endUserPrice: materialFromHandler.customerPriceController.text,
+      matCurrencyVal: materialFromHandler.costPriceController.text.toDouble,
       materialModel: selectedMaterial,
     );
 
@@ -193,12 +195,27 @@ class MaterialController extends GetxController with AppNavigator {
 
     final result = await _materialsHiveRepo.save(updatedUserModel);
 
- /*   result.fold(
+    /*   result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (success) {
         AppUIUtils.onSuccess('تم الحفظ بنجاح');
         getAllUsers();
       },
     );*/
+  }
+
+  void navigateToAddMaterialScreen() {
+    to(AppRoutes.addMaterialScreen);
+  }
+
+
+
+  void openMaterialSelectionDialog({
+    required String query,
+    required BuildContext context,
+  }) async {
+    MaterialModel? searchedMaterial = await searchProductTextDialog(query);
+    materialFromHandler.parentModel = searchedMaterial;
+    update();
   }
 }
