@@ -1,9 +1,5 @@
-import 'package:ba3_bs/core/styling/app_colors.dart';
-import 'package:ba3_bs/core/widgets/custom_text_field_without_icon.dart';
-import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/core/widgets/searchable_material_field.dart';
 import 'package:ba3_bs/core/widgets/tax_dropdown.dart';
-import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +32,7 @@ class AddMaterialScreen extends StatelessWidget {
                   label: "المجموعة",
                   textController: controller.materialFromHandler.parentController,
                   onSubmitted: (text) {
-                    controller.selectMaterialForParent(
+                    controller.openMaterialSelectionDialog(
                       query: text,
                       context: context,
                     );
