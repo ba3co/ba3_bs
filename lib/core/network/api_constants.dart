@@ -6,7 +6,7 @@ class ApiConstants {
   static const String bills = 'bills';
   static const String patterns = 'bill_types';
   static const String bonds= 'bonds';
-  static const String changes = 'bonds';
+  static const String changes = 'changes';
   static const String bondsCheques = 'bondsCheques';
   static const String entryBonds = 'entry_bonds';
   static const String accountsStatements = 'accounts_statements';

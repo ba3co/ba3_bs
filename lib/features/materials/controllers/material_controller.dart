@@ -203,7 +203,7 @@ class MaterialController extends GetxController with AppNavigator {
       return;
     }
 
-    AppUIUtils.onSuccess('تم الحفظ بنجاح');
+log("updatedMaterialModel !=null");
 
     final userChangeQueue = read<UserManagementController>()
         .userHaveChanges
@@ -218,13 +218,14 @@ class MaterialController extends GetxController with AppNavigator {
         .toList();
 
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-
+    log("${userChangeQueue.map((e) => e.toJson(),)}");
     changesResult.fold(
       (hiveFailure) {
         // If Hive save fails, show failure message
         AppUIUtils.onFailure(hiveFailure.message);
       },
       (_) {
+
         // If both operations succeed, handle success
         _handleSaveOrUpdateMaterialSuccess(updatedMaterialModel);
       },
