@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
@@ -26,21 +27,19 @@ class MaterialController extends GetxController with AppNavigator {
   List<MaterialModel> materials = [];
   MaterialModel? selectedMaterial;
 
-  late  MaterialFromHandler _materialFromHandler;
-  late  MaterialService _materialService;
-
+  late MaterialFromHandler _materialFromHandler;
+  late MaterialService _materialService;
 
   @override
-  onInit(){
+  onInit() {
     super.onInit();
 
     _initializer();
   }
 
-  _initializer(){
-    _materialFromHandler=MaterialFromHandler();
-    _materialService=MaterialService();
-
+  _initializer() {
+    _materialFromHandler = MaterialFromHandler();
+    _materialService = MaterialService();
   }
 
   bool isLoading = false;
@@ -169,8 +168,37 @@ class MaterialController extends GetxController with AppNavigator {
     });
   }
 
-  void saveOrUpdateMaterial() {
+  void saveOrUpdateMaterial() async {
+    if (!_materialFromHandler.validate()) return;
 
+    // Create the user model from the provided data
+    final updatedUserModel = _materialService.createMaterialModel(
+     matVatGuid: _materialFromHandler.taxModel.taxGuid!,
+      matGroupGuid: _materialFromHandler.parentModel?.id??'',
+      wholesalePrice:_materialFromHandler.wholePriceController.text ,
+      retailPrice: _materialFromHandler.retailPriceController.text,
+      matName: _materialFromHandler.nameController.text,
+      matCode: _materialFromHandler.codeController.text.toInt,
+      matBarCode: _materialFromHandler.barcodeController.text,
+      endUserPrice: _materialFromHandler.customerPriceController.text,
+      matCurrencyVal: _materialFromHandler.costPriceController.text.toDouble,
+      materialModel: selectedMaterial,
+    );
 
+    // Handle null user model
+    if (updatedUserModel == null) {
+      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
+      return;
+    }
+
+    final result = await _materialsHiveRepo.save(updatedUserModel);
+
+ /*   result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (success) {
+        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        getAllUsers();
+      },
+    );*/
   }
 }
