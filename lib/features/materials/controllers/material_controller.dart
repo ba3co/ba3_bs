@@ -242,8 +242,10 @@ class MaterialController extends GetxController with AppNavigator {
     );
   }
 
-  void navigateToAddMaterialScreen() {
-    materialFromHandler.init(null);
+  void navigateToAddOrUpdateMaterialScreen({String? matId}) {
+    MaterialModel? materialModel;
+    if(matId!=null)materialModel=getMaterialById(matId);
+    materialFromHandler.init(materialModel);
     to(AppRoutes.addMaterialScreen);
   }
 

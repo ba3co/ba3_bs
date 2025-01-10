@@ -24,10 +24,7 @@ class MaterialLayout extends StatelessWidget {
             Scaffold(
               appBar: AppBar(
                 title: const Text("المواد"),
-                actions: [
-                  AppButton(title: "حذف المواد", onPressed: () =>  read<MaterialController>().removeAllMaterials(),)
-
-                ],
+                actions: [],
               ),
               body: Column(
                 children: [
@@ -41,9 +38,7 @@ class MaterialLayout extends StatelessWidget {
                   AppMenuItem(
                       text: "اضافة المواد",
                       onTap: () {
-                        read<MaterialController>()
-
-                          .navigateToAddOrUpdateMaterialScreen();
+                        read<MaterialController>().navigateToAddOrUpdateMaterialScreen();
                       }),
                 ],
               ),
