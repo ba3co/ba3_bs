@@ -69,6 +69,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     _initializeBillUtilities();
 
     fetchBillsTypes();
+
     read<MaterialController>().reloadMaterialsIfEmpty();
   }
 

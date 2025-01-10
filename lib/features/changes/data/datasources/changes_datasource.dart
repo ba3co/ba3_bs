@@ -38,7 +38,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
 
   @override
   Future<ChangesModel> save(ChangesModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.changeId, data: item.toJson());
+    final data = await databaseService.add(path: path, documentId: item.targetUserId, data: item.toJson());
 
     return ChangesModel.fromJson(data);
   }
@@ -47,7 +47,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   Future<List<ChangesModel>> saveAll(List<ChangesModel> items) async {
     final savedData = await databaseService.addAll(
       path: path,
-      data: items.map((item) => {...item.toJson(), 'docId': item.changeId}).toList(),
+      data: items.map((item) => {...item.toJson(), 'docId': item.targetUserId}).toList(),
     );
 
     return savedData.map(ChangesModel.fromJson).toList();

@@ -20,6 +20,7 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
+import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/material_model.dart';
 
@@ -114,7 +115,6 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void navigateToAllMaterialScreen() {
-
     to(AppRoutes.showAllMaterialsScreen);
   }
 
@@ -123,7 +123,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     List<MaterialModel> searchedMaterials = [];
 
-    query = replaceArabicNumbersWithEnglish(query);
+    query = AppServiceUtils.replaceArabicNumbersWithEnglish(query);
 
     String query2 = '';
     String query3 = '';
@@ -174,28 +174,12 @@ class MaterialController extends GetxController with AppNavigator {
     return null;
   }
 
-  String replaceArabicNumbersWithEnglish(String input) {
-    return input.replaceAllMapped(RegExp(r'[٠-٩]'), (Match match) {
-      return String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
-    });
-  }
-
   void saveOrUpdateMaterial() async {
+    // Validate the input before proceeding
     if (!materialFromHandler.validate()) return;
 
-    // Create the material model from the provided data
-    final updatedMaterialModel = _materialService.createMaterialModel(
-      matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
-      matGroupGuid: materialFromHandler.parentModel?.id ?? '',
-      wholesalePrice: materialFromHandler.wholePriceController.text,
-      retailPrice: materialFromHandler.retailPriceController.text,
-      matName: materialFromHandler.nameController.text,
-      matCode: materialFromHandler.codeController.text.toInt,
-      matBarCode: materialFromHandler.barcodeController.text,
-      endUserPrice: materialFromHandler.customerPriceController.text,
-      matCurrencyVal: materialFromHandler.costPriceController.text.toDouble,
-      materialModel: selectedMaterial,
-    );
+    // Create a material model based on the user input
+    final updatedMaterialModel = _createMaterialModel();
 
     // Handle null material model
     if (updatedMaterialModel == null) {
@@ -203,49 +187,64 @@ class MaterialController extends GetxController with AppNavigator {
       return;
     }
 
-log("updatedMaterialModel !=null");
+    // Prepare user change queue for saving
+    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel);
 
-    final userChangeQueue = read<UserManagementController>()
-        .userHaveChanges
-        .map(
-          (user) => ChangesModel(
-            changeId: user.userId,
-            changeType: ChangeType.addOrUpdate,
-            changeCollection: ChangeCollection.materials,
-            change: updatedMaterialModel.toJson(),
-          ),
-        )
-        .toList();
-
+    // Save changes and handle results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-    log("${userChangeQueue.map((e) => e.toJson(),)}");
-    changesResult.fold(
-      (hiveFailure) {
-        // If Hive save fails, show failure message
-        AppUIUtils.onFailure(hiveFailure.message);
-      },
-      (_) {
 
-        // If both operations succeed, handle success
-        _handleSaveOrUpdateMaterialSuccess(updatedMaterialModel);
-      },
+    changesResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _onSaveSuccess(updatedMaterialModel),
     );
   }
 
-  void _handleSaveOrUpdateMaterialSuccess(MaterialModel materialModel) async {
-    // If remote save succeeds, persist the data in Hive
+  MaterialModel? _createMaterialModel() => _materialService.createMaterialModel(
+        matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
+        matGroupGuid: materialFromHandler.parentModel?.id ?? '',
+        wholesalePrice: materialFromHandler.wholePriceController.text,
+        retailPrice: materialFromHandler.retailPriceController.text,
+        matName: materialFromHandler.nameController.text,
+        matCode: materialFromHandler.codeController.text.toInt,
+        matBarCode: materialFromHandler.barcodeController.text,
+        endUserPrice: materialFromHandler.customerPriceController.text,
+        matCurrencyVal: materialFromHandler.costPriceController.text.toDouble,
+        materialModel: selectedMaterial,
+      );
+
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel) => read<UserManagementController>()
+      .nonLoggedInUsers
+      .map(
+        (user) => ChangesModel(
+          targetUserId: user.userId!,
+          changeItems: {
+            ChangeCollection.materials: [
+              ChangeItem(
+                target: ChangeTarget(
+                  targetCollection: ChangeCollection.materials,
+                  changeType: ChangeType.addOrUpdate,
+                ),
+                change: materialModel.toJson(),
+              )
+            ]
+          },
+        ),
+      )
+      .toList();
+
+  void _onSaveSuccess(MaterialModel materialModel) async {
+    // Persist the data in Hive upon successful save
     final hiveResult = await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
-      (hiveFailure) => AppUIUtils.onFailure(hiveFailure.message),
-      (_) {},
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
     );
   }
 
   void navigateToAddMaterialScreen() {
     materialFromHandler.init(null);
     to(AppRoutes.addMaterialScreen);
-
   }
 
   void openMaterialSelectionDialog({

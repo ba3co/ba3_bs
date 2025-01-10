@@ -1,5 +1,8 @@
+import 'package:ba3_bs/core/utils/generate_id.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../../core/helper/enums/enums.dart';
 
 class MaterialService {
   MaterialModel? createMaterialModel({
@@ -15,10 +18,9 @@ class MaterialService {
     required String matVatGuid,
     required double matCurrencyVal,
   }) {
-    final MaterialModel newMaterialModel;
-
     if (materialModel == null) {
-      newMaterialModel = MaterialModel(
+      return MaterialModel(
+        id: generateId(RecordType.material),
         matName: matName,
         matCompositionLatinName: matCompositionLatinName,
         matBarCode: matBarCode,
@@ -36,7 +38,7 @@ class MaterialService {
         matPictureGuid: '',
       );
     } else {
-      newMaterialModel = materialModel.copyWith(
+      return materialModel.copyWith(
         matName: matName,
         matBarCode: matBarCode,
         wholesalePrice: wholesalePrice,
@@ -48,6 +50,5 @@ class MaterialService {
         matCurrencyVal: matCurrencyVal,
       );
     }
-    return newMaterialModel;
   }
 }

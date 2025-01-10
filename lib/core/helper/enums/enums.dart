@@ -9,8 +9,8 @@ enum UserManagementStatus { first, login, block, auth }
 
 enum RecordType {
   bond,
-  invoice,
-  product,
+  bills,
+  material,
   account,
   pattern,
   undefined,

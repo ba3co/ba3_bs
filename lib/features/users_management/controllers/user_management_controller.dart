@@ -83,7 +83,7 @@ class UserManagementController extends GetxController with AppNavigator {
 
   int get holidaysLength => holidays.length;
 
-  List<UserModel> get userHaveChanges => allUsers
+  List<UserModel> get nonLoggedInUsers => allUsers
       .where(
         (user) => user.userId != loggedInUserModel?.userId,
       )

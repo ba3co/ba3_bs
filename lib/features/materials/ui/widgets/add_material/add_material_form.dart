@@ -8,12 +8,8 @@ import '../../../../bill/ui/widgets/bill_shared/form_field_row.dart';
 import '../../../controllers/material_controller.dart';
 
 class AddMaterialForm extends StatelessWidget {
-
   final MaterialController controller;
-  const AddMaterialForm({
-    super.key,
-    required this.controller
-  });
+  const AddMaterialForm({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +27,10 @@ class AddMaterialForm extends StatelessWidget {
                       firstItem: TextAndExpandedChildField(
                           label: "اسم المادة",
                           child: CustomTextFieldWithoutIcon(
-                              filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.nameController)),
+                            filedColor: AppColors.backGroundColor,
+                            textEditingController: controller.materialFromHandler.nameController,
+                            validator: (value) => controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
+                          )),
                       secondItem: TextAndExpandedChildField(
                           label: "الاسم اللاتيني",
                           child: CustomTextFieldWithoutIcon(
@@ -48,8 +46,11 @@ class AddMaterialForm extends StatelessWidget {
                       secondItem: TextAndExpandedChildField(
                           label: "رمز الباركود",
                           child: CustomTextFieldWithoutIcon(
-                              filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.barcodeController)),
+                            filedColor: AppColors.backGroundColor,
+                            textEditingController: controller.materialFromHandler.barcodeController,
+                            validator: (value) =>
+                                controller.materialFromHandler.defaultValidator(value, 'رمز الباركود'),
+                          )),
                     ),
                   ],
                 )),

@@ -14,6 +14,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
   MaterialController get materialController => read<MaterialController>();
 
   final formKey = GlobalKey<FormState>();
+
   TextEditingController nameController = TextEditingController();
   TextEditingController latinNameController = TextEditingController();
   TextEditingController codeController = TextEditingController();
@@ -85,5 +86,6 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
 
   @override
   Rx<VatEnums> get selectedTax => _taxModel.obs;
+
   TextEditingController parentController = TextEditingController();
 }
