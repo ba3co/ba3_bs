@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:get/get.dart';
@@ -16,8 +17,23 @@ class ChangesController extends GetxController {
   /// Tracks the currently received change in real-time.
   final Rx<ChangesModel?> currentChange = Rx<ChangesModel?>(null);
 
+  /// Stream subscription for listening to changes.
+  late StreamSubscription<ChangesModel> _subscription;
+
   /// Constructor to initialize with a repository for listening to changes.
   ChangesController(this._repository);
+
+  @override
+  void onInit() {
+    super.onInit();
+    listenToChanges();
+  }
+
+  @override
+  void onClose() {
+    _subscription.cancel();
+    super.onClose();
+  }
 
   /// Starts listening to changes for the logged-in user.
   void listenToChanges() {
@@ -33,23 +49,31 @@ class ChangesController extends GetxController {
 
     result.fold(
       (failure) => log("Error subscribing to changes: ${failure.message}"),
-      (documentStream) => documentStream.listen(
-        _processChange,
-        onError: (error) => log("Error in stream subscription: $error"),
-      ),
+      (documentStream) {
+        _subscription = documentStream
+            .distinct() // Avoid duplicate events.
+            .listen(
+              _processChange,
+              onError: (error) => log("Error in stream subscription: $error"),
+            );
+      },
     );
   }
 
   /// Processes an incoming change from the stream.
   void _processChange(ChangesModel change) {
-    currentChange.value = change;
-    log("Processing change for target user: ${change.targetUserId}");
+    try {
+      currentChange.value = change;
+      log("Processing change for target user: ${change.targetUserId}");
 
-    change.changeItems.forEach((collection, changes) {
-      for (final changeItem in changes) {
-        _handleChangeItem(changeItem);
-      }
-    });
+      change.changeItems.forEach((collection, changes) {
+        for (final changeItem in changes) {
+          _handleChangeItem(changeItem);
+        }
+      });
+    } catch (e, stack) {
+      log("Error processing change: $e\n$stack");
+    }
   }
 
   /// Determines how to process a specific change item based on its type and collection.
@@ -76,5 +100,13 @@ class ChangesController extends GetxController {
   void _handleDelete(ChangeItem changeItem) {
     // Implement delete logic.
     log("Delete operation for item: ${changeItem.change}");
+  }
+
+  /// Updates the listener when the logged-in user changes.
+  void updateListenerForNewUser(UserModel? newUser) {
+    _subscription.cancel(); // Cancel the existing subscription.
+    if (newUser?.userId != null) {
+      listenToChanges();
+    }
   }
 }

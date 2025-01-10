@@ -140,4 +140,25 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       throw Exception("Error listening to document: $error");
     });
   }
+
+  @override
+  Future<void> updateWithUnion({
+    required String path,
+    required String documentId,
+    required Map<String, dynamic> data,
+  }) async {
+    final docRef = _firestore.collection(path).doc(documentId);
+
+    final updatedData = <String, dynamic>{};
+
+    data.forEach((key, value) {
+      if (value is List) {
+        updatedData[key] = FieldValue.arrayUnion(value);
+      } else {
+        updatedData[key] = value;
+      }
+    });
+
+    await docRef.update(updatedData);
+  }
 }

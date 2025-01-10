@@ -28,4 +28,11 @@ abstract class IRemoteDatabaseService<T> {
     required String path,
     required List<Map<String, dynamic>> data,
   });
+
+  /// Updates an item by merging (union) the specified [data] with the existing document at [path] and [documentId].
+  Future<void> updateWithUnion({
+    required String path,
+    required String documentId,
+    required Map<String, dynamic> data,
+  });
 }

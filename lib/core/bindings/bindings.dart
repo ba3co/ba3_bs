@@ -12,6 +12,7 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
+import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
 import 'package:ba3_bs/features/changes/data/datasources/changes_datasource.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
@@ -206,6 +207,11 @@ class AppBindings extends Bindings {
   void _initializePermanentControllers(_Repositories repositories) {
     put(
       SellersController(repositories.sellersRepo, repositories.sellerImportRepo),
+      permanent: true,
+    );
+
+    put(
+      ChangesController(repositories.listenableDatasourceRepo),
       permanent: true,
     );
   }

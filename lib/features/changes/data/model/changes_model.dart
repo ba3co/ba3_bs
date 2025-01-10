@@ -43,8 +43,8 @@ class ChangesModel {
   /// Converts the `ChangesModel` into a JSON-compatible map.
   Map<String, dynamic> toJson() {
     return {
-      'targetUserId': targetUserId,
-      'changeItems': changeItems.map((key, value) => MapEntry(
+      'docId': targetUserId,
+      'changeItems': changeItems.map((ChangeCollection key, List<ChangeItem> value) => MapEntry(
             key.name,
             value.map((item) => item.toJson()).toList(),
           )),
@@ -54,7 +54,7 @@ class ChangesModel {
   /// Creates a `ChangesModel` instance from a JSON-compatible map.
   factory ChangesModel.fromJson(Map<String, dynamic> json) {
     return ChangesModel(
-      targetUserId: json['targetUserId'],
+      targetUserId: json['docId'],
       changeItems: (json['changeItems'] as Map<String, dynamic>).map(
         (key, value) => MapEntry(
           ChangeCollection.values.byName(key),
