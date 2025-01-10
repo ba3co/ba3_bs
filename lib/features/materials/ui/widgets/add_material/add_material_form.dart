@@ -8,8 +8,12 @@ import '../../../../bill/ui/widgets/bill_shared/form_field_row.dart';
 import '../../../controllers/material_controller.dart';
 
 class AddMaterialForm extends StatelessWidget {
+
   final MaterialController controller;
-  const AddMaterialForm({super.key, required this.controller});
+  const AddMaterialForm({
+    super.key,
+    required this.controller
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +31,10 @@ class AddMaterialForm extends StatelessWidget {
                       firstItem: TextAndExpandedChildField(
                           label: "اسم المادة",
                           child: CustomTextFieldWithoutIcon(
-                            filedColor: AppColors.backGroundColor,
-                            textEditingController: controller.materialFromHandler.nameController,
-                            validator: (value) => controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
+                              filedColor: AppColors.backGroundColor,
+                              textEditingController: controller.materialFromHandler.nameController,
+                            validator: (value) =>
+                                controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
                           )),
                       secondItem: TextAndExpandedChildField(
                           label: "الاسم اللاتيني",
@@ -42,15 +47,16 @@ class AddMaterialForm extends StatelessWidget {
                           label: "رمز المادة",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
+                              validator: (value) =>
+                                  controller.materialFromHandler.defaultValidator(value, 'رمز المادة'),
                               textEditingController: controller.materialFromHandler.codeController)),
                       secondItem: TextAndExpandedChildField(
                           label: "رمز الباركود",
                           child: CustomTextFieldWithoutIcon(
-                            filedColor: AppColors.backGroundColor,
-                            textEditingController: controller.materialFromHandler.barcodeController,
-                            validator: (value) =>
-                                controller.materialFromHandler.defaultValidator(value, 'رمز الباركود'),
-                          )),
+                              filedColor: AppColors.backGroundColor,
+                              validator: (value) =>
+                                  controller.materialFromHandler.defaultValidator(value, 'رمز الباركود'),
+                              textEditingController: controller.materialFromHandler.barcodeController)),
                     ),
                   ],
                 )),
@@ -61,10 +67,12 @@ class AddMaterialForm extends StatelessWidget {
                   children: [
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "التكلفة",
+                          label: " المستهلك",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.costPriceController)),
+                              validator: (value) =>
+                                  controller.materialFromHandler.defaultValidator(value, 'المستهلك'),
+                              textEditingController: controller.materialFromHandler.customerPriceController)),
                       secondItem: TextAndExpandedChildField(
                           label: "المفرق",
                           child: CustomTextFieldWithoutIcon(
@@ -77,11 +85,7 @@ class AddMaterialForm extends StatelessWidget {
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               textEditingController: controller.materialFromHandler.wholePriceController)),
-                      secondItem: TextAndExpandedChildField(
-                          label: " المستهلك",
-                          child: CustomTextFieldWithoutIcon(
-                              filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.customerPriceController)),
+                      secondItem: SizedBox(),
                     ),
                   ],
                 ))
