@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';

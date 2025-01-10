@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/helper/extensions/date_fromat_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 

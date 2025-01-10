@@ -1,6 +1,5 @@
 import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
-import 'package:ba3_bs/features/accounts/ui/widgets/add_account/add_account.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/pending_bills_screen.dart';
 import 'package:ba3_bs/features/login/ui/screens/splash_screen.dart';
@@ -16,6 +15,7 @@ import 'package:ba3_bs/features/users_management/ui/screens/user_management/add_
 import 'package:ba3_bs/features/users_management/ui/screens/user_management/all_user_screen.dart';
 import 'package:get/get.dart';
 
+import '../../features/accounts/ui/screens/add_account_screen.dart';
 import '../../features/bill/ui/screens/bill_details_screen.dart';
 import '../../features/bond/ui/screens/bond_details_screen.dart';
 import '../../features/cheques/ui/screens/all_cheques_view.dart';
@@ -36,7 +36,6 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.showAllPatternsScreen, page: () => const AllPatternScreen()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
-  GetPage(name: AppRoutes.addAccountScreen, page: () => const AddAccount()),
   GetPage(
     name: AppRoutes.showAllBillsScreen,
     page: () => const AllBillsScreen(),
@@ -132,5 +131,9 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.addMaterialScreen,
     page: () => const AddMaterialScreen(),
+  ),
+  GetPage(
+    name: AppRoutes.addAccountScreen,
+    page: () => const AddAccountScreen(),
   ),
 ];

@@ -1,7 +1,7 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
