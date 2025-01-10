@@ -1,5 +1,8 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/utils/generate_id.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 
 class MaterialService {
   MaterialModel? createMaterialModel({
@@ -19,6 +22,7 @@ class MaterialService {
 
     if (materialModel == null) {
       newMaterialModel = MaterialModel(
+         id: generateId(RecordType.product),
         matName: matName,
         matCompositionLatinName: matCompositionLatinName,
         matBarCode: matBarCode,
