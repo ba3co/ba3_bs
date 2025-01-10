@@ -22,7 +22,6 @@ class AllMaterialsScreen extends StatelessWidget {
         },
         onSelected: (selectedRow) {
           String? matId=selectedRow.row?.cells[AppStrings.materialIdFiled]?.value;
-print(read<MaterialController>().getMaterialById(matId!));
           read<MaterialController>().navigateToAddOrUpdateMaterialScreen(matId: matId);
         },
       );

@@ -30,20 +30,15 @@ enum RecordType {
 }
 
 enum BillType {
-  sales(
-      label: 'sales',
-      value: 'فاتورة مبيعات',
-      typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
-      color: 4282339765,
-      accounts: {
-        BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-        BillAccounts.additions: AccountModel(accName: "ايرادات مختلفة", id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
-        BillAccounts.discounts: AccountModel(accName: "الحسم الممنوح", id: "e903d658-f30f-46c8-82c0-fee86256a511"),
-        BillAccounts.materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
-        BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
-        BillAccounts.gifts: AccountModel(accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
-        BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
-      }),
+  sales(label: 'sales', value: 'فاتورة مبيعات', typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d", color: 4282339765, accounts: {
+    BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+    BillAccounts.additions: AccountModel(accName: "ايرادات مختلفة", id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
+    BillAccounts.discounts: AccountModel(accName: "الحسم الممنوح", id: "e903d658-f30f-46c8-82c0-fee86256a511"),
+    BillAccounts.materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
+    BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+    BillAccounts.gifts: AccountModel(accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
+    BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+  }),
   purchase(
     label: 'purchase',
     value: 'فاتورة مشتريات',
@@ -94,11 +89,7 @@ enum BillType {
       color: 4287349578,
       accounts: {}),
   transferIn(
-      label: 'transferIn',
-      value: 'إد.عملية مناقلة',
-      typeGuide: "f0f2a5db-53ed-4e53-9686-d6a809911327",
-      color: 4278228616,
-      accounts: {}),
+      label: 'transferIn', value: 'إد.عملية مناقلة', typeGuide: "f0f2a5db-53ed-4e53-9686-d6a809911327", color: 4278228616, accounts: {}),
   transferOut(
     label: 'transferOut',
     value: 'إخ.عملية مناقلة',
@@ -556,6 +547,26 @@ enum StoreAccount {
         id: typeGuide,
         accName: value,
       );
+}
+
+enum AccountType {
+  normal('عادي'),
+  finalAccount('ختامي'),
+  aggregate('تجميعي');
+
+  final String title;
+
+  const AccountType(this.title);
+
+  factory AccountType.byTitle(String title) {
+    return AccountType.values.firstWhere(
+          (type) => type.title == title,
+      orElse: () => throw ArgumentError('No matching AccountType for title: $title'),
+    );
+  }
+  factory AccountType.byIndex(int index) {
+    return AccountType.values.elementAt(index);
+  }
 }
 
 // enum TaxType {
