@@ -20,14 +20,14 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
   TextEditingController customerPriceController = TextEditingController();
   TextEditingController wholePriceController = TextEditingController();
   TextEditingController retailPriceController = TextEditingController();
-  TextEditingController costPriceController = TextEditingController();
-  TextEditingController minPriceController = TextEditingController();
   TextEditingController barcodeController = TextEditingController();
+  TextEditingController parentController = TextEditingController();
+
 
   VatEnums _taxModel = VatEnums.withVat;
   late MaterialModel? parentModel;
 
-  void init(MaterialModel? material) {
+  void init({MaterialModel? material}) {
     if (material != null) {
       materialController.selectedMaterial = material;
       nameController.text = materialController.selectedMaterial!.matName!;
@@ -35,10 +35,12 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
       customerPriceController.text = materialController.selectedMaterial!.endUserPrice!;
       wholePriceController.text = materialController.selectedMaterial!.wholesalePrice!;
       retailPriceController.text = materialController.selectedMaterial!.retailPrice!;
-      costPriceController.text = materialController.selectedMaterial!.matCurrencyVal!.toFixedString();
-      minPriceController.text = materialController.selectedMaterial!.matLastPriceCurVal!.toFixedString();
       barcodeController.text = materialController.selectedMaterial!.matBarCode!;
       latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName!;
+      // parentModel=materialController.getMaterialById(materialController.selectedMaterial!.matGroupGuid!);
+      _taxModel=VatEnums.byGuid(materialController.selectedMaterial!.matVatGuid!);
+      // parentController.text=parentModel!.matName!;
+
     } else {
       materialController.selectedMaterial = null;
       parentModel = null;
@@ -53,8 +55,6 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     customerPriceController.clear();
     wholePriceController.clear();
     retailPriceController.clear();
-    costPriceController.clear();
-    minPriceController.clear();
     barcodeController.clear();
     latinNameController.clear();
     parentController.clear();
@@ -68,8 +68,6 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     customerPriceController.dispose();
     wholePriceController.dispose();
     retailPriceController.dispose();
-    costPriceController.dispose();
-    minPriceController.dispose();
     barcodeController.dispose();
     latinNameController.dispose();
     parentController.dispose();
@@ -85,5 +83,4 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
 
   @override
   Rx<VatEnums> get selectedTax => _taxModel.obs;
-  TextEditingController parentController = TextEditingController();
 }

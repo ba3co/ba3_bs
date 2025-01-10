@@ -114,7 +114,6 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void navigateToAllMaterialScreen() {
-
     to(AppRoutes.showAllMaterialsScreen);
   }
 
@@ -157,14 +156,14 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
 
-  MaterialModel? getMaterialById(String id) {
-    return materials.firstWhereOrNull((material) => material.id == id);
+  MaterialModel getMaterialById(String id) {
+    reloadMaterialsIfEmpty();
+    return materials.firstWhere((material) => material.id == id);
   }
 
   MaterialModel? getMaterialByName(name) {
@@ -193,7 +192,6 @@ class MaterialController extends GetxController with AppNavigator {
       matCode: materialFromHandler.codeController.text.toInt,
       matBarCode: materialFromHandler.barcodeController.text,
       endUserPrice: materialFromHandler.customerPriceController.text,
-      matCurrencyVal: materialFromHandler.costPriceController.text.toDouble,
       materialModel: selectedMaterial,
     );
 
@@ -203,7 +201,7 @@ class MaterialController extends GetxController with AppNavigator {
       return;
     }
 
-log("updatedMaterialModel !=null");
+    log("updatedMaterialModel !=null");
 
     final userChangeQueue = read<UserManagementController>()
         .userHaveChanges
@@ -218,14 +216,15 @@ log("updatedMaterialModel !=null");
         .toList();
 
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-    log("${userChangeQueue.map((e) => e.toJson(),)}");
+    log("${userChangeQueue.map(
+      (e) => e.toJson(),
+    )}");
     changesResult.fold(
       (hiveFailure) {
         // If Hive save fails, show failure message
         AppUIUtils.onFailure(hiveFailure.message);
       },
       (_) {
-
         // If both operations succeed, handle success
         _handleSaveOrUpdateMaterialSuccess(updatedMaterialModel);
       },
@@ -242,10 +241,11 @@ log("updatedMaterialModel !=null");
     );
   }
 
-  void navigateToAddMaterialScreen() {
-    materialFromHandler.init(null);
+  void navigateToAddOrUpdateMaterialScreen({String? matId}) {
+    MaterialModel? materialModel;
+    if(matId!=null)materialModel=getMaterialById(matId);
+    materialFromHandler.init(material: materialModel);
     to(AppRoutes.addMaterialScreen);
-
   }
 
   void openMaterialSelectionDialog({
@@ -255,5 +255,9 @@ log("updatedMaterialModel !=null");
     MaterialModel? searchedMaterial = await searchProductTextDialog(query);
     materialFromHandler.parentModel = searchedMaterial;
     update();
+  }
+
+  void removeAllMaterials() {
+    _materialsHiveRepo.clear();
   }
 }

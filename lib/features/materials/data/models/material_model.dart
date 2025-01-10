@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/bisc/string_extension.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -334,8 +336,9 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: 'الرقم التعريفي', field: 'الرقم التعريفي', type: PlutoColumnType.text()): id,
-      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
+      PlutoColumn(title: 'الرقم التعريفي', field: AppStrings.materialIdFiled, type: PlutoColumnType.text()): id,
+      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName
+      ,
       PlutoColumn(title: 'رمز المادة', field: 'رمز المادة', type: PlutoColumnType.text()): matCode,
       PlutoColumn(title: 'الباركود', field: 'الباركود', type: PlutoColumnType.text()): matBarCode,
     };

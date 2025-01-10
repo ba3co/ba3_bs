@@ -1,10 +1,19 @@
 extension StringExtension on String {
+
+
+  String sanitize() {
+    return replaceAll(RegExp(r'[^\x20-\x7E]'), '');
+    // return replaceAll(RegExp(r'[^\x20-\x7Eء-ي]'), '');
+
+  }
   String get capitalizeFirst =>
       isNotEmpty ? this[0].toUpperCase() + substring(1).toLowerCase() : "";
 
   int get toInt => int.tryParse(this) ?? 0;
 
   double get toDouble => double.tryParse(this) ?? 0.0;
+
+
 }
 
 extension NullableStringExtension on String? {
@@ -31,6 +40,7 @@ extension NullableStringExtension on String? {
       return DateTime(1970, 1, 1); // قيمة افتراضية عند حدوث خطأ
     }
   }
+
 
   String get orEmpty => this ?? "";
 }

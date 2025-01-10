@@ -16,7 +16,6 @@ class MaterialService {
     required int matCode,
     required String matGroupGuid,
     required String matVatGuid,
-    required double matCurrencyVal,
   }) {
     final MaterialModel newMaterialModel;
 
@@ -32,7 +31,6 @@ class MaterialService {
         matCode: matCode,
         matGroupGuid: matGroupGuid,
         matVatGuid: matVatGuid,
-        matCurrencyVal: matCurrencyVal,
         matPrevQty: "0",
         matLastPriceCurVal: 0.0,
         matCreateDate: Timestamp.now().toDate(),
@@ -49,7 +47,6 @@ class MaterialService {
         matCode: matCode,
         matGroupGuid: matGroupGuid,
         matVatGuid: matVatGuid,
-        matCurrencyVal: matCurrencyVal,
       );
     }
     return newMaterialModel;

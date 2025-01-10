@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -10,6 +13,14 @@ import 'core/styling/app_themes.dart';
 import 'core/widgets/app_scroll_behavior.dart';
 
 void main() async {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // عرض الخطأ على وحدة التحكم
+    FlutterError.presentError(details);
+    log("FlutterError Error: ${details.exception}");
+exit(1);
+    // إذا كنت تريد إيقاف تشغيل التطبيق عند الخطأ
+    // يمكنك استدعاء exit(1) أو أي إجراء آخر مناسب.
+  };
   await initializeApp();
   runApp(const MyApp());
 }

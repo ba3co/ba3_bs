@@ -32,7 +32,10 @@ class AddMaterialForm extends StatelessWidget {
                           label: "اسم المادة",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.nameController)),
+                              textEditingController: controller.materialFromHandler.nameController,
+                            validator: (value) =>
+                                controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
+                          )),
                       secondItem: TextAndExpandedChildField(
                           label: "الاسم اللاتيني",
                           child: CustomTextFieldWithoutIcon(
@@ -44,11 +47,15 @@ class AddMaterialForm extends StatelessWidget {
                           label: "رمز المادة",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
+                              validator: (value) =>
+                                  controller.materialFromHandler.defaultValidator(value, 'رمز المادة'),
                               textEditingController: controller.materialFromHandler.codeController)),
                       secondItem: TextAndExpandedChildField(
                           label: "رمز الباركود",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
+                              validator: (value) =>
+                                  controller.materialFromHandler.defaultValidator(value, 'رمز الباركود'),
                               textEditingController: controller.materialFromHandler.barcodeController)),
                     ),
                   ],
@@ -60,10 +67,12 @@ class AddMaterialForm extends StatelessWidget {
                   children: [
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "التكلفة",
+                          label: " المستهلك",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.costPriceController)),
+                              validator: (value) =>
+                                  controller.materialFromHandler.defaultValidator(value, 'المستهلك'),
+                              textEditingController: controller.materialFromHandler.customerPriceController)),
                       secondItem: TextAndExpandedChildField(
                           label: "المفرق",
                           child: CustomTextFieldWithoutIcon(
@@ -76,11 +85,7 @@ class AddMaterialForm extends StatelessWidget {
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               textEditingController: controller.materialFromHandler.wholePriceController)),
-                      secondItem: TextAndExpandedChildField(
-                          label: " المستهلك",
-                          child: CustomTextFieldWithoutIcon(
-                              filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.customerPriceController)),
+                      secondItem: SizedBox(),
                     ),
                   ],
                 ))
