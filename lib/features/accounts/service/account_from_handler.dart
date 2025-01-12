@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/interfaces/i_account_type_selection_handler.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
@@ -18,18 +20,20 @@ class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandl
   final TextEditingController accParentName = TextEditingController();
   AccountType accountType = AccountType.normal;
 
-
-   AccountModel? accountParentModel;
+  AccountModel? accountParentModel;
 
   void init({AccountModel? accountModel}) {
     if (accountModel != null) {
-      nameController.text=accountController.selectedAccount!.accName!;
-      latinNameController.text=accountController.selectedAccount!.accLatinName!;
-      codeController.text=accountController.selectedAccount!.accCode!;
-      accountParentModel=accountController.getAccountModelById(accountController.selectedAccount!.id!)!;
-      accParentName.text=accountParentModel!.accName!;
-          accountType=AccountType.byIndex(accountController.selectedAccount!.accType!);
+      nameController.text = accountController.selectedAccount!.accName!;
+      latinNameController.text = accountController.selectedAccount!.accLatinName!;
+      codeController.text = accountController.selectedAccount!.accCode!;
+      accountParentModel = accountController.getAccountModelById(accountController.selectedAccount!.id!)!;
+      accParentName.text = accountParentModel!.accName!;
+      accountType = AccountType.byIndex(accountController.selectedAccount!.accType!);
     } else {
+      log("accountModel =null");
+      accountParentModel = null;
+
       clear();
     }
   }
@@ -39,7 +43,7 @@ class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandl
     codeController.clear();
     accParentName.clear();
     latinNameController.clear();
-    accountParentModel=null;
+    accountParentModel = null;
   }
 
   bool validate() => formKey.currentState?.validate() ?? false;
@@ -49,7 +53,6 @@ class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandl
     codeController.dispose();
     accParentName.dispose();
     latinNameController.dispose();
-
   }
 
   String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);

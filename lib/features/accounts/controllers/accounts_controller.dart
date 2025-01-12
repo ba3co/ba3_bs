@@ -30,9 +30,7 @@ class AccountsController extends GetxController with AppNavigator {
   late AccountFromHandler accountFromHandler;
   late AccountService accountService;
 
-
-  void setAccountParent(AccountModel accountModel){
-
+  void setAccountParent(AccountModel accountModel) {
     accountFromHandler.accountParentModel = accountModel;
     accountFromHandler.accParentName.text = accountModel.accName!;
     update();
@@ -44,7 +42,6 @@ class AccountsController extends GetxController with AppNavigator {
   }
 
   bool isLoading = true;
-
 
   @override
   void onInit() {
@@ -112,7 +109,8 @@ class AccountsController extends GetxController with AppNavigator {
     to(AppRoutes.showAllAccountsScreen);
   }
 
-  void navigateToAddAccountScreen() {
+  void navigateToAddOrUpdateAccountScreen({AccountModel? accountModel}) {
+    accountFromHandler.init(accountModel: accountModel);
     to(AppRoutes.addAccountScreen);
   }
 
@@ -182,8 +180,6 @@ class AccountsController extends GetxController with AppNavigator {
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
-
-
   Future<AccountModel?> openAccountSelectionDialog({
     required String query,
     required BuildContext context,
@@ -195,7 +191,7 @@ class AccountsController extends GetxController with AppNavigator {
       // Single match
       selectedAccountModel = searchedAccounts.first;
     } else if (searchedAccounts.isNotEmpty) {
-     await OverlayService.showDialog(
+      await OverlayService.showDialog(
         context: context,
         title: 'أختر الحساب',
         content: AccountSelectionDialogContent(
@@ -203,18 +199,13 @@ class AccountsController extends GetxController with AppNavigator {
           onAccountTap: (selectedAccount) {
             OverlayService.back();
 
-            // Set the selected account to the model
             selectedAccountModel = selectedAccount;
           },
         ),
         onCloseCallback: () {
           log('Account Selection Dialog Closed.');
-
-
-
         },
       );
-     print("OverlayService.showDialog");
     } else {
       AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }

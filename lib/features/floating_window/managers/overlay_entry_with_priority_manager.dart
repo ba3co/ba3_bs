@@ -32,7 +32,7 @@ class OverlayEntryWithPriorityManager {
   /// - `priority`: Optional priority, where lower values are higher priority.
   /// - `onCloseCallback`: A callback invoked after the overlay is closed.
 
-  void displayOverlay({
+  Future<void> displayOverlay({
     required OverlayState overlay,
     bool? showDivider,
     BorderRadius? borderRadius,
@@ -45,7 +45,7 @@ class OverlayEntryWithPriorityManager {
     double? height,
     int? priority,
     VoidCallback? onCloseCallback,
-  }) {
+  }) async{
     if (hasHigherPriorityOverlay()) {
       _removeOverlay();
     }
@@ -53,7 +53,7 @@ class OverlayEntryWithPriorityManager {
     _onCloseCallback = onCloseCallback;
 
     // Create a new overlay entry if none is passed
-    _overlayEntry = overlayEntry ??
+  _overlayEntry = overlayEntry ??
         OverlayEntry(
           builder: (context) {
             return GestureDetector(
@@ -70,8 +70,7 @@ class OverlayEntryWithPriorityManager {
                     width: width ?? 500,
                     height: height ?? 500,
                     padding: contentPadding ?? const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    decoration:
-                        BoxDecoration(color: Colors.white, borderRadius: borderRadius ?? BorderRadius.circular(24)),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: borderRadius ?? BorderRadius.circular(24)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,8 +132,7 @@ class OverlayEntryWithPriorityManager {
 
   /// Checks if any overlay exists with a priority higher than the given [defaultPriority].
   /// Lower numbers indicate higher priority (e.g., 0 is higher than 1).
-  bool hasHigherPriorityOverlay([int defaultPriority = 1]) =>
-      _overlayEntries.any((entry) => entry.priority < defaultPriority);
+  bool hasHigherPriorityOverlay([int defaultPriority = 1]) => _overlayEntries.any((entry) => entry.priority < defaultPriority);
 
   void clearAllHigherPriorityOverlay() {
     if (hasHigherPriorityOverlay()) {
