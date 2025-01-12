@@ -47,7 +47,6 @@ class AddAccountFormWidget extends StatelessWidget {
                   query: text,
                   context: context,
                 );
-                print(accountModel?.accName.toString());
                 if (accountModel != null) {
                   controller.setAccountParent(accountModel);
                 }

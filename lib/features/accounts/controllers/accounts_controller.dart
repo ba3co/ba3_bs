@@ -109,7 +109,8 @@ class AccountsController extends GetxController with AppNavigator {
     to(AppRoutes.showAllAccountsScreen);
   }
 
-  void navigateToAddAccountScreen() {
+  void navigateToAddOrUpdateAccountScreen({AccountModel? accountModel}) {
+    accountFromHandler.init(accountModel: accountModel);
     to(AppRoutes.addAccountScreen);
   }
 
@@ -121,9 +122,7 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts
-        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
-        .toList();
+    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -146,8 +145,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel = accounts
-          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel =
+          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -200,7 +199,6 @@ class AccountsController extends GetxController with AppNavigator {
           onAccountTap: (selectedAccount) {
             OverlayService.back();
 
-            // Set the selected account to the model
             selectedAccountModel = selectedAccount;
           },
         ),
@@ -208,7 +206,6 @@ class AccountsController extends GetxController with AppNavigator {
           log('Account Selection Dialog Closed.');
         },
       );
-      print("OverlayService.showDialog");
     } else {
       AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }

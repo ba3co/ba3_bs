@@ -47,7 +47,7 @@ class AccountLayout extends StatelessWidget {
             AppMenuItem(
               text: 'اضافة حساب',
               onTap: () {
-                read<AccountsController>().navigateToAddAccountScreen();
+                read<AccountsController>().navigateToAddOrUpdateAccountScreen();
               },
             ),
           ],

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../managers/overlay_entry_with_priority_manager.dart';
@@ -23,9 +25,10 @@ class OverlayService {
     double? height,
     int? priority,
     VoidCallback? onCloseCallback,
-  }) async{
-    final OverlayState overlay = Overlay.of(context);
+  }) async {
+    final Completer<void> completer = Completer<void>();
 
+    final OverlayState overlay = Overlay.of(context);
     _entryWithPriorityInstance.displayOverlay(
       overlay: overlay,
       showDivider: showDivider,
@@ -37,8 +40,13 @@ class OverlayService {
       width: width,
       height: height,
       priority: priority,
-      onCloseCallback: onCloseCallback,
+      onCloseCallback: () {
+        onCloseCallback?.call();
+        completer.complete();
+      },
     );
+    await completer.future;
+    return completer.future;
   }
 
   static Widget showDropdown<T>({
