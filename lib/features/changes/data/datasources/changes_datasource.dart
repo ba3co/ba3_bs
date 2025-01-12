@@ -77,9 +77,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
 
   /// Delete a change by ID
   @override
-  Future<void> delete(
-    String id,
-  ) async {
+  Future<void> delete(String id) async {
     await databaseService.delete(path: path, documentId: id, mapFieldName: 'changeItems');
   }
 }
