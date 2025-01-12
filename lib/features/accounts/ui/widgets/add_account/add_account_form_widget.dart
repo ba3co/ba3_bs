@@ -30,7 +30,7 @@ class AddAccountFormWidget extends StatelessWidget {
               ),
             ),
             secondItem: TextAndExpandedChildField(
-              label: "سم الحساب اللاتيني",
+              label: "اسم الحساب اللاتيني",
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: SizedBox(),
                 textEditingController: controller.accountFromHandler.latinNameController,

@@ -41,6 +41,9 @@ class MaterialController extends GetxController with AppNavigator {
   late MaterialFromHandler materialFromHandler;
   late MaterialService _materialService;
 
+  bool get isFromHandler => selectedMaterial == null ? false : true;
+
+
   @override
   onInit() {
     super.onInit();
@@ -157,8 +160,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -243,9 +245,9 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void navigateToAddOrUpdateMaterialScreen({String? matId}) {
-    MaterialModel? materialModel;
-    if(matId!=null)materialModel=getMaterialById(matId);
-    materialFromHandler.init(materialModel);
+    selectedMaterial = null;
+    if (matId != null) selectedMaterial = getMaterialById(matId);
+    materialFromHandler.init(selectedMaterial);
     to(AppRoutes.addMaterialScreen);
   }
 
