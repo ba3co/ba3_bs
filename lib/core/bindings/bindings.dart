@@ -238,7 +238,6 @@ class AppBindings extends Bindings {
     lazyPut(AddSellerController());
     lazyPut(
       ChangesController(repositories.listenableDatasourceRepo),
-    
     );
   }
 }

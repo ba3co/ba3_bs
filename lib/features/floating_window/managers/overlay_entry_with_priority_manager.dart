@@ -32,7 +32,7 @@ class OverlayEntryWithPriorityManager {
   /// - `priority`: Optional priority, where lower values are higher priority.
   /// - `onCloseCallback`: A callback invoked after the overlay is closed.
 
-  Future<void> displayOverlay({
+  void displayOverlay({
     required OverlayState overlay,
     bool? showDivider,
     BorderRadius? borderRadius,
@@ -45,7 +45,7 @@ class OverlayEntryWithPriorityManager {
     double? height,
     int? priority,
     VoidCallback? onCloseCallback,
-  }) async{
+  }) {
     if (hasHigherPriorityOverlay()) {
       _removeOverlay();
     }
@@ -53,7 +53,7 @@ class OverlayEntryWithPriorityManager {
     _onCloseCallback = onCloseCallback;
 
     // Create a new overlay entry if none is passed
-  _overlayEntry = overlayEntry ??
+    _overlayEntry = overlayEntry ??
         OverlayEntry(
           builder: (context) {
             return GestureDetector(
