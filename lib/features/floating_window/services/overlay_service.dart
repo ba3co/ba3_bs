@@ -45,7 +45,6 @@ class OverlayService {
         completer.complete();
       },
     );
-    await completer.future;
     return completer.future;
   }
 

@@ -122,7 +122,9 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
+    return accounts
+        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
+        .toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -145,8 +147,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel =
-          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel = accounts
+          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -198,7 +200,6 @@ class AccountsController extends GetxController with AppNavigator {
           accounts: searchedAccounts,
           onAccountTap: (selectedAccount) {
             OverlayService.back();
-
             selectedAccountModel = selectedAccount;
           },
         ),
