@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../core/services/firebase/interfaces/listen_datasource.dart';
 
@@ -55,53 +52,36 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   //   );
   //   return data.map((item) => ChangesModel.fromJson(item)).toList();
   // }
+
   @override
   Future<List<ChangesModel>> saveAll(List<ChangesModel> items) async {
-    final batch = FirebaseFirestore.instance.batch();
-
-    for (var item in items) {
+    // Convert ChangesModel items to the format required by batchUpdateWithArrayUnion
+    final itemsToUpdate = items.map((item) {
       final docId = item.targetUserId;
 
-      // Loop through each changeItem and apply arrayUnion
-      for (var collection in item.changeItems.keys) {
-        log('collection ${collection.name}');
+      // Prepare the data in the required format for arrayUnion
+      final nestedFieldData = <String, dynamic>{};
 
-        final changes = item.changeItems[collection]!;
+      item.changeItems.forEach((collection, changes) {
+        nestedFieldData[collection.name] = changes.map((changeItem) => changeItem.toJson()).toList();
+      });
 
-        final docRef = FirebaseFirestore.instance.collection(path).doc(docId);
+      return {
+        'docId': docId,
+        'changeItems': nestedFieldData,
+      };
+    }).toList();
 
-        // Check if the document exists
-        final docSnapshot = await docRef.get();
+    // Call batchUpdateWithArrayUnion to handle the batch update with arrayUnion logic
+    final updatedItems = await databaseService.batchUpdateWithArrayUnion(
+      path: path,
+      items: itemsToUpdate,
+      docIdField: 'docId', // The field in the map that contains the docId
+      nestedFieldPath: 'changeItems', // The nested field to apply arrayUnion on
+    );
 
-        if (!docSnapshot.exists) {
-          // If document doesn't exist, create it with initial empty data
-          batch.set(docRef, {
-            'docId': docId,
-            'changeItems': {
-              collection.name: changes.map((changeItem) => changeItem.toJson()).toList(),
-            }
-          });
-        } else {
-          // If document exists, update it with arrayUnion
-          batch.update(
-            docRef,
-            {
-              'changeItems.${collection.name}': FieldValue.arrayUnion(
-                changes.map((changeItem) => changeItem.toJson()).toList(),
-              ),
-            },
-          );
-        }
-      }
-    }
-
-    // Commit the batch write operation
-    await batch.commit();
-
-    // Fetch and return the updated list of items
-    final List<Map<String, dynamic>> updatedData = await databaseService.fetchAll(path: path);
-
-    return updatedData.map((item) => ChangesModel.fromJson(item)).toList();
+    // Process the updated items into ChangesModel
+    return updatedItems.map((item) => ChangesModel.fromJson(item)).toList();
   }
 
   /// Delete a change by ID

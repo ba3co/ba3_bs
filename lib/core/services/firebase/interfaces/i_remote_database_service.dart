@@ -29,10 +29,16 @@ abstract class IRemoteDatabaseService<T> {
     required List<Map<String, dynamic>> data,
   });
 
-  /// Updates an item by merging (union) the specified [data] with the existing document at [path] and [documentId].
-  Future<void> updateWithUnion({
+  /// Updates multiple documents in the Firestore collection at [path] using batch operations
+  /// and returns a list of the processed items.
+  ///
+  /// For each item in [items]:
+  /// - If the document (identified by [docIdField]) does not exist, it creates it with [nestedFieldPath].
+  /// - If the document exists, it updates [nestedFieldPath] using `FieldValue.arrayUnion`.
+  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnion({
     required String path,
-    required String documentId,
-    required Map<String, dynamic> data,
+    required List<Map<String, dynamic>> items,
+    required String docIdField,
+    required String nestedFieldPath,
   });
 }

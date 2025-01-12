@@ -83,7 +83,6 @@ class ChangesController extends GetxController {
 
     if (targetCollection == ChangeCollection.materials) {
       if (changeType == ChangeType.addOrUpdate) {
-
         _handleAddOrUpdateMaterial(changeItem);
       } else if (changeType == ChangeType.remove) {
         _handleDelete(changeItem);
@@ -95,13 +94,13 @@ class ChangesController extends GetxController {
   void _handleAddOrUpdateMaterial(ChangeItem changeItem) {
     // Implement add or update logic.
 
-    log("Add/Update operation for item: ${changeItem.change}");
+    log("Add/Update operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
   }
 
   /// Handles a delete operation for a specific change item.
   void _handleDelete(ChangeItem changeItem) {
     // Implement delete logic.
-    log("Delete operation for item: ${changeItem.change}");
+    log("Delete operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
   }
 
   /// Updates the listener when the logged-in user changes.

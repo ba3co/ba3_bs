@@ -142,23 +142,57 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<void> updateWithUnion({
+  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnion({
     required String path,
-    required String documentId,
-    required Map<String, dynamic> data,
+    required List<Map<String, dynamic>> items,
+    required String docIdField,
+    required String nestedFieldPath,
   }) async {
-    final docRef = _firestore.collection(path).doc(documentId);
+    final batch = _firestore.batch();
 
-    final updatedData = <String, dynamic>{};
+    // List to track the items being processed
+    final processedItems = <Map<String, dynamic>>[];
 
-    data.forEach((key, value) {
-      if (value is List) {
-        updatedData[key] = FieldValue.arrayUnion(value);
-      } else {
-        updatedData[key] = value;
+    for (final item in items) {
+      // Extract the document ID
+      final docId = item[docIdField];
+      if (docId == null) {
+        throw ArgumentError('Document ID is missing in one of the items');
       }
-    });
 
-    await docRef.update(updatedData);
+      // Reference to the document
+      final docRef = _firestore.collection(path).doc(docId);
+
+      // Check if the document exists
+      final docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        // Create the document with initial structure
+        final initialData = {
+          docIdField: docId,
+          nestedFieldPath: item[nestedFieldPath],
+        };
+        batch.set(docRef, initialData);
+        processedItems.add(initialData);
+      } else {
+        // Update the document using arrayUnion for nested fields
+        final nestedData = item[nestedFieldPath] as Map<String, dynamic>;
+
+        nestedData.forEach((key, value) {
+          if (value is List) {
+            batch.update(docRef, {
+              '$nestedFieldPath.$key': FieldValue.arrayUnion(value),
+            });
+          }
+        });
+
+        processedItems.add(item);
+      }
+    }
+
+    // Commit the batch operation
+    await batch.commit();
+
+    return processedItems;
   }
 }
