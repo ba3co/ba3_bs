@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 import '../../../../core/widgets/account_type_dropdown.dart';
+import '../widgets/add_account/add_account_buttons_widget.dart';
 import '../widgets/add_account/add_account_form_widget.dart';
 
 class AddAccountScreen extends StatelessWidget {
@@ -14,8 +15,9 @@ class AddAccountScreen extends StatelessWidget {
     return GetBuilder<AccountsController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("بطاقة حساب"),
-          actions: [],
+          title: Text(
+            controller.isFromHandler ? controller.selectedAccount!.accName! : "بطاقة حساب",
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
@@ -26,12 +28,9 @@ class AddAccountScreen extends StatelessWidget {
                 controller: controller,
               ),
               AccountTypeDropdown(accountSelectionHandler: controller.accountFromHandler),
-
-              AppButton(
-                  title: 'اضافة',
-                  onPressed: () {
-                    controller.saveOrUpdateAccount();
-                  })
+              AddAccountButtonsWidget(
+                controller: controller,
+              )
             ],
           ),
         ),

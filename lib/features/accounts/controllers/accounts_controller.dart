@@ -27,6 +27,8 @@ class AccountsController extends GetxController with AppNavigator {
   List<AccountModel> accounts = [];
   AccountModel? selectedAccount;
 
+  bool get isFromHandler => selectedAccount == null ? false : true;
+
   late AccountFromHandler accountFromHandler;
   late AccountService accountService;
 
@@ -109,12 +111,13 @@ class AccountsController extends GetxController with AppNavigator {
     to(AppRoutes.showAllAccountsScreen);
   }
 
-  void navigateToAddOrUpdateAccountScreen({AccountModel? accountModel}) {
-    accountFromHandler.init(accountModel: accountModel);
+  void navigateToAddOrUpdateAccountScreen({String? accountId}) {
+    selectedAccount = null;
+    if (accountId != null) selectedAccount = getAccountModelById(accountId);
+
+    accountFromHandler.init(accountModel: selectedAccount);
     to(AppRoutes.addAccountScreen);
   }
-
-  void navigateToAccountDetailsScreen(String accountId) {}
 
   List<AccountModel> searchAccountsByNameOrCode(text) {
     if (accounts.isEmpty) {
@@ -122,9 +125,7 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts
-        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
-        .toList();
+    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -147,8 +148,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel = accounts
-          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel =
+          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -220,6 +221,7 @@ class AccountsController extends GetxController with AppNavigator {
 
     // Create a material model based on the user input
     final updatedAccountModel = accountService.createAccountModel(
+      accountModel: selectedAccount,
       accName: accountFromHandler.nameController.text,
       accCode: accountFromHandler.codeController.text,
       accLatinName: accountFromHandler.latinNameController.text,
@@ -244,5 +246,15 @@ class AccountsController extends GetxController with AppNavigator {
     );*/
 
     update();
+  }
+
+  void deleteAccount() async {
+    if (isFromHandler) {
+      final result = await _accountsFirebaseRepo.delete(selectedAccount!.id!);
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (_) {},
+      );
+    }
   }
 }
