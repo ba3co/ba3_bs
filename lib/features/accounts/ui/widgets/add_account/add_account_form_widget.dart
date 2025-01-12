@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -45,9 +47,9 @@ class AddAccountFormWidget extends StatelessWidget {
                   query: text,
                   context: context,
                 );
+                print(accountModel?.accName.toString());
                 if (accountModel != null) {
-                  controller.accountFromHandler.accountParentModel = accountModel;
-                  controller.accountFromHandler.accParentName.text = accountModel.accName!;
+                  controller.setAccountParent(accountModel);
                 }
               },
             ),

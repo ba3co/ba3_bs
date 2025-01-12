@@ -11,7 +11,7 @@ class OverlayService {
     _entryWithPriorityInstance.dispose();
   }
 
-  static void showDialog({
+  static Future<void> showDialog({
     required BuildContext context,
     required Widget content,
     bool? showDivider,
@@ -23,7 +23,7 @@ class OverlayService {
     double? height,
     int? priority,
     VoidCallback? onCloseCallback,
-  }) {
+  }) async{
     final OverlayState overlay = Overlay.of(context);
 
     _entryWithPriorityInstance.displayOverlay(

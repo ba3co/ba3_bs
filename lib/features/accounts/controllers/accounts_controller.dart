@@ -30,6 +30,14 @@ class AccountsController extends GetxController with AppNavigator {
   late AccountFromHandler accountFromHandler;
   late AccountService accountService;
 
+
+  void setAccountParent(AccountModel accountModel){
+
+    accountFromHandler.accountParentModel = accountModel;
+    accountFromHandler.accParentName.text = accountModel.accName!;
+    update();
+  }
+
   void initializer() {
     accountFromHandler = AccountFromHandler();
     accountService = AccountService();
@@ -187,7 +195,7 @@ class AccountsController extends GetxController with AppNavigator {
       // Single match
       selectedAccountModel = searchedAccounts.first;
     } else if (searchedAccounts.isNotEmpty) {
-      OverlayService.showDialog(
+     await OverlayService.showDialog(
         context: context,
         title: 'أختر الحساب',
         content: AccountSelectionDialogContent(
@@ -201,8 +209,12 @@ class AccountsController extends GetxController with AppNavigator {
         ),
         onCloseCallback: () {
           log('Account Selection Dialog Closed.');
+
+
+
         },
       );
+     print("OverlayService.showDialog");
     } else {
       AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }

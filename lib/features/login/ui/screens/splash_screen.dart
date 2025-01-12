@@ -10,37 +10,8 @@ import '../../../users_management/data/datasources/roles_data_source.dart';
 import '../../../users_management/data/datasources/users_data_source.dart';
 import '../widgets/login_header_text.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
-
-  @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
-
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-
-    _controller.forward();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,10 +21,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             body: Center(
-              child: ScaleTransition(
-                scale: _animation,
-                child: LoginHeaderText(),
-              ),
+              child: LoginHeaderText(),
             ),
           );
         } else if (snapshot.hasError) {
@@ -66,10 +34,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           _navigateToLogin();
           return Scaffold(
             body: Center(
-              child: ScaleTransition(
-                scale: _animation,
-                child: LoginHeaderText(),
-              ),
+              child: LoginHeaderText(),
             ),
           );
         }

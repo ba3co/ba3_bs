@@ -95,7 +95,7 @@ class ChangesController extends GetxController {
   /// Handles an add or update operation for a specific change item.
   void _handleAddOrUpdateMaterial(ChangeItem changeItem) {
     // Implement add or update logic.
-    read<MaterialController>();
+
     log("Add/Update operation for item: ${changeItem.change}");
   }
 

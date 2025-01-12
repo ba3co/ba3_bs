@@ -17,7 +17,7 @@ void main() async {
     // عرض الخطأ على وحدة التحكم
     FlutterError.presentError(details);
     log("FlutterError Error: ${details.exception}");
-exit(1);
+    // exit(1);
     // إذا كنت تريد إيقاف تشغيل التطبيق عند الخطأ
     // يمكنك استدعاء exit(1) أو أي إجراء آخر مناسب.
   };

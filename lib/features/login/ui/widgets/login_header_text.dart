@@ -15,12 +15,12 @@ class LoginHeaderText extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(20.0), // تحديد درجة التقويس
+          borderRadius: BorderRadius.circular(20.0),
           child: Image.asset(
             AppAssets.loginLogo,
             width: 0.25.sw,
             height: 0.25.sw,
-            fit: BoxFit.cover, // لضبط حجم الصورة
+            fit: BoxFit.cover,
           ),
         ),
         Text(
