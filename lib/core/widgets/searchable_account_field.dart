@@ -34,7 +34,10 @@ class SearchableAccountField extends StatelessWidget {
           SizedBox(width: 100, child: Text(label)),
           Expanded(
             child: CustomTextFieldWithIcon(
-                readOnly: readOnly, textEditingController: textEditingController, validator: validator, onSubmitted: onSubmitted),
+                readOnly: readOnly,
+                textEditingController: textEditingController,
+                validator: validator,
+                onSubmitted: onSubmitted),
           ),
         ],
       ),

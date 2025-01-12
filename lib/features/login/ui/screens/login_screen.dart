@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     color: Colors.black.withAlpha(100),
                   ),
                   const Expanded(
-                    child: LoginHeaderText(),
+                    child: LoginHeaderText(text: 'Ba3 Business Solutions'),
                   ),
                 ],
               ),
