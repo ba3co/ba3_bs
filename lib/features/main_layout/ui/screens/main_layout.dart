@@ -1,3 +1,4 @@
+import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
 import 'package:ba3_bs/features/main_layout/controllers/main_layout_controller.dart';
 import 'package:ba3_bs/features/main_layout/ui/widgets/right_main_widget.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class MainLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     put(WindowCloseController());
     put(MainLayoutController());
-
+    read<ChangesController>();
     return GetBuilder<MainLayoutController>(builder: (mainController) {
       return Directionality(
         textDirection: TextDirection.rtl,

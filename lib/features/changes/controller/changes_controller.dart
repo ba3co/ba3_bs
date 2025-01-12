@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -65,7 +66,7 @@ class ChangesController extends GetxController {
     try {
       currentChange.value = change;
       log("Processing change for target user: ${change.targetUserId}");
-
+      log(change.changeItems.length.toString());
       change.changeItems.forEach((collection, changes) {
         for (final changeItem in changes) {
           _handleChangeItem(changeItem);
@@ -81,9 +82,10 @@ class ChangesController extends GetxController {
     final targetCollection = changeItem.target.targetCollection;
     final changeType = changeItem.target.changeType;
 
-    if (targetCollection == ChangeCollection.bills) {
+    if (targetCollection == ChangeCollection.materials) {
       if (changeType == ChangeType.addOrUpdate) {
-        _handleAddOrUpdate(changeItem);
+
+        _handleAddOrUpdateMaterial(changeItem);
       } else if (changeType == ChangeType.remove) {
         _handleDelete(changeItem);
       }
@@ -91,8 +93,9 @@ class ChangesController extends GetxController {
   }
 
   /// Handles an add or update operation for a specific change item.
-  void _handleAddOrUpdate(ChangeItem changeItem) {
+  void _handleAddOrUpdateMaterial(ChangeItem changeItem) {
     // Implement add or update logic.
+    read<MaterialController>();
     log("Add/Update operation for item: ${changeItem.change}");
   }
 

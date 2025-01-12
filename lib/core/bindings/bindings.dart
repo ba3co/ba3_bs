@@ -126,11 +126,13 @@ class AppBindings extends Bindings {
       materialsHiveService: materialsHiveService,
     );
 
-    // Permanent Controllers
-    _initializePermanentControllers(repositories);
+
 
     // Lazy Controllers
     _initializeLazyControllers(repositories);
+
+    // Permanent Controllers
+    _initializePermanentControllers(repositories);
   }
 
   // Initialize external services
@@ -210,10 +212,7 @@ class AppBindings extends Bindings {
       permanent: true,
     );
 
-    put(
-      ChangesController(repositories.listenableDatasourceRepo),
-      permanent: true,
-    );
+
   }
 
   // Lazy Controllers Initialization
@@ -237,6 +236,10 @@ class AppBindings extends Bindings {
       repositories.listenableDatasourceRepo,
     ));
     lazyPut(AddSellerController());
+    lazyPut(
+      ChangesController(repositories.listenableDatasourceRepo),
+    
+    );
   }
 }
 
