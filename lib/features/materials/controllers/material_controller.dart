@@ -81,7 +81,12 @@ class MaterialController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterial) => materials.addAll(savedMaterial),
+      (savedMaterial) {
+        final materialsCopy = List<MaterialModel>.from(materials);
+        materialsCopy.addAll(savedMaterial);
+        materials.clear();
+        materials.addAll(materialsCopy);
+      },
     );
   }
 
