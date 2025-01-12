@@ -3,13 +3,11 @@ import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/styling/app_text_style.dart';
-
 class LoginHeaderText extends StatelessWidget {
   const LoginHeaderText({
-    super.key,
+    Key? key,
     this.text,
-  });
+  }) : super(key: key);
 
   final String? text;
 
@@ -22,7 +20,7 @@ class LoginHeaderText extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
           child: Image.asset(
-            AppAssets.loginLogo,
+            AppAssets.loginLogo, // ضع مسار صورتك هنا
             width: 0.25.sw,
             height: 0.25.sw,
             fit: BoxFit.cover,
@@ -30,15 +28,20 @@ class LoginHeaderText extends StatelessWidget {
         ),
         if (text != null)
           AnimatedTextKit(
-            repeatForever: true,
-            animatedTexts: [
+         isRepeatingAnimation: false,  animatedTexts: [
               TyperAnimatedText(
                 text!,
                 textAlign: TextAlign.center,
-                textStyle: AppTextStyles.headLineStyle1,
-              )
+                textStyle: TextStyle(
+                  fontSize: 24.0.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                speed: const Duration(milliseconds: 100),
+                curve: Curves.easeIn
+              ),
             ],
-          )
+          ),
       ],
     );
   }
