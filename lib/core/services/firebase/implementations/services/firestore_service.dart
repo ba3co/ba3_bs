@@ -66,8 +66,16 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<void> delete({required String path, String? documentId}) async {
-    await _firestore.collection(path).doc(documentId).delete();
+  Future<void> delete({required String path, String? documentId, String? mapFieldName}) async {
+    if (mapFieldName != null) {
+      // If mapFieldName is provided, delete the specific map field
+      await _firestore.collection(path).doc(documentId).update({
+        mapFieldName: FieldValue.delete(),
+      });
+    } else {
+      // If mapFieldName is null, delete the entire document
+      await _firestore.collection(path).doc(documentId).delete();
+    }
   }
 
   @override

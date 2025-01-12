@@ -15,7 +15,7 @@ abstract class IRemoteDatabaseService<T> {
   Stream<T> subscribeToDoc({required String path, String? documentId});
 
   /// Deletes an item from the specified [path] by its [documentId].
-  Future<void> delete({required String path, String? documentId});
+  Future<void> delete({required String path, String? documentId, String? mapFieldName});
 
   /// Adds a new item of type [T] to the specified [path] with the given [data].
   Future<T> add({required String path, String? documentId, required Map<String, dynamic> data});
