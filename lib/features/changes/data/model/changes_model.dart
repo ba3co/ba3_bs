@@ -54,15 +54,16 @@ class ChangesModel {
   /// Creates a `ChangesModel` instance from a JSON-compatible map.
   factory ChangesModel.fromJson(Map<String, dynamic> json) {
     return ChangesModel(
-      targetUserId: json['docId'],
-      changeItems: (json['changeItems'] as Map<String, dynamic>).map(
-        (key, value) => MapEntry(
-          ChangeCollection.values.byName(key),
-          List<ChangeItem>.from(
-            (value as List).map((item) => ChangeItem.fromJson(item)),
-          ),
-        ),
-      ),
+      targetUserId: json['docId'] as String,
+      changeItems: (json['changeItems'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(
+              ChangeCollection.values.byName(key),
+              List<ChangeItem>.from(
+                (value as List<dynamic>).map((item) => ChangeItem.fromJson(item)),
+              ),
+            ),
+          ) ??
+          {}, // Assign empty map if `changeItems` is null
     );
   }
 }
