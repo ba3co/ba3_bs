@@ -23,5 +23,8 @@ class MaterialsLocalDatasource extends LocalDatasourceBase<MaterialModel> {
   Future<void> removeData(String id) => database.delete(id);
 
   @override
+  Future<void> removeAllData(List<MaterialModel> data) => database.deleteAll(data);
+
+  @override
   Future<void> clearAllData() => database.clear();
 }

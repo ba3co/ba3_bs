@@ -7,13 +7,15 @@ abstract class LocalDatasourceBase<T> {
 
   Future<void> saveData(T data);
 
-  Future<void> saveAllData(List<T> data) ;
+  Future<void> saveAllData(List<T> data);
 
   Future<List<T>> getAllData();
 
-  Future<T?> getDataById(String id) ;
+  Future<T?> getDataById(String id);
 
-  Future<void> removeData(String id) ;
+  Future<void> removeData(String id);
+
+  Future<void> removeAllData(List<T> data);
 
   Future<void> clearAllData();
 }

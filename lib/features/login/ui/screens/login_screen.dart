@@ -88,9 +88,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             () => TextFormField(
                               maxLength: 6,
                               obscureText: !userManagementController.isPasswordVisible.value,
-                              onFieldSubmitted: (value) {
-                                userManagementController.validateUserInputs();
-                              },
                               decoration: InputDecoration(
                                 label: const Text('كلمة السر'),
                                 suffixIcon: IconButton(

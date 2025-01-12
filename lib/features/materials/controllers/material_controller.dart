@@ -43,7 +43,6 @@ class MaterialController extends GetxController with AppNavigator {
 
   bool get isFromHandler => selectedMaterial == null ? false : true;
 
-
   @override
   onInit() {
     super.onInit();
@@ -61,13 +60,12 @@ class MaterialController extends GetxController with AppNavigator {
   Rx<RequestState> saveAllMaterialsRequestState = RequestState.initial.obs;
 
   Future<void> fetchMaterials() async {
-    try {
-      final result = await _materialsHiveRepo.getAll();
-      materials.assignAll(result);
-      update();
-    } catch (e) {
-      debugPrint("Error fetching materials: $e");
-    }
+    final result = await _materialsHiveRepo.getAll();
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedMaterial) => materials.assignAll(fetchedMaterial),
+    );
   }
 
   Future<void> reloadMaterialsIfEmpty() async {
@@ -76,6 +74,24 @@ class MaterialController extends GetxController with AppNavigator {
       await fetchMaterials();
       log('Fetching materials ended...');
     }
+  }
+
+  Future<void> saveAllMaterial(List<MaterialModel> materials) async {
+    final result = await _materialsHiveRepo.saveAll(materials);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedMaterial) => materials.addAll(savedMaterial),
+    );
+  }
+
+  Future<void> deleteAllMaterial(List<MaterialModel> materials) async {
+    final result = await _materialsHiveRepo.deleteAll(materials);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => materials.removeWhere((material) => materials.contains(material)), // Remove all deleted materials
+    );
   }
 
   Future<void> fetchAllMaterialFromLocal() async {
@@ -160,7 +176,8 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode =
+        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }

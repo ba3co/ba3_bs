@@ -19,24 +19,12 @@ class SplashScreen extends StatelessWidget {
       future: _initializeApp(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: LoginHeaderText(),
-            ),
-          );
+          return Scaffold(body: Center(child: LoginHeaderText()));
         } else if (snapshot.hasError) {
-          return Scaffold(
-            body: Center(
-              child: Text("Error: ${snapshot.error}"),
-            ),
-          );
+          return Scaffold(body: Center(child: Text("Error: ${snapshot.error}")));
         } else {
           _navigateToLogin();
-          return Scaffold(
-            body: Center(
-              child: LoginHeaderText(),
-            ),
-          );
+          return Scaffold(body: Center(child: LoginHeaderText()));
         }
       },
     );

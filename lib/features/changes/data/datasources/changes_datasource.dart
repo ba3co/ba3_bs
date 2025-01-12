@@ -44,16 +44,6 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
     return ChangesModel.fromJson(data);
   }
 
-  /// Add all changes using a batch operation
-  // @override
-  // Future<List<ChangesModel>> saveAll(List<ChangesModel> items) async {
-  //   final data = await databaseService.addAll(
-  //     path: path,
-  //     data: items.map((item) => {...item.toJson(), 'docId': item.targetUserId}).toList(),
-  //   );
-  //   return data.map((item) => ChangesModel.fromJson(item)).toList();
-  // }
-
   @override
   Future<List<ChangesModel>> saveAll(List<ChangesModel> items) async {
     // Convert ChangesModel items to the format required by batchUpdateWithArrayUnion

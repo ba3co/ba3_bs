@@ -11,5 +11,7 @@ abstract class ILocalDatabaseService<T> {
 
   Future<void> delete(String id);
 
+  Future<void> deleteAll(List<T> data);
+
   Future<void> clear();
 }

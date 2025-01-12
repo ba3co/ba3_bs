@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/dialogs/custom_date_picker_dialog.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
+import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
@@ -142,8 +144,6 @@ class UserManagementController extends GetxController with AppNavigator {
         allRoles = fetchedRoles;
       },
     );
-
-    update();
   }
 
   // Fetch roles using the repository
@@ -157,8 +157,6 @@ class UserManagementController extends GetxController with AppNavigator {
         allUsers = fetchedUsers;
       },
     );
-
-    update();
   }
 
   // Fetch user by ID using the repository
@@ -316,21 +314,14 @@ class UserManagementController extends GetxController with AppNavigator {
         getAllRoles();
       },
     );
+    update();
   }
 
   Future<void> saveOrUpdateUser() async {
     // Validate the form first
     if (!userFormHandler.validate()) return;
 
-    // Create the user model from the provided data
-    final updatedUserModel = _userService.createUserModel(
-        userModel: selectedUserModel,
-        userName: userFormHandler.userNameController.text,
-        userPassword: userFormHandler.passController.text,
-        userRoleId: userFormHandler.selectedRoleId.value,
-        userSellerId: userFormHandler.selectedSellerId.value,
-        workingHour: workingHours,
-        holidays: holidays.toList());
+    final updatedUserModel = _createUserModel();
 
     // Handle null user model
     if (updatedUserModel == null) {
@@ -341,12 +332,38 @@ class UserManagementController extends GetxController with AppNavigator {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (success) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        getAllUsers();
-      },
+      (failure) => _handleFailure(failure),
+      (userModel) => _onUserSaved(userModel),
     );
+  }
+
+  UserModel? _createUserModel() => _userService.createUserModel(
+        userModel: selectedUserModel,
+        userName: userFormHandler.userNameController.text,
+        userPassword: userFormHandler.passController.text,
+        userRoleId: userFormHandler.selectedRoleId.value,
+        userSellerId: userFormHandler.selectedSellerId.value,
+        workingHour: workingHours,
+        holidays: holidays.toList(),
+      );
+
+  void _handleFailure(Failure failure) => AppUIUtils.onFailure(failure.message);
+
+  void _onUserSaved(UserModel userModel) {
+    AppUIUtils.onSuccess('تم الحفظ بنجاح');
+    getAllUsers();
+
+    // Check if the user was newly saved
+    final isSaved = selectedUserModel == null;
+    if (isSaved) {
+      _createChangeDocument(userModel.userId!);
+    }
+    update();
+  }
+
+  Future<void> _createChangeDocument(String userId) async {
+    // Call the ChangesController to create the document
+    await read<ChangesController>().createChangeDocument(userId);
   }
 
   @override

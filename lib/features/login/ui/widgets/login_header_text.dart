@@ -5,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginHeaderText extends StatelessWidget {
   const LoginHeaderText({
-    Key? key,
+    super.key,
     this.text,
-  }) : super(key: key);
+  });
 
   final String? text;
 
@@ -20,7 +20,7 @@ class LoginHeaderText extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
           child: Image.asset(
-            AppAssets.loginLogo, // ضع مسار صورتك هنا
+            AppAssets.loginLogo,
             width: 0.25.sw,
             height: 0.25.sw,
             fit: BoxFit.cover,
@@ -28,18 +28,17 @@ class LoginHeaderText extends StatelessWidget {
         ),
         if (text != null)
           AnimatedTextKit(
-         isRepeatingAnimation: false,  animatedTexts: [
-              TyperAnimatedText(
-                text!,
-                textAlign: TextAlign.center,
-                textStyle: TextStyle(
-                  fontSize: 24.0.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                speed: const Duration(milliseconds: 100),
-                curve: Curves.easeIn
-              ),
+            isRepeatingAnimation: false,
+            animatedTexts: [
+              TyperAnimatedText(text!,
+                  textAlign: TextAlign.center,
+                  textStyle: TextStyle(
+                    fontSize: 24.0.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  speed: const Duration(milliseconds: 100),
+                  curve: Curves.easeIn),
             ],
           ),
       ],
