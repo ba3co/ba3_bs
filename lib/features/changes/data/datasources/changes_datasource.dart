@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 
 import '../../../../core/services/firebase/interfaces/listen_datasource.dart';
@@ -15,7 +16,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   }
 
   @override
-  String get path => 'changes'; // Collection name in Firestore
+  String get path => ApiConstants.changes; // Collection name in Firestore
 
   /// Fetch all changes
   @override

@@ -5,8 +5,7 @@ class ApiConstants {
   // COLLECTIONS
   static const String bills = 'bills';
   static const String patterns = 'bill_types';
-  static const String bonds= 'bonds';
-  static const String changes = 'changes';
+  static const String bonds = 'bonds';
   static const String bondsCheques = 'bondsCheques';
   static const String entryBonds = 'entry_bonds';
   static const String accountsStatements = 'accounts_statements';
@@ -15,9 +14,10 @@ class ApiConstants {
   static const String roles = 'roles';
   static const String users = 'users';
   static const String sellers = 'sellers';
-  static const String taxes= 'texes';
+  static const String taxes = 'texes';
   static const String accounts = 'accounts';
   static const String materials = 'materials';
+  static const String changes = 'changes';
 
   // FIELDS
   static const String status = 'status';

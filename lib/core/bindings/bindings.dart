@@ -12,6 +12,7 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
+import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
 import 'package:ba3_bs/features/changes/data/datasources/changes_datasource.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
@@ -50,7 +51,6 @@ import '../../features/bond/data/datasources/bonds_compound_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
 import '../../features/bond/service/bond/bond_export.dart';
-import '../../features/changes/controller/changes_controller.dart';
 import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/materials/controllers/material_controller.dart';
@@ -125,6 +125,8 @@ class AppBindings extends Bindings {
       sellersImportService: sellersImport,
       materialsHiveService: materialsHiveService,
     );
+
+    lazyPut(repositories.listenableDatasourceRepo);
 
     // Lazy Controllers
     _initializeLazyControllers(repositories);
@@ -209,8 +211,6 @@ class AppBindings extends Bindings {
       SellersController(repositories.sellersRepo, repositories.sellerImportRepo),
       permanent: true,
     );
-
-    put(ChangesController(repositories.listenableDatasourceRepo), permanent: true);
   }
 
   // Lazy Controllers Initialization
@@ -234,6 +234,9 @@ class AppBindings extends Bindings {
       repositories.listenableDatasourceRepo,
     ));
     lazyPut(AddSellerController());
+    lazyPut(
+      ChangesController(repositories.listenableDatasourceRepo),
+    );
   }
 }
 
