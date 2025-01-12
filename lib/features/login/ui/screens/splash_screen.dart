@@ -8,9 +8,39 @@ import '../../../../core/services/get_x/shared_preferences_service.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
 import '../../../users_management/data/datasources/roles_data_source.dart';
 import '../../../users_management/data/datasources/users_data_source.dart';
+import '../widgets/login_header_text.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +48,13 @@ class SplashScreen extends StatelessWidget {
       future: _initializeApp(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+          return Scaffold(
+            body: Center(
+              child: ScaleTransition(
+                scale: _animation,
+                child: LoginHeaderText(),
+              ),
+            ),
           );
         } else if (snapshot.hasError) {
           return Scaffold(
@@ -29,8 +64,13 @@ class SplashScreen extends StatelessWidget {
           );
         } else {
           _navigateToLogin();
-          return const Scaffold(
-            body: Center(child: Text('Redirecting...')),
+          return Scaffold(
+            body: Center(
+              child: ScaleTransition(
+                scale: _animation,
+                child: LoginHeaderText(),
+              ),
+            ),
           );
         }
       },

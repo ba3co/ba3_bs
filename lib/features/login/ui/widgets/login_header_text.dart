@@ -3,7 +3,6 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class LoginHeaderText extends StatelessWidget {
   const LoginHeaderText({
     super.key,
@@ -15,7 +14,6 @@ class LoginHeaderText extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-
         ClipRRect(
           borderRadius: BorderRadius.circular(20.0), // تحديد درجة التقويس
           child: Image.asset(
@@ -25,12 +23,11 @@ class LoginHeaderText extends StatelessWidget {
             fit: BoxFit.cover, // لضبط حجم الصورة
           ),
         ),
-         Text(
+        Text(
           "Ba3 Business Solutions",
           textAlign: TextAlign.center,
           style: AppTextStyles.headLineStyle1,
         ),
-
       ],
     );
   }
