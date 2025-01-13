@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,7 +78,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     // Search for matching materials
     var searchedMaterials = await materialController.searchOfProductByText(productText);
     MaterialModel? selectedMaterial;
-
+    log("searchedMaterials  length ${searchedMaterials.length}");
     if (searchedMaterials.length == 1) {
       // Single match
       selectedMaterial = searchedMaterials.first;
@@ -111,10 +112,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       content: ProductSelectionDialogContent(
         searchedMaterials: searchedMaterials,
         onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
-          final materialId = onSelectedEvent.row?.cells['الرقم التعريفي']?.value;
-
+          final materialId = onSelectedEvent.row?.cells[AppStrings.materialIdFiled]?.value;
           final selectedMaterial = materialId != null ? materialController.getMaterialById(materialId) : null;
-
           updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
 
           OverlayService.back();
@@ -136,6 +135,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     PlutoGridStateManager stateManager,
     IPlutoController plutoController,
   ) {
+    log(materialModel.toString());
     if (materialModel != null) {
       _updateRowWithMaterial(materialModel, stateManager);
       plutoController.moveToNextRow(stateManager, AppConstants.invRecProduct);
