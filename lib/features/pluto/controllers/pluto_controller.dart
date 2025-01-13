@@ -23,7 +23,7 @@ class PlutoController extends GetxController {
   List<PlutoRow> generateRows<T>(List<PlutoAdaptable> adaptableModels, [T? type]) {
     if (adaptableModels.isEmpty) return [];
 
-    //   updatePlutoKey();
+    updatePlutoKey();
     return adaptableModels.map((model) => _mapModelToRow(model, type)).toList();
   }
 
