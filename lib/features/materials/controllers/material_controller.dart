@@ -67,12 +67,8 @@ class MaterialController extends GetxController with AppNavigator {
     );
   }
 
-  Future<void> reloadMaterialsIfEmpty() async {
-    if (materials.isEmpty) {
-      log('Fetching materials started...');
-      await fetchMaterials();
-      log('Fetching materials ended (${materials.length})');
-    }
+  Future<void> reloadMaterials() async {
+    await fetchMaterials();
   }
 
   Future<void> saveAllMaterial(List<MaterialModel> materialsToSave) async {
@@ -81,7 +77,7 @@ class MaterialController extends GetxController with AppNavigator {
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (savedMaterials) {
       log('materials length before add item: ${materials.length}');
       AppUIUtils.onSuccess('تم الحفظ بنجاح');
-      materials.addAll(savedMaterials);
+      reloadMaterials();
       log('materials length after add item: ${materials.length}');
     });
   }
@@ -91,7 +87,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => materials.removeWhere((material) => materialsToDelete.contains(material)), // Remove all deleted materials
+      (_) => reloadMaterials(), // Remove all deleted materials
     );
   }
 
@@ -139,7 +135,7 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   Future<List<MaterialModel>> searchOfProductByText(query) async {
-    await reloadMaterialsIfEmpty();
+    await reloadMaterials();
 
     List<MaterialModel> searchedMaterials = [];
 
@@ -175,7 +171,7 @@ class MaterialController extends GetxController with AppNavigator {
   String getMaterialBarcodeById(String? id) {
     if (id == null || id.isEmpty) return '0';
 
-    reloadMaterialsIfEmpty();
+    reloadMaterials();
 
     final String matBarCode =
         materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
@@ -216,20 +212,19 @@ class MaterialController extends GetxController with AppNavigator {
     );
   }
 
-  void deleteSelectedMaterial() async {
+  void deleteMaterial() async {
     if (selectedMaterial == null) return;
 
     // Prepare user change queue for delete
     final userChangeQueue = _prepareUserChangeQueue(selectedMaterial!, ChangeType.remove);
 
-
-    log(userChangeQueue.length.toString());
+    log('userChangeQueue length on deleteMaterial: ${userChangeQueue.length}');
     // Save changes and handle results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onDeleteSuccess(selectedMaterial!),
+      (_) => _onDeleteSuccess(),
     );
   }
 
@@ -276,12 +271,15 @@ class MaterialController extends GetxController with AppNavigator {
       (savedMaterial) {
         log('materials length before add item: ${materials.length}');
         AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        materials.add(savedMaterial);
+        reloadMaterials();
         log('materials length after add item: ${materials.length}');
       },
     );
   }
-  void _onDeleteSuccess(MaterialModel materialModel) async {
+
+  void _onDeleteSuccess() async {
+    final MaterialModel materialModel = selectedMaterial!;
+
     // Persist the data in Hive upon successful save
     final hiveResult = await _materialsHiveRepo.delete(materialModel, materialModel.id!);
 
@@ -290,12 +288,11 @@ class MaterialController extends GetxController with AppNavigator {
       (savedMaterial) {
         log('materials length before add item: ${materials.length}');
         AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        materials.remove(materialModel);
+        reloadMaterials();
         log('materials length after add item: ${materials.length}');
       },
     );
   }
-
 
   void navigateToAddOrUpdateMaterialScreen({String? matId}) {
     selectedMaterial = null;

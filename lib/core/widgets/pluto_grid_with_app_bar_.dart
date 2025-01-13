@@ -78,7 +78,6 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                         ),
                         createFooter: (stateManager) {
                           stateManager.setPageSize(100, notify: false); // default 40
-
                           return PlutoPagination(stateManager);
                         },
                       ),

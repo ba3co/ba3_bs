@@ -70,7 +70,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     fetchBillsTypes();
 
-    read<MaterialController>().reloadMaterialsIfEmpty();
+    read<MaterialController>().reloadMaterials();
   }
 
   int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;

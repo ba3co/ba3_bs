@@ -24,7 +24,9 @@ class AddMaterialScreen extends StatelessWidget {
           child: Column(
             spacing: 20,
             children: [
-              AddMaterialForm(controller: controller,),
+              AddMaterialForm(
+                controller: controller,
+              ),
               FormFieldRow(
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
@@ -49,9 +51,9 @@ class AddMaterialScreen extends StatelessWidget {
               AppButton(
                 title: 'حذف',
                 onPressed: () {
-                  controller.deleteSelectedMaterial();
+                  controller.deleteMaterial();
                 },
-                iconData:Icons.delete,
+                iconData: Icons.delete,
                 color: Colors.red,
               ),
             ],
@@ -61,5 +63,3 @@ class AddMaterialScreen extends StatelessWidget {
     });
   }
 }
-
-
