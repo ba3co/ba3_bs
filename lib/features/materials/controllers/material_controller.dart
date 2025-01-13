@@ -291,7 +291,7 @@ class MaterialController extends GetxController with AppNavigator {
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) {
         log('materials length before add item: ${materials.length}');
-        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        AppUIUtils.onSuccess('تم الحذف بنجاح');
         reloadMaterials();
         log('materials length after add item: ${materials.length}');
       },
