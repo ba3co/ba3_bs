@@ -23,12 +23,7 @@ class HiveDatabaseService<T> implements ILocalDatabaseService<T> {
   @override
   Future<void> insertAll(List<T> data) async {
     for (var item in data) {
-      if (item is HiveObject) {
-        if (!item.isInBox) {
-          await _box.add(item); // Add each item to the box if it's not already in it
-        }
-        await item.save(); // Save the object
-      }
+      await insert(item);
     }
   }
 
