@@ -83,6 +83,7 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
+
     // Filter materials that match the IDs in materialsToDelete
     final copiedMaterials = materials.where((material) => materialsToDelete.any((e) => e.id == material.id)).toList();
 
