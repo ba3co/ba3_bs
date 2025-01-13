@@ -78,10 +78,12 @@ class MaterialController extends GetxController with AppNavigator {
   Future<void> saveAllMaterial(List<MaterialModel> materialsToSave) async {
     final result = await _materialsHiveRepo.saveAll(materialsToSave);
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterials) => materials.addAll(savedMaterials),
-    );
+    result.fold((failure) => AppUIUtils.onFailure(failure.message), (savedMaterials) {
+      log('materials length before add item: ${materials.length}');
+      AppUIUtils.onSuccess('تم الحفظ بنجاح');
+      materials.addAll(savedMaterials);
+      log('materials length after add item: ${materials.length}');
+    });
   }
 
   Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
@@ -242,25 +244,26 @@ class MaterialController extends GetxController with AppNavigator {
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
-      .nonLoggedInUsers
-      .map(
-        (user) => ChangesModel(
-          targetUserId: user.userId!,
-          changeItems: {
-            ChangeCollection.materials: [
-              ChangeItem(
-                target: ChangeTarget(
-                  targetCollection: ChangeCollection.materials,
-                  changeType: changeType,
-                ),
-                change: materialModel.toJson(),
-              )
-            ]
-          },
-        ),
-      )
-      .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
+      read<UserManagementController>()
+          .nonLoggedInUsers
+          .map(
+            (user) => ChangesModel(
+              targetUserId: user.userId!,
+              changeItems: {
+                ChangeCollection.materials: [
+                  ChangeItem(
+                    target: ChangeTarget(
+                      targetCollection: ChangeCollection.materials,
+                      changeType: changeType,
+                    ),
+                    change: materialModel.toJson(),
+                  )
+                ]
+              },
+            ),
+          )
+          .toList();
 
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save
@@ -276,13 +279,14 @@ class MaterialController extends GetxController with AppNavigator {
       },
     );
   }
+
   void _onDeleteSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful delete
     final hiveResult = await _materialsHiveRepo.delete(materialModel);
 
     hiveResult.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
     );
   }
 
