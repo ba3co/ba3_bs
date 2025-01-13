@@ -222,6 +222,8 @@ class MaterialController extends GetxController with AppNavigator {
     // Prepare user change queue for delete
     final userChangeQueue = _prepareUserChangeQueue(selectedMaterial!, ChangeType.remove);
 
+
+    log(userChangeQueue.length.toString());
     // Save changes and handle results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
 
@@ -279,16 +281,21 @@ class MaterialController extends GetxController with AppNavigator {
       },
     );
   }
-
   void _onDeleteSuccess(MaterialModel materialModel) async {
-    // Persist the data in Hive upon successful delete
-    final hiveResult = await _materialsHiveRepo.delete(materialModel);
+    // Persist the data in Hive upon successful save
+    final hiveResult = await _materialsHiveRepo.delete(materialModel, materialModel.id!);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
+      (savedMaterial) {
+        log('materials length before add item: ${materials.length}');
+        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        materials.remove(materialModel);
+        log('materials length after add item: ${materials.length}');
+      },
     );
   }
+
 
   void navigateToAddOrUpdateMaterialScreen({String? matId}) {
     selectedMaterial = null;

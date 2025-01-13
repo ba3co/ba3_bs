@@ -71,6 +71,7 @@ class LocalDatasourceRepository<T> {
   Future<Either<Failure, List<T>>> saveAll(List<T> data) async {
     try {
       await localDatasource.saveAllData(data);
+
       return Right(data);
     } catch (e) {
       log('Error in saveAll: $e');
@@ -78,13 +79,16 @@ class LocalDatasourceRepository<T> {
     }
   }
 
-  Future<Either<Failure, Unit>> delete(T item) async {
+  Future<Either<Failure, Unit>> delete(T item, String itemId) async {
     try {
+      await remoteDatasource.delete(itemId);
+
       await localDatasource.removeData(item);
-      return Right(unit);
+
+      return Right(unit); // Return success
     } catch (e) {
-      log('Error in delete: $e');
-      return Left(ErrorHandler(e).failure);
+      log('Error in delete on LocalDatasourceRepository: $e');
+      return Left(ErrorHandler(e).failure); // Return error
     }
   }
 
