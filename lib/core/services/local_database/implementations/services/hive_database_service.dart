@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/services/local_database/interfaces/i_local_database_service.dart';
 import 'package:hive/hive.dart';
 
@@ -48,12 +46,9 @@ class HiveDatabaseService<T> implements ILocalDatabaseService<T> {
 
   @override
   Future<void> delete(T item) async {
-    log('delete');
     if (item is HiveObject) {
-      log('item is HiveObject');
       await item.delete(); // Delete the object from the box
     } else {
-      log('throw Exception');
       // Optionally log or handle unexpected types
       throw Exception('Item is not a HiveObject and cannot be deleted.');
     } // Delete the item by ID
