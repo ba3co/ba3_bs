@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+
 import '../../features/pluto/controllers/pluto_controller.dart';
 
 class PlutoGridWithAppBar<T> extends StatelessWidget {
@@ -83,7 +84,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                   localeText: const PlutoGridLocaleText.arabic(),
                 ),
                 createFooter: (stateManager) {
-                  stateManager.setPageSize(100, notify: false); // التحكم بعدد الصفوف
+                  stateManager.setPageSize(100, notify: false);
                   return PlutoPagination(stateManager);
                 },
               ),
@@ -100,9 +101,9 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
       centerTitle: true,
       leading: leadingIcon != null
           ? IconButton(
-        onPressed: onLeadingIconPressed,
-        icon: Icon(leadingIcon),
-      )
+              onPressed: onLeadingIconPressed,
+              icon: Icon(leadingIcon),
+            )
           : null,
       title: Text(title ?? 'جدول البيانات'),
       actions: [
