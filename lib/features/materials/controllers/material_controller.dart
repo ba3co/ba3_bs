@@ -46,7 +46,6 @@ class MaterialController extends GetxController with AppNavigator {
   @override
   onInit() {
     super.onInit();
-
     _initializer();
   }
 
@@ -72,20 +71,16 @@ class MaterialController extends GetxController with AppNavigator {
     if (materials.isEmpty) {
       log('Fetching materials started...');
       await fetchMaterials();
-      log('Fetching materials ended...');
+      log('Fetching materials ended (${materials.length})');
     }
   }
 
-  Future<void> saveAllMaterial(List<MaterialModel> materialsToAdd) async {
-    final result = await _materialsHiveRepo.saveAll(materialsToAdd);
+  Future<void> saveAllMaterial(List<MaterialModel> materialsToSave) async {
+    final result = await _materialsHiveRepo.saveAll(materialsToSave);
+
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterial) {
-        final materialsCopy = List<MaterialModel>.from(materialsToAdd);
-        materialsCopy.addAll(savedMaterial);
-        materialsToAdd.clear();
-        materialsToAdd.addAll(materialsCopy);
-      },
+      (savedMaterials) => materials.addAll(savedMaterials),
     );
   }
 
@@ -180,7 +175,8 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode =
+        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -272,7 +268,12 @@ class MaterialController extends GetxController with AppNavigator {
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+      (savedMaterial) {
+        log('materials length before add item: ${materials.length}');
+        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        materials.add(savedMaterial);
+        log('materials length after add item: ${materials.length}');
+      },
     );
   }
   void _onDeleteSuccess(MaterialModel materialModel) async {
