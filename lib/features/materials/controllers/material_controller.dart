@@ -83,7 +83,9 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
-    final result = await _materialsHiveRepo.deleteAll(materialsToDelete);
+    final copiedMaterials = materials.where((material) => materialsToDelete.contains(material)).toList();
+
+    final result = await _materialsHiveRepo.deleteAll(copiedMaterials);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -173,8 +175,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterials();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -241,26 +242,25 @@ class MaterialController extends GetxController with AppNavigator {
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
-      read<UserManagementController>()
-          .nonLoggedInUsers
-          .map(
-            (user) => ChangesModel(
-              targetUserId: user.userId!,
-              changeItems: {
-                ChangeCollection.materials: [
-                  ChangeItem(
-                    target: ChangeTarget(
-                      targetCollection: ChangeCollection.materials,
-                      changeType: changeType,
-                    ),
-                    change: materialModel.toJson(),
-                  )
-                ]
-              },
-            ),
-          )
-          .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
+      .nonLoggedInUsers
+      .map(
+        (user) => ChangesModel(
+          targetUserId: user.userId!,
+          changeItems: {
+            ChangeCollection.materials: [
+              ChangeItem(
+                target: ChangeTarget(
+                  targetCollection: ChangeCollection.materials,
+                  changeType: changeType,
+                ),
+                change: materialModel.toJson(),
+              )
+            ]
+          },
+        ),
+      )
+      .toList();
 
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save
