@@ -76,26 +76,25 @@ class MaterialController extends GetxController with AppNavigator {
     }
   }
 
-  Future<void> saveAllMaterial(List<MaterialModel> materials) async {
-    final result = await _materialsHiveRepo.saveAll(materials);
-
+  Future<void> saveAllMaterial(List<MaterialModel> materialsToAdd) async {
+    final result = await _materialsHiveRepo.saveAll(materialsToAdd);
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) {
-        final materialsCopy = List<MaterialModel>.from(materials);
+        final materialsCopy = List<MaterialModel>.from(materialsToAdd);
         materialsCopy.addAll(savedMaterial);
-        materials.clear();
-        materials.addAll(materialsCopy);
+        materialsToAdd.clear();
+        materialsToAdd.addAll(materialsCopy);
       },
     );
   }
 
-  Future<void> deleteAllMaterial(List<MaterialModel> materials) async {
-    final result = await _materialsHiveRepo.deleteAll(materials);
+  Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
+    final result = await _materialsHiveRepo.deleteAll(materialsToDelete);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => materials.removeWhere((material) => materials.contains(material)), // Remove all deleted materials
+      (_) => materials.removeWhere((material) => materialsToDelete.contains(material)), // Remove all deleted materials
     );
   }
 
@@ -181,8 +180,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterialsIfEmpty();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }

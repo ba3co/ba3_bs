@@ -153,7 +153,6 @@ class ChangesController extends GetxController {
     // Assuming we need to handle deletions separately
     // We can add the material to the materialsToDelete list
     log("Delete operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
-
     MaterialModel materialToDelete = _extractMaterialsFromChangeItem(changeItem);
     materialsToDelete.add(materialToDelete); // Add to materialsToDelete
   }
