@@ -39,7 +39,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
       costPriceController.text = materialController.selectedMaterial!.matCurrencyVal!.toFixedString();
       minPriceController.text = materialController.selectedMaterial!.matLastPriceCurVal!.toFixedString();
       barcodeController.text = materialController.selectedMaterial!.matBarCode!;
-      latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName!;
+      latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName??'';
     } else {
       materialController.selectedMaterial = null;
       parentModel = null;

@@ -199,18 +199,15 @@ class MaterialController extends GetxController with AppNavigator {
   void saveOrUpdateMaterial() async {
     // Validate the input before proceeding
     if (!materialFromHandler.validate()) return;
-
     // Create a material model based on the user input
     final updatedMaterialModel = _createMaterialModel();
-
     // Handle null material model
     if (updatedMaterialModel == null) {
       AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
       return;
     }
-
     // Prepare user change queue for saving
-    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel);
+    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, ChangeType.addOrUpdate);
 
     // Save changes and handle results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
@@ -218,6 +215,21 @@ class MaterialController extends GetxController with AppNavigator {
     changesResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) => _onSaveSuccess(updatedMaterialModel),
+    );
+  }
+
+  void deleteSelectedMaterial() async {
+    if (selectedMaterial == null) return;
+
+    // Prepare user change queue for delete
+    final userChangeQueue = _prepareUserChangeQueue(selectedMaterial!, ChangeType.remove);
+
+    // Save changes and handle results
+    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+
+    changesResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _onDeleteSuccess(selectedMaterial!),
     );
   }
 
@@ -234,7 +246,7 @@ class MaterialController extends GetxController with AppNavigator {
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel) => read<UserManagementController>()
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
       .nonLoggedInUsers
       .map(
         (user) => ChangesModel(
@@ -244,7 +256,7 @@ class MaterialController extends GetxController with AppNavigator {
               ChangeItem(
                 target: ChangeTarget(
                   targetCollection: ChangeCollection.materials,
-                  changeType: ChangeType.addOrUpdate,
+                  changeType: changeType,
                 ),
                 change: materialModel.toJson(),
               )
@@ -261,6 +273,15 @@ class MaterialController extends GetxController with AppNavigator {
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+    );
+  }
+  void _onDeleteSuccess(MaterialModel materialModel) async {
+    // Persist the data in Hive upon successful delete
+    final hiveResult = await _materialsHiveRepo.delete(materialModel);
+
+    hiveResult.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
     );
   }
 

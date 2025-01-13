@@ -78,9 +78,9 @@ class LocalDatasourceRepository<T> {
     }
   }
 
-  Future<Either<Failure, Unit>> delete(String id) async {
+  Future<Either<Failure, Unit>> delete(T item) async {
     try {
-      await localDatasource.removeData(id);
+      await localDatasource.removeData(item);
       return Right(unit);
     } catch (e) {
       log('Error in delete: $e');

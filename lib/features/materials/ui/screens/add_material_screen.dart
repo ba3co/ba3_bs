@@ -3,7 +3,6 @@ import 'package:ba3_bs/core/widgets/tax_dropdown.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
@@ -39,19 +38,22 @@ class AddMaterialScreen extends StatelessWidget {
                   },
                 ),
               ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: .15.sh),
-                  child: AppButton(
-                    title: controller.selectedMaterial?.id == null ? 'إضافة' : 'تعديل',
-                    onPressed: () {
-                      controller.saveOrUpdateMaterial();
-                    },
-                    iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
-                    color: controller.selectedMaterial?.id == null ? null : Colors.green,
-                  ),
-                ),
-              )
+              AppButton(
+                title: controller.selectedMaterial?.id == null ? 'إضافة' : 'تعديل',
+                onPressed: () {
+                  controller.saveOrUpdateMaterial();
+                },
+                iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
+                color: controller.selectedMaterial?.id == null ? null : Colors.green,
+              ),
+              AppButton(
+                title: 'حذف',
+                onPressed: () {
+                  controller.deleteSelectedMaterial();
+                },
+                iconData:Icons.delete,
+                color: Colors.red,
+              ),
             ],
           ),
         ),

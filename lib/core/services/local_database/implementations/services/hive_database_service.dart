@@ -50,8 +50,13 @@ class HiveDatabaseService<T> implements ILocalDatabaseService<T> {
   }
 
   @override
-  Future<void> delete(String id) async {
-    await _box.delete(id); // Delete the item by ID
+  Future<void> delete(T item) async {
+    if (item is HiveObject) {
+      await item.delete(); // Delete the object from the box
+    } else {
+      // Optionally log or handle unexpected types
+      throw Exception('Item is not a HiveObject and cannot be deleted.');
+    }// Delete the item by ID
   }
 
   @override
