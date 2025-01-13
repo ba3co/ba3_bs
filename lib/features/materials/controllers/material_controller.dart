@@ -83,7 +83,7 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
-    final copiedMaterials = materials.where((material) => materialsToDelete.contains(material)).toList();
+    final copiedMaterials = materials.where((material) => materialsToDelete.map((e) => e.id,).contains(material.id)).toList();
 
     final result = await _materialsHiveRepo.deleteAll(copiedMaterials);
 
