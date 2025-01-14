@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 // Function to create a numbered column with automatic ID generation.
-PlutoColumn createAutoIdColumn({String title = 'رقم السطر', double width = 180}) => PlutoColumn(
+PlutoColumn createAutoIdColumn({String title = '', double width = 50}) => PlutoColumn(
       width: width,
       title: title,
       field: title,
