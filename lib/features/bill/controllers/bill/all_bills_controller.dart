@@ -24,6 +24,7 @@ import '../../../../core/services/firebase/implementations/repos/remote_datasour
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
+import '../../services/bill/all_bills_service.dart';
 import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
@@ -37,6 +38,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
+  late final AllBillsService _allBillsService;
   late final BillUtils _billUtils;
 
   List<BillTypeModel> billsTypes = [];
@@ -60,14 +62,15 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   Rx<RequestState> getAllNestedBillsRequestState = RequestState.initial.obs;
 
   // Initializer
-  void _initializeBillUtilities() {
+  void _initializeServices() {
     _billUtils = BillUtils();
+    _allBillsService = AllBillsService();
   }
 
   @override
   void onInit() {
     super.onInit();
-    _initializeBillUtilities();
+    _initializeServices();
 
     fetchBillsTypes();
 
@@ -91,6 +94,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
     plutoGridIsLoading = false;
     update();
+
+    _allBillsService.generateEntryBondsFromAllBills(bills: bills);
   }
 
   Future<void> fetchAllNestedBills() async {
