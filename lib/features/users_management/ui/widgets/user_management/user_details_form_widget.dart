@@ -36,6 +36,7 @@ class UserDetailsForm extends StatelessWidget {
         bodyWidget: Form(
           key: userManagementController.userFormHandler.formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             spacing: 10,
             children: [
               FormFieldRow(
@@ -43,8 +44,7 @@ class UserDetailsForm extends StatelessWidget {
                   label: 'اسم الحساب',
                   child: CustomTextFieldWithoutIcon(
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) =>
-                        userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
+                    validator: (value) => userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
                     textEditingController: userManagementController.userFormHandler.userNameController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
@@ -53,8 +53,7 @@ class UserDetailsForm extends StatelessWidget {
                   label: 'كلمة السر',
                   child: CustomTextFieldWithoutIcon(
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) =>
-                        userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
+                    validator: (value) => userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
                     textEditingController: userManagementController.userFormHandler.passController,
                     suffixIcon: const SizedBox.shrink(),
                     maxLength: 6,
@@ -122,7 +121,28 @@ class UserDetailsForm extends StatelessWidget {
                         ),
                       );
                     }),
-                  ))
+                  )),
+              InkWell(
+                onTap: (){
+                  userManagementController.userFormHandler.changeUserState();
+
+                },
+                child: AnimatedContainer(
+                  duration: Durations.medium2,
+                  height: 30,
+                  width: 120,
+                  padding: EdgeInsets.all(5),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: userManagementController.userFormHandler.isUserActive.value ? Colors.green : AppColors.grayColor,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child:   Text(
+                    userManagementController.userFormHandler.userActiveStatus.value.label,
+                    style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  ),
+                ),
+              )
             ],
           ),
         ),

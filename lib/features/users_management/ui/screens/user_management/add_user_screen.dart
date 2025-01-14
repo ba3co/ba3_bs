@@ -1,7 +1,6 @@
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/user_all_holidays.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -37,10 +36,11 @@ class AddUserScreen extends StatelessWidget {
               UserAllHolidays(
                 controller: controller,
               ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: .15.sh),
-                  child: AppButton(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+
+                  AppButton(
                     title: controller.selectedUserModel?.userId == null ? 'إضافة' : 'تعديل',
                     onPressed: () {
                       controller.saveOrUpdateUser();
@@ -48,8 +48,8 @@ class AddUserScreen extends StatelessWidget {
                     iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
                     color: controller.selectedUserModel?.userId == null ? null : Colors.green,
                   ),
-                ),
-              )
+                ],
+              ),
             ],
           ),
         ),

@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../controllers/user_management_controller.dart';
@@ -16,6 +19,9 @@ class UserFormHandler with AppValidator {
   RxnString selectedSellerId = RxnString();
   RxnString selectedRoleId = RxnString();
 
+  Rx<bool> get isUserActive => userActiveStatus.value == UserActiveStatus.active ? true.obs : false.obs;
+  Rx<UserActiveStatus> userActiveStatus = UserActiveStatus.active.obs;
+
   void init(UserModel? user) {
     if (user != null) {
       userManagementController.selectedUserModel = user;
@@ -25,15 +31,17 @@ class UserFormHandler with AppValidator {
 
       userNameController.text = user.userName ?? '';
       passController.text = user.userPassword ?? '';
+      userActiveStatus.value = user.userActiveStatus!;
 
       userManagementController.workingHours = user.userWorkingHours ?? {};
       userManagementController.holidays = user.userHolidays?.toSet() ?? {};
+      log(isUserActive.toString());
     } else {
       userManagementController.selectedUserModel = null;
 
       selectedSellerId.value = null;
       selectedRoleId.value = null;
-
+      userActiveStatus.value = UserActiveStatus.active;
       userManagementController.workingHours = {};
       userManagementController.holidays = {};
 
@@ -63,6 +71,15 @@ class UserFormHandler with AppValidator {
 
   void updatePasswordVisibility() {
     userManagementController.isPasswordVisible.value = !userManagementController.isPasswordVisible.value;
+  }
+
+  changeUserState() {
+    if (isUserActive.value) {
+      userActiveStatus.value = UserActiveStatus.inactive;
+    } else {
+      userActiveStatus.value = UserActiveStatus.active;
+    }
+    userManagementController.update();
   }
 
   String? passwordValidator(String? value, String fieldName) => isPasswordValid(value, fieldName);
