@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/helper/mixin/bond_entry_bonds_generator.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
 import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
@@ -19,11 +20,11 @@ import '../../data/models/bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
 import 'bond_entry_bond_service.dart';
 
-class BondService with PdfBase, BondEntryBondService, FloatingLauncher {
+class BondDetailsService with PdfBase, BondEntryBondService, FloatingLauncher, BondEntryBondsGenerator {
   final IRecodesPlutoController<PayItem> plutoController;
   final BondDetailsController bondController;
 
-  BondService(this.plutoController, this.bondController);
+  BondDetailsService(this.plutoController, this.bondController);
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
@@ -53,8 +54,7 @@ class BondService with PdfBase, BondEntryBondService, FloatingLauncher {
         bondRecordsItems: plutoController.generateRecords,
       );
 
-  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController,
-      [fromBondById]) async {
+  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController, [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
       await read<AllBondsController>().fetchAllBondsByType(BondType.byTypeGuide(bondModel.payTypeGuid!));
@@ -101,39 +101,19 @@ class BondService with PdfBase, BondEntryBondService, FloatingLauncher {
     );
   }
 
-/*  Future<void> handleSaveSuccess(BondModel bondModel, BondDetailsController bondDetailsController) async {
-    AppUIUtils.onSuccess('تم حفظ السند بنجاح!');
-
-    bondDetailsController.updateIsBondSaved(true);
-
-    generateAndSendPdf(
-      fileName: AppStrings.bond,
-      itemModel: bondModel,
-      itemModelId: bondModel.payGuid,
-      items: bondModel.payItems.itemList,
-      pdfGenerator: BondPdfGenerator(),
-    );
-  }
-
-  void handleUpdateSuccess(BondModel bondModel, BondSearchController bondSearchController) {
-    AppUIUtils.onSuccess('تم تعديل السند بنجاح!');
-
-    bondSearchController.updateBond(bondModel);
-
-    generateAndSendPdf(
-      fileName: AppStrings.bond,
-      itemModel: bondModel,
-      itemModelId: bondModel.payGuid,
-      items: bondModel.payItems.itemList,
-      pdfGenerator: BondPdfGenerator(),
-    );
-  }*/
-
   bool validateAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!');
       return false;
     }
     return true;
+  }
+
+  generateEntryBondsFromAllBonds({required List<BondModel> bonds}) {
+    final entryBonds = generateEntryBonds(bonds);
+
+    for (final entryBond in entryBonds) {
+      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
+    }
   }
 }

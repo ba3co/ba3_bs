@@ -9,7 +9,7 @@ import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
-import 'package:ba3_bs/features/bill/services/bill/all_bills_service.dart';
+import 'package:ba3_bs/features/bill/services/bill/bill_entry_bond_creating_service.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:file_picker/file_picker.dart';
@@ -18,6 +18,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
+import '../../../../core/helper/mixin/bills_entry_bonds_generator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
@@ -28,7 +29,7 @@ import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
+class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator,BillEntryBondService,BillsEntryBondsGenerator {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -37,7 +38,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
-  late final AllBillsService _allBillsService;
   late final BillUtils _billUtils;
 
   List<BillTypeModel> billsTypes = [];
@@ -63,7 +63,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   // Initializer
   void _initializeBillUtilities() {
     _billUtils = BillUtils();
-    _allBillsService = AllBillsService();
   }
 
   @override
@@ -93,8 +92,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     plutoGridIsLoading = false;
     update();
-
-    _allBillsService.generateEntryBondsFromAllBills(bills: bills);
   }
 
   Future<void> fetchAllNestedBills() async {
@@ -112,6 +109,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> fetchAllBillsFromLocal() async {
+    log('fetchAllBillsFromLocal');
     // getBillsRequestState.value=RequestState.loading;
 
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
@@ -126,6 +124,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
           getBillsByTypeRequestState.value = RequestState.success;
           bills.assignAll(fetchedBills);
 
+          // debugPrint("${fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first.toJson()}");
+
           BillModel aa = fetchedBills
               .where(
                 (element) => element.billId == 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
@@ -134,6 +134,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
           _billsFirebaseRepo.save(
             aa.copyWith(items: BillItems(itemList: aa.items.itemList.sublist(0, 3000))),
           );
+          // _billsFirebaseRepo.saveAllNested(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).toList(),billsTypes);
         },
       );
     }
@@ -352,4 +353,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     );
     return billModel;
   }
+
+
 }
