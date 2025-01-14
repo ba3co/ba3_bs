@@ -18,29 +18,42 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subcollectionPath = getSubCollectionPath(itemTypeModel);
 
-    final data = await compoundDatabaseService.fetchAll(
+    final dataList = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subcollectionPath,
     );
 
-    final entryBondItems = data.map((item) => EntryBondItemModel.fromJson(item)).toList();
+    // Flatten and map data['items'] into a single list of EntryBondItemModel
+    final entryBondItems = dataList
+        .expand((data) =>
+            (data['items'] as List<dynamic>).map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>)))
+        .toList();
 
     return entryBondItems;
   }
 
   @override
-  Future<List<EntryBondItemModel>> fetchWhere<V>(
-      {required AccountEntity itemTypeModel, required String field, required V value, DateFilter? dateFilter}) async {
-    final data = await compoundDatabaseService.fetchWhere(
-        rootCollectionPath: rootCollectionPath,
-        rootDocumentId: getRootDocumentId(itemTypeModel),
-        subCollectionPath: getSubCollectionPath(itemTypeModel),
-        field: field,
-        value: value,
-        dateFilter: dateFilter);
+  Future<List<EntryBondItemModel>> fetchWhere<V>({
+    required AccountEntity itemTypeModel,
+    required String field,
+    required V value,
+    DateFilter? dateFilter,
+  }) async {
+    final dataList = await compoundDatabaseService.fetchWhere(
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: getRootDocumentId(itemTypeModel),
+      subCollectionPath: getSubCollectionPath(itemTypeModel),
+      field: field,
+      value: value,
+      dateFilter: dateFilter,
+    );
 
-    final entryBondItems = data.map((item) => EntryBondItemModel.fromJson(item)).toList();
+    // Flatten and map data['items'] into a single list of EntryBondItemModel
+    final entryBondItems = dataList
+        .expand((data) =>
+            (data['items'] as List<dynamic>).map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>)))
+        .toList();
 
     return entryBondItems;
   }
@@ -57,7 +70,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
       subDocumentId: id,
     );
 
-    return EntryBondItemModel.fromJson(data);
+    return EntryBondItemModel.fromJson(data['items']);
   }
 
   @override
