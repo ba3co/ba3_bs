@@ -15,17 +15,17 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
     final chequesElements = document.findAllElements('H');
     return chequesElements.map((element) {
       return ChequesModel(
-        chequesTypeGuid: element.findElements('CheckTypeGuid').first.text,
-        chequesNumber: int.tryParse(element.findElements('CheckNumber').first.text),
-        chequesNum: int.tryParse(element.findElements('CheckNum').first.text),
-        chequesGuid: element.findElements('CheckGuid').first.text,
-        chequesDate: element.findElements('CheckDate').first.text,
-        chequesDueDate: element.findElements('CheckDueDate').first.text,
-        chequesNote: element.findElements('CheckNote').first.text,
-        chequesVal: double.tryParse(element.findElements('CheckVal').first.text),
-        chequesAccount2Guid: element.findElements('CheckAccount2Guid').first.text,
-        accPtr: element.findElements('AccPtr').first.text,
-
+        chequesTypeGuid: element.findElements('CheckTypeGuid').first.value,
+        chequesNumber: int.tryParse(element.findElements('CheckNumber').first.value!),
+        chequesNum: int.tryParse(element.findElements('CheckNum').first.value!),
+        chequesGuid: element.findElements('CheckGuid').first.value,
+        chequesDate: element.findElements('CheckDate').first.value,
+        chequesDueDate: element.findElements('CheckDueDate').first.value,
+        chequesNote: element.findElements('CheckNote').first.value,
+        chequesVal: double.tryParse(element.findElements('CheckVal').first.value!),
+        chequesAccount2Guid: element.findElements('CheckAccount2Guid').first.value,
+        accPtr: element.findElements('AccPtr').first.value,
+        isPayed: element.findElements('').first.value != null,
         accPtrName: null,
         chequesAccount2Name: null,
       );
