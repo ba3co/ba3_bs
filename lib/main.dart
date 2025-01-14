@@ -18,6 +18,7 @@ void main() async {
     FlutterError.presentError(details);
     exit(1);
   };
+
   await initializeApp();
   runApp(const MyApp());
 }

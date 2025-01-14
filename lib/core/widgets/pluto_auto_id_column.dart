@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 // Function to create a numbered column with automatic ID generation.
-PlutoColumn createAutoIdColumn({String title = 'رقم السطر', double width = 50}) => PlutoColumn(
+PlutoColumn createAutoIdColumn({String title = '', double width = 50}) => PlutoColumn(
       width: width,
       title: title,
       field: title,
-       enableRowDrag: false,
-      frozen: PlutoColumnFrozen.start,
       // Assuming field name matches the title.
       type: PlutoColumnType.number(),
       renderer: (rendererContext) {
@@ -17,6 +15,7 @@ PlutoColumn createAutoIdColumn({String title = 'رقم السطر', double width
         final rowIndex = rendererContext.rowIdx;
         final autoId = calculateAutoId(currentPage, rowIndex);
 
+        log('Page: $currentPage, Row Index: $rowIndex, Auto ID: $autoId');
 
         return Text(
           autoId.toString(),
