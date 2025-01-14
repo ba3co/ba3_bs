@@ -18,7 +18,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
-import '../../../../core/helper/mixin/bills_entry_bonds_generator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
@@ -29,7 +28,7 @@ import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator,BillEntryBondService,BillsEntryBondsGenerator {
+class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, BillEntryBondService {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -353,6 +352,4 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator,B
     );
     return billModel;
   }
-
-
 }
