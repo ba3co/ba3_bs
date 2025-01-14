@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/features/bond/service/bond/all_bonds_service.dart';
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
 import 'package:file_picker/file_picker.dart';
@@ -30,10 +31,12 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
   // Services
   late final BondUtils _bondUtils;
+  late final AllBondsService _allBondsService;
 
   // Initializer
   void _initializeServices() {
     _bondUtils = BondUtils();
+    _allBondsService = AllBondsService();
   }
 
   @override
