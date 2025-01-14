@@ -3,7 +3,7 @@ import '../../../features/bill/services/bill/bill_entry_bond_creating_service.da
 import '../../../features/bond/data/models/entry_bond_model.dart';
 import '../enums/enums.dart';
 
-mixin BillsEntryBondsGenerator on BillEntryBondService {
+class BillsEntryBondsGenerator with BillEntryBondService {
   List<EntryBondModel> generateEntryBonds(List<BillModel> bills) => bills
       .map(
         (bill) => createEntryBond(

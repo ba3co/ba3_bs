@@ -14,7 +14,6 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/helper/mixin/bills_entry_bonds_generator.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
@@ -28,11 +27,11 @@ import '../../data/models/invoice_record_model.dart';
 import 'bill_entry_bond_creating_service.dart';
 import 'bill_pdf_generator.dart';
 
-class BillService with PdfBase, BillEntryBondService, FloatingLauncher, BillsEntryBondsGenerator {
+class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
-  BillService(this.plutoController, this.billController);
+  BillDetailsService(this.plutoController, this.billController);
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
@@ -174,13 +173,5 @@ class BillService with PdfBase, BillEntryBondService, FloatingLauncher, BillsEnt
         log('E-Invoice dialog closed.');
       },
     );
-  }
-
-  generateEntryBondsFromAllBills({required List<BillModel> bills}) {
-    final entryBonds = generateEntryBonds(bills);
-
-    for (final entryBond in entryBonds) {
-      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
-    }
   }
 }

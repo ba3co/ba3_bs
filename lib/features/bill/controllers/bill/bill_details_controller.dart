@@ -24,8 +24,8 @@ import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/account_handler.dart';
+import '../../services/bill/bill_details_service.dart';
 import '../../services/bill/bill_pdf_generator.dart';
-import '../../services/bill/bill_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
@@ -42,7 +42,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   });
 
   // Services
-  late final BillService _billService;
+  late final BillDetailsService _billService;
   late final BillUtils _billUtils;
   late final AccountHandler _accountHandler;
 
@@ -105,7 +105,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   // Initializer
   void _initializeServices() {
-    _billService = BillService(billDetailsPlutoController, this);
+    _billService = BillDetailsService(billDetailsPlutoController, this);
     _billUtils = BillUtils();
     _accountHandler = AccountHandler();
   }
