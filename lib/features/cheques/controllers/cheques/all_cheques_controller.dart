@@ -62,9 +62,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedCheques) {
           log('chequesList.length ${chequesList.length}');
-          log('chequesList.firstOrNull ${chequesList.firstOrNull?.toJson()}');
+          // log('chequesList.firstOrNull ${chequesList.firstOrNull?.toJson()}');
 
-          chequesList.assignAll(fetchedCheques);
+          // chequesList.assignAll(fetchedCheques);
         },
       );
     } else {
