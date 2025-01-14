@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/mixin/cheques_entry_bonds_generator.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +21,7 @@ import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
-class AllChequesController extends FloatingChequesDetailsLauncher with AppNavigator {
+class AllChequesController extends FloatingChequesDetailsLauncher with AppNavigator  {
   final CompoundDatasourceRepository<ChequesModel, ChequesType> _chequesFirebaseRepo;
   final ImportExportRepository<ChequesModel> _jsonImportExportRepo;
 
@@ -181,4 +182,13 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     );
     return chequesModel;
   }
+
+/*  generateEntryBondsFromAllBonds({required List<ChequesModel> cheques}) {
+    final entryBonds = generateEntryBonds(cheques);
+
+    for (final entryBond in entryBonds) {
+      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
+    }
+  }*/
+
 }
