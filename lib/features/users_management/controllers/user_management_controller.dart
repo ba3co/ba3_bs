@@ -100,12 +100,10 @@ class UserManagementController extends GetxController with AppNavigator {
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() =>
-      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) =>
-      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -344,6 +342,7 @@ class UserManagementController extends GetxController with AppNavigator {
         userRoleId: userFormHandler.selectedRoleId.value,
         userSellerId: userFormHandler.selectedSellerId.value,
         workingHour: workingHours,
+        userActiveState: userFormHandler.userActiveStatus.value,
         holidays: holidays.toList(),
       );
 

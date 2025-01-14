@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +16,7 @@ void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     log("FlutterError Error: ${details.exception}");
     FlutterError.presentError(details);
+    exit(1);
   };
 
   await initializeApp();

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 
 class UserService {
@@ -9,6 +10,7 @@ class UserService {
     String? userSellerId,
     Map<String, UserWorkingHours>? workingHour,
     List<String>? holidays,
+    required  UserActiveStatus userActiveState,
   }) {
     if (userRoleId == null || userSellerId == null) {
       return null;
@@ -24,6 +26,7 @@ class UserService {
           userSellerId: userSellerId,
           userWorkingHours: workingHour,
       userHolidays: holidays,
+        userActiveStatus: userActiveState
       );
     } else {
       newUserModel = userModel.copyWith(
@@ -32,7 +35,8 @@ class UserService {
           userRoleId: userRoleId,
           userSellerId: userSellerId,
           userWorkingHours: workingHour,
-          userHolidays:holidays
+          userHolidays:holidays,
+        userActiveStatus: userActiveState
       );
     }
     return newUserModel;

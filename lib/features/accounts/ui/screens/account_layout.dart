@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/dialogs/Account_Option_Dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/widgets/app_button.dart';
 
 class AccountLayout extends StatelessWidget {
   const AccountLayout({super.key});
@@ -18,13 +17,13 @@ class AccountLayout extends StatelessWidget {
         appBar: AppBar(
           title: const Text('الحسابات'),
           actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: AppButton(
-                title: 'تحميل الحسابات',
-                onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: AppButton(
+            //     title: 'تحميل الحسابات',
+            //     onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
+            //   ),
+            // ),
           ],
         ),
         body: Column(
