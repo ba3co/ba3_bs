@@ -1,5 +1,3 @@
-
-
 class TaxModel {
   final String? taxGuid;
   final double? taxRatio;
@@ -88,5 +86,3 @@ enum VatEnums {
     );
   }
 }
-
-

@@ -159,19 +159,15 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 
-    final savedData = await compoundDatabaseService.saveAll(
+    final savedData = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
-      items: items.map((item) {
-        return {
-          ...item.toJson(),
-          'docId': item.originId,
-        };
-      }).toList(),
+      subDocumentId: items.first.originId,
+      data: {'items': items.map((item) => item.toJson()).toList()},
     );
 
-    return savedData.map(EntryBondItemModel.fromJson).toList();
+    return [EntryBondItemModel.fromJson(savedData)];
   }
 }
 
