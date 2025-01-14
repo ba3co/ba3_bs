@@ -63,7 +63,6 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 rows: controller.generateRows<T>(tableSourceModels, type),
                 mode: PlutoGridMode.selectWithOneTap,
                 configuration: PlutoGridConfiguration(
-                  shortcut: const PlutoGridShortcut(),
                   style: PlutoGridStyleConfig(
                     enableRowColorAnimation: true,
                     evenRowColor: Colors.blueAccent.withAlpha(127),
@@ -73,11 +72,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                     activatedColor: Colors.white.withAlpha(127),
-                    cellTextStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+
                     gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
                     gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
                   ),

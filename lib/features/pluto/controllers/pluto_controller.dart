@@ -6,9 +6,18 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoController extends GetxController {
   UniqueKey plutoKey = UniqueKey();
 
+
+
   /// Updates the `plutoKey` to a new unique value.
   void updatePlutoKey() {
     plutoKey = UniqueKey();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
   }
 
   /// Generates a list of PlutoColumns based on the first model in the provided list.
@@ -34,4 +43,5 @@ class PlutoController extends GetxController {
     });
     return PlutoRow(cells: cells);
   }
+
 }
