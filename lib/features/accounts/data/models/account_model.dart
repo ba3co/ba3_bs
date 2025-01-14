@@ -7,12 +7,12 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 
 class AccountModel implements PlutoAdaptable {
-  final  String? id;
+  final String? id;
   final String? accName;
   final String? accLatinName;
   final String? accCode;
-  final  DateTime? accCDate;
-  final  DateTime? accCheckDate;
+  final DateTime? accCDate;
+  final DateTime? accCheckDate;
   final String? accParentGuid;
   final String? accParentName;
   final String? accFinalGuid;
@@ -23,19 +23,19 @@ class AccountModel implements PlutoAdaptable {
   final int? accWarn;
   final String? note;
   final int? accCurVal;
-  final  String? accCurGuid;
+  final String? accCurGuid;
   final int? accSecurity;
   final int? accDebitOrCredit;
   final int? accType;
   final int? accState;
-  final  int? accIsChangableRatio;
+  final int? accIsChangableRatio;
   final String? accBranchGuid;
   final int? accNumber;
   final int? accBranchMask;
 
   // final List<String>? billsId;
 
- const AccountModel({
+  const AccountModel({
     this.id,
     this.accName,
     this.accLatinName,
@@ -195,18 +195,17 @@ class AccountModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(field: 'الرقم التعريفي', type: PlutoColumnType.text(), title: 'الرقم التعريفي'): id,
-      plutoAutoIdColumn(): '',
-      PlutoColumn(field: 'رقم الحساب', type: PlutoColumnType.text(), title: 'رقم الحساب'): accNumber,
-      PlutoColumn(field: 'رمز الحساب', type: PlutoColumnType.text(), title: 'رمز الحساب'): accCode,
+      PlutoColumn(field: 'الرقم التعريفي', type: PlutoColumnType.text(), title: 'الرقم التعريفي', hide: true): id,
+      createAutoIdColumn(): '',
+      PlutoColumn(field: 'رقم الحساب', type: PlutoColumnType.text(), title: 'رقم الحساب', width: 180): accNumber,
+      PlutoColumn(field: 'رمز الحساب', type: PlutoColumnType.text(), title: 'رمز الحساب', width: 180): accCode,
       PlutoColumn(field: 'اسم الحساب', type: PlutoColumnType.text(), title: 'اسم الحساب'): accName,
       PlutoColumn(field: 'الاسم الاتيني', type: PlutoColumnType.text(), title: 'الاسم الاتيني'): accLatinName,
       PlutoColumn(field: 'نوع الحساب', type: PlutoColumnType.text(), title: 'نوع الحساب'):
           AppServiceUtils.getAccountType(accType),
-      PlutoColumn(field: 'Debit Or Credit', type: PlutoColumnType.text(), title: 'Debit Or Credit'):
+      PlutoColumn(field: 'Debit Or Credit', type: PlutoColumnType.text(), title: 'نوع الدفع', width: 150):
           AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),
-      PlutoColumn(field: 'حساب الاب', type: PlutoColumnType.text(), title: 'حساب الاب'):
-        accParentName,
+      PlutoColumn(field: 'حساب الاب', type: PlutoColumnType.text(), title: 'حساب الاب'): accParentName,
       PlutoColumn(field: 'الاولاد', type: PlutoColumnType.text(), title: 'الاولاد'):
           read<AccountsController>().getAccountChildren(id).join(' , '),
     };

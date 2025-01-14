@@ -1,8 +1,8 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
@@ -151,7 +151,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                 ? [
                     BillItem(
                       itemGuid: billData['Items']['I']['MatPtr'],
-                      itemQuantity: (billData['Items']['I']['QtyBonus'].split(',').first as String).toInt ,
+                      itemQuantity: (billData['Items']['I']['QtyBonus'].split(',').first as String).toInt,
                       itemTotalPrice: billData['Items']['I']['PriceDescExtra'].split(',').first,
                       itemSubTotalPrice: AppServiceUtils.calcSubtotal(
                         (billData['Items']['I']['QtyBonus'].split(',').first as String).toInt,
@@ -162,7 +162,9 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                         (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
                       ),
                       itemGiftsNumber: (billData['Items']['I']['QtyBonus'].split(',').second as String).toInt,
-                      itemName: read<MaterialController>().getMaterialNameById(billData['Items']['I']['MatPtr'].toString()).toString(),
+                      itemName: read<MaterialController>()
+                          .getMaterialNameById(billData['Items']['I']['MatPtr'].toString())
+                          .toString(),
                       itemVatPrice: AppServiceUtils.calcVat(
                         billData['Items']['I']['VatRatio'],
                         (billData['Items']['I']['PriceDescExtra'].split(',').first as String).toDouble,
@@ -198,13 +200,15 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
               BillAccounts.gifts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.gifts]!,
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
-              BillAccounts.exchangeForGifts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.exchangeForGifts]!,
+              BillAccounts.exchangeForGifts:
+                  _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.exchangeForGifts]!,
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasDiscountsAccount)
               BillAccounts.discounts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!,
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
               BillAccounts.additions: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!,
             BillAccounts.store: AccountModel(
-                id: billData['B']['BillStoreGuid'], accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),
+                id: billData['B']['BillStoreGuid'],
+                accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),
           },
           id: billData['B']['BillTypeGuid'],
           fullName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
@@ -243,12 +247,14 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void type]) => {
         PlutoColumn(title: 'billId', field: 'billId', type: PlutoColumnType.text(), hide: true): billId ?? '',
-        plutoAutoIdColumn(): '',
+        createAutoIdColumn(): '',
         PlutoColumn(title: 'حالة الفاتورة', field: 'حالة الفاتورة', type: PlutoColumnType.text()): status.value,
-        PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.number()): billDetails.billNumber ?? 0,
+        PlutoColumn(title: 'رقم الفاتورة', field: 'رقم الفاتورة', type: PlutoColumnType.number()):
+            billDetails.billNumber ?? 0,
         PlutoColumn(title: 'نوع الفاتورة', field: 'نوع الفاتورة', type: PlutoColumnType.text()):
             BillType.byLabel(billTypeModel.billTypeLabel ?? '').value,
-        PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): billDetails.billDate?.dayMonthYear ?? '',
+        PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()):
+            billDetails.billDate?.dayMonthYear ?? '',
         PlutoColumn(title: 'مجموع الضريبة', field: 'مجموع الضريبة', type: PlutoColumnType.text()):
             AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
         PlutoColumn(title: 'المجموع قبل الضريبة', field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
@@ -259,7 +265,8 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
             AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
         PlutoColumn(title: 'مجموع الاضافات', field: 'مجموع الاضافات', type: PlutoColumnType.text()):
             AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
-        PlutoColumn(title: 'مجموع الهدايا', field: 'مجموع الهدايا', type: PlutoColumnType.text()): billDetails.billGiftsTotal ?? 0,
+        PlutoColumn(title: 'مجموع الهدايا', field: 'مجموع الهدايا', type: PlutoColumnType.text()):
+            billDetails.billGiftsTotal ?? 0,
         PlutoColumn(title: 'نوع الدفع', field: 'نوع الدفع', type: PlutoColumnType.text()):
             InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
         PlutoColumn(title: 'حساب العميل', field: 'حساب العميل', type: PlutoColumnType.text()):
@@ -314,7 +321,8 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         AppConstants.additionRatio: additionRatio,
       };
 
-  String _calculateRatio(double value, double total) => total > 0 && value > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
+  String _calculateRatio(double value, double total) =>
+      total > 0 && value > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
 
   double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 

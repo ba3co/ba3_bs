@@ -130,7 +130,7 @@ class EntryBondItemModel implements PlutoAdaptable {
     final accountsController = read<AccountsController>();
     return {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
-      plutoAutoIdColumn(): '',
+      createAutoIdColumn(): '',
       PlutoColumn(
           title: 'مدين',
           field: 'مدين',
