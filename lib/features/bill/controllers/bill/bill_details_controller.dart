@@ -82,6 +82,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   void updateCustomerAccount(AccountModel? newAccount) {
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
+      customerAccountController.text=newAccount.accName!;
     }
   }
 
