@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:ba3_bs/core/helper/mixin/cheques_entry_bonds_generator.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';

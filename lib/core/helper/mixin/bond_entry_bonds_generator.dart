@@ -4,7 +4,7 @@ import 'package:ba3_bs/features/bond/service/bond/bond_entry_bond_service.dart';
 import '../../../features/bond/data/models/entry_bond_model.dart';
 import '../enums/enums.dart';
 
-mixin BondEntryBondsGenerator on BondEntryBondService {
+class BondEntryBondsGenerator with BondEntryBondService {
   List<EntryBondModel> generateEntryBonds(List<BondModel> bonds) => bonds
       .map(
         (bond) => createEntryBondModel(
