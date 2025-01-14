@@ -15,8 +15,8 @@ import '../controllers/cheques/cheques_search_controller.dart';
 import '../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 
-class ChequesService with PdfBase, ChequesBondService, FloatingLauncher {
-  ChequesService();
+class ChequesDetailsService with PdfBase, ChequesBondService, FloatingLauncher {
+  ChequesDetailsService();
 
   void launchChequesEntryBondScreen({
     required BuildContext context,

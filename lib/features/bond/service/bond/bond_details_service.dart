@@ -20,11 +20,11 @@ import '../../data/models/bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
 import 'bond_entry_bond_service.dart';
 
-class BondService with PdfBase, BondEntryBondService, FloatingLauncher, BondEntryBondsGenerator {
+class BondDetailsService with PdfBase, BondEntryBondService, FloatingLauncher, BondEntryBondsGenerator {
   final IRecodesPlutoController<PayItem> plutoController;
   final BondDetailsController bondController;
 
-  BondService(this.plutoController, this.bondController);
+  BondDetailsService(this.plutoController, this.bondController);
 
   EntryBondController get entryBondController => read<EntryBondController>();
 

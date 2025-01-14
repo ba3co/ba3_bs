@@ -176,11 +176,5 @@ class BillService with PdfBase, BillEntryBondService, FloatingLauncher, BillsEnt
     );
   }
 
-  generateEntryBondsFromAllBills({required List<BillModel> bills}) {
-    final entryBonds = generateEntryBonds(bills);
 
-    for (final entryBond in entryBonds) {
-      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
-    }
-  }
 }
