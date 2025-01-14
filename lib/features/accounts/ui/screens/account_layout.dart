@@ -18,13 +18,13 @@ class AccountLayout extends StatelessWidget {
         appBar: AppBar(
           title: const Text('الحسابات'),
           actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: AppButton(
-                title: 'تحميل الحسابات',
-                onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: AppButton(
+            //     title: 'تحميل الحسابات',
+            //     onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
+            //   ),
+            // ),
           ],
         ),
         body: Column(

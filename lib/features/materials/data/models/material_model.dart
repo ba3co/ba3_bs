@@ -344,7 +344,6 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       PlutoColumn(title: 'الباركود', field: 'الباركود', type: PlutoColumnType.text()): matBarCode,
       PlutoColumn(title: 'التكلفة', field: 'التكلفة', type: PlutoColumnType.text()): retailPrice,
       PlutoColumn(title: 'سعر المستهلك', field: 'سعر المستهلك', type: PlutoColumnType.text()): endUserPrice,
-
       PlutoColumn(title: 'سعر الجملة', field: 'سعر الجملة', type: PlutoColumnType.text()): wholesalePrice,
     };
   }

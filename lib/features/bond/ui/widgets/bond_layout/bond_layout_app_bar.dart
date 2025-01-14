@@ -5,12 +5,12 @@ import '../../../../../core/widgets/app_button.dart';
 
 AppBar bondLayoutAppBar(AllBondsController controller) {
   return AppBar(actions: [
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: AppButton(
-        title: "تحميل السندات",
-        onPressed: () =>controller.fetchAllBondsLocal(),
-      ),
-    ),
+    // Padding(
+    //   padding: const EdgeInsets.all(8.0),
+    //   child: AppButton(
+    //     title: "تحميل السندات",
+    //     onPressed: () =>controller.fetchAllBondsLocal(),
+    //   ),
+    // ),
   ]);
 }
