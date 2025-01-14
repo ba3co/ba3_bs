@@ -137,7 +137,7 @@ class EntryBondItemModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()): account.name ?? '',
+      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()): account.name ,
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
     };

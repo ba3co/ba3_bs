@@ -8,7 +8,6 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/helper/mixin/bond_entry_bonds_generator.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
 import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
@@ -20,7 +19,7 @@ import '../../data/models/bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
 import 'bond_entry_bond_service.dart';
 
-class BondDetailsService with PdfBase, BondEntryBondService, FloatingLauncher, BondEntryBondsGenerator {
+class BondDetailsService with PdfBase, BondEntryBondService, FloatingLauncher {
   final IRecodesPlutoController<PayItem> plutoController;
   final BondDetailsController bondController;
 
@@ -109,11 +108,4 @@ class BondDetailsService with PdfBase, BondEntryBondService, FloatingLauncher, B
     return true;
   }
 
-  generateEntryBondsFromAllBonds({required List<BondModel> bonds}) {
-    final entryBonds = generateEntryBonds(bonds);
-
-    for (final entryBond in entryBonds) {
-      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
-    }
-  }
 }
