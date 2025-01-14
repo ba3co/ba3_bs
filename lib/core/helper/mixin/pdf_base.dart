@@ -3,13 +3,13 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 
-import '../constants/app_assets.dart';
-import '../constants/app_strings.dart';
-import '../services/mailer_messaging/implementations/gmail_messaging_service.dart';
-import '../services/mailer_messaging/implementations/mailer_messaging_repo.dart';
-import '../services/pdf_generator/implementations/pdf_generator_repo.dart';
-import '../services/pdf_generator/interfaces/i_pdf_generator.dart';
-import '../utils/app_ui_utils.dart';
+import '../../constants/app_assets.dart';
+import '../../constants/app_strings.dart';
+import '../../services/mailer_messaging/implementations/gmail_messaging_service.dart';
+import '../../services/mailer_messaging/implementations/mailer_messaging_repo.dart';
+import '../../services/pdf_generator/implementations/pdf_generator_repo.dart';
+import '../../services/pdf_generator/interfaces/i_pdf_generator.dart';
+import '../../utils/app_ui_utils.dart';
 
 mixin PdfBase {
   /// Sends the bill email with optional attachments
@@ -31,8 +31,8 @@ mixin PdfBase {
     );
 
     result.fold(
-          (failure) => _onEmailSendFailure(failure.message),
-          (_) => _onEmailSendSuccess(attachments),
+      (failure) => _onEmailSendFailure(failure.message),
+      (_) => _onEmailSendSuccess(attachments),
     );
   }
 
@@ -80,11 +80,7 @@ mixin PdfBase {
     if (!hasModelItems(items)) return;
 
     final pdfFilePath = await _generatePdf(
-        pdfGenerator: pdfGenerator,
-        itemModel: itemModel,
-        fileName: fileName,
-        logoSrc: logoSrc,
-        fontSrc: fontSrc);
+        pdfGenerator: pdfGenerator, itemModel: itemModel, fileName: fileName, logoSrc: logoSrc, fontSrc: fontSrc);
 
     await sendToEmail(
       recipientEmail: recipientEmail,

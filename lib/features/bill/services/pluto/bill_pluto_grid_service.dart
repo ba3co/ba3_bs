@@ -120,7 +120,8 @@ class BillPlutoGridService {
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecQuantity, quantity);
   }
 
-  void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {
+  void updateSelectedRowCellValue(
+      PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {
     if (selectedRow.cells.containsKey(field)) {
       // Update the cell value in the previous row.
       stateManager.changeCellValue(
@@ -141,7 +142,9 @@ class BillPlutoGridService {
       final fields = [AppConstants.discount, AppConstants.addition];
 
       for (final field in fields) {
-        total == 0 ? updateAdditionsDiscountsCellValue(row.cells[field]!, '') : _updateCell(field, row, total, invoiceUtils);
+        total == 0
+            ? updateAdditionsDiscountsCellValue(row.cells[field]!, '')
+            : _updateCell(field, row, total, invoiceUtils);
       }
     }
   }
@@ -156,9 +159,11 @@ class BillPlutoGridService {
     updateAdditionsDiscountsCellValue(valueCell, newValue);
   }
 
-  String _getTargetField(String field) => field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
+  String _getTargetField(String field) =>
+      field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
 
-  List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records, BillTypeModel billTypeModel) => records.map((record) {
+  List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records, BillTypeModel billTypeModel) =>
+      records.map((record) {
         final rowData = record.toEditedMap(billTypeModel);
         final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);
@@ -205,25 +210,19 @@ class BillPlutoGridService {
   }
 
 // Helper method to extract discount data
-  DiscountData _extractDiscountData(BillPlutoUtils plutoUtils, PlutoRow row) {
-    return DiscountData(
-      percentage: plutoUtils.getCellValueInDouble(row.cells, AppConstants.discountRatio),
-      value: plutoUtils.getCellValueInDouble(row.cells, AppConstants.discount),
-    );
-  }
+  DiscountData _extractDiscountData(BillPlutoUtils plutoUtils, PlutoRow row) => DiscountData(
+        percentage: plutoUtils.getCellValueInDouble(row.cells, AppConstants.discountRatio),
+        value: plutoUtils.getCellValueInDouble(row.cells, AppConstants.discount),
+      );
 
 // Helper method to extract addition data
-  AdditionData _extractAdditionData(BillPlutoUtils plutoUtils, PlutoRow row) {
-    return AdditionData(
-      percentage: plutoUtils.getCellValueInDouble(row.cells, AppConstants.additionRatio),
-      value: plutoUtils.getCellValueInDouble(row.cells, AppConstants.addition),
-    );
-  }
+  AdditionData _extractAdditionData(BillPlutoUtils plutoUtils, PlutoRow row) => AdditionData(
+        percentage: plutoUtils.getCellValueInDouble(row.cells, AppConstants.additionRatio),
+        value: plutoUtils.getCellValueInDouble(row.cells, AppConstants.addition),
+      );
 
 // Helper method to check if account data is valid
-  bool _isValidAccount(String accountName, String accountId) {
-    return accountName.isNotEmpty && accountId.isNotEmpty;
-  }
+  bool _isValidAccount(String accountName, String accountId) => accountName.isNotEmpty && accountId.isNotEmpty;
 
 // Helper method to create the DiscountAdditionAccountModel
   DiscountAdditionAccountModel _createAccountModel({
@@ -231,14 +230,13 @@ class BillPlutoGridService {
     required String accountId,
     required DiscountData discountData,
     required AdditionData additionData,
-  }) {
-    return DiscountAdditionAccountModel(
-      accName: accountName,
-      id: accountId,
-      amount: discountData.isValid ? discountData.value : additionData.value,
-      percentage: discountData.isValid ? discountData.percentage : additionData.percentage,
-    );
-  }
+  }) =>
+      DiscountAdditionAccountModel(
+        accName: accountName,
+        id: accountId,
+        amount: discountData.isValid ? discountData.value : additionData.value,
+        percentage: discountData.isValid ? discountData.percentage : additionData.percentage,
+      );
 
 // Helper method to update the accounts map
   void _updateAccountsMap(

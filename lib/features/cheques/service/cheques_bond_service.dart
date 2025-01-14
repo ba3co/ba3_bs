@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 
 import '../../../core/helper/enums/enums.dart';
+import '../../accounts/data/models/account_model.dart';
 import '../../bond/data/models/entry_bond_model.dart';
 
 mixin ChequesBondService {
@@ -91,9 +92,11 @@ mixin ChequesBondService {
     itemBonds.add(EntryBondItemModel(
       note: note,
       amount: amount,
+      account: AccountEntity(
+        id: chequesModel.chequesAccount2Guid!,
+        name: chequesModel.chequesAccount2Name!,
+      ),
       bondItemType: BondItemType.creditor,
-      accountId: chequesModel.chequesAccount2Guid,
-      accountName: chequesModel.chequesAccount2Name,
       date: date,
       originId: originId,
     ));
@@ -101,8 +104,10 @@ mixin ChequesBondService {
       note: note,
       amount: amount,
       bondItemType: BondItemType.debtor,
-      accountId: chequesModel.accPtr,
-      accountName: chequesModel.accPtrName,
+      account: AccountEntity(
+        id: chequesModel.accPtr!,
+        name: chequesModel.accPtrName!,
+      ),
       date: date,
       originId: originId,
     ));
@@ -120,8 +125,10 @@ mixin ChequesBondService {
       note: note,
       amount: amount,
       bondItemType: BondItemType.debtor,
-      accountId: chequesModel.chequesAccount2Guid,
-      accountName: chequesModel.chequesAccount2Name,
+      account: AccountEntity(
+        id: chequesModel.chequesAccount2Guid!,
+        name: chequesModel.chequesAccount2Name!,
+      ),
       date: date,
       originId: originId,
     ));
@@ -129,8 +136,10 @@ mixin ChequesBondService {
       note: note,
       amount: amount,
       bondItemType: BondItemType.creditor,
-      accountId: AppStrings.bankAccountId,
-      accountName: AppStrings.bankToAccountName,
+      account: AccountEntity(
+        id: AppStrings.bankAccountId,
+        name: AppStrings.bankToAccountName,
+      ),
       date: date,
       originId: originId,
     ));

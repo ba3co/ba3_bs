@@ -1,19 +1,17 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
-import '../../../../core/i_controllers/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../core/helper/mixin/pdf_base.dart';
 import '../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../controllers/cheques/all_cheques_controller.dart';
 import '../controllers/cheques/cheques_details_controller.dart';
 import '../controllers/cheques/cheques_search_controller.dart';
-
 import '../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 

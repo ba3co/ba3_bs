@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -31,8 +32,10 @@ mixin BondEntryBondService {
         originId: originId,
         date: bondModel.payDate ?? date,
         note: note,
-        accountName: element.entryAccountName,
-        accountId: element.entryAccountGuid,
+        account: AccountEntity(
+          id: element.entryAccountName!,
+          name: element.entryAccountGuid!,
+        ),
         bondItemType: element.entryCredit! > 0 ? BondItemType.creditor : BondItemType.debtor,
         amount: element.entryCredit! > 0 ? element.entryCredit : element.entryDebit,
       ));

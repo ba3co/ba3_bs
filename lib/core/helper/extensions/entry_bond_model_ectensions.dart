@@ -9,7 +9,7 @@ extension EntryBondModelExtension on EntryBondModel {
   List<DataGridRow> get bondDataGridRows =>
       items?.map<DataGridRow>((bondItem) {
         return DataGridRow(cells: [
-          DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: bondItem.accountName),
+          DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: bondItem.account.name),
           DataGridCell<double>(
             columnName: AppConstants.rowBondDebitAmount,
             value: bondItem.bondItemType == BondItemType.debtor ? bondItem.amount : 0.0,

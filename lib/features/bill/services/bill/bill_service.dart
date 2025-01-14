@@ -14,7 +14,8 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/i_controllers/pdf_base.dart';
+import '../../../../core/helper/mixin/bills_entry_bonds_generator.dart';
+import '../../../../core/helper/mixin/pdf_base.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
@@ -27,13 +28,13 @@ import '../../data/models/invoice_record_model.dart';
 import 'bill_entry_bond_creating_service.dart';
 import 'bill_pdf_generator.dart';
 
-class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
+class BillService with PdfBase, BillEntryBondService, FloatingLauncher, BillsEntryBondsGenerator {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
   BillService(this.plutoController, this.billController);
 
-  EntryBondController get bondController => read<EntryBondController>();
+  EntryBondController get entryBondController => read<EntryBondController>();
 
   BillModel? createBillModel({
     BillModel? billModel,
@@ -70,7 +71,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
   }) {
     if (!hasModelId(billModel.billId)) return;
 
-    final entryBondModel = createEntryBondModel(
+    final entryBondModel = createEntryBond(
       isSimulatedVat: true,
       originType: EntryBondType.bill,
       billModel: billModel,
@@ -99,7 +100,7 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
 
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
 
-    bondController.deleteEntryBondModel(entryId: billModel.billId!);
+    entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
   }
 
   Future<void> handleUpdateBillStatusSuccess({
@@ -112,8 +113,8 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
 
     if (updatedBillModel.status == Status.approved &&
         updatedBillModel.billTypeModel.billPatternType!.hasCashesAccount) {
-      bondController.saveEntryBondModel(
-        entryBondModel: createEntryBondModel(
+      entryBondController.saveEntryBondModel(
+        entryBondModel: createEntryBond(
           isSimulatedVat: false,
           originType: EntryBondType.bill,
           billModel: updatedBillModel,
@@ -148,8 +149,8 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
     );
 
     if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      bondController.saveEntryBondModel(
-        entryBondModel: createEntryBondModel(
+      entryBondController.saveEntryBondModel(
+        entryBondModel: createEntryBond(
           isSimulatedVat: false,
           originType: EntryBondType.bill,
           billModel: billModel,
@@ -173,5 +174,13 @@ class BillService with PdfBase, BillEntryBondCreatingService, FloatingLauncher {
         log('E-Invoice dialog closed.');
       },
     );
+  }
+
+  generateEntryBondsFromAllBills({required List<BillModel> bills}) {
+    final entryBonds = generateEntryBonds(bills);
+
+    for (final entryBond in entryBonds) {
+      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
+    }
   }
 }

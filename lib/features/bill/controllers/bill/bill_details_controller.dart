@@ -66,13 +66,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   BillType billType = BillType.sales;
   bool isLoading = true;
 
-  Map<Account, AccountModel> selectedAdditionsDiscountAccounts = {};
-
   RxBool isBillSaved = false.obs;
-
-  @override
-  updateSelectedAdditionsDiscountAccounts(Account key, AccountModel value) =>
-      selectedAdditionsDiscountAccounts[key] = value;
 
   @override
   Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
@@ -237,7 +231,11 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     }
 
     final updatedBillTypeModel = _accountHandler.updateBillTypeAccounts(
-            billTypeModel, selectedAdditionsDiscountAccounts, selectedCustomerAccount, selectedStore.value) ??
+          billTypeModel,
+          billDetailsPlutoController.generateDiscountsAndAdditions,
+          selectedCustomerAccount,
+          selectedStore.value,
+        ) ??
         billTypeModel;
 
     // Create and return the bill model
@@ -280,7 +278,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     setBillDate = bill.billDetails.billDate!;
 
-    noteController.text=bill.billDetails.note??'';
+    noteController.text = bill.billDetails.note ?? '';
 
     initBillNumberController(bill.billDetails.billNumber);
 

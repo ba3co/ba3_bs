@@ -42,9 +42,9 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
         value: value,
         dateFilter: dateFilter);
 
-    final users = data.map((item) => BillModel.fromJson(item)).toList();
+    final bills = data.map((item) => BillModel.fromJson(item)).toList();
 
-    return users;
+    return bills;
   }
 
   @override

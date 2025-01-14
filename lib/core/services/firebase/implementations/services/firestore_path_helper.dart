@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
 import '../../../../../features/patterns/data/models/bill_type_model.dart';
 
@@ -15,6 +16,9 @@ mixin FirestorePathHelper<ItemTypeModel> {
     if (typeModel is ChequesType) {
       return typeModel.typeGuide;
     }
+    if (typeModel is AccountEntity) {
+      return typeModel.id;
+    }
 
     throw ArgumentError('Unsupported typeModel for getRootDocumentId.');
   }
@@ -30,6 +34,9 @@ mixin FirestorePathHelper<ItemTypeModel> {
     }
     if (typeModel is ChequesType) {
       return typeModel.label;
+    }
+    if (typeModel is AccountEntity) {
+      return typeModel.name;
     }
     throw ArgumentError('Unsupported typeModel for getSubcollectionPath.');
   }

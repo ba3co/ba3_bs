@@ -1,9 +1,8 @@
+import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
-import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 /// Represents a bond entry with associated details and items.
@@ -55,10 +54,7 @@ class EntryBondItemModel implements PlutoAdaptable {
   final double? amount;
 
   /// The account related to this bond item.
-  final String? accountId;
-
-  /// The account related to this bond item.
-  final String? accountName;
+  final AccountEntity account;
 
   /// Additional notes or comments for this bond item.
   final String? note;
@@ -71,11 +67,10 @@ class EntryBondItemModel implements PlutoAdaptable {
   EntryBondItemModel({
     this.bondItemType,
     this.amount,
-    this.accountId,
-    this.accountName,
     this.note,
     this.originId,
     this.date,
+    required this.account,
   });
 
   /// Creates an instance from a JSON object.
@@ -83,11 +78,10 @@ class EntryBondItemModel implements PlutoAdaptable {
     return EntryBondItemModel(
       bondItemType: BondItemType.byLabel(json['bondItemType']),
       amount: (json['amount'] as num?)?.toDouble(),
-      accountId: json['accountId'] as String?,
-      accountName: json['accountName'] as String?,
       note: json['note'] as String?,
-      originId: json['originId'] as String?,
+      originId: json['docId'] as String?,
       date: json['date'] as String?,
+      account: AccountEntity.fromJson(json['account']),
     );
   }
 
@@ -96,38 +90,34 @@ class EntryBondItemModel implements PlutoAdaptable {
     return {
       'bondItemType': bondItemType?.label,
       'amount': amount,
-      'accountId': accountId,
-      'accountName': accountName,
       'note': note,
-      'originId': originId,
+      'docId': originId,
       'date': date,
+      'account': account.toJson(),
     };
   }
 
   /// Creates a new instance with modified fields.
   EntryBondItemModel copyWith({
-    BondItemType? bondItemType,
-    double? amount,
-    String? accountId,
-    String? accountName,
-    String? note,
-    String? originId,
-    String? date,
+    final BondItemType? bondItemType,
+    final double? amount,
+    final String? note,
+    final String? originId,
+    final String? date,
+    final AccountEntity? account,
   }) {
     return EntryBondItemModel(
       bondItemType: bondItemType ?? this.bondItemType,
       amount: amount ?? this.amount,
-      accountId: accountId ?? this.accountId,
-      accountName: accountName ?? this.accountName,
       note: note ?? this.note,
       originId: originId ?? this.originId,
       date: date ?? this.date,
+      account: account ?? this.account,
     );
   }
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
-    final accountsController = read<AccountsController>();
     return {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
       createAutoIdColumn(): '',
@@ -147,8 +137,7 @@ class EntryBondItemModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()):
-          accountsController.getAccountNameById(accountId),
+      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()): account.name ?? '',
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
     };

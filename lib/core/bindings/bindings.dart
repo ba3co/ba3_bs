@@ -183,7 +183,8 @@ class AppBindings extends Bindings {
       rolesRepo: RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService)),
       usersRepo: FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService)),
       entryBondsRepo: RemoteDataSourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
-      accountsStatementsRepo: AccountsStatementsRepository(AccountsStatementsDatasource()),
+      accountsStatementsRepo:
+          CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
       billImportExportRepo: ImportExportRepository(billImportService, billExportService),
       chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
       userTimeRepo: UserTimeRepository(),
@@ -250,7 +251,7 @@ class _Repositories {
   final RemoteDataSourceRepository<RoleModel> rolesRepo;
   final FilterableDataSourceRepository<UserModel> usersRepo;
   final RemoteDataSourceRepository<EntryBondModel> entryBondsRepo;
-  final AccountsStatementsRepository accountsStatementsRepo;
+  final CompoundDatasourceRepository<EntryBondItemModel, AccountEntity> accountsStatementsRepo;
   final ImportExportRepository<BillModel> billImportExportRepo;
   final ImportExportRepository<BondModel> bondImportExportRepo;
   final ImportExportRepository<MaterialModel> materialImportExportRepo;

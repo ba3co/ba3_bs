@@ -11,23 +11,25 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-mixin BillEntryBondCreatingService {
-  EntryBondModel createEntryBondModel({
+mixin BillEntryBondService {
+  EntryBondModel createEntryBond({
     required EntryBondType originType,
     required BillModel billModel,
     required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
     required bool isSimulatedVat,
-  }) {
-    return EntryBondModel(
-      origin: EntryBondOrigin(
-        originId: billModel.billId,
-        originType: originType,
-        originTypeId: billModel.billTypeModel.billTypeId,
-      ),
-      items: generateBondItems(
-          billModel: billModel, discountsAndAdditions: discountsAndAdditions, isSimulatedVat: isSimulatedVat),
-    );
-  }
+  }) =>
+      EntryBondModel(
+        origin: EntryBondOrigin(
+          originId: billModel.billId,
+          originType: originType,
+          originTypeId: billModel.billTypeModel.billTypeId,
+        ),
+        items: generateBondItems(
+          billModel: billModel,
+          discountsAndAdditions: discountsAndAdditions,
+          isSimulatedVat: isSimulatedVat,
+        ),
+      );
 
   List<EntryBondItemModel> generateBondItems({
     required BillModel billModel,
@@ -70,38 +72,37 @@ mixin BillEntryBondCreatingService {
     required String date,
     required bool isSales,
     required bool isSimulatedVat,
-  }) {
-    return billItems.expand((item) {
-      return [
-        if (accounts.containsKey(BillAccounts.materials) && item.itemQuantity > 0)
-          _createMaterialBond(
-            billId: billId,
-            materialAccount: accounts[BillAccounts.materials]!,
-            total: item.itemSubTotalPrice! * item.itemQuantity,
-            quantity: item.itemQuantity,
-            name: item.itemName!,
-            date: date,
-            isSales: isSales,
-          ),
-        if (item.itemQuantity > 0)
-          ..._generateCustomerBonds(
-              billId: billId,
-              customerAccount: customerAccount,
-              item: item,
-              date: date,
-              isSales: isSales,
-              isSimulatedVat: isSimulatedVat),
-        ..._createOptionalBonds(
-          billId: billId,
-          accounts: accounts,
-          item: item,
-          date: date,
-          isSales: isSales,
-          isSimulatedVat: isSimulatedVat,
-        ),
-      ];
-    }).toList();
-  }
+  }) =>
+      billItems
+          .expand((item) => [
+                if (accounts.containsKey(BillAccounts.materials) && item.itemQuantity > 0)
+                  _createMaterialBond(
+                    billId: billId,
+                    materialAccount: accounts[BillAccounts.materials]!,
+                    total: item.itemSubTotalPrice! * item.itemQuantity,
+                    quantity: item.itemQuantity,
+                    name: item.itemName!,
+                    date: date,
+                    isSales: isSales,
+                  ),
+                if (item.itemQuantity > 0)
+                  ..._generateCustomerBonds(
+                      billId: billId,
+                      customerAccount: customerAccount,
+                      item: item,
+                      date: date,
+                      isSales: isSales,
+                      isSimulatedVat: isSimulatedVat),
+                ..._createOptionalBonds(
+                  billId: billId,
+                  accounts: accounts,
+                  item: item,
+                  date: date,
+                  isSales: isSales,
+                  isSimulatedVat: isSimulatedVat,
+                ),
+              ])
+          .toList();
 
   List<EntryBondItemModel> _createOptionalBonds({
     required String billId,
@@ -350,8 +351,10 @@ mixin BillEntryBondCreatingService {
       EntryBondItemModel(
         bondItemType: bondType,
         amount: amount,
-        accountId: accountId,
-        accountName: accountName,
+        account: AccountEntity(
+          id: accountId!,
+          name: accountName!,
+        ),
         note: note,
         originId: billId,
         date: date,
