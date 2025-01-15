@@ -8,7 +8,6 @@ import 'package:ba3_bs/core/services/json_file_operations/implementations/import
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
-import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_entry_bond_creating_service.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -126,19 +125,15 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
         (fetchedBills) {
           log("fetchedBills length ${fetchedBills.length}");
           getBillsByTypeRequestState.value = RequestState.success;
-          bills.assignAll(fetchedBills);
-
-          // debugPrint("${fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first.toJson()}");
-
-          BillModel aa = fetchedBills
+          bills.assignAll(fetchedBills
               .where(
-                (element) => element.billId == 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
+                (element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
               )
-              .first;
-          _billsFirebaseRepo.save(
-            aa.copyWith(items: BillItems(itemList: aa.items.itemList.sublist(0, 3000))),
-          );
-          // _billsFirebaseRepo.saveAllNested(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).toList(),billsTypes);
+              .toList());
+          //error bill id
+          //'b44c994f-9fd1-4305-ada2-8a27fb676d68'
+          _allBillsService.generateEntryBondsFromAllBills(bills: bills);
+          _billsFirebaseRepo.saveAllNested(bills, billsTypes);
         },
       );
     }
@@ -148,8 +143,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -257,8 +252,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);

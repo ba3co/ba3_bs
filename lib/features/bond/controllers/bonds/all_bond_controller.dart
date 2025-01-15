@@ -75,7 +75,7 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           log('bonds.length ${bonds.length}');
           bonds.assignAll(fetchedBonds);
           _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
-          // _allBondsService.generateEntryBondsFromAllBonds(bonds: bonds);
+          _allBondsService.generateEntryBondsFromAllBonds(bonds: bonds);
         },
       );
     }
