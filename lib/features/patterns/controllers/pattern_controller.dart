@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -138,6 +140,8 @@ class PatternController extends GetxController with AppNavigator {
 
     final billTypeModel = _createBillTypeModel();
 
+
+
     final result = await _repository.save(billTypeModel);
 
     result.fold(
@@ -152,6 +156,9 @@ class PatternController extends GetxController with AppNavigator {
     accounts[BillAccounts.store] = patternFormHandler.selectedStore.value.toStoreAccountModel;
 
     final selectedBillTypeModel = patternFormHandler.selectedBillTypeModel;
+
+
+    log(accounts.toString());
 
     if (selectedBillTypeModel != null) {
       return selectedBillTypeModel.copyWith(

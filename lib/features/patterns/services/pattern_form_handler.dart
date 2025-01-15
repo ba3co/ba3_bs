@@ -51,8 +51,12 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
 
   Map<Account, AccountModel> selectedAccounts = {};
 
-  set setSelectedAccounts(Map<Account, AccountModel>? accounts) {
+  setSelectedAccounts(Map<Account, AccountModel>? accounts) {
     selectedAccounts = accounts ?? {};
+  }
+
+  addToSelectedAccounts({required Account key,required AccountModel value}) {
+    selectedAccounts[key] = value;
   }
 
   void populateBillTypeAccounts(BillTypeModel billType) {
@@ -60,7 +64,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
     initializeControllerToBillAccountsMap();
 
     // Set the selected accounts in the accounts controller
-    setSelectedAccounts = billType.accounts;
+    setSelectedAccounts(billType.accounts);
 
     final accounts = billType.accounts;
 
@@ -97,7 +101,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
       // Initialize the controller-to-bill-accounts map
       initializeControllerToBillAccountsMap();
 
-     setSelectedAccounts = {};
+      setSelectedAccounts({});
 
       // Reset the selected bill type
       selectedBillPatternType = null;

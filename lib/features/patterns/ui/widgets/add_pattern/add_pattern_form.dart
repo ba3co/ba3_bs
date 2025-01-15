@@ -56,7 +56,7 @@ class AddPatternForm extends StatelessWidget {
                 );
                 if (accountModel != null) {
                   patternController.patternFormHandler.materialsController.text = (accountModel.accName!);
-                  patternController.patternFormHandler.setSelectedAccounts = {BillAccounts.materials: accountModel};
+                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.materials,value:accountModel  ) ;
                 }
               },
               textEditingController: patternController.patternFormHandler.materialsController,
@@ -71,7 +71,7 @@ class AddPatternForm extends StatelessWidget {
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.setSelectedAccounts = {BillAccounts.discounts: accountModel};
+                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.discounts,value:accountModel  );
 
                   patternController.patternFormHandler.discountsController.text = (accountModel.accName!);
                 }
@@ -88,7 +88,7 @@ class AddPatternForm extends StatelessWidget {
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.setSelectedAccounts = {BillAccounts.additions: accountModel};
+                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.additions,value:accountModel  ) ;
 
                   patternController.patternFormHandler.additionsController.text = (accountModel.accName!);
                 }
@@ -105,7 +105,7 @@ class AddPatternForm extends StatelessWidget {
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.setSelectedAccounts = {BillAccounts.caches: accountModel};
+                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.caches,value:accountModel  )  ;
 
                   patternController.patternFormHandler.cachesController.text = (accountModel.accName!);
                 }
@@ -122,7 +122,7 @@ class AddPatternForm extends StatelessWidget {
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.setSelectedAccounts = {BillAccounts.gifts: accountModel};
+                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.materials,value:accountModel  );
 
                   patternController.patternFormHandler.giftsController.text = (accountModel.accName!);
                 }
@@ -138,7 +138,7 @@ class AddPatternForm extends StatelessWidget {
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.setSelectedAccounts = {BillAccounts.exchangeForGifts: accountModel};
+                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.exchangeForGifts,value:accountModel  ) ;
 
                   patternController.patternFormHandler.exchangeForGiftsController.text = (accountModel.accName!);
                 }

@@ -1,8 +1,6 @@
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
-import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
@@ -16,7 +14,6 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
 
   @override
   List<ChequesModel> fromImportXml(XmlDocument document) {
-    DateFormat dateFormat = DateFormat('yyyy-M-d');
 
     final chequesElements = document.findAllElements('H');
     return chequesElements.map((element) {

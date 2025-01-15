@@ -116,6 +116,7 @@ class AccountsController extends GetxController with AppNavigator {
     if (accountId != null) selectedAccount = getAccountModelById(accountId);
 
     accountFromHandler.init(accountModel: selectedAccount);
+
     to(AppRoutes.addAccountScreen);
   }
 
@@ -236,14 +237,13 @@ class AccountsController extends GetxController with AppNavigator {
       AppUIUtils.onFailure('');
       return;
     }
-    log(updatedAccountModel.toJson().toString());
-    /* // Save changes and handle results
+    // Save changes and handle results
     final result = await _accountsFirebaseRepo.save(updatedAccountModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) => AppUIUtils.onSuccess('تم اضافة الحساب بنجاح'),
-    );*/
+    );
 
     update();
   }
@@ -253,7 +253,9 @@ class AccountsController extends GetxController with AppNavigator {
       final result = await _accountsFirebaseRepo.delete(selectedAccount!.id!);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (_) {},
+        (_) {
+          AppUIUtils.onSuccess("تم حذف الحساب بنجاح");
+        },
       );
     }
   }
