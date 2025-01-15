@@ -127,7 +127,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
           bills.assignAll(fetchedBills.where(
             (element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
           ));
-          // _allBillsService.generateEntryBondsFromAllBills(bills: bills);
           // debugPrint("${fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first.toJson()}");
           /*     BillModel aa = fetchedBills
               .where(

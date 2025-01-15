@@ -31,7 +31,8 @@ class BillImport extends ImportServiceBase<BillModel> {
           'BillNumber': billElement.findElements('B').single.findElements('BillNumber').single.text,
           'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           // 'BillCustPtr': customerId,
-          'BillCustName': billElement.findElements('B').single.findElements('BillCustName').single.text,
+          'BillCustName':
+              read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,

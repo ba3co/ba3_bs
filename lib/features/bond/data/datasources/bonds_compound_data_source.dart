@@ -145,14 +145,50 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
 
   @override
   Future<Map<BondType, List<BondModel>>> saveAllNested(
-      {required List<BondType> itemTypes, required List<BondModel> items}) {
-    // TODO: implement saveAllNested
-    throw UnimplementedError();
+      {required List<BondType> itemTypes, required List<BondModel> items}) async{
+    final bondsByType = <BondType, List<BondModel>>{};
+
+    final List<Future<void>> fetchTasks = [];
+    // Create tasks to fetch all bills for each type
+
+    for (final bondType in itemTypes) {
+      fetchTasks.add(
+        saveAll(
+            itemTypeModel: bondType,
+            items: items
+                .where(
+                  (bond) => bond.payTypeGuid == bondType.typeGuide,
+            )
+                .toList())
+            .then((result) {
+          bondsByType[bondType] = result;
+        }),
+      );
+    }
+
+    // Wait for all tasks to complete
+    await Future.wait(fetchTasks);
+
+    return bondsByType;
   }
 
   @override
-  Future<List<BondModel>> saveAll({required List<BondModel> items, required BondType itemTypeModel}) {
-    // TODO: implement saveAll
-    throw UnimplementedError();
+  Future<List<BondModel>> saveAll({required List<BondModel> items, required BondType itemTypeModel}) async{
+    final rootDocumentId = getRootDocumentId(itemTypeModel);
+    final subCollectionPath = getSubCollectionPath(itemTypeModel);
+
+    final savedData = await compoundDatabaseService.saveAll(
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: rootDocumentId,
+      subCollectionPath: subCollectionPath,
+      items: items.map((item) {
+        return {
+          ...item.toJson(),
+          'docId': item.payGuid,
+        };
+      }).toList(),
+    );
+
+    return savedData.map(BondModel.fromJson).toList();
   }
 }

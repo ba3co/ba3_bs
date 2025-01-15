@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:xml/xml.dart';
 
@@ -24,6 +26,7 @@ class BondImport extends ImportServiceBase<BondModel> {
       // إنشاء قائمة من PayItem
       final payItemList = payItemsNode?.findAllElements('N').map((itemNode) {
         return PayItem(
+          entryAccountName: read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
           entryAccountGuid: itemNode.getElement('EntryAccountGuid')?.text,
           entryDate: itemNode.getElement('EntryDate')?.text,
           entryDebit: double.tryParse(itemNode.getElement('EntryDebit')?.text ?? '0'),
