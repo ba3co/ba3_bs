@@ -100,12 +100,13 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     isLoading = true;
     update();
 
-    log('accountModel ${accountModel.id}');
+    log('accountModel id: ${accountModel.id} - accName: ${accountModel.accName}');
     final result = await _accountsStatementsRepo.getAll(AccountEntity.fromAccountModel(accountModel));
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedItems) {
         entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
+        log('fetchedItems ${fetchedItems.length}');
         filterByDate();
 
         _calculateValues(filteredEntryBondItems);
@@ -117,7 +118,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   void filterByDate() {
-    final DateFormat dateFormat = DateFormat('dd-MM-yyyy'); // Match your date format
+    final DateFormat dateFormat = DateFormat('yyyy-MM-dd'); // Format for start and end dates
 
     final DateTime startDate = dateFormat.parse(startDateController.text);
     final DateTime endDate = dateFormat.parse(endDateController.text);
@@ -130,13 +131,15 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       try {
         entryBondItemDate = dateFormat.parse(entryBondItemDateStr);
       } catch (e) {
-        log('e $e ');
+        log('Error parsing item.date: $entryBondItemDateStr. Error: $e');
         return false; // Skip invalid date formats
       }
 
       return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
           entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
+
+    log('Filtered items count: ${filteredEntryBondItems.length}');
   }
 
   /// Navigation handler

@@ -15,3 +15,12 @@ class BillsEntryBondsGenerator with BillEntryBondService {
       )
       .toList();
 }
+
+// abstract class EntryBondCreator<T> {
+//   EntryBondModel createEntryBond({
+//     required EntryBondType originType,
+//     required T model, // Accepts different models
+//     Map<Account, List<DiscountAdditionAccountModel>>? discountsAndAdditions,
+//     bool? isSimulatedVat,
+//   });
+// }
