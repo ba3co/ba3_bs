@@ -3,7 +3,9 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
-class AccountsDatasource extends BulkSavableDatasource<AccountModel> {
+import '../../../../../core/services/firebase/implementations/services/firebase_sequential_number_database.dart';
+
+class AccountsDatasource extends BulkSavableDatasource<AccountModel> with FirebaseSequentialNumberDatabase{
   AccountsDatasource({required super.databaseService});
 
   @override
@@ -31,9 +33,17 @@ class AccountsDatasource extends BulkSavableDatasource<AccountModel> {
 
   @override
   Future<AccountModel> save(AccountModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
 
-    return AccountModel.fromJson(data);
+    final updatedItem = item.id == null ? await _assignAccountNumber(item) : item;
+
+    final savedData = await databaseService.add(path: path, documentId: updatedItem.id, data: updatedItem.toJson());
+
+    return item.id == null ? AccountModel.fromJson(savedData) : updatedItem;
+  }
+
+  Future<AccountModel> _assignAccountNumber(AccountModel item) async {
+    final newBillNumber = await getNextNumber(path, "account");
+    return item.copyWith(accNumber: newBillNumber);
   }
 
   @override
