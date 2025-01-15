@@ -24,10 +24,13 @@ mixin BillEntryBondService {
           originType: originType,
           originTypeId: billModel.billTypeModel.billTypeId,
         ),
-        items: generateBondItems(
-          billModel: billModel,
-          discountsAndAdditions: discountsAndAdditions,
-          isSimulatedVat: isSimulatedVat,
+        items: EntryBondItems(
+          id: billModel.billId!,
+          itemList: generateBondItems(
+            billModel: billModel,
+            discountsAndAdditions: discountsAndAdditions,
+            isSimulatedVat: isSimulatedVat,
+          ),
         ),
       );
 

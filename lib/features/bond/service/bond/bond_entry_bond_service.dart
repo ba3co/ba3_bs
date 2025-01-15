@@ -16,8 +16,9 @@ mixin BondEntryBondService {
           originType: originType,
           originTypeId: bondModel.payTypeGuid,
         ),
-        items: generateBondItems(
-          bondModel: bondModel,
+        items: EntryBondItems(
+          id: bondModel.payGuid!,
+          itemList: generateBondItems(bondModel: bondModel),
         ),
       );
 

@@ -6,7 +6,7 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import '../../../../../core/models/query_filter.dart';
 import '../../../../bond/data/models/entry_bond_model.dart';
 
-class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemModel, AccountEntity> {
+class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems, AccountEntity> {
   AccountsStatementsDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bills", "bonds")
@@ -14,7 +14,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
   String get rootCollectionPath => ApiConstants.accountsStatements; // Collection name in Firestore
 
   @override
-  Future<List<EntryBondItemModel>> fetchAll({required AccountEntity itemTypeModel}) async {
+  Future<List<EntryBondItems>> fetchAll({required AccountEntity itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subcollectionPath = getSubCollectionPath(itemTypeModel);
 
@@ -24,17 +24,14 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
       subCollectionPath: subcollectionPath,
     );
 
-    // Flatten and map data['items'] into a single list of EntryBondItemModel
-    final entryBondItems = dataList
-        .expand((data) =>
-            (data['items'] as List<dynamic>).map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>)))
-        .toList();
+    // Flatten and map data['items'] into a single list of EntryBondItems
+    final entryBondItems = dataList.map((item) => EntryBondItems.fromJson(item)).toList();
 
     return entryBondItems;
   }
 
   @override
-  Future<List<EntryBondItemModel>> fetchWhere<V>({
+  Future<List<EntryBondItems>> fetchWhere<V>({
     required AccountEntity itemTypeModel,
     required String field,
     required V value,
@@ -49,17 +46,14 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
       dateFilter: dateFilter,
     );
 
-    // Flatten and map data['items'] into a single list of EntryBondItemModel
-    final entryBondItems = dataList
-        .expand((data) =>
-            (data['items'] as List<dynamic>).map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>)))
-        .toList();
+    // Flatten and map data['items'] into a single list of EntryBondItems
+    final entryBondItems = dataList.map((item) => EntryBondItems.fromJson(item)).toList();
 
     return entryBondItems;
   }
 
   @override
-  Future<EntryBondItemModel> fetchById({required String id, required AccountEntity itemTypeModel}) async {
+  Future<EntryBondItems> fetchById({required String id, required AccountEntity itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subcollectionPath = getSubCollectionPath(itemTypeModel);
 
@@ -70,36 +64,40 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
       subDocumentId: id,
     );
 
-    return EntryBondItemModel.fromJson(data['items']);
+    return EntryBondItems.fromJson(data);
   }
 
   @override
-  Future<void> delete({required EntryBondItemModel item}) async {
-    final rootDocumentId = getRootDocumentId(item.account);
-    final subcollectionPath = getSubCollectionPath(item.account);
+  Future<void> delete({required EntryBondItems item}) async {
+    final account = item.itemList.first.account;
+
+    final rootDocumentId = getRootDocumentId(account);
+    final subcollectionPath = getSubCollectionPath(account);
 
     await compoundDatabaseService.delete(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subcollectionPath,
-      subDocumentId: item.originId,
+      subDocumentId: item.id,
     );
   }
 
   @override
-  Future<EntryBondItemModel> save({required EntryBondItemModel item}) async {
-    final rootDocumentId = getRootDocumentId(item.account);
-    final subCollectionPath = getSubCollectionPath(item.account);
+  Future<EntryBondItems> save({required EntryBondItems item}) async {
+    final account = item.itemList.first.account;
+
+    final rootDocumentId = getRootDocumentId(account);
+    final subCollectionPath = getSubCollectionPath(account);
 
     final savedData = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
-      subDocumentId: item.originId,
-      data: item.toJson(),
+      subDocumentId: item.id,
+      data: {'items': item.itemList.map((item) => item.toJson()).toList()},
     );
 
-    return EntryBondItemModel.fromJson(savedData);
+    return EntryBondItems.fromJson(savedData);
   }
 
   @override
@@ -118,8 +116,8 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
   }
 
   @override
-  Future<Map<AccountEntity, List<EntryBondItemModel>>> fetchAllNested({required List<AccountEntity> itemTypes}) async {
-    final billsByType = <AccountEntity, List<EntryBondItemModel>>{};
+  Future<Map<AccountEntity, List<EntryBondItems>>> fetchAllNested({required List<AccountEntity> itemTypes}) async {
+    final billsByType = <AccountEntity, List<EntryBondItems>>{};
 
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
@@ -138,9 +136,9 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
   }
 
   @override
-  Future<Map<AccountEntity, List<EntryBondItemModel>>> saveAllNested(
-      {required List<AccountEntity> itemTypes, required List<EntryBondItemModel> items}) async {
-    final billsByType = <AccountEntity, List<EntryBondItemModel>>{};
+  Future<Map<AccountEntity, List<EntryBondItems>>> saveAllNested(
+      {required List<AccountEntity> itemTypes, required List<EntryBondItems> items}) async {
+    final billsByType = <AccountEntity, List<EntryBondItems>>{};
 
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
@@ -151,7 +149,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
                 itemTypeModel: accountEntity,
                 items: items
                     .where(
-                      (element) => element.account.id == accountEntity.id,
+                      (element) => element.itemList.first.account.id == accountEntity.id,
                     )
                     .toList())
             .then((result) {
@@ -167,20 +165,24 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
   }
 
   @override
-  Future<List<EntryBondItemModel>> saveAll(
-      {required List<EntryBondItemModel> items, required AccountEntity itemTypeModel}) async {
+  Future<List<EntryBondItems>> saveAll(
+      {required List<EntryBondItems> items, required AccountEntity itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 
-    final savedData = await compoundDatabaseService.add(
+    final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
-      subDocumentId: items.first.originId,
-      data: {'items': items.map((item) => item.toJson()).toList()},
+      items: items.map((item) {
+        return {
+          ...item.toJson(),
+          'docId': item.id,
+        };
+      }).toList(),
     );
 
-    return [EntryBondItemModel.fromJson(savedData)];
+    return savedData.map(EntryBondItems.fromJson).toList();
   }
 }
 
@@ -207,21 +209,21 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
 //   }
 //
 //   /// Fetch all bond entries under a specific account
-//   Future<List<EntryBondItemModel>> fetchAll(String accountId) async {
+//   Future<List<EntryBondItems>> fetchAll(String accountId) async {
 //     try {
 //       final bondsCollection = _accountsStatementsCollection.doc(accountId).collection(ApiConstants.entryBondsItems);
 //       final bondSnapshots = await bondsCollection.get();
 //
 //       if (bondSnapshots.docs.isEmpty) return [];
 //
-//       final List<EntryBondItemModel> entryBondItems = [];
+//       final List<EntryBondItems> entryBondItems = [];
 //       for (final doc in bondSnapshots.docs) {
 //         final data = doc.data() as Map<String, dynamic>?;
 //
 //         final itemsData = data?['items'] as List<dynamic>? ?? [];
 //
 //         final items = itemsData.map((item) {
-//           return EntryBondItemModel.fromJson(item as Map<String, dynamic>);
+//           return EntryBondItems.fromJson(item as Map<String, dynamic>);
 //         }).toList();
 //
 //         entryBondItems.addAll(items);
@@ -233,7 +235,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
 //   }
 //
 //   /// Fetch a specific bond entry items under a specific account by origin id created from it
-//   Future<List<EntryBondItemModel>?> fetchById(String accountId, String bondId) async {
+//   Future<List<EntryBondItems>?> fetchById(String accountId, String bondId) async {
 //     try {
 //       final docRef = _accountsStatementsCollection.doc(accountId).collection(ApiConstants.entryBondsItems).doc(bondId);
 //       final docSnapshot = await docRef.get();
@@ -244,7 +246,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
 //
 //       final itemsData = data?['items'] as List<dynamic>? ?? [];
 //       final items = itemsData.map((item) {
-//         return EntryBondItemModel.fromJson(item as Map<String, dynamic>);
+//         return EntryBondItems.fromJson(item as Map<String, dynamic>);
 //       }).toList();
 //
 //       return items;
@@ -299,7 +301,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
 //
 //   AccountsStatementsRepository(this._dataSource);
 //
-//   Future<Either<Failure, List<EntryBondItemModel>>> getAllBonds(String accountId) async {
+//   Future<Either<Failure, List<EntryBondItems>>> getAllBonds(String accountId) async {
 //     try {
 //       final data = await _dataSource.fetchAll(accountId);
 //
@@ -310,7 +312,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItemM
 //     }
 //   }
 //
-//   Future<Either<Failure, List<EntryBondItemModel>?>> getBondById(String accountId, String bondId) async {
+//   Future<Either<Failure, List<EntryBondItems>?>> getBondById(String accountId, String bondId) async {
 //     try {
 //       final data = await _dataSource.fetchById(accountId, bondId);
 //

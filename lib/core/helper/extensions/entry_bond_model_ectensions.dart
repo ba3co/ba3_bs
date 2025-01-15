@@ -7,7 +7,7 @@ import '../enums/enums.dart';
 extension EntryBondModelExtension on EntryBondModel {
   // Build DataGrid rows based on bond model
   List<DataGridRow> get bondDataGridRows =>
-      items?.map<DataGridRow>((bondItem) {
+      items?.itemList.map<DataGridRow>((bondItem) {
         return DataGridRow(cells: [
           DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: bondItem.account.name),
           DataGridCell<double>(
