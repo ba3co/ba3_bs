@@ -34,8 +34,8 @@ mixin BondEntryBondService {
         date: bondModel.payDate ?? date,
         note: note,
         account: AccountEntity(
-          id: element.entryAccountName!,
-          name: element.entryAccountGuid!,
+          id:  element.entryAccountGuid!,
+          name:element.entryAccountName!,
         ),
         bondItemType: element.entryCredit! > 0 ? BondItemType.creditor : BondItemType.debtor,
         amount: element.entryCredit! > 0 ? element.entryCredit : element.entryDebit,

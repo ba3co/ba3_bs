@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
@@ -17,8 +19,8 @@ class BillImport extends ImportServiceBase<BillModel> {
     final billsXml = document.findAllElements('Bill');
 
     List<BillModel> bills = billsXml.map((billElement) {
-
-
+      // String customerId =
+      //     read<AccountsController>().getAccountIdByName(billElement.findElements('B').single.findElements('BillCustName').single.text);
       Map<String, dynamic> billJson = {
         'B': {
           'BillTypeGuid': billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
@@ -27,8 +29,10 @@ class BillImport extends ImportServiceBase<BillModel> {
           'BillPayType': billElement.findElements('B').single.findElements('BillPayType').single.text,
           'BillCheckTypeGuid': billElement.findElements('B').single.findElements('BillCheckTypeGuid').single.text,
           'BillNumber': billElement.findElements('B').single.findElements('BillNumber').single.text,
-          'BillCustPtr': billElement.findElements('B').single.findElements('BillCustPtr').single.text,
-          'BillCustName': billElement.findElements('B').single.findElements('BillCustName').single.text,
+          'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
+          // 'BillCustPtr': customerId,
+          'BillCustName':
+              read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
@@ -60,7 +64,6 @@ class BillImport extends ImportServiceBase<BillModel> {
 
       final itemsElement = billElement.findElements('Items').single;
       final itemsJson = itemsElement.findElements('I').map((iElement) {
-
         return {
           'MatPtr': iElement.findElements('MatPtr').single.text,
           'QtyBonus': iElement.findElements('QtyBonus').single.text,

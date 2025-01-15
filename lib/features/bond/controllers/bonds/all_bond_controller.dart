@@ -73,13 +73,11 @@ class AllBondsController extends FloatingBondDetailsLauncher {
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBonds) {
           log('bonds.length ${bonds.length}');
-          log('bonds.lastOrNull ${bonds.firstOrNull?.toJson()}');
-
           bonds.assignAll(fetchedBonds);
+          _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
+          // _allBondsService.generateEntryBondsFromAllBonds(bonds: bonds);
         },
       );
-    } else {
-      // User canceled the picker
     }
 
     isLoading = false;
