@@ -20,7 +20,7 @@ import '../data/models/account_model.dart';
 
 class AccountStatementController extends GetxController with FloatingLauncher, AppNavigator {
   // Dependencies
-  final CompoundDatasourceRepository<EntryBondItemModel, AccountEntity> _accountsStatementsRepo;
+  final CompoundDatasourceRepository<EntryBondItems, AccountEntity> _accountsStatementsRepo;
   final AccountsController _accountsController = read<AccountsController>();
 
   AccountStatementController(this._accountsStatementsRepo);
@@ -100,11 +100,12 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     isLoading = true;
     update();
 
+    log('accountModel ${accountModel.id}');
     final result = await _accountsStatementsRepo.getAll(AccountEntity.fromAccountModel(accountModel));
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedItems) {
-        entryBondItems.assignAll(fetchedItems);
+        entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
         filterByDate();
 
         _calculateValues(filteredEntryBondItems);

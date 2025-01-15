@@ -17,8 +17,9 @@ mixin ChequesBondService {
         originType: originType,
         originTypeId: chequesModel.chequesTypeGuid,
       ),
-      items: generateEntryBondItems(
-        chequesModel: chequesModel,
+      items: EntryBondItems(
+        id: chequesModel.chequesGuid!,
+        itemList: generateEntryBondItems(chequesModel: chequesModel),
       ),
     );
   }
@@ -33,13 +34,16 @@ mixin ChequesBondService {
         originType: originType,
         originTypeId: chequesModel.chequesTypeGuid,
       ),
-      items: _generateNormalEntryBond(
-          chequesModel: chequesModel,
-          note:
-              "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
-          amount: chequesModel.chequesVal!,
-          date: chequesModel.chequesDate ?? _currentDate,
-          originId: chequesModel.chequesGuid!),
+      items: EntryBondItems(
+        id: chequesModel.chequesGuid!,
+        itemList: _generateNormalEntryBond(
+            chequesModel: chequesModel,
+            note:
+                "سند قيد ل${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
+            amount: chequesModel.chequesVal!,
+            date: chequesModel.chequesDate ?? _currentDate,
+            originId: chequesModel.chequesGuid!),
+      ),
     );
   }
 
@@ -53,13 +57,16 @@ mixin ChequesBondService {
         originType: originType,
         originTypeId: chequesModel.chequesTypeGuid,
       ),
-      items: _generatePayEntryBond(
-          chequesModel: chequesModel,
-          note:
-              "سند قيد لدفع ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
-          amount: chequesModel.chequesVal!,
-          date: chequesModel.chequesDate ?? _currentDate,
-          originId: chequesModel.chequesGuid!),
+      items: EntryBondItems(
+        id: chequesModel.chequesGuid!,
+        itemList: _generatePayEntryBond(
+            chequesModel: chequesModel,
+            note:
+                "سند قيد لدفع ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value} رقم :${chequesModel.chequesNumber}",
+            amount: chequesModel.chequesVal!,
+            date: chequesModel.chequesDate ?? _currentDate,
+            originId: chequesModel.chequesGuid!),
+      ),
     );
   }
 
@@ -147,5 +154,4 @@ mixin ChequesBondService {
   }
 
   String get _currentDate => DateTime.now().dayMonthYear;
-
 }

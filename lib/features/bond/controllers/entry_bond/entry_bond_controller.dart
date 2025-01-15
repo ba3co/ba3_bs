@@ -16,7 +16,7 @@ import '../../data/models/entry_bond_model.dart';
 class EntryBondController extends GetxController with FloatingLauncher {
   final RemoteDataSourceRepository<EntryBondModel> _entryBondsFirebaseRepo;
 
-  final CompoundDatasourceRepository<EntryBondItemModel, AccountEntity> _accountsStatementsFirebaseRepo;
+  final CompoundDatasourceRepository<EntryBondItems, AccountEntity> _accountsStatementsFirebaseRepo;
 
   EntryBondController(this._entryBondsFirebaseRepo, this._accountsStatementsFirebaseRepo);
 
@@ -27,13 +27,16 @@ class EntryBondController extends GetxController with FloatingLauncher {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedEntryBondModel) async {
-        if (savedEntryBondModel.items == null || savedEntryBondModel.items!.isEmpty) return;
+        if (savedEntryBondModel.items?.itemList == null || savedEntryBondModel.items!.itemList.isEmpty) return;
 
-        final entryBondItems = savedEntryBondModel.items!;
+        final entryBondItems = savedEntryBondModel.items!.itemList;
         for (final entryBondItem in entryBondItems) {
           final relatedItems = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
 
-          await _accountsStatementsFirebaseRepo.saveAll(relatedItems, entryBondItem.account);
+          await _accountsStatementsFirebaseRepo.save(EntryBondItems(
+            id: entryBondItem.originId!,
+            itemList: relatedItems,
+          ));
         }
       },
     );
@@ -58,11 +61,15 @@ class EntryBondController extends GetxController with FloatingLauncher {
         final List<Future<void>> deletedTasks = [];
         final errors = <String>[]; // Collect error messages.
 
-        final uniqueEntryBondItemsFromBond = getUniqueEntryBondItemsFromBond(entryBondModel);
+        final entryBondItems = entryBondModel.items!.itemList;
 
-        for (final item in uniqueEntryBondItemsFromBond) {
+        for (final entryBondItem in entryBondItems) {
+          final relatedItems = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
+
           deletedTasks.add(
-            _accountsStatementsFirebaseRepo.delete(item).then(
+            _accountsStatementsFirebaseRepo
+                .delete(EntryBondItems(id: entryBondItem.originId!, itemList: relatedItems))
+                .then(
               (deleteResult) {
                 deleteResult.fold(
                   (failure) => errors.add(failure.message), // Collect errors.
@@ -88,20 +95,18 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
-  List<EntryBondItemModel> getUniqueEntryBondItemsFromBond(EntryBondModel entryBondModel) {
-    final uniqueItemsByAccountId = <String, EntryBondItemModel>{};
-
-    // Populate the map with unique items using accountId as the key.
-    for (final item in entryBondModel.items ?? []) {
-      final accountId = item.accountId;
-      if (accountId != null) {
-        uniqueItemsByAccountId.putIfAbsent(accountId, () => item);
-      }
-    }
-
-    // Return the unique items as a list.
-    return uniqueItemsByAccountId.values.toList();
-  }
+  // EntryBondItems getUniqueEntryBondItemsFromBond(EntryBondModel entryBondModel) {
+  //   final uniqueItemsByAccountId = <String, EntryBondItems>{};
+  //
+  //   // Populate the map with unique items using accountId as the key.
+  //   for (final EntryBondItemModel item in entryBondModel.items?.itemList ?? []) {
+  //     final accountId = item.account.id;
+  //     uniqueItemsByAccountId.putIfAbsent(accountId, () => item);
+  //   }
+  //
+  //   // Return the unique items as a list.
+  //   return EntryBondItems(itemList: uniqueItemsByAccountId.values.toList());
+  // }
 
   void openEntryBondOrigin(EntryBondModel entryBondModel, BuildContext context) {
     final origin = entryBondModel.origin;

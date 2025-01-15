@@ -95,7 +95,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
     plutoGridIsLoading = false;
     update();
 
-    _allBillsService.generateEntryBondsFromAllBills(bills: bills);
+    // _allBillsService.generateEntryBondsFromAllBills(bills: bills);
   }
 
   Future<void> fetchAllNestedBills() async {

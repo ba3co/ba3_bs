@@ -251,7 +251,7 @@ class _Repositories {
   final RemoteDataSourceRepository<RoleModel> rolesRepo;
   final FilterableDataSourceRepository<UserModel> usersRepo;
   final RemoteDataSourceRepository<EntryBondModel> entryBondsRepo;
-  final CompoundDatasourceRepository<EntryBondItemModel, AccountEntity> accountsStatementsRepo;
+  final CompoundDatasourceRepository<EntryBondItems, AccountEntity> accountsStatementsRepo;
   final ImportExportRepository<BillModel> billImportExportRepo;
   final ImportExportRepository<BondModel> bondImportExportRepo;
   final ImportExportRepository<MaterialModel> materialImportExportRepo;
