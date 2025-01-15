@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,13 @@ class BillLayout extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+         appBar: AppBar(
+           actions: [
+             Padding(padding: EdgeInsets.all(8),
+             child: AppButton(title: "تحميل الفواتيير", onPressed:() => read<AllBillsController>().fetchAllBillsFromLocal(),),
+             )
+           ],
+         ),
         body: Obx(
           () => Stack(
             children: [

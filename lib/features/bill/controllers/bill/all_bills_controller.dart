@@ -94,8 +94,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
     plutoGridIsLoading = false;
     update();
-
-    _allBillsService.generateEntryBondsFromAllBills(bills: bills);
   }
 
   Future<void> fetchAllNestedBills() async {
@@ -126,19 +124,26 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
         (fetchedBills) {
           log("fetchedBills length ${fetchedBills.length}");
           getBillsByTypeRequestState.value = RequestState.success;
-          bills.assignAll(fetchedBills);
-
+          bills.assignAll(fetchedBills.where(
+            (element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
+          ));
+          // _allBillsService.generateEntryBondsFromAllBills(bills: bills);
           // debugPrint("${fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).first.toJson()}");
-
-          BillModel aa = fetchedBills
+          /*     BillModel aa = fetchedBills
               .where(
                 (element) => element.billId == 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
               )
               .first;
           _billsFirebaseRepo.save(
             aa.copyWith(items: BillItems(itemList: aa.items.itemList.sublist(0, 3000))),
-          );
-          // _billsFirebaseRepo.saveAllNested(fetchedBills.where((element) => element.billId=='b44c994f-9fd1-4305-ada2-8a27fb676d68',).toList(),billsTypes);
+          );*/
+          _billsFirebaseRepo.saveAllNested(
+              fetchedBills
+                  .where(
+                    (element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
+                  )
+                  .toList(),
+              billsTypes);
         },
       );
     }
@@ -148,8 +153,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -257,8 +262,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
