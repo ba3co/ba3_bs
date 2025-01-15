@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
@@ -20,26 +19,26 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
 
     final chequesElements = document.findAllElements('H');
     return chequesElements.map((element) {
-
       return ChequesModel(
         chequesTypeGuid: element.findElements('CheckTypeGuid').first.text,
         chequesNumber: int.tryParse(element.findElements('CheckNumber').first.text),
         chequesNum: int.tryParse(element.findElements('CheckNum').first.text),
         chequesGuid: element.findElements('CheckGuid').first.text,
-
         chequesDate: convertDateToYearMonthDay(element.findElements('CheckDate').first.text),
-        chequesDueDate:convertDateToYearMonthDay(element.findElements('CheckDueDate').first.text),
+        chequesDueDate: convertDateToYearMonthDay(element.findElements('CheckDueDate').first.text),
         chequesNote: element.findElements('CheckNote').first.text,
         chequesVal: double.tryParse(element.findElements('CheckVal').first.text),
         chequesAccount2Guid: element.findElements('CheckAccount2Guid').first.text,
         accPtr: element.findElements('AccPtr').first.text,
-        isPayed:false,
+        isPayed: false,
         accPtrName: read<AccountsController>().getAccountNameById(element.findElements('AccPtr').first.text),
-        chequesAccount2Name: read<AccountsController>().getAccountNameById(element.findElements('CheckAccount2Guid').first.text),
+        chequesAccount2Name:
+            read<AccountsController>().getAccountNameById(element.findElements('CheckAccount2Guid').first.text),
       );
     }).toList();
   }
 }
+
 String convertDateToYearMonthDay(String date) {
   // تقسيم النص إلى يوم، شهر، سنة
   List<String> parts = date.split("-");
@@ -50,5 +49,5 @@ String convertDateToYearMonthDay(String date) {
   }
 
   // ترتيب التاريخ إلى سنة-شهر-يوم
-  return "${parts[2]}-${parts[1].padLeft(2,'0')}-${parts[0].padLeft(2,'0')}";
+  return "${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}";
 }

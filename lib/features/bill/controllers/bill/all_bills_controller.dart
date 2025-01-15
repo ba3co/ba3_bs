@@ -8,7 +8,6 @@ import 'package:ba3_bs/core/services/json_file_operations/implementations/import
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
-import 'package:ba3_bs/features/bill/services/bill/bill_entry_bond_creating_service.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:file_picker/file_picker.dart';
@@ -28,7 +27,7 @@ import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, BillEntryBondService {
+class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -132,7 +131,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
               .toList());
           //error bill id
           //'b44c994f-9fd1-4305-ada2-8a27fb676d68'
-          _allBillsService.generateEntryBondsFromAllBills(bills: bills);
+          _allBillsService.saveEntryBondsFromAllBills(bills: bills);
           _billsFirebaseRepo.saveAllNested(bills, billsTypes);
         },
       );
@@ -143,8 +142,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result =
-        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result = await _billsFirebaseRepo.fetchWhere(
+        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -252,7 +251,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) =>
+      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);

@@ -6,7 +6,7 @@ import '../../data/models/bill_model.dart';
 class AllBillsService extends BillsEntryBondsGenerator {
   EntryBondController get entryBondController => read<EntryBondController>();
 
-  generateEntryBondsFromAllBills({required List<BillModel> bills}) {
+  saveEntryBondsFromAllBills({required List<BillModel> bills}) {
     final entryBonds = generateEntryBonds(bills);
 
     for (final entryBond in entryBonds) {

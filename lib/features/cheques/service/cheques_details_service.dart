@@ -15,31 +15,19 @@ import '../controllers/cheques/cheques_search_controller.dart';
 import '../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 
-class ChequesDetailsService with PdfBase, ChequesBondService, FloatingLauncher {
-  ChequesDetailsService();
+class ChequesDetailsService with PdfBase, FloatingLauncher {
+  final ChequesEntryBondStrategyFactory _chequesBondService = ChequesEntryBondStrategyFactory();
 
   void launchChequesEntryBondScreen({
     required BuildContext context,
     required ChequesModel chequesModel,
+    bool isPay = false,
   }) {
-    final entryBondModel = createNormalEntryBondModel(
-      originType: EntryBondType.cheque,
-      chequesModel: chequesModel,
-    );
-    launchFloatingWindow(
-      context: context,
-      minimizedTitle: 'سند خاص ب ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value}',
-      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
-    );
-  }
+    final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel, isPayStrategy: isPay);
 
-  void launchChequesPayEntryBondScreen({
-    required BuildContext context,
-    required ChequesModel chequesModel,
-  }) {
-    final entryBondModel = createPayEntryBondModel(
+    final entryBondModel = strategy.createEntryBond(
       originType: EntryBondType.cheque,
-      chequesModel: chequesModel,
+      model: chequesModel,
     );
     launchFloatingWindow(
       context: context,
@@ -112,18 +100,11 @@ class ChequesDetailsService with PdfBase, ChequesBondService, FloatingLauncher {
       chequesSearchController.updateCheques(chequesModel);
     }
 
-    // generateAndSendPdf(
-    //   fileName: AppStrings.bill,
-    //   itemModel: billModel,
-    //   itemModelId: billModel.billId,
-    //   items: billModel.items.itemList,
-    //   pdfGenerator: BillPdfGenerator(),
-    // );
-
+    final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel);
     entryBondController.saveEntryBondModel(
-      entryBondModel: createEntryBondModel(
+      entryBondModel: strategy.createEntryBond(
         originType: EntryBondType.cheque,
-        chequesModel: chequesModel,
+        model: chequesModel,
       ),
     );
   }
@@ -135,5 +116,4 @@ class ChequesDetailsService with PdfBase, ChequesBondService, FloatingLauncher {
     }
     return true;
   }
-
 }

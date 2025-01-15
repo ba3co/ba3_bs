@@ -82,7 +82,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   void updateCustomerAccount(AccountModel? newAccount) {
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
-      customerAccountController.text=newAccount.accName!;
+      customerAccountController.text = newAccount.accName!;
     }
   }
 
@@ -146,7 +146,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     _billService.launchFloatingEntryBondDetailsScreen(
       context: context,
       billModel: billModel,
-      discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,
     );
   }
 
@@ -157,7 +156,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       (failure) => AppUIUtils.onFailure(failure.message),
       (updatedBillModel) => _billService.handleUpdateBillStatusSuccess(
         updatedBillModel: updatedBillModel,
-        discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,
         billSearchController: billSearchController,
       ),
     );
@@ -209,7 +207,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       (billModel) {
         _billService.handleSaveOrUpdateSuccess(
           billModel: billModel,
-          discountsAndAdditions: billDetailsPlutoController.generateDiscountsAndAdditions,
           billSearchController: billSearchController,
           isSave: existingBillModel == null,
         );

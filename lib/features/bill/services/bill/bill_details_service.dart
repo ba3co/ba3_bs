@@ -15,6 +15,7 @@ import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
+import '../../../../core/services/entry_bond_creator/implementations/entry_bond_creator_factory.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
@@ -22,12 +23,10 @@ import '../../../floating_window/services/overlay_service.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
-import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
-import 'bill_entry_bond_creating_service.dart';
 import 'bill_pdf_generator.dart';
 
-class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
+class BillDetailsService with PdfBase, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -63,18 +62,15 @@ class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
     );
   }
 
-  void launchFloatingEntryBondDetailsScreen({
-    required BuildContext context,
-    required BillModel billModel,
-    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
-  }) {
+  void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
 
-    final entryBondModel = createEntryBond(
+    final creator = EntryBondCreatorFactory.getService(billModel);
+
+    final entryBondModel = creator.createEntryBond(
       isSimulatedVat: true,
       originType: EntryBondType.bill,
-      billModel: billModel,
-      discountsAndAdditions: discountsAndAdditions,
+      model: billModel,
     );
 
     launchFloatingWindow(
@@ -104,7 +100,6 @@ class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
 
   Future<void> handleUpdateBillStatusSuccess({
     required BillModel updatedBillModel,
-    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
     required BillSearchController billSearchController,
   }) async {
     AppUIUtils.onSuccess('تم القبول بنجاح');
@@ -112,12 +107,13 @@ class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
 
     if (updatedBillModel.status == Status.approved &&
         updatedBillModel.billTypeModel.billPatternType!.hasCashesAccount) {
+      final creator = EntryBondCreatorFactory.getService(updatedBillModel);
+
       entryBondController.saveEntryBondModel(
-        entryBondModel: createEntryBond(
+        entryBondModel: creator.createEntryBond(
           isSimulatedVat: false,
           originType: EntryBondType.bill,
-          billModel: updatedBillModel,
-          discountsAndAdditions: discountsAndAdditions,
+          model: updatedBillModel,
         ),
       );
     }
@@ -125,7 +121,6 @@ class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
 
   Future<void> handleSaveOrUpdateSuccess({
     required BillModel billModel,
-    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
     required BillSearchController billSearchController,
     required bool isSave,
   }) async {
@@ -148,12 +143,13 @@ class BillDetailsService with PdfBase, BillEntryBondService, FloatingLauncher {
     );
 
     if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+      final creator = EntryBondCreatorFactory.getService(billModel);
+
       entryBondController.saveEntryBondModel(
-        entryBondModel: createEntryBond(
+        entryBondModel: creator.createEntryBond(
           isSimulatedVat: false,
           originType: EntryBondType.bill,
-          billModel: billModel,
-          discountsAndAdditions: discountsAndAdditions,
+          model: billModel,
         ),
       );
     }

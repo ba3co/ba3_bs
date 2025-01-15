@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +24,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   // Repositories
 
-  final CompoundDatasourceRepository<ChequesModel,ChequesType> _chequesFirebaseRepo;
+  final CompoundDatasourceRepository<ChequesModel, ChequesType> _chequesFirebaseRepo;
   final ChequesSearchController chequesSearchController;
 
   // Services
@@ -153,9 +153,10 @@ class ChequesDetailsController extends GetxController with AppValidator {
   void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
-    _chequesService.launchChequesPayEntryBondScreen(
+    _chequesService.launchChequesEntryBondScreen(
       chequesModel: chequesModel,
       context: context,
+      isPay: true,
     );
   }
 
