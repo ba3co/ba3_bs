@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -89,10 +91,11 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
     final rootDocumentId = getRootDocumentId(account);
     final subCollectionPath = getSubCollectionPath(account);
 
+
     final savedData = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
-      rootDocumentId: rootDocumentId,
-      subCollectionPath: subCollectionPath,
+      rootDocumentId: rootDocumentId.replaceAll("/", " "),
+      subCollectionPath: subCollectionPath.replaceAll("/", " "),
       subDocumentId: item.id,
       data: {'items': item.itemList.map((item) => item.toJson()).toList()},
     );

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
@@ -185,6 +187,9 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   void updateBondDetailsOnScreen(BondModel bond, BondDetailsPlutoController bondPlutoController) {
+
+    log("bond.payDate! ${bond.payDate!}");
+    log("bond.payDate!.toDate ${bond.payDate.toDate}");
     setBondDate(bond.payDate!.toDate);
 
     initBondNumberController(bond.payNumber);

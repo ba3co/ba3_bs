@@ -70,12 +70,13 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedBonds) {
+        (fetchedBonds) async{
           log('bonds.length ${bonds.length}');
           bonds.assignAll(fetchedBonds);
-          _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
-
-          read<EntryBondGeneratorRepo>().saveEntryBonds(bonds);
+          if(bonds.isNotEmpty) {
+            await _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
+            read<EntryBondGeneratorRepo>().saveEntryBonds(bonds);
+          }
         },
       );
     }

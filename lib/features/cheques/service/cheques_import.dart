@@ -40,14 +40,11 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
 }
 
 String convertDateToYearMonthDay(String date) {
-  // تقسيم النص إلى يوم، شهر، سنة
   List<String> parts = date.split("-");
 
-  // التحقق من صحة التنسيق
   if (parts.length != 3) {
     throw FormatException("Invalid date format. Expected format: DD-MM-YYYY");
   }
 
-  // ترتيب التاريخ إلى سنة-شهر-يوم
   return "${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}";
 }

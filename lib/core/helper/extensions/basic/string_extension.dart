@@ -37,7 +37,7 @@ extension NullableStringExtension on String? {
     try {
       return DateTime.parse(this!);
     } catch (e) {
-      return DateTime(1970, 1, 1); // قيمة افتراضية عند حدوث خطأ
+      return DateTime(1970, 1, 1);
     }
   }
 

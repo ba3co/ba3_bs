@@ -1,9 +1,11 @@
+import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
+import '../../../cheques/service/cheques_import.dart';
 import '../../data/models/pay_item_model.dart';
 
 class BondImport extends ImportServiceBase<BondModel> {
@@ -28,7 +30,7 @@ class BondImport extends ImportServiceBase<BondModel> {
         return PayItem(
           entryAccountName: read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
           entryAccountGuid: itemNode.getElement('EntryAccountGuid')?.text,
-          entryDate: itemNode.getElement('EntryDate')?.text,
+          entryDate:  (itemNode.getElement('EntryDate')!.text.toYearMonthDayFormat()),
           entryDebit: double.tryParse(itemNode.getElement('EntryDebit')?.text ?? '0'),
           entryCredit: double.tryParse(itemNode.getElement('EntryCredit')?.text ?? '0'),
           entryNote: itemNode.getElement('EntryNote')?.text,
@@ -48,7 +50,7 @@ class BondImport extends ImportServiceBase<BondModel> {
         payNumber: int.tryParse(node.getElement('PayNumber')?.text ?? '0'),
         payGuid: node.getElement('PayGuid')?.text,
         payBranchGuid: node.getElement('PayBranchGuid')?.text,
-        payDate: node.getElement('PayDate')?.text,
+        payDate: node.getElement('PayDate')?.text.toYearMonthDayFormat(),
         entryPostDate: node.getElement('EntryPostDate')?.text,
         payNote: node.getElement('PayNote')?.text,
         payCurrencyGuid: node.getElement('PayCurrencyGuid')?.text,

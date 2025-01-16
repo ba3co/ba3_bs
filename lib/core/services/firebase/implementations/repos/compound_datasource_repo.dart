@@ -46,13 +46,13 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
   }
 
   Future<Either<Failure, T>> save(T item) async {
-    try {
+    // try {
       final savedItem = await _dataSource.save(item: item);
       return Right(savedItem); // Return success
-    } catch (e) {
-      log('Error in save: $e');
-      return Left(ErrorHandler(e).failure); // Return error
-    }
+    // } catch (e) {
+    //   log('Error in save: $e');
+    //   return Left(ErrorHandler(e).failure); // Return error
+    // }
   }
 
   Future<Either<Failure, int>> count({required ItemTypeModel itemTypeModel, QueryFilter? countQueryFilter}) async {
