@@ -20,8 +20,8 @@ extension BillPatternTypeExtension on BillPatternType {
     switch (this) {
       case BillPatternType.purchase:
       case BillPatternType.sales:
-      case BillPatternType.buyReturn:
-      case BillPatternType.salesReturn:
+      // case BillPatternType.buyReturn:
+      // case BillPatternType.salesReturn:
         return true;
       default:
         return false;

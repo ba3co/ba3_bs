@@ -132,6 +132,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                   itemGuid: item['MatPtr'],
                   itemQuantity: (item['QtyBonus'].split(',').first as String).toInt,
                   itemTotalPrice: item['PriceDescExtra'].split(',').first,
+
                   itemSubTotalPrice: AppServiceUtils.calcSubtotal(
                     (item['QtyBonus'].split(',').first as String).toInt,
                     (item['PriceDescExtra'].split(',').first as String).toDouble,
