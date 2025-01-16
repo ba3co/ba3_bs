@@ -71,6 +71,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
+
                     activatedColor: Colors.white.withAlpha(127),
 
                     gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),

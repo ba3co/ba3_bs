@@ -17,6 +17,8 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
 
     final chequesElements = document.findAllElements('H');
     return chequesElements.map((element) {
+      final checkCollectEntries = element.findElements('CheckCollectEntry');
+
       return ChequesModel(
         chequesTypeGuid: element.findElements('CheckTypeGuid').first.text,
         chequesNumber: int.tryParse(element.findElements('CheckNumber').first.text),
@@ -27,8 +29,8 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
         chequesNote: element.findElements('CheckNote').first.text,
         chequesVal: double.tryParse(element.findElements('CheckVal').first.text),
         chequesAccount2Guid: element.findElements('CheckAccount2Guid').first.text,
-        accPtr: element.findElements('AccPtr').first.text,
-        isPayed: false,
+        accPtr: element.findElements('AccPtr').first.text,//CheckCollectEntry
+        isPayed: checkCollectEntries.isNotEmpty,
         accPtrName: read<AccountsController>().getAccountNameById(element.findElements('AccPtr').first.text),
         chequesAccount2Name:
             read<AccountsController>().getAccountNameById(element.findElements('CheckAccount2Guid').first.text),

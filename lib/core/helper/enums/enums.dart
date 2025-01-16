@@ -83,8 +83,8 @@ enum BillType {
     color: 4278228616,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.materials: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
-      BillAccounts.caches: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
+      BillAccounts.caches: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
+      BillAccounts.materials: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
     },
   ),
   outputAdjustment(
@@ -94,8 +94,8 @@ enum BillType {
     color: 4278228616,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
-      BillAccounts.materials: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
+      BillAccounts.materials: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
+      BillAccounts.caches: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
     },
   ),
   firstPeriodInventory(

@@ -128,7 +128,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(
-      fetchedBills.where((element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68').toList(),
+      fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
     );
 
     _billsFirebaseRepo.saveAllNested(bills, billsTypes);
