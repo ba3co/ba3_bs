@@ -12,7 +12,7 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
+class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   @override
   List<EntryBondItemModel> generateItems({required BillModel model, bool? isSimulatedVat}) {
     final customerAccount = model.billTypeModel.accounts![BillAccounts.caches]!;
@@ -66,12 +66,13 @@ class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
                   ),
                 if (item.itemQuantity > 0)
                   ..._generateCustomerBonds(
-                      billId: billId,
-                      customerAccount: customerAccount,
-                      item: item,
-                      date: date,
-                      isSales: isSales,
-                      isSimulatedVat: isSimulatedVat),
+                    billId: billId,
+                    customerAccount: customerAccount,
+                    item: item,
+                    date: date,
+                    isSales: isSales,
+                    isSimulatedVat: isSimulatedVat,
+                  ),
                 ..._createOptionalBonds(
                   billId: billId,
                   accounts: accounts,
@@ -296,26 +297,27 @@ class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
     required BondItemType oppositeBondType,
   }) =>
       [
-        for (final model in models) ...[
-          _createBondItem(
-            amount: model.amount,
-            billId: billId,
-            bondType: positiveBondType,
-            accountName: model.accName,
-            accountId: model.id,
-            note: '$notePrefix لحساب ${model.accName}',
-            date: date,
-          ),
-          _createBondItem(
-            amount: model.amount,
-            billId: billId,
-            bondType: oppositeBondType,
-            accountName: customerAccount.accName,
-            accountId: customerAccount.id,
-            note: '$notePrefix لحساب ${model.accName}',
-            date: date,
-          ),
-        ],
+        for (final model in models)
+          if (model.amount > 0) ...[
+            _createBondItem(
+              amount: model.amount,
+              billId: billId,
+              bondType: positiveBondType,
+              accountName: model.accName,
+              accountId: model.id,
+              note: '$notePrefix لحساب ${model.accName}',
+              date: date,
+            ),
+            _createBondItem(
+              amount: model.amount,
+              billId: billId,
+              bondType: oppositeBondType,
+              accountName: customerAccount.accName,
+              accountId: customerAccount.id,
+              note: '$notePrefix لحساب ${model.accName}',
+              date: date,
+            ),
+          ],
       ];
 
   EntryBondItemModel _createBondItem({

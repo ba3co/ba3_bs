@@ -2,15 +2,16 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
-import 'package:ba3_bs/features/cheques/service/all_cheques_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -33,12 +34,10 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
   // Services
   late final ChequesUtils _chequesUtils;
-  late final AllChequesService _chequesService;
 
   // Initializer
   void _initializeServices() {
     _chequesUtils = ChequesUtils();
-    _chequesService = AllChequesService();
   }
 
   @override
@@ -49,7 +48,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     // getAllChequesTypes();
   }
 
-  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
+  ChequesModel getChequesById(String chequesId) =>
+      chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
 
   Future<void> fetchAllChequesLocal() async {
     log('fetchAllChequesLocal');
@@ -69,7 +69,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
           chequesList.assignAll(fetchedCheques);
 
           _chequesFirebaseRepo.saveAllNested(chequesList, ChequesType.values);
-          _chequesService.generateEntryBondsFromAllCheques(chequesList: chequesList);
+
+          read<EntryBondGeneratorRepo>().saveEntryBonds(chequesList);
         },
       );
     } else {
@@ -93,12 +94,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     update();
   }
 
-  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel}) async {
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel,
+      {ChequesModel? chequesModel}) async {
     await fetchAllChequesByType(chequesTypeModel);
 
     if (!context.mounted) return;
 
-    final ChequesModel lastChequesModel = chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
+    final ChequesModel lastChequesModel =
+        chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
 
     _openChequesDetailsFloatingWindow(
       context: context,
@@ -169,7 +172,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     final ChequesModel chequesModel = await fetchChequesById(chequesId, itemTypeModel);
     if (!context.mounted) return;
 
-    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel);
+    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
+        chequesModel: chequesModel);
   }
 
   Future<ChequesModel> fetchChequesById(String chequesId, ChequesType itemTypeModel) async {

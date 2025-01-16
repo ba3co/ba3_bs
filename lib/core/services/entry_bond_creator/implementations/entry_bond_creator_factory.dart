@@ -4,17 +4,29 @@ import '../../../../features/bond/data/models/bond_model.dart';
 import '../../../../features/bond/service/bond/bond_entry_bond_service.dart';
 import '../../../../features/cheques/data/models/cheques_model.dart';
 import '../../../../features/cheques/service/cheques_bond_service.dart';
+import '../../../helper/enums/enums.dart';
 import '../interfaces/entry_bond_creator.dart';
 
 class EntryBondCreatorFactory {
-  static EntryBondCreator getService<T>(T model) {
+  static EntryBondCreator resolveEntryBondCreator<T>(T model) {
     if (model is ChequesModel) {
-      return ChequesEntryBondStrategyFactory().determineStrategy(chequesModel: model);
+      return ChequesEntryBondCreator().determineStrategy(chequesModel: model);
     } else if (model is BondModel) {
-      return BondEntryBondService();
+      return BondEntryBondCreator();
     } else if (model is BillModel) {
-      return BillEntryBondService();
+      return BillEntryBondCreator();
     }
-    throw UnimplementedError("No service found for model type ${T.runtimeType}");
+    throw UnimplementedError("No EntryBondCreator implementation for model of type ${T.runtimeType}");
+  }
+
+  static EntryBondType determineOriginType<T>(T model) {
+    if (model is ChequesModel) {
+      return EntryBondType.cheque;
+    } else if (model is BondModel) {
+      return EntryBondType.bond;
+    } else if (model is BillModel) {
+      return EntryBondType.bill;
+    }
+    throw UnimplementedError("No EntryBondType defined for model of type ${T.runtimeType}");
   }
 }

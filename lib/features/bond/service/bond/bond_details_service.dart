@@ -28,7 +28,7 @@ class BondDetailsService with PdfBase, FloatingLauncher {
   EntryBondController get entryBondController => read<EntryBondController>();
 
   void launchBondEntryBondScreen({required BuildContext context, required BondModel bondModel}) {
-    final creator = EntryBondCreatorFactory.getService(bondModel);
+    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(bondModel);
 
     final entryBond = creator.createEntryBond(
       originType: EntryBondType.cheque,
@@ -98,7 +98,7 @@ class BondDetailsService with PdfBase, FloatingLauncher {
       pdfGenerator: BondPdfGenerator(),
     );
 
-    final creator = EntryBondCreatorFactory.getService(bondModel);
+    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(bondModel);
 
     entryBondController.saveEntryBondModel(
       entryBondModel: creator.createEntryBond(

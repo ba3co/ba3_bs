@@ -42,6 +42,12 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
+  Future<void> saveAllEntryBondModels(List<EntryBondModel> entryBonds) async {
+    for (final entryBond in entryBonds) {
+      await saveEntryBondModel(entryBondModel: entryBond);
+    }
+  }
+
   Future<EntryBondModel> getEntryBondById({required String entryId}) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 

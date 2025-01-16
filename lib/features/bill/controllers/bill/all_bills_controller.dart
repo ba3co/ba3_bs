@@ -17,12 +17,12 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
-import '../../services/bill/all_bills_service.dart';
 import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
@@ -36,7 +36,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
-  late final AllBillsService _allBillsService;
   late final BillUtils _billUtils;
 
   List<BillTypeModel> billsTypes = [];
@@ -62,7 +61,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   // Initializer
   void _initializeServices() {
     _billUtils = BillUtils();
-    _allBillsService = AllBillsService();
   }
 
   @override
@@ -93,7 +91,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     plutoGridIsLoading = false;
     update();
 
-    // _allBillsService.generateEntryBondsFromAllBills(bills: bills);
+    read<EntryBondGeneratorRepo>().saveEntryBonds(bills);
   }
 
   Future<void> fetchAllNestedBills() async {
@@ -111,34 +109,29 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> fetchAllBillsFromLocal() async {
-    log('fetchAllBillsFromLocal');
-    // getBillsRequestState.value=RequestState.loading;
-
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
-      File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importXmlFile(file);
+      final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
+
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedBills) {
-          log("fetchedBills length ${fetchedBills.length}");
-          getBillsByTypeRequestState.value = RequestState.success;
-          bills.assignAll(fetchedBills
-              .where(
-                (element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68',
-              )
-              .toList());
-          //error bill id
-          //'b44c994f-9fd1-4305-ada2-8a27fb676d68'
-          _allBillsService.saveEntryBondsFromAllBills(bills: bills);
-          _billsFirebaseRepo.saveAllNested(bills, billsTypes);
-        },
+        (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
       );
     }
 
     plutoGridIsLoading = false;
     update();
+  }
+
+  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) {
+    log("fetchedBills length ${fetchedBills.length}");
+
+    bills.assignAll(
+      fetchedBills.where((element) => element.billId != 'b44c994f-9fd1-4305-ada2-8a27fb676d68').toList(),
+    );
+
+    _billsFirebaseRepo.saveAllNested(bills, billsTypes);
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {

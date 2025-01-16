@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:ba3_bs/features/bond/service/bond/all_bonds_service.dart';
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
 import 'package:file_picker/file_picker.dart';
@@ -9,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
@@ -31,12 +32,10 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
   // Services
   late final BondUtils _bondUtils;
-  late final AllBondsService _allBondsService;
 
   // Initializer
   void _initializeServices() {
     _bondUtils = BondUtils();
-    _allBondsService = AllBondsService();
   }
 
   @override
@@ -75,7 +74,8 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           log('bonds.length ${bonds.length}');
           bonds.assignAll(fetchedBonds);
           _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
-          _allBondsService.generateEntryBondsFromAllBonds(bonds: bonds);
+
+          read<EntryBondGeneratorRepo>().saveEntryBonds(bonds);
         },
       );
     }

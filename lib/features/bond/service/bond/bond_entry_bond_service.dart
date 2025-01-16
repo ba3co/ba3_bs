@@ -6,7 +6,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/entry_bond_creator/implementations/base_entry_bond_creator.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-class BondEntryBondService extends BaseEntryBondCreator<BondModel> {
+class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
   @override
   List<EntryBondItemModel> generateItems({required BondModel model, bool? isSimulatedVat}) {
     List<EntryBondItemModel> itemBonds = [];

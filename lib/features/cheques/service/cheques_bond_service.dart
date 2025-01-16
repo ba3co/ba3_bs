@@ -7,7 +7,7 @@ import '../../../core/services/entry_bond_creator/implementations/base_entry_bon
 import '../../accounts/data/models/account_model.dart';
 import '../../bond/data/models/entry_bond_model.dart';
 
-class ChequesEntryBondStrategyFactory {
+class ChequesEntryBondCreator {
   final DefaultChequesBondStrategy _defaultStrategy = DefaultChequesBondStrategy();
   final NormalChequesBondStrategy _normalStrategy = NormalChequesBondStrategy();
   final PayChequesBondStrategy _payStrategy = PayChequesBondStrategy();

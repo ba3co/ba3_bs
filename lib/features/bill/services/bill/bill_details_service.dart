@@ -65,7 +65,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
   void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
 
-    final creator = EntryBondCreatorFactory.getService(billModel);
+    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
 
     final entryBondModel = creator.createEntryBond(
       isSimulatedVat: true,
@@ -107,7 +107,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
     if (updatedBillModel.status == Status.approved &&
         updatedBillModel.billTypeModel.billPatternType!.hasCashesAccount) {
-      final creator = EntryBondCreatorFactory.getService(updatedBillModel);
+      final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
 
       entryBondController.saveEntryBondModel(
         entryBondModel: creator.createEntryBond(
@@ -143,7 +143,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     );
 
     if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      final creator = EntryBondCreatorFactory.getService(billModel);
+      final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
 
       entryBondController.saveEntryBondModel(
         entryBondModel: creator.createEntryBond(

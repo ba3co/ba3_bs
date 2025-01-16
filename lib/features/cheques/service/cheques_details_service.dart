@@ -16,7 +16,7 @@ import '../data/models/cheques_model.dart';
 import 'cheques_bond_service.dart';
 
 class ChequesDetailsService with PdfBase, FloatingLauncher {
-  final ChequesEntryBondStrategyFactory _chequesBondService = ChequesEntryBondStrategyFactory();
+  final ChequesEntryBondCreator _chequesBondService = ChequesEntryBondCreator();
 
   void launchChequesEntryBondScreen({
     required BuildContext context,
