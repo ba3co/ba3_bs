@@ -1,8 +1,10 @@
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +13,7 @@ import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
 import '../../../../../core/widgets/searchable_account_field.dart';
 import '../../../../accounts/data/models/account_model.dart';
+import '../../../../users_management/data/models/role_model.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../data/models/bill_model.dart';
 import '../bill_shared/bill_header_field.dart';
@@ -77,15 +80,15 @@ class BillDetailsHeader extends StatelessWidget {
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: 'البائع',
-                readOnly: true,
+                readOnly: !RoleItemType.viewBill.hasReadPermission,
                 textEditingController: billDetailsController.sellerAccountController,
                 validator: (value) => billDetailsController.validator(value, 'البائع'),
                 onSubmitted: (text) {
-                  // read<SellerController>().openSellerSelectionDialog(
-                  //   query: text,
-                  //   textEditingController: billDetailsController.sellerAccountController,
-                  //   context: context,
-                  // );
+                  read<SellersController>().openSellerSelectionDialog(
+                    query: text,
+                    textEditingController: billDetailsController.sellerAccountController,
+                    context: context,
+                  );
                 },
               ),
               secondItem: TextAndExpandedChildField(
