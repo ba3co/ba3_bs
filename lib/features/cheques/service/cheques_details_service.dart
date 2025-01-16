@@ -13,7 +13,7 @@ import '../controllers/cheques/all_cheques_controller.dart';
 import '../controllers/cheques/cheques_details_controller.dart';
 import '../controllers/cheques/cheques_search_controller.dart';
 import '../data/models/cheques_model.dart';
-import 'cheques_bond_service.dart';
+import 'cheques_entry_bond_creator.dart';
 
 class ChequesDetailsService with PdfBase, FloatingLauncher {
   final ChequesEntryBondCreator _chequesBondService = ChequesEntryBondCreator();

@@ -136,7 +136,8 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   }
 
   /// Helper function for calculating simulated VAT.
-  double _calculateSimulatedVat(BillItem item) => ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
+  double _calculateSimulatedVat(BillItem item) =>
+      ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
 
   /// Helper function for calculating the actual VAT value.
   double _calculateActualVat(BillItem item) => item.itemVatPrice! * item.itemQuantity;
@@ -187,7 +188,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         note: '${billTypeModel.shortName} عدد ${item.itemQuantity} من ${item.itemName}',
         date: date,
       ),
-      if (vat > 0&&billTypeModel.billPatternType!.hasVat)
+      if (vat > 0 && billTypeModel.billPatternType!.hasVat)
         _createBondItem(
           amount: vat,
           billId: billId,
@@ -210,7 +211,8 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required bool isSales,
   }) {
     final bondType = isSales ? BondItemType.creditor : BondItemType.debtor;
-    final accountId = item.matVatGuid == null ? VatEnums.withVat.taxAccountGuid : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
+    final accountId =
+        item.matVatGuid == null ? VatEnums.withVat.taxAccountGuid : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
     final note = 'ضريبة ${billTypeModel.shortName} عدد $quantity من ${item.matName}';
 
     return _createBondItem(

@@ -100,13 +100,11 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     isLoading = true;
     update();
 
-    log('accountModel id: ${accountModel.id} - accName: ${accountModel.accName}');
     final result = await _accountsStatementsRepo.getAll(AccountEntity.fromAccountModel(accountModel));
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedItems) {
         entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
-        log('fetchedItems ${fetchedItems.length}');
         filterByDate();
 
         _calculateValues(filteredEntryBondItems);
@@ -138,8 +136,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
           entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
     }).toList();
-
-    log('Filtered items count: ${filteredEntryBondItems.length}');
   }
 
   /// Navigation handler
