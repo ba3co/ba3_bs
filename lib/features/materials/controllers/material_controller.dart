@@ -109,6 +109,15 @@ class MaterialController extends GetxController with AppNavigator {
       );
     }
   }
+  Future<void> deleteAllMaterialFromLocal() async {
+
+      final result = await _materialsHiveRepo.clear();
+
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (_) => AppUIUtils.onSuccess("تم حذف المواد بنجاح"),
+      );
+  }
 
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
