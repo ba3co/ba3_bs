@@ -194,6 +194,10 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   MaterialModel? getMaterialById(String id) {
+    if( materials.firstWhereOrNull((material) => material.id == id)==null)
+      {
+        log(id);
+      }
     return materials.firstWhereOrNull((material) => material.id == id);
   }
 

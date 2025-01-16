@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
@@ -109,15 +111,12 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     /// When isSimulatedVat is true, VAT is calculated as 5% of the total price for preview purposes only.
     /// Otherwise, the actual VAT value is used.
     final vat = isSimulatedVat ?? false ? _calculateSimulatedVat(item) : _calculateActualVat(item);
-
     return [
       if (vat > 0 && billTypeModel.billPatternType!.hasVat)
         _createVatBond(
             billId: billId,
             vat: vat,
-            item: read<MaterialController>().materials.firstWhere(
-                  (mat) => mat.id == item.itemGuid,
-                ),
+            item: read<MaterialController>().getMaterialById(item.itemGuid)!,
             quantity: item.itemQuantity,
             date: date,
             isSales: isSales,

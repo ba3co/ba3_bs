@@ -90,8 +90,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     plutoGridIsLoading = false;
     update();
-
-    read<EntryBondGeneratorRepo>().saveEntryBonds(bills);
   }
 
   Future<void> fetchAllNestedBills() async {
@@ -124,19 +122,22 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
-  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) {
+  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) async {
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(
       fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
     );
-
-    _billsFirebaseRepo.saveAllNested(bills, billsTypes);
+    if (bills.isNotEmpty) {
+      await _billsFirebaseRepo.saveAllNested(bills, billsTypes);
+      await read<EntryBondGeneratorRepo>().saveEntryBonds(bills);
+    }
+    AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -244,8 +245,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
