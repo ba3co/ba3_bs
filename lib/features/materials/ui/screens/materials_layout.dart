@@ -30,7 +30,13 @@ class MaterialLayout extends StatelessWidget {
                     child: AppButton(title: "تحميل المواد", onPressed: (){
                       read<MaterialController>().fetchAllMaterialFromLocal();
                     }),
-                  )
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(6),
+                    child: AppButton(title: "محو المواد", onPressed: (){
+                      read<MaterialController>().deleteAllMaterialFromLocal();
+                    }),
+                  ),
                 ],
               ),
               body: Column(

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
@@ -31,16 +32,19 @@ class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
       isSales: isSales,
       isSimulatedVat: isSimulatedVat,
     );
-
-    final adjustmentBonds = _generateAdjustmentBonds(
-      discountsAndAdditions: model.billTypeModel.discountAdditionAccounts!,
-      billId: model.billId!,
-      customerAccount: customerAccount,
-      date: date,
-      isSales: isSales,
-    );
-
-    return [...itemBonds, ...adjustmentBonds];
+    if (model.billTypeModel.billPatternType!.hasDiscountsAccount) {
+      final adjustmentBonds = _generateAdjustmentBonds(
+        discountsAndAdditions: model.billTypeModel.discountAdditionAccounts!,
+        billId: model.billId!,
+        customerAccount: customerAccount,
+        date: date,
+        isSales: isSales,
+      );
+      return [...itemBonds, ...adjustmentBonds];
+    }
+    else {
+      return itemBonds;
+    }
   }
 
   List<EntryBondItemModel> _generateBillItemBonds({
@@ -124,8 +128,7 @@ class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
   }
 
   /// Helper function for calculating simulated VAT.
-  double _calculateSimulatedVat(BillItem item) =>
-      ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
+  double _calculateSimulatedVat(BillItem item) => ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
 
   /// Helper function for calculating the actual VAT value.
   double _calculateActualVat(BillItem item) => item.itemVatPrice! * item.itemQuantity;
@@ -196,8 +199,7 @@ class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
     required bool isSales,
   }) {
     final bondType = isSales ? BondItemType.creditor : BondItemType.debtor;
-    final accountId =
-        item.matVatGuid == null ? VatEnums.withVat.taxAccountGuid : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
+    final accountId = item.matVatGuid == null ? VatEnums.withVat.taxAccountGuid : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
     final note = 'ضريبة ${getNote(isSales)} عدد $quantity من ${item.matName}';
 
     return _createBondItem(
