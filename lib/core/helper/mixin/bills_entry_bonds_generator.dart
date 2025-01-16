@@ -1,26 +1,20 @@
 import '../../../features/bill/data/models/bill_model.dart';
-import '../../../features/bill/services/bill/bill_entry_bond_creating_service.dart';
 import '../../../features/bond/data/models/entry_bond_model.dart';
+import '../../services/entry_bond_creator/implementations/entry_bond_creator_factory.dart';
+import '../../services/entry_bond_creator/interfaces/entry_bonds_generator.dart';
 import '../enums/enums.dart';
 
-class BillsEntryBondsGenerator with BillEntryBondService {
-  List<EntryBondModel> generateEntryBonds(List<BillModel> bills) => bills
-      .map(
-        (bill) => createEntryBond(
-          originType: EntryBondType.bill,
-          billModel: bill,
-          discountsAndAdditions: bill.billTypeModel.discountAdditionAccounts ?? const {},
-          isSimulatedVat: false,
-        ),
-      )
-      .toList();
-}
+class BillsEntryBondsGenerator implements EntryBondsGenerator<BillModel> {
+  @override
+  List<EntryBondModel> generateEntryBonds(List<BillModel> bills) {
+    return bills.map((bill) {
+      final creator = EntryBondCreatorFactory.getService(bill);
 
-// abstract class EntryBondCreator<T> {
-//   EntryBondModel createEntryBond({
-//     required EntryBondType originType,
-//     required T model, // Accepts different models
-//     Map<Account, List<DiscountAdditionAccountModel>>? discountsAndAdditions,
-//     bool? isSimulatedVat,
-//   });
-// }
+      return creator.createEntryBond(
+        originType: EntryBondType.bill,
+        model: bill,
+        isSimulatedVat: false,
+      );
+    }).toList();
+  }
+}

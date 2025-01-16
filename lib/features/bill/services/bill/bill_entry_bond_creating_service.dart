@@ -7,58 +7,34 @@ import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/services/entry_bond_creator/implementations/base_entry_bond_creator.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-mixin BillEntryBondService {
-  EntryBondModel createEntryBond({
-    required EntryBondType originType,
-    required BillModel billModel,
-    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
-    required bool isSimulatedVat,
-  }) =>
-      EntryBondModel(
-        origin: EntryBondOrigin(
-          originId: billModel.billId,
-          originType: originType,
-          originTypeId: billModel.billTypeModel.billTypeId,
-        ),
-        items: EntryBondItems(
-          id: billModel.billId!,
-          itemList: generateBondItems(
-            billModel: billModel,
-            discountsAndAdditions: discountsAndAdditions,
-            isSimulatedVat: isSimulatedVat,
-          ),
-        ),
-      );
+class BillEntryBondService extends BaseEntryBondCreator<BillModel> {
+  @override
+  List<EntryBondItemModel> generateItems({required BillModel model, bool? isSimulatedVat}) {
+    final customerAccount = model.billTypeModel.accounts![BillAccounts.caches]!;
 
-  List<EntryBondItemModel> generateBondItems({
-    required BillModel billModel,
-    required Map<Account, List<DiscountAdditionAccountModel>> discountsAndAdditions,
-    required bool isSimulatedVat,
-  }) {
-    final customerAccount = billModel.billTypeModel.accounts![BillAccounts.caches]!;
-
-    final billType = BillType.byLabel(billModel.billTypeModel.billTypeLabel!);
+    final billType = BillType.byLabel(model.billTypeModel.billTypeLabel!);
     final isSales = billType == BillType.sales;
 
-    final date = billModel.billDetails.billDate!.dayMonthYear;
+    final date = model.billDetails.billDate!.dayMonthYear;
 
     final itemBonds = _generateBillItemBonds(
-      billId: billModel.billId!,
-      accounts: billModel.billTypeModel.accounts!,
+      billId: model.billId!,
+      accounts: model.billTypeModel.accounts!,
       customerAccount: customerAccount,
-      billItems: billModel.items.itemList,
+      billItems: model.items.itemList,
       date: date,
       isSales: isSales,
       isSimulatedVat: isSimulatedVat,
     );
 
     final adjustmentBonds = _generateAdjustmentBonds(
-      discountsAndAdditions: discountsAndAdditions,
-      billId: billModel.billId!,
+      discountsAndAdditions: model.billTypeModel.discountAdditionAccounts!,
+      billId: model.billId!,
       customerAccount: customerAccount,
       date: date,
       isSales: isSales,
@@ -74,7 +50,7 @@ mixin BillEntryBondService {
     required List<BillItem> billItems,
     required String date,
     required bool isSales,
-    required bool isSimulatedVat,
+    bool? isSimulatedVat,
   }) =>
       billItems
           .expand((item) => [
@@ -113,14 +89,14 @@ mixin BillEntryBondService {
     required BillItem item,
     required String date,
     required bool isSales,
-    required bool isSimulatedVat,
+    bool? isSimulatedVat,
   }) {
     final giftCount = item.itemGiftsNumber;
     final giftPrice = item.itemGiftsPrice;
 
     /// When isSimulatedVat is true, VAT is calculated as 5% of the total price for preview purposes only.
     /// Otherwise, the actual VAT value is used.
-    final vat = isSimulatedVat ? _calculateSimulatedVat(item) : _calculateActualVat(item);
+    final vat = isSimulatedVat ?? false ? _calculateSimulatedVat(item) : _calculateActualVat(item);
 
     return [
       if (vat > 0)
@@ -180,10 +156,10 @@ mixin BillEntryBondService {
     required BillItem item,
     required String date,
     required bool isSales,
-    required bool isSimulatedVat,
+    bool? isSimulatedVat,
   }) {
     /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
-    final vat = isSimulatedVat
+    final vat = isSimulatedVat ?? false
         ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity
         : item.itemVatPrice! * item.itemQuantity;
     final total = item.itemSubTotalPrice! * item.itemQuantity;
@@ -370,4 +346,14 @@ mixin BillEntryBondService {
       return 'شراء';
     }
   }
+
+  @override
+  EntryBondOrigin createOrigin({required BillModel model, required EntryBondType originType}) => EntryBondOrigin(
+        originId: model.billId,
+        originType: originType,
+        originTypeId: model.billTypeModel.billTypeId,
+      );
+
+  @override
+  String getModelId(BillModel model) => model.billId!;
 }
