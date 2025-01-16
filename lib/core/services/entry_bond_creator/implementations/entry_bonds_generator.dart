@@ -7,7 +7,7 @@ import 'entry_bond_creator_factory.dart';
 
 class EntryBondGenerator implements IEntryBondGenerator {
   @override
-  List<EntryBondModel> createEntryBondModels(List sourceModels) {
+  List<EntryBondModel> createEntryBondsModels(List sourceModels) {
     return sourceModels.map(
       (model) {
         final EntryBondCreator creator = EntryBondCreatorFactory.resolveEntryBondCreator(model);
@@ -27,7 +27,7 @@ class EntryBondGeneratorRepo {
   EntryBondGeneratorRepo(this.entryBondGenerator);
 
   Future<void> saveEntryBonds(List sourceModels) async {
-    final entryBondModels = entryBondGenerator.createEntryBondModels(sourceModels);
+    final entryBondModels = entryBondGenerator.createEntryBondsModels(sourceModels);
 
     await read<EntryBondController>().saveAllEntryBondModels(entryBondModels);
   }
