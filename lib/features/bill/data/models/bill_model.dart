@@ -177,7 +177,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billGuid: billData['B']['BillGuid'],
         billPayType: int.parse(billData['B']['BillPayType']),
         billNumber: int.parse(billData['B']['BillNumber']),
-        billDate: dateFormat.parse(billData['B']['BillDate'].toYearMonthDayFormat()),
+        billDate: dateFormat.parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
         billCustomerId: billData['B']['BillCustAcc'],
         billSellerId: billData['B']['BillCostGuid'],
         billGiftsTotal: billGiftsTotal,
