@@ -140,8 +140,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
     launchFloatingWindow(
       context: context,
-      defaultHeight: 0.65.sh,
-      defaultWidth: 0.5.sw,
+      defaultHeight: 600,
+      defaultWidth: 600,
       minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.chequesTypeGuid!).value,
       floatingScreen: ChequesDetailsScreen(
         tag: controllerTag,

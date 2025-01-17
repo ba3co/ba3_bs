@@ -73,10 +73,9 @@ class AddChequeButtons extends StatelessWidget {
               chequesDetailsController.saveClearPayCheques(chequesModel)
               :chequesDetailsController.savePayCheques(chequesModel);
             },
-            title: chequesDetailsController.isPayed!?"تراجع عن الدفع":"دفع",
+            title: chequesDetailsController.isPayed!?"حذف الدفع":"دفع",
             color: Colors.black,
             iconData: Icons.paid,
-            width: 125,
           ),
           if(chequesDetailsController.isPayed!)
           AppButton(
@@ -87,6 +86,16 @@ class AddChequeButtons extends StatelessWidget {
             },
             title: "سند الدفع",
             iconData: Icons.view_list_outlined,
+          ),
+          if(!chequesDetailsController.isPayed!)
+          AppButton(
+            onPressed: () {
+
+              chequesDetailsController.refundPayCheques();
+
+            },
+            title: "استرداد",
+            iconData: Icons.lock_reset_rounded,
           ),
         ]
       ]),
