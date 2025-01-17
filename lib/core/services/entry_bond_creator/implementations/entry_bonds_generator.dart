@@ -5,7 +5,7 @@ import '../interfaces/entry_bond_creator.dart';
 import '../interfaces/i_entry_bonds_generator.dart';
 import 'entry_bond_creator_factory.dart';
 
-class EntryBondGenerator implements IEntryBondGenerator {
+class EntryBondsGenerator implements IEntryBondGenerator {
   @override
   List<EntryBondModel> createEntryBondsModels(List sourceModels) {
     return sourceModels.map(
@@ -21,10 +21,10 @@ class EntryBondGenerator implements IEntryBondGenerator {
   }
 }
 
-class EntryBondGeneratorRepo {
+class EntryBondsGeneratorRepo {
   final IEntryBondGenerator entryBondGenerator;
 
-  EntryBondGeneratorRepo(this.entryBondGenerator);
+  EntryBondsGeneratorRepo(this.entryBondGenerator);
 
   Future<void> saveEntryBonds(List sourceModels) async {
     final entryBondModels = entryBondGenerator.createEntryBondsModels(sourceModels);

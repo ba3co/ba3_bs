@@ -131,7 +131,7 @@ class AppBindings extends Bindings {
     );
 
     // Register the EntryBondRepository and inject the generator
-    lazyPut(EntryBondGeneratorRepo(entryBondGenerator));
+    lazyPut(EntryBondsGeneratorRepo(entryBondGenerator));
 
     lazyPut(repositories.listenableDatasourceRepo);
 
@@ -149,7 +149,7 @@ class AppBindings extends Bindings {
 
   ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService() => CompoundFireStoreService();
 
-  IEntryBondGenerator _initializeEntryBondGenerator() => EntryBondGenerator();
+  IEntryBondGenerator _initializeEntryBondGenerator() => EntryBondsGenerator();
 
   ITranslationService _initializeTranslationService(IAPiClient dioClient) => GoogleTranslationService(
         baseUrl: ApiConstants.translationBaseUrl,
