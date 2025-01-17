@@ -2,8 +2,9 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
-// import 'package:ba3_bs/features/cheques/service/cheques_pay_entry_bond_creator.dart';
+import 'package:ba3_bs/features/cheques/service/cheques_pay_entry_bond_creator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -217,8 +218,6 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void savePayCheques(ChequesModel chequesModel) async {
     setIsPayed(true);
-    // final creator=ChequesPayEntryBondCreator();
-    // creator.createEntryBond(originType: chequesType, model: chequesModel);
     _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
   }
 

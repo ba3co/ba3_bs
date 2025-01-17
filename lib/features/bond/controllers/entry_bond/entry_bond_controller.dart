@@ -21,8 +21,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
   EntryBondController(this._entryBondsFirebaseRepo, this._accountsStatementsFirebaseRepo);
 
   // Method to create a bond based on bill type
-  Future<void> saveEntryBondModel({required EntryBondModel entryBondModel}) async {
-    final result = await _entryBondsFirebaseRepo.save(entryBondModel);
+  Future<void> saveEntryBondModel({required EntryBondModel entryBondModel, String? docId}) async {
+    EntryBondModel updatedModel =
+        docId != null ? entryBondModel.copyWith(origin: entryBondModel.origin!.copyWith(originId: docId)) : entryBondModel;
+    final result = await _entryBondsFirebaseRepo.save(updatedModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -34,7 +36,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
           final relatedItems = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
 
           await _accountsStatementsFirebaseRepo.save(EntryBondItems(
-            id: entryBondItem.originId!,
+            id: docId ?? entryBondItem.originId!,
             itemList: relatedItems,
           ));
         }
@@ -73,9 +75,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
           final relatedItems = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
 
           deletedTasks.add(
-            _accountsStatementsFirebaseRepo
-                .delete(EntryBondItems(id: entryBondItem.originId!, itemList: relatedItems))
-                .then(
+            _accountsStatementsFirebaseRepo.delete(EntryBondItems(id: entryBondItem.originId!, itemList: relatedItems)).then(
               (deleteResult) {
                 deleteResult.fold(
                   (failure) => errors.add(failure.message), // Collect errors.
@@ -125,10 +125,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final actions = {
       EntryBondType.bond: () => read<AllBondsController>()
           .openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
-      EntryBondType.bill: () => read<AllBillsController>().openFloatingBillDetailsById(
-          origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
-      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(
-          origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bill: () => read<AllBillsController>()
+          .openFloatingBillDetailsById(origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
+      EntryBondType.cheque: () => read<AllChequesController>()
+          .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];
