@@ -8,23 +8,23 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
 class OldChequesEntryBondCreator {
-  final OldDefaultChequesBondStrategy _defaultStrategy = OldDefaultChequesBondStrategy();
-  final OldNormalChequesBondStrategy _normalStrategy = OldNormalChequesBondStrategy();
-  final OldPayChequesBondStrategy _payStrategy = OldPayChequesBondStrategy();
+  final OldDefaultChequesBondStrategy _chequesStrategy = OldDefaultChequesBondStrategy();
+  final OldNormalChequesBondStrategy _payChequesStrategy = OldNormalChequesBondStrategy();
+  final OldPayChequesBondStrategy _refundPayChequesStrategy = OldPayChequesBondStrategy();
 
   /// Determines the appropriate strategy based on the ChequesModel.
   BaseEntryBondCreator<ChequesModel> determineStrategy({required ChequesModel chequesModel, bool? isPayStrategy}) {
     if (isPayStrategy != null) {
       if (isPayStrategy) {
-        return _payStrategy;
+        return _refundPayChequesStrategy;
       } else {
-        return _normalStrategy;
+        return _payChequesStrategy;
       }
     } else {
       if (chequesModel.isPayed == true) {
-        return _defaultStrategy;
+        return _chequesStrategy;
       } else {
-        return _normalStrategy;
+        return _payChequesStrategy;
       }
     }
   }
