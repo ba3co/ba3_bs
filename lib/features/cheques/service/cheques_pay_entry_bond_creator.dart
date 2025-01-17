@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 
@@ -6,8 +7,7 @@ import '../../../core/services/entry_bond_creator/implementations/base_entry_bon
 import '../../accounts/data/models/account_model.dart';
 import '../../bond/data/models/entry_bond_model.dart';
 
-
-class ChequesEntryBondCreator extends BaseEntryBondCreator<ChequesModel> {
+class ChequesPayEntryBondCreator extends BaseEntryBondCreator<ChequesModel> {
   @override
   EntryBondOrigin createOrigin({required ChequesModel model, required EntryBondType originType}) => EntryBondOrigin(
         originId: model.chequesGuid,
@@ -16,10 +16,9 @@ class ChequesEntryBondCreator extends BaseEntryBondCreator<ChequesModel> {
       );
 
   @override
-  List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) =>
-      _generateNormalEntryBond(
+  List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) => _generatePayEntryBond(
         chequesModel: model,
-        note: "سند قيد ل${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}",
+        note: "سند قيد لدفع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}",
         amount: model.chequesVal!,
         date: model.chequesDate ?? DateTime.now().dayMonthYear,
         originId: model.chequesGuid!,
@@ -28,7 +27,7 @@ class ChequesEntryBondCreator extends BaseEntryBondCreator<ChequesModel> {
   @override
   String getModelId(ChequesModel model) => model.chequesGuid!;
 
-  List<EntryBondItemModel> _generateNormalEntryBond(
+  List<EntryBondItemModel> _generatePayEntryBond(
       {required ChequesModel chequesModel,
       required String note,
       required String originId,
@@ -38,21 +37,21 @@ class ChequesEntryBondCreator extends BaseEntryBondCreator<ChequesModel> {
     itemBonds.add(EntryBondItemModel(
       note: note,
       amount: amount,
+      bondItemType: BondItemType.debtor,
       account: AccountEntity(
         id: chequesModel.chequesAccount2Guid!,
         name: chequesModel.chequesAccount2Name!,
       ),
-      bondItemType: BondItemType.creditor,
       date: date,
       originId: originId,
     ));
     itemBonds.add(EntryBondItemModel(
       note: note,
       amount: amount,
-      bondItemType: BondItemType.debtor,
+      bondItemType: BondItemType.creditor,
       account: AccountEntity(
-        id: chequesModel.accPtr!,
-        name: chequesModel.accPtrName!,
+        id: AppStrings.bankAccountId,
+        name: AppStrings.bankToAccountName,
       ),
       date: date,
       originId: originId,
@@ -60,4 +59,3 @@ class ChequesEntryBondCreator extends BaseEntryBondCreator<ChequesModel> {
     return itemBonds;
   }
 }
-

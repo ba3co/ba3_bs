@@ -23,7 +23,8 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     required ChequesModel chequesModel,
     bool isPay = false,
   }) {
-    final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel, isPayStrategy: isPay);
+    // final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel, isPayStrategy: isPay);
+    final strategy = _chequesBondService;
 
     final entryBondModel = strategy.createEntryBond(
       originType: EntryBondType.cheque,
@@ -70,8 +71,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
-      [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
@@ -100,9 +100,10 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesSearchController.updateCheques(chequesModel);
     }
 
-    final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel);
+    // final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel);
+    final creator = _chequesBondService;
     entryBondController.saveEntryBondModel(
-      entryBondModel: strategy.createEntryBond(
+      entryBondModel: creator.createEntryBond(
         originType: EntryBondType.cheque,
         model: chequesModel,
       ),

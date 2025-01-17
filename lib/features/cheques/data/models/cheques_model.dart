@@ -20,6 +20,7 @@ class ChequesModel implements PlutoAdaptable {
   final String? accPtr;
   final String? accPtrName;
   final String? chequesAccount2Name;
+  final String? chequesPayGuid;
 
   // final ChequesCollectEntryModel? chequesCollectEntry;
   // final ChequesEntryRelationModel? chequesEntryRelation;
@@ -55,13 +56,14 @@ class ChequesModel implements PlutoAdaptable {
     this.chequesDueDate,
     this.chequesNote,
     this.chequesVal,
-    // this.chequesCollectEntry,
-    // this.chequesEntryRelation,
     this.accPtr,
     this.chequesAccount2Guid,
     this.chequesAccount2Name,
     this.accPtrName,
     this.isPayed,
+    this.chequesPayGuid,
+    // this.chequesCollectEntry,
+    // this.chequesEntryRelation,
     // this.chequesCustomerGuid,
 
     // this.chequesCurGuid,
@@ -92,21 +94,21 @@ class ChequesModel implements PlutoAdaptable {
       chequesGuid: json['docId'] as String?,
       accPtrName: json['AccPtrName'] as String?,
       chequesAccount2Name: json['ChequesAccount2Name'] as String?,
-
       chequesDate: json['ChequesDate'] as String?,
       chequesDueDate: json['ChequesDueDate'] as String?,
       chequesNote: json['ChequesNote'] as String?,
       chequesVal: (json['ChequesVal'] as num).toDouble(),
-
       chequesAccount2Guid: json['ChequesAccount2Guid'] as String?,
+      chequesPayGuid: json['ChequesPayGuid'] as String?,
+      accPtr: json['AccPtr'] as String?,
+      isPayed: json['IsPayed'] as bool?,
       // chequesCollectEntry: json['ChequesCollectEntry'] != null ? ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']) : null,
       // chequesEntryRelation: json['chequesEntryRelation'] != null ? ChequesEntryRelationModel.fromJson(json['chequesEntryRelation']) : null,
 
       // chequesCustomerGuid: json['ChequesCustomerGuid'] as String,
 
       // chequesCurGuid: json['ChequesCurGuid'] as String,
-      accPtr: json['AccPtr'] as String?,
-      isPayed: json['IsPayed'] as bool?,
+
       // chequesCurVal: (json['ChequesCurVal'] as num).toDouble(),
       // chequesSec: json['ChequesSec'] as int,
       // chequesPrevNum: json['ChequesPrevNum'] as int,
@@ -138,12 +140,13 @@ class ChequesModel implements PlutoAdaptable {
       'ChequesNote': chequesNote,
       'ChequesVal': chequesVal,
       'ChequesAccount2Guid': chequesAccount2Guid,
-      // 'ChequesCollectEntry': chequesCollectEntry?.toJson(),
-      // 'ChequesEntryRelation': chequesEntryRelation?.toJson(),
       'AccPtr': accPtr,
       'IsPayed': isPayed,
       'AccPtrName': accPtrName,
       'ChequesAccount2Name': chequesAccount2Name,
+      'ChequesPayGuid': chequesPayGuid,
+      // 'ChequesCollectEntry': chequesCollectEntry?.toJson(),
+      // 'ChequesEntryRelation': chequesEntryRelation?.toJson(),
       // 'ChequesCustomerGuid': chequesCustomerGuid,
       // 'ChequesCurGuid': chequesCurGuid,
       // 'ChequesCurVal': chequesCurVal,
@@ -177,13 +180,13 @@ class ChequesModel implements PlutoAdaptable {
     double? chequesVal,
     bool? isPayed,
     String? chequesAccount2Guid,
-    // ChequesCollectEntryModel? chequesCollectEntry,
-    // ChequesEntryRelationModel? chequesEntryRelation,
     String? accPtr,
     String? accPtrName,
     String? chequesAccount2Name,
+    String? chequesPayGuid,
     // String? chequesCustomerGuid,
-
+    // ChequesCollectEntryModel? chequesCollectEntry,
+    // ChequesEntryRelationModel? chequesEntryRelation,
     // String? chequesCurGuid,
     // String? chequesParentGuid,
     // String? chequesBrGuid,
@@ -212,12 +215,15 @@ class ChequesModel implements PlutoAdaptable {
       chequesNote: chequesNote ?? this.chequesNote,
       chequesVal: chequesVal ?? this.chequesVal,
       chequesAccount2Guid: chequesAccount2Guid ?? this.chequesAccount2Guid,
-      // chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
-      // chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
+
       accPtr: accPtr ?? this.accPtr,
       accPtrName: accPtrName ?? this.accPtrName,
       chequesAccount2Name: chequesAccount2Name ?? this.chequesAccount2Name,
       isPayed: isPayed ?? this.isPayed,
+      chequesPayGuid: chequesPayGuid ?? this.chequesPayGuid,
+
+      // chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
+      // chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
       // chequesCustomerGuid: chequesCustomerGuid ?? this.chequesCustomerGuid,
       // chequesCurGuid: chequesCurGuid ?? this.chequesCurGuid,
       // chequesParentGuid: chequesParentGuid ?? this.chequesParentGuid,
@@ -298,11 +304,9 @@ class ChequesModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: "رقم القيد", field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true):
-          chequesGuid,
+      PlutoColumn(title: "رقم القيد", field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true): chequesGuid,
       createAutoIdColumn(): '',
-      PlutoColumn(title: "الرقم التسلسلي", field: AppConstants.chequesNumber, type: PlutoColumnType.number()):
-          chequesNumber,
+      PlutoColumn(title: "الرقم التسلسلي", field: AppConstants.chequesNumber, type: PlutoColumnType.number()): chequesNumber,
       PlutoColumn(title: "رقم الشيك", field: AppConstants.chequesNum, type: PlutoColumnType.number()): chequesNumber,
       PlutoColumn(
           title: "قيمة الشيك",
@@ -312,13 +316,10 @@ class ChequesModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): chequesVal,
-      PlutoColumn(title: "الحساب", field: AppConstants.chequesAccount2Guid, type: PlutoColumnType.text()):
-          chequesAccount2Name,
+      PlutoColumn(title: "الحساب", field: AppConstants.chequesAccount2Guid, type: PlutoColumnType.text()): chequesAccount2Name,
       PlutoColumn(title: "دفع الى", field: AppConstants.accPtr, type: PlutoColumnType.text()): accPtrName,
-      PlutoColumn(title: "تاريخ التحرير", field: AppConstants.chequesDate, type: PlutoColumnType.date()):
-          chequesDate.toDate,
-      PlutoColumn(title: "تاريخ الاستحقاق", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()):
-          chequesDueDate.toDate,
+      PlutoColumn(title: "تاريخ التحرير", field: AppConstants.chequesDate, type: PlutoColumnType.date()): chequesDate.toDate,
+      PlutoColumn(title: "تاريخ الاستحقاق", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()): chequesDueDate.toDate,
       PlutoColumn(title: "البيان", field: AppConstants.chequesNote, type: PlutoColumnType.text()): chequesNote,
       PlutoColumn(title: "نوع الشيك", field: AppConstants.chequesTypeGuid, type: PlutoColumnType.text()):
           ChequesType.byTypeGuide(chequesTypeGuid!).value,

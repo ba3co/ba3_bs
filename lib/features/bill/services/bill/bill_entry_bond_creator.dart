@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
