@@ -27,6 +27,7 @@ class ChequesModel implements PlutoAdaptable {
   // final ChequesEntryRelationModel? chequesEntryRelation;
 
   final bool? isPayed;
+  final bool? isRefund;
 
   // final String? chequesCustomerGuid;
   // final String? chequesCurGuid;
@@ -64,6 +65,7 @@ class ChequesModel implements PlutoAdaptable {
     this.isPayed,
     this.chequesPayGuid,
     this.chequesRefundPayGuid,
+    this.isRefund,
     // this.chequesCollectEntry,
     // this.chequesEntryRelation,
     // this.chequesCustomerGuid,
@@ -105,6 +107,7 @@ class ChequesModel implements PlutoAdaptable {
       chequesRefundPayGuid: json['ChequesRefundPayGuid'] as String?,
       accPtr: json['AccPtr'] as String?,
       isPayed: json['IsPayed'] as bool?,
+      isRefund: json['IsRefund'] as bool?,
       // chequesCollectEntry: json['ChequesCollectEntry'] != null ? ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']) : null,
       // chequesEntryRelation: json['chequesEntryRelation'] != null ? ChequesEntryRelationModel.fromJson(json['chequesEntryRelation']) : null,
 
@@ -149,6 +152,7 @@ class ChequesModel implements PlutoAdaptable {
       'ChequesAccount2Name': chequesAccount2Name,
       'ChequesPayGuid': chequesPayGuid,
       'ChequesRefundPayGuid': chequesRefundPayGuid,
+      'IsRefund': isRefund,
       // 'ChequesCollectEntry': chequesCollectEntry?.toJson(),
       // 'ChequesEntryRelation': chequesEntryRelation?.toJson(),
       // 'ChequesCustomerGuid': chequesCustomerGuid,
@@ -189,6 +193,7 @@ class ChequesModel implements PlutoAdaptable {
     String? chequesAccount2Name,
     String? chequesPayGuid,
     String? chequesRefundPayGuid,
+    bool? isRefund,
     // String? chequesCustomerGuid,
     // ChequesCollectEntryModel? chequesCollectEntry,
     // ChequesEntryRelationModel? chequesEntryRelation,
@@ -227,6 +232,7 @@ class ChequesModel implements PlutoAdaptable {
       isPayed: isPayed ?? this.isPayed,
       chequesPayGuid: chequesPayGuid ?? this.chequesPayGuid,
       chequesRefundPayGuid: chequesRefundPayGuid ?? this.chequesRefundPayGuid,
+      isRefund: isRefund ?? this.isRefund,
 
       // chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
       // chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
@@ -277,6 +283,7 @@ class ChequesModel implements PlutoAdaptable {
     required String accPtrName,
     required String chequesAccount2Name,
     required bool isPayed,
+    required bool isRefund,
     String? chequesPayGuid,
     String? chequesRefundPayGuid,
   }) {
@@ -293,6 +300,7 @@ class ChequesModel implements PlutoAdaptable {
             accPtrName: accPtrName,
             chequesAccount2Name: chequesAccount2Name,
             isPayed: isPayed,
+      isRefund: isRefund,
             chequesPayGuid: chequesPayGuid,
             chequesRefundPayGuid: chequesRefundPayGuid,
           )
@@ -305,6 +313,7 @@ class ChequesModel implements PlutoAdaptable {
             chequesVal: chequesVal,
             accPtr: accPtr,
             isPayed: isPayed,
+      isRefund: isRefund,
             accPtrName: accPtrName,
             chequesAccount2Name: chequesAccount2Name,
             chequesNote: chequesNote,
