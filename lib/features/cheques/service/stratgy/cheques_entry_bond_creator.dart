@@ -7,39 +7,39 @@ import '../../../../core/services/entry_bond_creator/implementations/base_entry_
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-class ChequesStrategyFactory {
+class ChequesStrategyBondFactory {
   static final ChequesBondStrategy _chequesStrategy = ChequesBondStrategy();
   static final PayBondStrategy _payStrategy = PayBondStrategy();
   static final RefundBondStrategy _refundStrategy = RefundBondStrategy();
 
-  static List<BaseEntryBondCreator<ChequesModel>> _getStrategy(ChequesBondStrategyType type) {
+  static List<BaseEntryBondCreator<ChequesModel>> _getStrategy(ChequesStrategyType type) {
     switch (type) {
-      case ChequesBondStrategyType.chequesStrategy:
+      case ChequesStrategyType.chequesStrategy:
         return [_chequesStrategy];
-      case ChequesBondStrategyType.payStrategy:
+      case ChequesStrategyType.payStrategy:
         return [_payStrategy];
-      case ChequesBondStrategyType.refundStrategy:
+      case ChequesStrategyType.refundStrategy:
         return [_refundStrategy];
-      case ChequesBondStrategyType.payChequesStrategy:
+      case ChequesStrategyType.payChequesStrategy:
         return [_chequesStrategy, _payStrategy];
-      case ChequesBondStrategyType.refundChequesStrategy:
+      case ChequesStrategyType.refundChequesStrategy:
         return [_chequesStrategy, _refundStrategy];
     }
   }
 
   /// Determines the appropriate strategies based on the ChequesModel.
   static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel,
-      {ChequesBondStrategyType? type}) {
+      {ChequesStrategyType? type}) {
     if (type != null) {
       return _getStrategy(type);
     }
 
     if (chequesModel.isPayed == true) {
-      return _getStrategy(ChequesBondStrategyType.payChequesStrategy);
+      return _getStrategy(ChequesStrategyType.payChequesStrategy);
     } else if (chequesModel.isRefund == true) {
-      return _getStrategy(ChequesBondStrategyType.refundChequesStrategy);
+      return _getStrategy(ChequesStrategyType.refundChequesStrategy);
     } else {
-      return _getStrategy(ChequesBondStrategyType.chequesStrategy);
+      return _getStrategy(ChequesStrategyType.chequesStrategy);
     }
   }
 }

@@ -601,7 +601,7 @@ enum AccountType {
   }
 }
 
-enum ChequesBondStrategyType {
+enum ChequesStrategyType {
   chequesStrategy,
   payStrategy,
   payChequesStrategy,
