@@ -10,7 +10,7 @@ import '../interfaces/entry_bond_creator.dart';
 class EntryBondCreatorFactory {
   static EntryBondCreator resolveEntryBondCreator<T>(T model) {
     if (model is ChequesModel) {
-      return ChequesEntryBondCreator()/*.determineStrategy(chequesModel: model)*/;
+      return ChequesEntryBondCreator();
     } else if (model is BondModel) {
       return BondEntryBondCreator();
     } else if (model is BillModel) {
