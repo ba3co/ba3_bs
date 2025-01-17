@@ -16,15 +16,19 @@ class OldChequesEntryBondCreator {
   BaseEntryBondCreator<ChequesModel> determineStrategy({required ChequesModel chequesModel, bool? isPayStrategy}) {
     if (isPayStrategy != null) {
       if (isPayStrategy) {
-        return _refundPayChequesStrategy;
-      } else {
         return _payChequesStrategy;
+      } else {
+        return _refundPayChequesStrategy;
       }
     } else {
-      if (chequesModel.isPayed == true) {
+      if (chequesModel.isPayed == false&&chequesModel.isRefund == false) {
         return _chequesStrategy;
-      } else {
+      } else  if (chequesModel.isPayed == true) {
         return _payChequesStrategy;
+        return _chequesStrategy;
+      }else{
+        return _payChequesStrategy;
+        return _refundPayChequesStrategy;
       }
     }
   }
