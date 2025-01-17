@@ -24,7 +24,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     bool isPay = false,
   }) {
     // final creator = _chequesBondService.determineStrategy(chequesModel: chequesModel, isPayStrategy: isPay);
-    final creators = ChequesEntryBondCreator.determineStrategy(chequesModel, isPayStrategy: isPay);
+    final creators = ChequesBondStrategyFactory.determineStrategy(chequesModel, isPayStrategy: isPay);
 
     final List<EntryBondModel> entryBondModels = [];
 

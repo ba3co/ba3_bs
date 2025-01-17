@@ -11,7 +11,7 @@ class EntryBondCreatorFactory {
   static List<EntryBondCreator> resolveEntryBondCreators<T>(T model) {
     if (model is ChequesModel) {
       // Handles multiple strategies for ChequesModel
-      return ChequesEntryBondCreator.determineStrategy(model);
+      return ChequesBondStrategyFactory.determineStrategy(model);
     } else if (model is BondModel) {
       // Returns a single BondEntryBondCreator wrapped in a list
       return [BondEntryBondCreator()];

@@ -7,23 +7,39 @@ import '../../../../core/services/entry_bond_creator/implementations/base_entry_
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-class ChequesEntryBondCreator {
+class ChequesBondStrategyFactory {
   static final ChequesBondStrategy _chequesStrategy = ChequesBondStrategy();
-  static final PayChequesBondStrategy _payChequesStrategy = PayChequesBondStrategy();
-  static final RefundPayChequesBondStrategy _refundPayChequesStrategy = RefundPayChequesBondStrategy();
+  static final PayBondStrategy _payStrategy = PayBondStrategy();
+  static final RefundBondStrategy _refundStrategy = RefundBondStrategy();
 
-  /// Determines the appropriate strategy based on the ChequesModel.
-  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel, {bool? isPayStrategy}) {
-    if (isPayStrategy != null) {
-      return isPayStrategy ? [_payChequesStrategy] : [_refundPayChequesStrategy];
+  static List<BaseEntryBondCreator<ChequesModel>> _getStrategy(ChequesBondStrategyType type) {
+    switch (type) {
+      case ChequesBondStrategyType.chequesStrategy:
+        return [_chequesStrategy];
+      case ChequesBondStrategyType.payStrategy:
+        return [_payStrategy];
+      case ChequesBondStrategyType.refundStrategy:
+        return [_refundStrategy];
+      case ChequesBondStrategyType.payChequesStrategy:
+        return [_chequesStrategy, _payStrategy];
+      case ChequesBondStrategyType.refundChequesStrategy:
+        return [_chequesStrategy, _refundStrategy];
+    }
+  }
+
+  /// Determines the appropriate strategies based on the ChequesModel.
+  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel,
+      {ChequesBondStrategyType? type}) {
+    if (type != null) {
+      return _getStrategy(type);
     }
 
     if (chequesModel.isPayed == true) {
-      return [_payChequesStrategy, _chequesStrategy];
+      return _getStrategy(ChequesBondStrategyType.payChequesStrategy);
     } else if (chequesModel.isRefund == true) {
-      return [_refundPayChequesStrategy, _chequesStrategy];
+      return _getStrategy(ChequesBondStrategyType.refundChequesStrategy);
     } else {
-      return [_chequesStrategy];
+      return _getStrategy(ChequesBondStrategyType.chequesStrategy);
     }
   }
 }
@@ -87,7 +103,7 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
   String getModelId(ChequesModel model) => model.chequesGuid!;
 }
 
-class PayChequesBondStrategy extends BaseChequesBondStrategy {
+class PayBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
     final date = model.chequesDate ?? DateTime.now().dayMonthYear;
@@ -115,7 +131,7 @@ class PayChequesBondStrategy extends BaseChequesBondStrategy {
   String getModelId(ChequesModel model) => model.chequesGuid!;
 }
 
-class RefundPayChequesBondStrategy extends BaseChequesBondStrategy {
+class RefundBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
     final date = model.chequesDate ?? DateTime.now().dayMonthYear;
