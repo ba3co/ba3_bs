@@ -48,7 +48,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     // getAllChequesTypes();
   }
 
-  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
+  ChequesModel getChequesById(String chequesId) =>
+      chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
 
   Future<void> fetchAllChequesLocal() async {
     log('fetchAllChequesLocal');
@@ -61,16 +62,15 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedCheques)async {
+        (fetchedCheques) async {
           log('chequesList.length ${fetchedCheques.length}');
           // log('chequesList.firstOrNull ${chequesList.firstOrNull?.toJson()}');
 
           chequesList.assignAll(fetchedCheques);
           if (chequesList.isNotEmpty) {
-           await _chequesFirebaseRepo.saveAllNested(chequesList, ChequesType.values);
+            await _chequesFirebaseRepo.saveAllNested(chequesList, ChequesType.values);
 
-            read<EntryBondGeneratorRepo>().saveEntryBonds(chequesList);
-
+            read<EntryBondsGeneratorRepo>().saveEntryBonds(chequesList);
           }
         },
       );
@@ -93,12 +93,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     update();
   }
 
-  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel}) async {
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel,
+      {ChequesModel? chequesModel}) async {
     await fetchAllChequesByType(chequesTypeModel);
 
     if (!context.mounted) return;
 
-    final ChequesModel lastChequesModel = chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
+    final ChequesModel lastChequesModel =
+        chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
 
     _openChequesDetailsFloatingWindow(
       context: context,
@@ -169,7 +171,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
     final ChequesModel chequesModel = await fetchChequesById(chequesId, itemTypeModel);
     if (!context.mounted) return;
 
-    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel);
+    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
+        chequesModel: chequesModel);
   }
 
   Future<ChequesModel> fetchChequesById(String chequesId, ChequesType itemTypeModel) async {
