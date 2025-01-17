@@ -2,9 +2,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
-import 'package:ba3_bs/features/cheques/service/cheques_pay_entry_bond_creator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -49,6 +47,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   AccountModel? chequesAccPtr, chequesToAccountModel;
   bool? isPayed;
+  bool? isRefundPay;
 
   EntryBondController get bondController => read<EntryBondController>();
 
@@ -76,6 +75,10 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void setIsPayed(bool pay) {
     isPayed = pay;
+  }
+
+  void setIsRefundPay(bool refund) {
+    isRefundPay = refund;
   }
 
   // Initializer
@@ -176,6 +179,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
     // Create and return the cheques model
     return _chequesService.createChequesModel(
         isPayed: isPayed!,
+        isRefund: false,
         accPtrName: chequesAccPtr!.accName!,
         chequesAccount2Name: chequesToAccountModel!.accName!,
         chequesModel: chequesModel,
@@ -204,6 +208,7 @@ class ChequesDetailsController extends GetxController with AppValidator {
     setChequesDate(cheques.chequesDate!.toDate);
     setChequesDueDate(cheques.chequesDueDate!.toDate);
     setIsPayed(cheques.isPayed ?? false);
+    setIsRefundPay(cheques.isRefund ?? false);
     setTowAccount(read<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
     setFirstAccount(read<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
     stChequesFormDate(cheques);
@@ -218,13 +223,19 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void savePayCheques(ChequesModel chequesModel) async {
     setIsPayed(true);
-    final EntryBondModel entryBondModel =
-        ChequesPayEntryBondCreator().createEntryBond(originType: EntryBondType.cheque, model: chequesModel);
-    // _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+    // creator
+    _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
   }
 
   void saveClearPayCheques(ChequesModel chequesModel) {
     setIsPayed(false);
+    // creator
     _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+  }
+
+  void refundPayCheques() {
+
+    if (isPayed!) return;
+    // creator
   }
 }

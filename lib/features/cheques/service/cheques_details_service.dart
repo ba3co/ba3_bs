@@ -49,6 +49,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     required String accPtrName,
     required String chequesAccount2Name,
     required bool isPayed,
+    required bool isRefund,
   }) {
     return ChequesModel.fromChequesData(
       chequesAccount2Name: chequesAccount2Name,
@@ -64,6 +65,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesTypeGuid: chequesTypeGuid,
       chequesDate: chequesDate,
       isPayed: isPayed,
+       isRefund: isRefund,
     );
   }
 
