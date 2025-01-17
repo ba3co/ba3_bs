@@ -7,7 +7,7 @@ import '../../../../core/services/entry_bond_creator/implementations/base_entry_
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/data/models/entry_bond_model.dart';
 
-class ChequesBondStrategyFactory {
+class ChequesStrategyFactory {
   static final ChequesBondStrategy _chequesStrategy = ChequesBondStrategy();
   static final PayBondStrategy _payStrategy = PayBondStrategy();
   static final RefundBondStrategy _refundStrategy = RefundBondStrategy();
