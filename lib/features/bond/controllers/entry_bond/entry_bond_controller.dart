@@ -73,9 +73,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
           final relatedItems = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
 
           deletedTasks.add(
-            _accountsStatementsFirebaseRepo
-                .delete(EntryBondItems(id: entryBondItem.originId!, itemList: relatedItems))
-                .then(
+            _accountsStatementsFirebaseRepo.delete(EntryBondItems(id: entryBondItem.originId!, itemList: relatedItems)).then(
               (deleteResult) {
                 deleteResult.fold(
                   (failure) => errors.add(failure.message), // Collect errors.
@@ -125,10 +123,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final actions = {
       EntryBondType.bond: () => read<AllBondsController>()
           .openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
-      EntryBondType.bill: () => read<AllBillsController>().openFloatingBillDetailsById(
-          origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
-      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(
-          origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bill: () => read<AllBillsController>()
+          .openFloatingBillDetailsById(origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
+      EntryBondType.cheque: () => read<AllChequesController>()
+          .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];

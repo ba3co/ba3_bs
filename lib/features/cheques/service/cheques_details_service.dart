@@ -101,7 +101,6 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
 
     // final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel);
     final creator = EntryBondCreatorFactory.resolveEntryBondCreator(chequesModel);
-    ;
     entryBondController.saveEntryBondModel(
       entryBondModel: creator.createEntryBond(
         originType: EntryBondType.cheque,
