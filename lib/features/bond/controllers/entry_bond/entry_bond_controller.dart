@@ -21,10 +21,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
   EntryBondController(this._entryBondsFirebaseRepo, this._accountsStatementsFirebaseRepo);
 
   // Method to create a bond based on bill type
-  Future<void> saveEntryBondModel({required EntryBondModel entryBondModel, String? docId}) async {
-    EntryBondModel updatedModel =
-        docId != null ? entryBondModel.copyWith(origin: entryBondModel.origin!.copyWith(originId: docId)) : entryBondModel;
-    final result = await _entryBondsFirebaseRepo.save(updatedModel);
+  Future<void> saveEntryBondModel({required EntryBondModel entryBondModel}) async {
+    final result = await _entryBondsFirebaseRepo.save(entryBondModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -36,7 +34,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
           final relatedItems = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
 
           await _accountsStatementsFirebaseRepo.save(EntryBondItems(
-            id: docId ?? entryBondItem.originId!,
+            id: entryBondItem.originId!,
             itemList: relatedItems,
           ));
         }
