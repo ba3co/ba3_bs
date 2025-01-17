@@ -22,11 +22,8 @@ class EntryBondCreatorFactory {
     throw UnimplementedError("No EntryBondCreator implementation for model of type ${model.runtimeType}");
   }
 
-  static dynamic resolveEntryBondCreator<T>(T model) {
-    if (model is ChequesModel) {
-      // Directly returns the list of EntryBondCreators for ChequesModel
-      return resolveEntryBondCreators(model);
-    } else if (model is BondModel || model is BillModel) {
+  static EntryBondCreator resolveEntryBondCreator<T>(T model) {
+    if (model is BondModel || model is BillModel || model is ChequesModel) {
       // Extracts the first EntryBondCreator from the list for single-entry models
       return resolveEntryBondCreators(model).first;
     }
