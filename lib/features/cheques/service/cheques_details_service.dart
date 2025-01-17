@@ -1,4 +1,6 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
+import 'package:ba3_bs/features/cheques/service/stratgy/cheques_entry_bond_creator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -22,12 +24,19 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     bool isPay = false,
   }) {
     // final creator = _chequesBondService.determineStrategy(chequesModel: chequesModel, isPayStrategy: isPay);
-    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(chequesModel);
+    final creators = ChequesEntryBondCreator.determineStrategy(chequesModel, isPayStrategy: isPay);
 
-    final entryBondModel = creator.createEntryBond(
-      originType: EntryBondType.cheque,
-      model: chequesModel,
-    );
+    final List<EntryBondModel> entryBondModels = [];
+
+    for (final creator in creators) {
+      final entryBondModel = creator.createEntryBond(
+        originType: EntryBondType.cheque,
+        model: chequesModel,
+      );
+
+      entryBondModels.add(entryBondModel);
+    }
+
     launchFloatingWindow(
       context: context,
       minimizedTitle: 'سند خاص ب ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value}',
@@ -65,7 +74,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesTypeGuid: chequesTypeGuid,
       chequesDate: chequesDate,
       isPayed: isPayed,
-       isRefund: isRefund,
+      isRefund: isRefund,
     );
   }
 
@@ -101,14 +110,16 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesSearchController.updateCheques(chequesModel);
     }
 
-    // final strategy = _chequesBondService.determineStrategy(chequesModel: chequesModel);
-    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(chequesModel);
-    entryBondController.saveEntryBondModel(
-      entryBondModel: creator.createEntryBond(
-        originType: EntryBondType.cheque,
-        model: chequesModel,
-      ),
-    );
+    final creators = EntryBondCreatorFactory.resolveEntryBondCreators(chequesModel);
+
+    for (final creator in creators) {
+      entryBondController.saveEntryBondModel(
+        entryBondModel: creator.createEntryBond(
+          originType: EntryBondType.cheque,
+          model: chequesModel,
+        ),
+      );
+    }
   }
 
   bool validateAccount(AccountModel? customerAccount) {
