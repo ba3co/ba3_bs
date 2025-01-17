@@ -300,7 +300,7 @@ class ChequesModel implements PlutoAdaptable {
             accPtrName: accPtrName,
             chequesAccount2Name: chequesAccount2Name,
             isPayed: isPayed,
-      isRefund: isRefund,
+            isRefund: isRefund,
             chequesPayGuid: chequesPayGuid,
             chequesRefundPayGuid: chequesRefundPayGuid,
           )
@@ -313,7 +313,7 @@ class ChequesModel implements PlutoAdaptable {
             chequesVal: chequesVal,
             accPtr: accPtr,
             isPayed: isPayed,
-      isRefund: isRefund,
+            isRefund: isRefund,
             accPtrName: accPtrName,
             chequesAccount2Name: chequesAccount2Name,
             chequesNote: chequesNote,

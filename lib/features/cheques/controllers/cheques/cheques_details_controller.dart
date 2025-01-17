@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
+import 'package:ba3_bs/core/utils/generate_id.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -13,6 +17,7 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../service/cheques_details_service.dart';
+import '../../service/stratgy/cheques_entry_bond_creator.dart';
 import 'cheques_search_controller.dart';
 
 class ChequesDetailsController extends GetxController with AppValidator {
@@ -150,26 +155,31 @@ class ChequesDetailsController extends GetxController with AppValidator {
     if (!validateForm()) return;
 
     _chequesService.launchChequesEntryBondScreen(
-      chequesModel: chequesModel,
-      context: context,
-    );
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.chequesStrategy);
   }
 
   void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
     _chequesService.launchChequesEntryBondScreen(
-      chequesModel: chequesModel,
-      context: context,
-      isPay: true,
-    );
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.payStrategy);
+  }
+
+  void launchRefundPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
+    if (!validateForm()) return;
+
+    _chequesService.launchChequesEntryBondScreen(
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.refundStrategy);
   }
 
   updateIsChequesSaved(bool newValue) {
     isChequesSaved.value = newValue;
   }
 
-  ChequesModel? _createChequesModelFromChequesData(ChequesType chequesType, [ChequesModel? chequesModel]) {
+  ChequesModel? _createChequesModelFromChequesData(
+    ChequesType chequesType, [
+    ChequesModel? chequesModel,
+  ]) {
     // Validate customer accounts
 
     if (!_chequesService.validateAccount(chequesAccPtr) || !_chequesService.validateAccount(chequesToAccountModel)) {
@@ -178,20 +188,21 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
     // Create and return the cheques model
     return _chequesService.createChequesModel(
-        isPayed: isPayed!,
-        isRefund: false,
-        accPtrName: chequesAccPtr!.accName!,
-        chequesAccount2Name: chequesToAccountModel!.accName!,
-        chequesModel: chequesModel,
-        chequesType: chequesType,
-        chequesAccount2Guid: chequesToAccountModel!.id!,
-        accPtr: chequesAccPtr!.id!,
-        chequesDate: chequesDate.value,
-        chequesDueDate: chequesDueDate.value,
-        chequesNote: chequesNoteController.text,
-        chequesNum: int.parse(chequesNumController.text),
-        chequesVal: double.parse(chequesAmountController.text),
-        chequesTypeGuid: chequesType.typeGuide);
+      isPayed: isPayed!,
+      isRefund: isRefundPay!,
+      accPtrName: chequesAccPtr!.accName!,
+      chequesAccount2Name: chequesToAccountModel!.accName!,
+      chequesModel: chequesModel,
+      chequesType: chequesType,
+      chequesAccount2Guid: chequesToAccountModel!.id!,
+      accPtr: chequesAccPtr!.id!,
+      chequesDate: chequesDate.value,
+      chequesDueDate: chequesDueDate.value,
+      chequesNote: chequesNoteController.text,
+      chequesNum: int.parse(chequesNumController.text),
+      chequesVal: double.parse(chequesAmountController.text),
+      chequesTypeGuid: chequesType.typeGuide,
+    );
   }
 
   initChequesNumberController(int? chequesNumber) {
@@ -223,19 +234,26 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void savePayCheques(ChequesModel chequesModel) async {
     setIsPayed(true);
-    // creator
-    _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+
+    String bondId = generateId(RecordType.entryBond);
+    final updatedModel = chequesModel.copyWith(chequesPayGuid: bondId);
+
+    final creator = ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.payStrategy).first;
+    EntryBondModel entryBondModel = creator.createEntryBond(originType: EntryBondType.cheque, model: updatedModel);
+
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
+
+    read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
   }
 
-  void saveClearPayCheques(ChequesModel chequesModel) {
+  void saveClearPayCheques(ChequesModel chequesModel) async {
     setIsPayed(false);
-    // creator
-    _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
   }
 
   void refundPayCheques() {
-
     if (isPayed!) return;
+    setIsPayed(false);
     // creator
   }
 }

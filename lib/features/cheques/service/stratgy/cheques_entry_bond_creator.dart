@@ -28,8 +28,7 @@ class ChequesStrategyBondFactory {
   }
 
   /// Determines the appropriate strategies based on the ChequesModel.
-  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel,
-      {ChequesStrategyType? type}) {
+  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel, {ChequesStrategyType? type}) {
     if (type != null) {
       return _getStrategy(type);
     }
@@ -106,7 +105,7 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
 class PayBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
-    final date = model.chequesDate ?? DateTime.now().dayMonthYear;
+    final date = model.chequesDueDate ?? DateTime.now().dayMonthYear;
     final note = "سند قيد لدفع${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesGuid!;
@@ -123,6 +122,7 @@ class PayBondStrategy extends BaseChequesBondStrategy {
   @override
   EntryBondOrigin createOrigin({required ChequesModel model, required EntryBondType originType}) => EntryBondOrigin(
         originId: model.chequesGuid!,
+        docId: model.chequesPayGuid!,
         originType: originType,
         originTypeId: model.chequesTypeGuid,
       );
@@ -134,7 +134,7 @@ class PayBondStrategy extends BaseChequesBondStrategy {
 class RefundBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
-    final date = model.chequesDate ?? DateTime.now().dayMonthYear;
+    final date = DateTime.now().dayMonthYear;
     final note = "سند قيد لارجاع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesGuid!;

@@ -184,6 +184,7 @@ class EntryBondItemModel implements PlutoAdaptable {
 class EntryBondOrigin {
   /// Unique identifier for the bond entry, which is the same as the origin ID (e.g., billId).
   final String? originId;
+  final String? docId;
 
   /// Refers to the origin entity type id of the bond entry (e.g., billTypeId for bills).
   final String? originTypeId;
@@ -193,6 +194,7 @@ class EntryBondOrigin {
 
   EntryBondOrigin({
     this.originId,
+    this.docId,
     this.originTypeId,
     this.originType,
   });
@@ -200,6 +202,7 @@ class EntryBondOrigin {
   factory EntryBondOrigin.fromJson(Map<String, dynamic> json) {
     return EntryBondOrigin(
       originId: json['originId'] as String?,
+      docId: json['docId'] as String?,
       originTypeId: json['originTypeId'] as String?,
       originType: EntryBondType.byLabel(json['originType']),
     );
@@ -208,6 +211,7 @@ class EntryBondOrigin {
   Map<String, dynamic> toJson() {
     return {
       'originId': originId,
+      'docId': docId,
       'originTypeId': originTypeId,
       'originType': originType?.label,
     };
@@ -216,12 +220,14 @@ class EntryBondOrigin {
   EntryBondOrigin copyWith({
     String? originId,
     String? originTypeId,
+    String? docId,
     EntryBondType? originType,
   }) {
     return EntryBondOrigin(
       originId: originId ?? this.originId,
       originTypeId: originTypeId ?? this.originTypeId,
       originType: originType ?? this.originType,
+      docId: docId ?? this.docId,
     );
   }
 }

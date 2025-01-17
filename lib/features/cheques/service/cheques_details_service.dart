@@ -21,21 +21,12 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
   void launchChequesEntryBondScreen({
     required BuildContext context,
     required ChequesModel chequesModel,
-    bool isPay = false,
+    required  ChequesStrategyType chequesStrategyType,
   }) {
-    // final creator = _chequesBondService.determineStrategy(chequesModel: chequesModel, isPayStrategy: isPay);
-    final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, isPayStrategy: isPay);
+    final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, type: chequesStrategyType);
 
-    final List<EntryBondModel> entryBondModels = [];
+    final EntryBondModel entryBondModel = creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
 
-    for (final creator in creators) {
-      final entryBondModel = creator.createEntryBond(
-        originType: EntryBondType.cheque,
-        model: chequesModel,
-      );
-
-      entryBondModels.add(entryBondModel);
-    }
 
     launchFloatingWindow(
       context: context,
@@ -59,6 +50,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     required String chequesAccount2Name,
     required bool isPayed,
     required bool isRefund,
+
   }) {
     return ChequesModel.fromChequesData(
       chequesAccount2Name: chequesAccount2Name,
@@ -75,13 +67,13 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesDate: chequesDate,
       isPayed: isPayed,
       isRefund: isRefund,
+
     );
   }
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
-      [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
