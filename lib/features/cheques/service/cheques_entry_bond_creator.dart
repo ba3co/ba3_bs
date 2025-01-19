@@ -111,7 +111,7 @@ class PayBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
     final date = model.chequesPayDate ?? DateTime.now().dayMonthYear;
-    final note = "سند قيد لدفع${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
+    final note = "سند قيد لدفع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesPayGuid!;
     return createBondItems(
