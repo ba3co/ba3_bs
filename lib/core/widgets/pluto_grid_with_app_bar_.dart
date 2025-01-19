@@ -56,7 +56,11 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
             Expanded(
               child: PlutoGrid(
                 key: controller.plutoKey,
-                onLoaded: onLoaded,
+                onLoaded: (event) {
+                  event.stateManager.setShowColumnFilter(true); // تفعيل الفلترة
+
+                  onLoaded(event);
+                },
                 onSelected: onSelected,
                 onRowDoubleTap: onRowDoubleTap,
                 columns: controller.generateColumns<T>(tableSourceModels, type),

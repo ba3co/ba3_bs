@@ -58,6 +58,11 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   Rx<RequestState> getAllNestedBillsRequestState = RequestState.initial.obs;
 
+  Rx<RequestState> saveAllBillsRequestState = RequestState.initial.obs;
+
+  // Initialize a progress observable
+  RxDouble uploadProgress = 0.0.obs;
+
   // Initializer
   void _initializeServices() {
     _billUtils = BillUtils();
@@ -110,6 +115,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
+      saveAllBillsRequestState.value = RequestState.loading;
       final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
@@ -130,14 +136,22 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     );
     if (bills.isNotEmpty) {
       await _billsFirebaseRepo.saveAllNested(bills, billsTypes);
-      await read<EntryBondsGeneratorRepo>().saveEntryBonds(bills);
+      await read<EntryBondsGeneratorRepo>().saveEntryBonds(
+        sourceModels: bills,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+      );
     }
+    saveAllBillsRequestState.value = RequestState.success;
+
     AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -245,8 +259,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);

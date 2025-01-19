@@ -19,49 +19,64 @@ class BillLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Scaffold(
-         appBar: AppBar(
-           actions: [
-             Padding(padding: EdgeInsets.all(8),
-             child: AppButton(title: "تحميل الفواتيير", onPressed:() => read<AllBillsController>().fetchAllBillsFromLocal(),),
-             )
-           ],
-         ),
-        body: Obx(
-          () => Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  child: OrganizedWidget(
-                    titleWidget: Align(
-                      child: Text(
-                        'الفواتير',
-                        style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
-                      ),
-                    ),
-                    bodyWidget: GetBuilder<AllBillsController>(
-                      builder: (controller) => Column(
-                        spacing: 10,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          AllBillsTypesList(allBillsController: controller),
-                          //    if (RoleItemType.viewBill.hasAdminPermission) billLayoutAppBar(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+      child: Obx(() {
+        final progress = read<AllBillsController>().uploadProgress.value;
+
+        return Stack(
+          children: [
+            Scaffold(
+              appBar: AppBar(
+                actions: [
+                  Padding(padding: EdgeInsets.all(8),
+                    child: AppButton(title: "تحميل الفواتيير", onPressed: () => read<AllBillsController>().fetchAllBillsFromLocal(),),
+                  )
+                ],
               ),
-              LoadingDialog(
-                isLoading: read<AllBillsController>().getBillsTypesRequestState.value == RequestState.loading,
-                message: 'أنواع الفواتير',
-                fontSize: 14.sp,
-              )
-            ],
-          ),
-        ),
-      ),
+              body: Obx(
+                    () =>
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SingleChildScrollView(
+                            child: OrganizedWidget(
+                              titleWidget: Align(
+                                child: Text(
+                                  'الفواتير',
+                                  style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
+                                ),
+                              ),
+                              bodyWidget: GetBuilder<AllBillsController>(
+                                builder: (controller) =>
+                                    Column(
+                                      spacing: 10,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        AllBillsTypesList(allBillsController: controller),
+                                        //    if (RoleItemType.viewBill.hasAdminPermission) billLayoutAppBar(),
+                                      ],
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        LoadingDialog(
+                          isLoading: read<AllBillsController>().getBillsTypesRequestState.value == RequestState.loading,
+                          message: 'أنواع الفواتير',
+                          fontSize: 14.sp,
+                        )
+                      ],
+                    ),
+              ),
+            ),
+            LoadingDialog(
+              isLoading: read<AllBillsController>().saveAllBillsRequestState.value == RequestState.loading,
+              message: '${(progress * 100).toStringAsFixed(2)}% من المواد',
+              fontSize: 14.sp,
+            )
+          ],
+        );
+      }),
     );
   }
 }

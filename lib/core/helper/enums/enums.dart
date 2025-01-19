@@ -66,8 +66,8 @@ enum BillType {
     color: 4278228616,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: "مردود المبيعات", id: "3c360b04-9a62-449c-929d-806b06810bcc"),
-      BillAccounts.materials: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
+      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
     },
   ),
   purchaseReturn(
@@ -77,8 +77,8 @@ enum BillType {
     color: 4278228616,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: 'الصندوق', id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
-      BillAccounts.materials: AccountModel(accName: "مردود المشتريات", id: "ee4e9396-56cd-41bd-af14-f5f588b21dd9"),
+      BillAccounts.caches: AccountModel(accName: 'المشتريات', id: "4fd556cc-6408-4fe7-809a-0d35bc399c11"),
+      BillAccounts.materials: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
     },
   ),
   adjustmentEntry(

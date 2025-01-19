@@ -43,9 +43,15 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
-  Future<void> saveAllEntryBondModels(List<EntryBondModel> entryBonds) async {
+  Future<void> saveAllEntryBondModels({
+    required List<EntryBondModel> entryBonds,
+    void Function(double progress)? onProgress,
+  }) async {
+    int counter = 0;
     for (final entryBond in entryBonds) {
       await saveEntryBondModel(entryBondModel: entryBond);
+
+      onProgress?.call((counter++) / entryBonds.length);
     }
   }
 

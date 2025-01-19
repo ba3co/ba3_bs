@@ -75,7 +75,7 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           bonds.assignAll(fetchedBonds);
           if (bonds.isNotEmpty) {
             await _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
-            read<EntryBondsGeneratorRepo>().saveEntryBonds(bonds);
+            read<EntryBondsGeneratorRepo>().saveEntryBonds(sourceModels: bonds);
           }
         },
       );

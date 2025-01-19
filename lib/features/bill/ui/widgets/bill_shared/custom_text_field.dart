@@ -228,7 +228,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
       height: AppConstants.constHeightTextField,
       child: TextFormField(
         onChanged: widget.onChanged,
-        enabled: widget.enabled,
+        readOnly: widget.enabled,
         onFieldSubmitted: widget.onSubmitted,
         controller: widget.controller,
         keyboardType: widget.keyboardType,

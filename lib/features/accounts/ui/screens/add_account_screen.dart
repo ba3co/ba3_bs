@@ -1,4 +1,5 @@
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
@@ -14,8 +15,21 @@ class AddAccountScreen extends StatelessWidget {
     return GetBuilder<AccountsController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(
-            controller.isFromHandler ? controller.selectedAccount!.accName! : "بطاقة حساب",
+          title: Row(
+            children: [
+              Spacer(),
+              Text(
+                controller.isFromHandler ? controller.selectedAccount!.accName! : "بطاقة حساب",
+              ),
+              Spacer(),
+
+              SizedBox(
+                  width: 400,
+                  child: CustomTextFieldWithoutIcon(
+                      enabled: true,
+                      controller: TextEditingController()..text=controller.isFromHandler ? controller.selectedAccount!.id!:'')),
+              Spacer(),
+            ],
           ),
         ),
         body: Padding(
