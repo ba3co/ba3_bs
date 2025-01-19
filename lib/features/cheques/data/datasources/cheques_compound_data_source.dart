@@ -9,7 +9,7 @@ import '../models/cheques_model.dart';
 class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, ChequesType> {
   ChequesCompoundDatasource({required super.compoundDatabaseService});
 
-  // Parent Collection (e.g., "chequess", "chequess")
+  // Parent Collection (e.g., "cheques")
   @override
   String get rootCollectionPath => ApiConstants.cheques; // Collection name in Firestore
 
@@ -145,7 +145,7 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<List<ChequesModel>> saveAll({required List<ChequesModel> items, required ChequesType itemTypeModel}) async{
+  Future<List<ChequesModel>> saveAll({required List<ChequesModel> items, required ChequesType itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 
@@ -166,7 +166,7 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
 
   @override
   Future<Map<ChequesType, List<ChequesModel>>> saveAllNested(
-      {required List<ChequesType> itemTypes, required List<ChequesModel> items})async {
+      {required List<ChequesType> itemTypes, required List<ChequesModel> items}) async {
     final chequesByType = <ChequesType, List<ChequesModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -175,12 +175,12 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
     for (final chequesType in itemTypes) {
       fetchTasks.add(
         saveAll(
-            itemTypeModel: chequesType,
-            items: items
-                .where(
-                  (bond) => bond.chequesTypeGuid == chequesType.typeGuide,
-            )
-                .toList())
+                itemTypeModel: chequesType,
+                items: items
+                    .where(
+                      (bond) => bond.chequesTypeGuid == chequesType.typeGuide,
+                    )
+                    .toList())
             .then((result) {
           chequesByType[chequesType] = result;
         }),
