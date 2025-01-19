@@ -18,7 +18,19 @@ class EntryBondDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //  appBar: AppBar(),
+       appBar: AppBar(
+         title:Row(
+           children: [
+
+             Text("التاريخ :"),
+             Text(" ${entryBondModel.items!.itemList.first.date}"),
+             Spacer(),
+             Text("رقم :"),
+             Text(" ${entryBondModel.items!.docId}"),
+
+           ],
+         ) ,
+       ),
       body: Column(
         children: [
           Expanded(
