@@ -28,6 +28,11 @@ class AllBondsController extends FloatingBondDetailsLauncher {
   List<BondModel> bonds = [];
   bool isLoading = true;
 
+  Rx<RequestState> saveAllBondsRequestState = RequestState.initial.obs;
+
+  // Initialize a progress observable
+  RxDouble uploadProgress = 0.0.obs;
+
   AllBondsController(this._bondsFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
@@ -74,9 +79,20 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           log('bonds.length ${fetchedBonds.length}');
           bonds.assignAll(fetchedBonds);
           if (bonds.isNotEmpty) {
+            saveAllBondsRequestState.value = RequestState.loading;
+
             await _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
-            read<EntryBondsGeneratorRepo>().saveEntryBonds(sourceModels: bonds);
+            await read<EntryBondsGeneratorRepo>().saveEntryBonds(
+              sourceModels: bonds,
+              onProgress: (progress) {
+                uploadProgress.value = progress; // Update progress
+                log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+              },
+            );
           }
+          saveAllBondsRequestState.value = RequestState.success;
+          AppUIUtils.onSuccess('تم تحميل السندات بنجاح');
+
         },
       );
     }

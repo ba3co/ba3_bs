@@ -29,11 +29,11 @@ class LoadingDialog extends StatelessWidget {
             child: ModalBarrier(dismissible: false, color: Colors.black),
           ),
           SizedBox(
-            width: max(.2.sw, 280),
+            width: max(.22.sw, 330),
             child: Dialog(
               backgroundColor: AppColors.whiteColor,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

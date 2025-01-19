@@ -155,31 +155,40 @@ class AppServiceUtils {
   static double toFixedDouble(double? value, [int fractionDigits = 2]) =>
       double.tryParse(value?.toStringAsFixed(fractionDigits) ?? '0') ?? 0.0;
 
-  static double calcSub(int vatRatio, double total) {
-    double sub = total / (1 + (vatRatio / 100));
+  static double calcSub(int vatRatio, double subTotal) {
+    double sub = subTotal * (1 + (vatRatio / 100));
 
     return sub;
   }
 
-  static double calcVat(int? vatRatio, double? total) {
-    if (vatRatio == null || vatRatio == 0 || total == null || total == 0) return 0;
+  static double calcVat(int? vatRatio, double? subTotal) {
+    if (vatRatio == null || vatRatio == 0 || subTotal == null || subTotal == 0) return 0;
 
-    double sunTotal = calcSub(vatRatio, total);
-
-    return total - sunTotal;
+    return calcSub(vatRatio, subTotal)-subTotal;
   }
+
   static double calcSubtotal(int? quantity, double? total) {
     if (quantity == null || quantity == 0 || total == null || total == 0) return 0;
 
+    return total / quantity;
+  }
 
+  static double calcGiftPrice(int? quantity, double? subTotal) {
+    if (quantity == null || quantity == 0 || subTotal == null || subTotal == 0) return 0;
 
-    return total/quantity;
+    return subTotal * quantity;
+  }
+
+  static double calcTotal(int? quantity, double? subtotal, double? vat) {
+    if (quantity == null || quantity == 0 || subtotal == null || subtotal == 0) return 0;
+
+    return quantity * (subtotal + (vat ?? 0));
   }
 
   static int getItemQuantity(PlutoRow row, String cellKey) {
     final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
 
-    int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt ;
+    int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt;
 
     return invRecQuantity;
   }
@@ -220,7 +229,4 @@ class AppServiceUtils {
     String year = DateFormat.y().format(date);
     return "$dayName - $monthName -  $year";
   }
-
-
-
 }
