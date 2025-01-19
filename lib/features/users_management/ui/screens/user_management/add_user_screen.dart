@@ -14,8 +14,9 @@ class AddUserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserManagementController userManagementViewController = read<UserManagementController>();
-    SellersController sellerViewController = read<SellersController>();
+    UserManagementController userManagementController = read<UserManagementController>();
+    SellersController sellersController = read<SellersController>();
+
     return GetBuilder<UserManagementController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
@@ -27,8 +28,8 @@ class AddUserScreen extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               UserDetailsForm(
-                userManagementController: userManagementViewController,
-                sellerController: sellerViewController,
+                userManagementController: userManagementController,
+                sellerController: sellersController,
               ),
               UserAllWorkingHour(
                 controller: controller,
@@ -39,7 +40,6 @@ class AddUserScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   AppButton(
                     title: controller.selectedUserModel?.userId == null ? 'إضافة' : 'تعديل',
                     onPressed: () {

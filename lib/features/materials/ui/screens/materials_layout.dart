@@ -1,5 +1,7 @@
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -24,20 +26,26 @@ class MaterialLayout extends StatelessWidget {
             Scaffold(
               appBar: AppBar(
                 title: const Text("المواد"),
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.all(6),
-                    child: AppButton(title: "تحميل المواد", onPressed: (){
-                      read<MaterialController>().fetchAllMaterialFromLocal();
-                    }),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(6),
-                    child: AppButton(title: "محو المواد", onPressed: (){
-                      read<MaterialController>().deleteAllMaterialFromLocal();
-                    }),
-                  ),
-                ],
+                actions: RoleItemType.viewProduct.hasAdminPermission
+                    ? [
+                        Padding(
+                          padding: EdgeInsets.all(6),
+                          child: AppButton(
+                              title: "تحميل المواد",
+                              onPressed: () {
+                                read<MaterialController>().fetchAllMaterialFromLocal();
+                              }),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(6),
+                          child: AppButton(
+                              title: "محو المواد",
+                              onPressed: () {
+                                read<MaterialController>().deleteAllMaterialFromLocal();
+                              }),
+                        ),
+                      ]
+                    : [],
               ),
               body: Column(
                 children: [
@@ -48,11 +56,12 @@ class MaterialLayout extends StatelessWidget {
                           ..reloadMaterials()
                           ..navigateToAllMaterialScreen();
                       }),
-                  AppMenuItem(
-                      text: "اضافة المواد",
-                      onTap: () {
-                        read<MaterialController>().navigateToAddOrUpdateMaterialScreen();
-                      }),
+                  if (RoleItemType.viewProduct.hasAdminPermission)
+                    AppMenuItem(
+                        text: "اضافة المواد",
+                        onTap: () {
+                          read<MaterialController>().navigateToAddOrUpdateMaterialScreen();
+                        }),
                 ],
               ),
             ),
