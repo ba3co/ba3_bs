@@ -46,8 +46,7 @@ class AddChequeButtons extends StatelessWidget {
             onPressed: () async {
               chequesDetailsController.updateCheques(
                 chequesModel: chequesModel,
-                chequesType:chequesType ,
-
+                chequesType: chequesType,
               );
             },
             iconData: Icons.edit_outlined,
@@ -69,34 +68,30 @@ class AddChequeButtons extends StatelessWidget {
           ),
           AppButton(
             onPressed: () async {
-              chequesDetailsController.isPayed! ?
-              chequesDetailsController.saveClearPayCheques(chequesModel)
-              :chequesDetailsController.savePayCheques(chequesModel);
+              chequesDetailsController.isPayed!
+                  ? chequesDetailsController.saveClearPayCheques(chequesModel)
+                  : chequesDetailsController.savePayCheques(chequesModel);
             },
-            title: chequesDetailsController.isPayed!?"حذف الدفع":"دفع",
+            title: chequesDetailsController.isPayed! ? "حذف الدفع" : "دفع",
             color: Colors.black,
             iconData: Icons.paid,
           ),
-          if(chequesDetailsController.isPayed!)
-          AppButton(
-            onPressed: () {
-
-              chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
-
-            },
-            title: "سند الدفع",
-            iconData: Icons.view_list_outlined,
-          ),
-          if(!chequesDetailsController.isPayed!)
-          AppButton(
-            onPressed: () {
-
-              chequesDetailsController.refundPayCheques();
-
-            },
-            title: "استرداد",
-            iconData: Icons.lock_reset_rounded,
-          ),
+          if (chequesDetailsController.isPayed!)
+            AppButton(
+              onPressed: () {
+                chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
+              },
+              title: "سند الدفع",
+              iconData: Icons.view_list_outlined,
+            ),
+          if (!chequesDetailsController.isPayed!)
+            AppButton(
+              onPressed: () {
+                chequesDetailsController.refundPayCheques(chequesModel);
+              },
+              title: "استرداد",
+              iconData: Icons.lock_reset_rounded,
+            ),
         ]
       ]),
     );

@@ -48,6 +48,7 @@ abstract class BaseChequesBondStrategy extends BaseEntryBondCreator<ChequesModel
   List<EntryBondItemModel> createBondItems({
     required String note,
     required String originId,
+    String? docId,
     required double amount,
     required String date,
     required AccountEntity creditAccount,
@@ -61,6 +62,7 @@ abstract class BaseChequesBondStrategy extends BaseEntryBondCreator<ChequesModel
         account: creditAccount,
         date: date,
         originId: originId,
+        docId: docId,
       ),
       EntryBondItemModel(
         note: note,
@@ -69,6 +71,7 @@ abstract class BaseChequesBondStrategy extends BaseEntryBondCreator<ChequesModel
         account: debitAccount,
         date: date,
         originId: originId,
+        docId: docId,
       ),
     ];
   }
@@ -86,6 +89,7 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
       originId: originId,
       amount: amount,
       date: date,
+      docId: model.chequesGuid,
       creditAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
       debitAccount: AccountEntity(id: model.accPtr!, name: model.accPtrName!),
     );
@@ -108,11 +112,12 @@ class PayBondStrategy extends BaseChequesBondStrategy {
     final date = model.chequesDueDate ?? DateTime.now().dayMonthYear;
     final note = "سند قيد لدفع${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
-    final originId = model.chequesGuid!;
+    final originId = model.chequesPayGuid!;
     return createBondItems(
       note: note,
       originId: originId,
       amount: amount,
+      docId: model.chequesPayGuid,
       date: date,
       creditAccount: AccountEntity(id: AppStrings.bankAccountId, name: AppStrings.bankToAccountName),
       debitAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
@@ -141,6 +146,7 @@ class RefundBondStrategy extends BaseChequesBondStrategy {
     return createBondItems(
       note: note,
       originId: originId,
+      docId: model.chequesRefundPayGuid,
       amount: amount,
       date: date,
       creditAccount: AccountEntity(id: model.accPtr!, name: model.accPtrName!),
@@ -151,6 +157,7 @@ class RefundBondStrategy extends BaseChequesBondStrategy {
   @override
   EntryBondOrigin createOrigin({required ChequesModel model, required EntryBondType originType}) => EntryBondOrigin(
         originId: model.chequesGuid!,
+        docId: model.chequesRefundPayGuid!,
         originType: originType,
         originTypeId: model.chequesTypeGuid,
       );

@@ -112,6 +112,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
       entryBondController.saveEntryBondModel(
         entryBondModel: creator.createEntryBond(
           isSimulatedVat: false,
+
           originType: EntryBondType.bill,
           model: updatedBillModel,
         ),
