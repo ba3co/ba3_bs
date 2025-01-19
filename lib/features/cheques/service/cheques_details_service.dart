@@ -1,6 +1,6 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
-import 'package:ba3_bs/features/cheques/service/stratgy/cheques_entry_bond_creator.dart';
+import 'package:ba3_bs/features/cheques/service/cheques_entry_bond_creator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -21,12 +21,12 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
   void launchChequesEntryBondScreen({
     required BuildContext context,
     required ChequesModel chequesModel,
-    required  ChequesStrategyType chequesStrategyType,
+    required ChequesStrategyType chequesStrategyType,
   }) {
     final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, type: chequesStrategyType);
 
-    final EntryBondModel entryBondModel = creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
-
+    final EntryBondModel entryBondModel =
+        creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
 
     launchFloatingWindow(
       context: context,
@@ -50,7 +50,6 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     required String chequesAccount2Name,
     required bool isPayed,
     required bool isRefund,
-
   }) {
     return ChequesModel.fromChequesData(
       chequesAccount2Name: chequesAccount2Name,
@@ -67,13 +66,13 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesDate: chequesDate,
       isPayed: isPayed,
       isRefund: isRefund,
-
     );
   }
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
+      [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));

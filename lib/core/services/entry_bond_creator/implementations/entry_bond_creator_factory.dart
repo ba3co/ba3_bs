@@ -3,7 +3,7 @@ import '../../../../features/bill/services/bill/bill_entry_bond_creator.dart';
 import '../../../../features/bond/data/models/bond_model.dart';
 import '../../../../features/bond/service/bond/bond_entry_bond_creator.dart';
 import '../../../../features/cheques/data/models/cheques_model.dart';
-import '../../../../features/cheques/service/stratgy/cheques_entry_bond_creator.dart';
+import '../../../../features/cheques/service/cheques_entry_bond_creator.dart';
 import '../../../helper/enums/enums.dart';
 import '../interfaces/entry_bond_creator.dart';
 
