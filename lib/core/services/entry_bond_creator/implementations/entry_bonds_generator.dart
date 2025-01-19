@@ -8,16 +8,15 @@ import 'entry_bond_creator_factory.dart';
 class EntryBondsGenerator implements IEntryBondGenerator {
   @override
   List<EntryBondModel> createEntryBondsModels(List sourceModels) {
-    return sourceModels.map(
-      (model) {
-        final EntryBondCreator creator = EntryBondCreatorFactory.resolveEntryBondCreator(model);
-
+    return sourceModels.expand<EntryBondModel>((model) {
+      final List<EntryBondCreator> creators = EntryBondCreatorFactory.resolveEntryBondCreators(model);
+      return creators.map((creator) {
         return creator.createEntryBond(
           originType: EntryBondCreatorFactory.determineOriginType(model),
           model: model,
         );
-      },
-    ).toList();
+      });
+    }).toList();
   }
 }
 
