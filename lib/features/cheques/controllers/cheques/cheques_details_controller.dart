@@ -242,14 +242,14 @@ class ChequesDetailsController extends GetxController with AppValidator {
     read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
   }
 
-  void saveClearPayCheques(ChequesModel chequesModel) async {
+  void clearPayCheques(ChequesModel chequesModel) async {
     setIsPayed(false);
-    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel);
+    final updatedModel = chequesModel.copyWithNullPayGuid();
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
     read<EntryBondController>().deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!);
   }
 
   void refundPayCheques(ChequesModel chequesModel) async {
-    if (isPayed!) return;
     setIsRefundPay(true);
     final updatedModel = chequesModel.copyWith(chequesRefundPayGuid: generateId(RecordType.entryBond));
     final creator = ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.refundStrategy).first;
@@ -257,5 +257,12 @@ class ChequesDetailsController extends GetxController with AppValidator {
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
     log(entryBondModel.origin!.toJson().toString());
     read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
+  }
+
+  void deleteRefundPayCheques(ChequesModel chequesModel) async {
+    setIsRefundPay(false);
+    final updatedModel = chequesModel.copyWithNullRefundPayGuid();
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
+    read<EntryBondController>().deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!);
   }
 }

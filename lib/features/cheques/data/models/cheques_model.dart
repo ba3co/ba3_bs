@@ -22,6 +22,8 @@ class ChequesModel implements PlutoAdaptable {
   final String? chequesAccount2Name;
   final String? chequesPayGuid;
   final String? chequesRefundPayGuid;
+  final String? chequesPayDate;
+  final String? chequesRefundPayDate;
 
   // final ChequesCollectEntryModel? chequesCollectEntry;
   // final ChequesEntryRelationModel? chequesEntryRelation;
@@ -66,6 +68,8 @@ class ChequesModel implements PlutoAdaptable {
     this.chequesPayGuid,
     this.chequesRefundPayGuid,
     this.isRefund,
+    this.chequesPayDate,
+    this.chequesRefundPayDate,
     // this.chequesCollectEntry,
     // this.chequesEntryRelation,
     // this.chequesCustomerGuid,
@@ -106,6 +110,8 @@ class ChequesModel implements PlutoAdaptable {
       chequesPayGuid: json['ChequesPayGuid'] as String?,
       chequesRefundPayGuid: json['ChequesRefundPayGuid'] as String?,
       accPtr: json['AccPtr'] as String?,
+      chequesPayDate: json['ChequesPayDate'] as String?,
+      chequesRefundPayDate: json['ChequesRefundPayDate'] as String?,
       isPayed: json['IsPayed'] as bool?,
       isRefund: json['IsRefund'] as bool?,
       // chequesCollectEntry: json['ChequesCollectEntry'] != null ? ChequesCollectEntryModel.fromJson(json['ChequesCollectEntry']) : null,
@@ -153,6 +159,8 @@ class ChequesModel implements PlutoAdaptable {
       'ChequesPayGuid': chequesPayGuid,
       'ChequesRefundPayGuid': chequesRefundPayGuid,
       'IsRefund': isRefund,
+      'ChequesRefundPayDate': chequesRefundPayDate,
+      'chequesPayDate': chequesPayDate,
       // 'ChequesCollectEntry': chequesCollectEntry?.toJson(),
       // 'ChequesEntryRelation': chequesEntryRelation?.toJson(),
       // 'ChequesCustomerGuid': chequesCustomerGuid,
@@ -193,6 +201,8 @@ class ChequesModel implements PlutoAdaptable {
     String? chequesAccount2Name,
     String? chequesPayGuid,
     String? chequesRefundPayGuid,
+    String? chequesPayDate,
+    String? chequesRefundPayDate,
     bool? isRefund,
     // String? chequesCustomerGuid,
     // ChequesCollectEntryModel? chequesCollectEntry,
@@ -225,7 +235,6 @@ class ChequesModel implements PlutoAdaptable {
       chequesNote: chequesNote ?? this.chequesNote,
       chequesVal: chequesVal ?? this.chequesVal,
       chequesAccount2Guid: chequesAccount2Guid ?? this.chequesAccount2Guid,
-
       accPtr: accPtr ?? this.accPtr,
       accPtrName: accPtrName ?? this.accPtrName,
       chequesAccount2Name: chequesAccount2Name ?? this.chequesAccount2Name,
@@ -233,6 +242,8 @@ class ChequesModel implements PlutoAdaptable {
       chequesPayGuid: chequesPayGuid ?? this.chequesPayGuid,
       chequesRefundPayGuid: chequesRefundPayGuid ?? this.chequesRefundPayGuid,
       isRefund: isRefund ?? this.isRefund,
+      chequesPayDate: chequesPayDate ?? this.chequesPayDate,
+      chequesRefundPayDate: chequesRefundPayDate ?? this.chequesRefundPayDate,
 
       // chequesCollectEntry: chequesCollectEntry ?? this.chequesCollectEntry,
       // chequesEntryRelation: chequesEntryRelation ?? this.chequesEntryRelation,
@@ -254,6 +265,52 @@ class ChequesModel implements PlutoAdaptable {
       // chequesCost1Guid: chequesCost1Guid ?? this.chequesCost1Guid,
       // chequesCost2Guid: chequesCost2Guid ?? this.chequesCost2Guid,
       // chequesState: chequesState ?? this.chequesState,
+    );
+  }
+
+  ChequesModel copyWithNullPayGuid() {
+    return ChequesModel(
+      chequesTypeGuid: chequesTypeGuid,
+      chequesNumber: chequesNumber,
+      chequesNum: chequesNum,
+      chequesGuid: chequesGuid,
+      chequesDate: chequesDate,
+      chequesDueDate: chequesDueDate,
+      chequesNote: chequesNote,
+      chequesVal: chequesVal,
+      chequesAccount2Guid: chequesAccount2Guid,
+      accPtr: accPtr,
+      accPtrName: accPtrName,
+      chequesAccount2Name: chequesAccount2Name,
+      chequesRefundPayGuid: chequesRefundPayGuid,
+      isRefund: isRefund,
+      chequesPayGuid: null,
+      isPayed: false,
+      chequesPayDate: null,
+      chequesRefundPayDate: chequesRefundPayDate,
+    );
+  }
+
+  ChequesModel copyWithNullRefundPayGuid() {
+    return ChequesModel(
+      chequesTypeGuid: chequesTypeGuid,
+      chequesNumber: chequesNumber,
+      chequesNum: chequesNum,
+      chequesGuid: chequesGuid,
+      chequesDate: chequesDate,
+      chequesDueDate: chequesDueDate,
+      chequesNote: chequesNote,
+      chequesVal: chequesVal,
+      chequesAccount2Guid: chequesAccount2Guid,
+      accPtr: accPtr,
+      accPtrName: accPtrName,
+      chequesAccount2Name: chequesAccount2Name,
+      chequesRefundPayGuid: null,
+      isRefund: false,
+      chequesPayGuid: chequesPayGuid,
+      isPayed: isPayed,
+      chequesPayDate: chequesPayDate,
+      chequesRefundPayDate: null,
     );
   }
 

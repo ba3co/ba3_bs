@@ -69,7 +69,7 @@ class AddChequeButtons extends StatelessWidget {
           AppButton(
             onPressed: () async {
               chequesDetailsController.isPayed!
-                  ? chequesDetailsController.saveClearPayCheques(chequesModel)
+                  ? chequesDetailsController.clearPayCheques(chequesModel)
                   : chequesDetailsController.savePayCheques(chequesModel);
             },
             title: chequesDetailsController.isPayed! ? "حذف الدفع" : "دفع",

@@ -109,7 +109,7 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
 class PayBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
-    final date = model.chequesDueDate ?? DateTime.now().dayMonthYear;
+    final date = model.chequesPayDate ?? DateTime.now().dayMonthYear;
     final note = "سند قيد لدفع${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesPayGuid!;
@@ -139,7 +139,7 @@ class PayBondStrategy extends BaseChequesBondStrategy {
 class RefundBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
-    final date = DateTime.now().dayMonthYear;
+    final date = model.chequesRefundPayDate ?? DateTime.now().dayMonthYear;
     final note = "سند قيد لارجاع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesGuid!;
