@@ -63,11 +63,11 @@ enum BillType {
     label: 'salesReturn',
     value: 'فاتورة مرتجع مبيع',
     typeGuide: "2373523c-9f23-4ce7-a6a2-6277757fc381",
-    color: 4278228616,
+    color: 4282339765,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
-      BillAccounts.materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
+      BillAccounts.caches : AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.  materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
     },
   ),
   purchaseReturn(
@@ -85,7 +85,7 @@ enum BillType {
     label: 'adjustmentEntry',
     value: 'فاتورة تسوية ادخال',
     typeGuide: "06f0e6ea-3493-480c-9e0c-573baf049605",
-    color: 4278228616,
+    color: 4286141768,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
       BillAccounts.caches: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
@@ -96,7 +96,7 @@ enum BillType {
     label: 'outputAdjustment',
     value: 'فاتورة تسوية اخراج',
     typeGuide: "563af9aa-5d7e-470b-8c3c-fee784da810a",
-    color: 4278228616,
+    color: 4294924066,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
       BillAccounts.materials: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
