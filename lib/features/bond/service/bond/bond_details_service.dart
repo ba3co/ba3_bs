@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
@@ -58,8 +61,7 @@ class BondDetailsService with PdfBase, FloatingLauncher {
         bondRecordsItems: plutoController.generateRecords,
       );
 
-  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController,
-      [fromBondById]) async {
+  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController, [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
       await read<AllBondsController>().fetchAllBondsByType(BondType.byTypeGuide(bondModel.payTypeGuid!));
@@ -75,7 +77,8 @@ class BondDetailsService with PdfBase, FloatingLauncher {
   }
 
   Future<void> handleSaveOrUpdateSuccess({
-    required BondModel bondModel,
+    BondModel? previousBond,
+    required BondModel currentBond,
     required BondDetailsController bondDetailsController,
     required BondSearchController bondSearchController,
     required bool isSave,
@@ -84,26 +87,33 @@ class BondDetailsService with PdfBase, FloatingLauncher {
 
     AppUIUtils.onSuccess(successMessage);
 
+    Map<String, AccountModel> modifiedBondTypeAccounts = {};
+
     if (isSave) {
       bondDetailsController.updateIsBondSaved(true);
     } else {
-      bondSearchController.updateBond(bondModel);
+      modifiedBondTypeAccounts = findModifiedBondTypeAccounts(
+        previousBond: previousBond!,
+        currentBond: currentBond,
+      );
+      bondSearchController.updateBond(currentBond);
     }
 
     generateAndSendPdf(
       fileName: AppStrings.bond,
-      itemModel: bondModel,
-      itemModelId: bondModel.payGuid,
-      items: bondModel.payItems.itemList,
+      itemModel: currentBond,
+      itemModelId: currentBond.payGuid,
+      items: currentBond.payItems.itemList,
       pdfGenerator: BondPdfGenerator(),
     );
 
-    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(bondModel);
+    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBond);
 
     entryBondController.saveEntryBondModel(
+      modifiedAccounts: modifiedBondTypeAccounts,
       entryBondModel: creator.createEntryBond(
         originType: EntryBondType.bond,
-        model: bondModel,
+        model: currentBond,
       ),
     );
   }
@@ -114,5 +124,47 @@ class BondDetailsService with PdfBase, FloatingLauncher {
       return false;
     }
     return true;
+  }
+
+  Map<String, AccountModel> findModifiedBondTypeAccounts({
+    required BondModel previousBond,
+    required BondModel currentBond,
+  }) {
+    // استخراج معرفات الحسابات من السندات السابقة والحالية
+    final previousAccounts = {
+      for (var item in previousBond.payItems.itemList)
+        item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
+    };
+    final currentAccounts = {
+      for (var item in currentBond.payItems.itemList)
+        item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
+    };
+
+    if (previousBond.payAccountGuid != null && currentBond.payAccountGuid != null) {
+      previousAccounts[previousBond.payAccountGuid!] = AccountModel(
+          id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
+      currentAccounts[currentBond.payAccountGuid!] = AccountModel(
+          id: currentBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(currentBond.payAccountGuid!));
+    }
+    log("currentAccounts ${currentAccounts.length}");
+    log("previousAccounts ${previousAccounts.length}");
+    final Map<String, AccountModel> modifiedAccounts = {};
+
+    previousAccounts.forEach((accountKey, previousAccountModel) {
+      // Find the corresponding account in the current bill
+      final currentAccountModel = currentAccounts[accountKey];
+
+      // Check if the account exists in the current bill and has been modified
+      if (currentAccountModel != null && currentAccountModel.id != previousAccountModel.id) {
+        modifiedAccounts[accountKey] = previousAccountModel;
+      }
+    });
+
+    log('modifiedAccounts length: ${modifiedAccounts.length}');
+
+    modifiedAccounts.forEach((key, value) => log('modifiedBondTypeAccounts Account $key, AccountModel ${value.toJson()}'));
+
+    // إرجاع الحسابات التي تم تعديلها
+    return modifiedAccounts;
   }
 }

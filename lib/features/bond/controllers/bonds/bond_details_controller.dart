@@ -56,6 +56,8 @@ class BondDetailsController extends GetxController with AppValidator {
   void setAccount(AccountModel setAccount) {
     selectedAccount = setAccount;
     bondDetailsPlutoController.setAccountGuid = setAccount.id;
+    accountController.text=setAccount.accName!;
+
   }
 
   @override
@@ -113,7 +115,6 @@ class BondDetailsController extends GetxController with AppValidator {
       AppUIUtils.onFailure('يجب موازنة السند من فضلك!');
       return;
     }
-
     // Create the bond model from the provided data
     final updatedBondModel = _createBondModelFromBondData(bondType, existingBondModel);
 
@@ -137,7 +138,8 @@ class BondDetailsController extends GetxController with AppValidator {
       (failure) => AppUIUtils.onFailure(failure.message),
       (bondModel) {
         _bondService.handleSaveOrUpdateSuccess(
-            bondModel: bondModel,
+            previousBond: existingBondModel,
+            currentBond: bondModel,
             bondSearchController: bondSearchController,
             isSave: existingBondModel == null,
             bondDetailsController: this);
@@ -168,11 +170,7 @@ class BondDetailsController extends GetxController with AppValidator {
     // Create and return the bond model
 
     return _bondService.createBondModel(
-        bondModel: bondModel,
-        bondType: bondType,
-        payDate: bondDate.value,
-        payAccountGuid: selectedAccount!.id!,
-        note: noteController.text);
+        bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>

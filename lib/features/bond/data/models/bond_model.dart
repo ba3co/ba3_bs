@@ -98,8 +98,9 @@ class BondModel {
     required List<PayItem> bondRecordsItems,
   }) {
     final items = PayItems.fromBondRecords(bondRecordsItems);
-    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry)
+    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) {
       payAccountGuid = "00000000-0000-0000-0000-000000000000";
+    }
 
     return bondModel == null
         ? BondModel(

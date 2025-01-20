@@ -120,7 +120,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     }
   }
 
-  Map<Account, AccountModel> findModifiedBillTypeAccounts({
+  Map<String, AccountModel> findModifiedBillTypeAccounts({
     required BillModel previousBill,
     required BillModel currentBill,
   }) {
@@ -133,7 +133,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     final currentAccounts = currentBillTypeModel.accounts ?? {};
 
     // Prepare a map to store accounts that have changed
-    final modifiedAccounts = <Account, AccountModel>{};
+    final modifiedAccounts = <String, AccountModel>{};
 
     // Iterate through the accounts in the previous bill
     previousAccounts.forEach((accountKey, previousAccountModel) {
@@ -142,13 +142,13 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
       // Check if the account exists in the current bill and has been modified
       if (currentAccountModel != null && currentAccountModel != previousAccountModel) {
-        modifiedAccounts[accountKey] = previousAccountModel;
+        modifiedAccounts[accountKey.label] = previousAccountModel;
       }
     });
     log('modifiedAccounts length: ${modifiedAccounts.length}');
 
     modifiedAccounts
-        .forEach((key, value) => log('modifiedBillTypeAccounts Account ${key.label}, AccountModel ${value.toJson()}'));
+        .forEach((key, value) => log('modifiedBillTypeAccounts Account $key, AccountModel ${value.toJson()}'));
 
     // Return the map of modified accounts
     return modifiedAccounts;
@@ -164,7 +164,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
     AppUIUtils.onSuccess(successMessage);
 
-    Map<Account, AccountModel> modifiedBillTypeAccounts = {};
+    Map<String, AccountModel> modifiedBillTypeAccounts = {};
 
     if (isSave) {
       billController.updateIsBillSaved = true;
@@ -189,7 +189,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
       final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBill);
 
       entryBondController.saveEntryBondModel(
-        modifiedBillTypeAccounts: modifiedBillTypeAccounts,
+        modifiedAccounts: modifiedBillTypeAccounts,
         entryBondModel: creator.createEntryBond(
           isSimulatedVat: false,
           originType: EntryBondType.bill,

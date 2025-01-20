@@ -26,7 +26,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Method to save an Entry Bond and update related account statements
   Future<void> saveEntryBondModel({
     required EntryBondModel entryBondModel,
-    Map<Account, AccountModel> modifiedBillTypeAccounts = const {},
+    Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
     final result = await _entryBondsFirebaseRepo.save(entryBondModel);
 
@@ -34,7 +34,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedEntryBondModel) => _onEntryBondSaved(
         entryBondModel: savedEntryBondModel,
-        modifiedBillTypeAccounts: modifiedBillTypeAccounts,
+        modifiedAccounts: modifiedAccounts,
       ),
     );
   }
@@ -42,7 +42,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Handles logic after an Entry Bond is successfully saved
   Future<void> _onEntryBondSaved({
     required EntryBondModel entryBondModel,
-    Map<Account, AccountModel> modifiedBillTypeAccounts = const {},
+    Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
     final entryBondItems = entryBondModel.items?.itemList;
 
@@ -55,25 +55,17 @@ class EntryBondController extends GetxController with FloatingLauncher {
     // Handle modifications to the Entry Bond items
     await _handleModifiedEntryBondItems(
       entryBondModel: entryBondModel,
-      modifiedBillTypeAccounts: modifiedBillTypeAccounts,
+      modifiedAccounts: modifiedAccounts,
     );
   }
 
-// [log] itemsGroupedByAccount
-// {b1e9e80b-0d23-414d-b3be-bd0aec386002:
-// [EntryBondItemModel(amount: 95.24, bondItemType: BondItemType.creditor, Account id: b1e9e80b-0d23-414d-b3be-bd0aec386002, Account name: المبيعات)],
-// a1791bc5-d42a-483c-ab19-ae6d2caa1685:
-// [EntryBondItemModel(amount: 95.24, bondItemType: BondItemType.debtor, Account id: a1791bc5-d42a-483c-ab19-ae6d2caa1685, Account name: سلفة علي مبرمج),
-// EntryBondItemModel(amount: 4.76, bondItemType: BondItemType.debtor, Account id: a1791bc5-d42a-483c-ab19-ae6d2caa1685, Account name: سلفة علي مبرمج)],
-// a5c04527-63e8-4373-92e8-68d8f88bdb16: [EntryBondItemModel(amount: 4.76, bondItemType: BondItemType.creditor, Account id: a5c04527-63e8-4373-92e8-68d8f88bdb16, Account name: ضريبة القيمة المضافة)]
-// }
 
   /// Saves grouped Entry Bond items by account
   Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems) async {
     // Group items by account ID
 
     final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
-    log('itemsGroupedByAccount ${itemsGroupedByAccount}');
+    log('itemsGroupedByAccount $itemsGroupedByAccount');
 
     for (final accountId in itemsGroupedByAccount.keys) {
       final groupedItems = itemsGroupedByAccount[accountId]!;
@@ -91,11 +83,11 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Handles modifications to the Entry Bond items
   Future<void> _handleModifiedEntryBondItems({
     required EntryBondModel entryBondModel,
-    Map<Account, AccountModel> modifiedBillTypeAccounts = const {},
+    Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
     final modifiedEntryBondItems = _mapToEntryBondItems(
       originId: entryBondModel.origin!.originId!,
-      modifiedBillTypeAccounts: modifiedBillTypeAccounts,
+      modifiedAccounts: modifiedAccounts,
     );
 
     if (modifiedEntryBondItems.isEmpty) return;
@@ -114,9 +106,9 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Converts modified bill type accounts to EntryBondItems
   List<EntryBondItems> _mapToEntryBondItems({
     required String originId,
-    required Map<Account, AccountModel> modifiedBillTypeAccounts,
+    required Map<String, AccountModel> modifiedAccounts,
   }) {
-    return modifiedBillTypeAccounts.entries.map((entry) {
+    return modifiedAccounts.entries.map((entry) {
       final accountModel = entry.value;
       return EntryBondItems(
         id: originId,
