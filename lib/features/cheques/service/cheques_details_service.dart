@@ -82,6 +82,8 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
     }
     entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!);
 
+    // TODO(3elwa): Delete second entry bond when delete cheque
+
     AppUIUtils.onSuccess('تم حذف الشيك بنجاح!');
   }
 

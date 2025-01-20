@@ -124,33 +124,27 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     required BillModel previousBill,
     required BillModel currentBill,
   }) {
-    // Extract the bill type models from the provided bills
-    final previousBillTypeModel = previousBill.billTypeModel;
-    final currentBillTypeModel = currentBill.billTypeModel;
+    // Extract accounts from the bill type models or default to empty maps
+    final previousAccounts = previousBill.billTypeModel.accounts ?? {};
+    final currentAccounts = currentBill.billTypeModel.accounts ?? {};
 
-    // Extract the accounts map or default to an empty map
-    final previousAccounts = previousBillTypeModel.accounts ?? {};
-    final currentAccounts = currentBillTypeModel.accounts ?? {};
+    // Identify accounts that are present in both bills but have changed
+    final Map<String, AccountModel> modifiedAccounts = Map.fromEntries(
+      previousAccounts.entries.where((MapEntry<Account, AccountModel> entry) {
+        final currentAccount = currentAccounts[entry.key];
+        return currentAccount != null && currentAccount != entry.value;
+      }).map(
+        // Use the account key's label for the map
+        (entry) => MapEntry(entry.key.label, entry.value),
+      ),
+    );
 
-    // Prepare a map to store accounts that have changed
-    final modifiedAccounts = <String, AccountModel>{};
+    // Log modified accounts
+    log('Modified accounts count: ${modifiedAccounts.length}');
+    modifiedAccounts.forEach(
+      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
+    );
 
-    // Iterate through the accounts in the previous bill
-    previousAccounts.forEach((accountKey, previousAccountModel) {
-      // Find the corresponding account in the current bill
-      final currentAccountModel = currentAccounts[accountKey];
-
-      // Check if the account exists in the current bill and has been modified
-      if (currentAccountModel != null && currentAccountModel != previousAccountModel) {
-        modifiedAccounts[accountKey.label] = previousAccountModel;
-      }
-    });
-    log('modifiedAccounts length: ${modifiedAccounts.length}');
-
-    modifiedAccounts
-        .forEach((key, value) => log('modifiedBillTypeAccounts Account $key, AccountModel ${value.toJson()}'));
-
-    // Return the map of modified accounts
     return modifiedAccounts;
   }
 
