@@ -166,6 +166,12 @@ class EntryBondItemModel implements PlutoAdaptable {
   }
 
   @override
+  String toString() {
+    return 'EntryBondItemModel(amount: $amount, bondItemType: $bondItemType, Account id: ${account.id}, Account name:'
+        ' ${account.name})';
+  }
+
+  @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
@@ -57,11 +59,21 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
+// [log] itemsGroupedByAccount
+// {b1e9e80b-0d23-414d-b3be-bd0aec386002:
+// [EntryBondItemModel(amount: 95.24, bondItemType: BondItemType.creditor, Account id: b1e9e80b-0d23-414d-b3be-bd0aec386002, Account name: المبيعات)],
+// a1791bc5-d42a-483c-ab19-ae6d2caa1685:
+// [EntryBondItemModel(amount: 95.24, bondItemType: BondItemType.debtor, Account id: a1791bc5-d42a-483c-ab19-ae6d2caa1685, Account name: سلفة علي مبرمج),
+// EntryBondItemModel(amount: 4.76, bondItemType: BondItemType.debtor, Account id: a1791bc5-d42a-483c-ab19-ae6d2caa1685, Account name: سلفة علي مبرمج)],
+// a5c04527-63e8-4373-92e8-68d8f88bdb16: [EntryBondItemModel(amount: 4.76, bondItemType: BondItemType.creditor, Account id: a5c04527-63e8-4373-92e8-68d8f88bdb16, Account name: ضريبة القيمة المضافة)]
+// }
+
   /// Saves grouped Entry Bond items by account
   Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems) async {
     // Group items by account ID
 
     final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
+    log('itemsGroupedByAccount ${itemsGroupedByAccount}');
 
     for (final accountId in itemsGroupedByAccount.keys) {
       final groupedItems = itemsGroupedByAccount[accountId]!;

@@ -142,9 +142,13 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
       // Check if the account exists in the current bill and has been modified
       if (currentAccountModel != null && currentAccountModel != previousAccountModel) {
-        modifiedAccounts[accountKey] = currentAccountModel;
+        modifiedAccounts[accountKey] = previousAccountModel;
       }
     });
+    log('modifiedAccounts length: ${modifiedAccounts.length}');
+
+    modifiedAccounts
+        .forEach((key, value) => log('modifiedBillTypeAccounts Account ${key.label}, AccountModel ${value.toJson()}'));
 
     // Return the map of modified accounts
     return modifiedAccounts;
