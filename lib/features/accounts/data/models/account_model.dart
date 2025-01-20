@@ -66,31 +66,31 @@ class AccountModel implements PlutoAdaptable {
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
     return AccountModel(
-      id: json['AccPtr']??json['docId'],
-      accName: json['AccName']??'',
-      accLatinName: json['AccLatinName']??'',
-      accCode: json['AccCode']??'',
-      accCDate: DateTime.tryParse(json['AccCDate']??''),
-      accCheckDate: DateTime.tryParse(json['AccCheckDate']??''),
-      accParentGuid: json['AccParentGuid']??'',
-      accFinalGuid: json['AccFinalGuid']??'',
+      id: json['AccPtr'] ?? json['docId'],
+      accName: json['AccName'] ?? '',
+      accLatinName: json['AccLatinName'] ?? '',
+      accCode: json['AccCode'] ?? '',
+      accCDate: DateTime.tryParse(json['AccCDate'] ?? ''),
+      accCheckDate: DateTime.tryParse(json['AccCheckDate'] ?? ''),
+      accParentGuid: json['AccParentGuid'] ?? '',
+      accFinalGuid: json['AccFinalGuid'] ?? '',
       // accAccNSons: json['AccAccNSons']??0,
       // accInitDebit: (json['AccInitDebit'] as num?)?.toDouble(),
       // accInitCredit: (json['AccInitCredit'] as num?)?.toDouble(),
       // maxDebit: (json['MaxDebit'] as num?)?.toDouble(),
       // accWarn: json['AccWarn']??0,
-      note: json['Note']??'',
+      note: json['Note'] ?? '',
       // accCurVal: json['AccCurVal']??0,
       // accCurGuid: json['AccCurGuid']??'',
       // accSecurity: json['AccSecurity']??0,
       // accDebitOrCredit: json['AccDebitOrCredit']??0,
-      accType: json['AccType']??0,
+      accType: json['AccType'] ?? 0,
       // accState: json['AccState']??0,
       // accIsChangableRatio: json['AccIsChangableRatio']??0,
       // accBranchGuid: json['AccBranchGuid']??'',
-      accNumber: int.tryParse(json['AccNumber'].toString())??0,
+      accNumber: int.tryParse(json['AccNumber'].toString()) ?? 0,
       // accBranchMask: json['AccBranchMask']??'',
-      accParentName: json['accParentName']??'',
+      accParentName: json['accParentName'] ?? '',
       // billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHfavRu"],
     );
   }
@@ -242,13 +242,13 @@ class AccountEntity {
     };
   }
 
-  AccountModel copyWith({
+  AccountEntity copyWith({
     String? id,
     String? name,
   }) {
-    return AccountModel(
+    return AccountEntity(
       id: id ?? this.id,
-      accName: name ?? this.name,
+      name: name ?? this.name,
     );
   }
 }

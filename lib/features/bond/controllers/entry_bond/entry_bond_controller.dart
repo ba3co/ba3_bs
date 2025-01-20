@@ -60,6 +60,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Saves grouped Entry Bond items by account
   Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems) async {
     // Group items by account ID
+
     final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
 
     for (final accountId in itemsGroupedByAccount.keys) {

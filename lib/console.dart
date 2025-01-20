@@ -1,9 +1,61 @@
-import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:pluto_grid/pluto_grid.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 
-import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/widgets/pluto_auto_id_column.dart';
-import '../../../pluto/data/models/pluto_adaptable.dart';
+List<EntryBondItemModel> items = [
+  EntryBondItemModel(
+    amount: 100,
+    bondItemType: BondItemType.debtor,
+    account: AccountEntityN(id: '1', name: '#1'),
+  ),
+  EntryBondItemModel(
+    amount: 100,
+    bondItemType: BondItemType.creditor,
+    account: AccountEntityN(id: '2', name: '#2'),
+  ),
+  EntryBondItemModel(
+    amount: 200,
+    bondItemType: BondItemType.creditor,
+    account: AccountEntityN(id: '1', name: '#1'),
+  ),
+  EntryBondItemModel(
+    amount: 200,
+    bondItemType: BondItemType.debtor,
+    account: AccountEntityN(id: '4', name: '#4'),
+  ),
+];
+
+void main() async {
+  final groupBy = items.groupBy((item) => item.account.id);
+  print('groupBy $groupBy');
+}
+
+class AccountEntityN {
+  final String id;
+  final String name;
+
+  const AccountEntityN({
+    required this.id,
+    required this.name,
+  });
+
+  factory AccountEntityN.fromJson(Map<String, dynamic> json) {
+    return AccountEntityN(
+      id: json['AccPtr'],
+      name: json['AccName'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'AccPtr': id,
+      'AccName': name,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'AccountEntity(id: $id, name: $name)';
+  }
+}
 
 /// Represents a bond entry with associated details and items.
 class EntryBondModel {
@@ -88,8 +140,43 @@ class EntryBondItems {
   }
 }
 
+enum BondItemType {
+  creditor('الدائن'),
+  debtor('مدين');
+
+  final String label;
+
+  const BondItemType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory BondItemType.byLabel(String label) {
+    return BondItemType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching BondItemType for label: $label'),
+    );
+  }
+}
+
+enum EntryBondType {
+  bond('bond'),
+  bill('bill'),
+  cheque('cheque');
+
+  final String label;
+
+  const EntryBondType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory EntryBondType.byLabel(String label) {
+    return EntryBondType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching EntryBondType for label: $label'),
+    );
+  }
+}
+
 /// Represents a single bond item within a bond entry.
-class EntryBondItemModel implements PlutoAdaptable {
+class EntryBondItemModel {
   /// Type of the bond item, defined by an enum.
   final BondItemType? bondItemType;
 
@@ -97,7 +184,7 @@ class EntryBondItemModel implements PlutoAdaptable {
   final double? amount;
 
   /// The account related to this bond item.
-  final AccountEntity account;
+  final AccountEntityN account;
 
   /// Additional notes or comments for this bond item.
   final String? note;
@@ -127,7 +214,7 @@ class EntryBondItemModel implements PlutoAdaptable {
       originId: json['docId'] as String?,
       date: json['date'] as String?,
       docId: json['docId'] as String?,
-      account: AccountEntity.fromJson(json['account']),
+      account: AccountEntityN.fromJson(json['account']),
     );
   }
 
@@ -152,7 +239,7 @@ class EntryBondItemModel implements PlutoAdaptable {
     final String? originId,
     final String? docId,
     final String? date,
-    final AccountEntity? account,
+    final AccountEntityN? account,
   }) {
     return EntryBondItemModel(
       bondItemType: bondItemType ?? this.bondItemType,
@@ -166,30 +253,9 @@ class EntryBondItemModel implements PlutoAdaptable {
   }
 
   @override
-  Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
-    return {
-      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
-      createAutoIdColumn(): '',
-      PlutoColumn(
-          title: 'مدين',
-          field: 'مدين',
-          type: PlutoColumnType.currency(
-            format: '#,##0.00 AED',
-            locale: 'en_AE',
-            symbol: 'AED',
-          )): bondItemType == BondItemType.debtor ? amount : 0,
-      PlutoColumn(
-          title: 'دائن',
-          field: 'دائن',
-          type: PlutoColumnType.currency(
-            format: '#,##0.00 AED',
-            locale: 'en_AE',
-            symbol: 'AED',
-          )): bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()): account.name,
-      PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
-      PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
-    };
+  String toString() {
+    return 'EntryBondItemModel(amount: $amount, bondItemType: $bondItemType, Account id: ${account.id}, Account name:'
+        ' ${account.name})';
   }
 }
 
