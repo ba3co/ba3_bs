@@ -130,7 +130,6 @@ class BondDetailsService with PdfBase, FloatingLauncher {
     required BondModel previousBond,
     required BondModel currentBond,
   }) {
-    // استخراج معرفات الحسابات من السندات السابقة والحالية
     final previousAccounts = {
       for (var item in previousBond.payItems.itemList)
         item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
@@ -139,8 +138,11 @@ class BondDetailsService with PdfBase, FloatingLauncher {
       for (var item in currentBond.payItems.itemList)
         item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
     };
-
+    currentAccounts.forEach((key, value) => log('currentAccounts Account $key, AccountModel ${value.accName}'));
+    previousAccounts.forEach((key, value) => log('previousAccounts Account $key, AccountModel ${value.accName}'));
     if (previousBond.payAccountGuid != null && currentBond.payAccountGuid != null) {
+      log("previousBond ${previousBond.payAccountGuid!}");
+      log("currentBond ${currentBond.payAccountGuid!}");
       previousAccounts[previousBond.payAccountGuid!] = AccountModel(
           id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
       currentAccounts[currentBond.payAccountGuid!] = AccountModel(
@@ -155,7 +157,7 @@ class BondDetailsService with PdfBase, FloatingLauncher {
       final currentAccountModel = currentAccounts[accountKey];
 
       // Check if the account exists in the current bill and has been modified
-      if (currentAccountModel != null && currentAccountModel.id != previousAccountModel.id) {
+      if (currentAccountModel?.id != previousAccountModel.id) {
         modifiedAccounts[accountKey] = previousAccountModel;
       }
     });
