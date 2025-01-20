@@ -25,8 +25,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
   }) {
     final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, type: chequesStrategyType);
 
-    final EntryBondModel entryBondModel =
-        creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
+    final EntryBondModel entryBondModel = creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
 
     launchFloatingWindow(
       context: context,
@@ -71,8 +70,7 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
-      [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
@@ -81,8 +79,12 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
       chequesSearchController.removeCheques(chequesModel);
     }
     entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!);
-
-    // TODO(3elwa): Delete second entry bond when delete cheque
+    if (chequesModel.chequesPayGuid != null) {
+      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!);
+    }
+    if (chequesModel.chequesRefundPayGuid != null) {
+      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!);
+    }
 
     AppUIUtils.onSuccess('تم حذف الشيك بنجاح!');
   }
