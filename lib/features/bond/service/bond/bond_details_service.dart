@@ -138,18 +138,13 @@ class BondDetailsService with PdfBase, FloatingLauncher {
       for (var item in currentBond.payItems.itemList)
         item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
     };
-    currentAccounts.forEach((key, value) => log('currentAccounts Account $key, AccountModel ${value.accName}'));
-    previousAccounts.forEach((key, value) => log('previousAccounts Account $key, AccountModel ${value.accName}'));
     if (previousBond.payAccountGuid != null && currentBond.payAccountGuid != null) {
-      log("previousBond ${previousBond.payAccountGuid!}");
-      log("currentBond ${currentBond.payAccountGuid!}");
       previousAccounts[previousBond.payAccountGuid!] = AccountModel(
           id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
       currentAccounts[currentBond.payAccountGuid!] = AccountModel(
           id: currentBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(currentBond.payAccountGuid!));
     }
-    log("currentAccounts ${currentAccounts.length}");
-    log("previousAccounts ${previousAccounts.length}");
+
     final Map<String, AccountModel> modifiedAccounts = {};
 
     previousAccounts.forEach((accountKey, previousAccountModel) {
@@ -162,11 +157,10 @@ class BondDetailsService with PdfBase, FloatingLauncher {
       }
     });
 
-    log('modifiedAccounts length: ${modifiedAccounts.length}');
+    // log('modifiedAccounts length: ${modifiedAccounts.length}');
+    //
+    // modifiedAccounts.forEach((key, value) => log('modifiedBondTypeAccounts Account $key, AccountModel ${value.toJson()}'));
 
-    modifiedAccounts.forEach((key, value) => log('modifiedBondTypeAccounts Account $key, AccountModel ${value.toJson()}'));
-
-    // إرجاع الحسابات التي تم تعديلها
     return modifiedAccounts;
   }
 }
