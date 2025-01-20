@@ -17,6 +17,7 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bond_creator_factory.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
@@ -112,7 +113,6 @@ class BillDetailsService with PdfBase, FloatingLauncher {
       entryBondController.saveEntryBondModel(
         entryBondModel: creator.createEntryBond(
           isSimulatedVat: false,
-
           originType: EntryBondType.bill,
           model: updatedBillModel,
         ),
@@ -120,8 +120,39 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     }
   }
 
+  Map<Account, AccountModel> findModifiedBillTypeAccounts({
+    required BillModel previousBill,
+    required BillModel currentBill,
+  }) {
+    // Extract the bill type models from the provided bills
+    final previousBillTypeModel = previousBill.billTypeModel;
+    final currentBillTypeModel = currentBill.billTypeModel;
+
+    // Extract the accounts map or default to an empty map
+    final previousAccounts = previousBillTypeModel.accounts ?? {};
+    final currentAccounts = currentBillTypeModel.accounts ?? {};
+
+    // Prepare a map to store accounts that have changed
+    final modifiedAccounts = <Account, AccountModel>{};
+
+    // Iterate through the accounts in the previous bill
+    previousAccounts.forEach((accountKey, previousAccountModel) {
+      // Find the corresponding account in the current bill
+      final currentAccountModel = currentAccounts[accountKey];
+
+      // Check if the account exists in the current bill and has been modified
+      if (currentAccountModel != null && currentAccountModel != previousAccountModel) {
+        modifiedAccounts[accountKey] = currentAccountModel;
+      }
+    });
+
+    // Return the map of modified accounts
+    return modifiedAccounts;
+  }
+
   Future<void> handleSaveOrUpdateSuccess({
-    required BillModel billModel,
+    BillModel? previousBill,
+    required BillModel currentBill,
     required BillSearchController billSearchController,
     required bool isSave,
   }) async {
@@ -129,28 +160,36 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
     AppUIUtils.onSuccess(successMessage);
 
+    Map<Account, AccountModel> modifiedBillTypeAccounts = {};
+
     if (isSave) {
       billController.updateIsBillSaved = true;
     } else {
-      billSearchController.updateBill(billModel);
+      modifiedBillTypeAccounts = findModifiedBillTypeAccounts(
+        previousBill: previousBill!,
+        currentBill: currentBill,
+      );
+
+      billSearchController.updateBill(currentBill);
     }
 
     generateAndSendPdf(
       fileName: AppStrings.bill,
-      itemModel: billModel,
-      itemModelId: billModel.billId,
-      items: billModel.items.itemList,
+      itemModel: currentBill,
+      itemModelId: currentBill.billId,
+      items: currentBill.items.itemList,
       pdfGenerator: BillPdfGenerator(),
     );
 
-    if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
+    if (currentBill.status == Status.approved && currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
+      final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBill);
 
       entryBondController.saveEntryBondModel(
+        modifiedBillTypeAccounts: modifiedBillTypeAccounts,
         entryBondModel: creator.createEntryBond(
           isSimulatedVat: false,
           originType: EntryBondType.bill,
-          model: billModel,
+          model: currentBill,
         ),
       );
     }

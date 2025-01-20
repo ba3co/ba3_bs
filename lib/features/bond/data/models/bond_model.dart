@@ -1,15 +1,11 @@
-
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-
-
 import '../../../../core/helper/enums/enums.dart';
 
-class BondModel  {
+class BondModel {
   final String? payTypeGuid;
   final int? payNumber;
   final String? payGuid;
@@ -45,7 +41,6 @@ class BondModel  {
   });
 
   factory BondModel.fromJson(Map<String, dynamic> json) {
-
     return BondModel(
       payTypeGuid: json['PayTypeGuid'],
       payNumber: json['PayNumber'],
@@ -86,10 +81,13 @@ class BondModel  {
   }
 
   factory BondModel.empty({required BondType bondType, int lastBondNumber = 0}) {
-    return BondModel(payAccountGuid: '',  payItems: PayItems(itemList: []), payNumber: lastBondNumber + 1, payTypeGuid: bondType.typeGuide, payDate: DateTime.now().toIso8601String());
+    return BondModel(
+        payAccountGuid: '',
+        payItems: PayItems(itemList: []),
+        payNumber: lastBondNumber + 1,
+        payTypeGuid: bondType.typeGuide,
+        payDate: DateTime.now().toIso8601String());
   }
-
-
 
   factory BondModel.fromBondData({
     BondModel? bondModel,
@@ -100,7 +98,8 @@ class BondModel  {
     required List<PayItem> bondRecordsItems,
   }) {
     final items = PayItems.fromBondRecords(bondRecordsItems);
-    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) payAccountGuid = "00000000-0000-0000-0000-000000000000";
+    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry)
+      payAccountGuid = "00000000-0000-0000-0000-000000000000";
 
     return bondModel == null
         ? BondModel(
@@ -172,8 +171,6 @@ class BondModel  {
   }
 
   factory BondModel.fromImportedJsonFile(Map<String, dynamic> payJson) {
-
-
     final payItemsJson = payJson["PayItems"]["N"] as List<dynamic>;
     final List<PayItem> payItemsList = payItemsJson.map((item) {
       return PayItem.fromJsonFile(item);
@@ -188,7 +185,7 @@ class BondModel  {
       payNumber: payJson["PayNumber"],
       payGuid: payJson["PayGuid"],
       payBranchGuid: payJson["PayBranchGuid"],
-      payDate:  dateFormat.parse(payJson["PayDate"].toString().toYearMonthDayFormat()).dayMonthYear,
+      payDate: dateFormat.parse(payJson["PayDate"].toString().toYearMonthDayFormat()).dayMonthYear,
       entryPostDate: payJson["EntryPostDate"],
       payNote: payJson["PayNote"].toString(),
       payCurrencyGuid: payJson["PayCurrencyGuid"],
@@ -201,5 +198,4 @@ class BondModel  {
       e: payJson["E"],
     );
   }
-
 }

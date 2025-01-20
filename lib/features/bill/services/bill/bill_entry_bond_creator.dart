@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
@@ -134,7 +134,8 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   }
 
   /// Helper function for calculating simulated VAT.
-  double _calculateSimulatedVat(BillItem item) => ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
+  double _calculateSimulatedVat(BillItem item) =>
+      ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
 
   /// Helper function for calculating the actual VAT value.
   double _calculateActualVat(BillItem item) => item.itemVatPrice! * item.itemQuantity;
@@ -192,7 +193,10 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
           bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
           accountName: customerAccount.accName,
           accountId: customerAccount.id,
-          note: billTypeModel.billPatternType==BillPatternType.salesReturn||billTypeModel.billPatternType==BillPatternType.purchase?'استرداد ضريبة ${billTypeModel.shortName} عدد ${item.itemQuantity} من ${item.itemName}': 'ضريبة ${billTypeModel.shortName} عدد ${item.itemQuantity} من ${item.itemName}',
+          note: billTypeModel.billPatternType == BillPatternType.salesReturn ||
+                  billTypeModel.billPatternType == BillPatternType.purchase
+              ? 'استرداد ضريبة ${billTypeModel.shortName} عدد ${item.itemQuantity} من ${item.itemName}'
+              : 'ضريبة ${billTypeModel.shortName} عدد ${item.itemQuantity} من ${item.itemName}',
           date: date,
         ),
     ];
@@ -210,14 +214,15 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     final bondType = isSales ? BondItemType.creditor : BondItemType.debtor;
     final accountId = item.matVatGuid == null
         ? VatEnums.withVat.taxAccountGuid
-        : billTypeModel.billPatternType == BillPatternType.purchase || billTypeModel.billPatternType == BillPatternType.salesReturn
+        : billTypeModel.billPatternType == BillPatternType.purchase ||
+                billTypeModel.billPatternType == BillPatternType.salesReturn
             ? AppStrings.returnTaxAccountId
             : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
     final note = 'ضريبة ${billTypeModel.shortName} عدد $quantity من ${item.matName}';
-    final String accountName =
-        billTypeModel.billPatternType == BillPatternType.purchase || billTypeModel.billPatternType == BillPatternType.salesReturn
-            ? AppStrings.returnTaxAccountName
-            : 'ضريبة القيمة المضافة';
+    final String accountName = billTypeModel.billPatternType == BillPatternType.purchase ||
+            billTypeModel.billPatternType == BillPatternType.salesReturn
+        ? AppStrings.returnTaxAccountName
+        : 'ضريبة القيمة المضافة';
     return _createBondItem(
       amount: vat,
       billId: billId,

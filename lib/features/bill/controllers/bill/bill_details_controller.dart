@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -179,15 +179,15 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBillModel: billModel);
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel);
   }
 
-  Future<void> _saveOrUpdateBill({required BillTypeModel billTypeModel, BillModel? existingBillModel}) async {
+  Future<void> _saveOrUpdateBill({required BillTypeModel billTypeModel, BillModel? existingBill}) async {
     // Validate the form first
     if (!validateForm()) return;
 
     // Create the bill model from the provided data
-    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBillModel);
+    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
     // Handle null bill model
     if (updatedBillModel == null) {
@@ -204,11 +204,12 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     // Handle the result (success or failure)
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (billModel) {
+      (updatedBill) {
         _billService.handleSaveOrUpdateSuccess(
-          billModel: billModel,
+          previousBill: existingBill,
+          currentBill: updatedBill,
           billSearchController: billSearchController,
-          isSave: existingBillModel == null,
+          isSave: existingBill == null,
         );
       },
     );

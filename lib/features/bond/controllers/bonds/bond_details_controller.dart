@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
@@ -15,8 +15,8 @@ import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../service/bond/bond_pdf_generator.dart';
 import '../../service/bond/bond_details_service.dart';
+import '../../service/bond/bond_pdf_generator.dart';
 import 'bond_search_controller.dart';
 
 class BondDetailsController extends GetxController with AppValidator {
@@ -29,7 +29,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   // Repositories
 
-  final CompoundDatasourceRepository<BondModel,BondType> _bondsFirebaseRepo;
+  final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
   final BondSearchController bondSearchController;
 
@@ -187,7 +187,6 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   void updateBondDetailsOnScreen(BondModel bond, BondDetailsPlutoController bondPlutoController) {
-
     log("bond.payDate! ${bond.payDate!}");
     log("bond.payDate!.toDate ${bond.payDate.toDate}");
     setBondDate(bond.payDate!.toDate);

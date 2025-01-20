@@ -1,5 +1,5 @@
-import 'package:ba3_bs/core/helper/extensions/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/services.dart';
@@ -112,7 +112,7 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> {
         '${item.itemQuantity}',
         (item.itemSubTotalPrice ?? 0).toStringAsFixed(2),
         (item.itemVatPrice ?? 0).toStringAsFixed(2),
-        (item.itemTotalPrice.toDouble ).toStringAsFixed(2),
+        (item.itemTotalPrice.toDouble).toStringAsFixed(2),
       ];
     }).toList();
   }
