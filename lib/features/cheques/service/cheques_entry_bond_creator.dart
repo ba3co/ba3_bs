@@ -28,8 +28,7 @@ class ChequesStrategyBondFactory {
   }
 
   /// Determines the appropriate strategies based on the ChequesModel.
-  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel,
-      {ChequesStrategyType? type}) {
+  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel, {ChequesStrategyType? type}) {
     if (type != null) {
       return _getStrategy(type);
     }
@@ -81,19 +80,23 @@ abstract class BaseChequesBondStrategy extends BaseEntryBondCreator<ChequesModel
 class ChequesBondStrategy extends BaseChequesBondStrategy {
   @override
   List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
-    final date = model.chequesDate ?? DateTime.now().dayMonthYear;
-    final note = "سند قيد ل${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
-    final amount = model.chequesVal!;
-    final originId = model.chequesGuid!;
-    return createBondItems(
-      note: note,
-      originId: originId,
-      amount: amount,
-      date: date,
-      docId: model.chequesGuid,
-      creditAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
-      debitAccount: AccountEntity(id: model.accPtr!, name: model.accPtrName!),
-    );
+    if (DateTime.parse(model.chequesDate!).year != DateTime.now().year) {
+      return [];
+    } else {
+      final date = model.chequesDate ?? DateTime.now().dayMonthYear;
+      final note = "سند قيد ل${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
+      final amount = model.chequesVal!;
+      final originId = model.chequesGuid!;
+      return createBondItems(
+        note: note,
+        originId: originId,
+        amount: amount,
+        date: date,
+        docId: model.chequesGuid,
+        creditAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
+        debitAccount: AccountEntity(id: model.accPtr!, name: model.accPtrName!),
+      );
+    }
   }
 
   @override

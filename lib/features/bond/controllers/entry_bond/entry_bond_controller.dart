@@ -65,7 +65,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
     // Group items by account ID
 
     final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
-    log('itemsGroupedByAccount $itemsGroupedByAccount');
+    // log('itemsGroupedByAccount $itemsGroupedByAccount');
 
     for (final accountId in itemsGroupedByAccount.keys) {
       final groupedItems = itemsGroupedByAccount[accountId]!;
