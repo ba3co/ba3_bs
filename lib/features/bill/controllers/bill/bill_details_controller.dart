@@ -25,7 +25,6 @@ import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
-import '../../services/bill/bill_pdf_generator.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
@@ -125,15 +124,18 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   void onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
       selectedPayType.value = payType;
-      // update();
       log('onPayTypeChanged');
     }
   }
 
-  Future<void> printBill({required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
+  Future<void> printBill(
+      {required BuildContext context,
+      required BillModel billModel,
+      required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     await read<PrintingController>().startPrinting(
+      context: context,
       invRecords: invRecords,
       billNumber: billModel.billDetails.billNumber!,
       invDate: billDate.value.dayMonthYear,
@@ -292,12 +294,13 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   generateAndSendBillPdf(BillModel billModel) {
+    if (!_billService.hasModelId(billModel.billId)) return;
+
+    if (!_billService.hasModelItems(billModel.items.itemList)) return;
+
     _billService.generateAndSendPdf(
-      fileName: AppStrings.bill,
+      fileName: AppStrings.existedBill,
       itemModel: billModel,
-      itemModelId: billModel.billId,
-      items: billModel.items.itemList,
-      pdfGenerator: BillPdfGenerator(),
     );
   }
 

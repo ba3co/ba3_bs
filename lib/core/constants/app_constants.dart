@@ -377,4 +377,7 @@ abstract class AppConstants {
   static const double deviceFullHeight = 930.0;
 
   static const String userIdKey = 'userIdKey';
+
+  static const String before = 'قبل';
+  static const String after = 'بعد';
 }

@@ -16,7 +16,6 @@ import '../../../../core/services/firebase/implementations/repos/compound_dataso
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../service/bond/bond_details_service.dart';
-import '../../service/bond/bond_pdf_generator.dart';
 import 'bond_search_controller.dart';
 
 class BondDetailsController extends GetxController with AppValidator {
@@ -56,8 +55,7 @@ class BondDetailsController extends GetxController with AppValidator {
   void setAccount(AccountModel setAccount) {
     selectedAccount = setAccount;
     bondDetailsPlutoController.setAccountGuid = setAccount.id;
-    accountController.text=setAccount.accName!;
-
+    accountController.text = setAccount.accName!;
   }
 
   @override
@@ -170,7 +168,11 @@ class BondDetailsController extends GetxController with AppValidator {
     // Create and return the bond model
 
     return _bondService.createBondModel(
-        bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
+        bondModel: bondModel,
+        bondType: bondType,
+        payDate: bondDate.value,
+        payAccountGuid: selectedAccount!.id!,
+        note: noteController.text);
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
@@ -202,12 +204,13 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   generateAndSendBondPdf(BondModel bondModel) {
+    if (!_bondService.hasModelId(bondModel.payGuid)) return;
+
+    if (!_bondService.hasModelItems(bondModel.payItems.itemList)) return;
+
     _bondService.generateAndSendPdf(
       fileName: AppStrings.bond,
       itemModel: bondModel,
-      itemModelId: bondModel.payGuid,
-      items: bondModel.payItems.itemList,
-      pdfGenerator: BondPdfGenerator(),
     );
   }
 }

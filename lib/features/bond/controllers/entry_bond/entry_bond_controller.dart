@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
@@ -58,7 +56,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
       modifiedAccounts: modifiedAccounts,
     );
   }
-
 
   /// Saves grouped Entry Bond items by account
   Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems) async {

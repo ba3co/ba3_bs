@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -41,13 +40,13 @@ class BillDetailsButtons extends StatelessWidget {
         children: [
           if (billSearchController.isNew) _buildAddButton(),
           if (!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission)
-            if (billModel.billTypeModel.billPatternType!.hasCashesAccount||billSearchController.isPending)
+            if (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending)
               _buildApprovalOrBondButton(context),
-
           _buildActionButton(
             title: 'طباعة',
             icon: Icons.print_outlined,
             onPressed: () => billDetailsController.printBill(
+              context: context,
               billModel: billModel,
               invRecords: billDetailsPlutoController.generateRecords,
             ),

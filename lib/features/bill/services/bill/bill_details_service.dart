@@ -25,7 +25,6 @@ import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
-import 'bill_pdf_generator.dart';
 
 class BillDetailsService with PdfBase, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
@@ -162,22 +161,28 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
     if (isSave) {
       billController.updateIsBillSaved = true;
-    } else {
-      modifiedBillTypeAccounts = findModifiedBillTypeAccounts(
-        previousBill: previousBill!,
-        currentBill: currentBill,
-      );
 
-      billSearchController.updateBill(currentBill);
+      if (hasModelId(currentBill.billId) && hasModelItems(currentBill.items.itemList)) {
+        generateAndSendPdf(
+          fileName: AppStrings.newBill,
+          itemModel: currentBill,
+        );
+      }
+    } else {
+      modifiedBillTypeAccounts = findModifiedBillTypeAccounts(previousBill: previousBill!, currentBill: currentBill);
+
+      if (hasModelId(currentBill.billId) &&
+          hasModelItems(currentBill.items.itemList) &&
+          hasModelId(previousBill.billId) &&
+          hasModelItems(previousBill.items.itemList)) {
+        generateAndSendPdf(
+          fileName: AppStrings.updatedBill,
+          itemModel: [previousBill, currentBill],
+        );
+      }
     }
 
-    generateAndSendPdf(
-      fileName: AppStrings.bill,
-      itemModel: currentBill,
-      itemModelId: currentBill.billId,
-      items: currentBill.items.itemList,
-      pdfGenerator: BillPdfGenerator(),
-    );
+    billSearchController.updateBill(currentBill);
 
     if (currentBill.status == Status.approved && currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
       final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBill);

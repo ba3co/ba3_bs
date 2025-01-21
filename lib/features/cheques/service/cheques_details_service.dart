@@ -8,7 +8,6 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/utils/app_ui_utils.dart';
-import '../../../core/helper/mixin/pdf_base.dart';
 import '../../../core/services/entry_bond_creator/implementations/entry_bond_creator_factory.dart';
 import '../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
@@ -17,7 +16,7 @@ import '../controllers/cheques/cheques_details_controller.dart';
 import '../controllers/cheques/cheques_search_controller.dart';
 import '../data/models/cheques_model.dart';
 
-class ChequesDetailsService with PdfBase, FloatingLauncher {
+class ChequesDetailsService with FloatingLauncher {
   void launchChequesEntryBondScreen({
     required BuildContext context,
     required ChequesModel chequesModel,
@@ -25,7 +24,8 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
   }) {
     final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, type: chequesStrategyType);
 
-    final EntryBondModel entryBondModel = creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
+    final EntryBondModel entryBondModel =
+        creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
 
     launchFloatingWindow(
       context: context,
@@ -70,7 +70,8 @@ class ChequesDetailsService with PdfBase, FloatingLauncher {
 
   EntryBondController get entryBondController => read<EntryBondController>();
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
+      [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -48,27 +49,35 @@ class PrintingController extends GetxController {
   }
 
   Future<void> startPrinting(
-      {required int billNumber, required List<InvoiceRecordModel> invRecords, required String invDate}) async {
-    _showLoadingDialog();
+      {required BuildContext context,
+      required int billNumber,
+      required List<InvoiceRecordModel> invRecords,
+      required String invDate}) async {
+    _showLoadingDialog(context);
 
     await _printBill(billNumber: billNumber, invRecords: invRecords, invDate: invDate);
 
     _dismissLoadingDialog();
-    Get.delete<PrintingController>();
   }
 
   /// Displays a loading dialog during the printing process
-  void _showLoadingDialog() {
-    Get.defaultDialog(
+  void _showLoadingDialog(BuildContext context) {
+    OverlayService.showDialog(
+      context: context,
       title: '',
+      width: 150,
+      height: 100,
       content: const PrintingLoadingDialog(),
       contentPadding: EdgeInsets.zero,
-      titlePadding: EdgeInsets.zero,
-      radius: 8,
+      // titlePadding: EdgeInsets.zero,
+      // radius: 8,
+      onCloseCallback: () {
+        Get.delete<PrintingController>();
+      },
     );
   }
 
-  void _dismissLoadingDialog() => Get.back();
+  void _dismissLoadingDialog() => OverlayService.back();
 
   Future<void> _printBill(
       {required int billNumber, required List<InvoiceRecordModel> invRecords, required String invDate}) async {

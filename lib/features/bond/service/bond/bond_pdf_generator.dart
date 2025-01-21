@@ -12,11 +12,11 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
   final _accountsController = read<AccountsController>();
 
   @override
-  Widget buildTitle(BondModel itemModel, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(BondModel itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildBondDetails(itemModel, font),
+        _buildBondDetails(itemModel, fileName, font),
         if (logoUint8List != null)
           Image(
             MemoryImage(logoUint8List),
@@ -27,11 +27,11 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
     );
   }
 
-  Widget _buildBondDetails(BondModel itemModel, Font? font) {
+  Widget _buildBondDetails(BondModel itemModel, String fileName, Font? font) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTitleText('Bond', 24, FontWeight.bold),
+        _buildTitleText(fileName, 24, FontWeight.bold),
         _buildSpacing(),
         _buildDetailRow('Bond number: ', itemModel.payNumber.toString()),
         _buildSpacing(),
@@ -68,21 +68,28 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> {
   Widget _buildSpacing() => SizedBox(height: 0.4 * PdfPageFormat.cm);
 
   @override
-  Widget buildBody(BondModel itemModel, {Font? font}) {
+  List<Widget> buildBody(BondModel itemModel, {Font? font}) {
     final headers = ['id', 'account', 'debt', 'credit', 'nots'];
     final data = _buildTableData(itemModel);
 
-    return TableHelper.fromTextArray(
-      headers: headers,
-      data: data,
-      headerStyle: TextStyle(fontWeight: FontWeight.bold, font: font),
-      cellStyle: TextStyle(font: font),
-      tableDirection: TextDirection.rtl,
-      headerDecoration: const BoxDecoration(color: PdfColors.grey300),
-      cellHeight: 30,
-      columnWidths: _columnWidths,
-      cellAlignments: _cellAlignments,
-    );
+    return <Widget>[
+      Text(
+        'تفاصيل السند',
+        textDirection: TextDirection.rtl,
+        style: font != null ? TextStyle(font: font) : null,
+      ),
+      TableHelper.fromTextArray(
+        headers: headers,
+        data: data,
+        headerStyle: TextStyle(fontWeight: FontWeight.bold, font: font),
+        cellStyle: TextStyle(font: font),
+        tableDirection: TextDirection.rtl,
+        headerDecoration: const BoxDecoration(color: PdfColors.grey300),
+        cellHeight: 30,
+        columnWidths: _columnWidths,
+        cellAlignments: _cellAlignments,
+      ),
+    ];
   }
 
   List<List<dynamic>> _buildTableData(BondModel itemModel) {
