@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:xml/xml.dart';
@@ -14,6 +15,13 @@ class BillImport extends ImportServiceBase<BillModel> {
     return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
   }
 
+  Map<String, int> billsNumbers = {for (var billType in BillType.values) billType.typeGuide: 0};
+
+  int getLastBillNumber(String billTypeGuid) {
+    billsNumbers[billTypeGuid] = billsNumbers[billTypeGuid]! + 1;
+    return billsNumbers[billTypeGuid]!;
+  }
+
   @override
   List<BillModel> fromImportXml(XmlDocument document) {
     final billsXml = document.findAllElements('Bill');
@@ -28,7 +36,12 @@ class BillImport extends ImportServiceBase<BillModel> {
           'BillBranch': billElement.findElements('B').single.findElements('BillBranch').single.text,
           'BillPayType': billElement.findElements('B').single.findElements('BillPayType').single.text,
           'BillCheckTypeGuid': billElement.findElements('B').single.findElements('BillCheckTypeGuid').single.text,
-          'BillNumber': billElement.findElements('B').single.findElements('BillNumber').single.text,
+          'BillNumber': getLastBillNumber(billElement
+              .findElements('B')
+              .single
+              .findElements('BillTypeGuid')
+              .single
+              .text) /*billElement.findElements('B').single.findElements('BillNumber').single.text*/,
           'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           // 'BillCustPtr': customerId,
           'BillCustName':

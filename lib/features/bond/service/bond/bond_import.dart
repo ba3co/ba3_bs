@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -12,7 +13,14 @@ class BondImport extends ImportServiceBase<BondModel> {
   @override
   List<BondModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Pay']['P'] ?? [];
-    return  billsJson.map((bondJson) => BondModel.fromImportedJsonFile(bondJson as Map<String, dynamic>)).toList();
+    return billsJson.map((bondJson) => BondModel.fromImportedJsonFile(bondJson as Map<String, dynamic>)).toList();
+  }
+
+  Map<String, int> bondsNumbers = {for (var bondType in BondType.values) bondType.typeGuide: 0};
+
+  int getLastBondNumber(String billTypeGuid) {
+    bondsNumbers[billTypeGuid] = bondsNumbers[billTypeGuid]! + 1;
+    return bondsNumbers[billTypeGuid]!;
   }
 
   @override
@@ -26,27 +34,28 @@ class BondImport extends ImportServiceBase<BondModel> {
 
       // إنشاء قائمة من PayItem
       final payItemList = payItemsNode?.findAllElements('N').map((itemNode) {
-        return PayItem(
-          entryAccountName: read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
-          entryAccountGuid: itemNode.getElement('EntryAccountGuid')?.text,
-          entryDate:  (itemNode.getElement('EntryDate')!.text.toYearMonthDayFormat()),
-          entryDebit: double.tryParse(itemNode.getElement('EntryDebit')?.text ?? '0'),
-          entryCredit: double.tryParse(itemNode.getElement('EntryCredit')?.text ?? '0'),
-          entryNote: itemNode.getElement('EntryNote')?.text,
-          entryCurrencyGuid: itemNode.getElement('EntryCurrencyGuid')?.text,
-          entryCurrencyVal: double.tryParse(itemNode.getElement('EntryCurrencyVal')?.text ?? '0'),
-          entryCostGuid: itemNode.getElement('EntryCostGuid')?.text,
-          entryClass: itemNode.getElement('EntryClass')?.text,
-          entryNumber: int.tryParse(itemNode.getElement('EntryNumber')?.text ?? '0'),
-          entryCustomerGuid: itemNode.getElement('EntryCustomerGuid')?.text,
-          entryType: int.tryParse(itemNode.getElement('EntryType')?.text ?? '0'),
-        );
-      }).toList() ?? [];
+            return PayItem(
+              entryAccountName: read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
+              entryAccountGuid: itemNode.getElement('EntryAccountGuid')?.text,
+              entryDate: (itemNode.getElement('EntryDate')!.text.toYearMonthDayFormat()),
+              entryDebit: double.tryParse(itemNode.getElement('EntryDebit')?.text ?? '0'),
+              entryCredit: double.tryParse(itemNode.getElement('EntryCredit')?.text ?? '0'),
+              entryNote: itemNode.getElement('EntryNote')?.text,
+              entryCurrencyGuid: itemNode.getElement('EntryCurrencyGuid')?.text,
+              entryCurrencyVal: double.tryParse(itemNode.getElement('EntryCurrencyVal')?.text ?? '0'),
+              entryCostGuid: itemNode.getElement('EntryCostGuid')?.text,
+              entryClass: itemNode.getElement('EntryClass')?.text,
+              entryNumber: int.tryParse(itemNode.getElement('EntryNumber')?.text ?? '0'),
+              entryCustomerGuid: itemNode.getElement('EntryCustomerGuid')?.text,
+              entryType: int.tryParse(itemNode.getElement('EntryType')?.text ?? '0'),
+            );
+          }).toList() ??
+          [];
 
       // إنشاء كائن BondModel
       return BondModel(
         payTypeGuid: node.getElement('PayTypeGuid')?.text,
-        payNumber: int.tryParse(node.getElement('PayNumber')?.text ?? '0'),
+        payNumber: getLastBondNumber(node.getElement('PayTypeGuid')!.text),
         payGuid: node.getElement('PayGuid')?.text,
         payBranchGuid: node.getElement('PayBranchGuid')?.text,
         payDate: node.getElement('PayDate')?.text.toYearMonthDayFormat(),
@@ -63,7 +72,4 @@ class BondImport extends ImportServiceBase<BondModel> {
       );
     }).toList();
   }
-
-
-
 }

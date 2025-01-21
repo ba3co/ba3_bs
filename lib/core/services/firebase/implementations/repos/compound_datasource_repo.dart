@@ -16,8 +16,7 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
   Future<Either<Failure, List<T>>> fetchWhere<V>(
       {required ItemTypeModel itemTypeModel, required String field, required V value, DateFilter? dateFilter}) async {
     try {
-      final savedItems = await _dataSource.fetchWhere(
-          itemTypeModel: itemTypeModel, field: field, value: value, dateFilter: dateFilter);
+      final savedItems = await _dataSource.fetchWhere(itemTypeModel: itemTypeModel, field: field, value: value, dateFilter: dateFilter);
       return Right(savedItems); // Return the list of saved items
     } catch (e) {
       log('Error in fetchWhere: $e');
@@ -85,8 +84,7 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     }
   }
 
-  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(
-      List<T> items, List<ItemTypeModel> itemTypeModel) async {
+  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(List<T> items, List<ItemTypeModel> itemTypeModel) async {
     try {
       final savedItems = await _dataSource.saveAllNested(items: items, itemTypes: itemTypeModel);
       return Right(savedItems); // Return the list of saved items
@@ -100,6 +98,16 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     try {
       final nestedItems = await _dataSource.fetchAllNested(itemTypes: itemTypes);
       return Right(nestedItems); // Return list of  Nested items
+    } catch (e) {
+      log('Error in fetchAllNested: $e');
+      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
+    }
+  }
+
+  Future<Either<Failure, Unit>> saveLastTypeNumber(T model) async {
+    try {
+      await _dataSource.saveLastTypeNumber(model);
+      return Right(unit); // Return list of  Nested items
     } catch (e) {
       log('Error in fetchAllNested: $e');
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure

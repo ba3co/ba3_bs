@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
@@ -94,7 +96,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
-    final newBondNumber = await getNextNumber(rootCollectionPath, bond.payTypeGuid!);
+    final newBondNumber = await getNextNumber(rootCollectionPath,BondType.byTypeGuide(bond.payGuid!).label);
     return bond.copyWith(payNumber: newBondNumber);
   }
 
@@ -190,5 +192,10 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
     );
 
     return savedData.map(BondModel.fromJson).toList();
+  }
+
+  @override
+  saveLastTypeNumber(BondModel model) async {
+    await satNumber(rootCollectionPath, BondType.byTypeGuide(model.payTypeGuid!).label, model.payNumber!);
   }
 }

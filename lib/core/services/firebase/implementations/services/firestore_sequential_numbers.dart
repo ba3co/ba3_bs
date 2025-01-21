@@ -41,6 +41,7 @@ mixin FirestoreSequentialNumbers {
 
     // Extract the `lastNumber` and increment it
     final lastNumber = entityData[ApiConstants.lastNumber] as int? ?? 0;
+
     final newNumber = lastNumber + 1;
 
     // Update the document with the new number for this entityType
@@ -49,5 +50,31 @@ mixin FirestoreSequentialNumbers {
     });
 
     return newNumber;
+  }
+
+  Future<void> satNumber(String category, String entityType, int number) async {
+    final docRef = FirebaseFirestore.instance
+        .collection(_parentCollection) // Parent collection
+        .doc(category); // Document for category (e.g., "bills", "bonds")
+
+    final snapshot = await docRef.get();
+
+    if (!snapshot.exists) {
+      // Initialize the document with the first entry for this entityType
+      await docRef.set({
+        entityType: {
+          ApiConstants.type: entityType,
+          ApiConstants.lastNumber: number,
+        },
+      });
+    }else{
+      await docRef.update({
+        entityType: {
+          ApiConstants.type: entityType,
+          ApiConstants.lastNumber: number,
+        },
+      });
+    }
+
   }
 }

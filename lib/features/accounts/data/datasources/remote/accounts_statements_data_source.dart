@@ -183,6 +183,12 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
 
     return savedData.map(EntryBondItems.fromJson).toList();
   }
+
+  @override
+  saveLastTypeNumber(EntryBondItems model) {
+    // TODO: implement saveLastBillNumber
+    throw UnimplementedError();
+  }
 }
 
 // class AccountsStatementsDatasource {

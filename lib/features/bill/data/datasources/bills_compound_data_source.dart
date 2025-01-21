@@ -98,14 +98,15 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   Future<Map<String, dynamic>> _saveBillData(
-          String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async =>
-      compoundDatabaseService.add(
-        rootCollectionPath: rootCollectionPath,
-        rootDocumentId: rootDocumentId,
-        subCollectionPath: subCollectionPath,
-        subDocumentId: billId,
-        data: data,
-      );
+      String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async {
+    return compoundDatabaseService.add(
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: rootDocumentId,
+      subCollectionPath: subCollectionPath,
+      subDocumentId: billId,
+      data: data,
+    );
+  }
 
   @override
   Future<int> countDocuments({required BillTypeModel itemTypeModel, QueryFilter? countQueryFilter}) async {
@@ -189,5 +190,10 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     );
 
     return savedData.map(BillModel.fromJson).toList();
+  }
+
+  @override
+  saveLastTypeNumber(BillModel model) async {
+    await satNumber(rootCollectionPath, model.billTypeModel.billTypeLabel!, model.billDetails.billNumber!);
   }
 }

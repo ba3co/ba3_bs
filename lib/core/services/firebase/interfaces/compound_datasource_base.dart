@@ -38,4 +38,7 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
     required List<ItemTypeModel> itemTypes,
     required List<T> items,
   });
+
+
+  Future <void> saveLastTypeNumber(T model);
 }

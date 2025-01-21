@@ -136,13 +136,13 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     );
     if (bills.isNotEmpty) {
       await _billsFirebaseRepo.saveAllNested(bills, billsTypes);
-      await read<EntryBondsGeneratorRepo>().saveEntryBonds(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      // await read<EntryBondsGeneratorRepo>().saveEntryBonds(
+      //   sourceModels: bills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
     }
     saveAllBillsRequestState.value = RequestState.success;
 
@@ -278,6 +278,10 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     plutoGridIsLoading = false;
 
     await fetchAllBillsByType(billTypeModel);
+
+
+    log("billNumber  ${bills.last.billDetails.billNumber.toString()}");
+    _billsFirebaseRepo.saveLastTypeNumber(bills.last);
 
     if (!context.mounted) return;
 

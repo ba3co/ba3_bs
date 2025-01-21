@@ -192,4 +192,10 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
 
     return chequesByType;
   }
+
+  @override
+  saveLastTypeNumber(ChequesModel model) {
+    // TODO: implement saveLastBillNumber
+    throw UnimplementedError();
+  }
 }
