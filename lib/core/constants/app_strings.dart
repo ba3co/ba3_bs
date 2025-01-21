@@ -3,7 +3,7 @@ class AppStrings {
   static const String existedBill = 'فاتورة موجودة';
   static const String newBill = 'فاتورة جديدة';
   static const String updatedBill = 'فاتورة معدلة';
-  static const String recipientEmail = 'ahmed.zein1896@gmail.com';
+  static const String recipientEmail = 'burjalarab000@gmail.com';
 
   static const String bond = 'bond';
   static const String chequeToAccountId = '7d471b63-4499-4c2f-ba99-21912c8b98b5';
