@@ -2,7 +2,9 @@ import 'package:ba3_bs/features/bill/services/bill/bill_pdf_generator.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_pdf_generator.dart';
 
 import '../../../../features/bill/data/models/bill_model.dart';
+import '../../../../features/bill/services/bill/bill_comparison_pdf_generator.dart';
 import '../../../../features/bond/data/models/bond_model.dart';
+import '../../../../features/bond/service/bond/bond_comparison_pdf_generator.dart';
 import '../interfaces/i_pdf_generator.dart';
 
 class PdfGeneratorFactory {

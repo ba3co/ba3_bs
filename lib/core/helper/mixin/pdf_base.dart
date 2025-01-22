@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 
 import '../../constants/app_assets.dart';
-import '../../constants/app_strings.dart';
+import '../../constants/app_constants.dart';
 import '../../services/mailer_messaging/implementations/gmail_messaging_service.dart';
 import '../../services/mailer_messaging/implementations/mailer_messaging_repo.dart';
 import '../../services/pdf_generator/implementations/pdf_generator_factory.dart';
@@ -66,7 +66,7 @@ mixin PdfBase {
   Future<void> generateAndSendPdf<T>({
     required T itemModel,
     required String fileName,
-    String recipientEmail = AppStrings.recipientEmail,
+    String recipientEmail = AppConstants.recipientEmail,
     String logoSrc = AppAssets.ba3Logo,
     String fontSrc = AppAssets.notoSansArabicRegular,
     String? url,

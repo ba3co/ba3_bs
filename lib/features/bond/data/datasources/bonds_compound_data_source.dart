@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
@@ -96,7 +94,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
-    final newBondNumber = await getNextNumber(rootCollectionPath,BondType.byTypeGuide(bond.payTypeGuid!).label);
+    final newBondNumber = await getNextNumber(rootCollectionPath, BondType.byTypeGuide(bond.payTypeGuid!).label);
     return bond.copyWith(payNumber: newBondNumber);
   }
 
@@ -147,7 +145,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
 
   @override
   Future<Map<BondType, List<BondModel>>> saveAllNested(
-      {required List<BondType> itemTypes, required List<BondModel> items}) async{
+      {required List<BondType> itemTypes, required List<BondModel> items}) async {
     final bondsByType = <BondType, List<BondModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -156,12 +154,12 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
     for (final bondType in itemTypes) {
       fetchTasks.add(
         saveAll(
-            itemTypeModel: bondType,
-            items: items
-                .where(
-                  (bond) => bond.payTypeGuid == bondType.typeGuide,
-            )
-                .toList())
+                itemTypeModel: bondType,
+                items: items
+                    .where(
+                      (bond) => bond.payTypeGuid == bondType.typeGuide,
+                    )
+                    .toList())
             .then((result) {
           bondsByType[bondType] = result;
         }),
@@ -175,7 +173,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   @override
-  Future<List<BondModel>> saveAll({required List<BondModel> items, required BondType itemTypeModel}) async{
+  Future<List<BondModel>> saveAll({required List<BondModel> items, required BondType itemTypeModel}) async {
     final rootDocumentId = getRootDocumentId(itemTypeModel);
     final subCollectionPath = getSubCollectionPath(itemTypeModel);
 

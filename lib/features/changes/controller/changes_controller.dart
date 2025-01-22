@@ -82,7 +82,7 @@ class ChangesController extends GetxController {
   void _processChange(ChangesModel change) {
     try {
       currentChange.value = change;
-      log("Processing change for target user: ${change.targetUserId}");
+      log("Processing change for current user: ${change.targetUserId}");
       log('change items: ${change.changeItems.length}');
 
       List<MaterialModel> materialsToSave = [];

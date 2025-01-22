@@ -6,8 +6,9 @@ class AppStrings {
   static const String existedBond = 'سند موجود';
   static const String newBond = 'سند جديد';
   static const String updatedBond = 'سند معدل';
-  // static const String recipientEmail = 'burjalarab000@gmail.com';
-  static const String recipientEmail = 'alidabol567@gmail.com';
+
+  static const String before = 'قبل';
+  static const String after = 'بعد';
 
   static const String bond = 'bond';
   static const String chequeToAccountId = '7d471b63-4499-4c2f-ba99-21912c8b98b5';
