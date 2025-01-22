@@ -1,5 +1,8 @@
 import 'package:ba3_bs/features/bill/services/bill/bill_pdf_generator.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_pdf_generator.dart';
+import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
+import 'package:ba3_bs/features/cheques/service/cheques_comparison_pdf_generator.dart';
+import 'package:ba3_bs/features/cheques/service/cheques_pdf_generator.dart';
 
 import '../../../../features/bill/data/models/bill_model.dart';
 import '../../../../features/bill/services/bill/bill_comparison_pdf_generator.dart';
@@ -21,6 +24,12 @@ class PdfGeneratorFactory {
     } else if (model is List<BondModel>) {
       // Returns a single BondEntryBondCreator wrapped in a list
       return BondComparisonPdfGenerator();
+    }else if (model is ChequesModel) {
+      // Returns a single BondEntryBondCreator wrapped in a list
+      return ChequesPdfGenerator();
+    } else if (model is List<ChequesModel>) {
+      // Returns a single BondEntryBondCreator wrapped in a list
+      return ChequesComparisonPdfGenerator();
     }
     throw UnimplementedError("No EntryBondCreator implementation for model of type ${model.runtimeType}");
   }
