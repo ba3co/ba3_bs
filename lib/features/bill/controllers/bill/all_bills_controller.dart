@@ -116,6 +116,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     if (resultFile != null) {
       saveAllBillsRequestState.value = RequestState.loading;
       final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
+      await _jsonImportExportRepo.initializeNumbers();
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
@@ -149,8 +150,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -258,8 +259,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
@@ -279,8 +279,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     await fetchAllBillsByType(billTypeModel);
 
-    log("billNumber  ${bills.last.billDetails.billNumber.toString()}");
-    _billsFirebaseRepo.saveLastTypeNumber(bills.last);
+    if (bills.isNotEmpty) _billsFirebaseRepo.saveLastTypeNumber(bills.last);
 
     if (!context.mounted) return;
 

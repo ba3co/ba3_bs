@@ -67,7 +67,7 @@ mixin FirestoreSequentialNumbers {
           ApiConstants.lastNumber: number,
         },
       });
-    }else{
+    } else {
       await docRef.update({
         entityType: {
           ApiConstants.type: entityType,
@@ -75,6 +75,37 @@ mixin FirestoreSequentialNumbers {
         },
       });
     }
+  }
 
+  Future<int> getNumber(
+    String category,
+    String entityType,
+  ) async {
+    final docRef = FirebaseFirestore.instance
+        .collection(_parentCollection) // Parent collection
+        .doc(category); // Document for category (e.g., "bills", "bonds")
+
+    // Fetch the current document
+    final snapshot = await docRef.get();
+
+    // entityType Document for entity type (e.g., "purchase", "sales")
+    if (!snapshot.exists) {
+      return 1;
+    }
+
+    // Get the current data for the document
+    final data = snapshot.data();
+    final entityData = data?[entityType] as Map<String, dynamic>?;
+
+    if (entityData == null) {
+      return 1;
+    }
+
+    // Extract the `lastNumber` and increment it
+    final lastNumber = entityData[ApiConstants.lastNumber] as int? ?? 0;
+
+    final newNumber = lastNumber + 1;
+
+    return newNumber;
   }
 }

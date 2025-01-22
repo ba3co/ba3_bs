@@ -45,4 +45,10 @@ class AccountImport extends ImportServiceBase<AccountModel> {
     }).toList();
   }
 
+  @override
+  Future<void> initializeNumbers() {
+    // TODO: implement initializeBillsNumbers
+    throw UnimplementedError();
+  }
+
 }

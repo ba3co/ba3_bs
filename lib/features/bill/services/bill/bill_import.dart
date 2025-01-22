@@ -1,12 +1,14 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:xml/xml.dart';
 
+import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
 import '../../data/models/bill_model.dart';
 
-class BillImport extends ImportServiceBase<BillModel> {
+class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNumbers {
   /// Converts the imported JSON structure to a list of BillModel
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
@@ -15,17 +17,29 @@ class BillImport extends ImportServiceBase<BillModel> {
     return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
   }
 
-  Map<String, int> billsNumbers = {for (var billType in BillType.values) billType.label: 0};
+  late Map<String, int> billsNumbers;
+
+  @override
+  Future<void> initializeNumbers() async {
+    billsNumbers = {
+      for (var billType in BillType.values)
+        billType.label: await getNumber(ApiConstants.bills, billType.label)
+    };
+  }
 
   int getLastBillNumber(String billTypeGuid) {
+    if (!billsNumbers.containsKey(billTypeGuid)) {
+      throw Exception('Bill type not found');
+    }
     billsNumbers[billTypeGuid] = billsNumbers[billTypeGuid]! + 1;
     return billsNumbers[billTypeGuid]!;
   }
 
+
   @override
   List<BillModel> fromImportXml(XmlDocument document) {
-    final billsXml = document.findAllElements('Bill');
 
+    final billsXml = document.findAllElements('Bill');
     List<BillModel> bills = billsXml.map((billElement) {
       // String customerId =
       //     read<AccountsController>().getAccountIdByName(billElement.findElements('B').single.findElements('BillCustName').single.text);

@@ -45,4 +45,10 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
       );
     }).toList();
   }
+
+  @override
+  Future<void> initializeNumbers() {
+    // TODO: implement initializeBillsNumbers
+    throw UnimplementedError();
+  }
 }
