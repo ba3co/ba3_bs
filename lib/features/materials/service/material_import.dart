@@ -113,6 +113,12 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
 
     return materials;
   }
+
+  @override
+  Future<void> initializeNumbers() {
+    // TODO: implement initializeBillsNumbers
+    throw UnimplementedError();
+  }
 }
 
 class GccMatTax {

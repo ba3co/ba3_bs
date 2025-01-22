@@ -10,4 +10,6 @@ abstract class IImportService<T> {
   List<T> importFromJsonFile(File filePath);
 
   List<T> importFromXmlFile(File filePath);
+
+  Future<void> initializeNumbers();
 }

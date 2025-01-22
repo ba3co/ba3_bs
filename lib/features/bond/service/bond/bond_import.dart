@@ -72,4 +72,10 @@ class BondImport extends ImportServiceBase<BondModel> {
       );
     }).toList();
   }
+
+  @override
+  Future<void> initializeNumbers() {
+    // TODO: implement initializeBillsNumbers
+    throw UnimplementedError();
+  }
 }
