@@ -105,7 +105,6 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     // await fetchAllBondsLocal();
     await fetchAllBondsByType(bondTypeModel);
 
-log('openFloatingBondDetails');
     await _bondsFirebaseRepo.saveLastTypeNumber(bonds.last);
 
     if (!context.mounted) return;

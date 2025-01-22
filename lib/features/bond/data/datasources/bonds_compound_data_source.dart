@@ -96,7 +96,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
-    final newBondNumber = await getNextNumber(rootCollectionPath,BondType.byTypeGuide(bond.payGuid!).label);
+    final newBondNumber = await getNextNumber(rootCollectionPath,BondType.byTypeGuide(bond.payTypeGuid!).label);
     return bond.copyWith(payNumber: newBondNumber);
   }
 

@@ -16,6 +16,9 @@ class PdfGeneratorFactory {
     } else if (model is BondModel) {
       // Returns a single BondEntryBondCreator wrapped in a list
       return BondPdfGenerator();
+    } else if (model is List<BondModel>) {
+      // Returns a single BondEntryBondCreator wrapped in a list
+      return BondComparisonPdfGenerator();
     }
     throw UnimplementedError("No EntryBondCreator implementation for model of type ${model.runtimeType}");
   }

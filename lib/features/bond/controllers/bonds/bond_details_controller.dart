@@ -127,13 +127,16 @@ class BondDetailsController extends GetxController with AppValidator {
       AppUIUtils.onFailure('من فضلك يرجى اضافة حقول للسند');
       return;
     }
-
+    log("save");
     // Save the bond to Firestore
     final result = await _bondsFirebaseRepo.save(updatedBondModel);
 
     // Handle the result (success or failure)
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) {
+        log("save failure");
+        return AppUIUtils.onFailure(failure.message);
+      },
       (bondModel) {
         _bondService.handleSaveOrUpdateSuccess(
             previousBond: existingBondModel,
@@ -168,11 +171,7 @@ class BondDetailsController extends GetxController with AppValidator {
     // Create and return the bond model
 
     return _bondService.createBondModel(
-        bondModel: bondModel,
-        bondType: bondType,
-        payDate: bondDate.value,
-        payAccountGuid: selectedAccount!.id!,
-        note: noteController.text);
+        bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
