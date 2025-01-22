@@ -19,37 +19,25 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
 
   @override
   Widget buildHeader(List<BillModel> itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
-    final beforeUpdate = itemModel[0];
+    final afterUpdate = itemModel[1];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildHeaderText(fileName, beforeUpdate, font),
+        _buildHeaderText(fileName, afterUpdate, font),
         if (logoUint8List != null) buildLogo(logoUint8List),
       ],
     );
   }
 
-  Widget _buildHeaderText(String fileName, BillModel beforeUpdate, Font? font) {
+  Widget _buildHeaderText(String fileName, BillModel afterUpdate, Font? font) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTitleText(fileName, 24, font, FontWeight.bold),
-        _buildRichText('الرقم التعريفي للفاتورة:', beforeUpdate.billId!, font),
-        _buildRichText('رقم الفاتورة:', beforeUpdate.billDetails.billNumber.toString(), font),
+        buildDetailRow('الرقم التعريفي للفاتورة: ', afterUpdate.billId!, font),
+        buildDetailRow(' رقم الفاتورة: ', afterUpdate.billDetails.billNumber.toString(), font),
       ],
-    );
-  }
-
-  Widget _buildRichText(String label, String value, Font? font) {
-    return RichText(
-      textDirection: TextDirection.rtl,
-      text: TextSpan(
-        children: [
-          TextSpan(text: label, style: TextStyle(fontSize: 12, font: font)),
-          TextSpan(text: value, style: TextStyle(fontSize: 12, font: font)),
-        ],
-      ),
     );
   }
 

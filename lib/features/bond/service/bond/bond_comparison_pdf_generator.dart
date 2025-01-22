@@ -16,86 +16,25 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
 
   @override
   Widget buildHeader(List<BondModel> itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
-    final BondModel beforeUpdate = itemModel[0];
+    final afterUpdate = itemModel[1];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildTitleText(fileName, 24, font),
-            RichText(
-              textDirection: TextDirection.rtl,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'الرقم التعريفي السند: ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      font: font,
-                    ),
-                  ),
-                  TextSpan(
-                    text: beforeUpdate.payGuid.toString(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      font: font,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            RichText(
-              textDirection: TextDirection.rtl,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'رقم السند: ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      font: font,
-                    ),
-                  ),
-                  TextSpan(
-                    text: beforeUpdate.payNumber.toString(),
-                    style: TextStyle(
-                      fontSize: 12,
-                      font: font,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            RichText(
-              textDirection: TextDirection.rtl,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'نوع السند: ',
-                    style: TextStyle(
-                      fontSize: 12,
-                      font: font,
-                    ),
-                  ),
-                  TextSpan(
-                    text: BondType.byTypeGuide(beforeUpdate.payTypeGuid!).value,
-                    style: TextStyle(
-                      fontSize: 12,
-                      font: font,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        if (logoUint8List != null)
-          Image(
-            MemoryImage(logoUint8List),
-            width: 5 * PdfPageFormat.cm,
-            height: 5 * PdfPageFormat.cm,
-          ),
+        _buildHeaderText(fileName, afterUpdate, font),
+        if (logoUint8List != null) buildLogo(logoUint8List),
+      ],
+    );
+  }
+
+  Widget _buildHeaderText(String fileName, BondModel afterUpdate, Font? font) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildTitleText(fileName, 24, font, FontWeight.bold),
+        buildDetailRow('الرقم التعريفي للسند: ', afterUpdate.payGuid.toString(), font),
+        buildDetailRow('رقم السند: ', afterUpdate.payNumber.toString().toString(), font),
+        buildDetailRow('نوع السند: ', BondType.byTypeGuide(afterUpdate.payTypeGuid!).value, font),
       ],
     );
   }
