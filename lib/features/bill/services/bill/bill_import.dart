@@ -15,7 +15,7 @@ class BillImport extends ImportServiceBase<BillModel> {
     return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
   }
 
-  Map<String, int> billsNumbers = {for (var billType in BillType.values) billType.typeGuide: 0};
+  Map<String, int> billsNumbers = {for (var billType in BillType.values) billType.label: 0};
 
   int getLastBillNumber(String billTypeGuid) {
     billsNumbers[billTypeGuid] = billsNumbers[billTypeGuid]! + 1;
