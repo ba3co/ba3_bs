@@ -35,12 +35,13 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   Future<List<BillModel>> fetchWhere<V>(
       {required BillTypeModel itemTypeModel, required String field, required V value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
-        rootCollectionPath: rootCollectionPath,
-        rootDocumentId: getRootDocumentId(itemTypeModel),
-        subCollectionPath: getSubCollectionPath(itemTypeModel),
-        field: field,
-        value: value,
-        dateFilter: dateFilter);
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: getRootDocumentId(itemTypeModel),
+      subCollectionPath: getSubCollectionPath(itemTypeModel),
+      field: field,
+      value: value,
+      dateFilter: dateFilter,
+    );
 
     final bills = data.map((item) => BillModel.fromJson(item)).toList();
 

@@ -30,4 +30,6 @@ class ApiConstants {
   static const String billSellerId = 'billDetails.billSellerId';
   static const String type = 'type';
   static const String lastNumber = 'lastNumber';
+
+  static const String billNumber = 'billDetails.billNumber';
 }

@@ -38,6 +38,11 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
 
     // Execute the query and return results
     final snapshot = await query.get();
+
+    if (snapshot.docs.isEmpty) {
+      throw Exception(
+          "لم يتم العثور على نتائج للاستعلام عن الحقل '$field' بالقيمة '$value' في المجموعة الفرعية '$subCollectionPath'.");
+    }
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 

@@ -10,12 +10,14 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
+import '../../../../core/network/error/failure.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
@@ -161,6 +163,14 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
+  Future<Either<Failure, List<BillModel>>> fetchBillByNumber(
+      {required BillTypeModel billTypeModel, required int billNumber}) async {
+    final result = await _billsFirebaseRepo.fetchWhere(
+        itemTypeModel: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
+
+    return result;
+  }
+
   Future<void> fetchBillsTypes() async {
     getBillsTypesRequestState.value = RequestState.loading;
 
@@ -270,26 +280,41 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     openFloatingBillDetails(context, billModel.billTypeModel, billModel: billModel);
   }
 
+  List<BillModel> billsCountByType(BillTypeModel billTypeModel) {
+    final billsCountByType = allBillsCounts(billTypeModel);
+    return _billUtils.appendEmptyBillModelNew(billTypeModel, billsCountByType);
+  }
+
   Future<void> openFloatingBillDetails(
     BuildContext context,
     BillTypeModel billTypeModel, {
     BillModel? billModel,
   }) async {
-    plutoGridIsLoading = false;
+    // plutoGridIsLoading = false;
+    //
+    // await fetchAllBillsByType(billTypeModel);
+    //
+    // log("billNumber  ${bills.last.billDetails.billNumber.toString()}");
+    // _billsFirebaseRepo.saveLastTypeNumber(bills.last);
+    //
+    // if (!context.mounted) return;
+    //
+    // final BillModel lastBillModel = billModel ?? _billUtils.appendEmptyBillModel(bills, billTypeModel);
+    //
+    // _openBillDetailsFloatingWindow(
+    //   context: context,
+    //   modifiedBills: bills,
+    //   lastBillModel: lastBillModel,
+    // );
 
-    await fetchAllBillsByType(billTypeModel);
-
-    log("billNumber  ${bills.last.billDetails.billNumber.toString()}");
-    _billsFirebaseRepo.saveLastTypeNumber(bills.last);
+    final bills = billsCountByType(billTypeModel);
 
     if (!context.mounted) return;
-
-    final BillModel lastBillModel = billModel ?? _billUtils.appendEmptyBillModel(bills, billTypeModel);
 
     _openBillDetailsFloatingWindow(
       context: context,
       modifiedBills: bills,
-      lastBillModel: lastBillModel,
+      lastBillModel: bills.last,
     );
   }
 
