@@ -1,4 +1,10 @@
-class MaterialGroupModel {
+import 'package:pluto_grid/pluto_grid.dart';
+
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
+import '../../../pluto/data/models/pluto_adaptable.dart';
+
+class MaterialGroupModel implements PlutoAdaptable {
   final String matGroupGuid;
   final String groupCode;
   final String groupName;
@@ -85,5 +91,18 @@ class MaterialGroupModel {
       groupNumber: groupNumber ?? this.groupNumber,
       groupBranchMask: groupBranchMask ?? this.groupBranchMask,
     );
+  }
+
+  @override
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
+    return {
+      PlutoColumn(title: 'الرقم التعريفي', field: AppStrings.materialGroupIdFiled, type: PlutoColumnType.text(), hide: true): matGroupGuid,
+      createAutoIdColumn(): '',
+      PlutoColumn(title: 'اسم المجموعة', field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
+      PlutoColumn(title: 'رمز المجموعة', field: 'رمز المادة', type: PlutoColumnType.text()): groupCode,
+      PlutoColumn(title: 'رقم المجموعة', field: 'التكلفة', type: PlutoColumnType.text()): groupNumber,
+      PlutoColumn(title: 'الاسم اللاتيني', field: 'سعر المستهلك', type: PlutoColumnType.text()): groupLatinName,
+      PlutoColumn(title: 'المُلاحظات', field: 'سعر الجملة', type: PlutoColumnType.text()): groupNotes,
+    };
   }
 }
