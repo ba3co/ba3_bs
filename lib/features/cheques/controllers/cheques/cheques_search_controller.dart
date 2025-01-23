@@ -1,7 +1,9 @@
 import 'dart:developer';
+
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:get/get.dart';
+
 import '../../../../core/utils/app_ui_utils.dart';
 
 class ChequesSearchController extends GetxController {
@@ -17,7 +19,9 @@ class ChequesSearchController extends GetxController {
     required ChequesDetailsController chequesDetailsController,
   }) {
     chequesList = chequesByCategory;
-    currentChequesIndex = chequesList.indexWhere((current) =>current.chequesGuid==cheques.chequesGuid||current==cheques ,);
+    currentChequesIndex = chequesList.indexWhere(
+      (current) => current.chequesGuid == cheques.chequesGuid || current == cheques,
+    );
     currentCheques = chequesList[currentChequesIndex];
     this.chequesDetailsController = chequesDetailsController;
     _setCurrentCheques(currentChequesIndex);
@@ -30,7 +34,8 @@ class ChequesSearchController extends GetxController {
   ChequesModel get getCurrentCheques => chequesList[currentChequesIndex];
 
   /// Finds the index of the cheques with the given number
-  int _getChequesIndexByNumber(int? chequesNumber) => chequesList.indexWhere((cheques) => cheques.chequesNumber == chequesNumber);
+  int _getChequesIndexByNumber(int? chequesNumber) =>
+      chequesList.indexWhere((cheques) => cheques.chequesNumber == chequesNumber);
 
   /// Updates the cheques in the search results if it exists
   void updateCheques(ChequesModel updatedCheques) {

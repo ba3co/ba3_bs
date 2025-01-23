@@ -98,17 +98,19 @@ class BillDetailsButtons extends StatelessWidget {
           billTypeModel: billModel.billTypeModel,
         ),
       ),
-      _buildActionButton(
-        title: 'Pdf-Email',
-        icon: Icons.link,
-        onPressed: () => billDetailsController.generateAndSendBillPdf(billModel),
-      ),
-      _buildActionButton(
-        title: 'حذف',
-        icon: Icons.delete_outline,
-        color: Colors.red,
-        onPressed: () => billDetailsController.deleteBill(billModel, fromBillById: fromBillById),
-      ),
+      if (RoleItemType.viewBill.hasAdminPermission)
+        _buildActionButton(
+          title: 'Pdf-Email',
+          icon: Icons.link,
+          onPressed: () => billDetailsController.generateAndSendBillPdf(billModel),
+        ),
+      if (RoleItemType.viewBill.hasAdminPermission)
+        _buildActionButton(
+          title: 'حذف',
+          icon: Icons.delete_outline,
+          color: Colors.red,
+          onPressed: () => billDetailsController.deleteBill(billModel, fromBillById: fromBillById),
+        ),
     ];
   }
 
