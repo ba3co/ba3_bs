@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
@@ -29,7 +30,7 @@ import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
+class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, FirestoreSequentialNumbers {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -291,8 +292,12 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     openFloatingBillDetails(context, billModel.billTypeModel, billModel: billModel);
   }
 
-  List<BillModel> billsCountByType(BillTypeModel billTypeModel) {
-    final billsCountByType = allBillsCounts(billTypeModel);
+  Future<List<BillModel>> billsCountByType(BillTypeModel billTypeModel) async {
+    int billsCountByType = await getLastNumber(
+      category: ApiConstants.bills,
+      entityType: billTypeModel.billTypeLabel!,
+    );
+
     return _billUtils.appendEmptyBillModelNew(billTypeModel, billsCountByType);
   }
 
@@ -318,7 +323,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     //   lastBillModel: lastBillModel,
     // );
 
-    final bills = billsCountByType(billTypeModel);
+    final bills = await billsCountByType(billTypeModel);
 
     if (!context.mounted) return;
 

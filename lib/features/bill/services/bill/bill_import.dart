@@ -23,7 +23,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   Future<void> initializeNumbers() async {
     billsNumbers = {
       for (var billType in BillType.values)
-        billType.typeGuide: await getNumber(
+        billType.typeGuide: await getLastNumber(
           category: ApiConstants.bills,
           entityType: billType.label,
         )
@@ -60,8 +60,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
               .text) /*billElement.findElements('B').single.findElements('BillNumber').single.text*/,
           'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           // 'BillCustPtr': customerId,
-          'BillCustName':
-              read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
+          'BillCustName': read<AccountsController>()
+              .getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,

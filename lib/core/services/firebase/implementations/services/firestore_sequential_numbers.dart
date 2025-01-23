@@ -65,7 +65,7 @@ mixin FirestoreSequentialNumbers {
     }, SetOptions(merge: true));
   }
 
-  Future<int> getNumber({required String category, required String entityType, int? number}) async {
+  Future<int> getLastNumber({required String category, required String entityType, int? number}) async {
     if (number != null) {
       return number;
     }

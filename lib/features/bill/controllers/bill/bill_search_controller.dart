@@ -109,19 +109,15 @@ class BillSearchController extends GetxController {
   }
 
   /// Navigates to a bill by its number.
-  Future<void> goToBillByNumber(int? billNumber) async {
-    if (!_isValidBillNumber(billNumber)) {
-      _showInvalidBillNumberError(billNumber);
-      return;
-    }
-    await _navigateToBill(billNumber!);
-  }
+  Future<void> goToBillByNumber(int? billNumber) async =>
+      await _navigateToBill(billNumber!, NavigateToBillSource.byNumber);
 
   /// Moves to the next bill if possible.
-  Future<void> next() async => await _navigateToBill(newtBill.billDetails.billNumber! + 1);
+  Future<void> next() async => await _navigateToBill(newtBill.billDetails.billNumber! + 1, NavigateToBillSource.byNext);
 
   /// Moves to the previous bill if possible.
-  Future<void> previous() async => await _navigateToBill(newtBill.billDetails.billNumber! - 1);
+  Future<void> previous() async =>
+      await _navigateToBill(newtBill.billDetails.billNumber! - 1, NavigateToBillSource.byPrevious);
 
   /// Moves to the last bill.
   void last() {
@@ -133,19 +129,37 @@ class BillSearchController extends GetxController {
   }
 
   /// Helper method to fetch or navigate to a specific bill.
-  Future<void> _navigateToBill(int billNumber) async {
+  Future<void> _navigateToBill(int billNumber, NavigateToBillSource source) async {
+    if (!_isValidBillNumber(billNumber)) {
+      _showInvalidBillNumberError(billNumber);
+      return;
+    }
+
     final existingBill = bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
     if (existingBill != null) {
       log('Bill with number $billNumber already exists in the list.');
       _setCurrentBill(bills.indexOf(existingBill));
       return;
     }
+
     final result = await read<AllBillsController>().fetchBillByNumber(
       billTypeModel: newtBill.billTypeModel,
       billNumber: billNumber,
     );
+
     result.fold(
-      (failure) => _displayErrorMessage('لا يوجد فاتورة ${failure.message}'),
+      (failure) {
+        if (source == NavigateToBillSource.byNext) {
+          log('source $source');
+          _navigateToBill(billNumber + 1, source);
+        } else if (source == NavigateToBillSource.byPrevious) {
+          log('source $source');
+          _navigateToBill(billNumber - 1, source);
+        } else {
+          log('source $source');
+          _displayErrorMessage('لا يوجد فاتورة ${failure.message}');
+        }
+      },
       (fetchedBills) {
         log('fetchedBill billNumber : ${fetchedBills.first.billDetails.billNumber}');
         log('bills length before insert: '
@@ -191,3 +205,5 @@ class BillSearchController extends GetxController {
   /// Displays an error message
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
 }
+
+enum NavigateToBillSource { byNext, byPrevious, byNumber }
