@@ -57,30 +57,18 @@ mixin FirestoreSequentialNumbers {
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
 
-    final snapshot = await docRef.get();
-
-    if (!snapshot.exists) {
-      // Initialize the document with the first entry for this entityType
-      await docRef.set({
-        entityType: {
-          ApiConstants.type: entityType,
-          ApiConstants.lastNumber: number,
-        },
-      });
-    } else {
-      await docRef.update({
-        entityType: {
-          ApiConstants.type: entityType,
-          ApiConstants.lastNumber: number,
-        },
-      });
-    }
+    await docRef.set({
+      entityType: {
+        ApiConstants.type: entityType,
+        ApiConstants.lastNumber: number,
+      },
+    }, SetOptions(merge: true));
   }
 
-  Future<int> getNumber(
-    String category,
-    String entityType,
-  ) async {
+  Future<int> getNumber({required String category,required String entityType, int? number}) async {
+    if (number != null) {
+      return number;
+    }
     final docRef = FirebaseFirestore.instance
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
@@ -103,7 +91,6 @@ mixin FirestoreSequentialNumbers {
 
     // Extract the `lastNumber` and increment it
     final lastNumber = entityData[ApiConstants.lastNumber] as int? ?? 0;
-
 
     return lastNumber;
   }

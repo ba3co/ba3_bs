@@ -21,7 +21,13 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
   @override
   Future<void> initializeNumbers() async {
-    billsNumbers = {for (var billType in BillType.values) billType.typeGuide: await getNumber(ApiConstants.bills, billType.label)};
+    billsNumbers = {
+      for (var billType in BillType.values)
+        billType.typeGuide: await getNumber(
+          category: ApiConstants.bills,
+          entityType: billType.label,
+        )
+    };
   }
 
   int getLastBillNumber(String billTypeGuid) {
