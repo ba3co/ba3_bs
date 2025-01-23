@@ -22,5 +22,6 @@ class AppStrings {
   static const double targetLongitude = 55.948330278435; // Longitude المنطقة المستهدفة
   static const double radiusInMeters = 25;
 
-  static const String materialIdFiled = 'materialIdFiled'; // نصف القطر بالمتر
+  static const String materialIdFiled = 'materialIdFiled';
+  static const String materialGroupIdFiled = 'materialGroupIdFiled'; // نصف القطر بالمتر
 }

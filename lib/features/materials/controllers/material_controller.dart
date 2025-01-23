@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:ba3_bs/core/dialogs/search_product_text_dialog.dart';
+import 'package:ba3_bs/core/dialogs/search_material_group_text_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
@@ -11,6 +11,7 @@ import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_sa
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/material_group.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
@@ -33,11 +34,7 @@ class MaterialController extends GetxController with AppNavigator {
   final QueryableSavableRepository<MaterialModel> _materialsRemoteDatasource;
 
   MaterialController(
-    this._jsonImportExportRepo,
-    this._materialsHiveRepo,
-    this._listenDataSourceRepository,
-      this._materialsRemoteDatasource
-  );
+      this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialsRemoteDatasource);
 
   List<MaterialModel> materials = [];
   MaterialModel? selectedMaterial;
@@ -115,7 +112,6 @@ class MaterialController extends GetxController with AppNavigator {
     }
   }
 
-
   Future<void> deleteAllMaterialFromLocal() async {
     final result = await _materialsHiveRepo.clear();
 
@@ -154,6 +150,8 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   void navigateToAllMaterialScreen() {
+  reloadMaterials();
+
     to(AppRoutes.showAllMaterialsScreen);
   }
 
@@ -252,7 +250,7 @@ class MaterialController extends GetxController with AppNavigator {
 
   MaterialModel? _createMaterialModel() => _materialService.createMaterialModel(
         matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
-        matGroupGuid: materialFromHandler.parentModel?.id ?? '',
+        matGroupGuid: materialFromHandler.parentModel?.matGroupGuid ?? '',
         wholesalePrice: materialFromHandler.wholePriceController.text,
         retailPrice: materialFromHandler.retailPriceController.text,
         matName: materialFromHandler.nameController.text,
@@ -326,7 +324,7 @@ class MaterialController extends GetxController with AppNavigator {
     required String query,
     required BuildContext context,
   }) async {
-    MaterialModel? searchedMaterial = await searchProductTextDialog(query);
+    MaterialGroupModel? searchedMaterial = await searchProductGroupTextDialog(query);
     materialFromHandler.parentModel = searchedMaterial;
     update();
   }

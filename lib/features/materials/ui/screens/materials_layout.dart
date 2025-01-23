@@ -65,6 +65,12 @@ class MaterialLayout extends StatelessWidget {
                           ..reloadMaterials()
                           ..navigateToAllMaterialScreen();
                       }),
+                  AppMenuItem(
+                      text: "معاينة المجموعات",
+                      onTap: () {
+                        read<MaterialGroupController>()
+                          .navigateToAllMaterialScreen();
+                      }),
                   if (RoleItemType.viewProduct.hasAdminPermission)
                     AppMenuItem(
                         text: "اضافة المواد",

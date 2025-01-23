@@ -1,6 +1,8 @@
 import 'package:ba3_bs/core/helper/extensions/basic/double_nullable_to_string.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/int_nullable_to_string.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/material_group.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
   TextEditingController barcodeController = TextEditingController();
 
   VatEnums _taxModel = VatEnums.withVat;
-  late MaterialModel? parentModel;
+  late MaterialGroupModel? parentModel;
 
   void init(MaterialModel? material) {
     if (material != null) {
@@ -40,6 +42,8 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
       minPriceController.text = materialController.selectedMaterial!.matLastPriceCurVal!.toFixedString();
       barcodeController.text = materialController.selectedMaterial!.matBarCode!;
       latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName??'';
+      parentModel=read<MaterialGroupController>().getMaterialGroupById(materialController.selectedMaterial!.matGroupGuid);
+      parentController.text=parentModel!.groupName;
     } else {
       materialController.selectedMaterial = null;
       parentModel = null;
