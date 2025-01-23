@@ -26,6 +26,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
         billType.typeGuide: await getLastNumber(
           category: ApiConstants.bills,
           entityType: billType.label,
+          number: 0,
         )
     };
   }
