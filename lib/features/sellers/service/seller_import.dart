@@ -48,9 +48,5 @@ class SellerImport extends ImportServiceBase<SellerModel> {
     return sellers;
   }
 
-  @override
-  Future<void> initializeNumbers() {
-    // TODO: implement initializeBillsNumbers
-    throw UnimplementedError();
-  }
+
 }

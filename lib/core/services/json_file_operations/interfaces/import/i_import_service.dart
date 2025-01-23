@@ -11,5 +11,4 @@ abstract class IImportService<T> {
 
   Future<List<T>> importFromXmlFile(File filePath);
 
-  Future<void> initializeNumbers();
 }

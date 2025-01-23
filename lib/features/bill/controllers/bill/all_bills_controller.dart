@@ -120,7 +120,6 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
     if (resultFile != null) {
       saveAllBillsRequestState.value = RequestState.loading;
-      await _jsonImportExportRepo.initializeNumbers();
       final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
