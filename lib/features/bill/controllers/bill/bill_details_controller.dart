@@ -164,6 +164,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
+    log('billModel json ${billModel.toJson()}');
     final result = await _billsFirebaseRepo.delete(billModel);
 
     result.fold(
