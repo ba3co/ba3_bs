@@ -104,8 +104,7 @@ mixin FirestoreSequentialNumbers {
     // Extract the `lastNumber` and increment it
     final lastNumber = entityData[ApiConstants.lastNumber] as int? ?? 0;
 
-    final newNumber = lastNumber + 1;
 
-    return newNumber;
+    return lastNumber;
   }
 }
