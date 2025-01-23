@@ -121,14 +121,20 @@ class BillSearchController extends GetxController {
   Future<void> previous() async =>
       await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigateToBillSource.byPrevious);
 
-  /// Moves to the last bill.
-  void last() {
-    if (bills.isEmpty) {
-      _displayErrorMessage('لا توجد فواتير متوفرة');
-    } else {
-      _setCurrentBill(bills.length - 1);
-    }
-  }
+  /// Moves to the next bill if possible.
+  Future<void> jumpTenForward() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigateToBillSource.byNext);
+
+  /// Moves to the previous bill if possible.
+  Future<void> jumpTenBackward() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigateToBillSource.byPrevious);
+
+  /// Moves to the next bill if possible.
+  Future<void> first() async => await _navigateToBill(1, NavigateToBillSource.byNext);
+
+  /// Moves to the previous bill if possible.
+  Future<void> last() async =>
+      await _navigateToBill(bills.last.billDetails.billNumber!, NavigateToBillSource.byPrevious);
 
   /// Helper method to fetch or navigate to a specific bill.
   Future<void> _navigateToBill(int billNumber, NavigateToBillSource source) async {
@@ -219,6 +225,9 @@ class BillSearchController extends GetxController {
 
   /// Checks if the current bill is the last in the list
   bool get isLast => currentBillIndex == bills.length - 1;
+
+  /// Checks if the current bill is the last in the list
+  bool get isFirst => currentBillIndex == 0;
 
   bool get isNew => currentBill.billId == null;
 
