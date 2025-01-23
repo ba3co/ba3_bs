@@ -111,33 +111,33 @@ class BillSearchController extends GetxController {
 
   /// Navigates to a bill by its number.
   Future<void> goToBillByNumber(int? billNumber) async =>
-      await _navigateToBill(billNumber!, NavigateToBillSource.byNumber);
+      await _navigateToBill(billNumber!, SearchControllerNavigateSource.byNumber);
 
   /// Moves to the next bill if possible.
   Future<void> next() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! + 1, NavigateToBillSource.byNext);
+      await _navigateToBill(currentBill.billDetails.billNumber! + 1, SearchControllerNavigateSource.byNext);
 
   /// Moves to the previous bill if possible.
   Future<void> previous() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigateToBillSource.byPrevious);
+      await _navigateToBill(currentBill.billDetails.billNumber! - 1, SearchControllerNavigateSource.byPrevious);
 
   /// Moves to the next bill if possible.
   Future<void> jumpTenForward() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigateToBillSource.byNext);
+      await _navigateToBill(currentBill.billDetails.billNumber! + 10, SearchControllerNavigateSource.byNext);
 
   /// Moves to the previous bill if possible.
   Future<void> jumpTenBackward() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigateToBillSource.byPrevious);
+      await _navigateToBill(currentBill.billDetails.billNumber! - 10, SearchControllerNavigateSource.byPrevious);
 
   /// Moves to the next bill if possible.
-  Future<void> first() async => await _navigateToBill(1, NavigateToBillSource.byNext);
+  Future<void> first() async => await _navigateToBill(1, SearchControllerNavigateSource.byNext);
 
   /// Moves to the previous bill if possible.
   Future<void> last() async =>
-      await _navigateToBill(bills.last.billDetails.billNumber!, NavigateToBillSource.byPrevious);
+      await _navigateToBill(bills.last.billDetails.billNumber!, SearchControllerNavigateSource.byPrevious);
 
   /// Helper method to fetch or navigate to a specific bill.
-  Future<void> _navigateToBill(int billNumber, NavigateToBillSource source) async {
+  Future<void> _navigateToBill(int billNumber, SearchControllerNavigateSource source) async {
     if (!_validateAndHandleBillNumber(billNumber)) return;
 
     if (_checkExistingBill(billNumber)) return;
@@ -168,7 +168,7 @@ class BillSearchController extends GetxController {
       bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Fetches the bill by number and handles success or failure.
-  Future<void> _fetchAndNavigateToBill(int billNumber, NavigateToBillSource source) async {
+  Future<void> _fetchAndNavigateToBill(int billNumber, SearchControllerNavigateSource source) async {
     final result = await read<AllBillsController>().fetchBillByNumber(
       billTypeModel: currentBill.billTypeModel,
       billNumber: billNumber,
@@ -181,12 +181,12 @@ class BillSearchController extends GetxController {
   }
 
   /// Handles a failed bill fetch and triggers navigation for adjacent bills if necessary.
-  void _handleFetchFailure(Failure failure, int billNumber, NavigateToBillSource source) {
+  void _handleFetchFailure(Failure failure, int billNumber, SearchControllerNavigateSource source) {
     log('Fetching bill from source: $source');
 
-    if (source == NavigateToBillSource.byNext) {
+    if (source == SearchControllerNavigateSource.byNext) {
       _navigateToBill(billNumber + 1, source);
-    } else if (source == NavigateToBillSource.byPrevious) {
+    } else if (source == SearchControllerNavigateSource.byPrevious) {
       _navigateToBill(billNumber - 1, source);
     } else {
       _displayErrorMessage('لا يوجد فاتورة ${failure.message}');
@@ -237,4 +237,4 @@ class BillSearchController extends GetxController {
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
 }
 
-enum NavigateToBillSource { byNext, byPrevious, byNumber }
+enum SearchControllerNavigateSource { byNext, byPrevious, byNumber }
