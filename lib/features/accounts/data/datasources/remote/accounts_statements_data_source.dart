@@ -137,7 +137,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
 
   @override
   Future<Map<AccountEntity, List<EntryBondItems>>> saveAllNested(
-      {required List<AccountEntity> itemTypes, required List<EntryBondItems> items}) async {
+      {required List<AccountEntity> itemTypes, required List<EntryBondItems> items,void Function(double progress)? onProgress,}) async {
     final billsByType = <AccountEntity, List<EntryBondItems>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -184,11 +184,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
     return savedData.map(EntryBondItems.fromJson).toList();
   }
 
-  @override
-  saveLastTypeNumber(EntryBondItems model) {
-    // TODO: implement saveLastBillNumber
-    throw UnimplementedError();
-  }
+
 }
 
 // class AccountsStatementsDatasource {

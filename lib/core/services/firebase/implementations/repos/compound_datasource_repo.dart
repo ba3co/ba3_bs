@@ -84,9 +84,11 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     }
   }
 
-  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(List<T> items, List<ItemTypeModel> itemTypeModel) async {
+  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(List<T> items, List<ItemTypeModel> itemTypeModel,
+      void Function(double progress)? onProgress,
+      ) async {
     try {
-      final savedItems = await _dataSource.saveAllNested(items: items, itemTypes: itemTypeModel);
+      final savedItems = await _dataSource.saveAllNested(items: items, itemTypes: itemTypeModel,onProgress:onProgress);
       return Right(savedItems); // Return the list of saved items
     } catch (e) {
       log('Error in saveAllNested: $e');
@@ -104,13 +106,5 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     }
   }
 
-  Future<Either<Failure, Unit>> saveLastTypeNumber(T model) async {
-    try {
-      await _dataSource.saveLastTypeNumber(model);
-      return Right(unit); // Return list of  Nested items
-    } catch (e) {
-      log('Error in fetchAllNested: $e');
-      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
-    }
-  }
+
 }

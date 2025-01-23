@@ -69,7 +69,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
           chequesList.assignAll(fetchedCheques);
           if (chequesList.isNotEmpty) {
-            await _chequesFirebaseRepo.saveAllNested(chequesList, ChequesType.values);
+            await _chequesFirebaseRepo.saveAllNested(chequesList, ChequesType.values,(progress) {
+
+            },);
 
             read<EntryBondsGeneratorRepo>().saveEntryBonds(sourceModels: chequesList);
           }

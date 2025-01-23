@@ -145,7 +145,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
 
   @override
   Future<Map<BondType, List<BondModel>>> saveAllNested(
-      {required List<BondType> itemTypes, required List<BondModel> items}) async {
+      {required List<BondType> itemTypes, required List<BondModel> items,void Function(double progress)? onProgress,}) async {
     final bondsByType = <BondType, List<BondModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -192,7 +192,5 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
     return savedData.map(BondModel.fromJson).toList();
   }
 
-  @override
-  saveLastTypeNumber(BondModel model) async {
-  }
+
 }

@@ -82,7 +82,9 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           if (bonds.isNotEmpty) {
             saveAllBondsRequestState.value = RequestState.loading;
 
-            await _bondsFirebaseRepo.saveAllNested(bonds, BondType.values);
+            await _bondsFirebaseRepo.saveAllNested(bonds, BondType.values,(progress) {
+
+            },);
             await read<EntryBondsGeneratorRepo>().saveEntryBonds(
               sourceModels: bonds,
               onProgress: (progress) {
@@ -106,7 +108,6 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     // await fetchAllBondsLocal();
     await fetchAllBondsByType(bondTypeModel);
 
-    await _bondsFirebaseRepo.saveLastTypeNumber(bonds.last);
 
     if (!context.mounted) return;
 

@@ -19,6 +19,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -60,6 +61,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   Rx<RequestState> getAllNestedBillsRequestState = RequestState.initial.obs;
 
   Rx<RequestState> saveAllBillsRequestState = RequestState.initial.obs;
+  Rx<RequestState> saveAllBillsBondRequestState = RequestState.initial.obs;
 
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
@@ -117,7 +119,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     if (resultFile != null) {
       saveAllBillsRequestState.value = RequestState.loading;
-    await  _jsonImportExportRepo.initializeNumbers();
+      await _jsonImportExportRepo.initializeNumbers();
       final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
@@ -131,23 +133,26 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   void _onFetchBillsFromLocalSuccess(Future<List<BillModel>> currentBills) async {
-
-    final fetchedBills=await currentBills;
+    final fetchedBills = await currentBills;
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(
       fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
     );
     if (bills.isNotEmpty) {
-
-      await _billsFirebaseRepo.saveAllNested(bills, billsTypes);
-      // await read<EntryBondsGeneratorRepo>().saveEntryBonds(
-      //   sourceModels: bills,
-      //   onProgress: (progress) {
-      //     uploadProgress.value = progress; // Update progress
-      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      //   },
-      // );
+      await _billsFirebaseRepo.saveAllNested(bills, billsTypes,
+          (progress) {
+            uploadProgress.value = progress; // Update progress
+            log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+          },
+      );
+      await read<EntryBondsGeneratorRepo>().saveEntryBonds(
+        sourceModels: bills,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+      );
     }
     saveAllBillsRequestState.value = RequestState.success;
 

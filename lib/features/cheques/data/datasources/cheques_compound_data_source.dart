@@ -166,7 +166,7 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
 
   @override
   Future<Map<ChequesType, List<ChequesModel>>> saveAllNested(
-      {required List<ChequesType> itemTypes, required List<ChequesModel> items}) async {
+      {required List<ChequesType> itemTypes, required List<ChequesModel> items,void Function(double progress)? onProgress,}) async {
     final chequesByType = <ChequesType, List<ChequesModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -193,9 +193,5 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
     return chequesByType;
   }
 
-  @override
-  saveLastTypeNumber(ChequesModel model) {
-    // TODO: implement saveLastBillNumber
-    throw UnimplementedError();
-  }
+
 }

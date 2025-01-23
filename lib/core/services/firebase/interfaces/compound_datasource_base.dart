@@ -37,8 +37,9 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
   Future<Map<ItemTypeModel, List<T>>> saveAllNested({
     required List<ItemTypeModel> itemTypes,
     required List<T> items,
+    void Function(double progress)? onProgress,
   });
 
 
-  Future <void> saveLastTypeNumber(T model);
+
 }
