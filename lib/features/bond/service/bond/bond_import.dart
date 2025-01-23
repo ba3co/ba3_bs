@@ -23,7 +23,7 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
   Future<void> _initializeNumbers() async {
     bondsNumbers = {
       for (var billType in BondType.values)
-        billType.typeGuide: await getNumber(
+        billType.typeGuide: await getLastNumber(
           category: ApiConstants.bonds,
           entityType: billType.label,
           number: 0,
@@ -57,7 +57,8 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
 
       final payItemList = payItemsNode?.findAllElements('N').map((itemNode) {
             return PayItem(
-              entryAccountName: read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
+              entryAccountName:
+                  read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
               entryAccountGuid: itemNode.getElement('EntryAccountGuid')?.text,
               entryDate: (itemNode.getElement('EntryDate')!.text.toYearMonthDayFormat()),
               entryDebit: double.tryParse(itemNode.getElement('EntryDebit')?.text ?? '0'),
