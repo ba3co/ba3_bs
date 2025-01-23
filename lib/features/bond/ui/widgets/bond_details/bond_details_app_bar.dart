@@ -1,8 +1,11 @@
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+
 import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/widgets/app_spacer.dart';
+import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/bonds/bond_search_controller.dart';
@@ -29,27 +32,78 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 100,
       title: Text(bondTypeModel.value),
       actions: [
-        IconButton(
-            onPressed: () {
-              bondSearchController.previous();
-            },
-            icon: const Icon(Icons.keyboard_double_arrow_right)),
+        HorizontalSpace(20),
+        CustomIconButton(
+          onPressed: () {
+            bondSearchController.last();
+          },
+          disabled: bondSearchController.isLast,
+          icon: FaIcon(
+            FontAwesomeIcons.arrowRotateRight,
+            size: 14,
+          ),
+        ),
+        HorizontalSpace(5),
+        CustomIconButton(
+          disabled: bondSearchController.isLast,
+          onPressed: () {
+            bondSearchController.jumpTenForward();
+          },
+          icon: FaIcon(
+            Icons.keyboard_double_arrow_right_outlined,
+          ),
+        ),
+        CustomIconButton(
+          disabled: bondSearchController.isLast,
+          onPressed: () {
+            bondSearchController.next();
+          },
+          icon: FaIcon(
+            Icons.keyboard_arrow_right_outlined,
+          ),
+        ),
+        HorizontalSpace(5),
         SizedBox(
           width: Get.width * 0.10,
           child: CustomTextFieldWithoutIcon(
             isNumeric: true,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             textEditingController: bondDetailsController.bondNumberController,
-            onSubmitted: (bondNumber) {
-              bondSearchController.goToBondByNumber(bondNumber.toInt);
+            onSubmitted: (billNumber) {
+              bondSearchController.goToBondByNumber(billNumber.toInt);
             },
           ),
         ),
-        IconButton(
-            onPressed: () {
-              bondSearchController.next();
-            },
-            icon: const Icon(Icons.keyboard_double_arrow_left)),
+        HorizontalSpace(5),
+        CustomIconButton(
+          onPressed: () {
+            bondSearchController.previous();
+          },
+          disabled: bondSearchController.isFirst,
+          icon: FaIcon(
+            Icons.keyboard_arrow_left_outlined,
+          ),
+        ),
+        CustomIconButton(
+          onPressed: () {
+            bondSearchController.jumpTenBackward();
+          },
+          disabled: bondSearchController.isFirst,
+          icon: FaIcon(
+            Icons.keyboard_double_arrow_left,
+          ),
+        ),
+        HorizontalSpace(5),
+        CustomIconButton(
+          onPressed: () {
+            bondSearchController.first();
+          },
+          disabled: bondSearchController.isFirst,
+          icon: FaIcon(
+            FontAwesomeIcons.arrowRotateLeft,
+            size: 14,
+          ),
+        ),
+        const HorizontalSpace(20),
       ],
     );
   }

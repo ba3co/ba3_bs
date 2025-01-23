@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
-import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
@@ -12,6 +11,7 @@ import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
@@ -162,25 +162,6 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         const HorizontalSpace(20),
       ],
-    );
-  }
-}
-
-class CustomIconButton extends StatelessWidget {
-  final Widget icon;
-  final VoidCallback onPressed;
-  final bool disabled;
-
-  const CustomIconButton({super.key, required this.icon, required this.onPressed, this.disabled = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      color: disabled ? AppColors.grayColor : Colors.blue.shade700,
-      padding: EdgeInsets.zero,
-      constraints: BoxConstraints(),
-      onPressed: disabled ? () {} : onPressed,
-      icon: icon,
     );
   }
 }

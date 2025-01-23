@@ -127,9 +127,14 @@ enum BillType {
       accounts: {
         BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
       }),
-  transferIn(label: 'transferIn', value: 'تسوية الزيادة', typeGuide: "494fa945-3fe5-4fc3-86d6-7a9999b6c9e8", color: 4278228616, accounts: {
-    BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-  }),
+  transferIn(
+      label: 'transferIn',
+      value: 'تسوية الزيادة',
+      typeGuide: "494fa945-3fe5-4fc3-86d6-7a9999b6c9e8",
+      color: 4278228616,
+      accounts: {
+        BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      }),
   transferOut(
     label: 'transferOut',
     value: 'تسوية النقص',
@@ -619,3 +624,5 @@ enum ChequesStrategyType {
   refundStrategy,
   refundChequesStrategy,
 }
+
+enum SearchControllerNavigateSource { byNext, byPrevious, byNumber }

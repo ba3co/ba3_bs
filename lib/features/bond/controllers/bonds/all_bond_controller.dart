@@ -3,14 +3,18 @@ import 'dart:io';
 
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
+import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/network/api_constants.dart';
+import '../../../../core/network/error/failure.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -20,7 +24,7 @@ import '../pluto/bond_details_pluto_controller.dart';
 import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
-class AllBondsController extends FloatingBondDetailsLauncher {
+class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSequentialNumbers {
   final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
   final ImportExportRepository<BondModel> _jsonImportExportRepo;
 
@@ -82,9 +86,11 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           if (bonds.isNotEmpty) {
             saveAllBondsRequestState.value = RequestState.loading;
 
-            await _bondsFirebaseRepo.saveAllNested(bonds, BondType.values,(progress) {
-
-            },);
+            await _bondsFirebaseRepo.saveAllNested(
+              bonds,
+              BondType.values,
+              (progress) {},
+            );
             await read<EntryBondsGeneratorRepo>().saveEntryBonds(
               sourceModels: bonds,
               onProgress: (progress) {
@@ -95,7 +101,6 @@ class AllBondsController extends FloatingBondDetailsLauncher {
           }
           saveAllBondsRequestState.value = RequestState.success;
           AppUIUtils.onSuccess('تم تحميل السندات بنجاح');
-
         },
       );
     }
@@ -104,20 +109,39 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     update();
   }
 
-  Future<void> openFloatingBondDetails(BuildContext context, BondType bondTypeModel, {BondModel? bondModel}) async {
-    // await fetchAllBondsLocal();
-    await fetchAllBondsByType(bondTypeModel);
+  Future<List<BondModel>> billsCountByType(BondType bondType) async {
+    int billsCountByType = await getLastNumber(
+      category: ApiConstants.bonds,
+      entityType: bondType.label,
+    );
 
+    return _bondUtils.appendEmptyBillModelNew(bondType, billsCountByType);
+  }
+
+  Future<void> openFloatingBondDetails(BuildContext context, BondType bondType, {BondModel? bondModel}) async {
+    // await fetchAllBondsLocal();
+    // await fetchAllBondsByType(bondTypeModel);
+    //
+    // if (!context.mounted) return;
+    //
+    // final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bonds, bondTypeModel);
+    //
+    // _openBondDetailsFloatingWindow(
+    //   context: context,
+    //   modifiedBonds: bonds,
+    //   lastBondModel: lastBondModel,
+    //   bondType: bondTypeModel,
+    // );
+
+    final bonds = await billsCountByType(bondType);
 
     if (!context.mounted) return;
-
-    final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bonds, bondTypeModel);
 
     _openBondDetailsFloatingWindow(
       context: context,
       modifiedBonds: bonds,
-      lastBondModel: lastBondModel,
-      bondType: bondTypeModel,
+      lastBondModel: bonds.last,
+      bondType: bondType,
     );
   }
 
@@ -138,6 +162,17 @@ class AllBondsController extends FloatingBondDetailsLauncher {
       (fetchedBonds) => bondModel = fetchedBonds,
     );
     return bondModel;
+  }
+
+  Future<Either<Failure, List<BondModel>>> fetchBondByNumber(
+      {required BondType bondType, required int bondNumber}) async {
+    final result = await _bondsFirebaseRepo.fetchWhere(
+      itemTypeModel: bondType,
+      field: ApiConstants.bondNumber,
+      value: bondNumber,
+    );
+
+    return result;
   }
 
   // Opens the 'Bond Details' floating window.
@@ -192,8 +227,8 @@ class AllBondsController extends FloatingBondDetailsLauncher {
     required BondDetailsPlutoController bondDetailsPlutoController,
   }) {
     bondSearchController.initialize(
-      bond: currentBond,
-      bondsByCategory: allBonds,
+      newBond: currentBond,
+      allBonds: allBonds,
       bondDetailsController: bondDetailsController,
       bondDetailsPlutoController: bondDetailsPlutoController,
     );

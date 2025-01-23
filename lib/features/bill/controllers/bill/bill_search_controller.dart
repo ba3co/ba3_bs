@@ -236,5 +236,3 @@ class BillSearchController extends GetxController {
   /// Displays an error message
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
 }
-
-enum SearchControllerNavigateSource { byNext, byPrevious, byNumber }

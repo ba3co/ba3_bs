@@ -33,4 +33,5 @@ class ApiConstants {
   static const String lastNumber = 'lastNumber';
 
   static const String billNumber = 'billDetails.billNumber';
+  static const String bondNumber = 'PayNumber';
 }
