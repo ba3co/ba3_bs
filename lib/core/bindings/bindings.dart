@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_sa
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
+import 'package:ba3_bs/core/services/json_file_operations/interfaces/import/i_import_repository.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_source.dart';
@@ -18,9 +19,12 @@ import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/datasources/cheques_compound_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
+import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
+import 'package:ba3_bs/features/materials/data/models/material_group.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
 import 'package:ba3_bs/features/materials/service/material_export.dart';
+import 'package:ba3_bs/features/materials/service/materials_groups_import.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
@@ -55,6 +59,7 @@ import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/materials/controllers/material_controller.dart';
 import '../../features/materials/data/datasources/local/material_local_data_source.dart';
+import '../../features/materials/data/datasources/remote/materials_groups_data_source.dart';
 import '../../features/materials/service/material_import.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
@@ -110,25 +115,26 @@ class AppBindings extends Bindings {
     final chequesImport = ChequesImport();
     final chequesExport = ChequesExport();
     final sellersImport = SellerImport();
+    final materialGroupImport = MaterialGroupImport();
 
     // Initialize repositories
     final repositories = _initializeRepositories(
-      fireStoreService: fireStoreService,
-      compoundFireStoreService: compoundFireStoreService,
-      translationService: translationService,
-      billImportService: billImport,
-      billExportService: billExport,
-      bondExportService: bondExport,
-      bondImportService: bondImport,
-      materialExportService: materialExport,
-      materialImportService: materialImport,
-      accountExportService: accountExport,
-      accountImportService: accountImport,
-      chequesExportService: chequesExport,
-      chequesImportService: chequesImport,
-      sellersImportService: sellersImport,
-      materialsHiveService: materialsHiveService,
-    );
+        fireStoreService: fireStoreService,
+        compoundFireStoreService: compoundFireStoreService,
+        translationService: translationService,
+        billImportService: billImport,
+        billExportService: billExport,
+        bondExportService: bondExport,
+        bondImportService: bondImport,
+        materialExportService: materialExport,
+        materialImportService: materialImport,
+        accountExportService: accountExport,
+        accountImportService: accountImport,
+        chequesExportService: chequesExport,
+        chequesImportService: chequesImport,
+        sellersImportService: sellersImport,
+        materialsHiveService: materialsHiveService,
+        importMaterialGroupService: materialGroupImport);
 
     // Register the EntryBondRepository and inject the generator
     lazyPut(EntryBondsGeneratorRepo(entryBondGenerator));
@@ -179,27 +185,23 @@ class AppBindings extends Bindings {
     required IExportService<ChequesModel> chequesExportService,
     required IImportService<SellerModel> sellersImportService,
     required ILocalDatabaseService<MaterialModel> materialsHiveService,
+    required IImportService<MaterialGroupModel> importMaterialGroupService,
   }) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
       patternsRepo: RemoteDataSourceRepository(PatternsDatasource(databaseService: fireStoreService)),
-      billsRepo:
-          CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
-      bondsRepo:
-          CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
-      chequesRepo:
-          CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       rolesRepo: RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService)),
       usersRepo: FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService)),
       entryBondsRepo: RemoteDataSourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
-      accountsStatementsRepo:
-          CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
+      accountsStatementsRepo: CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
       billImportExportRepo: ImportExportRepository(billImportService, billExportService),
       chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
       userTimeRepo: UserTimeRepository(),
       sellersRepo: BulkSavableDatasourceRepository(SellersDatasource(databaseService: fireStoreService)),
-      materialsRemoteDatasourceRepo:
-          QueryableSavableRepository(MaterialsRemoteDatasource(databaseService: fireStoreService)),
+      materialsRemoteDatasourceRepo: QueryableSavableRepository(MaterialsRemoteDatasource(databaseService: fireStoreService)),
       accountsRep: BulkSavableDatasourceRepository(AccountsDatasource(databaseService: fireStoreService)),
       bondImportExportRepo: ImportExportRepository(bondImportService, bondExportService),
       materialImportExportRepo: ImportExportRepository(materialImportService, materialExportService),
@@ -212,6 +214,8 @@ class AppBindings extends Bindings {
       listenableDatasourceRepo: ListenDataSourceRepository(
         ChangesListenDatasource(databaseService: fireStoreService),
       ),
+      importMaterialRepository: ImportRepository(importMaterialGroupService),
+      materialGroupDataSource: QueryableSavableRepository(MaterialsGroupsDataSource(databaseService: fireStoreService)),
     );
   }
 
@@ -242,11 +246,13 @@ class AppBindings extends Bindings {
       repositories.materialImportExportRepo,
       repositories.materialsLocalDatasourceRepo,
       repositories.listenableDatasourceRepo,
+      repositories.materialsRemoteDatasourceRepo
     ));
     lazyPut(AddSellerController());
     lazyPut(
       ChangesController(repositories.listenableDatasourceRepo),
     );
+    lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
   }
 }
 
@@ -273,6 +279,8 @@ class _Repositories {
   final QueryableSavableRepository<MaterialModel> materialsRemoteDatasourceRepo;
   final LocalDatasourceRepository<MaterialModel> materialsLocalDatasourceRepo;
   final ListenDataSourceRepository<ChangesModel> listenableDatasourceRepo;
+  final IImportRepository<MaterialGroupModel> importMaterialRepository;
+  final QueryableSavableRepository<MaterialGroupModel> materialGroupDataSource;
 
   _Repositories({
     required this.translationRepo,
@@ -296,5 +304,7 @@ class _Repositories {
     required this.materialsRemoteDatasourceRepo,
     required this.materialsLocalDatasourceRepo,
     required this.listenableDatasourceRepo,
+    required this.importMaterialRepository,
+    required this.materialGroupDataSource,
   });
 }

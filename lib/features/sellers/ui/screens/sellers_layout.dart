@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -11,7 +13,15 @@ class SellersLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     final SellerSalesController sellerSalesController = read<SellerSalesController>();
     return Scaffold(
-      appBar: AppBar(title: const Text('البائعون')),
+      appBar: AppBar(
+        title: const Text('البائعون'),
+        actions: [
+          Padding(
+            padding: EdgeInsets.all(5),
+            child: AppButton(title: 'تحميل البائعين', onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
+          )
+        ],
+      ),
       body: Column(
         children: [
           AppMenuItem(
