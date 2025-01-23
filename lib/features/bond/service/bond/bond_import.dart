@@ -1,38 +1,60 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:xml/xml.dart';
 
+import '../../../../core/network/api_constants.dart';
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
 import '../../data/models/pay_item_model.dart';
 
-class BondImport extends ImportServiceBase<BondModel> {
-  /// Converts the imported JSON structure to a list of BillModel
+class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNumbers {
+  /// Converts the imported JSON structure to a list of BondModel
   @override
   List<BondModel> fromImportJson(Map<String, dynamic> jsonContent) {
-    final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Pay']['P'] ?? [];
-    return billsJson.map((bondJson) => BondModel.fromImportedJsonFile(bondJson as Map<String, dynamic>)).toList();
+    final List<dynamic> bondsJson = jsonContent['MainExp']['Export']['Pay']['P'] ?? [];
+    return bondsJson.map((bondJson) => BondModel.fromImportedJsonFile(bondJson as Map<String, dynamic>)).toList();
   }
 
   Map<String, int> bondsNumbers = {for (var bondType in BondType.values) bondType.typeGuide: 0};
 
+  Future<void> _initializeNumbers() async {
+    bondsNumbers = {
+      for (var billType in BondType.values)
+        billType.typeGuide: await getNumber(
+          category: ApiConstants.bonds,
+          entityType: billType.label,
+          number: 0,
+        )
+    };
+  }
+
   int getLastBondNumber(String billTypeGuid) {
+    if (!bondsNumbers.containsKey(billTypeGuid)) {
+      throw Exception('Bond type not found');
+    }
     bondsNumbers[billTypeGuid] = bondsNumbers[billTypeGuid]! + 1;
     return bondsNumbers[billTypeGuid]!;
   }
 
-  @override
-  Future<List<BondModel>> fromImportXml(XmlDocument document) async{
-    // العثور على جميع العقد <P> داخل <Pay>
-    final bondNodes = document.findAllElements('P');
+  _setLastNumber() async {
+    bondsNumbers.forEach(
+      (billTypeGuid, number) async {
+        await satNumber(ApiConstants.bonds, BondType.byTypeGuide(billTypeGuid).label, number);
+      },
+    );
+  }
 
-    return bondNodes.map((node) {
-      // تحليل العناصر الرئيسية لـ BondModel
+  @override
+  Future<List<BondModel>> fromImportXml(XmlDocument document) async {
+    await _initializeNumbers();
+
+    final bondNodes = document.findAllElements('P');
+    List<BondModel> bonds = bondNodes.map((node) {
       final payItemsNode = node.getElement('PayItems');
 
-      // إنشاء قائمة من PayItem
       final payItemList = payItemsNode?.findAllElements('N').map((itemNode) {
             return PayItem(
               entryAccountName: read<AccountsController>().getAccountNameById(itemNode.getElement('EntryAccountGuid')?.text),
@@ -71,11 +93,7 @@ class BondImport extends ImportServiceBase<BondModel> {
         e: node.getElement('E')?.text,
       );
     }).toList();
-  }
-
-  @override
-  Future<void> initializeNumbers() {
-    // TODO: implement initializeBillsNumbers
-    throw UnimplementedError();
+    await _setLastNumber();
+    return bonds;
   }
 }

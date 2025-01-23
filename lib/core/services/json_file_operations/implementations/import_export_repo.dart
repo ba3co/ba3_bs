@@ -49,13 +49,4 @@ class ImportExportRepository<T> implements IImportRepository<T>, IExportReposito
     }
   }
 
-  Future<Either<Failure, Unit>> initializeNumbers() async {
-    try {
-      await _jsonImport.initializeNumbers();
-      return   right(unit);
-    } catch (e) {
-      log('[$e] فشل في تهيئة الارقام');
-      return Left(ErrorHandler(e).failure);
-    }
-  }
 }
