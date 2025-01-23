@@ -1,11 +1,13 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -41,7 +43,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Row(
             children: [
               Visibility(
-                visible:billTypeModel.billPatternType?.hasCashesAccount ??true,
+                visible: billTypeModel.billPatternType?.hasCashesAccount ?? true,
                 child: SizedBox(
                   width: 250,
                   child: Row(
@@ -82,25 +84,77 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
               Row(
                 children: [
-                  IconButton(
-                      onPressed: () {
-                        billSearchController.previous();
-                      },
-                      icon: const Icon(Icons.keyboard_double_arrow_right)),
+                  HorizontalSpace(20),
+                  CustomIconButton(
+                    onPressed: () {
+                      billSearchController.last();
+                    },
+                    disabled: billSearchController.isLast,
+                    icon: FaIcon(
+                      FontAwesomeIcons.arrowRotateRight,
+                      size: 14,
+                    ),
+                  ),
+                  HorizontalSpace(5),
+                  CustomIconButton(
+                    disabled: billSearchController.isLast,
+                    onPressed: () {
+                      billSearchController.jumpTenForward();
+                    },
+                    icon: FaIcon(
+                      Icons.keyboard_double_arrow_right_outlined,
+                    ),
+                  ),
+                  CustomIconButton(
+                    disabled: billSearchController.isLast,
+                    onPressed: () {
+                      billSearchController.next();
+                    },
+                    icon: FaIcon(
+                      Icons.keyboard_arrow_right_outlined,
+                    ),
+                  ),
+                  HorizontalSpace(5),
                   SizedBox(
-                      width: Get.width * 0.10,
-                      child: CustomTextFieldWithoutIcon(
-                        isNumeric: true,
-                        textEditingController: billDetailsController.billNumberController,
-                        onSubmitted: (billNumber) {
-                          billSearchController.goToBillByNumber(billNumber.toInt);
-                        },
-                      )),
-                  IconButton(
-                      onPressed: () {
-                        billSearchController.next();
+                    width: Get.width * 0.10,
+                    child: CustomTextFieldWithoutIcon(
+                      isNumeric: true,
+                      textEditingController: billDetailsController.billNumberController,
+                      onSubmitted: (billNumber) {
+                        billSearchController.goToBillByNumber(billNumber.toInt);
                       },
-                      icon: const Icon(Icons.keyboard_double_arrow_left)),
+                    ),
+                  ),
+                  HorizontalSpace(5),
+                  CustomIconButton(
+                    onPressed: () {
+                      billSearchController.previous();
+                    },
+                    disabled: billSearchController.isFirst,
+                    icon: FaIcon(
+                      Icons.keyboard_arrow_left_outlined,
+                    ),
+                  ),
+                  CustomIconButton(
+                    onPressed: () {
+                      billSearchController.jumpTenBackward();
+                    },
+                    disabled: billSearchController.isFirst,
+                    icon: FaIcon(
+                      Icons.keyboard_double_arrow_left,
+                    ),
+                  ),
+                  HorizontalSpace(5),
+                  CustomIconButton(
+                    onPressed: () {
+                      billSearchController.first();
+                    },
+                    disabled: billSearchController.isFirst,
+                    icon: FaIcon(
+                      FontAwesomeIcons.arrowRotateLeft,
+                      size: 14,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -108,6 +162,25 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         const HorizontalSpace(20),
       ],
+    );
+  }
+}
+
+class CustomIconButton extends StatelessWidget {
+  final Widget icon;
+  final VoidCallback onPressed;
+  final bool disabled;
+
+  const CustomIconButton({super.key, required this.icon, required this.onPressed, this.disabled = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      color: disabled ? AppColors.grayColor : Colors.blue.shade700,
+      padding: EdgeInsets.zero,
+      constraints: BoxConstraints(),
+      onPressed: disabled ? () {} : onPressed,
+      icon: icon,
     );
   }
 }
