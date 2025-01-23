@@ -6,6 +6,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/network/error/failure.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/bill_details.dart';
 import '../../data/models/bill_items.dart';
@@ -14,7 +15,7 @@ import '../pluto/bill_details_pluto_controller.dart';
 
 class BillSearchController extends GetxController {
   late List<BillModel> bills;
-  late BillModel newtBill;
+  late BillModel currentBill;
   late int currentBillIndex;
 
   late BillDetailsController billDetailsController;
@@ -29,7 +30,7 @@ class BillSearchController extends GetxController {
   }) {
     bills = _prepareBillList(allBills, newBill);
     currentBillIndex = _getBillIndexByNumber(newBill.billDetails.billNumber);
-    newtBill = bills[currentBillIndex];
+    currentBill = bills[currentBillIndex];
     this.billDetailsController = billDetailsController;
     this.billDetailsPlutoController = billDetailsPlutoController;
 
@@ -85,7 +86,7 @@ class BillSearchController extends GetxController {
     final billIndex = _getBillIndexByNumber(updatedBill.billDetails.billNumber);
     if (billIndex != -1) {
       bills[billIndex] = updatedBill;
-      if (currentBillIndex == billIndex) newtBill = updatedBill;
+      if (currentBillIndex == billIndex) currentBill = updatedBill;
       update();
     }
   }
@@ -113,11 +114,12 @@ class BillSearchController extends GetxController {
       await _navigateToBill(billNumber!, NavigateToBillSource.byNumber);
 
   /// Moves to the next bill if possible.
-  Future<void> next() async => await _navigateToBill(newtBill.billDetails.billNumber! + 1, NavigateToBillSource.byNext);
+  Future<void> next() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! + 1, NavigateToBillSource.byNext);
 
   /// Moves to the previous bill if possible.
   Future<void> previous() async =>
-      await _navigateToBill(newtBill.billDetails.billNumber! - 1, NavigateToBillSource.byPrevious);
+      await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigateToBillSource.byPrevious);
 
   /// Moves to the last bill.
   void last() {
@@ -130,56 +132,76 @@ class BillSearchController extends GetxController {
 
   /// Helper method to fetch or navigate to a specific bill.
   Future<void> _navigateToBill(int billNumber, NavigateToBillSource source) async {
+    if (!_validateAndHandleBillNumber(billNumber)) return;
+
+    if (_checkExistingBill(billNumber)) return;
+
+    await _fetchAndNavigateToBill(billNumber, source);
+  }
+
+  bool _validateAndHandleBillNumber(int billNumber) {
     if (!_isValidBillNumber(billNumber)) {
       _showInvalidBillNumberError(billNumber);
-      return;
+      return false;
     }
+    return true;
+  }
 
-    final existingBill = bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
+  bool _checkExistingBill(int billNumber) {
+    final existingBill = _findExistingBill(billNumber);
     if (existingBill != null) {
       log('Bill with number $billNumber already exists in the list.');
       _setCurrentBill(bills.indexOf(existingBill));
-      return;
+      return true;
     }
+    return false;
+  }
 
+  /// Checks if the bill number exists in the list and returns its index, or null if not found.
+  BillModel? _findExistingBill(int billNumber) =>
+      bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
+
+  /// Fetches the bill by number and handles success or failure.
+  Future<void> _fetchAndNavigateToBill(int billNumber, NavigateToBillSource source) async {
     final result = await read<AllBillsController>().fetchBillByNumber(
-      billTypeModel: newtBill.billTypeModel,
+      billTypeModel: currentBill.billTypeModel,
       billNumber: billNumber,
     );
 
     result.fold(
-      (failure) {
-        if (source == NavigateToBillSource.byNext) {
-          log('source $source');
-          _navigateToBill(billNumber + 1, source);
-        } else if (source == NavigateToBillSource.byPrevious) {
-          log('source $source');
-          _navigateToBill(billNumber - 1, source);
-        } else {
-          log('source $source');
-          _displayErrorMessage('لا يوجد فاتورة ${failure.message}');
-        }
-      },
-      (fetchedBills) {
-        // log('fetchedBill billNumber : ${fetchedBills.first.billDetails.billNumber}');
-        // log('bills length before insert: '
-        //     '${bills.length}');
-        bills[billNumber - 1] = fetchedBills.first;
-        //   log('bills length after insert: ${bills.length}');
-
-        // for (final bill in bills) {
-        //   log('billNumber: ${bill.billDetails.billNumber}, billId: ${bill.billId}');
-        // }
-        bills[billNumber - 1] = fetchedBills.first;
-        _setCurrentBill(billNumber - 1);
-      },
+      (failure) => _handleFetchFailure(failure, billNumber, source),
+      (fetchedBills) => _handleFetchSuccess(fetchedBills, billNumber),
     );
+  }
+
+  /// Handles a failed bill fetch and triggers navigation for adjacent bills if necessary.
+  void _handleFetchFailure(Failure failure, int billNumber, NavigateToBillSource source) {
+    log('Fetching bill from source: $source');
+
+    if (source == NavigateToBillSource.byNext) {
+      _navigateToBill(billNumber + 1, source);
+    } else if (source == NavigateToBillSource.byPrevious) {
+      _navigateToBill(billNumber - 1, source);
+    } else {
+      _displayErrorMessage('لا يوجد فاتورة ${failure.message}');
+    }
+  }
+
+  /// Handles a successful bill fetch and updates the list.
+  void _handleFetchSuccess(List<BillModel> fetchedBills, int billNumber) {
+    if (fetchedBills.isEmpty) {
+      _displayErrorMessage('No bills returned from the fetch operation.');
+      return;
+    }
+
+    bills[billNumber - 1] = fetchedBills.first;
+    _setCurrentBill(billNumber - 1);
   }
 
   /// Updates the current bill and refreshes the screen`
   void _setCurrentBill(int index) {
     currentBillIndex = index;
-    newtBill = bills[index];
+    currentBill = bills[index];
     _updateBillDetailsOnScreen();
     update();
   }
@@ -187,7 +209,7 @@ class BillSearchController extends GetxController {
   /// Refreshes the screen with the current bill's details
   void _updateBillDetailsOnScreen() {
     billDetailsController.updateBillDetailsOnScreen(
-      newtBill,
+      currentBill,
       billDetailsPlutoController,
     );
   }
@@ -198,9 +220,9 @@ class BillSearchController extends GetxController {
   /// Checks if the current bill is the last in the list
   bool get isLast => currentBillIndex == bills.length - 1;
 
-  bool get isNew => newtBill.billId == null;
+  bool get isNew => currentBill.billId == null;
 
-  bool get isPending => newtBill.status == Status.pending;
+  bool get isPending => currentBill.status == Status.pending;
 
   /// Displays an error message
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
