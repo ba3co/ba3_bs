@@ -194,6 +194,5 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
 
   @override
   saveLastTypeNumber(BondModel model) async {
-    await satNumber(rootCollectionPath, BondType.byTypeGuide(model.payTypeGuid!).label, model.payNumber!);
   }
 }

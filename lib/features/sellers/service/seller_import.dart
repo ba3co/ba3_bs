@@ -13,7 +13,7 @@ class SellerImport extends ImportServiceBase<SellerModel> {
   }
 
   @override
-  List<SellerModel> fromImportXml(XmlDocument document) {
+  Future<List<SellerModel>> fromImportXml(XmlDocument document) async{
     final materialsXml = document.findAllElements('Q');
 
     List<SellerModel> sellers = materialsXml.map((materialElement) {

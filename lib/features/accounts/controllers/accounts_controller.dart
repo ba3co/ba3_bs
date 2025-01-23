@@ -79,10 +79,11 @@ class AccountsController extends GetxController with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importXmlFile(file);
+      final result =  _jsonImportExportRepo.importXmlFile(file);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedAccounts) {
+        ( accountFromNetwork)async {
+          final fetchedAccounts=await accountFromNetwork;
           log("fetchedAccounts length ${fetchedAccounts.length}");
           log(fetchedAccounts.last.toJson().toString());
 

@@ -61,7 +61,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedCheques) async {
+        (fetchedChequesFromNetwork) async {
+          final fetchedCheques=await fetchedChequesFromNetwork;
+
           log('chequesList.length ${fetchedCheques.length}');
           // log('chequesList.firstOrNull ${chequesList.firstOrNull?.toJson()}');
 

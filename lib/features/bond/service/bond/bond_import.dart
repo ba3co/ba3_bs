@@ -24,7 +24,7 @@ class BondImport extends ImportServiceBase<BondModel> {
   }
 
   @override
-  List<BondModel> fromImportXml(XmlDocument document) {
+  Future<List<BondModel>> fromImportXml(XmlDocument document) async{
     // العثور على جميع العقد <P> داخل <Pay>
     final bondNodes = document.findAllElements('P');
 

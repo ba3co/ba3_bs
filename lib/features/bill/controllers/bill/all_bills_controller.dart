@@ -117,6 +117,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
     if (resultFile != null) {
       saveAllBillsRequestState.value = RequestState.loading;
+    await  _jsonImportExportRepo.initializeNumbers();
       final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
@@ -129,13 +130,16 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
-  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) async {
+  void _onFetchBillsFromLocalSuccess(Future<List<BillModel>> currentBills) async {
+
+    final fetchedBills=await currentBills;
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(
       fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
     );
     if (bills.isNotEmpty) {
+
       await _billsFirebaseRepo.saveAllNested(bills, billsTypes);
       // await read<EntryBondsGeneratorRepo>().saveEntryBonds(
       //   sourceModels: bills,
@@ -151,8 +155,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -163,10 +167,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
     update();
   }
 
-  Future<Either<Failure, List<BillModel>>> fetchBillByNumber(
-      {required BillTypeModel billTypeModel, required int billNumber}) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
+  Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {
+    final result = await _billsFirebaseRepo.fetchWhere(itemTypeModel: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
 
     return result;
   }
@@ -268,8 +270,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator {
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);

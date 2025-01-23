@@ -21,10 +21,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
   @override
   Future<void> initializeNumbers() async {
-    billsNumbers = {
-      for (var billType in BillType.values)
-        billType.label: await getNumber(ApiConstants.bills, billType.label)
-    };
+    billsNumbers = {for (var billType in BillType.values) billType.typeGuide: await getNumber(ApiConstants.bills, billType.label)};
   }
 
   int getLastBillNumber(String billTypeGuid) {
@@ -35,10 +32,9 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     return billsNumbers[billTypeGuid]!;
   }
 
-
   @override
-  List<BillModel> fromImportXml(XmlDocument document) {
-
+  Future<List<BillModel>> fromImportXml(XmlDocument document) async {
+    await initializeNumbers();
     final billsXml = document.findAllElements('Bill');
     List<BillModel> bills = billsXml.map((billElement) {
       // String customerId =
@@ -116,7 +112,15 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       return BillModel.fromImportedJsonFile(billJson);
     }).toList();
-
+    await setLastNumber();
     return bills;
+  }
+
+  setLastNumber() async {
+    billsNumbers.forEach(
+      (billTypeGuid, number) async {
+        await satNumber(ApiConstants.bills, BillType.byTypeGuide(billTypeGuid).label, number);
+      },
+    );
   }
 }

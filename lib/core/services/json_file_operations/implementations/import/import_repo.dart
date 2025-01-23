@@ -25,9 +25,9 @@ class ImportRepository<T> implements IImportRepository<T> {
   }
 
   @override
-  Either<Failure, List<T>> importXmlFile(File file) {
+  Either<Failure, Future<List<T>>> importXmlFile(File file) {
     try {
-      List<T> itemsModels = _jsonImport.importFromXmlFile(file);
+     Future <List<T>> itemsModels = _jsonImport.importFromXmlFile(file);
       return Right(itemsModels);
     } catch (e) {
       log('[$e] فشل في استيراد الملف');

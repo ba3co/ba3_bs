@@ -122,7 +122,9 @@ class MaterialController extends GetxController with AppNavigator {
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
 
-  _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
+  _handelFetchAllMaterialFromLocalSuccess(Future<List<MaterialModel>> fetchedMaterialFromNetwork) async {
+
+    final fetchedMaterial=await fetchedMaterialFromNetwork;
     log('fetchedMaterial length ${fetchedMaterial.length}');
     log('fetchedMaterial first ${fetchedMaterial.first.toJson()}');
 

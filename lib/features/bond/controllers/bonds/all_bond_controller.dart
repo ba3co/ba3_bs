@@ -75,7 +75,8 @@ class AllBondsController extends FloatingBondDetailsLauncher {
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedBonds) async {
+        (fetchedBondsFromNetwork) async {
+          final fetchedBonds = await fetchedBondsFromNetwork;
           log('bonds.length ${fetchedBonds.length}');
           bonds.assignAll(fetchedBonds);
           if (bonds.isNotEmpty) {

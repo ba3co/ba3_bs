@@ -14,7 +14,7 @@ class ChequesImport extends ImportServiceBase<ChequesModel> {
   }
 
   @override
-  List<ChequesModel> fromImportXml(XmlDocument document) {
+  Future<List<ChequesModel>> fromImportXml(XmlDocument document) async{
     final chequesElements = document.findAllElements('H');
     return chequesElements.map((element) {
       final checkCollectEntries = element.findElements('CheckCollectEntry');

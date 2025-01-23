@@ -90,7 +90,7 @@ mixin FirestoreSequentialNumbers {
 
     // entityType Document for entity type (e.g., "purchase", "sales")
     if (!snapshot.exists) {
-      return 1;
+      return 0;
     }
 
     // Get the current data for the document
@@ -98,7 +98,7 @@ mixin FirestoreSequentialNumbers {
     final entityData = data?[entityType] as Map<String, dynamic>?;
 
     if (entityData == null) {
-      return 1;
+      return 0;
     }
 
     // Extract the `lastNumber` and increment it
