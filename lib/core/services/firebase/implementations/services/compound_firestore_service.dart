@@ -182,7 +182,6 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
-    void Function(double progress)? onProgress,
   }) async {
     final batch = _firestore.batch();
     final addedItems = <Map<String, dynamic>>[];
