@@ -82,6 +82,7 @@ class BillDetailsButtons extends StatelessWidget {
     return _buildActionButton(
       title: isPending ? 'قبول' : 'السند',
       icon: Icons.file_open_outlined,
+      color: isPending ? Colors.orange : null,
       onPressed: isPending
           ? () => billDetailsController.updateBillStatus(billModel, Status.approved)
           : () => billDetailsController.createEntryBond(billModel, context),
@@ -119,12 +120,13 @@ class BillDetailsButtons extends StatelessWidget {
     required IconData icon,
     required VoidCallback onPressed,
     Color? color,
+    double? width,
   }) {
     return AppButton(
       title: title,
       iconData: icon,
       height: 20,
-      width: 100,
+      width: width ?? 100,
       fontSize: 14,
       color: color ?? Colors.blue.shade700,
       onPressed: onPressed,
