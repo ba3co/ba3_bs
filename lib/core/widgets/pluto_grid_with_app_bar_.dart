@@ -58,7 +58,6 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 key: controller.plutoKey,
                 onLoaded: (event) {
                   event.stateManager.setShowColumnFilter(true); // تفعيل الفلترة
-
                   onLoaded(event);
                 },
                 onSelected: onSelected,
@@ -68,16 +67,8 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 mode: PlutoGridMode.selectWithOneTap,
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
-                    enableRowColorAnimation: true,
                     evenRowColor: Colors.blueAccent.withAlpha(127),
-                    columnTextStyle: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-
                     activatedColor: Colors.white.withAlpha(127),
-
                     gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
                     gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
                   ),

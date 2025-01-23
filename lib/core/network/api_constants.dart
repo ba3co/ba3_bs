@@ -16,6 +16,7 @@ class ApiConstants {
   static const String taxes = 'texes';
   static const String accounts = 'accounts';
   static const String materials = 'materials';
+  static const String materialGroup = 'materialGroup';
   static const String changes = 'changes';
   static const String sequentialNumbers = 'sequential_numbers';
   static const String guestUser = 'guest_user';
