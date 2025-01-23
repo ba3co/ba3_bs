@@ -161,15 +161,15 @@ class BillSearchController extends GetxController {
         }
       },
       (fetchedBills) {
-        log('fetchedBill billNumber : ${fetchedBills.first.billDetails.billNumber}');
-        log('bills length before insert: '
-            '${bills.length}');
+        // log('fetchedBill billNumber : ${fetchedBills.first.billDetails.billNumber}');
+        // log('bills length before insert: '
+        //     '${bills.length}');
         bills[billNumber - 1] = fetchedBills.first;
-        log('bills length after insert: ${bills.length}');
+        //   log('bills length after insert: ${bills.length}');
 
-        for (final bill in bills) {
-          log('billNumber: ${bill.billDetails.billNumber}, billId: ${bill.billId}');
-        }
+        // for (final bill in bills) {
+        //   log('billNumber: ${bill.billDetails.billNumber}, billId: ${bill.billId}');
+        // }
         bills[billNumber - 1] = fetchedBills.first;
         _setCurrentBill(billNumber - 1);
       },
