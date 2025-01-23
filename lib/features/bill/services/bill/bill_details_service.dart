@@ -95,7 +95,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
 
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
 
-    if (billModel.status == Status.approved) {
+    if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
     }
   }
