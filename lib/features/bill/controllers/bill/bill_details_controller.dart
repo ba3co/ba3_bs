@@ -1,14 +1,20 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/core/widgets/custom_text_field_without_icon.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,6 +61,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   final TextEditingController firstPayController = TextEditingController();
   final TextEditingController invReturnDateController = TextEditingController();
   final TextEditingController invReturnCodeController = TextEditingController();
+  final TextEditingController invFirstPayController = TextEditingController();
 
   AccountModel? selectedCustomerAccount;
 
@@ -69,6 +76,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   @override
   Rx<StoreAccount> selectedStore = StoreAccount.main.obs;
+
+  bool get isCash => selectedPayType.value == InvPayType.cash;
 
   @override
   void onSelectedStoreChanged(StoreAccount? newStore) {
@@ -86,10 +95,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   @override
-  Future<void> sendToEmail(
-      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
-    _billService.sendToEmail(
-        recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
+  Future<void> sendToEmail({required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
+    _billService.sendToEmail(recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
   }
 
   @override
@@ -129,9 +136,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> printBill(
-      {required BuildContext context,
-      required BillModel billModel,
-      required List<InvoiceRecordModel> invRecords}) async {
+      {required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     await read<PrintingController>().startPrinting(
@@ -246,6 +251,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       billNote: noteController.text,
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
+      billFirstPay:firstPayController.text.toDouble,
       billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billSellerId: sellerController.selectedSellerAccount!.costGuid!,
       billPayType: selectedPayType.value.index,
@@ -281,6 +287,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     setBillDate = bill.billDetails.billDate!;
 
     noteController.text = bill.billDetails.note ?? '';
+    firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
     initBillNumberController(bill.billDetails.billNumber);
 
@@ -307,5 +314,23 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
     _billService.showEInvoiceDialog(billModel, context);
+  }
+
+  void openFirstPayDialog(BuildContext context) {
+    OverlayService.showDialog(
+        color: AppColors.backGroundColor,
+        context: context,
+        height: 200,
+        showDivider: true,
+        title: 'المزيد',
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+           spacing: 5,
+          children: [
+            TextAndExpandedChildField(label: 'الدفعة الاولى', child: CustomTextFieldWithoutIcon(textEditingController: firstPayController)),
+            AppButton(title: 'تم', onPressed: () => OverlayService.back())
+          ],
+        ));
   }
 }

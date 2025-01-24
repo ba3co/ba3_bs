@@ -230,6 +230,7 @@ class BillSearchController extends GetxController {
   bool get isFirst => currentBillIndex == 0;
 
   bool get isNew => currentBill.billId == null;
+  bool get isCash => currentBill.billDetails.billPayType == InvPayType.cash.index;
 
   bool get isPending => currentBill.status == Status.pending;
 
