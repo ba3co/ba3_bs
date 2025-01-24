@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 
@@ -107,15 +105,12 @@ void updateCustomersVat(List<CustomerModel> customers, List<GccCusTax> gccList) 
       (gccItem) => gccItem.guid == customer.id,
       orElse: () => GccCusTax(vat: '4.00', guid: ''), // Default object with 0.00 VAT
     );
-    log('customer ${customer.id}');
-    log('gcc guid: ${gcc.guid}, gcc vat: ${gcc.vat}');
     CustomerModel updatedMaterial = customer; // Initialize with original material
 
     // Check if gcc is found and update the matVatGuid
     if (gcc.vat.isNotEmpty && gcc.guid.isNotEmpty) {
       double vatValue = double.tryParse(gcc.vat) ?? 0.00; // Parse vat to double safely
-      log('gcc ${gcc.vat}');
-      log('vatValue ${vatValue}');
+
       if (vatValue == 1.00) {
         updatedMaterial = customer.copyWith(cusVatGuid: 'xtc33mNeCZYR98i96pd8');
       } else if (vatValue == 4.00) {
