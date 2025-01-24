@@ -57,6 +57,16 @@ class BillDetailsButtons extends StatelessWidget {
             onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
           ),
           if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
+          Obx(() => !billDetailsController.isCash
+              ? AppButton(
+                  height: 20,
+                  width: 100,
+                  fontSize: 14,
+                  title: "المزيد",
+                  onPressed: () {
+                    billDetailsController.openFirstPayDialog(context);
+                  })
+              : SizedBox.shrink())
         ],
       ),
     );

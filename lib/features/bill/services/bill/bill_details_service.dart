@@ -42,6 +42,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     required String? billNote,
     required int billPayType,
     required DateTime billDate,
+    required double billFirstPay,
   }) {
     return BillModel.fromBillData(
       billModel: billModel,
@@ -52,6 +53,7 @@ class BillDetailsService with PdfBase, FloatingLauncher {
       billSellerId: billSellerId,
       billPayType: billPayType,
       billDate: billDate,
+      billFirstPay: billFirstPay,
       billTotal: plutoController.calculateFinalTotal,
       billVatTotal: plutoController.computeTotalVat,
       billWithoutVatTotal: plutoController.computeBeforeVatTotal,
