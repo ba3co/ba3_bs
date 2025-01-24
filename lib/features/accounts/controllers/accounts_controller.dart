@@ -85,7 +85,7 @@ class AccountsController extends GetxController with AppNavigator {
         ( accountFromNetwork)async {
           final fetchedAccounts=await accountFromNetwork;
           log("fetchedAccounts length ${fetchedAccounts.length}");
-          log(fetchedAccounts.last.toJson().toString());
+          log((fetchedAccounts.lastOrNull?.toJson()).toString());
 
           accounts.assignAll(fetchedAccounts);
           addAccounts(accounts);
