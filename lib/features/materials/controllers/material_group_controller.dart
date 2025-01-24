@@ -23,7 +23,7 @@ class MaterialGroupController extends GetxController with AppNavigator {
 
   List<MaterialGroupModel> materialGroups = [];
 
-  bool isLoading=false;
+  bool isLoading = false;
 
   getAllGroups() async {
     final result = await _dataSourceRepository.getAll();
@@ -44,7 +44,6 @@ class MaterialGroupController extends GetxController with AppNavigator {
   }
 
   void navigateToAllMaterialScreen() {
-
     to(AppRoutes.showAllMaterialsGroupScreen);
   }
 
@@ -53,7 +52,7 @@ class MaterialGroupController extends GetxController with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _importRepository.importXmlFile(file);
+      final result = await _importRepository.importXmlFile(file);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
@@ -62,9 +61,7 @@ class MaterialGroupController extends GetxController with AppNavigator {
     }
   }
 
-
   Future<List<MaterialGroupModel>> searchOfProductByText(query) async {
-
     List<MaterialGroupModel> searchedMaterialGroups = [];
 
     query = AppServiceUtils.replaceArabicNumbersWithEnglish(query);
@@ -84,14 +81,15 @@ class MaterialGroupController extends GetxController with AppNavigator {
       bool prodName = item.groupName.toString().toLowerCase().contains(query3.toLowerCase()) &&
           item.groupName.toString().toLowerCase().contains(query2.toLowerCase());
       bool prodCode = item.groupCode.toString().toLowerCase().contains(query.toLowerCase());
-      return (prodName || prodCode );
+      return (prodName || prodCode);
     }).toList();
 
     return searchedMaterialGroups;
   }
 
-  _handelFetchAllMaterialGroupGroupFromLocalSuccess(Future<List<MaterialGroupModel>> fetchedMaterialGroupGroupFromNetwork) async {
-    final fetchedMaterialGroup = await fetchedMaterialGroupGroupFromNetwork;
+  void _handelFetchAllMaterialGroupGroupFromLocalSuccess(
+      List<MaterialGroupModel> fetchedMaterialGroupGroupFromNetwork) async {
+    final fetchedMaterialGroup = fetchedMaterialGroupGroupFromNetwork;
     log('fetchedMaterialGroup length ${fetchedMaterialGroup.length}');
 
     materialGroups.addAll(fetchedMaterialGroup);
@@ -110,7 +108,19 @@ class MaterialGroupController extends GetxController with AppNavigator {
   MaterialGroupModel? getMaterialGroupById(String? id) {
     if (id == null || id == '') return null;
     return materialGroups.firstWhereOrNull(
-      (matGroup) => matGroup.matGroupGuid == id,
-    )??MaterialGroupModel(matGroupGuid: id, groupCode: id, groupName: id, groupLatinName: id, parentGuid: id, groupNotes: id, groupSecurity: 0, groupType: 0, groupVat: 0, groupNumber: 0, groupBranchMask: 0);
+          (matGroup) => matGroup.matGroupGuid == id,
+        ) ??
+        MaterialGroupModel(
+            matGroupGuid: id,
+            groupCode: id,
+            groupName: id,
+            groupLatinName: id,
+            parentGuid: id,
+            groupNotes: id,
+            groupSecurity: 0,
+            groupType: 0,
+            groupVat: 0,
+            groupNumber: 0,
+            groupBranchMask: 0);
   }
 }

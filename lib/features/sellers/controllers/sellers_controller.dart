@@ -56,7 +56,7 @@ class SellersController extends GetxController with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _sellersImportRepo.importXmlFile(file);
+      final result = await _sellersImportRepo.importXmlFile(file);
 
       result.fold(
         (failure) {
@@ -68,8 +68,8 @@ class SellersController extends GetxController with AppNavigator {
     }
   }
 
-  _handelFetchAllSellersFromLocalSuccess(Future<List<SellerModel>> fetchedSellersFromNetwork) async {
-    final fetchedSellers = await fetchedSellersFromNetwork;
+  void _handelFetchAllSellersFromLocalSuccess(List<SellerModel> fetchedSellersFromNetwork) {
+    final fetchedSellers = fetchedSellersFromNetwork;
     logger.d('fetchedSellers length ${fetchedSellers.length}');
     logger.d('fetchedSellers first ${fetchedSellers.first.toJson()}');
 
@@ -103,7 +103,8 @@ class SellersController extends GetxController with AppNavigator {
   // Search for sellers by text query
 
   List<SellerModel> searchSellersByNameOrCode(text) => sellers
-      .where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
+      .where((item) =>
+          item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
       .toList();
 
   List<String> getSellersNames(String query) {

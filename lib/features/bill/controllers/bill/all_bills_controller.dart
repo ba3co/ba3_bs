@@ -120,7 +120,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
     if (resultFile != null) {
       saveAllBillsRequestState.value = RequestState.loading;
-      final result = _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
+      final result = await _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
@@ -132,8 +132,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
     update();
   }
 
-  void _onFetchBillsFromLocalSuccess(Future<List<BillModel>> currentBills) async {
-    final fetchedBills = await currentBills;
+  void _onFetchBillsFromLocalSuccess(List<BillModel> currentBills) async {
+    final fetchedBills = currentBills;
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(

@@ -12,10 +12,14 @@ class AccountImport extends ImportServiceBase<AccountModel> {
   }
 
   @override
-  Future<List<AccountModel>> fromImportXml(XmlDocument document)async {
+  Future<List<AccountModel>> fromImportXml(XmlDocument document) async {
     final accountNodes = document.findAllElements('A');
     DateFormat dateFormat = DateFormat('dd-MM-yyyy');
-    return accountNodes.where((account) => account.getElement('AccName')?.text!='',).map((account) {
+    return accountNodes
+        .where(
+      (account) => account.getElement('AccName')?.text != '',
+    )
+        .map((account) {
       return AccountModel(
         id: account.getElement('AccPtr')?.text,
         accName: account.getElement('AccName')?.text,
@@ -44,7 +48,4 @@ class AccountImport extends ImportServiceBase<AccountModel> {
       );
     }).toList();
   }
-
-
-
 }

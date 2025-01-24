@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/widgets/app_menu_item.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +24,13 @@ class AccountLayout extends StatelessWidget {
               child: AppButton(
                 title: 'تحميل الحسابات',
                 onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AppButton(
+                title: 'تحميل الزبائن',
+                onPressed: () => read<CustomersController>().fetchAllCustomersFromLocal(),
               ),
             ),
           ],

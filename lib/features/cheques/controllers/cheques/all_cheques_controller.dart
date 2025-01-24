@@ -57,21 +57,23 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importXmlFile(file);
+      final result = await _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedChequesFromNetwork) async {
-          final fetchedCheques=await fetchedChequesFromNetwork;
+          final fetchedCheques = fetchedChequesFromNetwork;
 
           log('chequesList.length ${fetchedCheques.length}');
           // log('chequesList.firstOrNull ${chequesList.firstOrNull?.toJson()}');
 
           chequesList.assignAll(fetchedCheques);
           if (chequesList.isNotEmpty) {
-            await _chequesFirebaseRepo.saveAllNested(chequesList, ChequesType.values,(progress) {
-
-            },);
+            await _chequesFirebaseRepo.saveAllNested(
+              chequesList,
+              ChequesType.values,
+              (progress) {},
+            );
 
             read<EntryBondsGeneratorRepo>().saveEntryBonds(sourceModels: chequesList);
           }

@@ -28,10 +28,10 @@ class ImportExportRepository<T> implements IImportRepository<T>, IExportReposito
   }
 
   @override
-  Either<Failure, Future<List<T>>> importXmlFile(File filePath) {
+  Future<Either<Failure, List<T>>> importXmlFile(File filePath) async {
     try {
-   Future <List<T>> itemsModels = _jsonImport.importFromXmlFile(filePath);
-    return Right( itemsModels);
+      List<T> itemsModels = await _jsonImport.importFromXmlFile(filePath);
+      return Right(itemsModels);
     } catch (e) {
       log('[$e] فشل في استيراد الملف');
       return Left(ErrorHandler(e).failure);
@@ -48,5 +48,4 @@ class ImportExportRepository<T> implements IImportRepository<T>, IExportReposito
       return Left(ErrorHandler(e).failure);
     }
   }
-
 }

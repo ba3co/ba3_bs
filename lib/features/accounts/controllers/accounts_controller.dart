@@ -79,11 +79,11 @@ class AccountsController extends GetxController with AppNavigator {
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result =  _jsonImportExportRepo.importXmlFile(file);
+      final result = await _jsonImportExportRepo.importXmlFile(file);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        ( accountFromNetwork)async {
-          final fetchedAccounts=await accountFromNetwork;
+        (accountFromNetwork) {
+          final fetchedAccounts = accountFromNetwork;
           log("fetchedAccounts length ${fetchedAccounts.length}");
           log(fetchedAccounts.last.toJson().toString());
 
@@ -127,7 +127,9 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
+    return accounts
+        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
+        .toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -150,8 +152,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel =
-          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel = accounts
+          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {

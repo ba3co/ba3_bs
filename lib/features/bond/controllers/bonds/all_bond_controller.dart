@@ -75,12 +75,12 @@ class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSeque
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
-      final result = _jsonImportExportRepo.importXmlFile(file);
+      final result = await _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBondsFromNetwork) async {
-          final fetchedBonds = await fetchedBondsFromNetwork;
+          final fetchedBonds = fetchedBondsFromNetwork;
           log('bonds.length ${fetchedBonds.length}');
           bonds.assignAll(fetchedBonds);
           if (bonds.isNotEmpty) {
