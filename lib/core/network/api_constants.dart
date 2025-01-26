@@ -20,6 +20,7 @@ class ApiConstants {
   static const String changes = 'changes';
   static const String sequentialNumbers = 'sequential_numbers';
   static const String guestUser = 'guest_user';
+  static const String customers = 'customers';
 
   // Documents
   static const String guest = 'guest';

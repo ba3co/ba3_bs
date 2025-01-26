@@ -62,6 +62,9 @@ class CustomersController extends GetxController with AppNavigator {
   //   );
   // }
 
+  // Initialize a progress observable
+  RxDouble uploadProgress = 0.0.obs;
+
   Future<void> fetchAllCustomersFromLocal() async {
     log('fetchAllCustomersFromLocal');
 
@@ -74,6 +77,17 @@ class CustomersController extends GetxController with AppNavigator {
         (failure) => AppUIUtils.onFailure(failure.message),
         (customersFromLocal) {
           customers.assignAll(customersFromLocal);
+          log('customersFromLocal length: ${customersFromLocal.length}');
+          // FirestoreUploader firestoreUploader = FirestoreUploader();
+          // firestoreUploader.concurrently(
+          //   data: customersFromLocal.map((item) => item.toJson()).toList(),
+          //   collectionPath: ApiConstants.customers,
+          //   onProgress: (progress) {
+          //     uploadProgress.value = progress; // Update progress
+          //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+          //   },
+          // );
+
           //  addAccounts(accounts);
         },
       );
