@@ -154,7 +154,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                     double.parse(item['PriceDescExtra'].split(',').first),
                   ),
                   itemGiftsNumber: int.parse(item['QtyBonus'].split(',')[1]),
-                  itemName: read<MaterialController>().getMaterialNameById(item['MatPtr'].toString()),
+                  itemName: item['MatName'],
                   itemVatPrice: AppServiceUtils.calcVat(
                     int.parse(item['VatRatio']),
                     double.parse(item['PriceDescExtra'].split(',').first),
@@ -208,7 +208,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
               ],
       ),
       billDetails: BillDetails(
-        billFirstPay: billData['B']['BillFirstPay'],
+        billFirstPay: double.tryParse(billData['B']['BillFirstPay'])??0.0,
         billGuid: billData['B']['BillGuid'],
         billPayType: int.parse(billData['B']['BillPayType']),
         billNumber: (billData['B']['BillNumber']),
