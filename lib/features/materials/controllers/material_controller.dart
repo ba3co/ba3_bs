@@ -18,6 +18,7 @@ import 'package:ba3_bs/features/users_management/controllers/user_management_con
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
@@ -33,8 +34,8 @@ class MaterialController extends GetxController with AppNavigator {
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
   final QueryableSavableRepository<MaterialModel> _materialsRemoteDatasource;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository,
-      this._materialsRemoteDatasource);
+  MaterialController(
+      this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialsRemoteDatasource);
 
   List<MaterialModel> materials = [];
   MaterialModel? selectedMaterial;
@@ -43,6 +44,7 @@ class MaterialController extends GetxController with AppNavigator {
   late MaterialService _materialService;
 
   bool get isFromHandler => selectedMaterial == null ? false : true;
+  final logger = Logger();
 
   @override
   onInit() {
@@ -124,10 +126,10 @@ class MaterialController extends GetxController with AppNavigator {
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
 
-  void _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterialFromNetwork) async {
-    final fetchedMaterial = fetchedMaterialFromNetwork;
-
+  void _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
     saveAllMaterialsRequestState.value = RequestState.loading;
+    logger.d("fetchedMaterial.length ${fetchedMaterial.length}");
+    logger.d("new Materials length ${_materialService.getAllMaterialNotExist(materials, fetchedMaterial).length}");
 
     if (_materialService.getAllMaterialNotExist(materials, fetchedMaterial).isNotEmpty) {
       // Show progress in the UI
@@ -194,8 +196,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterials();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -205,6 +206,8 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   MaterialModel? getMaterialByName(name) {
+    // log('name $name');
+    // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
     if (name != null && name != " " && name != "") {
       return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
     }
@@ -262,26 +265,25 @@ class MaterialController extends GetxController with AppNavigator {
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
-      read<UserManagementController>()
-          .nonLoggedInUsers
-          .map(
-            (user) => ChangesModel(
-              targetUserId: user.userId!,
-              changeItems: {
-                ChangeCollection.materials: [
-                  ChangeItem(
-                    target: ChangeTarget(
-                      targetCollection: ChangeCollection.materials,
-                      changeType: changeType,
-                    ),
-                    change: materialModel.toJson(),
-                  )
-                ]
-              },
-            ),
-          )
-          .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
+      .nonLoggedInUsers
+      .map(
+        (user) => ChangesModel(
+          targetUserId: user.userId!,
+          changeItems: {
+            ChangeCollection.materials: [
+              ChangeItem(
+                target: ChangeTarget(
+                  targetCollection: ChangeCollection.materials,
+                  changeType: changeType,
+                ),
+                change: materialModel.toJson(),
+              )
+            ]
+          },
+        ),
+      )
+      .toList();
 
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save

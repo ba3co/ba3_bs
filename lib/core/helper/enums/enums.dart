@@ -193,9 +193,13 @@ enum BillPatternType {
     value: 'transferOut',
     label: 'تسوية النقص',
   ),
+  salesService(
+    value: 'sales service',
+    label: 'مبيع خدمة',
+  ),
   transferIn(
-    value: 'transferIn',
-    label: 'تسوية الزيادة',
+  value: 'transferIn',
+  label: 'تسوية الزيادة',
   );
 
   final String label;

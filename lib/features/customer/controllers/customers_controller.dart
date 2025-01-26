@@ -35,12 +35,7 @@ class CustomersController extends GetxController with AppNavigator {
 
   bool isLoading = true;
 
-  @override
-  void onInit() {
-    super.onInit();
-    //  fetchAccounts();
-    // initializer();
-  }
+
 
   // Fetch materials from the repository
   //

@@ -1,7 +1,11 @@
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
@@ -25,7 +29,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
         billType.typeGuide: await getLastNumber(
           category: ApiConstants.bills,
           entityType: billType.label,
-          number: 0,
+          // number: 0,
         )
     };
   }
@@ -37,17 +41,39 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     billsNumbers[billTypeGuid] = billsNumbers[billTypeGuid]! + 1;
     return billsNumbers[billTypeGuid]!;
   }
+
   setLastNumber() async {
     billsNumbers.forEach(
-          (billTypeGuid, number) async {
+      (billTypeGuid, number) async {
         await satNumber(ApiConstants.bills, BillType.byTypeGuide(billTypeGuid).label, number);
       },
     );
   }
+
   @override
   Future<List<BillModel>> fromImportXml(XmlDocument document) async {
     await initializeNumbers();
     final billsXml = document.findAllElements('Bill');
+    final materialXml = document.findAllElements('M');
+    final sellersXml = document.findAllElements('Q');
+
+    Map<String, String> matNameWithId = {};
+
+    for (var mat in materialXml) {
+      String matGuid = mat.findElements('mptr').first.text;
+      String amtName = mat.findElements('MatName').first.text;
+      matNameWithId[matGuid] = amtName;
+    }
+
+    Map<String, String> sellerNameID = {};
+
+    for (var sel in sellersXml) {
+      String selGuid = sel.findElements('CostGuid').first.text;
+      String selName = sel.findElements('CostName').first.text;
+      sellerNameID[selGuid] = selName;
+    }
+   await Future.delayed(Durations.long4);
+    // matNameWithId.forEach((key, value) => log('$value   $key'),);
     List<BillModel> bills = billsXml.map((billElement) {
       // String customerId =
       //     read<AccountsController>().getAccountIdByName(billElement.findElements('B').single.findElements('BillCustName').single.text);
@@ -66,8 +92,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
               .text) /*billElement.findElements('B').single.findElements('BillNumber').single.text*/,
           'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           // 'BillCustPtr': customerId,
-          'BillCustName': read<AccountsController>()
-              .getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
+          'BillCustName':
+              read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
@@ -75,7 +101,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           'Note': billElement.findElements('B').single.findElements('Note').single.text,
           'BillCustAcc': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
-          'BillCostGuid': billElement.findElements('B').single.findElements('BillCostGuid').single.text,
+          'BillCostGuid':read<SellersController>().getSellerIdByName(sellerNameID[billElement.findElements('B').single.findElements('BillCostGuid').single.text]) ,
+          // 'BillCostGuid': billElement.findElements('B').single.findElements('BillCostGuid').single.text,
           'BillVendorSalesMan': billElement.findElements('B').single.findElements('BillVendorSalesMan').single.text,
           'BillFirstPay': billElement.findElements('B').single.findElements('BillFirstPay').single.text,
           'BillFPayAccGuid': billElement.findElements('B').single.findElements('BillFPayAccGuid').single.text,
@@ -100,7 +127,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       final itemsElement = billElement.findElements('Items').single;
       final itemsJson = itemsElement.findElements('I').map((iElement) {
         return {
-          'MatPtr': iElement.findElements('MatPtr').single.text,
+          'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
+          'MatName': matNameWithId[iElement.findElements('MatPtr').single.text],
           'QtyBonus': iElement.findElements('QtyBonus').single.text,
           'Unit': iElement.findElements('Unit').single.text,
           'PriceDescExtra': iElement.findElements('PriceDescExtra').single.text,
@@ -127,6 +155,4 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     await setLastNumber();
     return bills;
   }
-
-
 }
