@@ -21,7 +21,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     final customerAccount = model.billTypeModel.accounts![BillAccounts.caches]!;
 
     final billType = BillType.byLabel(model.billTypeModel.billTypeLabel!);
-    final isSales = billType == BillType.sales;
+    final isSales = billType == BillType.sales||billType==BillType.purchaseReturn;
 
     final date = model.billDetails.billDate!.dayMonthYear;
     final firstPayBond = [];
