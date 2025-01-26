@@ -103,8 +103,7 @@ class SellersController extends GetxController with AppNavigator {
   // Search for sellers by text query
 
   List<SellerModel> searchSellersByNameOrCode(text) => sellers
-      .where((item) =>
-          item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
+      .where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
       .toList();
 
   List<String> getSellersNames(String query) {
@@ -117,6 +116,14 @@ class SellersController extends GetxController with AppNavigator {
   String getSellerNameById(String? id) {
     if (id == null || id.isEmpty) return '';
     return sellers.firstWhere((seller) => seller.costGuid == id).costName ?? '';
+  }
+
+  // Get seller ID by name
+  String getSellerIdByName(String? name) {
+    log(name.toString());
+    log("sellers    ${sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid}");
+    if (name == null || name.isEmpty) return '';
+    return sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid ?? '';
   }
 
   // Get seller  by ID

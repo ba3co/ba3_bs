@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
@@ -54,6 +55,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     await initializeNumbers();
     final billsXml = document.findAllElements('Bill');
     final materialXml = document.findAllElements('M');
+    final sellersXml = document.findAllElements('Q');
 
     Map<String, String> matNameWithId = {};
 
@@ -61,6 +63,14 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       String matGuid = mat.findElements('mptr').first.text;
       String amtName = mat.findElements('MatName').first.text;
       matNameWithId[matGuid] = amtName;
+    }
+
+    Map<String, String> sellerNameID = {};
+
+    for (var sel in sellersXml) {
+      String selGuid = sel.findElements('CostGuid').first.text;
+      String selName = sel.findElements('CostName').first.text;
+      sellerNameID[selGuid] = selName;
     }
    await Future.delayed(Durations.long4);
     // matNameWithId.forEach((key, value) => log('$value   $key'),);
@@ -91,7 +101,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           'Note': billElement.findElements('B').single.findElements('Note').single.text,
           'BillCustAcc': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
-          'BillCostGuid': billElement.findElements('B').single.findElements('BillCostGuid').single.text,
+          'BillCostGuid':read<SellersController>().getSellerIdByName(sellerNameID[billElement.findElements('B').single.findElements('BillCostGuid').single.text]) ,
+          // 'BillCostGuid': billElement.findElements('B').single.findElements('BillCostGuid').single.text,
           'BillVendorSalesMan': billElement.findElements('B').single.findElements('BillVendorSalesMan').single.text,
           'BillFirstPay': billElement.findElements('B').single.findElements('BillFirstPay').single.text,
           'BillFPayAccGuid': billElement.findElements('B').single.findElements('BillFPayAccGuid').single.text,
