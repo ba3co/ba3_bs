@@ -96,6 +96,10 @@ class PatternController extends GetxController with AppNavigator {
             fullName: 'بضاعة اول مدة',
             latinShortName: 'Add',
             latinFullName: 'first Period Inventory');
+      case BillPatternType.salesService:
+        fillControllers(
+            shortName: 'مبيعات', fullName: 'فاتورة مبيعات', latinShortName: 'Sales', latinFullName: 'Sales Invoice');
+        break;
     }
   }
 

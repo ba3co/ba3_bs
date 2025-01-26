@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
@@ -29,7 +28,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
         billType.typeGuide: await getLastNumber(
           category: ApiConstants.bills,
           entityType: billType.label,
-          number: 0,
+          // number: 0,
         )
     };
   }

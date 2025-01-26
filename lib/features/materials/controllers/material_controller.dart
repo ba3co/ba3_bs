@@ -18,6 +18,7 @@ import 'package:ba3_bs/features/users_management/controllers/user_management_con
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
@@ -43,6 +44,7 @@ class MaterialController extends GetxController with AppNavigator {
   late MaterialService _materialService;
 
   bool get isFromHandler => selectedMaterial == null ? false : true;
+  final logger = Logger();
 
   @override
   onInit() {
@@ -124,10 +126,10 @@ class MaterialController extends GetxController with AppNavigator {
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
 
-  void _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterialFromNetwork) async {
-    final fetchedMaterial = fetchedMaterialFromNetwork;
-
+  void _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
     saveAllMaterialsRequestState.value = RequestState.loading;
+    logger.d("fetchedMaterial.length ${fetchedMaterial.length}");
+    logger.d("new Materials length ${_materialService.getAllMaterialNotExist(materials, fetchedMaterial).length}");
 
     if (_materialService.getAllMaterialNotExist(materials, fetchedMaterial).isNotEmpty) {
       // Show progress in the UI
@@ -204,8 +206,8 @@ class MaterialController extends GetxController with AppNavigator {
   }
 
   MaterialModel? getMaterialByName(name) {
-    log('name $name');
-    log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
+    // log('name $name');
+    // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
     if (name != null && name != " " && name != "") {
       return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
     }

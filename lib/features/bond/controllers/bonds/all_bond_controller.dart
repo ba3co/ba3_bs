@@ -79,11 +79,12 @@ class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSeque
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedBondsFromNetwork) async {
-          final fetchedBonds = fetchedBondsFromNetwork;
+        (fetchedBonds) async {
           log('bonds.length ${fetchedBonds.length}');
           bonds.assignAll(fetchedBonds);
           if (bonds.isNotEmpty) {
+            log('bonds.length ${fetchedBonds.last.toJson()}');
+
             saveAllBondsRequestState.value = RequestState.loading;
 
             await _bondsFirebaseRepo.saveAllNested(
