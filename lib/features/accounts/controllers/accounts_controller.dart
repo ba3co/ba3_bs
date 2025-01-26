@@ -1,9 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/features/accounts/service/account_from_handler.dart';
+import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +50,8 @@ class AccountsController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    fetchAccounts();
+    log('onInit fetchAccounts');
+    read<CustomersController>().fetchCustomers();
     initializer();
   }
 
@@ -96,7 +99,7 @@ class AccountsController extends GetxController with AppNavigator {
     update();
   }
 
-  void fetchAccounts() async {
+  Future<void> fetchAccounts() async {
     final result = await _accountsFirebaseRepo.getAll();
 
     result.fold(

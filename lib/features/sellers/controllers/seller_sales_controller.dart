@@ -113,7 +113,7 @@ class SellerSalesController extends GetxController with AppNavigator {
     );
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('لا توجد فواتير مسجلة لهذا البائع: ${failure.message}'),
+      (failure) => AppUIUtils.onFailure('لا توجد فواتير مسجلة ل${sellerModel.costName}'),
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
   }

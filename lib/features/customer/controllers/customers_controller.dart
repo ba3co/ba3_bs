@@ -6,16 +6,23 @@ import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/customer_model.dart';
 
 class CustomersController extends GetxController with AppNavigator {
   final ImportRepository<CustomerModel> _customerImportRepo;
+  final RemoteDataSourceRepository<CustomerModel> _customersFirestoreRepo;
 
-  CustomersController(this._customerImportRepo);
+  CustomersController(this._customersFirestoreRepo, this._customerImportRepo);
 
   List<CustomerModel> customers = [];
-  CustomerModel? selectedCustomer;
+
+  // Single selected customer
+  final Rxn<CustomerModel> selectedCustomer = Rxn<CustomerModel>();
+
+  // Multiple selected customers
+  final RxList<CustomerModel> selectedCustomers = <CustomerModel>[].obs;
 
   // bool get isFromHandler => selectedCustomer == null ? false : true;
 
@@ -34,8 +41,6 @@ class CustomersController extends GetxController with AppNavigator {
   // }
 
   bool isLoading = true;
-
-
 
   // Fetch materials from the repository
   //
@@ -91,17 +96,26 @@ class CustomersController extends GetxController with AppNavigator {
     update();
   }
 
-// void fetchAccounts() async {
-//   final result = await _accountsFirebaseRepo.getAll();
-//
-//   result.fold(
-//     (error) => AppUIUtils.onFailure(error.message),
-//     (fetchedAccount) => accounts = fetchedAccount,
-//   );
-//
-//   isLoading = false;
-//   update();
-// }
+  Future<void> fetchCustomers() async {
+    final result = await _customersFirestoreRepo.getAll();
+
+    result.fold(
+      (error) => AppUIUtils.onFailure(error.message),
+      (fetchedCustomers) => customers = fetchedCustomers,
+    );
+  }
+
+  /// Handle single customer selection
+  void selectCustomer(String? customerId) {
+    selectedCustomer.value = customers.firstWhereOrNull((customer) => customer.id == customerId);
+  }
+
+  /// Handle multiple customer selection
+  void setSelectedCustomers(List<String> customerIds) {
+    selectedCustomers.assignAll(
+      customers.where((customer) => customerIds.contains(customer.id)),
+    );
+  }
 //
 // void navigateToAllAccountsScreen() {
 //   to(AppRoutes.showAllAccountsScreen);

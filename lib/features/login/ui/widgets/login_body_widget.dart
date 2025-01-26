@@ -79,30 +79,30 @@ class LoginBodyWidget extends StatelessWidget {
             },
           ),
           Obx(
-            () => Row(
-              children: [
-                userManagementController.isGuestLoginButtonVisible.value
-                    ? LoginButtonWidget(
-                        text: 'تسجيل كضيف',
-                        onTap: () {
-                          userManagementController.loginAsGuest();
-                        },
-                      )
-                    : SizedBox.shrink(),
-                if (RoleItemType.viewUserManagement.hasAdminPermission)
-                  IconButton(
-                    icon: Icon(
-                      userManagementController.isGuestLoginButtonVisible.value
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      size: 20,
-                      color: AppColors.blueColor,
+            () => SizedBox(
+              width: .25.sw,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (RoleItemType.viewUserManagement.hasAdminPermission)
+                    IconButton(
+                      icon: Icon(
+                        userManagementController.isGuestLoginButtonVisible.value
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        size: 20,
+                        color: AppColors.blueColor,
+                      ),
+                      onPressed: userManagementController.toggleGuestButtonVisibility,
                     ),
-                    onPressed: () {
-                      userManagementController.toggleGuestButtonVisibility();
-                    },
-                  )
-              ],
+                  if (userManagementController.isGuestLoginButtonVisible.value)
+                    LoginButtonWidget(
+                      text: 'تسجيل كضيف',
+                      width: RoleItemType.viewUserManagement.hasAdminPermission ? .15.sw : null,
+                      onTap: userManagementController.loginAsGuest,
+                    ),
+                ],
+              ),
             ),
           ),
           const Spacer(),
@@ -117,10 +117,12 @@ class LoginButtonWidget extends StatelessWidget {
     super.key,
     required this.text,
     required this.onTap,
+    this.width,
   });
 
   final String text;
   final VoidCallback onTap;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +130,7 @@ class LoginButtonWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 32.h,
-        width: .25.sw,
+        width: width ?? .25.sw,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),

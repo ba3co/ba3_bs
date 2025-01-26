@@ -19,6 +19,7 @@ import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controll
 import 'package:ba3_bs/features/cheques/data/datasources/cheques_compound_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
+import 'package:ba3_bs/features/customer/data/datasources/remote/customers_data_source.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
@@ -228,6 +229,7 @@ class AppBindings extends Bindings {
       importMaterialRepository: ImportRepository(importMaterialGroupService),
       materialGroupDataSource: QueryableSavableRepository(MaterialsGroupsDataSource(databaseService: fireStoreService)),
       customerImportRepo: ImportRepository(customerImportService),
+      customersRepo: RemoteDataSourceRepository(CustomersDatasource(databaseService: fireStoreService)),
     );
   }
 
@@ -248,6 +250,7 @@ class AppBindings extends Bindings {
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
     lazyPut(BillDetailsPlutoController());
+    lazyPut(CustomersController(repositories.customersRepo, repositories.customerImportRepo));
     lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
     lazyPut(PrintingController(repositories.translationRepo));
     lazyPut(BillSearchController());
@@ -258,7 +261,6 @@ class AppBindings extends Bindings {
         repositories.listenableDatasourceRepo, repositories.materialsRemoteDatasourceRepo));
     lazyPut(AddSellerController());
     lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
-    lazyPut(CustomersController(repositories.customerImportRepo));
   }
 }
 
@@ -288,6 +290,7 @@ class _Repositories {
   final IImportRepository<MaterialGroupModel> importMaterialRepository;
   final QueryableSavableRepository<MaterialGroupModel> materialGroupDataSource;
   final ImportRepository<CustomerModel> customerImportRepo;
+  final RemoteDataSourceRepository<CustomerModel> customersRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -314,5 +317,6 @@ class _Repositories {
     required this.importMaterialRepository,
     required this.materialGroupDataSource,
     required this.customerImportRepo,
+    required this.customersRepo,
   });
 }
