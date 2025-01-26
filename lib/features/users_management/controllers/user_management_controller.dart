@@ -268,8 +268,15 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   Future<void> checkGuestLoginButtonVisibility(UserModel guestUser) async {
     if (guestUser.userId != null) {
-      isGuestLoginButtonVisible.value = await isShowGuestUser(guestUser.userId!);
+      isGuestLoginButtonVisible.value = await isGuestUserEnabled(guestUser.userId!);
     }
+  }
+
+  Future<void> toggleGuestButtonVisibility() async {
+    final guestUser = allUsers.firstWhere((user) => user.userName == ApiConstants.guest);
+    await updateGuestUser(guestUser.userId!, visible: !isGuestLoginButtonVisible.value);
+
+    isGuestLoginButtonVisible.value = !isGuestLoginButtonVisible.value;
   }
 
   Future<void> loginAsGuest() async {

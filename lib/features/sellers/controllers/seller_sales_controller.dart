@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
@@ -93,10 +93,9 @@ class SellerSalesController extends GetxController with AppNavigator {
   }
 
   // Sets the selected seller and fetches their bills
-  Future<void> onSelectSeller(SellerModel sellerModel) async {
+  void onSelectSeller(SellerModel sellerModel) {
     setSelectedSeller = sellerModel;
-    await fetchSellerBillsByDate(sellerModel: sellerModel);
-    navigateToSellerSalesScreen();
+    fetchSellerBillsByDate(sellerModel: sellerModel);
   }
 
   Future<void> fetchSellerBillsByDate({required SellerModel sellerModel, DateTimeRange? dateTimeRange}) async {
@@ -112,8 +111,9 @@ class SellerSalesController extends GetxController with AppNavigator {
           dateFieldName: ApiConstants.billDate,
           range: dateTimeRange ?? DateTimeRange(start: startOfDay, end: endOfDay)),
     );
+
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure('لا توجد فواتير مسجلة لهذا البائع: ${failure.message}'),
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
   }
@@ -124,6 +124,7 @@ class SellerSalesController extends GetxController with AppNavigator {
     } else {
       sellerBills.assignAll(bills);
     }
+    navigateToSellerSalesScreen();
   }
 
   // Method to calculate the total sales
@@ -140,7 +141,7 @@ class SellerSalesController extends GetxController with AppNavigator {
       // Iterate through all items in each bill
       for (final item in bill.items.itemList) {
         if (item.itemSubTotalPrice != null) {
-          double itemTotal = item.itemTotalPrice.toDouble ;
+          double itemTotal = item.itemTotalPrice.toDouble;
 
           if (item.itemSubTotalPrice! < 1000) {
             log('${item.itemName} total price = $itemTotal');

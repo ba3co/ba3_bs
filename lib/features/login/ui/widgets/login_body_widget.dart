@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -76,14 +78,33 @@ class LoginBodyWidget extends StatelessWidget {
               userManagementController.validateUserInputs();
             },
           ),
-          Obx(() => userManagementController.isGuestLoginButtonVisible.value
-              ? LoginButtonWidget(
-                  text: 'ضيف',
-                  onTap: () {
-                    userManagementController.loginAsGuest();
-                  },
-                )
-              : SizedBox.shrink()),
+          Obx(
+            () => Row(
+              children: [
+                userManagementController.isGuestLoginButtonVisible.value
+                    ? LoginButtonWidget(
+                        text: 'تسجيل كضيف',
+                        onTap: () {
+                          userManagementController.loginAsGuest();
+                        },
+                      )
+                    : SizedBox.shrink(),
+                if (RoleItemType.viewUserManagement.hasAdminPermission)
+                  IconButton(
+                    icon: Icon(
+                      userManagementController.isGuestLoginButtonVisible.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      size: 20,
+                      color: AppColors.blueColor,
+                    ),
+                    onPressed: () {
+                      userManagementController.toggleGuestButtonVisibility();
+                    },
+                  )
+              ],
+            ),
+          ),
           const Spacer(),
         ],
       ),

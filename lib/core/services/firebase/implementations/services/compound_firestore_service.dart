@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../models/date_filter.dart';
@@ -39,9 +41,10 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     // Execute the query and return results
     final snapshot = await query.get();
 
+    log("snapshot: ${snapshot.docs.length}");
     if (snapshot.docs.isEmpty) {
       throw Exception(
-          "لم يتم العثور على نتائج للاستعلام عن الحقل '$field' بالقيمة '$value' في المجموعة الفرعية '$subCollectionPath'.");
+          "No results were found for querying the field '$field' with the value '$value' in the sub-collection '$subCollectionPath'.");
     }
     return snapshot.docs.map((doc) => doc.data()).toList();
   }

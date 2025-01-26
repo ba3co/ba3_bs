@@ -31,6 +31,7 @@ class BillSearchController extends GetxController {
     bills = _prepareBillList(allBills, newBill);
     currentBillIndex = _getBillIndexByNumber(newBill.billDetails.billNumber);
     currentBill = bills[currentBillIndex];
+
     this.billDetailsController = billDetailsController;
     this.billDetailsPlutoController = billDetailsPlutoController;
 
@@ -47,22 +48,19 @@ class BillSearchController extends GetxController {
   }
 
   /// Creates a placeholder bill for missing entries.
-  BillModel _createPlaceholderBill(BillModel referenceBill) {
-    return BillModel(
-      billTypeModel: referenceBill.billTypeModel,
-      status: Status.pending,
-      items: const BillItems(itemList: []),
-      billDetails: BillDetails(
-        billPayType: InvPayType.cash.index,
-        billDate: DateTime.now(),
-      ),
-    );
-  }
+  BillModel _createPlaceholderBill(BillModel referenceBill) => BillModel(
+        billTypeModel: referenceBill.billTypeModel,
+        status: Status.pending,
+        items: const BillItems(itemList: []),
+        billDetails: BillDetails(
+          billPayType: InvPayType.cash.index,
+          billDate: DateTime.now(),
+        ),
+      );
 
   /// Validates the bill number range.
-  bool _isValidBillNumber(int? billNumber) {
-    return billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
-  }
+  bool _isValidBillNumber(int? billNumber) =>
+      billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
 
   /// Displays an error message for invalid bill numbers.
   void _showInvalidBillNumberError(int? billNumber) {
@@ -77,9 +75,7 @@ class BillSearchController extends GetxController {
   }
 
   /// Retrieves the index of a bill by its number.
-  int _getBillIndexByNumber(int? billNumber) {
-    return bills.indexWhere((bill) => bill.billDetails.billNumber == billNumber);
-  }
+  int _getBillIndexByNumber(int? billNumber) => bills.indexWhere((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Updates a bill if it exists.
   void updateBill(BillModel updatedBill) {
@@ -111,38 +107,36 @@ class BillSearchController extends GetxController {
 
   /// Navigates to a bill by its number.
   Future<void> goToBillByNumber(int? billNumber) async =>
-      await _navigateToBill(billNumber!, SearchControllerNavigateSource.byNumber);
+      await _navigateToBill(billNumber!, NavigationDirection.specific);
 
   /// Moves to the next bill if possible.
-  Future<void> next() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! + 1, SearchControllerNavigateSource.byNext);
+  Future<void> next() async => await _navigateToBill(currentBill.billDetails.billNumber! + 1, NavigationDirection.next);
 
   /// Moves to the previous bill if possible.
   Future<void> previous() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! - 1, SearchControllerNavigateSource.byPrevious);
+      await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
 
-  /// Moves to the next bill if possible.
-  Future<void> jumpTenForward() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! + 10, SearchControllerNavigateSource.byNext);
+  /// Jumps forward by 10 bills from the current bill number.
+  Future<void> jumpForwardByTen() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigationDirection.next);
 
-  /// Moves to the previous bill if possible.
-  Future<void> jumpTenBackward() async =>
-      await _navigateToBill(currentBill.billDetails.billNumber! - 10, SearchControllerNavigateSource.byPrevious);
+  /// Jumps backward by 10 bills from the current bill number.
+  Future<void> jumpBackwardByTen() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigationDirection.previous);
 
-  /// Moves to the next bill if possible.
-  Future<void> first() async => await _navigateToBill(1, SearchControllerNavigateSource.byNext);
+  /// Navigates to the first bill in the list.
+  Future<void> first() async => await _navigateToBill(1, NavigationDirection.next);
 
-  /// Moves to the previous bill if possible.
-  Future<void> last() async =>
-      await _navigateToBill(bills.last.billDetails.billNumber!, SearchControllerNavigateSource.byPrevious);
+  /// Navigates to the last bill in the list.
+  Future<void> last() async => await _navigateToBill(bills.last.billDetails.billNumber!, NavigationDirection.previous);
 
   /// Helper method to fetch or navigate to a specific bill.
-  Future<void> _navigateToBill(int billNumber, SearchControllerNavigateSource source) async {
+  Future<void> _navigateToBill(int billNumber, NavigationDirection direction) async {
     if (!_validateAndHandleBillNumber(billNumber)) return;
 
     if (_checkExistingBill(billNumber)) return;
 
-    await _fetchAndNavigateToBill(billNumber, source);
+    await _fetchAndNavigateToBill(billNumber, direction);
   }
 
   bool _validateAndHandleBillNumber(int billNumber) {
@@ -168,26 +162,26 @@ class BillSearchController extends GetxController {
       bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Fetches the bill by number and handles success or failure.
-  Future<void> _fetchAndNavigateToBill(int billNumber, SearchControllerNavigateSource source) async {
+  Future<void> _fetchAndNavigateToBill(int billNumber, NavigationDirection direction) async {
     final result = await read<AllBillsController>().fetchBillByNumber(
       billTypeModel: currentBill.billTypeModel,
       billNumber: billNumber,
     );
 
     result.fold(
-      (failure) => _handleFetchFailure(failure, billNumber, source),
+      (failure) => _handleFetchFailure(failure, billNumber, direction),
       (fetchedBills) => _handleFetchSuccess(fetchedBills, billNumber),
     );
   }
 
   /// Handles a failed bill fetch and triggers navigation for adjacent bills if necessary.
-  void _handleFetchFailure(Failure failure, int billNumber, SearchControllerNavigateSource source) {
-    log('Fetching bill from source: $source');
+  void _handleFetchFailure(Failure failure, int billNumber, NavigationDirection direction) {
+    log('Fetching bill from source: $direction');
 
-    if (source == SearchControllerNavigateSource.byNext) {
-      _navigateToBill(billNumber + 1, source);
-    } else if (source == SearchControllerNavigateSource.byPrevious) {
-      _navigateToBill(billNumber - 1, source);
+    if (direction == NavigationDirection.next) {
+      _navigateToBill(billNumber + 1, direction);
+    } else if (direction == NavigationDirection.previous) {
+      _navigateToBill(billNumber - 1, direction);
     } else {
       _displayErrorMessage('لا يوجد فاتورة ${failure.message}');
     }
@@ -230,6 +224,7 @@ class BillSearchController extends GetxController {
   bool get isFirst => currentBillIndex == 0;
 
   bool get isNew => currentBill.billId == null;
+
   bool get isCash => currentBill.billDetails.billPayType == InvPayType.cash.index;
 
   bool get isPending => currentBill.status == Status.pending;

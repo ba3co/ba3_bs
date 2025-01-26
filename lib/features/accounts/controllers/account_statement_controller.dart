@@ -67,26 +67,23 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   // Event Handlers
   void onAccountNameSubmitted(String text, BuildContext context) async {
-    accountNameController.text = AppUIUtils.convertArabicNumbers(text);
+    final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
+
     AccountModel? accountModel = await _accountsController.openAccountSelectionDialog(
-      query: text,
+      query: convertArabicNumbers,
       context: context,
     );
     if (accountModel != null) {
       accountNameController.text = accountModel.accName!;
     }
-
-    update();
   }
 
   void onStartDateSubmitted(String text) {
     startDateController.text = AppUIUtils.getDateFromString(text);
-    update();
   }
 
   void onEndDateSubmitted(String text) {
     endDateController.text = AppUIUtils.getDateFromString(text);
-    update();
   }
 
   // Fetch bond items for the selected account
@@ -139,9 +136,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   /// Navigation handler
-  void navigateToAccountStatementScreen() {
-    to(AppRoutes.accountStatementScreen);
-  }
+  void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
 
   /// Calculates debit, credit, and total values
   void _calculateValues(List<EntryBondItemModel> items) {

@@ -200,6 +200,8 @@ class AppUIUtils {
   }
 
   static String formatDecimalNumberWithCommas(double number) {
+    if (number == 0) return '0.00';
+
     // ضبط الرقم العشري إلى رقمين بعد الفاصلة
     String formattedNumber = number.toStringAsFixed(2);
 
@@ -214,7 +216,8 @@ class AppUIUtils {
       (Match match) => '${match[1]},',
     );
 
-    return '$formattedIntegerPart.$decimalPart';
+    final formattedValue = '$formattedIntegerPart.$decimalPart';
+    return formattedValue == '-0.00' ? '0.00' : formattedValue;
   }
 
   static Widget showLoadingIndicator({

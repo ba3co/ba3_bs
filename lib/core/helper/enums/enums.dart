@@ -625,4 +625,4 @@ enum ChequesStrategyType {
   refundChequesStrategy,
 }
 
-enum SearchControllerNavigateSource { byNext, byPrevious, byNumber }
+enum NavigationDirection { next, previous, specific }
