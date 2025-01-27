@@ -78,7 +78,7 @@ class AddAccountFormWidget extends StatelessWidget {
                     );
                   }).toList(),
                   onChanged: (value) {
-                    customersController.selectCustomer(value);
+                    customersController.setSelectCustomer(value);
                   },
                 );
               }),
