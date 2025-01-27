@@ -112,8 +112,9 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
         payAccountGuid: '00000000-0000-0000-0000-000000000000',
         paySecurity: int.tryParse(node.getElement('CEntrySecurity')?.text ?? '0'),
         // paySecurity: int.tryParse(node.getElement('PaySecurity')?.text ?? '0'),
-        // paySkip: int.tryParse(node.getElement('PaySkip')?.text ?? '0'),
         paySkip: 0,
+        // paySkip: int.tryParse(node.getElement('PaySkip')?.text ?? '0'),
+
         erParentType: 0,
         // erParentType: int.tryParse(node.getElement('ErParentType')?.text ?? '0'),
         payItems: PayItems(itemList: payItemList),

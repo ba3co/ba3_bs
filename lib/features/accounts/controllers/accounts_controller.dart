@@ -75,7 +75,9 @@ class AccountsController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedAccounts) {},
+      (fetchedAccounts) {
+        AppUIUtils.onSuccess('تم رفع ${fetchedAccounts.length} حساب بنجاح');
+      },
     );
   }
 
@@ -89,18 +91,30 @@ class AccountsController extends GetxController with AppNavigator {
       final result = await _jsonImportExportRepo.importXmlFile(file);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (accountFromNetwork) {
-          final fetchedAccounts = accountFromNetwork;
+        (fetchedAccounts) async {
           log("fetchedAccounts length ${fetchedAccounts.length}");
-          log((fetchedAccounts.lastOrNull?.toJson()).toString());
-
-          accounts.assignAll(fetchedAccounts);
-          addAccounts(accounts);
+          log('accounts length is ${accounts.length}');
+          log('AllAccountNotExist length is ${getAllAccountNotExist(accounts, fetchedAccounts).length}');
+          if (accounts.isNotEmpty && getAllAccountNotExist(accounts, fetchedAccounts).isNotEmpty) {
+            await addAccounts(getAllAccountNotExist(accounts, fetchedAccounts));
+            accounts.assignAll(getAllAccountNotExist(accounts, fetchedAccounts));
+          }
         },
       );
     }
 
     update();
+  }
+
+  List<AccountModel> getAllAccountNotExist(List<AccountModel> currentMaterials, List<AccountModel> fetchedMaterials) {
+    List<AccountModel> accounts = [];
+    final existingMatNames = currentMaterials.map((e) => e.accName).toSet();
+    for (var element in fetchedMaterials) {
+      if (!existingMatNames.contains(element.accName)) {
+        accounts.add(element);
+      }
+    }
+    return accounts;
   }
 
   Future<void> fetchAccounts() async {
@@ -138,9 +152,7 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts
-        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
-        .toList();
+    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -157,22 +169,31 @@ class AccountsController extends GetxController with AppNavigator {
   }
 
   String getAccountIdByName(String? accountName) {
-    if (accountName == null || accountName.isEmpty) return '';
-    return accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
+    String? accountID;
+
+    if (accountName == null || accountName.isEmpty) accountID = '';
+    accountID = accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
+    if (accountID == '') log('getAccountIdByName with $accountName is null');
+    return accountID;
   }
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel = accounts
-          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel =
+          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+        log('getAccountModelByName is null with  $text');
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
+        log('getAccountModelByName is null with  $text');
+
         return null;
       } else {
         return accountModel;
       }
     }
+    log('getAccountModelByName is null with  $text');
+
     return null;
   }
 
