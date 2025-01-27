@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -78,7 +79,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subcollectionPath,
-      subDocumentId: item.docId ??  item.id,
+      subDocumentId: item.docId ?? item.id,
     );
   }
 
@@ -88,7 +89,6 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
 
     final rootDocumentId = getRootDocumentId(account);
     final subCollectionPath = getSubCollectionPath(account);
-
     final savedData = await compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
@@ -136,8 +136,11 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
   }
 
   @override
-  Future<Map<AccountEntity, List<EntryBondItems>>> saveAllNested(
-      {required List<AccountEntity> itemTypes, required List<EntryBondItems> items,void Function(double progress)? onProgress,}) async {
+  Future<Map<AccountEntity, List<EntryBondItems>>> saveAllNested({
+    required List<AccountEntity> itemTypes,
+    required List<EntryBondItems> items,
+    void Function(double progress)? onProgress,
+  }) async {
     final billsByType = <AccountEntity, List<EntryBondItems>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -183,8 +186,6 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
 
     return savedData.map(EntryBondItems.fromJson).toList();
   }
-
-
 }
 
 // class AccountsStatementsDatasource {
