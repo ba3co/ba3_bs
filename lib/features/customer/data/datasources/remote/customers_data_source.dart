@@ -1,10 +1,10 @@
 // EntryBondsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/remote_datasource_base.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 
 import '../../models/customer_model.dart';
 
-class CustomersDatasource extends RemoteDatasourceBase<CustomerModel> {
+class CustomersDatasource extends BulkSavableDatasource<CustomerModel> {
   CustomersDatasource({required super.databaseService});
 
   @override
@@ -35,5 +35,15 @@ class CustomersDatasource extends RemoteDatasourceBase<CustomerModel> {
     final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
 
     return CustomerModel.fromJson(data);
+  }
+
+  @override
+  Future<List<CustomerModel>> saveAll(List<CustomerModel> items) async {
+    final savedData = await databaseService.addAll(
+      path: path,
+      data: items.map((item) => item.toJson()).toList(),
+    );
+
+    return savedData.map(CustomerModel.fromJson).toList();
   }
 }

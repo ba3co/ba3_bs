@@ -4,10 +4,10 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/material_group.dart';
 import 'package:ba3_bs/features/materials/data/models/material_model.dart';
-import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/interfaces/i_tex_selection_handler.dart';
@@ -41,9 +41,10 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
       costPriceController.text = materialController.selectedMaterial!.matCurrencyVal!.toFixedString();
       minPriceController.text = materialController.selectedMaterial!.matLastPriceCurVal!.toFixedString();
       barcodeController.text = materialController.selectedMaterial!.matBarCode!;
-      latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName??'';
-      parentModel=read<MaterialGroupController>().getMaterialGroupById(materialController.selectedMaterial!.matGroupGuid);
-      parentController.text=parentModel!.groupName;
+      latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName ?? '';
+      parentModel =
+          read<MaterialGroupController>().getMaterialGroupById(materialController.selectedMaterial!.matGroupGuid);
+      parentController.text = parentModel!.groupName;
     } else {
       materialController.selectedMaterial = null;
       parentModel = null;

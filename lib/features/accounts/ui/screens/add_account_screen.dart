@@ -1,11 +1,12 @@
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/widgets/account_type_dropdown.dart';
+import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../widgets/add_account/add_account_buttons_widget.dart';
 import '../widgets/add_account/add_account_form_widget.dart';
+import '../widgets/add_account/add_customers_widget.dart';
 
 class AddAccountScreen extends StatelessWidget {
   const AddAccountScreen({super.key});
@@ -19,15 +20,15 @@ class AddAccountScreen extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                controller.isFromHandler ? controller.selectedAccount!.accName! : "بطاقة حساب",
+                controller.isEditAccount ? controller.selectedAccount!.accName! : "بطاقة حساب",
               ),
               Spacer(),
-
               SizedBox(
                   width: 400,
                   child: CustomTextFieldWithoutIcon(
                       enabled: true,
-                      controller: TextEditingController()..text=controller.isFromHandler ? controller.selectedAccount!.id!:'')),
+                      textEditingController: TextEditingController()
+                        ..text = controller.isEditAccount ? controller.selectedAccount!.id! : '')),
               Spacer(),
             ],
           ),
@@ -37,13 +38,12 @@ class AddAccountScreen extends StatelessWidget {
           child: Column(
             spacing: 20,
             children: [
-              AddAccountFormWidget(
-                controller: controller,
-              ),
+              AddAccountFormWidget(controller: controller),
               AccountTypeDropdown(accountSelectionHandler: controller.accountFromHandler),
-              AddAccountButtonsWidget(
-                controller: controller,
-              )
+              const SizedBox(height: 15),
+              // Button to add a new customer
+              AddCustomersWidget(),
+              AddAccountButtonsWidget(controller: controller),
             ],
           ),
         ),

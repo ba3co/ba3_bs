@@ -6,7 +6,12 @@ import '../../../../../core/widgets/app_spacer.dart';
 import '../../../data/models/user_model.dart';
 
 class WorkingHoursItem extends StatelessWidget {
-  const WorkingHoursItem({super.key, required this.userWorkingHours, required this.onEnterTimeChange, required this.onOutTimeChange, required this.onDelete});
+  const WorkingHoursItem(
+      {super.key,
+      required this.userWorkingHours,
+      required this.onEnterTimeChange,
+      required this.onOutTimeChange,
+      required this.onDelete});
 
   final UserWorkingHours userWorkingHours;
   final void Function(Time) onEnterTimeChange;
@@ -29,7 +34,6 @@ class WorkingHoursItem extends StatelessWidget {
               onTap: () async {
                 Navigator.of(context).push(
                   showPicker(
-
                     context: context,
                     value: Time(hour: 4, minute: 30),
                     sunrise: TimeOfDay(hour: 6, minute: 0),
@@ -42,7 +46,8 @@ class WorkingHoursItem extends StatelessWidget {
               child: Container(
                 height: 30,
                 width: 100,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
                 child: Center(
                   child: Text(
                     userWorkingHours.enterTime ?? '',
@@ -77,7 +82,8 @@ class WorkingHoursItem extends StatelessWidget {
               child: Container(
                 height: 30,
                 width: 100,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
                 child: Center(
                   child: Text(
                     userWorkingHours.outTime ?? '',
@@ -89,7 +95,6 @@ class WorkingHoursItem extends StatelessWidget {
             ),
           ],
         ),
-
         IconButton(onPressed: onDelete, icon: Icon(Icons.delete))
       ],
     );

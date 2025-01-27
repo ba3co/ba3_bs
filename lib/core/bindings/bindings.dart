@@ -229,7 +229,7 @@ class AppBindings extends Bindings {
       importMaterialRepository: ImportRepository(importMaterialGroupService),
       materialGroupDataSource: QueryableSavableRepository(MaterialsGroupsDataSource(databaseService: fireStoreService)),
       customerImportRepo: ImportRepository(customerImportService),
-      customersRepo: RemoteDataSourceRepository(CustomersDatasource(databaseService: fireStoreService)),
+      customersRepo: BulkSavableDatasourceRepository(CustomersDatasource(databaseService: fireStoreService)),
     );
   }
 
@@ -290,7 +290,7 @@ class _Repositories {
   final IImportRepository<MaterialGroupModel> importMaterialRepository;
   final QueryableSavableRepository<MaterialGroupModel> materialGroupDataSource;
   final ImportRepository<CustomerModel> customerImportRepo;
-  final RemoteDataSourceRepository<CustomerModel> customersRepo;
+  final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
 
   _Repositories({
     required this.translationRepo,

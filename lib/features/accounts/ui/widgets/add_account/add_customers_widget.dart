@@ -1,0 +1,134 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+
+import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/styling/app_colors.dart';
+import '../../../../../core/styling/app_text_style.dart';
+import '../../../../../core/widgets/app_spacer.dart';
+import '../../../../../core/widgets/custom_text_field_without_icon.dart';
+import '../../../../../core/widgets/organized_widget.dart';
+import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
+import '../../../controllers/accounts_controller.dart';
+import 'customer_item_widget.dart';
+
+class AddCustomersWidget extends StatelessWidget {
+  const AddCustomersWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = read<AccountsController>();
+    return SizedBox(
+      height: 230,
+      child: Obx(
+        () {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: OrganizedWidget(
+              titleWidget: Center(
+                child: Text(
+                  "الزبائن",
+                  style: AppTextStyles.headLineStyle2,
+                ),
+              ),
+              bodyWidget: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: controller.toggleAddCustomerForm,
+                      icon: Row(
+                        children: [
+                          Icon(
+                            controller.showAddCustomerForm.value ? Icons.close : Icons.add,
+                            size: 12,
+                            color: AppColors.blueColor,
+                          ),
+                          HorizontalSpace(),
+                          Text(
+                            controller.showAddCustomerForm.value ? 'إخفاء' : 'اضافة',
+                            style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (controller.showAddCustomerForm.value)
+                    Column(
+                      children: [
+                        FormFieldRow(
+                          spacing: 40,
+                          firstItem: TextAndExpandedChildField(
+                            label: 'اسم الزبون',
+                            child: CustomTextFieldWithoutIcon(
+                              suffixIcon: const SizedBox(),
+                              textEditingController: controller.newCustomerNameController,
+                              // validator: (value) => controller.defaultValidator(value, "اسم العميل"),
+                            ),
+                          ),
+                          secondItem: TextAndExpandedChildField(
+                            label: 'رقم الموبايل',
+                            child: CustomTextFieldWithoutIcon(
+                              suffixIcon: const SizedBox(),
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                              textEditingController: controller.newCustomerPhoneController,
+                              //    validator: (value) => controller.defaultValidator(value, "رقم العميل"),
+                            ),
+                          ),
+                        ),
+                        VerticalSpace(),
+                        TextAndExpandedChildField(
+                          label: 'نوع الضريبة',
+                          child: DropdownButtonFormField<VatEnums>(
+                            value: controller.selectedVat.value,
+                            items: VatEnums.values.map(
+                              (vat) {
+                                return DropdownMenuItem<VatEnums>(
+                                  value: vat,
+                                  child: Text(vat.taxName!),
+                                );
+                              },
+                            ).toList(),
+                            onChanged: controller.onSelectedVatChanged,
+                          ),
+                        ),
+                        VerticalSpace(20),
+                        OutlinedButton(
+                          onPressed: () {
+                            controller.addNewCustomer();
+                          },
+                          child: Text(
+                            'حفظ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (controller.addedCustomers.isNotEmpty && !controller.showAddCustomerForm.value)
+                    ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => CustomerItemWidget(
+                        customerModel: controller.addedCustomers[index],
+                        onDelete: () => controller.deleteCustomer(customer: controller.addedCustomers[index]),
+                      ),
+                      separatorBuilder: (context, index) => VerticalSpace(),
+                      itemCount: controller.addedCustomers.length,
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

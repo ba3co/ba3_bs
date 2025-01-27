@@ -70,7 +70,7 @@ class CustomerModel {
       telex: json['telex'] as String?,
       note: json['note'] as String?,
       accountGuid: json['accountGuid'] as String?,
-      checkDate: DateTime.parse(json['checkDate'] as String),
+      checkDate: DateTime.tryParse(json['checkDate'] as String? ?? ''),
       security: json['security'] as int?,
       type: json['type'] as int?,
       discountRatio: (json['discountRatio'] as num?)?.toDouble(),

@@ -16,10 +16,11 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
   Future<Either<Failure, List<T>>> fetchWhere<V>(
       {required ItemTypeModel itemTypeModel, required String field, required V value, DateFilter? dateFilter}) async {
     try {
-      final savedItems = await _dataSource.fetchWhere(itemTypeModel: itemTypeModel, field: field, value: value, dateFilter: dateFilter);
+      final savedItems = await _dataSource.fetchWhere(
+          itemTypeModel: itemTypeModel, field: field, value: value, dateFilter: dateFilter);
       return Right(savedItems); // Return the list of saved items
-    } catch (e) {
-      log('Error in fetchWhere: $e');
+    } catch (e, stackTrace) {
+      log('Error in fetchWhere: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
@@ -28,8 +29,8 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     try {
       final item = await _dataSource.fetchById(id: id, itemTypeModel: itemTypeModel);
       return Right(item); // Return the found item
-    } catch (e) {
-      log('Error: $e');
+    } catch (e, stackTrace) {
+      log('Error in getById: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
@@ -38,28 +39,28 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     try {
       await _dataSource.delete(item: item);
       return const Right(unit); // Return success
-    } catch (e) {
-      log('Error: $e');
+    } catch (e, stackTrace) {
+      log('Error in delete: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
 
   Future<Either<Failure, T>> save(T item) async {
-    // try {
-    final savedItem = await _dataSource.save(item: item);
-    return Right(savedItem); // Return success
-    // } catch (e) {
-    //   log('Error in save: $e');
-    //   return Left(ErrorHandler(e).failure); // Return error
-    // }
+    try {
+      final savedItem = await _dataSource.save(item: item);
+      return Right(savedItem); // Return success
+    } catch (e, stackTrace) {
+      log('Error in save: $e', stackTrace: stackTrace);
+      return Left(ErrorHandler(e).failure); // Return error
+    }
   }
 
   Future<Either<Failure, int>> count({required ItemTypeModel itemTypeModel, QueryFilter? countQueryFilter}) async {
     try {
       final count = await _dataSource.countDocuments(itemTypeModel: itemTypeModel, countQueryFilter: countQueryFilter);
       return Right(count); // Return the found item
-    } catch (e) {
-      log('Error in count: $e');
+    } catch (e, stackTrace) {
+      log('Error in count: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
@@ -68,8 +69,8 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     try {
       final items = await _dataSource.fetchAll(itemTypeModel: itemTypeModel);
       return Right(items); // Return list of items
-    } catch (e) {
-      log('Error: $e');
+    } catch (e, stackTrace) {
+      log('Error in getAll: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
@@ -78,20 +79,23 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     try {
       final savedItems = await _dataSource.saveAll(items: items, itemTypeModel: itemTypeModel);
       return Right(savedItems); // Return the list of saved items
-    } catch (e) {
-      log('Error in fetchWhere: $e');
+    } catch (e, stackTrace) {
+      log('Error in saveAll: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
 
-  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(List<T> items, List<ItemTypeModel> itemTypeModel,
-      void Function(double progress)? onProgress,
-      ) async {
+  Future<Either<Failure, Map<ItemTypeModel, List<T>>>> saveAllNested(
+    List<T> items,
+    List<ItemTypeModel> itemTypeModel,
+    void Function(double progress)? onProgress,
+  ) async {
     try {
-      final savedItems = await _dataSource.saveAllNested(items: items, itemTypes: itemTypeModel,onProgress:onProgress);
+      final savedItems =
+          await _dataSource.saveAllNested(items: items, itemTypes: itemTypeModel, onProgress: onProgress);
       return Right(savedItems); // Return the list of saved items
-    } catch (e) {
-      log('Error in saveAllNested: $e');
+    } catch (e, stackTrace) {
+      log('Error in saveAllNested: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
@@ -100,11 +104,9 @@ class CompoundDatasourceRepository<T, ItemTypeModel> {
     try {
       final nestedItems = await _dataSource.fetchAllNested(itemTypes: itemTypes);
       return Right(nestedItems); // Return list of  Nested items
-    } catch (e) {
-      log('Error in fetchAllNested: $e');
+    } catch (e, stackTrace) {
+      log('Error in fetchAllNested: $e', stackTrace: stackTrace);
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
-
-
 }

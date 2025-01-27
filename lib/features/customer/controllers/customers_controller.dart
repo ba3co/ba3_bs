@@ -1,28 +1,24 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
+import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
-import '../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
+import '../../../core/network/error/failure.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/customer_model.dart';
 
 class CustomersController extends GetxController with AppNavigator {
   final ImportRepository<CustomerModel> _customerImportRepo;
-  final RemoteDataSourceRepository<CustomerModel> _customersFirestoreRepo;
+  final BulkSavableDatasourceRepository<CustomerModel> _customersFirestoreRepo;
 
   CustomersController(this._customersFirestoreRepo, this._customerImportRepo);
 
   List<CustomerModel> customers = [];
-
-  // Single selected customer
-  final Rxn<CustomerModel> selectedCustomer = Rxn<CustomerModel>();
-
-  // Multiple selected customers
-  final RxList<CustomerModel> selectedCustomers = <CustomerModel>[].obs;
 
   // bool get isFromHandler => selectedCustomer == null ? false : true;
 
@@ -53,14 +49,9 @@ class CustomersController extends GetxController with AppNavigator {
   //   );
   // }
   //
-  // Future<void> addAccounts(List<AccountModel> accounts) async {
-  //   final result = await _accountsFirebaseRepo.saveAll(accounts);
-  //
-  //   result.fold(
-  //     (failure) => AppUIUtils.onFailure(failure.message),
-  //     (fetchedAccounts) {},
-  //   );
-  // }
+
+  Future<Either<Failure, List<CustomerModel>>> addCustomers(List<CustomerModel> customers) async =>
+      await _customersFirestoreRepo.saveAll(customers);
 
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
@@ -105,35 +96,6 @@ class CustomersController extends GetxController with AppNavigator {
     );
   }
 
-  /// Handle single customer selection
-  void setSelectCustomer(String? customerId) {
-    selectedCustomer.value = customers.firstWhereOrNull((customer) => customer.id == customerId);
-    selectedCustomers.clear();
-  }
-
-  /// Handle multiple customer selection
-  void setSelectedCustomers(List<String> customerIds) {
-    selectedCustomer.value = null;
-    selectedCustomers.assignAll(
-      customers.where(
-        (customer) => customerIds.contains(customer.id),
-      ),
-    );
-  }
-
-  void updateSelectedCustomers(List<String>? customerIds) {
-    log('customerIds $customerIds');
-    if (customerIds == null || customerIds.isEmpty) {
-      selectedCustomer.value = null;
-      selectedCustomers.clear();
-    } else if (customerIds.length == 1) {
-      setSelectCustomer(customerIds.first);
-      selectedCustomers.clear();
-    } else {
-      selectedCustomer.value = null;
-      setSelectedCustomers(customerIds);
-    }
-  }
 //
 // void navigateToAllAccountsScreen() {
 //   to(AppRoutes.showAllAccountsScreen);

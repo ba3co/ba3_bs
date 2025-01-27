@@ -29,16 +29,12 @@ class UserAllWorkingHour extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               itemBuilder: (context, index) => WorkingHoursItem(
-
                 onDelete: () => controller.deleteWorkingHour(key: index),
                 onEnterTimeChange: (time) {
-
-
                   controller.setEnterTime(index, time);
                 },
                 onOutTimeChange: (time) {
-
-                  controller.setOutTime(index,time);
+                  controller.setOutTime(index, time);
                 },
                 userWorkingHours: controller.workingHours.values.elementAt(index),
               ),

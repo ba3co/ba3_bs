@@ -31,12 +31,8 @@ class AddUserScreen extends StatelessWidget {
                 userManagementController: userManagementController,
                 sellerController: sellersController,
               ),
-              UserAllWorkingHour(
-                controller: controller,
-              ),
-              UserAllHolidays(
-                controller: controller,
-              ),
+              UserAllWorkingHour(controller: controller),
+              UserAllHolidays(controller: controller),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

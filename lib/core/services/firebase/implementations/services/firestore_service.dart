@@ -109,13 +109,17 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> addAll({required String path, required List<Map<String, dynamic>> data}) async {
+  Future<List<Map<String, dynamic>>> addAll({
+    required String path,
+    required List<Map<String, dynamic>> data,
+  }) async {
     final batch = _firestore.batch();
     final addedItems = <Map<String, dynamic>>[];
 
     for (final item in data) {
-      // Ensure the document ID is set
-      final docId = item.putIfAbsent('docId', () => _firestore.collection(path).doc().id);
+      // Generate a document ID if not already set
+      final docId = item['docId'] ?? _firestore.collection(path).doc().id;
+      item['docId'] = docId;
 
       // Add the item to the batch
       final docRef = _firestore.collection(path).doc(docId);

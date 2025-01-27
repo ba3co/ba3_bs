@@ -9,7 +9,8 @@ class OrganizedWidget extends StatelessWidget {
     required this.bodyWidget,
   });
 
-  final Widget titleWidget, bodyWidget;
+  final Widget titleWidget;
+  final Widget bodyWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +30,11 @@ class OrganizedWidget extends StatelessWidget {
               children: [Expanded(child: titleWidget)],
             ),
           ),
+          Container(width: 1.sw, height: 1, color: Colors.white10),
           Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
             width: 1.sw,
-            height: 1,
-            color: Colors.white10,
-          ),
-          Container(
-            padding: EdgeInsets.all(16.0),
-            width: 1.sw,
-            alignment: Alignment.center,
+            alignment: Alignment.centerRight,
             decoration: BoxDecoration(
               // boxShadow: [BoxShadow(color: AppColors.grayColor, blurRadius: 5, spreadRadius: 0.2)],
               color: Colors.white,

@@ -1,10 +1,9 @@
-
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
-import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constants/app_constants.dart';
+import '../helper/enums/enums.dart';
 import '../interfaces/i_tex_selection_handler.dart';
 
 class TaxDropdown extends StatelessWidget {
@@ -41,8 +40,7 @@ class TaxDropdown extends StatelessWidget {
                     border: Border.all(color: Colors.black38),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  onCloseCallback: () {
-                  },
+                  onCloseCallback: () {},
                 );
               }),
             ),
