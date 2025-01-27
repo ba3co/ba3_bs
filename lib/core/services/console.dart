@@ -258,7 +258,7 @@ class SynchronizedCounterProxy implements Counter {
 
 // Step 4: Client Code
 void main() {
-  // Virtual Proxy
+  /// Virtual Proxy
   print("=== Virtual Proxy ===");
   print("Creating proxy for 'photo1.jpg'...");
   Image image1 = ImageProxy("photo1.jpg");
@@ -275,12 +275,12 @@ void main() {
   print("\nDisplaying 'photo1.jpg' again...");
   image1.display(); // Real image is reused without loading
 
-  // Remote Proxy
+  /// Remote Proxy
   print("\n=== Remote Proxy ===");
   RemoteService remoteService = RemoteServiceProxy();
   remoteService.fetchData();
 
-  // Protection Proxy
+  /// Protection Proxy
   print("\n=== Protection Proxy ===");
   Database dbAdmin = DatabaseProxy("admin");
   Database dbUser = DatabaseProxy("user");
@@ -288,7 +288,7 @@ void main() {
   dbAdmin.query("DELETE FROM users"); // Allowed
   dbUser.query("DELETE FROM users"); // Denied
 
-  // Cache Proxy
+  /// Cache Proxy
   print("\n=== Cache Proxy ===");
   WeatherService weatherService = CachedWeatherServiceProxy();
 
@@ -296,14 +296,14 @@ void main() {
   print(weatherService.getWeather("New York")); // Returns cached data
   print(weatherService.getWeather("Los Angeles")); // Fetches new data
 
-  // Firewall Proxy
+  /// Firewall Proxy
   print("\n=== Firewall Proxy ===");
   WebServer server = FirewallProxy();
 
   server.handleRequest("192.168.1.5"); // Blocked
   server.handleRequest("192.168.1.10"); // Allowed
 
-  // Synchronization Proxy
+  /// Synchronization Proxy
   print("\n=== Synchronization Proxy ===");
   Counter counter = SynchronizedCounterProxy();
   counter.increment();
