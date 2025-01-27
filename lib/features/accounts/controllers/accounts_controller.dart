@@ -157,14 +157,19 @@ class AccountsController extends GetxController with AppNavigator {
     if (text != '') {
       final AccountModel accountModel = accounts
           .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+            log('getAccountModelByName is null with  $text');
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
+        log('getAccountModelByName is null with  $text');
+
         return null;
       } else {
         return accountModel;
       }
     }
+    log('getAccountModelByName is null with  $text');
+
     return null;
   }
 

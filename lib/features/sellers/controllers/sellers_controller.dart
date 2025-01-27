@@ -120,8 +120,10 @@ class SellersController extends GetxController with AppNavigator {
 
   // Get seller ID by name
   String getSellerIdByName(String? name) {
-    log(name.toString());
-    log("sellers    ${sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid}");
+    // log(name.toString());
+    // log("sellers    ${sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid}");
+    if(name=='BASUES') name='BASUS';
+
     if (name == null || name.isEmpty) return '';
     return sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid ?? '';
   }
