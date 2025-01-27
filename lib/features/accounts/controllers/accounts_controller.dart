@@ -37,7 +37,6 @@ class AccountsController extends GetxController with AppNavigator {
   void setAccountParent(AccountModel accountModel) {
     accountFromHandler.accountParentModel = accountModel;
     accountFromHandler.accParentName.text = accountModel.accName!;
-    update();
   }
 
   void initializer() {
@@ -116,8 +115,12 @@ class AccountsController extends GetxController with AppNavigator {
   }
 
   void navigateToAddOrUpdateAccountScreen({String? accountId}) {
-    selectedAccount = null;
-    if (accountId != null) selectedAccount = getAccountModelById(accountId);
+    if (accountId != null) {
+      selectedAccount = getAccountModelById(accountId);
+    } else {
+      selectedAccount = null;
+    }
+    read<CustomersController>().updateSelectedCustomers(selectedAccount?.accCustomer);
 
     accountFromHandler.init(accountModel: selectedAccount);
 
@@ -245,7 +248,7 @@ class AccountsController extends GetxController with AppNavigator {
 
     // Handle null material model
     if (updatedAccountModel == null) {
-      AppUIUtils.onFailure('');
+      AppUIUtils.onFailure('من فضلك أدخل ');
       return;
     }
     // Save changes and handle results
@@ -255,8 +258,6 @@ class AccountsController extends GetxController with AppNavigator {
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) => AppUIUtils.onSuccess('تم اضافة الحساب بنجاح'),
     );
-
-    update();
   }
 
   void deleteAccount() async {

@@ -106,15 +106,33 @@ class CustomersController extends GetxController with AppNavigator {
   }
 
   /// Handle single customer selection
-  void selectCustomer(String? customerId) {
+  void setSelectCustomer(String? customerId) {
     selectedCustomer.value = customers.firstWhereOrNull((customer) => customer.id == customerId);
+    selectedCustomers.clear();
   }
 
   /// Handle multiple customer selection
   void setSelectedCustomers(List<String> customerIds) {
+    selectedCustomer.value = null;
     selectedCustomers.assignAll(
-      customers.where((customer) => customerIds.contains(customer.id)),
+      customers.where(
+        (customer) => customerIds.contains(customer.id),
+      ),
     );
+  }
+
+  void updateSelectedCustomers(List<String>? customerIds) {
+    log('customerIds $customerIds');
+    if (customerIds == null || customerIds.isEmpty) {
+      selectedCustomer.value = null;
+      selectedCustomers.clear();
+    } else if (customerIds.length == 1) {
+      setSelectCustomer(customerIds.first);
+      selectedCustomers.clear();
+    } else {
+      selectedCustomer.value = null;
+      setSelectedCustomers(customerIds);
+    }
   }
 //
 // void navigateToAllAccountsScreen() {
