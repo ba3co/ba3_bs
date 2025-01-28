@@ -22,6 +22,7 @@ class ApiConstants {
   static const String guestUser = 'guest_user';
   static const String customers = 'customers';
   static const String storeCart = 'StoreCart';
+  static const String materialsStatements = 'materials_statements';
 
   // Documents
   static const String guest = 'guest';

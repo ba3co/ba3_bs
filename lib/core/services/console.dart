@@ -110,24 +110,40 @@ class ImageProxy implements Image {
 }
 
 /// Remote Proxy
+// Define the interface
 abstract class RemoteService {
-  void fetchData();
+  Future<void> fetchData();
 }
 
+// Real service performing the actual work
 class RealRemoteService implements RemoteService {
   @override
-  void fetchData() {
-    print("Fetching data from remote server...");
+  Future<void> fetchData() async {
+    print("Fetching data from a remote server...");
+    await Future.delayed(Duration(seconds: 2)); // Simulate network latency
+    print("Data fetched successfully!");
   }
 }
 
+// Proxy that monitors and forwards the request to the real service
 class RemoteServiceProxy implements RemoteService {
   final RealRemoteService _remoteService = RealRemoteService();
+  bool _isAuthenticated = false;
+
+  RemoteServiceProxy({required bool isAuthenticated}) {
+    _isAuthenticated = isAuthenticated;
+  }
 
   @override
-  void fetchData() {
-    print("Proxy: Forwarding request to the remote server...");
-    _remoteService.fetchData();
+  Future<void> fetchData() async {
+    if (!_isAuthenticated) {
+      print("Access denied: User is not authenticated!");
+      return;
+    }
+
+    print("Proxy: Forwarding request to the remote service...");
+    await _remoteService.fetchData();
+    print("Proxy: Request completed.");
   }
 }
 
@@ -159,6 +175,7 @@ class DatabaseProxy implements Database {
   }
 }
 
+/// Cache Proxy
 abstract class WeatherService {
   String getWeather(String city);
 }
@@ -217,47 +234,78 @@ class FirewallProxy implements WebServer {
 }
 
 /// Synchronization Proxy
-abstract class Counter {
-  void increment();
+abstract class BankAccount {
+  Future<void> deposit(int amount);
 
-  int get value;
+  Future<void> withdraw(int amount);
+
+  Future<int> get balance;
 }
 
-class RealCounter implements Counter {
-  int _value = 0;
+/// RealBankAccount: The actual bank account implementation
+class RealBankAccount implements BankAccount {
+  int _balance = 0;
 
   @override
-  void increment() {
-    _value++;
+  Future<void> deposit(int amount) async {
+    _balance += amount;
+    print("Deposited \$${amount}. Current balance: \$$_balance");
   }
 
   @override
-  int get value => _value;
-}
-
-class SynchronizedCounterProxy implements Counter {
-  final RealCounter _counter = RealCounter();
+  Future<void> withdraw(int amount) async {
+    if (_balance >= amount) {
+      _balance -= amount;
+      print("Withdrew \$${amount}. Current balance: \$$_balance");
+    } else {
+      print("Insufficient funds! Withdrawal of \$${amount} failed.");
+    }
+  }
 
   @override
-  void increment() {
-    print("Incrementing counter in a thread-safe way...");
-    // Simulate thread-safe operation
-    synchronized(() {
-      _counter.increment();
+  Future<int> get balance async => _balance;
+}
+
+/// Synchronization Proxy for BankAccount
+class SynchronizedBankAccountProxy implements BankAccount {
+  final RealBankAccount _realAccount = RealBankAccount();
+  final _lock = Object();
+
+  @override
+  Future<void> deposit(int amount) async {
+    await _synchronized(() async {
+      await _realAccount.deposit(amount);
     });
   }
 
   @override
-  int get value => _counter.value;
+  Future<void> withdraw(int amount) async {
+    await _synchronized(() async {
+      await _realAccount.withdraw(amount);
+    });
+  }
 
-  void synchronized(Function operation) {
-    // Placeholder for synchronization
-    operation();
+  @override
+  Future<int> get balance async {
+    int result = 0;
+    await _synchronized(() async {
+      result = await _realAccount.balance;
+    });
+    return result;
+  }
+
+  Future<void> _synchronized(Future<void> Function() operation) async {
+    // Simulate critical section protection
+    await Future(() async {
+      print("Entering synchronized block...");
+      await operation();
+      print("Exiting synchronized block...");
+    });
   }
 }
 
 // Step 4: Client Code
-void main() {
+Future<void> main() async {
   /// Virtual Proxy
   print("=== Virtual Proxy ===");
   print("Creating proxy for 'photo1.jpg'...");
@@ -277,8 +325,13 @@ void main() {
 
   /// Remote Proxy
   print("\n=== Remote Proxy ===");
-  RemoteService remoteService = RemoteServiceProxy();
-  remoteService.fetchData();
+  print("Scenario 1: Unauthenticated user");
+  RemoteService unauthenticatedService = RemoteServiceProxy(isAuthenticated: false);
+  unauthenticatedService.fetchData();
+
+  print("\nScenario 2: Authenticated user");
+  RemoteService authenticatedService = RemoteServiceProxy(isAuthenticated: true);
+  authenticatedService.fetchData();
 
   /// Protection Proxy
   print("\n=== Protection Proxy ===");
@@ -304,8 +357,22 @@ void main() {
   server.handleRequest("192.168.1.10"); // Allowed
 
   /// Synchronization Proxy
-  print("\n=== Synchronization Proxy ===");
-  Counter counter = SynchronizedCounterProxy();
-  counter.increment();
-  print("Counter value: ${counter.value}");
+  print("\n=== Synchronization Proxy: Bank Account ===");
+  BankAccount account = SynchronizedBankAccountProxy();
+
+  // Simulate multiple tasks depositing and withdrawing money
+  List<Future> tasks = [
+    account.deposit(100),
+    account.withdraw(50),
+    account.deposit(200),
+    account.withdraw(150),
+    account.withdraw(200),
+  ];
+
+  print("\nSimulating multiple transactions...");
+  await Future.wait(tasks);
+
+  // Get the final balance
+  int finalBalance = await account.balance;
+  print("\nFinal balance: \$${finalBalance}");
 }

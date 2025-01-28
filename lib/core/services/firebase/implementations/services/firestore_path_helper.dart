@@ -19,6 +19,9 @@ mixin FirestorePathHelper<ItemTypeModel> {
     if (typeModel is AccountEntity) {
       return typeModel.id;
     }
+    if (typeModel is String) {
+      return typeModel;
+    }
 
     throw ArgumentError('Unsupported typeModel for getRootDocumentId.');
   }
@@ -31,6 +34,7 @@ mixin FirestorePathHelper<ItemTypeModel> {
       BondType(:final label) => label,
       ChequesType(:final label) => label,
       AccountEntity(:final name) => name,
+      String name => name, // For String, directly return it.
       _ => throw ArgumentError('Unsupported typeModel for getSubCollectionPath.'),
     };
 
