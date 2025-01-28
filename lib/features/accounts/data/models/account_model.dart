@@ -93,7 +93,7 @@ class AccountModel implements PlutoAdaptable {
       accNumber: int.tryParse(json['AccNumber'].toString()) ?? 0,
       // accBranchMask: json['AccBranchMask']??'',
       accParentName: json['accParentName'] ?? '',
-      accCustomer:List<String>.from(json['accCustomer'] ?? []) ,
+      accCustomer: List<String>.from(json['accCustomer'] ?? []),
       // billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHfavRu"],
     );
   }
@@ -214,8 +214,7 @@ class AccountModel implements PlutoAdaptable {
       PlutoColumn(field: 'حساب الاب', type: PlutoColumnType.text(), title: 'حساب الاب'): accParentName,
       PlutoColumn(field: 'الاولاد', type: PlutoColumnType.text(), title: 'الاولاد'):
           read<AccountsController>().getAccountChildren(id).join(' , '),
-      PlutoColumn(field: 'الزبائن', type: PlutoColumnType.text(), title: 'الزبائن'):
-          accCustomer?.toList().join(' , '),
+      PlutoColumn(field: 'الزبائن', type: PlutoColumnType.text(), title: 'الزبائن'): accCustomer?.toList().join(' , '),
     };
   }
 }

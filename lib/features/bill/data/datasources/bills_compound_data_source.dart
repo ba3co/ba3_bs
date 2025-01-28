@@ -145,8 +145,11 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<Map<BillTypeModel, List<BillModel>>> saveAllNested(
-      {required List<BillTypeModel> itemTypes, required List<BillModel> items, void Function(double progress)? onProgress,}) async {
+  Future<Map<BillTypeModel, List<BillModel>>> saveAllNested({
+    required List<BillTypeModel> itemTypes,
+    required List<BillModel> items,
+    void Function(double progress)? onProgress,
+  }) async {
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -192,6 +195,4 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
 
     return savedData.map(BillModel.fromJson).toList();
   }
-
-
 }

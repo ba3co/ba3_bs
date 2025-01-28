@@ -28,7 +28,8 @@ class ChequesStrategyBondFactory {
   }
 
   /// Determines the appropriate strategies based on the ChequesModel.
-  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel, {ChequesStrategyType? type}) {
+  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel,
+      {ChequesStrategyType? type}) {
     if (type != null) {
       return _getStrategy(type);
     }

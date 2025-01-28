@@ -39,7 +39,4 @@ abstract class CompoundDatasourceBase<T, ItemTypeModel>
     required List<T> items,
     void Function(double progress)? onProgress,
   });
-
-
-
 }
