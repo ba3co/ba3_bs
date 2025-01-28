@@ -21,7 +21,9 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
+import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/materials/material_model.dart';
@@ -125,28 +127,26 @@ class MaterialController extends GetxController with AppNavigator {
   void _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
     saveAllMaterialsRequestState.value = RequestState.loading;
     logger.d("fetchedMaterial.length ${fetchedMaterial.length}");
-    logger.d("new Materials length ${_materialService.getAllMaterialExist(materials, fetchedMaterial).map(
-          (e) => e.toJson(),
-        ).toList().join(' ;;;;;; ')}");
+    logger.d("new Materials length ${_materialService.getAllMaterialNotExist(materials, fetchedMaterial).length}");
 
-    // if (_materialService.getAllMaterialNotExist(materials, fetchedMaterial).isNotEmpty) {
-    //   // Show progress in the UI
-    //   FirestoreUploader firestoreUploader = FirestoreUploader();
-    //   await firestoreUploader.sequentially(
-    //     data: _materialService
-    //         .getAllMaterialNotExist(materials, fetchedMaterial)
-    //         .map((item) => {...item.toJson(), 'docId': item.id})
-    //         .toList(),
-    //     collectionPath: ApiConstants.materials,
-    //     onProgress: (progress) {
-    //       uploadProgress.value = progress; // Update progress
-    //       log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-    //     },
-    //   );
-    // }
+    if (_materialService.getAllMaterialNotExist(materials, fetchedMaterial).isNotEmpty) {
+      // Show progress in the UI
+      FirestoreUploader firestoreUploader = FirestoreUploader();
+      await firestoreUploader.sequentially(
+        data: _materialService
+            .getAllMaterialNotExist(materials, fetchedMaterial)
+            .map((item) => {...item.toJson(), 'docId': item.id})
+            .toList(),
+        collectionPath: ApiConstants.materials,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+      );
+    }
 
     saveAllMaterialsRequestState.value = RequestState.success;
-    // materials.assignAll(fetchedMaterial);
+    materials.assignAll(fetchedMaterial);
   }
 
   void navigateToAllMaterialScreen() {
