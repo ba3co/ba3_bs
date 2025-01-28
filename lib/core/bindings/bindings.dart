@@ -258,7 +258,7 @@ class AppBindings extends Bindings {
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
     lazyPut(MaterialController(repositories.materialImportExportRepo, repositories.materialsLocalDatasourceRepo,
-        repositories.listenableDatasourceRepo, repositories.materialsRemoteDatasourceRepo));
+        repositories.listenableDatasourceRepo,));
     lazyPut(AddSellerController());
     lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
   }

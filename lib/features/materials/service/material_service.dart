@@ -62,4 +62,14 @@ class MaterialService {
     }
     return materials;
   }
+  List<MaterialModel> getAllMaterialExist(List<MaterialModel> currentMaterials,List<MaterialModel>fetchedMaterials) {
+    List<MaterialModel> materials=[];
+    final existingMatNames = currentMaterials.map((e) => e.matName).toSet();
+    for (var element in fetchedMaterials) {
+      if (existingMatNames.contains(element.matName)) {
+        materials.add(element);
+      }
+    }
+    return materials;
+  }
 }
