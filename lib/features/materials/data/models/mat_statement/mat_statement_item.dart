@@ -7,7 +7,7 @@ import '../../../../pluto/data/models/pluto_adaptable.dart';
 class MatStatementItemModel implements PlutoAdaptable {
   final MatOrigin? matOrigin;
 
-  final double? amount;
+  final double? quantity;
 
   final double? price;
   final String? date;
@@ -16,7 +16,7 @@ class MatStatementItemModel implements PlutoAdaptable {
 
   MatStatementItemModel({
     this.matOrigin,
-    this.amount,
+    this.quantity,
     this.note,
     this.date,
     this.price,
@@ -26,9 +26,8 @@ class MatStatementItemModel implements PlutoAdaptable {
   /// Creates an instance from a JSON object.
   factory MatStatementItemModel.fromJson(Map<String, dynamic> json) {
     return MatStatementItemModel(
-
       matOrigin: MatOrigin.fromJson(json['matOriginType']),
-      amount: (json['amount'] as num?)?.toDouble(),
+      quantity: (json['quantity'] as num?)?.toDouble(),
       note: json['note'] as String?,
       id: json['docId'] as String?,
       date: json['date'] as String?,
@@ -40,7 +39,7 @@ class MatStatementItemModel implements PlutoAdaptable {
   Map<String, dynamic> toJson() {
     return {
       'matOriginType': matOrigin?.toJson(),
-      'amount': amount,
+      'quantity': quantity,
       'note': note,
       'docId': id,
       'date': date,
@@ -51,7 +50,7 @@ class MatStatementItemModel implements PlutoAdaptable {
   /// Creates a new instance with modified fields.
   MatStatementItemModel copyWith({
     final MatOrigin? matOrigin,
-    final double? amount,
+    final double? quantity,
     final String? note,
     final String? originId,
     final double? price,
@@ -60,7 +59,7 @@ class MatStatementItemModel implements PlutoAdaptable {
   }) {
     return MatStatementItemModel(
       matOrigin: matOrigin ?? this.matOrigin,
-      amount: amount ?? this.amount,
+      quantity: quantity ?? this.quantity,
       note: note ?? this.note,
       date: date ?? this.date,
       price: price ?? this.price,
@@ -70,14 +69,15 @@ class MatStatementItemModel implements PlutoAdaptable {
 
   @override
   String toString() {
-    return 'MatStatementItemModel(docId: $id, amount: $amount, matOriginType: ${matOrigin?.toJson()}, price: $price'
+    return 'MatStatementItemModel(docId: $id, amount: $quantity, matOriginType: ${matOrigin?.toJson()}, price: $price'
         ', date: $date, note: $note)';
   }
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
-      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): matOrigin?.originId ?? '',
+      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()):
+          matOrigin?.originId ?? '',
       createAutoIdColumn(): '',
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
