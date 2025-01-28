@@ -1,4 +1,4 @@
-import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';

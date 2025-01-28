@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
-import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';

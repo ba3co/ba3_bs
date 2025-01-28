@@ -8,7 +8,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/widgets/app_button.dart';
-import '../../../materials/data/models/material_model.dart';
+import '../../../materials/data/models/materials/material_model.dart';
 import 'bill_pluto_grid_service.dart';
 import 'bill_pluto_utils.dart';
 

@@ -23,8 +23,8 @@ import 'package:ba3_bs/features/customer/data/datasources/remote/customers_data_
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
-import 'package:ba3_bs/features/materials/data/models/material_group.dart';
-import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/materials/service/material_export.dart';
 import 'package:ba3_bs/features/materials/service/materials_groups_import.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';

@@ -127,14 +127,9 @@ enum BillType {
       accounts: {
         BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
       }),
-  transferIn(
-      label: 'transferIn',
-      value: 'تسوية الزيادة',
-      typeGuide: "494fa945-3fe5-4fc3-86d6-7a9999b6c9e8",
-      color: 4278228616,
-      accounts: {
-        BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      }),
+  transferIn(label: 'transferIn', value: 'تسوية الزيادة', typeGuide: "494fa945-3fe5-4fc3-86d6-7a9999b6c9e8", color: 4278228616, accounts: {
+    BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+  }),
   transferOut(
     label: 'transferOut',
     value: 'تسوية النقص',
@@ -414,6 +409,22 @@ enum EntryBondType {
   }
 }
 
+enum MatOriginType {
+  bill('bill');
+
+  final String label;
+
+  const MatOriginType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory MatOriginType.byLabel(String label) {
+    return MatOriginType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching MatOriginType for label: $label'),
+    );
+  }
+}
+
 enum BondItemType {
   creditor('الدائن'),
   debtor('مدين');
@@ -637,11 +648,7 @@ enum VatEnums {
       taxName: 'ضريبة القيمة المضافة رأس الخيمة',
       taxRatio: 0.05,
       taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16'),
-  withOutVat(
-      taxGuid: 'kCfkUHwNyRbxTlD71uXV',
-      taxName: 'معفى',
-      taxRatio: 0,
-      taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
+  withOutVat(taxGuid: 'kCfkUHwNyRbxTlD71uXV', taxName: 'معفى', taxRatio: 0, taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
 
   final String? taxGuid;
   final String? taxName;

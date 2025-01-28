@@ -4,8 +4,8 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/widgets/pluto_auto_id_column.dart';
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../../core/widgets/pluto_auto_id_column.dart';
 
 part 'material_model.g.dart'; // This will be generated automatically by the build_runner
 

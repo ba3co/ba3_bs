@@ -2,8 +2,8 @@ import 'package:ba3_bs/core/helper/extensions/basic/double_nullable_to_string.da
 import 'package:ba3_bs/core/helper/extensions/basic/int_nullable_to_string.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
-import 'package:ba3_bs/features/materials/data/models/material_group.dart';
-import 'package:ba3_bs/features/materials/data/models/material_model.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 

@@ -2,7 +2,7 @@
 
 import 'package:ba3_bs/core/services/local_database/interfaces/local_datasource_base.dart';
 
-import '../../models/material_model.dart';
+import '../../models/materials/material_model.dart';
 
 class MaterialsLocalDatasource extends LocalDatasourceBase<MaterialModel> {
   MaterialsLocalDatasource(super.database);

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
-import '../../materials/data/models/material_model.dart';
+import '../../materials/data/models/materials/material_model.dart';
 import '../../users_management/controllers/user_management_controller.dart';
 import '../../users_management/data/models/user_model.dart';
 import '../data/model/changes_model.dart';

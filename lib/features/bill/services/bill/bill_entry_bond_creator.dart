@@ -5,8 +5,7 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
-import 'package:ba3_bs/features/materials/data/models/material_model.dart';
-import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/entry_bond_creator/implementations/base_entry_bond_creator.dart';

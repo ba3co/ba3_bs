@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/interfaces/import/i_import_repository.dart';
-import 'package:ba3_bs/features/materials/data/models/material_group.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 

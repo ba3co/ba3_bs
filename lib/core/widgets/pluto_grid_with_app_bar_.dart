@@ -43,7 +43,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     return Scaffold(
       appBar: appBar ?? _buildAppBar(),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator()) // تحسين عرض التحميل
+          ? const Center(child: CircularProgressIndicator())
           : _buildGrid(context),
     );
   }
@@ -68,9 +68,6 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
                     evenRowColor: Colors.blueAccent.withAlpha(127),
-                    activatedColor: Colors.white.withAlpha(127),
-                    gridPopupBorderRadius: const BorderRadius.all(Radius.circular(15)),
-                    gridBorderRadius: const BorderRadius.all(Radius.circular(15)),
                   ),
                   localeText: const PlutoGridLocaleText.arabic(),
                 ),

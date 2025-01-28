@@ -11,7 +11,7 @@ import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_sa
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
-import 'package:ba3_bs/features/materials/data/models/material_group.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
@@ -26,7 +26,7 @@ import '../../../core/services/firebase/implementations/services/firestore_uploa
 import '../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
-import '../data/models/material_model.dart';
+import '../data/models/materials/material_model.dart';
 
 class MaterialController extends GetxController with AppNavigator {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
