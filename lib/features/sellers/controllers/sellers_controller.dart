@@ -68,13 +68,26 @@ class SellersController extends GetxController with AppNavigator {
     }
   }
 
-  void _handelFetchAllSellersFromLocalSuccess(List<SellerModel> fetchedSellersFromNetwork) {
-    final fetchedSellers = fetchedSellersFromNetwork;
-    logger.d('fetchedSellers length ${fetchedSellers.length}');
-    logger.d('fetchedSellers first ${fetchedSellers.first.toJson()}');
+  void _handelFetchAllSellersFromLocalSuccess(List<SellerModel> fetchedSellers) async {
+    logger.d("fetchedSellers length ${fetchedSellers.length}");
+    logger.d('sellers length is ${sellers.length}');
+    logger.d('getAllSellersNotExist length is ${getAllSellersNotExist(sellers, fetchedSellers).length}');
+    if (sellers.isNotEmpty && getAllSellersNotExist(sellers, fetchedSellers).isNotEmpty) {
+      await _sellersFirebaseRepo.saveAll(getAllSellersNotExist(sellers, fetchedSellers));
+      AppUIUtils.onSuccess("تم اضافة  ${getAllSellersNotExist(sellers, fetchedSellers).length}");
+      sellers.addAll(getAllSellersNotExist(sellers, fetchedSellers));
+    }
+  }
 
-    sellers.assignAll(fetchedSellers);
-    _sellersFirebaseRepo.saveAll(fetchedSellers);
+  List<SellerModel> getAllSellersNotExist(List<SellerModel> currentMaterials, List<SellerModel> fetchedMaterials) {
+    List<SellerModel> sellers = [];
+    final existingMatNames = currentMaterials.map((e) => e.costName).toSet();
+    for (var element in fetchedMaterials) {
+      if (!existingMatNames.contains(element.costName)) {
+        sellers.add(element);
+      }
+    }
+    return sellers;
   }
 
   Future<void> addSeller(SellerModel seller) async {
@@ -122,7 +135,7 @@ class SellersController extends GetxController with AppNavigator {
   String getSellerIdByName(String? name) {
     // log(name.toString());
     // log("sellers    ${sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid}");
-    if(name=='BASUES') name='BASUS';
+    if (name == 'BASUES') name = 'BASUS';
 
     if (name == null || name.isEmpty) return '';
     return sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid ?? '';
