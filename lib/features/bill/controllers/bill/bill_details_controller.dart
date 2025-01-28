@@ -223,6 +223,12 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
+  appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber}) {
+    BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
+
+    billSearchController.insertLastAndUpdate(newBill);
+  }
+
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
     final sellerController = read<SellersController>();
 
@@ -251,7 +257,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       billNote: noteController.text,
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
-      billFirstPay:firstPayController.text.toDouble,
+      billFirstPay: firstPayController.text.toDouble,
       billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billSellerId: sellerController.selectedSellerAccount!.costGuid!,
       billPayType: selectedPayType.value.index,
@@ -285,7 +291,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate = bill.billDetails.billDate!;
-
+    isBillSaved.value = bill.billId != null;
     noteController.text = bill.billDetails.note ?? '';
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
@@ -326,7 +332,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-           spacing: 5,
+          spacing: 5,
           children: [
             TextAndExpandedChildField(label: 'الدفعة الاولى', child: CustomTextFieldWithoutIcon(textEditingController: firstPayController)),
             AppButton(title: 'تم', onPressed: () => OverlayService.back())

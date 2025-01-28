@@ -186,10 +186,8 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   void updateBondDetailsOnScreen(BondModel bond, BondDetailsPlutoController bondPlutoController) {
-    log("bond.payDate! ${bond.payDate!}");
-    log("bond.payDate!.toDate ${bond.payDate.toDate}");
     setBondDate(bond.payDate!.toDate);
-
+    isBondSaved.value=bond.payGuid!=null;
     initBondNumberController(bond.payNumber);
 
     if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid) != null) {
@@ -211,5 +209,12 @@ class BondDetailsController extends GetxController with AppValidator {
       fileName: AppStrings.bond,
       itemModel: bondModel,
     );
+  }
+
+
+  appendNewBill({required BondType bondType, required int lastBondNumber}) {
+    BondModel newBond = BondModel.empty(bondType: bondType, lastBondNumber: lastBondNumber);
+
+    bondSearchController.insertLastAndUpdate(newBond);
   }
 }

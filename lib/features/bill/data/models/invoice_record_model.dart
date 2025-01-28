@@ -199,6 +199,7 @@ class InvoiceRecordModel {
       ): invRecId,
       PlutoColumn(
         title: 'المادة',
+        width: 300,
         field: AppConstants.invRecProduct,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
@@ -208,14 +209,16 @@ class InvoiceRecordModel {
       PlutoColumn(
         title: 'الكمية',
         field: AppConstants.invRecQuantity,
+        width: 110,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecQuantity,
       PlutoColumn(
-        title: 'السعر الإفرادي',
+        title: 'الإفرادي',
         field: AppConstants.invRecSubTotal,
+        width: 110,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
@@ -224,12 +227,14 @@ class InvoiceRecordModel {
       if(billTypeModel.billPatternType!.hasVat)
       PlutoColumn(
         title: 'الضريبة',
+        width: 110,
         field: AppConstants.invRecVat,
         enableEditingMode: false,
         type: PlutoColumnType.text(),
       ): vat,
       PlutoColumn(
         title: 'المجموع',
+        width: 150,
         field: AppConstants.invRecTotal,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
@@ -239,6 +244,7 @@ class InvoiceRecordModel {
       if(billTypeModel.billPatternType!.hasGiftsAccount)
       PlutoColumn(
         title: 'الهدايا',
+        width: 110,
         field: AppConstants.invRecGift,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {

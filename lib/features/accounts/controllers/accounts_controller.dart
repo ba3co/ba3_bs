@@ -173,7 +173,7 @@ class AccountsController extends GetxController with AppNavigator {
 
     if (accountName == null || accountName.isEmpty) accountID = '';
     accountID = accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
-    if (accountID == '') log('getAccountIdByName with $accountName is null');
+    // if (accountID == '') log('getAccountIdByName with $accountName is null');
     return accountID;
   }
 

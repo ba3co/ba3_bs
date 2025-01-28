@@ -105,8 +105,7 @@ class BondSearchController extends GetxController {
   }
 
   /// Navigates to a Bond by its number.
-  Future<void> goToBondByNumber(int? bondNumber) async =>
-      await _navigateToBond(bondNumber!, NavigationDirection.specific);
+  Future<void> goToBondByNumber(int? bondNumber) async => await _navigateToBond(bondNumber!, NavigationDirection.specific);
 
   /// Moves to the next Bond if possible.
   Future<void> next() async => await _navigateToBond(currentBond.payNumber! + 1, NavigationDirection.next);
@@ -118,8 +117,7 @@ class BondSearchController extends GetxController {
   Future<void> jumpTenForward() async => await _navigateToBond(currentBond.payNumber! + 10, NavigationDirection.next);
 
   /// Moves to the previous Bond if possible.
-  Future<void> jumpTenBackward() async =>
-      await _navigateToBond(currentBond.payNumber! - 10, NavigationDirection.previous);
+  Future<void> jumpTenBackward() async => await _navigateToBond(currentBond.payNumber! - 10, NavigationDirection.previous);
 
   /// Moves to the next Bond if possible.
   Future<void> first() async => await _navigateToBond(1, NavigationDirection.next);
@@ -223,4 +221,9 @@ class BondSearchController extends GetxController {
 
   /// Displays an error message
   void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
+
+  void insertLastAndUpdate(BondModel newBond) {
+    bonds.add(newBond);
+    _setCurrentBond(bonds.indexOf(newBond));
+  }
 }
