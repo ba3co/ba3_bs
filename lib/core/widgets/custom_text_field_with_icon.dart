@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../constants/app_constants.dart';
+
 class CustomTextFieldWithIcon extends StatefulWidget {
   const CustomTextFieldWithIcon({
     super.key,
@@ -65,45 +67,53 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      readOnly: widget.readOnly,
-      onFieldSubmitted: widget.onSubmitted,
-      validator: widget.validator,
-      onChanged: widget.onChanged,
-      cursorHeight: 15,
-      controller: widget.textEditingController,
-      inputFormatters: widget.inputFormatters,
-      onTap: () => widget.textEditingController.selection =
-          TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
-      style: widget.textStyle ?? const TextStyle(fontSize: 14),
-      decoration: InputDecoration(
-          fillColor: Colors.white,
-          filled: true,
-          errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
-          isDense: true,
-          disabledBorder: UnderlineInputBorder(
-            borderSide: const BorderSide(color: Colors.white, width: 2.0),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          border: UnderlineInputBorder(
-            borderSide: const BorderSide(color: Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.blue, width: 2.0),
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          suffixIcon: IconButton(
-            onPressed: widget.onIconPressed,
-            focusNode: FocusNode(skipTraversal: true),
-            icon: const Icon(Icons.search),
-          ),
-          // Add an icon as a prefix
-          contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)
-          // Center the text vertically
-          ),
-      textAlign: TextAlign.center,
+    return SizedBox(
+      height:AppConstants.constHeightTextField,
+
+      child: TextFormField(
+        readOnly: widget.readOnly,
+        onFieldSubmitted: widget.onSubmitted,
+        validator: widget.validator,
+        onChanged: widget.onChanged,
+        cursorHeight: 15,
+        scrollPadding: EdgeInsets.zero,
+
+        controller: widget.textEditingController,
+        inputFormatters: widget.inputFormatters,
+        onTap: () => widget.textEditingController.selection =
+            TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
+        style: widget.textStyle ?? const TextStyle(fontSize: 14),
+        decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+            errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
+            isDense: true,
+            disabledBorder: UnderlineInputBorder(
+              borderSide: const BorderSide(color: Colors.white, width: 2.0),
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            border: UnderlineInputBorder(
+              borderSide: const BorderSide(color: Colors.black, width: 2.0),
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.blue, width: 2.0),
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            suffixIcon: IconButton(
+              onPressed: widget.onIconPressed,
+              focusNode: FocusNode(skipTraversal: true),
+              icon: const Icon(Icons.search),
+            ),
+            // Add an icon as a prefix
+            contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)
+            // Center the text vertically
+            ),
+        textAlign: TextAlign.center,
+
+
       // Center the text horizontally
+      ),
     );
   }
 }

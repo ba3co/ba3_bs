@@ -1,3 +1,5 @@
+
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -73,13 +75,15 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: widget.height,
+      height:AppConstants.constHeightTextField,
       child: TextFormField(
+
         maxLines: widget.maxLine,
         maxLength: widget.maxLength,
         onChanged: widget.onChanged,
         validator: widget.validator,
         enabled: widget.enabled,
+        // readOnly: widget.enable,
         onFieldSubmitted: widget.onSubmitted,
         controller: widget.textEditingController,
         keyboardType: widget.keyboardType,
@@ -107,8 +111,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
               ),
               borderRadius: BorderRadius.circular(5.0),
             ),
-            suffixIcon: widget.suffixIcon,
-            contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)),
+            suffixIcon: SizedBox.shrink(),
+            contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 0)),
         textAlign: TextAlign.center,
         // Center the text horizontally
       ),

@@ -171,7 +171,7 @@ class BondDetailsController extends GetxController with AppValidator {
     // Create and return the bond model
 
     return _bondService.createBondModel(
-        bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount!.id!, note: noteController.text);
+        bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount?.id!??"00000000-0000-0000-0000-000000000000", note: noteController.text);
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>

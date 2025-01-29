@@ -88,9 +88,9 @@ class BondDetailsService with PdfBase, FloatingLauncher {
     AppUIUtils.onSuccess(successMessage);
 
     Map<String, AccountModel> modifiedBondTypeAccounts = {};
-
     if (isSave) {
       bondDetailsController.updateIsBondSaved(true);
+
       if (hasModelId(currentBond.payGuid) && hasModelItems(currentBond.payItems.itemList)) {
         generateAndSendPdf(
           fileName: AppStrings.newBond,
@@ -102,7 +102,6 @@ class BondDetailsService with PdfBase, FloatingLauncher {
         previousBond: previousBond!,
         currentBond: currentBond,
       );
-      bondSearchController.updateBond(currentBond);
       if (hasModelId(currentBond.payGuid) &&
           hasModelItems(currentBond.payItems.itemList) &&
           hasModelId(previousBond.payGuid) &&
@@ -113,6 +112,7 @@ class BondDetailsService with PdfBase, FloatingLauncher {
         );
       }
     }
+    bondSearchController.updateBond(currentBond);
 
     final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBond);
 

@@ -58,7 +58,7 @@ class BillDetailsHeader extends StatelessWidget {
                 label: 'رقم الجوال',
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: billDetailsController.mobileNumberController,
-                  suffixIcon: const SizedBox.shrink(),
+                  // suffixIcon: const SizedBox.shrink(),
                 ),
               ),
               secondItem: SearchableAccountField(

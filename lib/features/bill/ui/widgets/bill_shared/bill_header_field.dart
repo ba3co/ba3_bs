@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_constants.dart';
+
 class TextAndExpandedChildField extends StatelessWidget {
   final String label;
   final Widget child;
@@ -11,6 +13,8 @@ class TextAndExpandedChildField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      height:AppConstants.constHeightTextField,
+
       width: width ?? Get.width * 0.45,
       child: Row(
         children: [

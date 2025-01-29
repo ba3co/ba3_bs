@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/pdf_helper.dart';
+import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
@@ -103,12 +104,32 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
 
   List<List<dynamic>> _buildItemsComparisonData(BondModel beforeUpdate, BondModel afterUpdate, Font? font) {
     // Create maps of items for easier lookup by item GUID
-    final itemsBefore = beforeUpdate.payItems.itemList.groupBy(
-      (p0) => p0.entryAccountGuid,
-    );
-    final itemsAfter = afterUpdate.payItems.itemList.groupBy(
-      (p0) => p0.entryAccountGuid,
-    );
+    final itemsBefore = beforeUpdate.payItems.itemList
+        .mergeBy(
+          (payEntry) => payEntry.entryAccountGuid,
+          (existing, current) => PayItem(
+              entryAccountName: existing.entryAccountName,
+              entryNote: existing.entryNote! + current.entryNote!,
+              entryCredit: existing.entryCredit! + current.entryCredit!,
+              entryDebit: existing.entryDebit! + current.entryDebit!,
+              entryDate: existing.entryDate),
+        )
+        .toMap(
+          (e) => e.entryAccountGuid,
+        );
+    final itemsAfter = afterUpdate.payItems.itemList
+        .mergeBy(
+          (payEntry) => payEntry.entryAccountGuid,
+          (existing, current) => PayItem(
+              entryAccountName: existing.entryAccountName,
+              entryNote: existing.entryNote! + current.entryNote!,
+              entryCredit: existing.entryCredit! + current.entryCredit!,
+              entryDebit: existing.entryDebit! + current.entryDebit!,
+              entryDate: existing.entryDate),
+        )
+        .toMap(
+          (e) => e.entryAccountGuid,
+        );
 
     // Combine all GUIDs from both before and after updates
     final allGuids = {...itemsBefore.keys, ...itemsAfter.keys};
@@ -118,34 +139,14 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
       final after = itemsAfter[guid];
 
       return [
-        buildTextCell(before?.firstOrNull?.entryAccountName ?? '', font),
-        buildTextCell(after?.firstOrNull?.entryAccountName ?? '', font),
-        (before?.fold(
-                  0.0,
-                  (previousValue, element) => previousValue + element.entryDebit!,
-                ) ??
-                0)
-            .toString(),
-        (after?.fold(
-                  0.0,
-                  (previousValue, element) => previousValue + element.entryDebit!,
-                ) ??
-                0)
-            .toString(),
-        (before?.fold(
-                  0.0,
-                  (previousValue, element) => previousValue + element.entryCredit!,
-                ) ??
-                0)
-            .toString(),
-        (after?.fold(
-                  0.0,
-                  (previousValue, element) => previousValue + element.entryCredit!,
-                ) ??
-                0)
-            .toString(),
-        before?.firstOrNull?.entryNote ?? '',
-        after?.firstOrNull?.entryNote ?? '',
+        buildTextCell(before?.entryAccountName ?? '', font),
+        buildTextCell(after?.entryAccountName ?? '', font),
+        (before?.entryDebit.toString()),
+        (after?.entryDebit.toString()),
+        (before?.entryCredit.toString()),
+        (after?.entryCredit.toString()),
+        before?.entryNote ?? '',
+        after?.entryNote ?? '',
       ];
     }).toList();
   }
