@@ -23,7 +23,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     for (final matStatement in matsStatements) {
       await saveMatStatementModel(matStatementModel: matStatement);
 
-      onProgress?.call((counter++) / matsStatements.length);
+      onProgress?.call((++counter) / matsStatements.length);
     }
   }
 
