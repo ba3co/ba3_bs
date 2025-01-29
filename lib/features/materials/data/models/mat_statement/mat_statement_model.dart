@@ -13,7 +13,8 @@ class MatStatementModel implements PlutoAdaptable {
   final DateTime? date;
   final String? note;
   final String? matId;
-  final String? docId;
+  final String? originId;
+  final String? matName;
 
   MatStatementModel({
     this.matOrigin,
@@ -22,7 +23,8 @@ class MatStatementModel implements PlutoAdaptable {
     this.date,
     this.price,
     this.matId,
-    this.docId,
+    this.originId,
+    this.matName,
   });
 
   /// Creates an instance from a JSON object.
@@ -31,8 +33,9 @@ class MatStatementModel implements PlutoAdaptable {
       matOrigin: MatOrigin.fromJson(json['matOriginType']),
       quantity: (json['quantity'] as num?)?.toInt(),
       note: json['note'] as String?,
-      matId: json['matId'],
-      docId: json['docId'],
+      matId: json['matId'] as String?,
+      originId: json['docId'] as String?,
+      matName: json['matName'] as String?,
       date: DateTime.tryParse(json['date'] as String? ?? ''),
       price: (json['price'] as num?)?.toDouble(),
     );
@@ -45,7 +48,8 @@ class MatStatementModel implements PlutoAdaptable {
       'quantity': quantity,
       'note': note,
       'matId': matId,
-      'docId': docId,
+      'matName': matName,
+      'docId': originId,
       'date': date?.toIso8601String(),
       'price': price,
     };
@@ -61,6 +65,7 @@ class MatStatementModel implements PlutoAdaptable {
     final DateTime? date,
     final String? docId,
     final String? matId,
+    final String? matName,
   }) {
     return MatStatementModel(
       matOrigin: matOrigin ?? this.matOrigin,
@@ -69,13 +74,14 @@ class MatStatementModel implements PlutoAdaptable {
       date: date ?? this.date,
       price: price ?? this.price,
       matId: matId ?? this.matId,
-      docId: docId ?? this.docId,
+      originId: docId ?? this.originId,
+      matName: matName ?? this.matName,
     );
   }
 
   @override
   String toString() {
-    return 'MatStatementItemModel(docId: $docId, matId: $matId, amount: $quantity, matOriginType: ${matOrigin?.toJson()}, price: $price'
+    return 'MatStatementItemModel(originId: $originId, matId: $matId, matName: $matName, amount: $quantity, matOriginType: ${matOrigin?.toJson()}, price: $price'
         ', date: $date, note: $note)';
   }
 
@@ -85,6 +91,9 @@ class MatStatementModel implements PlutoAdaptable {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()):
           matOrigin?.originId ?? '',
       createAutoIdColumn(): '',
+      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.date()): matName,
+      PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.date()): quantity,
+      PlutoColumn(title: 'السعر', field: 'السعر', type: PlutoColumnType.date()): price,
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
     };

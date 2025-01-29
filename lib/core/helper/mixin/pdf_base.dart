@@ -73,13 +73,8 @@ mixin PdfBase {
     String? subject,
     String? body,
   }) async {
-    final pdfFilePath = await _generatePdf(
-      pdfGenerator: PdfGeneratorFactory.resolveGenerator(itemModel),
-      itemModel: itemModel,
-      fileName: fileName,
-      logoSrc: logoSrc,
-      fontSrc: fontSrc,
-    );
+    final pdfFilePath =
+        await _generatePdf(itemModel: itemModel, fileName: fileName, logoSrc: logoSrc, fontSrc: fontSrc);
 
     await sendToEmail(
       recipientEmail: recipientEmail,
@@ -92,13 +87,14 @@ mixin PdfBase {
 
   /// Generates the bill PDF and returns the file path
   Future<String> _generatePdf<T>({
-    required IPdfGenerator<T> pdfGenerator,
     required T itemModel,
     required String fileName,
     String? logoSrc,
     String? fontSrc,
   }) async {
-    final pdfGeneratorRepo = PdfGeneratorRepository<T>(pdfGenerator: pdfGenerator);
+    final IPdfGenerator pdfGenerator = PdfGeneratorFactory.resolveGenerator(itemModel);
+
+    final pdfGeneratorRepo = PdfGeneratorRepository(pdfGenerator: pdfGenerator);
 
     return await pdfGeneratorRepo.savePdf(itemModel, fileName, logoSrc: logoSrc, fontSrc: fontSrc);
   }

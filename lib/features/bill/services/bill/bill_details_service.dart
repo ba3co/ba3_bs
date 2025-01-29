@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
+import 'package:ba3_bs/core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,12 +22,13 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
+import '../../../materials/service/mat_statement_generator.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
 
-class BillDetailsService with PdfBase, FloatingLauncher {
+class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -100,6 +102,10 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
     }
+
+    if (billModel.status == Status.approved) {
+      deleteMatsStatementsModels(billModel);
+    }
   }
 
   Future<void> handleUpdateBillStatusSuccess({
@@ -110,15 +116,26 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     billSearchController.updateBill(updatedBillModel);
 
     if (updatedBillModel.status == Status.approved &&
-        updatedBillModel.billTypeModel.billPatternType!.hasCashesAccount) {
-      final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
+        updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+      generateAndSaveEntryBondsFromModel(model: updatedBillModel);
 
-      entryBondController.saveEntryBondModel(
-        entryBondModel: creator.createEntryBond(
-          isSimulatedVat: false,
-          originType: EntryBondType.bill,
-          model: updatedBillModel,
-        ),
+      // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
+      //
+      // entryBondController.saveEntryBondModel(
+      //   entryBondModel: creator.createEntryBond(
+      //     isSimulatedVat: false,
+      //     originType: EntryBondType.bill,
+      //     model: updatedBillModel,
+      //   ),
+      // );
+    }
+
+    if (updatedBillModel.status == Status.approved) {
+      generateAndSaveMatsStatements(
+        sourceModels: [updatedBillModel],
+        onProgress: (progress) {
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
       );
     }
   }
@@ -189,15 +206,29 @@ class BillDetailsService with PdfBase, FloatingLauncher {
     billSearchController.updateBill(currentBill);
 
     if (currentBill.status == Status.approved && currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
-      final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBill);
-
-      entryBondController.saveEntryBondModel(
+      generateAndSaveEntryBondsFromModel(
         modifiedAccounts: modifiedBillTypeAccounts,
-        entryBondModel: creator.createEntryBond(
-          isSimulatedVat: false,
-          originType: EntryBondType.bill,
-          model: currentBill,
-        ),
+        model: currentBill,
+      );
+
+      // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBill);
+      //
+      // entryBondController.saveEntryBondModel(
+      //   modifiedAccounts: modifiedBillTypeAccounts,
+      //   entryBondModel: creator.createEntryBond(
+      //     isSimulatedVat: false,
+      //     originType: EntryBondType.bill,
+      //     model: currentBill,
+      //   ),
+      // );
+    }
+
+    if (currentBill.status == Status.approved) {
+      generateAndSaveMatsStatements(
+        sourceModels: [currentBill],
+        onProgress: (progress) {
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
       );
     }
   }

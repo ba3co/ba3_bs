@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
@@ -21,7 +20,7 @@ import '../../ui/screens/cheques_details.dart';
 import 'cheques_details_controller.dart';
 import 'cheques_search_controller.dart';
 
-class AllChequesController extends FloatingChequesDetailsLauncher with AppNavigator {
+class AllChequesController extends FloatingChequesDetailsLauncher with EntryBondsGenerator, AppNavigator {
   final CompoundDatasourceRepository<ChequesModel, ChequesType> _chequesFirebaseRepo;
   final ImportExportRepository<ChequesModel> _jsonImportExportRepo;
 
@@ -75,7 +74,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
               (progress) {},
             );
 
-            read<EntryBondsGeneratorRepo>().saveEntryBonds(sourceModels: chequesList);
+            await generateAndSaveEntryBondsFromModels(sourceModels: chequesList);
           }
         },
       );

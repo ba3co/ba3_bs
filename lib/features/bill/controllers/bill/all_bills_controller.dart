@@ -30,7 +30,8 @@ import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
-class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, FirestoreSequentialNumbers {
+class AllBillsController extends FloatingBillDetailsLauncher
+    with AppNavigator, EntryBondsGenerator, FirestoreSequentialNumbers {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -148,7 +149,8 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
         },
       );
-      await read<EntryBondsGeneratorRepo>().saveEntryBonds(
+
+      await generateAndSaveEntryBondsFromModels(
         sourceModels: bills,
         onProgress: (progress) {
           uploadProgress.value = progress; // Update progress

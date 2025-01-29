@@ -75,7 +75,7 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subcollectionPath,
-      subDocumentId: item.docId,
+      subDocumentId: item.originId,
     );
   }
 
@@ -90,7 +90,7 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
-      subDocumentId: item.docId,
+      subDocumentId: item.originId,
       data: item.toJson(),
     );
 

@@ -59,7 +59,8 @@ class BillSearchController extends GetxController {
       );
 
   /// Validates the bill number range.
-  bool _isValidBillNumber(int? billNumber) => billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
+  bool _isValidBillNumber(int? billNumber) =>
+      billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
 
   /// Displays an error message for invalid bill numbers.
   void _showInvalidBillNumberError(int? billNumber) {
@@ -91,33 +92,47 @@ class BillSearchController extends GetxController {
     final billIndex = _getBillIndexByNumber(billToDelete.billDetails.billNumber);
     if (billIndex != -1) {
       bills.removeAt(billIndex);
-      reloadCurrentBill();
+      reloadCurrentBill(billToDelete: billToDelete);
     }
   }
 
   /// Reloads the current bill or shows an error if unavailable.
-  void reloadCurrentBill() {
+  void reloadCurrentBill({required BillModel billToDelete}) {
+    log('currentBillIndex $currentBillIndex');
+    log('bills.length ${bills.length}');
     if (currentBillIndex < bills.length) {
+      log('currentBillIndex < bills.length');
+
       _setCurrentBill(currentBillIndex);
     } else {
-      _displayErrorMessage('لا يوجد فاتورة أخرى');
+      log('_displayErrorMessage');
+      billDetailsController.appendNewBill(
+        billTypeModel: billToDelete.billTypeModel,
+        lastBillNumber: billToDelete.billDetails.billNumber!,
+      );
+
+      //   _displayErrorMessage('لا يوجد فاتورة أخرى');
     }
   }
 
   /// Navigates to a bill by its number.
-  Future<void> goToBillByNumber(int? billNumber) async => await _navigateToBill(billNumber!, NavigationDirection.specific);
+  Future<void> goToBillByNumber(int? billNumber) async =>
+      await _navigateToBill(billNumber!, NavigationDirection.specific);
 
   /// Moves to the next bill if possible.
   Future<void> next() async => await _navigateToBill(currentBill.billDetails.billNumber! + 1, NavigationDirection.next);
 
   /// Moves to the previous bill if possible.
-  Future<void> previous() async => await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
+  Future<void> previous() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
 
   /// Jumps forward by 10 bills from the current bill number.
-  Future<void> jumpForwardByTen() async => await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigationDirection.next);
+  Future<void> jumpForwardByTen() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigationDirection.next);
 
   /// Jumps backward by 10 bills from the current bill number.
-  Future<void> jumpBackwardByTen() async => await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigationDirection.previous);
+  Future<void> jumpBackwardByTen() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigationDirection.previous);
 
   /// Navigates to the first bill in the list.
   Future<void> first() async => await _navigateToBill(1, NavigationDirection.next);
@@ -135,6 +150,8 @@ class BillSearchController extends GetxController {
   }
 
   bool _validateAndHandleBillNumber(int billNumber) {
+    log('billNumber: ${billNumber}');
+    log('bills.last.billDetails.billNumber: ${bills.last.billDetails.billNumber}');
     if (!_isValidBillNumber(billNumber)) {
       _showInvalidBillNumberError(billNumber);
       return false;
@@ -153,7 +170,8 @@ class BillSearchController extends GetxController {
   }
 
   /// Checks if the bill number exists in the list and returns its index, or null if not found.
-  BillModel? _findExistingBill(int billNumber) => bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
+  BillModel? _findExistingBill(int billNumber) =>
+      bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Fetches the bill by number and handles success or failure.
   Future<void> _fetchAndNavigateToBill(int billNumber, NavigationDirection direction) async {

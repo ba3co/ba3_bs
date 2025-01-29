@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/network/api_constants.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
@@ -24,7 +23,7 @@ import '../pluto/bond_details_pluto_controller.dart';
 import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
-class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSequentialNumbers {
+class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGenerator, FirestoreSequentialNumbers {
   final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
   final ImportExportRepository<BondModel> _jsonImportExportRepo;
 
@@ -92,7 +91,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSeque
               BondType.values,
               (progress) {},
             );
-            await read<EntryBondsGeneratorRepo>().saveEntryBonds(
+            await generateAndSaveEntryBondsFromModels(
               sourceModels: bonds,
               onProgress: (progress) {
                 uploadProgress.value = progress; // Update progress

@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
 import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.dart';
@@ -5,8 +7,22 @@ import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import 'mat_statement_creator.dart';
 
-class MatsStatementsGenerator {
-  List<MatStatementModel> createMatsStatementsModels(List sourceModels) {
+mixin MatsStatementsGenerator {
+  final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
+
+  Future<void> generateAndSaveMatsStatements({
+    required List sourceModels,
+    void Function(double progress)? onProgress,
+  }) async {
+    final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
+
+    await _materialsStatementController.saveAllMatsStatementsModels(
+      matsStatements: matsStatementsModels,
+      onProgress: onProgress,
+    );
+  }
+
+  List<MatStatementModel> _generateMatsStatementsModels(List sourceModels) {
     return sourceModels.expand<MatStatementModel>(
       (model) {
         final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
@@ -14,22 +30,27 @@ class MatsStatementsGenerator {
       },
     ).toList();
   }
-}
 
-class MatStatementItemsGeneratorRepo {
-  final MatsStatementsGenerator matsStatementsGenerator;
+  Future<void> deleteMatsStatementsModels(BillModel billModel) async {
+    final String originId = billModel.billId!;
 
-  MatStatementItemsGeneratorRepo(this.matsStatementsGenerator);
+    final matMatStatementsModels = billModel.items.itemList
+        .map(
+          (item) => MatStatementModel(
+            matId: item.itemGuid,
+            originId: originId,
+          ),
+        )
+        .toList();
 
-  Future<void> saveEntryBonds({
-    required List sourceModels,
-    void Function(double progress)? onProgress,
-  }) async {
-    final matsStatementsModels = matsStatementsGenerator.createMatsStatementsModels(sourceModels);
-
-    await read<MaterialsStatementController>().saveAllMatsStatementsModels(
-      matsStatements: matsStatementsModels,
-      onProgress: onProgress,
+    final groupedMatMatStatementsModels = matMatStatementsModels.mergeBy(
+      (item) => item.matId,
+      (existing, current) => MatStatementModel(
+        matId: existing.matId,
+        originId: existing.originId,
+      ),
     );
+
+    await _materialsStatementController.deleteAllMatStatementModel(groupedMatMatStatementsModels);
   }
 }

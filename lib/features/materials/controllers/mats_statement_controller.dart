@@ -36,6 +36,39 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     );
   }
 
+  Future<void> deleteMatStatementModel(MatStatementModel matStatementModel) async {
+    final result = await _matStatementsRepo.delete(matStatementModel);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
+    );
+  }
+
+  Future<void> deleteAllMatStatementModel(List<MatStatementModel> matStatementsModels) async {
+    final List<Future<void>> deletedTasks = [];
+    final errors = <String>[];
+
+    for (final matStatementModel in matStatementsModels) {
+      deletedTasks.add(
+        _matStatementsRepo.delete(matStatementModel).then(
+          (deleteResult) {
+            deleteResult.fold(
+              (failure) => errors.add(failure.message), // Collect errors.
+              (_) {},
+            );
+          },
+        ),
+      );
+    }
+
+    await Future.wait(deletedTasks);
+
+    if (errors.isNotEmpty) {
+      AppUIUtils.onFailure('Some deletions failed: ${errors.join(', ')}');
+    }
+  }
+
 // // Text Controllers
 // final productForSearchController = TextEditingController();
 // final groupForSearchController = TextEditingController();

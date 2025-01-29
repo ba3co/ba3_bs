@@ -235,11 +235,16 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void savePayCheques(ChequesModel chequesModel) async {
     setIsPayed(true);
+
     final updatedModel = chequesModel.copyWith(chequesPayGuid: generateId(RecordType.entryBond));
-    final creator = ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.payStrategy).first;
+
+    final creator =
+        ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.payStrategy).first;
+
     EntryBondModel entryBondModel = creator.createEntryBond(originType: EntryBondType.cheque, model: updatedModel);
 
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
+
     read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
   }
 
@@ -252,11 +257,18 @@ class ChequesDetailsController extends GetxController with AppValidator {
 
   void refundPayCheques(ChequesModel chequesModel) async {
     setIsRefundPay(true);
+
     final updatedModel = chequesModel.copyWith(chequesRefundPayGuid: generateId(RecordType.entryBond));
-    final creator = ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.refundStrategy).first;
+
+    final creator =
+        ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.refundStrategy).first;
+
     EntryBondModel entryBondModel = creator.createEntryBond(originType: EntryBondType.cheque, model: updatedModel);
+
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
+
     log(entryBondModel.origin!.toJson().toString());
+
     read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
   }
 

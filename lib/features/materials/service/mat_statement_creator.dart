@@ -24,7 +24,8 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
           (matItem) => MatStatementModel(
             matOrigin: MatStatementCreatorFactory.resolveOriginType(model),
             matId: matItem.itemGuid,
-            docId: model.billId,
+            matName: matItem.itemName,
+            originId: model.billId,
             quantity: quantityStrategy.calculateQuantity(matItem.itemQuantity),
             date: model.billDetails.billDate!,
             price: matItem.itemSubTotalPrice,

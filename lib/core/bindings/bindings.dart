@@ -76,8 +76,6 @@ import '../../features/user_time/controller/user_time_controller.dart';
 import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
-import '../services/entry_bond_creator/implementations/entry_bonds_generator.dart';
-import '../services/entry_bond_creator/interfaces/i_entry_bonds_generator.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
@@ -107,8 +105,6 @@ class AppBindings extends Bindings {
     final compoundFireStoreService = _initializeCompoundFireStoreService();
 
     final translationService = _initializeTranslationService(dioClient);
-
-    final entryBondGenerator = _initializeEntryBondGenerator();
 
     final billImport = BillImport();
     final billExport = BillExport();
@@ -145,9 +141,6 @@ class AppBindings extends Bindings {
       customerImportService: customerImport,
     );
 
-    // Register the EntryBondRepository and inject the generator
-    lazyPut(EntryBondsGeneratorRepo(entryBondGenerator));
-
     lazyPut(repositories.listenableDatasourceRepo);
 
     // Lazy Controllers
@@ -163,8 +156,6 @@ class AppBindings extends Bindings {
   IRemoteDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreService();
 
   ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService() => CompoundFireStoreService();
-
-  IEntryBondGenerator _initializeEntryBondGenerator() => EntryBondsGenerator();
 
   ITranslationService _initializeTranslationService(IAPiClient dioClient) => GoogleTranslationService(
         baseUrl: ApiConstants.translationBaseUrl,
