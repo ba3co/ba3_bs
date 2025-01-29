@@ -39,9 +39,11 @@ class BondDetailsHeader extends StatelessWidget {
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: "البيان",
+
                   child: CustomTextFieldWithoutIcon(
+                    height: 30,
                     textEditingController: bondDetailsController.noteController,
-                    suffixIcon: const SizedBox.shrink(),
+                    // suffixIcon: const SizedBox.shrink(),
                   ),
                 )),
             const VerticalSpace(8),
