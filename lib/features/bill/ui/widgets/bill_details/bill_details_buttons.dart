@@ -57,13 +57,7 @@ class BillDetailsButtons extends StatelessWidget {
             onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
           ),
           if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
-          _buildActionButton(
-            title: 'جديد',
-            icon: Icons.new_label_rounded,
-            color: Colors.greenAccent,
-            onPressed: () => billDetailsController.appendNewBill(
-                billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!),
-          ),
+
           Obx(() => !billDetailsController.isCash
               ? AppButton(
                   height: 20,
