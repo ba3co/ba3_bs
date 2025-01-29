@@ -71,7 +71,7 @@
 //   print('${sugarMilkCoffee.description()} costs \$${sugarMilkCoffee.cost()}');
 // }
 
-import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+
 
 /// Virtual Proxy
 // Step 1: Define the Subject (Interface)
@@ -378,45 +378,3 @@ class SynchronizedBankAccountProxy implements BankAccount {
 //   int finalBalance = await account.balance;
 //   print("\nFinal balance: \$${finalBalance}");
 // }
-
-void main() {
-  List<Product> products = [
-    Product(id: "A1", name: "Apple", quantity: 2, price: 3.0),
-    Product(id: "A1", name: "Apple", quantity: 3, price: 4.5),
-    Product(id: "B2", name: "Banana", quantity: 1, price: 2.0),
-  ];
-
-  List<Product> mergedProducts = products.mergeBy(
-    (product) => product.id,
-    (existing, current) => Product(
-      id: existing.id,
-      name: existing.name,
-      quantity: existing.quantity + current.quantity,
-      price: existing.price + current.price,
-    ),
-  );
-
-  for (var product in mergedProducts) {
-    print("ID: ${product.id}, Name: ${product.name}, Quantity: ${product.quantity}, Price: ${product.price}");
-  }
-  List<String> words = ["apple", "banana", "cherry"];
-
-  Map<String, String> wordMap = words.toMap((word) => word);
-
-  print(wordMap);
-  // Output: {5: "apple", 6: "banana", 6: "cherry"} (last value overrides)
-}
-
-class Product {
-  final String id;
-  final String name;
-  final int quantity;
-  final double price;
-
-  Product({
-    required this.id,
-    required this.name,
-    required this.quantity,
-    required this.price,
-  });
-}

@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
 
 import '../../bill/data/models/bill_items.dart';
@@ -16,9 +17,9 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
   List<MatStatementModel> createMatStatement({required BillModel model}) {
     final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(model);
 
-    final groupItems = groupItemsById(model.items.itemList);
+    final mergedItems = mergeItemsById(model.items.itemList);
 
-    return groupItems
+    return mergedItems
         .map(
           (matItem) => MatStatementModel(
             matOrigin: MatStatementCreatorFactory.resolveOriginType(model),
@@ -33,15 +34,13 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
         .toList();
   }
 
-  List<BillItem> groupItemsById(List<BillItem> itemList) => itemList.mergeBy(
+  List<BillItem> mergeItemsById(List<BillItem> itemList) => itemList.mergeBy(
         (item) => item.itemGuid,
         (existing, current) => BillItem(
           itemGuid: existing.itemGuid,
           itemName: existing.itemName,
-          // Assuming name remains the same
           itemQuantity: existing.itemQuantity + current.itemQuantity,
-          itemTotalPrice:
-              (double.parse(existing.itemTotalPrice) + double.parse(current.itemTotalPrice)).toStringAsFixed(2),
+          itemTotalPrice: (existing.itemTotalPrice.toDouble + current.itemTotalPrice.toDouble).toStringAsFixed(2),
           itemSubTotalPrice: (existing.itemSubTotalPrice ?? 0.0) + (current.itemSubTotalPrice ?? 0.0),
           itemVatPrice: (existing.itemVatPrice ?? 0.0) + (current.itemVatPrice ?? 0.0),
           itemGiftsNumber: (existing.itemGiftsNumber ?? 0) + (current.itemGiftsNumber ?? 0),

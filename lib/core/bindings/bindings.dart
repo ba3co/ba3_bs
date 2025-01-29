@@ -263,6 +263,7 @@ class AppBindings extends Bindings {
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
+    lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
     lazyPut(
       MaterialController(
         repositories.materialImportExportRepo,
@@ -272,7 +273,6 @@ class AppBindings extends Bindings {
     );
     lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
     lazyPut(AddSellerController());
-    lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
   }
 }
 
