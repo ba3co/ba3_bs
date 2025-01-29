@@ -143,7 +143,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
 
   /// Helper function for calculating simulated VAT.
   double _calculateSimulatedVat(BillItem item) =>
-      ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity;
+      ((double.parse(item.itemTotalPrice) / 1.05) * 0.05);
 
   /// Helper function for calculating the actual VAT value.
   double _calculateActualVat(BillItem item) => item.itemVatPrice! * item.itemQuantity;
@@ -180,7 +180,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   }) {
     /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
     final vat = isSimulatedVat ?? false
-        ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) * item.itemQuantity
+        ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05)
         : item.itemVatPrice! * item.itemQuantity;
     final total = item.itemSubTotalPrice! * item.itemQuantity;
 
