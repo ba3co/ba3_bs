@@ -27,4 +27,13 @@ extension ListExtensions<T> on List<T> {
 
     return mergedMap.values.toList();
   }
+
+  /// Converts a list into a map using a key selector
+  Map<K, T> toMap<K>(K Function(T) keySelector) {
+    final Map<K, T> mapped = {};
+    for (var item in this) {
+      mapped[keySelector(item)] = item;
+    }
+    return mapped;
+  }
 }

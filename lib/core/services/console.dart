@@ -399,6 +399,12 @@ void main() {
   for (var product in mergedProducts) {
     print("ID: ${product.id}, Name: ${product.name}, Quantity: ${product.quantity}, Price: ${product.price}");
   }
+  List<String> words = ["apple", "banana", "cherry"];
+
+  Map<String, String> wordMap = words.toMap((word) => word);
+
+  print(wordMap);
+  // Output: {5: "apple", 6: "banana", 6: "cherry"} (last value overrides)
 }
 
 class Product {
