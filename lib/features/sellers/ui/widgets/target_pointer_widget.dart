@@ -5,8 +5,11 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class TargetPointerWidget extends StatefulWidget {
   final double value;
+  final double maxValue;
+  final double minValue;
+  final double midValue;
 
-  const TargetPointerWidget({super.key, required this.value});
+  const TargetPointerWidget({super.key, required this.value, required this.maxValue, required this.minValue, required this.midValue});
 
   @override
   State<TargetPointerWidget> createState() => TargetPointerWidgetState();
@@ -17,6 +20,7 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
   double _value = 0;
   double limit = 0;
 
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -25,7 +29,7 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
         _buildWidgetPointerExample(context),
         Container(
             height: 75,
-            width: 100,
+            width: 200,
             decoration: BoxDecoration(
               color: const Color.fromRGBO(33, 33, 33, 1),
               borderRadius: BorderRadius.circular(10),
@@ -110,15 +114,15 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
     return SfRadialGauge(
       axes: <RadialAxis>[
         RadialAxis(
-          interval: 5000,
-          labelOffset: 0.1,
+          interval: widget.maxValue/10,
+          labelOffset: 0.12,
           tickOffset: 0.125,
           minorTicksPerInterval: 0,
           labelsPosition: ElementsPosition.outside,
           offsetUnit: GaugeSizeUnit.factor,
           showAxisLine: false,
           showLastLabel: true,
-          maximum: 75000,
+          maximum: widget.maxValue,
           pointers: <GaugePointer>[
             NeedlePointer(
               needleEndWidth: 5,
@@ -130,23 +134,29 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
           ranges: <GaugeRange>[
             GaugeRange(
               startValue: 0,
-              endValue: 50000,
-              startWidth: 25,
-              endWidth: 25,
+              label:widget.minValue.toString() ,
+              labelStyle: GaugeTextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              endValue: widget.minValue,
+              startWidth: 40,
+              endWidth: 40,
               color: const Color.fromRGBO(74, 177, 70, 1),
             ),
             GaugeRange(
-              startValue: 50000,
-              endValue: 65000,
-              startWidth: 25,
-              endWidth: 25,
+              startValue: widget.minValue,
+              endValue: widget.midValue,
+              label:widget.midValue.toString() ,
+              labelStyle: GaugeTextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              startWidth: 40,
+              endWidth: 40,
               color: const Color.fromRGBO(251, 190, 32, 1),
             ),
             GaugeRange(
-              startValue: 65000,
-              endValue: 75000,
-              startWidth: 25,
-              endWidth: 25,
+              startValue: widget.midValue,
+              endValue: widget.maxValue,
+              label:widget.maxValue.toString() ,
+              labelStyle: GaugeTextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              startWidth: 40,
+              endWidth: 40,
               color: const Color.fromRGBO(237, 34, 35, 1),
             )
           ],

@@ -64,8 +64,8 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   @override
   void onInit() {
     super.onInit();
-    getAllRoles();
     getAllUsers();
+    getAllRoles();
 
     _initializeServices();
   }
@@ -102,12 +102,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() =>
-      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) =>
-      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -222,7 +220,6 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     final result = await _usersFirebaseRepo.fetchWhere(
       queryFilters: [QueryFilter(field: ApiConstants.userPassword, value: loginPasswordController.text)],
     );
-
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers),
@@ -234,20 +231,19 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
       await _handleNoMatch();
       return;
     }
+    final firstFetchedUser = fetchedUsers.firstWhereOrNull(
+      (user) => user.userName == loginNameController.text,
+    );
 
-    final firstFetchedUser = fetchedUsers.first;
+    if (firstFetchedUser == null) {
+      AppUIUtils.onFailure('أسم المستخدم غير صحيح!');
+      return;
+    }
 
     if (!_isUserActive(firstFetchedUser)) {
       if (currentRoute != AppRoutes.loginScreen) {
         offAll(AppRoutes.loginScreen);
       }
-      return;
-    }
-
-    final isLoginNameMatch = firstFetchedUser.userName?.trim() == loginNameController.text;
-
-    if (!isLoginNameMatch) {
-      AppUIUtils.onFailure('أسم المستخدم غير صحيح!');
       return;
     }
 
@@ -385,8 +381,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   // Call the ChangesController to create the document
-  Future<void> _createChangeDocument(String userId) async =>
-      await read<ChangesController>().createChangeDocument(userId);
+  Future<void> _createChangeDocument(String userId) async => await read<ChangesController>().createChangeDocument(userId);
 
   void logOut() {
     _sharedPreferencesService.remove(AppConstants.userIdKey);

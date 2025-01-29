@@ -94,7 +94,7 @@ class DatePicker extends StatelessWidget {
           // );
         },
         child: CustomTextFieldWithoutIcon(
-          enabled: true,
+          enabled: false,
           textEditingController: TextEditingController()..text = initDate ?? '',
           // padding: const EdgeInsets.all(8.0),
           // child: Row(
