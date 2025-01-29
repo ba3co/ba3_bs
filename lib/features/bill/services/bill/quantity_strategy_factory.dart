@@ -1,9 +1,12 @@
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/quantity_strategy.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 
 class QuantityStrategyFactory {
-  static QuantityStrategy getStrategy(BillType billType) {
+  static QuantityStrategy getStrategy(BillModel billModel) {
+    final BillType billType = BillType.byLabel(billModel.billTypeModel.billTypeLabel!);
+
     switch (billType) {
       case BillType.purchase:
       case BillType.salesReturn:

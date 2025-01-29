@@ -3,9 +3,9 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
 
 import '../../../../../core/models/query_filter.dart';
-import '../../models/mat_statement/mat_statement_item.dart';
+import '../../models/mat_statement/mat_statement_model.dart';
 
-class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementItemModel, String> {
+class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementModel, String> {
   MaterialsStatementsDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bills", "bonds")
@@ -13,9 +13,9 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
   String get rootCollectionPath => ApiConstants.materialsStatements; // Collection name in Firestore
 
   @override
-  Future<List<MatStatementItemModel>> fetchAll({required String itemTypeModel}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<List<MatStatementModel>> fetchAll({required String itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
     final dataList = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
@@ -23,38 +23,36 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
       subCollectionPath: subcollectionPath,
     );
 
-    // Flatten and map data['items'] into a single list of MatStatementItemModel
-    final entryBondItems = dataList.map((item) => MatStatementItemModel.fromJson(item)).toList();
+    final matStatements = dataList.map((item) => MatStatementModel.fromJson(item)).toList();
 
-    return entryBondItems;
+    return matStatements;
   }
 
   @override
-  Future<List<MatStatementItemModel>> fetchWhere<V>({
-    required String itemTypeModel,
+  Future<List<MatStatementModel>> fetchWhere<V>({
+    required String itemIdentifier,
     required String field,
     required V value,
     DateFilter? dateFilter,
   }) async {
     final dataList = await compoundDatabaseService.fetchWhere(
       rootCollectionPath: rootCollectionPath,
-      rootDocumentId: getRootDocumentId(itemTypeModel),
-      subCollectionPath: getSubCollectionPath(itemTypeModel),
+      rootDocumentId: getRootDocumentId(itemIdentifier),
+      subCollectionPath: getSubCollectionPath(itemIdentifier),
       field: field,
       value: value,
       dateFilter: dateFilter,
     );
 
-    // Flatten and map data['items'] into a single list of MatStatementItemModel
-    final entryBondItems = dataList.map((item) => MatStatementItemModel.fromJson(item)).toList();
+    final matStatements = dataList.map((item) => MatStatementModel.fromJson(item)).toList();
 
-    return entryBondItems;
+    return matStatements;
   }
 
   @override
-  Future<MatStatementItemModel> fetchById({required String id, required String itemTypeModel}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<MatStatementModel> fetchById({required String id, required String itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
     final data = await compoundDatabaseService.fetchById(
       rootCollectionPath: rootCollectionPath,
@@ -63,12 +61,12 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
       subDocumentId: id,
     );
 
-    return MatStatementItemModel.fromJson(data);
+    return MatStatementModel.fromJson(data);
   }
 
   @override
-  Future<void> delete({required MatStatementItemModel item}) async {
-    final String id = item.id!;
+  Future<void> delete({required MatStatementModel item}) async {
+    final String id = item.matId!;
 
     final rootDocumentId = getRootDocumentId(id);
     final subcollectionPath = getSubCollectionPath(id);
@@ -77,13 +75,13 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subcollectionPath,
-      subDocumentId: item.matOrigin?.originId,
+      subDocumentId: item.docId,
     );
   }
 
   @override
-  Future<MatStatementItemModel> save({required MatStatementItemModel item}) async {
-    final String id = item.id!;
+  Future<MatStatementModel> save({required MatStatementModel item}) async {
+    final String id = item.matId!;
 
     final rootDocumentId = getRootDocumentId(id);
     final subCollectionPath = getSubCollectionPath(id);
@@ -92,17 +90,17 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
-      subDocumentId: item.matOrigin?.originId,
+      subDocumentId: item.docId,
       data: item.toJson(),
     );
 
-    return MatStatementItemModel.fromJson(savedData);
+    return MatStatementModel.fromJson(savedData);
   }
 
   @override
-  Future<int> countDocuments({required String itemTypeModel, QueryFilter? countQueryFilter}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subCollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<int> countDocuments({required String itemIdentifier, QueryFilter? countQueryFilter}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
     final count = await compoundDatabaseService.countDocuments(
       rootCollectionPath: rootCollectionPath,
@@ -115,47 +113,43 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
   }
 
   @override
-  Future<Map<String, List<MatStatementItemModel>>> fetchAllNested({required List<String> itemTypes}) async {
-    final billsByType = <String, List<MatStatementItemModel>>{};
+  Future<Map<String, List<MatStatementModel>>> fetchAllNested({required List<String> itemIdentifiers}) async {
+    final matStatementById = <String, List<MatStatementModel>>{};
 
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
 
-    for (final billTypeModel in itemTypes) {
+    for (final matId in itemIdentifiers) {
       fetchTasks.add(
-        fetchAll(itemTypeModel: billTypeModel).then((result) {
-          billsByType[billTypeModel] = result;
+        fetchAll(itemIdentifier: matId).then((result) {
+          matStatementById[matId] = result;
         }),
       );
     }
     // Wait for all tasks to complete
     await Future.wait(fetchTasks);
 
-    return billsByType;
+    return matStatementById;
   }
 
   @override
-  Future<Map<String, List<MatStatementItemModel>>> saveAllNested({
-    required List<String> itemTypes,
-    required List<MatStatementItemModel> items,
+  Future<Map<String, List<MatStatementModel>>> saveAllNested({
+    required List<String> itemIdentifiers,
+    required List<MatStatementModel> items,
     void Function(double progress)? onProgress,
   }) async {
-    final billsByType = <String, List<MatStatementItemModel>>{};
+    final matStatementById = <String, List<MatStatementModel>>{};
 
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
 
-    for (final matId in itemTypes) {
+    for (final matId in itemIdentifiers) {
       fetchTasks.add(
         saveAll(
-                itemTypeModel: matId,
-                items: items
-                    .where(
-                      (element) => element.id == matId,
-                    )
-                    .toList())
-            .then((result) {
-          billsByType[matId] = result;
+          itemIdentifier: matId,
+          items: items.where((element) => element.matId == matId).toList(),
+        ).then((result) {
+          matStatementById[matId] = result;
         }),
       );
     }
@@ -163,24 +157,22 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementI
     // Wait for all tasks to complete
     await Future.wait(fetchTasks);
 
-    return billsByType;
+    return matStatementById;
   }
 
   @override
-  Future<List<MatStatementItemModel>> saveAll(
-      {required List<MatStatementItemModel> items, required String itemTypeModel}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subCollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<List<MatStatementModel>> saveAll(
+      {required List<MatStatementModel> items, required String itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
-      items: items.map((item) {
-        return item.toJson();
-      }).toList(),
+      items: items.map((item) => item.toJson()).toList(),
     );
 
-    return savedData.map(MatStatementItemModel.fromJson).toList();
+    return savedData.map(MatStatementModel.fromJson).toList();
   }
 }

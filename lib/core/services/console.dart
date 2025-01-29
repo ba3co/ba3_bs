@@ -71,6 +71,8 @@
 //   print('${sugarMilkCoffee.description()} costs \$${sugarMilkCoffee.cost()}');
 // }
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+
 /// Virtual Proxy
 // Step 1: Define the Subject (Interface)
 abstract class Image {
@@ -305,74 +307,110 @@ class SynchronizedBankAccountProxy implements BankAccount {
 }
 
 // Step 4: Client Code
-Future<void> main() async {
-  /// Virtual Proxy
-  print("=== Virtual Proxy ===");
-  print("Creating proxy for 'photo1.jpg'...");
-  Image image1 = ImageProxy("photo1.jpg");
+// Future<void> main() async {
+//   /// Virtual Proxy
+//   print("=== Virtual Proxy ===");
+//   print("Creating proxy for 'photo1.jpg'...");
+//   Image image1 = ImageProxy("photo1.jpg");
+//
+//   print("\nCreating proxy for 'photo2.jpg'...");
+//   Image image2 = ImageProxy("photo2.jpg");
+//
+//   print("\nDisplaying 'photo1.jpg'...");
+//   image1.display(); // Real image is loaded here
+//
+//   print("\nDisplaying 'photo2.jpg'...");
+//   image2.display(); // Real image is loaded here
+//
+//   print("\nDisplaying 'photo1.jpg' again...");
+//   image1.display(); // Real image is reused without loading
+//
+//   /// Remote Proxy
+//   print("\n=== Remote Proxy ===");
+//   print("Scenario 1: Unauthenticated user");
+//   RemoteService unauthenticatedService = RemoteServiceProxy(isAuthenticated: false);
+//   unauthenticatedService.fetchData();
+//
+//   print("\nScenario 2: Authenticated user");
+//   RemoteService authenticatedService = RemoteServiceProxy(isAuthenticated: true);
+//   authenticatedService.fetchData();
+//
+//   /// Protection Proxy
+//   print("\n=== Protection Proxy ===");
+//   Database dbAdmin = DatabaseProxy("admin");
+//   Database dbUser = DatabaseProxy("user");
+//
+//   dbAdmin.query("DELETE FROM users"); // Allowed
+//   dbUser.query("DELETE FROM users"); // Denied
+//
+//   /// Cache Proxy
+//   print("\n=== Cache Proxy ===");
+//   WeatherService weatherService = CachedWeatherServiceProxy();
+//
+//   print(weatherService.getWeather("New York")); // Fetches new data
+//   print(weatherService.getWeather("New York")); // Returns cached data
+//   print(weatherService.getWeather("Los Angeles")); // Fetches new data
+//
+//   /// Firewall Proxy
+//   print("\n=== Firewall Proxy ===");
+//   WebServer server = FirewallProxy();
+//
+//   server.handleRequest("192.168.1.5"); // Blocked
+//   server.handleRequest("192.168.1.10"); // Allowed
+//
+//   /// Synchronization Proxy
+//   print("\n=== Synchronization Proxy: Bank Account ===");
+//   BankAccount account = SynchronizedBankAccountProxy();
+//
+//   // Simulate multiple tasks depositing and withdrawing money
+//   List<Future> tasks = [
+//     account.deposit(100),
+//     account.withdraw(50),
+//     account.deposit(200),
+//     account.withdraw(150),
+//     account.withdraw(200),
+//   ];
+//
+//   print("\nSimulating multiple transactions...");
+//   await Future.wait(tasks);
+//
+//   // Get the final balance
+//   int finalBalance = await account.balance;
+//   print("\nFinal balance: \$${finalBalance}");
+// }
 
-  print("\nCreating proxy for 'photo2.jpg'...");
-  Image image2 = ImageProxy("photo2.jpg");
-
-  print("\nDisplaying 'photo1.jpg'...");
-  image1.display(); // Real image is loaded here
-
-  print("\nDisplaying 'photo2.jpg'...");
-  image2.display(); // Real image is loaded here
-
-  print("\nDisplaying 'photo1.jpg' again...");
-  image1.display(); // Real image is reused without loading
-
-  /// Remote Proxy
-  print("\n=== Remote Proxy ===");
-  print("Scenario 1: Unauthenticated user");
-  RemoteService unauthenticatedService = RemoteServiceProxy(isAuthenticated: false);
-  unauthenticatedService.fetchData();
-
-  print("\nScenario 2: Authenticated user");
-  RemoteService authenticatedService = RemoteServiceProxy(isAuthenticated: true);
-  authenticatedService.fetchData();
-
-  /// Protection Proxy
-  print("\n=== Protection Proxy ===");
-  Database dbAdmin = DatabaseProxy("admin");
-  Database dbUser = DatabaseProxy("user");
-
-  dbAdmin.query("DELETE FROM users"); // Allowed
-  dbUser.query("DELETE FROM users"); // Denied
-
-  /// Cache Proxy
-  print("\n=== Cache Proxy ===");
-  WeatherService weatherService = CachedWeatherServiceProxy();
-
-  print(weatherService.getWeather("New York")); // Fetches new data
-  print(weatherService.getWeather("New York")); // Returns cached data
-  print(weatherService.getWeather("Los Angeles")); // Fetches new data
-
-  /// Firewall Proxy
-  print("\n=== Firewall Proxy ===");
-  WebServer server = FirewallProxy();
-
-  server.handleRequest("192.168.1.5"); // Blocked
-  server.handleRequest("192.168.1.10"); // Allowed
-
-  /// Synchronization Proxy
-  print("\n=== Synchronization Proxy: Bank Account ===");
-  BankAccount account = SynchronizedBankAccountProxy();
-
-  // Simulate multiple tasks depositing and withdrawing money
-  List<Future> tasks = [
-    account.deposit(100),
-    account.withdraw(50),
-    account.deposit(200),
-    account.withdraw(150),
-    account.withdraw(200),
+void main() {
+  List<Product> products = [
+    Product(id: "A1", name: "Apple", quantity: 2, price: 3.0),
+    Product(id: "A1", name: "Apple", quantity: 3, price: 4.5),
+    Product(id: "B2", name: "Banana", quantity: 1, price: 2.0),
   ];
 
-  print("\nSimulating multiple transactions...");
-  await Future.wait(tasks);
+  List<Product> mergedProducts = products.mergeBy(
+    (product) => product.id,
+    (existing, current) => Product(
+      id: existing.id,
+      name: existing.name,
+      quantity: existing.quantity + current.quantity,
+      price: existing.price + current.price,
+    ),
+  );
 
-  // Get the final balance
-  int finalBalance = await account.balance;
-  print("\nFinal balance: \$${finalBalance}");
+  for (var product in mergedProducts) {
+    print("ID: ${product.id}, Name: ${product.name}, Quantity: ${product.quantity}, Price: ${product.price}");
+  }
+}
+
+class Product {
+  final String id;
+  final String name;
+  final int quantity;
+  final double price;
+
+  Product({
+    required this.id,
+    required this.name,
+    required this.quantity,
+    required this.price,
+  });
 }

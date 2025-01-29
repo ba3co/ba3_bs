@@ -1,17 +1,17 @@
 abstract class QuantityStrategy {
-  double calculateQuantity(double baseQuantity);
+  int calculateQuantity(int baseQuantity);
 }
 
 class AddQuantityStrategy implements QuantityStrategy {
   @override
-  double calculateQuantity(double baseQuantity) {
+  int calculateQuantity(int baseQuantity) {
     return baseQuantity; // Adds quantity as-is
   }
 }
 
 class SubtractQuantityStrategy implements QuantityStrategy {
   @override
-  double calculateQuantity(double baseQuantity) {
+  int calculateQuantity(int baseQuantity) {
     return -baseQuantity; // Subtracts quantity
   }
 }

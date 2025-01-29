@@ -4,33 +4,36 @@ import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../../pluto/data/models/pluto_adaptable.dart';
 
-class MatStatementItemModel implements PlutoAdaptable {
+class MatStatementModel implements PlutoAdaptable {
   final MatOrigin? matOrigin;
 
-  final double? quantity;
+  final int? quantity;
 
   final double? price;
-  final String? date;
+  final DateTime? date;
   final String? note;
-  final String? id;
+  final String? matId;
+  final String? docId;
 
-  MatStatementItemModel({
+  MatStatementModel({
     this.matOrigin,
     this.quantity,
     this.note,
     this.date,
     this.price,
-    this.id,
+    this.matId,
+    this.docId,
   });
 
   /// Creates an instance from a JSON object.
-  factory MatStatementItemModel.fromJson(Map<String, dynamic> json) {
-    return MatStatementItemModel(
+  factory MatStatementModel.fromJson(Map<String, dynamic> json) {
+    return MatStatementModel(
       matOrigin: MatOrigin.fromJson(json['matOriginType']),
-      quantity: (json['quantity'] as num?)?.toDouble(),
+      quantity: (json['quantity'] as num?)?.toInt(),
       note: json['note'] as String?,
-      id: json['docId'] as String?,
-      date: json['date'] as String?,
+      matId: json['matId'],
+      docId: json['docId'],
+      date: DateTime.tryParse(json['date'] as String? ?? ''),
       price: (json['price'] as num?)?.toDouble(),
     );
   }
@@ -41,35 +44,38 @@ class MatStatementItemModel implements PlutoAdaptable {
       'matOriginType': matOrigin?.toJson(),
       'quantity': quantity,
       'note': note,
-      'docId': id,
-      'date': date,
+      'matId': matId,
+      'docId': docId,
+      'date': date?.toIso8601String(),
       'price': price,
     };
   }
 
   /// Creates a new instance with modified fields.
-  MatStatementItemModel copyWith({
+  MatStatementModel copyWith({
     final MatOrigin? matOrigin,
-    final double? quantity,
+    final int? quantity,
     final String? note,
     final String? originId,
     final double? price,
-    final String? date,
-    final String? id,
+    final DateTime? date,
+    final String? docId,
+    final String? matId,
   }) {
-    return MatStatementItemModel(
+    return MatStatementModel(
       matOrigin: matOrigin ?? this.matOrigin,
       quantity: quantity ?? this.quantity,
       note: note ?? this.note,
       date: date ?? this.date,
       price: price ?? this.price,
-      id: id ?? this.id,
+      matId: matId ?? this.matId,
+      docId: docId ?? this.docId,
     );
   }
 
   @override
   String toString() {
-    return 'MatStatementItemModel(docId: $id, amount: $quantity, matOriginType: ${matOrigin?.toJson()}, price: $price'
+    return 'MatStatementItemModel(docId: $docId, matId: $matId, amount: $quantity, matOriginType: ${matOrigin?.toJson()}, price: $price'
         ', date: $date, note: $note)';
   }
 
@@ -103,7 +109,7 @@ class MatOrigin {
 
   factory MatOrigin.fromJson(Map<String, dynamic> json) {
     return MatOrigin(
-      originId: json['docId'] as String?,
+      originId: json['originId'] as String?,
       originTypeId: json['originTypeId'] as String?,
       originType: MatOriginType.byLabel(json['originType']),
     );
@@ -111,7 +117,7 @@ class MatOrigin {
 
   Map<String, dynamic> toJson() {
     return {
-      'docId': originId,
+      'originId': originId,
       'originTypeId': originTypeId,
       'originType': originType?.label,
     };

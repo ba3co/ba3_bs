@@ -6,7 +6,6 @@ import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
@@ -194,7 +193,8 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterials();
 
-    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode =
+        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -263,25 +263,26 @@ class MaterialController extends GetxController with AppNavigator {
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
-      .nonLoggedInUsers
-      .map(
-        (user) => ChangesModel(
-          targetUserId: user.userId!,
-          changeItems: {
-            ChangeCollection.materials: [
-              ChangeItem(
-                target: ChangeTarget(
-                  targetCollection: ChangeCollection.materials,
-                  changeType: changeType,
-                ),
-                change: materialModel.toJson(),
-              )
-            ]
-          },
-        ),
-      )
-      .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
+      read<UserManagementController>()
+          .nonLoggedInUsers
+          .map(
+            (user) => ChangesModel(
+              targetUserId: user.userId!,
+              changeItems: {
+                ChangeCollection.materials: [
+                  ChangeItem(
+                    target: ChangeTarget(
+                      targetCollection: ChangeCollection.materials,
+                      changeType: changeType,
+                    ),
+                    change: materialModel.toJson(),
+                  )
+                ]
+              },
+            ),
+          )
+          .toList();
 
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save

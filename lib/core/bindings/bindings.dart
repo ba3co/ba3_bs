@@ -61,8 +61,11 @@ import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/customer/service/customer_import.dart';
 import '../../features/materials/controllers/material_controller.dart';
+import '../../features/materials/controllers/mats_statement_controller.dart';
 import '../../features/materials/data/datasources/local/material_local_data_source.dart';
 import '../../features/materials/data/datasources/remote/materials_groups_data_source.dart';
+import '../../features/materials/data/datasources/remote/materials_statements_data_source.dart';
+import '../../features/materials/data/models/mat_statement/mat_statement_model.dart';
 import '../../features/materials/service/material_import.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
@@ -230,6 +233,9 @@ class AppBindings extends Bindings {
       materialGroupDataSource: QueryableSavableRepository(MaterialsGroupsDataSource(databaseService: fireStoreService)),
       customerImportRepo: ImportRepository(customerImportService),
       customersRepo: BulkSavableDatasourceRepository(CustomersDatasource(databaseService: fireStoreService)),
+      matStatementsRepo: CompoundDatasourceRepository(
+        MaterialsStatementsDatasource(compoundDatabaseService: compoundFireStoreService),
+      ),
     );
   }
 
@@ -257,8 +263,14 @@ class AppBindings extends Bindings {
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
-    lazyPut(MaterialController(repositories.materialImportExportRepo, repositories.materialsLocalDatasourceRepo,
-        repositories.listenableDatasourceRepo,));
+    lazyPut(
+      MaterialController(
+        repositories.materialImportExportRepo,
+        repositories.materialsLocalDatasourceRepo,
+        repositories.listenableDatasourceRepo,
+      ),
+    );
+    lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
     lazyPut(AddSellerController());
     lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
   }
@@ -291,6 +303,7 @@ class _Repositories {
   final QueryableSavableRepository<MaterialGroupModel> materialGroupDataSource;
   final ImportRepository<CustomerModel> customerImportRepo;
   final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
+  final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -318,5 +331,6 @@ class _Repositories {
     required this.materialGroupDataSource,
     required this.customerImportRepo,
     required this.customersRepo,
+    required this.matStatementsRepo,
   });
 }

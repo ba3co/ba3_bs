@@ -14,9 +14,9 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   String get rootCollectionPath => ApiConstants.bills; // Collection name in Firestore
 
   @override
-  Future<List<BillModel>> fetchAll({required BillTypeModel itemTypeModel}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<List<BillModel>> fetchAll({required BillTypeModel itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
@@ -33,11 +33,11 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<List<BillModel>> fetchWhere<V>(
-      {required BillTypeModel itemTypeModel, required String field, required V value, DateFilter? dateFilter}) async {
+      {required BillTypeModel itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
       rootCollectionPath: rootCollectionPath,
-      rootDocumentId: getRootDocumentId(itemTypeModel),
-      subCollectionPath: getSubCollectionPath(itemTypeModel),
+      rootDocumentId: getRootDocumentId(itemIdentifier),
+      subCollectionPath: getSubCollectionPath(itemIdentifier),
       field: field,
       value: value,
       dateFilter: dateFilter,
@@ -49,9 +49,9 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<BillModel> fetchById({required String id, required BillTypeModel itemTypeModel}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subcollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<BillModel> fetchById({required String id, required BillTypeModel itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
     final data = await compoundDatabaseService.fetchById(
       rootCollectionPath: rootCollectionPath,
@@ -110,9 +110,9 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<int> countDocuments({required BillTypeModel itemTypeModel, QueryFilter? countQueryFilter}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subCollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<int> countDocuments({required BillTypeModel itemIdentifier, QueryFilter? countQueryFilter}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
     final count = await compoundDatabaseService.countDocuments(
       rootCollectionPath: rootCollectionPath,
@@ -125,15 +125,15 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested({required List<BillTypeModel> itemTypes}) async {
+  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested({required List<BillTypeModel> itemIdentifiers}) async {
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
 
-    for (final billTypeModel in itemTypes) {
+    for (final billTypeModel in itemIdentifiers) {
       fetchTasks.add(
-        fetchAll(itemTypeModel: billTypeModel).then((result) {
+        fetchAll(itemIdentifier: billTypeModel).then((result) {
           billsByType[billTypeModel] = result;
         }),
       );
@@ -146,7 +146,7 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<Map<BillTypeModel, List<BillModel>>> saveAllNested({
-    required List<BillTypeModel> itemTypes,
+    required List<BillTypeModel> itemIdentifiers,
     required List<BillModel> items,
     void Function(double progress)? onProgress,
   }) async {
@@ -155,10 +155,10 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     final List<Future<void>> fetchTasks = [];
     // Create tasks to fetch all bills for each type
 
-    for (final billTypeModel in itemTypes) {
+    for (final billTypeModel in itemIdentifiers) {
       fetchTasks.add(
         saveAll(
-                itemTypeModel: billTypeModel,
+                itemIdentifier: billTypeModel,
                 items: items
                     .where(
                       (element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId,
@@ -177,9 +177,9 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemTypeModel}) async {
-    final rootDocumentId = getRootDocumentId(itemTypeModel);
-    final subCollectionPath = getSubCollectionPath(itemTypeModel);
+  Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
     final savedData = await compoundDatabaseService.saveAll(
       rootCollectionPath: rootCollectionPath,

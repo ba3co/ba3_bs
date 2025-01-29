@@ -183,7 +183,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with AppNaviga
   Future<ChequesModel> fetchChequesById(String chequesId, ChequesType itemTypeModel) async {
     late ChequesModel chequesModel;
 
-    final result = await _chequesFirebaseRepo.getById(id: chequesId, itemTypeModel: itemTypeModel);
+    final result = await _chequesFirebaseRepo.getById(id: chequesId, itemIdentifier: itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

@@ -12,7 +12,7 @@ class EntryBondsGenerator implements IEntryBondGenerator {
       final List<EntryBondCreator> creators = EntryBondCreatorFactory.resolveEntryBondCreators(model);
       return creators.map((creator) {
         return creator.createEntryBond(
-          originType: EntryBondCreatorFactory.determineOriginType(model),
+          originType: EntryBondCreatorFactory.resolveOriginType(model),
           model: model,
         );
       });
@@ -31,9 +31,6 @@ class EntryBondsGeneratorRepo {
   }) async {
     final entryBondModels = entryBondGenerator.createEntryBondsModels(sourceModels);
 
-    await read<EntryBondController>().saveAllEntryBondModels(
-      entryBonds: entryBondModels,
-      onProgress: onProgress
-    );
+    await read<EntryBondController>().saveAllEntryBondModels(entryBonds: entryBondModels, onProgress: onProgress);
   }
 }

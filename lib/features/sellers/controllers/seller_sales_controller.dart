@@ -104,7 +104,7 @@ class SellerSalesController extends GetxController with AppNavigator {
     final endOfDay = currentDate;
 
     final result = await _billsFirebaseRepo.fetchWhere(
-      itemTypeModel: BillType.sales.billTypeModel,
+      itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
       value: sellerModel.costGuid,
       dateFilter: DateFilter(

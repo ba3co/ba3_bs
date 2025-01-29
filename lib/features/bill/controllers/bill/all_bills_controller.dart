@@ -163,7 +163,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
     final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+        itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -177,7 +177,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   Future<Either<Failure, List<BillModel>>> fetchBillByNumber(
       {required BillTypeModel billTypeModel, required int billNumber}) async {
     final result = await _billsFirebaseRepo.fetchWhere(
-        itemTypeModel: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
+        itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
 
     return result;
   }
@@ -210,7 +210,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
       fetchTasks.add(
         _billsFirebaseRepo
             .count(
-                itemTypeModel: billTypeModel,
+                itemIdentifier: billTypeModel,
                 countQueryFilter: QueryFilter(
                   field: ApiConstants.status,
                   value: Status.pending.value,
@@ -239,11 +239,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
     for (final billTypeModel in fetchedBillTypes) {
       fetchTasks.add(
-        _billsFirebaseRepo
-            .count(
-          itemTypeModel: billTypeModel,
-        )
-            .then((result) {
+        _billsFirebaseRepo.count(itemIdentifier: billTypeModel).then((result) {
           result.fold(
             (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
             (count) => allBillsCountsByType[billTypeModel] = count,
@@ -393,7 +389,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   Future<BillModel> fetchBillById(String billId, BillTypeModel billTypeModel) async {
     late BillModel billModel;
 
-    final result = await _billsFirebaseRepo.getById(id: billId, itemTypeModel: billTypeModel);
+    final result = await _billsFirebaseRepo.getById(id: billId, itemIdentifier: billTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),

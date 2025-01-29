@@ -1,0 +1,199 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:get/get.dart';
+
+import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/helper/mixin/floating_launcher.dart';
+import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../../../core/utils/app_ui_utils.dart';
+import '../data/models/mat_statement/mat_statement_model.dart';
+import 'material_controller.dart';
+
+class MaterialsStatementController extends GetxController with FloatingLauncher, AppNavigator {
+  // Dependencies
+  final CompoundDatasourceRepository<MatStatementModel, String> _matStatementsRepo;
+  final MaterialController _materialsController = read<MaterialController>();
+
+  MaterialsStatementController(this._matStatementsRepo);
+
+  Future<void> saveAllMatsStatementsModels({
+    required List<MatStatementModel> matsStatements,
+    void Function(double progress)? onProgress,
+  }) async {
+    int counter = 0;
+    for (final matStatement in matsStatements) {
+      await saveMatStatementModel(matStatementModel: matStatement);
+
+      onProgress?.call((counter++) / matsStatements.length);
+    }
+  }
+
+  Future<void> saveMatStatementModel({required MatStatementModel matStatementModel}) async {
+    final result = await _matStatementsRepo.save(matStatementModel);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedEntryBondModel) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+    );
+  }
+
+// // Text Controllers
+// final productForSearchController = TextEditingController();
+// final groupForSearchController = TextEditingController();
+// final accountNameController = TextEditingController();
+// final storeForSearchController = TextEditingController();
+// final startDateController = TextEditingController()..text = _formattedToday;
+// final endDateController = TextEditingController()..text = _formattedToday;
+//
+// // Data
+// final List<EntryBondItemModel> entryBondItems = [];
+// List<EntryBondItemModel> filteredEntryBondItems = [];
+//
+// // State variables
+// bool isLoading = false;
+//
+// double totalValue = 0.0;
+// double debitValue = 0.0;
+// double creditValue = 0.0;
+//
+// @override
+// void onInit() {
+//   super.onInit();
+//   resetFields();
+// }
+//
+// /// Clears fields and resets state
+// void resetFields({String? initialAccount}) {
+//   productForSearchController.clear();
+//   groupForSearchController.clear();
+//   storeForSearchController.clear();
+//   startDateController.text = _formattedToday;
+//   endDateController.text = _formattedToday;
+//
+//   if (initialAccount != null) {
+//     accountNameController.text = initialAccount;
+//   } else {
+//     accountNameController.clear();
+//   }
+// }
+//
+// // Event Handlers
+// void onAccountNameSubmitted(String text, BuildContext context) async {
+//   final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
+//
+//   AccountModel? accountModel = await _materialsController.openAccountSelectionDialog(
+//     query: convertArabicNumbers,
+//     context: context,
+//   );
+//   if (accountModel != null) {
+//     accountNameController.text = accountModel.accName!;
+//   }
+// }
+//
+// void onStartDateSubmitted(String text) {
+//   startDateController.text = AppUIUtils.getDateFromString(text);
+// }
+//
+// void onEndDateSubmitted(String text) {
+//   endDateController.text = AppUIUtils.getDateFromString(text);
+// }
+//
+// // Fetch bond items for the selected account
+// Future<void> fetchAccountEntryBondItems() async {
+//   final accountModel = _materialsController.getAccountModelByName(accountNameController.text);
+//   if (accountModel == null) {
+//     _showErrorSnackBar("خطأ إدخال", "يرجى إدخال اسم الحساب");
+//     return;
+//   }
+//
+//   isLoading = true;
+//   update();
+//
+//   final result = await _accountsStatementsRepo.getAll(AccountEntity.fromAccountModel(accountModel));
+//   result.fold(
+//     (failure) => AppUIUtils.onFailure(failure.message),
+//     (fetchedItems) {
+//       entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
+//       filterByDate();
+//
+//       _calculateValues(filteredEntryBondItems);
+//     },
+//   );
+//
+//   isLoading = false;
+//   update();
+// }
+//
+// void filterByDate() {
+//   final DateFormat dateFormat = DateFormat('yyyy-MM-dd'); // Format for start and end dates
+//
+//   final DateTime startDate = dateFormat.parse(startDateController.text);
+//   final DateTime endDate = dateFormat.parse(endDateController.text);
+//
+//   filteredEntryBondItems = entryBondItems.where((item) {
+//     final String? entryBondItemDateStr = item.date; // Ensure `date` is the correct field
+//     if (entryBondItemDateStr == null) return false;
+//
+//     DateTime? entryBondItemDate;
+//     try {
+//       entryBondItemDate = dateFormat.parse(entryBondItemDateStr);
+//     } catch (e) {
+//       log('Error parsing item.date: $entryBondItemDateStr. Error: $e');
+//       return false; // Skip invalid date formats
+//     }
+//
+//     return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
+//         entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
+//   }).toList();
+// }
+//
+// /// Navigation handler
+// void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
+//
+// /// Calculates debit, credit, and total values
+// void _calculateValues(List<EntryBondItemModel> items) {
+//   if (items.isEmpty) {
+//     _resetValues();
+//   } else {
+//     _updateValues(items);
+//   }
+// }
+//
+// _resetValues() {
+//   totalValue = 0.0;
+//   debitValue = 0.0;
+//   creditValue = 0.0;
+// }
+//
+// _updateValues(List<EntryBondItemModel> items) {
+//   debitValue = _calculateSum(items: items, type: BondItemType.debtor);
+//   creditValue = _calculateSum(items: items, type: BondItemType.creditor);
+//
+//   totalValue = debitValue - creditValue;
+// }
+//
+// double _calculateSum({required List<EntryBondItemModel> items, required BondItemType type}) => items.fold(
+//       0.0,
+//       (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
+//     );
+//
+// String get screenTitle =>
+//     'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
+//
+// // Helper Methods
+// static String get _formattedToday => DateTime.now().dayMonthYear;
+//
+// void _showErrorSnackBar(String title, String message) {
+//   Get.snackbar(title, message, icon: const Icon(Icons.error_outline));
+// }
+//
+// void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
+//   EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(entryId: originId);
+//
+//   if (!context.mounted) return;
+//   launchFloatingWindow(
+//     context: context,
+//     minimizedTitle: 'سند خاص ب ${entryBondModel.origin!.originType!.label}',
+//     floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+//   );
+// }
+}

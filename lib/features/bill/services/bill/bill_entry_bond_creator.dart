@@ -374,16 +374,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         date: date,
       );
 
-  @override
-  EntryBondOrigin createOrigin({required BillModel model, required EntryBondType originType}) => EntryBondOrigin(
-        originId: model.billId,
-        originType: originType,
-        originTypeId: model.billTypeModel.billTypeId,
-      );
-
-  @override
-  String getModelId(BillModel model) => model.billId!;
-
   List<EntryBondItemModel> _createFirstPayBond({
     required String billId,
     required double firstPay,
@@ -412,4 +402,14 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       )
     ];
   }
+
+  @override
+  EntryBondOrigin createOrigin({required BillModel model, required EntryBondType originType}) => EntryBondOrigin(
+        originId: model.billId,
+        originType: originType,
+        originTypeId: model.billTypeModel.billTypeId,
+      );
+
+  @override
+  String getModelId(BillModel model) => model.billId!;
 }

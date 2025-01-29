@@ -156,7 +156,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSeque
   Future<BondModel> fetchBondsById(String bondId, BondType itemTypeModel) async {
     late BondModel bondModel;
 
-    final result = await _bondsFirebaseRepo.getById(id: bondId, itemTypeModel: itemTypeModel);
+    final result = await _bondsFirebaseRepo.getById(id: bondId, itemIdentifier: itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -168,7 +168,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with FirestoreSeque
   Future<Either<Failure, List<BondModel>>> fetchBondByNumber(
       {required BondType bondType, required int bondNumber}) async {
     final result = await _bondsFirebaseRepo.fetchWhere(
-      itemTypeModel: bondType,
+      itemIdentifier: bondType,
       field: ApiConstants.bondNumber,
       value: bondNumber,
     );
