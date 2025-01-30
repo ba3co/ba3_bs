@@ -243,6 +243,16 @@ class AppBindings extends Bindings {
     lazyPut(PlutoController());
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
     lazyPut(PatternController(repositories.patternsRepo));
+    lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
+
+    lazyPut(
+      MaterialController(
+        repositories.materialImportExportRepo,
+        repositories.materialsLocalDatasourceRepo,
+        repositories.listenableDatasourceRepo,
+      ),
+    );
+    lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
     lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billImportExportRepo));
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
     lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
@@ -254,15 +264,7 @@ class AppBindings extends Bindings {
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
     lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
-    lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
-    lazyPut(
-      MaterialController(
-        repositories.materialImportExportRepo,
-        repositories.materialsLocalDatasourceRepo,
-        repositories.listenableDatasourceRepo,
-      ),
-    );
-    lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
+
     lazyPut(AddSellerController());
   }
 }
