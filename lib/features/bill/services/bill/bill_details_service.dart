@@ -170,14 +170,11 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
     final currentGroupedItems = currentBill.items.itemList.groupBy((item) => item.itemGuid);
 
-    // Compute deleted items by filtering out those that exist in the current bill
-    final deletedItems = previousGroupedItems.map((key, value) => MapEntry(key, value))
-      ..removeWhere((key, _) => currentGroupedItems.containsKey(key));
-
-    log('Deleted items count: ${deletedItems.length}');
-    deletedItems.forEach((key, _) => log('Deleted Item Key: $key'));
-
-    return deletedItems;
+    return Map.fromEntries(
+      previousGroupedItems.entries.where(
+        (entry) => !currentGroupedItems.containsKey(entry.key),
+      ),
+    );
   }
 
   Future<void> handleSaveOrUpdateSuccess({
