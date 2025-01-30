@@ -2,9 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +18,7 @@ import '../../../core/services/firebase/implementations/repos/bulk_savable_datas
 import '../../../core/services/json_file_operations/implementations/import/import_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
+import '../../users_management/data/models/role_model.dart';
 import '../data/models/seller_model.dart';
 
 class SellersController extends GetxController with AppNavigator {
@@ -34,7 +37,16 @@ class SellersController extends GetxController with AppNavigator {
   @override
   void onInit() {
     super.onInit();
-    getAllSellers();
+
+    fetchProbabilitySellers();
+  }
+
+  fetchProbabilitySellers() {
+    if (RoleItemType.viewSellers.hasAdminPermission) {
+      getAllSellers();
+    } else {
+      fetchLoginSellers();
+    }
   }
 
   // Fetch sellers from the repository
@@ -157,6 +169,15 @@ class SellersController extends GetxController with AppNavigator {
     if (newAccount != null) {
       selectedSellerAccount = newAccount;
     }
+  }
+
+  fetchLoginSellers() async {
+    UserModel userModel = read<UserManagementController>().loggedInUserModel!;
+    final result = await _sellersFirebaseRepo.getById(userModel.userSellerId!);
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedSeller) => sellers.assignAll([fetchedSeller]),
+    );
   }
 
   void initSellerAccount({
