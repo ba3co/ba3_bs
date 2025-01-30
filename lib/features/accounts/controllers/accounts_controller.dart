@@ -58,6 +58,7 @@ class AccountsController extends GetxController with AppNavigator {
     super.onInit();
     log('onInit fetchAccounts');
     read<CustomersController>().fetchCustomers();
+    fetchAccounts();
     initializer();
   }
 
@@ -152,7 +153,9 @@ class AccountsController extends GetxController with AppNavigator {
       // fetchAccounts();
     }
 
-    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
+    return accounts
+        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
+        .toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -179,8 +182,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel =
-          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel = accounts
+          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         log('getAccountModelByName is null with  $text');
         return AccountModel(accName: null);
       });

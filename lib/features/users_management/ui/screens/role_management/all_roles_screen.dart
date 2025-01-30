@@ -24,7 +24,7 @@ class AllRolesScreen extends StatelessWidget {
           ],
         ),
         body: GetBuilder<UserManagementController>(builder: (controller) {
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
               width: double.infinity,

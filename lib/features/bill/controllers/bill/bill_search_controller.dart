@@ -23,30 +23,38 @@ class BillSearchController extends GetxController {
 
   /// Initializes the bill search with the given bills and controllers.
   void initialize({
-    required List<BillModel> allBills,
-    required BillModel newBill,
+    required int lastBillNumber,
+    required BillModel currentBill,
     required BillDetailsController billDetailsController,
     required BillDetailsPlutoController billDetailsPlutoController,
-    BillModel? billModel,
   }) {
-    bills = _prepareBillList(allBills, newBill);
-    currentBillIndex = _getBillIndexByNumber( newBill.billDetails.billNumber);
+    bills = _prepareBillList(lastBillNumber, currentBill);
+    currentBillIndex = _getBillIndexByNumber(currentBill.billDetails.billNumber);
     currentBill = bills[currentBillIndex];
 
     this.billDetailsController = billDetailsController;
     this.billDetailsPlutoController = billDetailsPlutoController;
 
     _setCurrentBill(currentBillIndex);
-    if (billModel?.billDetails.billNumber != null) _navigateToBill(billModel!.billDetails.billNumber!, NavigationDirection.specific);
   }
 
   /// Prepares a list of bills with placeholders up to the last bill number.
-  List<BillModel> _prepareBillList(List<BillModel> allBills, BillModel currentBill) {
-    final placeholders = List<BillModel>.filled(
-      allBills.last.billDetails.billNumber! - 1,
-      _createPlaceholderBill(currentBill),
+  List<BillModel> _prepareBillList(int lastBillNumber, BillModel currentBill) {
+    // Create a growable list of placeholder bills
+    final placeholders = List<BillModel>.generate(
+      lastBillNumber - 1,
+      (index) => _createPlaceholderBill(currentBill),
     );
-    return [...placeholders, currentBill];
+
+    final currentBillNumber = currentBill.billDetails.billNumber!;
+
+    // If the current bill is the last one, append it to the list
+    if (currentBillNumber == lastBillNumber) {
+      return [...placeholders, currentBill];
+    } else {
+      // Otherwise, insert the current bill at the correct position
+      return placeholders..insert(currentBillNumber - 1, currentBill);
+    }
   }
 
   /// Creates a placeholder bill for missing entries.
@@ -61,7 +69,8 @@ class BillSearchController extends GetxController {
       );
 
   /// Validates the bill number range.
-  bool _isValidBillNumber(int? billNumber) => billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
+  bool _isValidBillNumber(int? billNumber) =>
+      billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
 
   /// Displays an error message for invalid bill numbers.
   void _showInvalidBillNumberError(int? billNumber) {
@@ -117,19 +126,23 @@ class BillSearchController extends GetxController {
   }
 
   /// Navigates to a bill by its number.
-  Future<void> goToBillByNumber(int? billNumber) async => await _navigateToBill(billNumber!, NavigationDirection.specific);
+  Future<void> goToBillByNumber(int? billNumber) async =>
+      await _navigateToBill(billNumber!, NavigationDirection.specific);
 
   /// Moves to the next bill if possible.
   Future<void> next() async => await _navigateToBill(currentBill.billDetails.billNumber! + 1, NavigationDirection.next);
 
   /// Moves to the previous bill if possible.
-  Future<void> previous() async => await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
+  Future<void> previous() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
 
   /// Jumps forward by 10 bills from the current bill number.
-  Future<void> jumpForwardByTen() async => await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigationDirection.next);
+  Future<void> jumpForwardByTen() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigationDirection.next);
 
   /// Jumps backward by 10 bills from the current bill number.
-  Future<void> jumpBackwardByTen() async => await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigationDirection.previous);
+  Future<void> jumpBackwardByTen() async =>
+      await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigationDirection.previous);
 
   /// Navigates to the first bill in the list.
   Future<void> first() async => await _navigateToBill(1, NavigationDirection.next);
@@ -167,7 +180,8 @@ class BillSearchController extends GetxController {
   }
 
   /// Checks if the bill number exists in the list and returns its index, or null if not found.
-  BillModel? _findExistingBill(int billNumber) => bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
+  BillModel? _findExistingBill(int billNumber) =>
+      bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Fetches the bill by number and handles success or failure.
   Future<void> _fetchAndNavigateToBill(int billNumber, NavigationDirection direction) async {

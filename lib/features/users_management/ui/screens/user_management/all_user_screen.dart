@@ -26,7 +26,7 @@ class AllUserScreen extends StatelessWidget {
               )
             ],
           ),
-          body: Padding(
+          body: SingleChildScrollView(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
               width: double.infinity,
