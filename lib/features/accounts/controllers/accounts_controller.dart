@@ -147,14 +147,38 @@ class AccountsController extends GetxController with AppNavigator {
     to(AppRoutes.addAccountScreen);
   }
 
-  List<AccountModel> searchAccountsByNameOrCode(text) {
+  List<AccountModel> searchAccountsByNameOrCode(String text) {
     if (accounts.isEmpty) {
       log('Accounts isEmpty');
-      // fetchAccounts();
     }
 
+    String lowerText = text.toLowerCase();
+
+    // 1️⃣ البحث عن تطابق كامل
+    var exactMatch = accounts.firstWhereOrNull(
+      (item) => item.accName?.toLowerCase() == lowerText || item.accCode == text,
+    );
+
+    if (exactMatch != null) {
+      return [exactMatch]; // إرجاع الحساب المطابق فقط
+    }
+
+    // 2️⃣ البحث عن الحسابات التي يبدأ اسمها بالنص المدخل
+    var startsWithMatches = accounts
+        .where(
+          (item) => item.accName!.toLowerCase().startsWith(lowerText),
+        )
+        .toList();
+
+    if (startsWithMatches.isNotEmpty) {
+      return startsWithMatches; // إرجاع الحسابات التي تبدأ بالنص المدخل
+    }
+
+    // 3️⃣ البحث عن أي تطابق جزئي
     return accounts
-        .where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text))
+        .where(
+          (item) => item.accName!.toLowerCase().contains(lowerText) || item.accCode!.contains(text),
+        )
         .toList();
   }
 
@@ -182,8 +206,8 @@ class AccountsController extends GetxController with AppNavigator {
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel = accounts
-          .firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
+      final AccountModel accountModel =
+          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         log('getAccountModelByName is null with  $text');
         return AccountModel(accName: null);
       });
