@@ -60,8 +60,8 @@ class UserTimeController extends GetxController {
         return AppUIUtils.onFailure(failure.message);
       },
       (location) {
-        return isWithinRegion = _userTimeServices.isWithinRegion(
-            location, AppStrings.targetLatitude, AppStrings.targetLongitude, AppStrings.radiusInMeters);
+        return isWithinRegion =
+            _userTimeServices.isWithinRegion(location, AppStrings.targetLatitude, AppStrings.targetLongitude, AppStrings.radiusInMeters);
       },
     );
 
@@ -81,14 +81,16 @@ class UserTimeController extends GetxController {
     } else {
       logOutState.value = RequestState.loading;
     }
+    await read<UserManagementController>().refreshLoggedInUser();
 
     UserModel? userModel = getUserById();
 
-    /// check if user in regin
+    /// we don't need it in diskTop app
+    /*   /// check if user in regin
     if (!await isWithinRegion()) {
       handleError('خطأ في المنطقة الجغرافية', logStatus);
       return;
-    }
+    }*/
 
     /// check if user want to login again before logout
     /// or
