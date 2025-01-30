@@ -183,6 +183,35 @@ void main() {
 
       expect(deletedItems, isEmpty);
     });
+
+    test('returns only one deleted item when previous bill has duplicates and two are removed', () {
+      final previousBill = BillModel(
+        billTypeModel: BillTypeModel(),
+        billDetails: BillDetails(),
+        status: Status.approved,
+        items: BillItems(
+          itemList: [
+            BillItem(itemGuid: 'item1', itemName: 'Item 1', itemQuantity: 1, itemTotalPrice: '10'),
+            BillItem(itemGuid: 'item1', itemName: 'Item 1', itemQuantity: 1, itemTotalPrice: '10'),
+            BillItem(itemGuid: 'item2', itemName: 'Item 2', itemQuantity: 1, itemTotalPrice: '10'),
+          ],
+        ),
+      );
+
+      final currentBill = BillModel(
+          billTypeModel: BillTypeModel(),
+          billDetails: BillDetails(),
+          status: Status.approved,
+          items: BillItems(itemList: [
+            BillItem(itemGuid: 'item2', itemName: 'Item 2', itemQuantity: 1, itemTotalPrice: '10'),
+          ]));
+
+      final deletedItems = findDeletedMaterials(previousBill: previousBill, currentBill: currentBill);
+
+      expect(deletedItems.length, 1);
+      expect(deletedItems.containsKey('item1'), isTrue);
+      expect(deletedItems.containsKey('item2'), isFalse);
+    });
   });
 }
 
