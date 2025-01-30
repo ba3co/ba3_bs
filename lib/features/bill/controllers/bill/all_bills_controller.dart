@@ -84,6 +84,10 @@ class AllBillsController extends FloatingBillDetailsLauncher
     read<MaterialController>().reloadMaterials();
   }
 
+  Future<void> refreshBillsTypes() async {
+    fetchBillsTypes();
+  }
+
   int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;
 
   int allBillsCounts(BillTypeModel billTypeModel) => allBillsCountsByType[billTypeModel] ?? 0;
