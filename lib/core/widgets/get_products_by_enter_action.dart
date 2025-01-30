@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,7 +77,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     final materialController = read<MaterialController>();
 
     // Search for matching materials
-    var searchedMaterials = await materialController.searchOfProductByText(productText);
+    var searchedMaterials =  materialController.searchOfProductByText(productText);
     MaterialModel? selectedMaterial;
     log("searchedMaterials  length ${searchedMaterials.length}");
     if (searchedMaterials.length == 1) {
@@ -84,6 +85,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       selectedMaterial = searchedMaterials.first;
       updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
     } else if (searchedMaterials.isEmpty) {
+      AppUIUtils.onFailure("هذه المادة غير موجودة");
       // No matches
       updateWithSelectedMaterial(null, stateManager, plutoController);
     } else {

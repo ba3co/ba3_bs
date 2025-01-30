@@ -118,7 +118,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     return _bondUtils.appendEmptyBillModelNew(bondType, billsCountByType);
   }
 
-  Future<void> openFloatingBondDetails(BuildContext context, BondType bondType, {BondModel? bondModel}) async {
+  Future<void> openFloatingBondDetails(BuildContext context, BondType bondType, {BondModel? currentBondModel}) async {
     // await fetchAllBondsLocal();
     // await fetchAllBondsByType(bondTypeModel);
     //
@@ -139,10 +139,9 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
     _openBondDetailsFloatingWindow(
       context: context,
-      modifiedBonds: bonds,
-      lastBondModel: bonds.last,
       bondType: bondType,
-      bondModel: bondModel
+      lastBondNumber: bonds.last.payNumber!,
+      currentBond: currentBondModel ?? bonds.last,
     );
   }
 
@@ -150,7 +149,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     final BondModel bondModel = await fetchBondsById(bondId, itemTypeModel);
     if (!context.mounted) return;
 
-    openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), bondModel: bondModel);
+    openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), currentBondModel: bondModel);
   }
 
   Future<BondModel> fetchBondsById(String bondId, BondType itemTypeModel) async {
@@ -165,8 +164,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     return bondModel;
   }
 
-  Future<Either<Failure, List<BondModel>>> fetchBondByNumber(
-      {required BondType bondType, required int bondNumber}) async {
+  Future<Either<Failure, List<BondModel>>> fetchBondByNumber({required BondType bondType, required int bondNumber}) async {
     final result = await _bondsFirebaseRepo.fetchWhere(
       itemIdentifier: bondType,
       field: ApiConstants.bondNumber,
@@ -179,11 +177,9 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
   // Opens the 'Bond Details' floating window.
   void _openBondDetailsFloatingWindow({
     required BuildContext context,
-    required List<BondModel> modifiedBonds,
-    required BondModel lastBondModel,
     required BondType bondType,
-    BondModel? bondModel,
-
+    required BondModel currentBond,
+    required int lastBondNumber,
   }) {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BondController');
 
@@ -202,18 +198,16 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     final bondSearchController = controllers['bondSearchController'] as BondSearchController;
 
     initializeBondSearch(
-      currentBond: lastBondModel,
-      allBonds: modifiedBonds,
+      currentBond: currentBond,
+      lastBondNumber: lastBondNumber,
       bondSearchController: bondSearchController,
       bondDetailsController: bondDetailsController,
       bondDetailsPlutoController: bondDetailsPlutoController,
-      bondModel:bondModel,
-
     );
 
     launchFloatingWindow(
       context: context,
-      minimizedTitle: BondType.byTypeGuide(lastBondModel.payTypeGuid!).value,
+      minimizedTitle: BondType.byTypeGuide(currentBond.payTypeGuid!).value,
       floatingScreen: BondDetailsScreen(
         fromBondById: false,
         bondDetailsController: bondDetailsController,
@@ -226,19 +220,16 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
   void initializeBondSearch({
     required BondModel currentBond,
-    required List<BondModel> allBonds,
+    required int lastBondNumber,
     required BondSearchController bondSearchController,
     required BondDetailsController bondDetailsController,
     required BondDetailsPlutoController bondDetailsPlutoController,
-    BondModel? bondModel,
-
   }) {
     bondSearchController.initialize(
-      newBond: currentBond,
-      allBonds: allBonds,
+      currentBond: currentBond,
+      lastBondNumber: lastBondNumber,
       bondDetailsController: bondDetailsController,
       bondDetailsPlutoController: bondDetailsPlutoController,
-      bondModel: bondModel
     );
   }
 }
