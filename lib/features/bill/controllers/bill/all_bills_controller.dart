@@ -287,7 +287,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
-    final BillModel billModel = await fetchBillById(billId, BillType.sales.billTypeModel);
+    final BillModel billModel = await fetchBillById(billId, bilTypeModel);
 
     if (!context.mounted) return;
 

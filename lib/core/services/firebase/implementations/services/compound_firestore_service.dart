@@ -74,6 +74,11 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String subCollectionPath,
     String? subDocumentId,
   }) async {
+
+    log('rootCollectionPath $rootCollectionPath');
+    log('rootDocumentId $rootDocumentId');
+    log('subCollectionPath $subCollectionPath');
+    log('subDocumentId $subDocumentId');
     final docSnapshot = await _firestore
         .collection(rootCollectionPath)
         .doc(rootDocumentId)
