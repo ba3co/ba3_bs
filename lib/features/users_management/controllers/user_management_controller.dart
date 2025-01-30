@@ -438,4 +438,12 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     roleFormHandler.dispose();
     super.onClose();
   }
+
+  refreshLoggedInUser() async {
+    final result = await _usersFirebaseRepo.getById(loggedInUserModel!.userId!);
+    result.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedUser) => loggedInUserModel = fetchedUser,
+    );
+  }
 }
