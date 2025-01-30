@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statemen
 import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../bill/data/models/bill_items.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
@@ -29,6 +30,32 @@ mixin MatsStatementsGenerator {
         return creator.createMatStatement(model: model);
       },
     ).toList();
+  }
+
+  Future<void> generateAndSaveMatStatement<T>({
+    required T model,
+    Map<String, List<BillItem>> deletedMaterials = const {},
+  }) async {
+    final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
+    final matsStatementModel = creator.createMatStatement(model: model);
+
+    await _materialsStatementController.saveAllMatsStatementsModels(
+      matsStatements: matsStatementModel,
+    );
+
+    if (deletedMaterials.isNotEmpty) {
+      final originId = matsStatementModel.first.originId;
+
+      final matStatementsToDelete = deletedMaterials.entries.map((entry) {
+        final matId = entry.value.first.itemGuid;
+        return MatStatementModel(
+          matId: matId,
+          originId: originId,
+        );
+      }).toList();
+
+      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
+    }
   }
 
   Future<void> deleteMatsStatementsModels(BillModel billModel) async {

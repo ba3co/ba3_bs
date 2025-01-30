@@ -189,6 +189,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     Map<String, AccountModel> modifiedBillTypeAccounts = {};
 
+    Map<String, List<BillItem>> deletedMaterials = {};
+
     if (isSave) {
       billController.updateIsBillSaved = true;
 
@@ -200,6 +202,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       }
     } else {
       modifiedBillTypeAccounts = findModifiedBillTypeAccounts(previousBill: previousBill!, currentBill: currentBill);
+      deletedMaterials = findDeletedMaterials(previousBill: previousBill, currentBill: currentBill);
 
       if (hasModelId(currentBill.billId) &&
           hasModelItems(currentBill.items.itemList) &&
@@ -233,12 +236,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
 
     if (currentBill.status == Status.approved) {
-      generateAndSaveMatsStatements(
-        sourceModels: [currentBill],
-        onProgress: (progress) {
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      generateAndSaveMatStatement(model: currentBill, deletedMaterials: deletedMaterials);
     }
   }
 
