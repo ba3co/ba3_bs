@@ -11,6 +11,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/service/mat_statement_generator.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,7 +32,7 @@ import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
 class AllBillsController extends FloatingBillDetailsLauncher
-    with AppNavigator, EntryBondsGenerator, FirestoreSequentialNumbers {
+    with AppNavigator, EntryBondsGenerator, MatsStatementsGenerator,FirestoreSequentialNumbers {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -127,6 +128,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
       );
+
     }
 
     plutoGridIsLoading = false;
@@ -141,6 +143,11 @@ class AllBillsController extends FloatingBillDetailsLauncher
       fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
     );
     if (bills.isNotEmpty) {
+    await  generateAndSaveMatsStatements(sourceModels:  bills,
+        onProgress:     (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },);
       await _billsFirebaseRepo.saveAllNested(
         bills,
         billsTypes,
