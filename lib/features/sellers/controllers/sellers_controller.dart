@@ -43,7 +43,7 @@ class SellersController extends GetxController with AppNavigator {
 
   fetchProbabilitySellers() {
     if (RoleItemType.viewSellers.hasAdminPermission) {
-
+      getAllSellers();
     } else {
       fetchLoginSellers();
     }
