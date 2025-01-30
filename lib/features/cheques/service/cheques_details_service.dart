@@ -1,7 +1,5 @@
 import 'package:ba3_bs/core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
-import 'package:ba3_bs/features/cheques/service/cheques_entry_bond_creator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +9,6 @@ import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/helper/mixin/pdf_base.dart';
-import '../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../controllers/cheques/all_cheques_controller.dart';
 import '../controllers/cheques/cheques_details_controller.dart';
@@ -24,10 +21,12 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     required ChequesModel chequesModel,
     required ChequesStrategyType chequesStrategyType,
   }) {
-    final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, type: chequesStrategyType);
+    // final creators = ChequesStrategyBondFactory.determineStrategy(chequesModel, type: chequesStrategyType);
+    //
+    // final EntryBondModel entryBondModel =
+    //     creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
 
-    final EntryBondModel entryBondModel =
-        creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
+    final entryBondModel = createChequeEntryBondByStrategy(chequesModel, chequesStrategyType: chequesStrategyType);
 
     launchFloatingWindow(
       context: context,
@@ -69,8 +68,6 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
       isRefund: isRefund,
     );
   }
-
-  EntryBondController get entryBondController => read<EntryBondController>();
 
   Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
       [fromChequesById]) async {
@@ -117,7 +114,7 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
       );
     }
 
-    await generateAndSaveEntryBondsFromModel(model: currentChequesModel);
+    await createAndStoreEntryBond(model: currentChequesModel);
 
     // final creators = EntryBondCreatorFactory.resolveEntryBondCreators(currentChequesModel);
     //

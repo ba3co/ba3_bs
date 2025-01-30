@@ -91,7 +91,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
               BondType.values,
               (progress) {},
             );
-            await generateAndSaveEntryBondsFromModels(
+            await createAndStoreEntryBonds(
               sourceModels: bonds,
               onProgress: (progress) {
                 uploadProgress.value = progress; // Update progress

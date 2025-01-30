@@ -150,7 +150,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         },
       );
 
-      await generateAndSaveEntryBondsFromModels(
+      await createAndStoreEntryBonds(
         sourceModels: bills,
         onProgress: (progress) {
           uploadProgress.value = progress; // Update progress

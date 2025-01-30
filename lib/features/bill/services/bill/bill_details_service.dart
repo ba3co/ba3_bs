@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
@@ -16,15 +17,14 @@ import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
-import '../../../../core/services/entry_bond_creator/implementations/entry_bond_creator_factory.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
-import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
 import '../../../materials/service/mat_statement_generator.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
+import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
 
@@ -33,8 +33,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   final IBillController billController;
 
   BillDetailsService(this.plutoController, this.billController);
-
-  EntryBondController get entryBondController => read<EntryBondController>();
 
   BillModel? createBillModel({
     BillModel? billModel,
@@ -69,13 +67,15 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
 
-    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
+    // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
+    //
+    // final entryBondModel = creator.createEntryBond(
+    //   isSimulatedVat: true,
+    //   originType: EntryBondType.bill,
+    //   model: billModel,
+    // );
 
-    final entryBondModel = creator.createEntryBond(
-      isSimulatedVat: true,
-      originType: EntryBondType.bill,
-      model: billModel,
-    );
+    final entryBondModel = createSimulatedVatEntryBond(billModel);
 
     launchFloatingWindow(
       context: context,
@@ -117,7 +117,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     if (updatedBillModel.status == Status.approved &&
         updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      generateAndSaveEntryBondsFromModel(model: updatedBillModel);
+      createAndStoreEntryBond(model: updatedBillModel);
 
       // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
       //
@@ -140,19 +140,17 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
   }
 
-  Map<String, AccountModel> findModifiedBillTypeAccounts({
-    required BillModel previousBill,
-    required BillModel currentBill,
-  }) {
+  Map<String, AccountModel> findModifiedBillTypeAccounts(
+      {required BillModel previousBill, required BillModel currentBill}) {
     // Extract accounts from the bill type models or default to empty maps
     final previousAccounts = previousBill.billTypeModel.accounts ?? {};
     final currentAccounts = currentBill.billTypeModel.accounts ?? {};
 
     // Identify accounts that are present in both bills but have changed
     final Map<String, AccountModel> modifiedAccounts = Map.fromEntries(
-      previousAccounts.entries.where((MapEntry<Account, AccountModel> entry) {
-        final currentAccount = currentAccounts[entry.key];
-        return currentAccount != null && currentAccount != entry.value;
+      previousAccounts.entries.where((MapEntry<Account, AccountModel> previousAccount) {
+        final currentAccountModel = currentAccounts[previousAccount.key];
+        return currentAccountModel != null && currentAccountModel != previousAccount.value;
       }).map(
         // Use the account key's label for the map
         (entry) => MapEntry(entry.key.label, entry.value),
@@ -166,6 +164,20 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
 
     return modifiedAccounts;
+  }
+
+  Map<String, List<BillItem>> findDeletedMaterials({required BillModel previousBill, required BillModel currentBill}) {
+    final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
+    final currentGroupedItems = currentBill.items.itemList.groupBy((item) => item.itemGuid);
+
+    // Compute deleted items by filtering out those that exist in the current bill
+    final deletedItems = previousGroupedItems.map((key, value) => MapEntry(key, value))
+      ..removeWhere((key, _) => currentGroupedItems.containsKey(key));
+
+    log('Deleted items count: ${deletedItems.length}');
+    deletedItems.forEach((key, _) => log('Deleted Item Key: $key'));
+
+    return deletedItems;
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -206,7 +218,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     billSearchController.updateBill(currentBill);
 
     if (currentBill.status == Status.approved && currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
-      generateAndSaveEntryBondsFromModel(
+      createAndStoreEntryBond(
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
       );

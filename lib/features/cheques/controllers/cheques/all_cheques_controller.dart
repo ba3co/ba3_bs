@@ -74,7 +74,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
               (progress) {},
             );
 
-            await generateAndSaveEntryBondsFromModels(sourceModels: chequesList);
+            await createAndStoreEntryBonds(sourceModels: chequesList);
           }
         },
       );

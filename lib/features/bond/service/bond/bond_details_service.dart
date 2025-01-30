@@ -14,7 +14,6 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
 import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
-import '../../../../core/services/entry_bond_creator/implementations/entry_bond_creator_factory.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../controllers/bonds/all_bond_controller.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
@@ -28,17 +27,19 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
   BondDetailsService(this.plutoController, this.bondController);
 
   void launchBondEntryBondScreen({required BuildContext context, required BondModel bondModel}) {
-    final creator = EntryBondCreatorFactory.resolveEntryBondCreator(bondModel);
+    // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(bondModel);
+    //
+    // final entryBond = creator.createEntryBond(
+    //   originType: EntryBondType.cheque,
+    //   model: bondModel,
+    // );
 
-    final entryBond = creator.createEntryBond(
-      originType: EntryBondType.cheque,
-      model: bondModel,
-    );
+    final entryBondModel = createEntryBond(bondModel);
 
     launchFloatingWindow(
       context: context,
       minimizedTitle: 'سند خاص ب ${BondType.byTypeGuide(bondModel.payTypeGuid!).value}',
-      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBond),
+      floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
 
@@ -113,7 +114,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     }
     bondSearchController.updateBond(currentBond);
 
-    generateAndSaveEntryBondsFromModel(
+    createAndStoreEntryBond(
       model: currentBond,
       modifiedAccounts: modifiedBondTypeAccounts,
     );
