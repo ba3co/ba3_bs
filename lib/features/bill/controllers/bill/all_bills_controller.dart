@@ -32,7 +32,7 @@ import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
 class AllBillsController extends FloatingBillDetailsLauncher
-    with AppNavigator, EntryBondsGenerator, MatsStatementsGenerator,FirestoreSequentialNumbers {
+    with AppNavigator, EntryBondsGenerator, MatsStatementsGenerator, FirestoreSequentialNumbers {
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -128,7 +128,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
       );
-
     }
 
     plutoGridIsLoading = false;
@@ -143,11 +142,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
       fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
     );
     if (bills.isNotEmpty) {
-    await  generateAndSaveMatsStatements(sourceModels:  bills,
-        onProgress:     (progress) {
+      await generateAndSaveMatsStatements(
+        sourceModels: bills,
+        onProgress: (progress) {
           uploadProgress.value = progress; // Update progress
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },);
+        },
+      );
       await _billsFirebaseRepo.saveAllNested(
         bills,
         billsTypes,
@@ -171,8 +172,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -183,10 +184,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     update();
   }
 
-  Future<Either<Failure, List<BillModel>>> fetchBillByNumber(
-      {required BillTypeModel billTypeModel, required int billNumber}) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
+  Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
 
     return result;
   }
@@ -284,8 +283,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
@@ -329,12 +327,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     final bills = await billsCountByType(billTypeModel);
 
+
     if (!context.mounted) return;
 
     _openBillDetailsFloatingWindow(
       context: context,
       modifiedBills: bills,
       lastBillModel: bills.last,
+      billModel: billModel
     );
   }
 
@@ -343,6 +343,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     required BuildContext context,
     required List<BillModel> modifiedBills,
     required BillModel lastBillModel,
+    BillModel? billModel,
   }) {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
@@ -365,6 +366,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
       billSearchController: billSearchController,
       billDetailsController: billDetailsController,
       billDetailsPlutoController: billDetailsPlutoController,
+      billModel: billModel
+
     );
 
     launchFloatingWindow(
@@ -386,12 +389,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
     required BillSearchController billSearchController,
     required BillDetailsController billDetailsController,
     required BillDetailsPlutoController billDetailsPlutoController,
+    BillModel? billModel,
   }) {
     billSearchController.initialize(
       newBill: currentBill,
       allBills: allBills,
       billDetailsController: billDetailsController,
       billDetailsPlutoController: billDetailsPlutoController,
+      billModel: billModel
     );
   }
 

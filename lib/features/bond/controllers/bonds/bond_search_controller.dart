@@ -26,14 +26,17 @@ class BondSearchController extends GetxController {
     required BondModel newBond,
     required BondDetailsController bondDetailsController,
     required BondDetailsPlutoController bondDetailsPlutoController,
+    BondModel? bondModel,
   }) {
     bonds = _prepareBondList(allBonds, newBond);
     currentBondIndex = _getBondIndexByNumber(newBond.payNumber);
+
     currentBond = bonds[currentBondIndex];
     this.bondDetailsController = bondDetailsController;
     this.bondDetailsPlutoController = bondDetailsPlutoController;
 
     _setCurrentBond(currentBondIndex);
+    if (bondModel!= null) _navigateToBond(bondModel.payNumber!, NavigationDirection.specific);
   }
 
   /// Prepares a list of bonds with placeholders up to the last Bond number.

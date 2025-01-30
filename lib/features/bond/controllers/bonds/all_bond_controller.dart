@@ -142,6 +142,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
       modifiedBonds: bonds,
       lastBondModel: bonds.last,
       bondType: bondType,
+      bondModel: bondModel
     );
   }
 
@@ -181,6 +182,8 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     required List<BondModel> modifiedBonds,
     required BondModel lastBondModel,
     required BondType bondType,
+    BondModel? bondModel,
+
   }) {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BondController');
 
@@ -204,6 +207,8 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
       bondSearchController: bondSearchController,
       bondDetailsController: bondDetailsController,
       bondDetailsPlutoController: bondDetailsPlutoController,
+      bondModel:bondModel,
+
     );
 
     launchFloatingWindow(
@@ -225,12 +230,15 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     required BondSearchController bondSearchController,
     required BondDetailsController bondDetailsController,
     required BondDetailsPlutoController bondDetailsPlutoController,
+    BondModel? bondModel,
+
   }) {
     bondSearchController.initialize(
       newBond: currentBond,
       allBonds: allBonds,
       bondDetailsController: bondDetailsController,
       bondDetailsPlutoController: bondDetailsPlutoController,
+      bondModel: bondModel
     );
   }
 }
