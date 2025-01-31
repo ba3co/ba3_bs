@@ -5,6 +5,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/accounts/data/models/account_model.dart';
+import '../constants/app_constants.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 
 class AppServiceUtils {
@@ -164,7 +165,7 @@ class AppServiceUtils {
   static double calcVat(int? vatRatio, double? subTotal) {
     if (vatRatio == null || vatRatio == 0 || subTotal == null || subTotal == 0) return 0;
 
-    return calcSub(vatRatio, subTotal)-subTotal;
+    return calcSub(vatRatio, subTotal) - subTotal;
   }
 
   static double calcSubtotal(int? quantity, double? total) {
@@ -185,13 +186,15 @@ class AppServiceUtils {
     return quantity * (subtotal + (vat ?? 0));
   }
 
-  static int getItemQuantity(PlutoRow row, String cellKey) {
-    final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
+  static int getItemQuantity(PlutoRow row) {
+    final String cellValue = getCellValue(row, AppConstants.invRecQuantity);
 
     int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt;
 
     return invRecQuantity;
   }
+
+  static String getCellValue(PlutoRow row, String cellKey) => row.cells[cellKey]?.value.toString() ?? '';
 
   static String zeroToEmpty(double? value) => value == null || value == 0 ? '' : value.toStringAsFixed(2);
 
@@ -217,7 +220,8 @@ class AppServiceUtils {
     int hour = dateTime.hour % 12;
     if (hour == 0) hour = 12;
 
-    String formattedDateTime = "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} \n"
+    String formattedDateTime =
+        "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} \n"
         "${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $period";
     return formattedDateTime;
   }

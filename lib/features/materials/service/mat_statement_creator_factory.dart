@@ -17,7 +17,8 @@ class MatStatementCreatorFactory {
     if (model is BillModel) {
       return MatOrigin(
         originId: model.billId,
-        originTypeId: model.billTypeModel.id,
+        originNumber: model.billDetails.billNumber,
+        originTypeId: model.billTypeModel.billTypeId,
         originType: MatOriginType.bill,
       );
     }

@@ -97,13 +97,16 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     isLoading = true;
     update();
 
-    final result = await _accountsStatementsRepo.getAll(AccountEntity.fromAccountModel(accountModel));
+    final accountEntity = AccountEntity.fromAccountModel(accountModel);
+
+    final result = await _accountsStatementsRepo.getAll(accountEntity);
+
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedItems) {
         entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
-        filterByDate();
 
+        filterByDate();
         _calculateValues(filteredEntryBondItems);
       },
     );

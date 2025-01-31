@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
@@ -91,12 +93,21 @@ class MatStatementModel implements PlutoAdaptable {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()):
           matOrigin?.originId ?? '',
       createAutoIdColumn(): '',
-      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.date()): matName,
-      PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.date()): quantity,
-      PlutoColumn(title: 'السعر', field: 'السعر', type: PlutoColumnType.date()): price,
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
+      PlutoColumn(title: 'فاتورة', field: 'فاتورة', type: PlutoColumnType.text()): originNameAndNumber,
+      PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.number()): quantity,
+      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
+      PlutoColumn(title: 'السعر', field: 'السعر', type: PlutoColumnType.currency(name: 'AED')): price,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
     };
+  }
+
+  String get originNameAndNumber {
+    log('matOrigin!.originTypeId ${matOrigin!.originTypeId}');
+    final originName = BillType.byTypeGuide(matOrigin!.originTypeId!).billPatternType.label;
+    final originNumber = matOrigin!.originNumber!;
+
+    return '$originName: $originNumber';
   }
 }
 
@@ -110,15 +121,20 @@ class MatOrigin {
   /// Refers to the type of the bond entry (bond, bill, cheque).
   final MatOriginType? originType;
 
+  /// Refers to the number of origin of mat (billNumber).
+  final int? originNumber;
+
   MatOrigin({
     this.originId,
     this.originTypeId,
     this.originType,
+    this.originNumber,
   });
 
   factory MatOrigin.fromJson(Map<String, dynamic> json) {
     return MatOrigin(
       originId: json['originId'] as String?,
+      originNumber: json['originNumber'] as int?,
       originTypeId: json['originTypeId'] as String?,
       originType: MatOriginType.byLabel(json['originType']),
     );
@@ -127,6 +143,7 @@ class MatOrigin {
   Map<String, dynamic> toJson() {
     return {
       'originId': originId,
+      'originNumber': originNumber,
       'originTypeId': originTypeId,
       'originType': originType?.label,
     };
@@ -134,11 +151,13 @@ class MatOrigin {
 
   MatOrigin copyWith({
     String? originId,
+    int? originNumber,
     String? originTypeId,
     MatOriginType? originType,
   }) {
     return MatOrigin(
       originId: originId ?? this.originId,
+      originNumber: originNumber ?? this.originNumber,
       originTypeId: originTypeId ?? this.originTypeId,
       originType: originType ?? this.originType,
     );

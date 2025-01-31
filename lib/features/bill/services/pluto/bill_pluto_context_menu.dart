@@ -1,7 +1,9 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
+import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -33,7 +35,7 @@ class BillPlutoContextMenu {
             '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
         onSelected: (PriceType type) {
           final PlutoRow selectedRow = controller.recordsTableStateManager.rows[index];
-          final int quantity = AppServiceUtils.getItemQuantity(selectedRow, AppConstants.invRecQuantity);
+          final int quantity = AppServiceUtils.getItemQuantity(selectedRow);
 
           gridService.updateInvoiceValuesBySubTotal(
             selectedRow: selectedRow,
@@ -44,6 +46,37 @@ class BillPlutoContextMenu {
         },
         onCloseCallback: () {
           debugPrint('PriceType menu closed.');
+        });
+  }
+
+  List<String> materialMenu = [
+    'حركة المادة',
+  ];
+
+  void showMaterialMenu({
+    required BuildContext context,
+    required Offset tapPosition,
+    required MaterialModel materialModel,
+    required BillPlutoUtils invoiceUtils,
+    required BillPlutoGridService gridService,
+    required int index,
+  }) {
+    OverlayService.showPopupMenu(
+        context: context,
+        tapPosition: tapPosition,
+        padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 8.0),
+        items: materialMenu,
+        itemLabelBuilder: (item) => item,
+        onSelected: (String selectedMenuItem) {
+          final PlutoRow selectedRow = controller.recordsTableStateManager.rows[index];
+          final String matName = AppServiceUtils.getCellValue(selectedRow, AppConstants.invRecProduct);
+
+          if (selectedMenuItem == 'حركة المادة') {
+            read<MaterialsStatementController>().fetchMatStatements(matName, context: context);
+          }
+        },
+        onCloseCallback: () {
+          debugPrint('Material Menu closed.');
         });
   }
 

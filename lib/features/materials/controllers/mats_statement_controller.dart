@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
+import 'package:ba3_bs/features/materials/ui/screens/material_statement_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
@@ -32,7 +37,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedEntryBondModel) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+      (savedStatementModel) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
     );
   }
 
@@ -77,17 +82,21 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 // final startDateController = TextEditingController()..text = _formattedToday;
 // final endDateController = TextEditingController()..text = _formattedToday;
 //
-// // Data
-// final List<EntryBondItemModel> entryBondItems = [];
+  // Data
+  final List<MatStatementModel> matStatements = [];
+  MaterialModel? selectedMat;
+
 // List<EntryBondItemModel> filteredEntryBondItems = [];
 //
-// // State variables
-// bool isLoading = false;
-//
-// double totalValue = 0.0;
+
+  // State variables
+  bool isLoadingPlutoGrid = false;
+
+  int totalQuantity = 0;
+
 // double debitValue = 0.0;
 // double creditValue = 0.0;
-//
+
 // @override
 // void onInit() {
 //   super.onInit();
@@ -130,32 +139,44 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 //   endDateController.text = AppUIUtils.getDateFromString(text);
 // }
 //
-// // Fetch bond items for the selected account
-// Future<void> fetchAccountEntryBondItems() async {
-//   final accountModel = _materialsController.getAccountModelByName(accountNameController.text);
-//   if (accountModel == null) {
-//     _showErrorSnackBar("خطأ إدخال", "يرجى إدخال اسم الحساب");
-//     return;
-//   }
-//
-//   isLoading = true;
-//   update();
-//
-//   final result = await _accountsStatementsRepo.getAll(AccountEntity.fromAccountModel(accountModel));
-//   result.fold(
-//     (failure) => AppUIUtils.onFailure(failure.message),
-//     (fetchedItems) {
-//       entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
-//       filterByDate();
-//
-//       _calculateValues(filteredEntryBondItems);
-//     },
-//   );
-//
-//   isLoading = false;
-//   update();
-// }
-//
+
+  bool isMatValid(MaterialModel? materialByName) {
+    if (materialByName == null || materialByName.id == null) {
+      AppUIUtils.onFailure('فشل في ايجاد الماده!');
+      selectedMat = null;
+      return false;
+    }
+
+    selectedMat = materialByName;
+    return true;
+  }
+
+// Fetch bond items for the selected account
+  Future<void> fetchMatStatements(String name, {required BuildContext context}) async {
+    log('name $name');
+    final materialByName = _materialsController.getMaterialByName(name);
+
+    log('materialByName ${materialByName?.id}');
+
+    if (!isMatValid(materialByName)) return;
+
+    final result = await _matStatementsRepo.getAll(materialByName!.id!);
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedItems) {
+        matStatements.assignAll(fetchedItems.map((item) => item).toList());
+
+        launchFloatingWindow(
+          context: context,
+          floatingScreen: MaterialStatementScreen(),
+          minimizedTitle: screenTitle,
+        );
+        // filterByDate();
+        _calculateValues(fetchedItems);
+      },
+    );
+  }
+
 // void filterByDate() {
 //   final DateFormat dateFormat = DateFormat('yyyy-MM-dd'); // Format for start and end dates
 //
@@ -182,36 +203,36 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 // /// Navigation handler
 // void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
 //
-// /// Calculates debit, credit, and total values
-// void _calculateValues(List<EntryBondItemModel> items) {
-//   if (items.isEmpty) {
-//     _resetValues();
-//   } else {
-//     _updateValues(items);
-//   }
-// }
-//
-// _resetValues() {
-//   totalValue = 0.0;
-//   debitValue = 0.0;
-//   creditValue = 0.0;
-// }
-//
-// _updateValues(List<EntryBondItemModel> items) {
-//   debitValue = _calculateSum(items: items, type: BondItemType.debtor);
-//   creditValue = _calculateSum(items: items, type: BondItemType.creditor);
-//
-//   totalValue = debitValue - creditValue;
-// }
-//
-// double _calculateSum({required List<EntryBondItemModel> items, required BondItemType type}) => items.fold(
-//       0.0,
-//       (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
-//     );
-//
-// String get screenTitle =>
-//     'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
-//
+
+  /// Calculates debit, credit, and total values
+  void _calculateValues(List<MatStatementModel> items) {
+    if (items.isEmpty) {
+      _resetValues();
+    } else {
+      _updateValues(items);
+    }
+  }
+
+  _resetValues() {
+    totalQuantity = 0;
+    // debitValue = 0.0;
+    // creditValue = 0.0;
+  }
+
+  _updateValues(List<MatStatementModel> items) {
+    // debitValue = _calculateSum(items: items, type: BondItemType.debtor);
+    // creditValue = _calculateSum(items: items, type: BondItemType.creditor);
+
+    totalQuantity = _calculateSum(items);
+  }
+
+  int _calculateSum(List<MatStatementModel> items) => items.fold(
+        0,
+        (sum, item) => sum + (item.quantity ?? 0),
+      );
+
+  String get screenTitle => 'حركات ${selectedMat?.matName}';
+
 // // Helper Methods
 // static String get _formattedToday => DateTime.now().dayMonthYear;
 //
