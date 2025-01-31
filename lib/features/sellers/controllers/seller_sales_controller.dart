@@ -41,7 +41,7 @@ class SellerSalesController extends GetxController with AppNavigator {
   final GlobalKey<TargetPointerWidgetState> accessoriesKey = GlobalKey<TargetPointerWidgetState>();
   final GlobalKey<TargetPointerWidgetState> mobilesKey = GlobalKey<TargetPointerWidgetState>();
 
-  bool get inFilterMode => dateRange != null;
+  bool inFilterMode = false;
 
   List<BillModel> get sellerSales => inFilterMode ? filteredBills : sellerBills;
 
@@ -72,49 +72,113 @@ class SellerSalesController extends GetxController with AppNavigator {
     selectedSeller = sellerModel;
   }
 
-  Future<void> onSubmitDateRangePicker(PickerDateRange pickedDateRange) async {
+  set setInFilterMode(bool newValue) {
+    inFilterMode = newValue;
+  }
+
+  set setDateRange(PickerDateRange newValue) {
+    dateRange = newValue;
+  }
+
+  bool isValidDateRange() {
+    if (dateRange == null) {
+      return false;
+    }
+
+    final startDate = dateRange!.startDate;
+    final endDate = dateRange!.endDate;
+
+    if (endDate == null && startDate != null) {
+      log('dateRange!.endDate == null');
+
+      /// Last day of the month
+      ///
+      /// setting the day to 0 in the DateTime constructor rolls back to the last day of the previous month.
+      final lastDayOfMonth = DateTime(startDate.year, startDate.month + 1, 0);
+      setDateRange = PickerDateRange(startDate, lastDayOfMonth);
+      update();
+    } else if (startDate == null && endDate != null) {
+      log('dateRange!.startDate == null');
+      final startDay = DateTime(endDate.year, endDate.month, 1); // First day of the month
+      setDateRange = PickerDateRange(startDay, endDate);
+      update();
+    }
+
+    return true;
+  }
+
+  Future<void> onSubmitDateRangePicker() async {
+    if (!isValidDateRange()) return;
+
+    log('onSubmitDateRangePicker ${dateRange!.startDate}, ${dateRange!.endDate}');
     isLoading = true;
     update();
 
-    dateRange = pickedDateRange;
+    setInFilterMode = true;
+
     await fetchSellerBillsByDate(
       sellerModel: selectedSeller!,
-      dateTimeRange: DateTimeRange(start: pickedDateRange.startDate!, end: pickedDateRange.endDate!),
+      dateTimeRange: DateTimeRange(start: dateRange!.startDate!, end: dateRange!.endDate!),
     );
 
     isLoading = false;
     update();
   }
 
-  void clearFilter() {
-    dateRange = null;
-    read<PlutoController>().updatePlutoKey();
+  void onSelectionChanged(dateRangePickerSelectionChangedArgs) {
+    setDateRange = dateRangePickerSelectionChangedArgs.value;
+  }
 
+  PickerDateRange get defaultDateRange {
+    final currentDate = DateTime.now();
+    final startDay = DateTime(currentDate.year, currentDate.month, 1);
+
+    return PickerDateRange(startDay, currentDate);
+  }
+
+  void clearFilter() {
+    setDateRange = defaultDateRange;
+
+    setInFilterMode = false;
+    filteredBills.assignAll([]);
+
+    read<PlutoController>().updatePlutoKey();
     update();
   }
 
   // Sets the selected seller and fetches their bills
   void onSelectSeller(SellerModel sellerModel) {
+    setDateRange = defaultDateRange;
+
     setSelectedSeller = sellerModel;
-    fetchSellerBillsByDate(sellerModel: sellerModel);
+
+    fetchSellerBillsByDate(
+      sellerModel: sellerModel,
+      dateTimeRange: DateTimeRange(start: defaultDateRange.startDate!, end: defaultDateRange.endDate!),
+    );
   }
 
-  Future<void> fetchSellerBillsByDate({required SellerModel sellerModel, DateTimeRange? dateTimeRange}) async {
-    final currentDate = DateTime.now();
-    final startOfDay = currentDate.subtract(Duration(days: 30));
-    final endOfDay = currentDate;
-
+  Future<void> fetchSellerBillsByDate({required SellerModel sellerModel, required DateTimeRange dateTimeRange}) async {
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
       value: sellerModel.costGuid,
       dateFilter: DateFilter(
-          dateFieldName: ApiConstants.billDate,
-          range: dateTimeRange ?? DateTimeRange(start: startOfDay, end: endOfDay)),
+        dateFieldName: ApiConstants.billDate,
+        range: dateTimeRange,
+      ),
     );
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('لا توجد فواتير مسجلة ل${sellerModel.costName}'),
+      (failure) {
+        if (!inFilterMode) {
+          AppUIUtils.onFailure('لا توجد فواتير مسجلة ل${sellerModel.costName} ❌');
+        } else {
+          AppUIUtils.onFailure(' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
+
+          clearFilter();
+        }
+      },
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
   }
@@ -137,8 +201,10 @@ class SellerSalesController extends GetxController with AppNavigator {
     totalAccessoriesSales = 0;
     totalMobilesSales = 0;
 
+    final bills = inFilterMode ? filteredBills : sellerBills;
+
     // Iterate through all bills
-    for (final bill in sellerBills) {
+    for (final bill in bills) {
       // Iterate through all items in each bill
       for (final item in bill.items.itemList) {
         if (item.itemSubTotalPrice != null) {
