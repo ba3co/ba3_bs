@@ -1,6 +1,17 @@
-import '../../../../core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
-class UserModel {
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/styling/app_colors.dart';
+import '../../../../core/styling/app_text_style.dart';
+import '../../../../core/widgets/app_spacer.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
+
+class UserModel implements PlutoAdaptable {
   final String? userId;
   final String? userName;
   final String? userPassword;
@@ -39,10 +50,8 @@ class UserModel {
       if (userWorkStatus != null) 'userWorkStatus': userWorkStatus?.label,
       if (userHolidays != null) 'userHolidays': userHolidays?.toList(),
       if (userWorkingHours != null)
-        'userWorkingHours':
-            Map.fromEntries(userWorkingHours!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
-      if (userTimeModel != null)
-        "userTime": Map.fromEntries(userTimeModel!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
+        'userWorkingHours': Map.fromEntries(userWorkingHours!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
+      if (userTimeModel != null) "userTime": Map.fromEntries(userTimeModel!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
     };
   }
 
@@ -69,9 +78,7 @@ class UserModel {
       userHolidays: List<String>.from(json['userHolidays'] ?? []),
       userWorkingHours: userDailyTime,
       userWorkStatus: UserWorkStatus.byLabel(json['userWorkStatus'] ?? UserWorkStatus.away.label),
-      userActiveStatus: json['userActiveStatus'] != null
-          ? UserActiveStatus.byLabel(json['userActiveStatus'])
-          : UserActiveStatus.inactive,
+      userActiveStatus: json['userActiveStatus'] != null ? UserActiveStatus.byLabel(json['userActiveStatus']) : UserActiveStatus.inactive,
       userTimeModel: userTimeModel,
     );
   }
@@ -101,6 +108,52 @@ class UserModel {
         userHolidays: userHolidays ?? this.userHolidays,
         userWorkingHours: userWorkingHours ?? this.userWorkingHours,
       );
+
+  @override
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
+    return {
+      PlutoColumn(title: 'الرقم التعريفي', field: AppStrings.userIdFiled, type: PlutoColumnType.text(), hide: true): userId,
+      createAutoIdColumn(): '',
+      PlutoColumn(
+        title: 'اسم الموظف',
+        field: 'اسم الموظف',
+        type: PlutoColumnType.text(),
+      ): userName,
+      PlutoColumn(
+        title: 'الحالة',
+        field: 'الحالة',
+        textAlign: PlutoColumnTextAlign.center,
+        renderer: (PlutoColumnRendererContext context) {
+          String status = context.cell.value.toString();
+
+          Color textColor = Colors.black;
+          if (status != UserWorkStatus.online.label) {
+            textColor = Colors.red;
+          }
+
+          return Center(
+            child: Text(
+              status,
+              style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+            ),
+          );
+        },
+        type: PlutoColumnType.text(),
+      ): userWorkStatus?.label,
+      PlutoColumn(
+        title: 'اخر دخول',
+        field: 'اخر دخول',
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
+      PlutoColumn(
+        title: 'اخر خروج',
+        field: 'اخر خروج',
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logOutDateList?.lastOrNull?.toIso8601String()),
+    };
+  }
 }
 
 class UserWorkingHours {

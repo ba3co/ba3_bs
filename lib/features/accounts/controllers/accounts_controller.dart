@@ -152,34 +152,34 @@ class AccountsController extends GetxController with AppNavigator {
       log('Accounts isEmpty');
     }
 
-    String lowerText = text.toLowerCase();
+    // تنظيف النص المدخل من الفراغات الزائدة وتحويله إلى قائمة من الكلمات
+    List<String> searchParts = text.toLowerCase().split(' ');
 
-    // 1️⃣ البحث عن تطابق كامل
+    // البحث عن تطابق كامل أولاً
     var exactMatch = accounts.firstWhereOrNull(
-      (item) => item.accName?.toLowerCase() == lowerText || item.accCode == text,
+          (item) => item.accName?.toLowerCase() == text.toLowerCase() || item.accCode == text,
     );
 
     if (exactMatch != null) {
       return [exactMatch]; // إرجاع الحساب المطابق فقط
     }
 
-    // 2️⃣ البحث عن الحسابات التي يبدأ اسمها بالنص المدخل
-    var startsWithMatches = accounts
-        .where(
-          (item) => item.accName!.toLowerCase().startsWith(lowerText),
-        )
-        .toList();
+    // البحث عن تطابق جزئي متتابع
+    var partialMatch = accounts.firstWhereOrNull(
+          (item) {
+        String name = item.accName!.toLowerCase();
+        return searchParts.every((part) => name.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
+      },
+    );
 
-    if (startsWithMatches.isNotEmpty) {
-      return startsWithMatches; // إرجاع الحسابات التي تبدأ بالنص المدخل
+    if (partialMatch != null) {
+      return [partialMatch]; // إرجاع أول تطابق جزئي متتابع
     }
 
-    // 3️⃣ البحث عن أي تطابق جزئي
-    return accounts
-        .where(
-          (item) => item.accName!.toLowerCase().contains(lowerText) || item.accCode!.contains(text),
-        )
-        .toList();
+    // البحث العادي عند عدم وجود تطابق متتابع
+    return accounts.where(
+            (item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)
+    ).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {

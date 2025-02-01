@@ -25,6 +25,7 @@ import '../../features/patterns/ui/screens/all_pattern_screen.dart';
 import '../../features/sellers/ui/screens/add_seller_screen.dart';
 import '../../features/sellers/ui/screens/all_sellers_screen.dart';
 import '../../features/users_management/ui/screens/role_management/all_roles_screen.dart';
+import '../../features/users_management/ui/screens/user_time_list/user_time_list_screen.dart';
 import '../bindings/middlewares.dart';
 import 'app_routes.dart';
 
@@ -141,5 +142,8 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.showAllMaterialsGroupScreen,
     page: () => const AllMaterialsGroupScreen(),
+  ),GetPage(
+    name: AppRoutes.showUserTimeListScreen,
+    page: () => const UserTimeListScreen(),
   ),
 ];

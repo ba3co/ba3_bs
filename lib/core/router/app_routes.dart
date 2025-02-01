@@ -29,4 +29,5 @@ class AppRoutes {
   static const String sellerTargetScreen = '/sellerTargetScreen';
   static const String addMaterialScreen = '/addMaterialScreen';
   static const String showAllMaterialsGroupScreen = '/allMaterialsGroupScreen';
+  static const String showUserTimeListScreen = '/UserTimeListScreen';
 }

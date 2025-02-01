@@ -34,6 +34,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   final SharedPreferencesService _sharedPreferencesService;
 
+
   UserManagementController(this._rolesFirebaseRepo, this._usersFirebaseRepo, this._sharedPreferencesService);
 
   // Services
@@ -60,6 +61,8 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   RxBool isPasswordVisible = false.obs;
   RxBool isGuestLoginButtonVisible = false.obs;
+  bool isLoading=false;
+
 
   @override
   void onInit() {
@@ -293,9 +296,13 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     to(AppRoutes.addUserScreen);
   }
 
-  void navigateToLAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
+  void navigateToAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
+  void navigateToUserTimeListScreen() => to(AppRoutes.showUserTimeListScreen);
 
-  void navigateToLAllPermissionsScreen() => to(AppRoutes.showAllPermissionsScreen);
+  void navigateToLAllPermissionsScreen() {
+    log(allUsers.length.toString());
+    to(AppRoutes.showAllPermissionsScreen);
+  }
 
   Future<void> _handleNoMatch() async {
     if (Get.currentRoute != AppRoutes.loginScreen) {

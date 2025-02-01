@@ -115,8 +115,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     AppUIUtils.onSuccess('تم القبول بنجاح');
     billSearchController.updateBill(updatedBillModel);
 
-    if (updatedBillModel.status == Status.approved &&
-        updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (updatedBillModel.status == Status.approved && updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       createAndStoreEntryBond(model: updatedBillModel);
 
       // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
@@ -140,8 +139,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
   }
 
-  Map<String, AccountModel> findModifiedBillTypeAccounts(
-      {required BillModel previousBill, required BillModel currentBill}) {
+  Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
     // Extract accounts from the bill type models or default to empty maps
     final previousAccounts = previousBill.billTypeModel.accounts ?? {};
     final currentAccounts = currentBill.billTypeModel.accounts ?? {};
@@ -255,4 +253,39 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       },
     );
   }
+
+  ///  this only in mobile app
+/*  Future<void> showBarCodeScanner({
+    required BuildContext context,
+    required PlutoGridStateManager stateManager,
+    required IPlutoController plutoController,
+  }) async {
+    final barCode = await SimpleBarcodeScanner.scanBarcode(context, scanFormat: ScanFormat.ONLY_BARCODE) ?? '';
+    // String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false, ScanMode.DEFAULT);
+
+    _handleBarCodeScan(
+      stateManager: stateManager,
+      plutoController: plutoController,
+      barCode: barCode,
+    );
+  }
+
+
+
+ void _handleBarCodeScan({
+    required PlutoGridStateManager stateManager,
+    required IPlutoController plutoController,
+    required String barCode,
+  }) async {
+    final materialController = read<MaterialController>();
+    final searchedMaterials = materialController.searchOfProductByText(barCode);
+
+    final MaterialModel? selectedMaterial = searchedMaterials.length == 1 ? searchedMaterials.first : null;
+
+    plutoController.updateWithSelectedMaterial(
+      stateManager: stateManager,
+      materialModel: selectedMaterial,
+      plutoController: plutoController,
+    );
+  }*/
 }

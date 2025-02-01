@@ -23,5 +23,6 @@ class AppStrings {
   static const double radiusInMeters = 25;
 
   static const String materialIdFiled = 'materialIdFiled';
-  static const String materialGroupIdFiled = 'materialGroupIdFiled'; // نصف القطر بالمتر
+  static const String materialGroupIdFiled = 'materialGroupIdFiled';
+  static const String userIdFiled = 'userIdFiled';
 }

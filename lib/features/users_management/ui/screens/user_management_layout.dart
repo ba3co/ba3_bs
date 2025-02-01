@@ -27,12 +27,17 @@ class UserManagementLayout extends StatelessWidget {
                   AppMenuItem(
                       text: 'إدارة المستخدمين',
                       onTap: () {
-                        userManagementController.navigateToLAllUsersScreen();
+                        userManagementController.navigateToAllUsersScreen();
                       }),
                   AppMenuItem(
                       text: 'إدارة الصلاحيات',
                       onTap: () {
                         userManagementController.navigateToLAllPermissionsScreen();
+                      }),
+                  AppMenuItem(
+                      text: 'سجل الدوام',
+                      onTap: () {
+                        userManagementController.navigateToUserTimeListScreen();
                       }),
                 ],
               ),

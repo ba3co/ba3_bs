@@ -229,8 +229,8 @@ class SellerSalesController extends GetxController with AppNavigator {
     to(AppRoutes.addSellerScreen);
   }
 
-  void navigateToAllSellersScreen() {
-    read<SellersController>().fetchProbabilitySellers();
+  void navigateToAllSellersScreen() async {
+    await read<SellersController>().fetchProbabilitySellers();
     to(AppRoutes.allSellersScreen);
   }
 

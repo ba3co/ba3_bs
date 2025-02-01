@@ -42,7 +42,9 @@ class UserDetailsForm extends StatelessWidget {
               FormFieldRow(
                 firstItem: TextAndExpandedChildField(
                   label: 'اسم الحساب',
+                  height: 70,
                   child: CustomTextFieldWithoutIcon(
+                    height: 70,
                     filedColor: AppColors.backGroundColor,
                     validator: (value) => userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
                     textEditingController: userManagementController.userFormHandler.userNameController,
@@ -51,7 +53,9 @@ class UserDetailsForm extends StatelessWidget {
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: 'كلمة السر',
+                  height: 70,
                   child: CustomTextFieldWithoutIcon(
+                    height: 70,
                     filedColor: AppColors.backGroundColor,
                     validator: (value) => userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
                     textEditingController: userManagementController.userFormHandler.passController,
