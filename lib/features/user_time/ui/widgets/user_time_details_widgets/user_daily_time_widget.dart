@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/user_time/controller/user_time_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -9,9 +10,12 @@ import '../../../../../core/widgets/organized_widget.dart';
 
 class UserDailyTimeWidget extends StatelessWidget {
   const UserDailyTimeWidget({
-    super.key, required this.userTimeController,
+    super.key,
+    required this.userModel,
   });
-final UserTimeController userTimeController;
+
+  final UserModel userModel;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -28,7 +32,7 @@ final UserTimeController userTimeController;
                 separatorBuilder: (context, index) => VerticalSpace(),
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
-                itemCount: userTimeController.workingHoursLength,
+                itemCount: userModel.userWorkingHours?.length??0,
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,7 +40,7 @@ final UserTimeController userTimeController;
                     SizedBox(
                         width: 0.3.sw,
                         child: Text(
-                          userTimeController.workingHours?[index.toString()]?.enterTime??'',
+                          userModel.userWorkingHours?[index.toString()]?.enterTime ?? '',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.headLineStyle4,
                         )),
@@ -61,7 +65,7 @@ final UserTimeController userTimeController;
                     SizedBox(
                         width: 0.3.sw,
                         child: Text(
-                          userTimeController.workingHours?[index.toString()]?.outTime??'',
+                          userModel.userWorkingHours![index.toString()]?.outTime ?? '',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.headLineStyle4,
                         )),

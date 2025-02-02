@@ -88,12 +88,12 @@ class RealImage implements Image {
   }
 
   void _loadFromDisk() {
-    print("Loading image from disk: $filename");
+    // print("Loading image from disk: $filename");
   }
 
   @override
   void display() {
-    print("Displaying image: $filename");
+    // print("Displaying image: $filename");
   }
 }
 
@@ -121,9 +121,9 @@ abstract class RemoteService {
 class RealRemoteService implements RemoteService {
   @override
   Future<void> fetchData() async {
-    print("Fetching data from a remote server...");
+    // print("Fetching data from a remote server...");
     await Future.delayed(Duration(seconds: 2)); // Simulate network latency
-    print("Data fetched successfully!");
+    // print("Data fetched successfully!");
   }
 }
 
@@ -139,13 +139,13 @@ class RemoteServiceProxy implements RemoteService {
   @override
   Future<void> fetchData() async {
     if (!_isAuthenticated) {
-      print("Access denied: User is not authenticated!");
+      // print("Access denied: User is not authenticated!");
       return;
     }
 
-    print("Proxy: Forwarding request to the remote service...");
+    // print("Proxy: Forwarding request to the remote service...");
     await _remoteService.fetchData();
-    print("Proxy: Request completed.");
+    // print("Proxy: Request completed.");
   }
 }
 
@@ -157,7 +157,7 @@ abstract class Database {
 class RealDatabase implements Database {
   @override
   void query(String sql) {
-    print("Executing query: $sql");
+    // print("Executing query: $sql");
   }
 }
 
@@ -172,7 +172,7 @@ class DatabaseProxy implements Database {
     if (userRole == "admin") {
       _realDatabase.query(sql);
     } else {
-      print("Access denied: Insufficient permissions.");
+      // print("Access denied: Insufficient permissions.");
     }
   }
 }
@@ -185,7 +185,7 @@ abstract class WeatherService {
 class RealWeatherService implements WeatherService {
   @override
   String getWeather(String city) {
-    print("Fetching weather data for $city...");
+    // print("Fetching weather data for $city...");
     return "Sunny in $city";
   }
 }
@@ -198,11 +198,11 @@ class CachedWeatherServiceProxy implements WeatherService {
   @override
   String getWeather(String city) {
     if (_cache.containsKey(city)) {
-      print("Returning cached weather for $city...");
+      // print("Returning cached weather for $city...");
       return _cache[city]!;
     }
 
-    print("Fetching new weather data...");
+    // print("Fetching new weather data...");
     String result = _realWeatherService.getWeather(city);
     _cache[city] = result;
     return result;
@@ -217,7 +217,7 @@ abstract class WebServer {
 class RealWebServer implements WebServer {
   @override
   void handleRequest(String ip) {
-    print("Handling request from IP: $ip");
+    // print("Handling request from IP: $ip");
   }
 }
 
@@ -228,7 +228,7 @@ class FirewallProxy implements WebServer {
   @override
   void handleRequest(String ip) {
     if (_blockedIps.contains(ip)) {
-      print("Blocked request from IP: $ip");
+      // print("Blocked request from IP: $ip");
     } else {
       _webServer.handleRequest(ip);
     }
@@ -251,16 +251,16 @@ class RealBankAccount implements BankAccount {
   @override
   Future<void> deposit(int amount) async {
     _balance += amount;
-    print("Deposited \$${amount}. Current balance: \$$_balance");
+    // print("Deposited \$${amount}. Current balance: \$$_balance");
   }
 
   @override
   Future<void> withdraw(int amount) async {
     if (_balance >= amount) {
       _balance -= amount;
-      print("Withdrew \$${amount}. Current balance: \$$_balance");
+      // print("Withdrew \$${amount}. Current balance: \$$_balance");
     } else {
-      print("Insufficient funds! Withdrawal of \$${amount} failed.");
+      // print("Insufficient funds! Withdrawal of \$${amount} failed.");
     }
   }
 
@@ -271,7 +271,7 @@ class RealBankAccount implements BankAccount {
 /// Synchronization Proxy for BankAccount
 class SynchronizedBankAccountProxy implements BankAccount {
   final RealBankAccount _realAccount = RealBankAccount();
-  final _lock = Object();
+  // final _lock = Object();
 
   @override
   Future<void> deposit(int amount) async {
@@ -299,9 +299,9 @@ class SynchronizedBankAccountProxy implements BankAccount {
   Future<void> _synchronized(Future<void> Function() operation) async {
     // Simulate critical section protection
     await Future(() async {
-      print("Entering synchronized block...");
+      // print("Entering synchronized block...");
       await operation();
-      print("Exiting synchronized block...");
+      // print("Exiting synchronized block...");
     });
   }
 }

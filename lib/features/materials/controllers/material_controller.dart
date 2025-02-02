@@ -168,8 +168,8 @@ class MaterialController extends GetxController with AppNavigator {
 
     // 1️⃣ البحث عن تطابق كامل
     var exactMatch = materials.firstWhereOrNull(
-          (item) =>
-      item.matName!.toLowerCase() == lowerQuery ||
+      (item) =>
+          item.matName!.toLowerCase() == lowerQuery ||
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery),
     );
@@ -179,24 +179,28 @@ class MaterialController extends GetxController with AppNavigator {
     }
 
     // 2️⃣ البحث عن المنتجات التي يبدأ اسمها أو كودها بالكلمات المدخلة
-    var startsWithMatches = materials.where(
+    var startsWithMatches = materials
+        .where(
           (item) =>
-      searchParts.every((part) => item.matName!.toLowerCase().startsWith(part)) ||
-          searchParts.every((part) => item.matCode.toString().toLowerCase().startsWith(part)) ||
-          (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))),
-    ).toList();
+              searchParts.every((part) => item.matName!.toLowerCase().startsWith(part)) ||
+              searchParts.every((part) => item.matCode.toString().toLowerCase().startsWith(part)) ||
+              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))),
+        )
+        .toList();
 
     if (startsWithMatches.isNotEmpty) {
       return startsWithMatches; // إرجاع المنتجات التي تبدأ بالكلمات المدخلة
     }
 
     // 3️⃣ البحث عن أي تطابق جزئي لكل الكلمات المدخلة
-    return materials.where(
+    return materials
+        .where(
           (item) =>
-      searchParts.every((part) => item.matName.toString().toLowerCase().contains(part)) ||
-          searchParts.every((part) => item.matCode.toString().toLowerCase().contains(part)) ||
-          (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))),
-    ).toList();
+              searchParts.every((part) => item.matName.toString().toLowerCase().contains(part)) ||
+              searchParts.every((part) => item.matCode.toString().toLowerCase().contains(part)) ||
+              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))),
+        )
+        .toList();
   }
 
   String? getMaterialNameById(String? id) {
@@ -209,8 +213,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     reloadMaterials();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -279,26 +282,25 @@ class MaterialController extends GetxController with AppNavigator {
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
-      read<UserManagementController>()
-          .nonLoggedInUsers
-          .map(
-            (user) => ChangesModel(
-              targetUserId: user.userId!,
-              changeItems: {
-                ChangeCollection.materials: [
-                  ChangeItem(
-                    target: ChangeTarget(
-                      targetCollection: ChangeCollection.materials,
-                      changeType: changeType,
-                    ),
-                    change: materialModel.toJson(),
-                  )
-                ]
-              },
-            ),
-          )
-          .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
+      .nonLoggedInUsers
+      .map(
+        (user) => ChangesModel(
+          targetUserId: user.userId!,
+          changeItems: {
+            ChangeCollection.materials: [
+              ChangeItem(
+                target: ChangeTarget(
+                  targetCollection: ChangeCollection.materials,
+                  changeType: changeType,
+                ),
+                change: materialModel.toJson(),
+              )
+            ]
+          },
+        ),
+      )
+      .toList();
 
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save
@@ -344,7 +346,14 @@ class MaterialController extends GetxController with AppNavigator {
     required BuildContext context,
   }) async {
     MaterialGroupModel? searchedMaterial = await searchProductGroupTextDialog(query);
-    materialFromHandler.parentModel = searchedMaterial;
+
+    if (searchedMaterial != null) {
+      materialFromHandler.parentModel = searchedMaterial;
+      materialFromHandler.parentController.text = searchedMaterial.groupName.toString();
+    }
+    else{
+      AppUIUtils.onFailure('لم يتم العثور على المجموعة');
+    }
     update();
   }
 }

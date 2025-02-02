@@ -121,7 +121,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           OverlayService.back();
         },
         onSubmitted: (_) async {
-          searchedMaterials = await materialController.searchOfProductByText(productTextController.text);
+          searchedMaterials =  materialController.searchOfProductByText(productTextController.text);
           materialController.update();
         },
         productTextController: productTextController,

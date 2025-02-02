@@ -11,7 +11,7 @@ import '../../bond/ui/screens/bond_layout.dart';
 import '../../cheques/ui/screens/cheque_layout.dart';
 import '../../materials/ui/screens/materials_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
-import '../../user_time/ui/screens/user_time_layout.dart';
+import '../../user_time/ui/screens/user_time_details.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
 
 class MainLayoutController extends GetxController {
@@ -82,7 +82,7 @@ class MainLayoutController extends GetxController {
       ),
     (
       name: 'الدوام',
-      layout: const UserTimeLayout(),
+      layout: const UserTimeDetails(),
       role: RoleItemType.viewTime,
       icon: AppAssets.usersTimeIcon,
       unSelectedIcon: AppAssets.usersTimeUnselectedIcon
