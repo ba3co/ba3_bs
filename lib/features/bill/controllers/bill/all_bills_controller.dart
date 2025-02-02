@@ -55,8 +55,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   bool plutoGridIsLoading = true;
 
-  Rx<RequestState> getBillsByTypeRequestState = RequestState.initial.obs;
-
   bool isPendingBillsLoading = true;
 
   Rx<RequestState> getBillsTypesRequestState = RequestState.initial.obs;

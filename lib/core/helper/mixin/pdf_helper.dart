@@ -153,9 +153,9 @@ mixin PdfHelperMixin {
 // Function to lighten a given color
   int lightenColor(int color, double factor) {
     Color original = Color(color); // Convert int to Color
-    int r = ((original.red * (1 - factor)) + (255 * factor)).toInt();
-    int g = ((original.green * (1 - factor)) + (255 * factor)).toInt();
-    int b = ((original.blue * (1 - factor)) + (255 * factor)).toInt();
+    int r = ((original.r * (1 - factor)) + (255 * factor)).toInt();
+    int g = ((original.g * (1 - factor)) + (255 * factor)).toInt();
+    int b = ((original.b * (1 - factor)) + (255 * factor)).toInt();
     return Color.fromARGB(original.alpha, r, g, b).value; // Convert back to int
   }
 

@@ -33,6 +33,7 @@ class BillTypeItemWidget extends StatelessWidget {
         width: max(.25.sw, 350),
         height: 130,
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
             Container(
               height: 100,
@@ -62,7 +63,7 @@ class BillTypeItemWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                     /* Row(
+                      /* Row(
                         children: [
                           Row(
                             spacing: 5,
