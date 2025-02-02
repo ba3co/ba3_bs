@@ -32,15 +32,15 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildTitleText(fileName, 24, font, FontWeight.bold),
+        buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
         buildSpacing(),
-        buildDetailRow('Bond number: ', itemModel.payNumber.toString(), font),
+        buildDetailRow('Bond number: ', itemModel.payNumber.toString(), font: font),
         buildSpacing(),
-        buildDetailRow('Bond type: ', bondName(itemModel), font),
+        buildDetailRow('Bond type: ', bondName(itemModel), font: font),
         buildSpacing(),
-        buildDetailRow('Bond id: ', itemModel.payGuid!, font),
+        buildDetailRow('Bond id: ', itemModel.payGuid!, font: font),
         buildSpacing(),
-        buildDetailRow('Date of Bond: ', itemModel.payDate!, font),
+        buildDetailRow('Date of Bond: ', itemModel.payDate!, font: font),
         buildSpacing(),
       ],
     );

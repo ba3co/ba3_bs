@@ -9,7 +9,6 @@ import '../../../../core/services/pdf_generator/implementations/pdf_generator_ba
 import '../data/models/cheques_model.dart';
 
 class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>> with PdfHelperMixin {
-
   @override
   Widget buildHeader(List<ChequesModel> itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
     final afterUpdate = itemModel[1];
@@ -27,10 +26,10 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildTitleText(fileName, 24, font, FontWeight.bold),
-        buildDetailRow('رقم الشيك التعريفي: ', afterUpdate.chequesGuid.toString(), font),
-        buildDetailRow('رقم الشيك: ', afterUpdate.chequesNumber.toString().toString(), font),
-        buildDetailRow('نوع الشيك: ', ChequesType.byTypeGuide(afterUpdate.chequesTypeGuid!).value, font),
+        buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
+        buildDetailRow('رقم الشيك التعريفي: ', afterUpdate.chequesGuid.toString(), font: font),
+        buildDetailRow('رقم الشيك: ', afterUpdate.chequesNumber.toString().toString(), font: font),
+        buildDetailRow('نوع الشيك: ', ChequesType.byTypeGuide(afterUpdate.chequesTypeGuid!).value, font: font),
       ],
     );
   }
@@ -43,9 +42,8 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
     final headersComparison = ['Field', AppStrings.before, AppStrings.after];
     final dataComparison = _buildComparisonData(beforeUpdate, afterUpdate);
 
-
     return <Widget>[
-      buildTitleText('تفاصيل التعديلات', 20, font),
+      buildTitleText('تفاصيل التعديلات', 20, font: font),
 
       /// Table for seller, customer, and date
       TableHelper.fromTextArray(
@@ -62,11 +60,8 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
       ),
 
       SizedBox(height: 20),
-
-
     ];
   }
-
 
   Map<int, TableColumnWidth> get _columnWidthsSummary => {
         0: const FixedColumnWidth(80), // Field
@@ -87,22 +82,17 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
         9: Alignment.center,
       };
 
-
-
-
   List<List<dynamic>> _buildComparisonData(ChequesModel beforeUpdate, ChequesModel afterUpdate) {
-
     return [
-
-        ['دفع الى', beforeUpdate.accPtrName, afterUpdate.accPtrName],
+      ['دفع الى', beforeUpdate.accPtrName, afterUpdate.accPtrName],
       ['الحساب', beforeUpdate.chequesAccount2Name, afterUpdate.chequesAccount2Name],
       ['التاريخ', beforeUpdate.chequesDate ?? '', afterUpdate.chequesDate ?? ''],
       ['تاريخ الاستحقاق', beforeUpdate.chequesDueDate ?? '', afterUpdate.chequesDueDate ?? ''],
       ['قيمة الشيك', beforeUpdate.chequesVal ?? '', afterUpdate.chequesVal ?? ''],
       ['رقم الشيك', beforeUpdate.chequesNumber ?? '', afterUpdate.chequesNumber ?? ''],
       ['رقم الورقة', beforeUpdate.chequesNum ?? '', afterUpdate.chequesNum ?? ''],
-      ['تم الدفع', (beforeUpdate.isPayed ?? false)?'نعم':'لا', (afterUpdate.isPayed ?? false)?'نعم':'لا'],
-      ['تم الارجاع', (beforeUpdate.isRefund ?? false)?'نعم':'لا', (afterUpdate.isRefund ?? false)?'نعم':'لا'],
+      ['تم الدفع', (beforeUpdate.isPayed ?? false) ? 'نعم' : 'لا', (afterUpdate.isPayed ?? false) ? 'نعم' : 'لا'],
+      ['تم الارجاع', (beforeUpdate.isRefund ?? false) ? 'نعم' : 'لا', (afterUpdate.isRefund ?? false) ? 'نعم' : 'لا'],
       ['البيان', beforeUpdate.chequesNote ?? '', afterUpdate.chequesNote ?? ''],
       // Add more comparisons as needed
     ];

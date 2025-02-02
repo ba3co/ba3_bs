@@ -32,10 +32,10 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildTitleText(fileName, 24, font, FontWeight.bold),
-        buildDetailRow('الرقم التعريفي للسند: ', afterUpdate.payGuid.toString(), font),
-        buildDetailRow('رقم السند: ', afterUpdate.payNumber.toString().toString(), font),
-        buildDetailRow('نوع السند: ', BondType.byTypeGuide(afterUpdate.payTypeGuid!).value, font),
+        buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
+        buildDetailRow('الرقم التعريفي للسند: ', afterUpdate.payGuid.toString(), font: font),
+        buildDetailRow('رقم السند: ', afterUpdate.payNumber.toString().toString(), font: font),
+        buildDetailRow('نوع السند: ', BondType.byTypeGuide(afterUpdate.payTypeGuid!).value, font: font),
       ],
     );
   }
@@ -61,7 +61,7 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
     final dataItems = _buildItemsComparisonData(beforeUpdate, afterUpdate, font);
 
     return <Widget>[
-      buildTitleText('تفاصيل التعديلات', 20, font),
+      buildTitleText('تفاصيل التعديلات', 20, font: font),
 
       /// Table for seller, customer, and date
       TableHelper.fromTextArray(
