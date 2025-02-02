@@ -1,14 +1,10 @@
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/styling/app_colors.dart';
-import '../../../../core/styling/app_text_style.dart';
-import '../../../../core/widgets/app_spacer.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 
 class UserModel implements PlutoAdaptable {
@@ -111,47 +107,85 @@ class UserModel implements PlutoAdaptable {
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
+    Color getStatusColor(String status) {
+      return status == UserWorkStatus.online.label ? Colors.lightGreen : Colors.redAccent;
+    }
+
+    Widget buildStatusCell(String status) {
+      return Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: getStatusColor(status),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            status,
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ),
+      );
+    }
+
+    bool hasHolidayToday() {
+      return userHolidays?.contains(DateTime.now().toString().split(" ")[0]) ?? false;
+    }
+
     return {
-      PlutoColumn(title: 'الرقم التعريفي', field: AppStrings.userIdFiled, type: PlutoColumnType.text(), hide: true): userId,
+      PlutoColumn(
+        title: 'الرقم التعريفي',
+        field: AppStrings.userIdFiled,
+        type: PlutoColumnType.text(),
+        hide: true,
+      ): userId,
       createAutoIdColumn(): '',
       PlutoColumn(
         title: 'اسم الموظف',
         field: 'اسم الموظف',
+        width: 120,
+        frozen: PlutoColumnFrozen.start,
         type: PlutoColumnType.text(),
       ): userName,
       PlutoColumn(
-        title: 'الحالة',
-        field: 'الحالة',
-        textAlign: PlutoColumnTextAlign.center,
-        renderer: (PlutoColumnRendererContext context) {
-          String status = context.cell.value.toString();
-
-          Color textColor = Colors.black;
-          if (status != UserWorkStatus.online.label) {
-            textColor = Colors.red;
-          }
-
-          return Center(
-            child: Text(
-              status,
-              style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-            ),
-          );
-        },
-        type: PlutoColumnType.text(),
-      ): userWorkStatus?.label,
-      PlutoColumn(
         title: 'اخر دخول',
         field: 'اخر دخول',
+        width: 120,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ): AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
+      ): hasHolidayToday()
+          ? 'اجازة'
+          : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
       PlutoColumn(
         title: 'اخر خروج',
         field: 'اخر خروج',
+        width: 120,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ): AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logOutDateList?.lastOrNull?.toIso8601String()),
+      ): hasHolidayToday()
+          ? 'اجازة'
+          : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logOutDateList?.lastOrNull?.toIso8601String()),
+      PlutoColumn(
+        title: 'عطل هذا الشهر',
+        field: 'عطل هذا الشهر',
+        width: 400,
+        renderer: (context) => Center(
+          child: Text(
+            context.cell.value.toString(),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): userHolidays?.where((date) => date.split("-")[1] == DateTime.now().month.toString().padLeft(2, '0')).toList().join(" , "),
+      PlutoColumn(
+        title: 'الحالة',
+        field: 'الحالة',
+        width: 120,
+        textAlign: PlutoColumnTextAlign.center,
+        renderer: (context) => buildStatusCell(context.cell.value.toString()),
+        type: PlutoColumnType.text(),
+      ): hasHolidayToday() ? 'اجازة' : userWorkStatus?.label,
+
     };
   }
 }

@@ -22,9 +22,10 @@ class AddTimeWidget extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
             child: Text(
-          "تسجيل الدوام",
-          style: AppTextStyles.headLineStyle2,
-        )),
+              "الدوام",
+              style: AppTextStyles.headLineStyle2,
+            )),
+
         bodyWidget: Column(
           children: [
             Obx(() {

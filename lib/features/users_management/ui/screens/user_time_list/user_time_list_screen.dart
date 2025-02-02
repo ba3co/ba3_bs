@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -9,13 +10,15 @@ class UserTimeListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<UserManagementController>(builder: (controller) {
+    return GetBuilder<UserManagementController>(builder: (userManagementController) {
       return PlutoGridWithAppBar(
         title: 'جميع الموظفين',
-        isLoading: controller.isLoading,
-        tableSourceModels: controller.allUsers,
+        isLoading: userManagementController.isLoading,
+        tableSourceModels: userManagementController.allUsers,
         onLoaded: (event) {},
         onSelected: (selectedRow) {
+          final userId = selectedRow.row?.cells[AppStrings.userIdFiled]?.value;
+          userManagementController.navigateToUserDetails(userId);
         },
       );
     });

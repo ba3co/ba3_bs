@@ -24,6 +24,7 @@ Future<void> initializeWindowSettings() async {
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     size: Size(1000, 800),
+
     minimumSize: Size(1000, 800),
     center: true,
     backgroundColor: Colors.transparent,
@@ -34,5 +35,6 @@ Future<void> initializeWindowSettings() async {
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
+
   });
 }

@@ -32,9 +32,7 @@ class UserTimeController extends GetxController {
     initialize();
   }
 
-  Map<String, UserWorkingHours>? get workingHours => getUserById()?.userWorkingHours;
 
-  int get workingHoursLength => workingHours?.length ?? 0;
 
   List<String>? get userHolidays => getUserById()
       ?.userHolidays

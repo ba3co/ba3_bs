@@ -212,7 +212,10 @@ class AppServiceUtils {
     return DateTime.now().microsecondsSinceEpoch.toString();
   }
 
-  static String formatDateTime(DateTime dateTime) {
+  static String formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return '';
+    }
     // DateTime dateTime = DateTime.parse(isoString);
     // print(dateTime);
     String period = dateTime.hour >= 12 ? "PM" : "AM";
@@ -220,10 +223,22 @@ class AppServiceUtils {
     int hour = dateTime.hour % 12;
     if (hour == 0) hour = 12;
 
-    String formattedDateTime =
-        "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} \n"
+    return "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} \n"
         "${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $period";
-    return formattedDateTime;
+  }
+
+  static String extractTimeFromDateTime(DateTime? dateTime) {
+    if (dateTime == null) {
+      return 'null';
+    }
+    // DateTime dateTime = DateTime.parse(isoString);
+    // print(dateTime);
+    String period = dateTime.hour >= 12 ? "PM" : "AM";
+
+    int hour = dateTime.hour % 12;
+    if (hour == 0) hour = 12;
+
+    return "${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $period";
   }
 
   static String getDayNameAndMonthName(String inputDate) {
@@ -234,11 +249,10 @@ class AppServiceUtils {
     return "$dayName - $monthName -  $year";
   }
 
- static String formatDateTimeFromString(String? isoString) {
-    if(isoString==null)
-      {
-        return '';
-      }
+  static String formatDateTimeFromString(String? isoString) {
+    if (isoString == null) {
+      return '';
+    }
     DateTime dateTime = DateTime.parse(isoString);
 
     // تحديد الفترة (AM/PM)
@@ -254,5 +268,4 @@ class AppServiceUtils {
 
     return formattedDateTime;
   }
-
 }

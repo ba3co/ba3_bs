@@ -34,7 +34,6 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   final SharedPreferencesService _sharedPreferencesService;
 
-
   UserManagementController(this._rolesFirebaseRepo, this._usersFirebaseRepo, this._sharedPreferencesService);
 
   // Services
@@ -61,8 +60,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   RxBool isPasswordVisible = false.obs;
   RxBool isGuestLoginButtonVisible = false.obs;
-  bool isLoading=false;
-
+  bool isLoading = false;
 
   @override
   void onInit() {
@@ -105,12 +103,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   // Check if all roles are selected
-  bool areAllRolesSelected() =>
-      RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
+  bool areAllRolesSelected() => RoleItemType.values.every((type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length);
 
   // Check if all roles are selected for a specific RoleItemType
-  bool areAllRolesSelectedForType(RoleItemType type) =>
-      roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
+  bool areAllRolesSelectedForType(RoleItemType type) => roleFormHandler.rolesMap[type]?.length == RoleItem.values.length;
 
   // Select all roles
   void selectAllRoles() {
@@ -297,6 +293,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   void navigateToAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
+
   void navigateToUserTimeListScreen() => to(AppRoutes.showUserTimeListScreen);
 
   void navigateToLAllPermissionsScreen() {
@@ -390,8 +387,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   // Call the ChangesController to create the document
-  Future<void> _createChangeDocument(String userId) async =>
-      await read<ChangesController>().createChangeDocument(userId);
+  Future<void> _createChangeDocument(String userId) async => await read<ChangesController>().createChangeDocument(userId);
 
   void logOut() {
     _sharedPreferencesService.remove(AppConstants.userIdKey);
@@ -455,5 +451,12 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedUser) => loggedInUserModel = fetchedUser,
     );
+  }
+
+  void navigateToUserDetails(String? userId) {
+    selectedUserModel = allUsers.firstWhereOrNull(
+      (user) => user.userId == userId,
+    );
+    to(AppRoutes.showUserDetails);
   }
 }

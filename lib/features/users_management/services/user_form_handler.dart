@@ -6,6 +6,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
+import '../../../core/utils/app_service_utils.dart';
 import '../controllers/user_management_controller.dart';
 import '../data/models/user_model.dart';
 
@@ -49,6 +50,7 @@ class UserFormHandler with AppValidator {
     }
   }
 
+
   void clear() {
     userNameController.clear();
     passController.clear();
@@ -85,4 +87,17 @@ class UserFormHandler with AppValidator {
   String? passwordValidator(String? value, String fieldName) => isPasswordValid(value, fieldName);
 
   String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
+
+
+
+  List<String> get userHolidays => userManagementController.selectedUserModel?.userHolidays?.toList() ?? [];
+
+  List<String>? get userHolidaysWithDay => userHolidays
+      .map(
+        (date) => AppServiceUtils.getDayNameAndMonthName(date),
+  )
+      .toList();
+
+  int get userHolidaysLength => userHolidays.length;
+
 }
