@@ -7,14 +7,9 @@ import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
-import 'package:ba3_bs/core/styling/app_colors.dart';
-import 'package:ba3_bs/core/widgets/app_button.dart';
-import 'package:ba3_bs/core/widgets/custom_text_field_without_icon.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
-import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
-import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,10 +28,13 @@ import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
-class BillDetailsController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
+class BillDetailsController extends IBillController
+    with AppValidator, AppNavigator
+    implements IStoreSelectionHandler {
   // Repositories
 
-  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel>
+      _billsFirebaseRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
 
@@ -55,7 +53,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   final TextEditingController billNumberController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
-  final TextEditingController customerAccountController = TextEditingController();
+  final TextEditingController customerAccountController =
+      TextEditingController();
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   final TextEditingController firstPayController = TextEditingController();
@@ -95,8 +94,18 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   @override
-  Future<void> sendToEmail({required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
-    _billService.sendToEmail(recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
+  Future<void> sendToEmail(
+      {required String recipientEmail,
+      String? url,
+      String? subject,
+      String? body,
+      List<String>? attachments}) async {
+    _billService.sendToEmail(
+        recipientEmail: recipientEmail,
+        url: url,
+        subject: subject,
+        body: body,
+        attachments: attachments);
   }
 
   @override
@@ -119,9 +128,11 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
-  void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
+  void updateBillType(String billTypeLabel) =>
+      billType = BillType.byLabel(billTypeLabel);
 
   set setBillDate(DateTime newDate) {
     billDate.value = newDate;
@@ -136,7 +147,9 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> printBill(
-      {required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
+      {required BuildContext context,
+      required BillModel billModel,
+      required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     await read<PrintingController>().startPrinting(
@@ -157,7 +170,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   void updateBillStatus(BillModel billModel, newStatus) async {
-    final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
+    final result =
+        await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -168,7 +182,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
-  Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
+  Future<void> deleteBill(BillModel billModel,
+      {bool fromBillById = false}) async {
     log('billModel json ${billModel.toJson()}');
     final result = await _billsFirebaseRepo.delete(billModel);
 
@@ -186,16 +201,21 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     await _saveOrUpdateBill(billTypeModel: billTypeModel);
   }
 
-  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel);
+  Future<void> updateBill(
+      {required BillTypeModel billTypeModel,
+      required BillModel billModel}) async {
+    await _saveOrUpdateBill(
+        billTypeModel: billTypeModel, existingBill: billModel);
   }
 
-  Future<void> _saveOrUpdateBill({required BillTypeModel billTypeModel, BillModel? existingBill}) async {
+  Future<void> _saveOrUpdateBill(
+      {required BillTypeModel billTypeModel, BillModel? existingBill}) async {
     // Validate the form first
     if (!validateForm()) return;
 
     // Create the bill model from the provided data
-    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
+    final updatedBillModel =
+        _createBillModelFromBillData(billTypeModel, existingBill);
 
     // Handle null bill model
     if (updatedBillModel == null) {
@@ -223,23 +243,28 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
-  appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber}) {
-    BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
+  appendNewBill(
+      {required BillTypeModel billTypeModel, required int lastBillNumber}) {
+    BillModel newBill = BillModel.empty(
+        billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
 
     billSearchController.insertLastAndUpdate(newBill);
   }
 
-  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
+  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel,
+      [BillModel? billModel]) {
     final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts
-    if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (billTypeModel.billPatternType!.hasCashesAccount ||
+        billTypeModel.billPatternType!.hasMaterialAccount) {
       if (!_billUtils.validateCustomerAccount(selectedCustomerAccount)) {
         return null;
       }
     }
 
-    if (!_billUtils.validateSellerAccount(sellerController.selectedSellerAccount)) {
+    if (!_billUtils
+        .validateSellerAccount(sellerController.selectedSellerAccount)) {
       return null;
     }
 
@@ -258,19 +283,23 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
       billFirstPay: firstPayController.text.toDouble,
-      billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      billCustomerId: selectedCustomerAccount?.id! ??
+          "00000000-0000-0000-0000-000000000000",
       billSellerId: sellerController.selectedSellerAccount!.costGuid!,
       billPayType: selectedPayType.value.index,
     );
   }
 
-  prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
+  prepareBillRecords(BillItems billItems,
+          BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareBillMaterialsRows(
         billItems.getMaterialRecords,
       );
 
-  prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);
+  prepareAdditionsDiscountsRecords(BillModel billModel,
+          BillDetailsPlutoController billDetailsPlutoController) =>
+      billDetailsPlutoController.prepareAdditionsDiscountsRows(
+          billModel.getAdditionsDiscountsRecords);
 
   initCustomerAccount(AccountModel? account) {
     if (account != null) {
@@ -287,7 +316,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     }
   }
 
-  void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
+  void updateBillDetailsOnScreen(
+      BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate = bill.billDetails.billDate!;
@@ -299,7 +329,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
 
-    read<SellersController>().initSellerAccount(sellerId: bill.billDetails.billSellerId, billDetailsController: this);
+    read<SellersController>().initSellerAccount(
+        sellerId: bill.billDetails.billSellerId, billDetailsController: this);
 
     prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);
@@ -318,25 +349,9 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
-  showEInvoiceDialog(BillModel billModel, BuildContext context) {
-    _billService.showEInvoiceDialog(billModel, context);
-  }
+  showEInvoiceDialog(BillModel billModel, BuildContext context) =>
+      _billService.showEInvoiceDialog(billModel, context);
 
-  void openFirstPayDialog(BuildContext context) {
-    OverlayService.showDialog(
-        color: AppColors.backGroundColor,
-        context: context,
-        height: 200,
-        showDivider: true,
-        title: 'المزيد',
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 5,
-          children: [
-            TextAndExpandedChildField(label: 'الدفعة الاولى', child: CustomTextFieldWithoutIcon(textEditingController: firstPayController)),
-            AppButton(title: 'تم', onPressed: () => OverlayService.back())
-          ],
-        ));
-  }
+  void openFirstPayDialog(BuildContext context) =>
+      _billService.showFirstPayDialog(context, firstPayController);
 }

@@ -17,7 +17,10 @@ import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
+import '../../../../core/styling/app_colors.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
@@ -27,8 +30,14 @@ import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
+import '../../ui/widgets/bill_shared/bill_header_field.dart';
 
-class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
+class BillDetailsService
+    with
+        PdfBase,
+        EntryBondsGenerator,
+        MatsStatementsGenerator,
+        FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -64,7 +73,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
   }
 
-  void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
+  void launchFloatingEntryBondDetailsScreen(
+      {required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
 
     // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
@@ -79,7 +89,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     launchFloatingWindow(
       context: context,
-      minimizedTitle: 'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
+      minimizedTitle:
+          'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
@@ -91,7 +102,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
-      await read<AllBillsController>().fetchAllBillsByType(billModel.billTypeModel);
+      await read<AllBillsController>()
+          .fetchAllBillsByType(billModel.billTypeModel);
       Get.back();
     } else {
       billSearchController.removeBill(billModel);
@@ -99,7 +111,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
 
-    if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (billModel.status == Status.approved &&
+        billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
     }
 
@@ -115,7 +128,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     AppUIUtils.onSuccess('تم القبول بنجاح');
     billSearchController.updateBill(updatedBillModel);
 
-    if (updatedBillModel.status == Status.approved && updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (updatedBillModel.status == Status.approved &&
+        updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       createAndStoreEntryBond(model: updatedBillModel);
 
       // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
@@ -139,16 +153,19 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
   }
 
-  Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
+  Map<String, AccountModel> findModifiedBillTypeAccounts(
+      {required BillModel previousBill, required BillModel currentBill}) {
     // Extract accounts from the bill type models or default to empty maps
     final previousAccounts = previousBill.billTypeModel.accounts ?? {};
     final currentAccounts = currentBill.billTypeModel.accounts ?? {};
 
     // Identify accounts that are present in both bills but have changed
     final Map<String, AccountModel> modifiedAccounts = Map.fromEntries(
-      previousAccounts.entries.where((MapEntry<Account, AccountModel> previousAccount) {
+      previousAccounts.entries
+          .where((MapEntry<Account, AccountModel> previousAccount) {
         final currentAccountModel = currentAccounts[previousAccount.key];
-        return currentAccountModel != null && currentAccountModel != previousAccount.value;
+        return currentAccountModel != null &&
+            currentAccountModel != previousAccount.value;
       }).map(
         // Use the account key's label for the map
         (entry) => MapEntry(entry.key.label, entry.value),
@@ -158,15 +175,19 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // Log modified accounts
     log('Modified accounts count: ${modifiedAccounts.length}');
     modifiedAccounts.forEach(
-      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
+      (key, account) =>
+          log('Account Key: $key, Account Model: ${account.toJson()}'),
     );
 
     return modifiedAccounts;
   }
 
-  Map<String, List<BillItem>> findDeletedMaterials({required BillModel previousBill, required BillModel currentBill}) {
-    final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
-    final currentGroupedItems = currentBill.items.itemList.groupBy((item) => item.itemGuid);
+  Map<String, List<BillItem>> findDeletedMaterials(
+      {required BillModel previousBill, required BillModel currentBill}) {
+    final previousGroupedItems =
+        previousBill.items.itemList.groupBy((item) => item.itemGuid);
+    final currentGroupedItems =
+        currentBill.items.itemList.groupBy((item) => item.itemGuid);
 
     return Map.fromEntries(
       previousGroupedItems.entries.where(
@@ -181,7 +202,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required BillSearchController billSearchController,
     required bool isSave,
   }) async {
-    final successMessage = isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
+    final successMessage =
+        isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
 
     AppUIUtils.onSuccess(successMessage);
 
@@ -192,15 +214,18 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     if (isSave) {
       billController.updateIsBillSaved = true;
 
-      if (hasModelId(currentBill.billId) && hasModelItems(currentBill.items.itemList)) {
+      if (hasModelId(currentBill.billId) &&
+          hasModelItems(currentBill.items.itemList)) {
         generateAndSendPdf(
           fileName: AppStrings.newBill,
           itemModel: currentBill,
         );
       }
     } else {
-      modifiedBillTypeAccounts = findModifiedBillTypeAccounts(previousBill: previousBill!, currentBill: currentBill);
-      deletedMaterials = findDeletedMaterials(previousBill: previousBill, currentBill: currentBill);
+      modifiedBillTypeAccounts = findModifiedBillTypeAccounts(
+          previousBill: previousBill!, currentBill: currentBill);
+      deletedMaterials = findDeletedMaterials(
+          previousBill: previousBill, currentBill: currentBill);
 
       if (hasModelId(currentBill.billId) &&
           hasModelItems(currentBill.items.itemList) &&
@@ -215,7 +240,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     billSearchController.updateBill(currentBill);
 
-    if (currentBill.status == Status.approved && currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (currentBill.status == Status.approved &&
+        currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
       createAndStoreEntryBond(
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
@@ -234,7 +260,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
 
     if (currentBill.status == Status.approved) {
-      generateAndSaveMatStatement(model: currentBill, deletedMaterials: deletedMaterials);
+      generateAndSaveMatStatement(
+          model: currentBill, deletedMaterials: deletedMaterials);
     }
   }
 
@@ -251,6 +278,31 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       onCloseCallback: () {
         log('E-Invoice dialog closed.');
       },
+    );
+  }
+
+  showFirstPayDialog(
+      BuildContext context, TextEditingController firstPayController) {
+    OverlayService.showDialog(
+      color: AppColors.backGroundColor,
+      context: context,
+      height: 200,
+      showDivider: true,
+      title: 'المزيد',
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 5,
+        children: [
+          TextAndExpandedChildField(
+            label: 'الدفعة الاولى',
+            child: CustomTextFieldWithoutIcon(
+              textEditingController: firstPayController,
+            ),
+          ),
+          AppButton(title: 'تم', onPressed: () => OverlayService.back())
+        ],
+      ),
     );
   }
 

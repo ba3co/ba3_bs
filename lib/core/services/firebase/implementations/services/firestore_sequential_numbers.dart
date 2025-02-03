@@ -3,9 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 mixin FirestoreSequentialNumbers {
   static const String _parentCollection = ApiConstants.sequentialNumbers;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<int> getNextNumber(String category, String entityType) async {
-    final docRef = FirebaseFirestore.instance
+    final docRef = _firestore
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
 
@@ -53,23 +54,26 @@ mixin FirestoreSequentialNumbers {
   }
 
   Future<void> satNumber(String category, String entityType, int number) async {
-    final docRef = FirebaseFirestore.instance
+    final docRef = _firestore
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
 
-    await docRef.set({
-      entityType: {
-        ApiConstants.type: entityType,
-        ApiConstants.lastNumber: number,
+    await docRef.set(
+      {
+        entityType: {
+          ApiConstants.type: entityType,
+          ApiConstants.lastNumber: number,
+        },
       },
-    }, SetOptions(merge: true));
+      SetOptions(merge: true),
+    );
   }
 
   Future<int> getLastNumber({required String category, required String entityType, int? number}) async {
     if (number != null) {
       return number;
     }
-    final docRef = FirebaseFirestore.instance
+    final docRef = _firestore
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
 

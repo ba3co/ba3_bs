@@ -41,7 +41,10 @@ class BillTypeItemWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), topLeft: Radius.circular(12)),
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                  topLeft: Radius.circular(12),
+                ),
                 border: Border.all(color: color, width: 2),
               ),
               child: FittedBox(
@@ -63,22 +66,6 @@ class BillTypeItemWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      /* Row(
-                        children: [
-                          Row(
-                            spacing: 5,
-                            children: [
-                              Text(
-                                ' فواتير اليوم:',
-                              ),
-                              Text(
-                                '${Random().nextInt(100)}',
-                                style: TextStyle(color: color),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),*/
                       InkWell(
                         onTap: onPendingBillsPressed,
                         child: Row(

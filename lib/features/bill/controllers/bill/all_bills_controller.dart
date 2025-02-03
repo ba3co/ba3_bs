@@ -315,11 +315,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return _billUtils.appendEmptyBillModelNew(billTypeModel, billsCountByType);
   }
 
-  Future<void> openFloatingBillDetails(
-    BuildContext context,
-    BillTypeModel billTypeModel, {
-    BillModel? currentBill,
-  }) async {
+  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel,
+      {BillModel? currentBill}) async {
     // plutoGridIsLoading = false;
     //
     // await fetchAllBillsByType(billTypeModel);
