@@ -187,4 +187,10 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
 
     return savedData.map(EntryBondItems.fromJson).toList();
   }
+
+  @override
+  Future<double> fetchMetaData({required String id, required AccountEntity itemIdentifier}) {
+    // TODO: implement fetchMetaData
+    throw UnimplementedError();
+  }
 }

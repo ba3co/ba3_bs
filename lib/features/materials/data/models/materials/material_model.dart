@@ -341,13 +341,25 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     return {
       PlutoColumn(title: 'الرقم التعريفي', field: AppStrings.materialIdFiled, type: PlutoColumnType.text(), hide: true): id,
       createAutoIdColumn(): '',
-      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
-      PlutoColumn(title: 'رمز المادة', field: 'رمز المادة', type: PlutoColumnType.text()): matCode,
-      PlutoColumn(title: 'الباركود', field: 'الباركود', type: PlutoColumnType.text()): matBarCode,
-      PlutoColumn(title: 'المجموعة', field: 'المجموعة', type: PlutoColumnType.text()): read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName??'',
-      PlutoColumn(title: 'التكلفة', field: 'التكلفة', type: PlutoColumnType.text()): retailPrice,
-      PlutoColumn(title: 'سعر المستهلك', field: 'سعر المستهلك', type: PlutoColumnType.text()): endUserPrice,
-      PlutoColumn(title: 'سعر الجملة', field: 'سعر الجملة', type: PlutoColumnType.text()): wholesalePrice,
+      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
+      PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          matPrevQty,
+      PlutoColumn(title: 'التكلفة', field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          retailPrice,
+      PlutoColumn(title: 'المستهلك', field: 'المستهلك', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          endUserPrice,
+      PlutoColumn(title: 'الجملة', field: 'الجملة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          wholesalePrice,
+      PlutoColumn(
+          title: 'رمز المادة',
+          field: 'رمز المادة',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matCode,
+      PlutoColumn(title: 'الباركود', field: 'الباركود', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          matBarCode,
+      PlutoColumn(title: 'المجموعة', field: 'المجموعة', type: PlutoColumnType.text()):
+          read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName ?? '',
     };
   }
 

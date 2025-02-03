@@ -174,8 +174,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -189,10 +189,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     update();
   }
 
-  Future<Either<Failure, List<BillModel>>> fetchBillByNumber(
-      {required BillTypeModel billTypeModel, required int billNumber}) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
+  Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
 
     return result;
   }
@@ -290,8 +288,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) =>
-      bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
@@ -411,5 +408,43 @@ class AllBillsController extends FloatingBillDetailsLauncher
       (fetchedBill) => billModel = fetchedBill,
     );
     return billModel;
+  }
+
+  Future<void> fetchAllBillsMetaDataByTypes(List<BillTypeModel> fetchedBillTypes) async {
+    final List<Future<void>> fetchTasks = [];
+    final errors = <String>[]; // Collect error messages.
+
+    for (final billTypeModel in fetchedBillTypes) {
+      fetchTasks.add(
+        _billsFirebaseRepo.getMetaData(id: billTypeModel.billTypeId!, itemIdentifier: billTypeModel).then((result) {
+          result.fold(
+            (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+            (count) => allBillsCountsByType[billTypeModel] = (count ?? 0).toInt(),
+          );
+        }),
+      );
+    }
+
+
+    // Wait for all tasks to complete.
+    await Future.wait(fetchTasks);
+
+    // Handle errors if any.
+    if (errors.isNotEmpty) {
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+    }
+  }
+
+  Future<void> fetchXXXXXX() async {
+    _billsFirebaseRepo.getMetaData(id: BillType.transferOut.typeGuide, itemIdentifier: BillType.transferOut.billTypeModel).then((result) {
+      result.fold(
+        (failure) => AppUIUtils.onFailure('Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
+
+        (count) {
+
+          log(count.toString());
+        },
+      );
+    });
   }
 }

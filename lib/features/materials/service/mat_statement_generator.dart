@@ -37,21 +37,18 @@ mixin MatsStatementsGenerator {
     Map<String, List<BillItem>> deletedMaterials = const {},
   }) async {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
-    final matsStatementModel = creator.createMatStatement(model: model);
+    final matsStatementsModels = creator.createMatStatement(model: model);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(
-      matsStatements: matsStatementModel,
-    );
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
-      final originId = matsStatementModel.first.originId;
+      final originId = matsStatementsModels.first.originId;
 
       final matStatementsToDelete = deletedMaterials.entries.map((entry) {
-        final matId = entry.value.first.itemGuid;
-        return MatStatementModel(
-          matId: matId,
-          originId: originId,
-        );
+        final matId = entry.key;
+        final matStatementModel = matsStatementsModels.firstWhere((matStatement) => matStatement.matId == entry.key);
+
+        return MatStatementModel(matId: matId, originId: originId, quantity: matStatementModel.quantity);
       }).toList();
 
       await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
@@ -66,6 +63,7 @@ mixin MatsStatementsGenerator {
           (item) => MatStatementModel(
             matId: item.itemGuid,
             originId: originId,
+            quantity: item.itemQuantity,
           ),
         )
         .toList();
@@ -75,6 +73,7 @@ mixin MatsStatementsGenerator {
       (existing, current) => MatStatementModel(
         matId: existing.matId,
         originId: existing.originId,
+        quantity: existing.quantity! + current.quantity!,
       ),
     );
 

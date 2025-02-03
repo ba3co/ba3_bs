@@ -28,6 +28,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     for (final matStatement in matsStatements) {
       await saveMatStatementModel(matStatementModel: matStatement);
 
+      await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.quantity!);
+
       onProgress?.call((++counter) / matsStatements.length);
     }
   }
@@ -56,15 +58,19 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
     for (final matStatementModel in matStatementsModels) {
       deletedTasks.add(
-        _matStatementsRepo.delete(matStatementModel).then(
+        deleteMatStatementModel(matStatementModel),
+
+        /*   _matStatementsRepo.delete(matStatementModel).then(
           (deleteResult) {
             deleteResult.fold(
               (failure) => errors.add(failure.message), // Collect errors.
               (_) {},
             );
           },
-        ),
+        ),*/
       );
+
+      deletedTasks.add(read<MaterialController>().updateMaterialQuantity(matStatementModel.matId!, matStatementModel.quantity!));
     }
 
     await Future.wait(deletedTasks);
@@ -74,71 +80,12 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     }
   }
 
-// // Text Controllers
-// final productForSearchController = TextEditingController();
-// final groupForSearchController = TextEditingController();
-// final accountNameController = TextEditingController();
-// final storeForSearchController = TextEditingController();
-// final startDateController = TextEditingController()..text = _formattedToday;
-// final endDateController = TextEditingController()..text = _formattedToday;
-//
-  // Data
   final List<MatStatementModel> matStatements = [];
   MaterialModel? selectedMat;
 
-// List<EntryBondItemModel> filteredEntryBondItems = [];
-//
-
-  // State variables
   bool isLoadingPlutoGrid = false;
 
   int totalQuantity = 0;
-
-// double debitValue = 0.0;
-// double creditValue = 0.0;
-
-// @override
-// void onInit() {
-//   super.onInit();
-//   resetFields();
-// }
-//
-// /// Clears fields and resets state
-// void resetFields({String? initialAccount}) {
-//   productForSearchController.clear();
-//   groupForSearchController.clear();
-//   storeForSearchController.clear();
-//   startDateController.text = _formattedToday;
-//   endDateController.text = _formattedToday;
-//
-//   if (initialAccount != null) {
-//     accountNameController.text = initialAccount;
-//   } else {
-//     accountNameController.clear();
-//   }
-// }
-//
-// // Event Handlers
-// void onAccountNameSubmitted(String text, BuildContext context) async {
-//   final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
-//
-//   AccountModel? accountModel = await _materialsController.openAccountSelectionDialog(
-//     query: convertArabicNumbers,
-//     context: context,
-//   );
-//   if (accountModel != null) {
-//     accountNameController.text = accountModel.accName!;
-//   }
-// }
-//
-// void onStartDateSubmitted(String text) {
-//   startDateController.text = AppUIUtils.getDateFromString(text);
-// }
-//
-// void onEndDateSubmitted(String text) {
-//   endDateController.text = AppUIUtils.getDateFromString(text);
-// }
-//
 
   bool isMatValid(MaterialModel? materialByName) {
     if (materialByName == null || materialByName.id == null) {
@@ -151,7 +98,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     return true;
   }
 
-// Fetch bond items for the selected account
   Future<void> fetchMatStatements(String name, {required BuildContext context}) async {
     log('name $name');
     final materialByName = _materialsController.getMaterialByName(name);
@@ -177,33 +123,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     );
   }
 
-// void filterByDate() {
-//   final DateFormat dateFormat = DateFormat('yyyy-MM-dd'); // Format for start and end dates
-//
-//   final DateTime startDate = dateFormat.parse(startDateController.text);
-//   final DateTime endDate = dateFormat.parse(endDateController.text);
-//
-//   filteredEntryBondItems = entryBondItems.where((item) {
-//     final String? entryBondItemDateStr = item.date; // Ensure `date` is the correct field
-//     if (entryBondItemDateStr == null) return false;
-//
-//     DateTime? entryBondItemDate;
-//     try {
-//       entryBondItemDate = dateFormat.parse(entryBondItemDateStr);
-//     } catch (e) {
-//       log('Error parsing item.date: $entryBondItemDateStr. Error: $e');
-//       return false; // Skip invalid date formats
-//     }
-//
-//     return entryBondItemDate.isAfter(startDate.subtract(const Duration(days: 1))) &&
-//         entryBondItemDate.isBefore(endDate.add(const Duration(days: 1)));
-//   }).toList();
-// }
-//
-// /// Navigation handler
-// void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
-//
-
   /// Calculates debit, credit, and total values
   void _calculateValues(List<MatStatementModel> items) {
     if (items.isEmpty) {
@@ -215,14 +134,9 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
   _resetValues() {
     totalQuantity = 0;
-    // debitValue = 0.0;
-    // creditValue = 0.0;
   }
 
   _updateValues(List<MatStatementModel> items) {
-    // debitValue = _calculateSum(items: items, type: BondItemType.debtor);
-    // creditValue = _calculateSum(items: items, type: BondItemType.creditor);
-
     totalQuantity = _calculateSum(items);
   }
 
@@ -232,22 +146,4 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       );
 
   String get screenTitle => 'حركات ${selectedMat?.matName}';
-
-// // Helper Methods
-// static String get _formattedToday => DateTime.now().dayMonthYear;
-//
-// void _showErrorSnackBar(String title, String message) {
-//   Get.snackbar(title, message, icon: const Icon(Icons.error_outline));
-// }
-//
-// void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
-//   EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(entryId: originId);
-//
-//   if (!context.mounted) return;
-//   launchFloatingWindow(
-//     context: context,
-//     minimizedTitle: 'سند خاص ب ${entryBondModel.origin!.originType!.label}',
-//     floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
-//   );
-// }
 }

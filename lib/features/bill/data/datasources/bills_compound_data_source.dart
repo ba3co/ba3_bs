@@ -69,11 +69,11 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     final subcollectionPath = getSubCollectionPath(item.billTypeModel);
 
     await compoundDatabaseService.delete(
-      rootCollectionPath: rootCollectionPath,
-      rootDocumentId: rootDocumentId,
-      subCollectionPath: subcollectionPath,
-      subDocumentId: item.billId!,
-    );
+        rootCollectionPath: rootCollectionPath,
+        rootDocumentId: rootDocumentId,
+        subCollectionPath: subcollectionPath,
+        subDocumentId: item.billId!,
+        metaValue: -1);
   }
 
   @override
@@ -101,12 +101,12 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   Future<Map<String, dynamic>> _saveBillData(
       String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async {
     return compoundDatabaseService.add(
-      rootCollectionPath: rootCollectionPath,
-      rootDocumentId: rootDocumentId,
-      subCollectionPath: subCollectionPath,
-      subDocumentId: billId,
-      data: data,
-    );
+        rootCollectionPath: rootCollectionPath,
+        rootDocumentId: rootDocumentId,
+        subCollectionPath: subCollectionPath,
+        subDocumentId: billId,
+        data: data,
+        metaValue: 1);
   }
 
   @override
@@ -158,13 +158,13 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     for (final billTypeModel in itemIdentifiers) {
       fetchTasks.add(
         saveAll(
-                itemIdentifier: billTypeModel,
-                items: items
-                    .where(
-                      (element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId,
-                    )
-                    .toList())
-            .then((result) {
+          itemIdentifier: billTypeModel,
+          items: items
+              .where(
+                (element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId,
+              )
+              .toList(),
+        ).then((result) {
           billsByType[billTypeModel] = result;
         }),
       );
@@ -185,6 +185,7 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
+      metaValue: items.length.toDouble(),
       items: items.map((item) {
         return {
           ...item.toJson(),
@@ -194,5 +195,19 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     );
 
     return savedData.map(BillModel.fromJson).toList();
+  }
+
+  @override
+  Future<double?> fetchMetaData({required String id, required BillTypeModel itemIdentifier}) async {
+    final rootDocumentId = getRootDocumentId(itemIdentifier);
+    final subcollectionPath = getSubCollectionPath(itemIdentifier);
+
+    final data = await compoundDatabaseService.fetchMetaData(
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: rootDocumentId,
+      subCollectionPath: subcollectionPath,
+      subDocumentId: id,
+    );
+    return data;
   }
 }

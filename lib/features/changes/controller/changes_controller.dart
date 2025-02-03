@@ -121,16 +121,26 @@ class ChangesController extends GetxController {
     final changeType = changeItem.target.changeType;
 
     if (targetCollection == ChangeCollection.materials) {
-      if (changeType == ChangeType.addOrUpdate) {
-        _handleAddOrUpdateMaterial(changeItem, materialsToSave); // Add/Update goes to materialsToSave
+      if (changeType == ChangeType.add) {
+        _handleAddMaterial(changeItem, materialsToSave); // Add/Update goes to materialsToSave
       } else if (changeType == ChangeType.remove) {
         _handleDelete(changeItem, materialsToDelete); // Delete goes to materialsToDelete
+      }
+      else if (changeType == ChangeType.update) {
+        _handleUpdateMaterial(changeItem, materialsToDelete); // Delete goes to materialsToDelete
       }
     }
   }
 
   /// Handles an add or update operation for a specific change item.
-  void _handleAddOrUpdateMaterial(ChangeItem changeItem, List<MaterialModel> materialsToSave) {
+  void _handleAddMaterial(ChangeItem changeItem, List<MaterialModel> materialsToSave) {
+    // Assuming changeItem contains the required material data for saving
+    MaterialModel material = _extractMaterialsFromChangeItem(changeItem);
+    materialsToSave.add(material); // Add to the materials list for saving
+    log("Add/Update operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
+  }
+
+  void _handleUpdateMaterial(ChangeItem changeItem, List<MaterialModel> materialsToSave) {
     // Assuming changeItem contains the required material data for saving
     MaterialModel material = _extractMaterialsFromChangeItem(changeItem);
     materialsToSave.add(material); // Add to the materials list for saving

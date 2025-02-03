@@ -8,6 +8,7 @@ abstract class ICompoundDatabaseService<T> {
     required String subCollectionPath,
     String? subDocumentId,
     required T data,
+    double? metaValue,
   });
 
   Future<List<T>> fetchAll({
@@ -32,6 +33,7 @@ abstract class ICompoundDatabaseService<T> {
     String? subDocumentId,
   });
 
+
   Future<void> update({
     required String rootCollectionPath,
     required String rootDocumentId,
@@ -45,6 +47,7 @@ abstract class ICompoundDatabaseService<T> {
     required String rootDocumentId,
     required String subCollectionPath,
     String? subDocumentId,
+    double? metaValue,
   });
 
   Future<int> countDocuments({
@@ -59,5 +62,13 @@ abstract class ICompoundDatabaseService<T> {
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
+    double? metaValue,
+  });
+
+  Future<double?> fetchMetaData({
+    required String rootCollectionPath,
+    required String rootDocumentId,
+    required String subCollectionPath,
+    String? subDocumentId,
   });
 }

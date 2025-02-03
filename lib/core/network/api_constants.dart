@@ -37,4 +37,5 @@ class ApiConstants {
 
   static const String billNumber = 'billDetails.billNumber';
   static const String bondNumber = 'PayNumber';
+  static const String metaValue = 'metaValue';
 }

@@ -231,7 +231,7 @@ class MaterialController extends GetxController with AppNavigator {
     return null;
   }
 
-  void saveOrUpdateMaterial() async {
+  Future<void> saveOrUpdateMaterial() async {
     // Validate the input before proceeding
     if (!materialFromHandler.validate()) return;
     // Create a material model based on the user input
@@ -242,7 +242,7 @@ class MaterialController extends GetxController with AppNavigator {
       return;
     }
     // Prepare user change queue for saving
-    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, ChangeType.addOrUpdate);
+    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
 
     // Save changes and handle results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
@@ -350,10 +350,19 @@ class MaterialController extends GetxController with AppNavigator {
     if (searchedMaterial != null) {
       materialFromHandler.parentModel = searchedMaterial;
       materialFromHandler.parentController.text = searchedMaterial.groupName.toString();
-    }
-    else{
+    } else {
       AppUIUtils.onFailure('لم يتم العثور على المجموعة');
     }
     update();
+  }
+
+  updateMaterialQuantity(String matId, int quantity) async {
+    log('updateMaterialQuantity  matId $matId  quantity $quantity ');
+    final materialModel = materials.firstWhere((material) => material.id == matId);
+    log('materialModel ${materialModel.toJson()} ');
+    materialFromHandler.init(materialModel.copyWith(matPrevQty: (int.parse(materialModel.matPrevQty!) + quantity).toString()));
+    log('selectedMaterial ${selectedMaterial!.toJson()} ');
+
+    await saveOrUpdateMaterial();
   }
 }
