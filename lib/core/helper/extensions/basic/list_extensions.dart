@@ -457,21 +457,26 @@ extension ListExtensions<T> on List<T> {
     ];
   }
 
-  /// Returns a list containing the elements that are present in this list but not in [other].
+  /// Returns a list of elements that exist in this list but not in [other],
+  /// based on a unique key extracted using [keySelector].
   ///
-  /// Example:
+  /// This method does not rely on object equality (`==`). Instead, it removes
+  /// items from this list that have a matching key in [other].
+  ///
+  /// ### Example Usage:
   /// ```dart
-  /// final list1 = [1, 2, 3, 4];
-  /// final list2 = [2, 4];
-  /// final difference = list1.subtract(list2);
-  /// // difference: [1, 3]
+  /// final list1 = [Item(id: 1), Item(id: 2), Item(id: 3)];
+  /// final list2 = [Item(id: 2)];
+  ///
+  /// final difference = list1.subtract(list2, (item) => item.id);
+  /// // Result: [Item(id: 1), Item(id: 3)]
   /// ```
-  List<T> subtract(List<T> other) {
-    final Set<T> otherSet = other.toSet();
-    return [
-      for (var item in this)
-        if (!otherSet.contains(item)) item
-    ];
+  ///
+  /// - [other]: The list of items to exclude from this list.
+  /// - [keySelector]: A function that extracts a unique key from each item for comparison.
+  List<T> subtract<K>(List<T> other, K Function(T) keySelector) {
+    final otherKeys = other.map(keySelector).toSet();
+    return where((item) => !otherKeys.contains(keySelector(item))).toList();
   }
 
   /// Iterates over each element along with its index and performs [action].
@@ -811,45 +816,38 @@ extension ListExtensions<T> on List<T> {
     ];
   }
 
-  /// Updates the quantity field in the list with the difference between new and old quantities.
+  /// Finds items that exist in both lists and updates their quantity with the difference (`new - old`).
   ///
   /// - [other]: The old list to compare with.
   /// - [keySelector]: A function to extract the key used to identify items.
   /// - [quantitySelector]: A function to extract the quantity from an item.
   /// - [updateQuantity]: A function to update the quantity field.
   ///
-  /// Returns a new list where each item's quantity is replaced with the difference (`new - old`).
+  /// Returns a list of updated items where the quantity is replaced with the difference,
+  /// excluding newly added or deleted items.
   List<T> withQuantityDifference<K>(
     List<T> other,
     K Function(T) keySelector,
     int Function(T) quantitySelector,
     T Function(T item, int newQuantity) updateQuantity,
   ) {
-    final oldQuantities = other.associateBy(keySelector).mapValues((_, item) => quantitySelector(item));
+    // Find only updated items that exist in both lists
+    return updatedBy(
+      other,
+      keySelector,
+      (currentItem, previousItem) => quantitySelector(currentItem) != quantitySelector(previousItem), // Compare quantities
+    ).map((currentItem) {
+      final oldQuantity = quantitySelector(
+        other.firstWhere(
+          (previousItem) => keySelector(previousItem) == keySelector(currentItem),
+        ),
+      );
 
-    return map((item) {
-      final key = keySelector(item);
-      final oldQuantity = oldQuantities[key] ?? 0;
-      final newQuantity = quantitySelector(item);
+      final newQuantity = quantitySelector(currentItem);
+
       final difference = newQuantity - oldQuantity;
 
-      return updateQuantity(item, difference.toInt());
+      return updateQuantity(currentItem, difference);
     }).toList();
-  }
-
-  /// Maps values of an existing map while keeping the same keys.
-  ///
-  /// Example:
-  /// ```dart
-  /// final map = {'a': 1, 'b': 2};
-  /// final doubled = map.mapValues((key, value) => value * 2);
-  /// // doubled: {'a': 2, 'b': 4}
-  /// ```
-  Map<K, V> mapValues<K, V>(V Function(K key, V value) transform) {
-    final Map<K, V> result = {};
-    for (var entry in this.asMap().entries) {
-      result[entry.key as K] = transform(entry.key as K, entry.value as V);
-    }
-    return result;
   }
 }
