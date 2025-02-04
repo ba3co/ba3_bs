@@ -307,10 +307,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
 
     // Compute the differences between the previous and current bill items.
-    final changes = findBillItemChanges(
-      previousItems: previousBill.items.itemList,
-      currentItems: currentBill.items.itemList,
-    );
+    final changes = findBillItemChanges(previousItems: previousBill.items.itemList, currentItems: currentBill.items.itemList);
 
     log('New items: ${changes['new']}');
     log('Deleted items: ${changes['deleted']}');
