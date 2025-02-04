@@ -811,4 +811,46 @@ extension ListExtensions<T> on List<T> {
         if (otherKeys.contains(keySelector(item))) item
     ];
   }
+
+  /// Updates the quantity field in the list with the difference between new and old quantities.
+  ///
+  /// - [other]: The old list to compare with.
+  /// - [keySelector]: A function to extract the key used to identify items.
+  /// - [quantitySelector]: A function to extract the quantity from an item.
+  /// - [updateQuantity]: A function to update the quantity field.
+  ///
+  /// Returns a new list where each item's quantity is replaced with the difference (`new - old`).
+  List<T> withQuantityDifference<K>(
+    List<T> other,
+    K Function(T) keySelector,
+    int Function(T) quantitySelector,
+    T Function(T item, int newQuantity) updateQuantity,
+  ) {
+    final oldQuantities = other.associateBy(keySelector).mapValues((_, item) => quantitySelector(item));
+
+    return map((item) {
+      final key = keySelector(item);
+      final oldQuantity = oldQuantities[key] ?? 0;
+      final newQuantity = quantitySelector(item);
+      final difference = newQuantity - oldQuantity;
+
+      return updateQuantity(item, difference.toInt());
+    }).toList();
+  }
+
+  /// Maps values of an existing map while keeping the same keys.
+  ///
+  /// Example:
+  /// ```dart
+  /// final map = {'a': 1, 'b': 2};
+  /// final doubled = map.mapValues((key, value) => value * 2);
+  /// // doubled: {'a': 2, 'b': 4}
+  /// ```
+  Map<K, V> mapValues<K, V>(V Function(K key, V value) transform) {
+    final Map<K, V> result = {};
+    for (var entry in this.asMap().entries) {
+      result[entry.key as K] = transform(entry.key as K, entry.value as V);
+    }
+    return result;
+  }
 }

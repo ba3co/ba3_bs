@@ -6,6 +6,7 @@ import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../bill/data/models/bill_items.dart';
+import '../controllers/material_controller.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
@@ -45,11 +46,10 @@ mixin MatsStatementsGenerator {
 
       final matStatementsToDelete = deletedMaterials.map(
         (material) {
+
           final matId = material.itemGuid;
 
-          // final matStatementModel = matsStatementsModels.firstWhere(
-          //   (matStatement) => matStatement.matId == matId,
-          // );
+
 
           return MatStatementModel(
             matId: matId,
@@ -58,6 +58,14 @@ mixin MatsStatementsGenerator {
           );
         },
       ).toList();
+
+      if(updatedMaterials.isNotEmpty){
+        for (var material in updatedMaterials) {
+          await read<MaterialController>().updateMaterialQuantity(material.matId!, matStatement.quantity!);
+
+        }
+
+      }
 
       await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
     }

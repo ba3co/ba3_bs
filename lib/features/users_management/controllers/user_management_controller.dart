@@ -8,6 +8,7 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
+import 'package:ba3_bs/features/user_time/ui/screens/all_attendance_screen.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
@@ -288,8 +289,11 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   void navigateToAddUserScreen([UserModel? user]) {
-    userFormHandler.init(user);
-    to(AppRoutes.addUserScreen);
+    // userFormHandler.init(user);
+    // to(AppRoutes.addUserScreen);
+    log(user!.toJson().toString());
+    Get.to(() => AllAttendanceScreen(users: allUsers,));
+
   }
 
   void navigateToAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
@@ -457,6 +461,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     selectedUserModel = allUsers.firstWhereOrNull(
       (user) => user.userId == userId,
     );
+
     to(AppRoutes.showUserDetails);
   }
 }
