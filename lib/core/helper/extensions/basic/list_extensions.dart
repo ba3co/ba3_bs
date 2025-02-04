@@ -36,4 +36,10 @@ extension ListExtensions<T> on List<T> {
     }
     return mapped;
   }
+  List<String> extract(String? Function(T item) idSelector) {
+    return [
+      for (var item in this)
+        if (idSelector(item) != null) idSelector(item)!
+    ];
+  }
 }

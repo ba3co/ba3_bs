@@ -316,9 +316,8 @@ class MaterialController extends GetxController with AppNavigator {
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save
 
-
-    final hiveResult =  await _materialsHiveRepo.save(materialModel);
-
+    final hiveResult =
+        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
