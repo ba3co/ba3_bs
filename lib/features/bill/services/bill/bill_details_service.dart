@@ -196,6 +196,41 @@ class BillDetailsService
     );
   }
 
+  _handelAdd(BillModel currentBill) {
+    billController.updateIsBillSaved = true;
+
+    if (hasModelId(currentBill.billId) &&
+        hasModelItems(currentBill.items.itemList)) {
+      generateAndSendPdf(
+        fileName: AppStrings.newBill,
+        itemModel: currentBill,
+      );
+    }
+  }
+
+  _handelUpdate({
+    required Map<String, AccountModel> modifiedBillTypeAccounts,
+    required Map<String, List<BillItem>> deletedMaterials,
+    required BillModel previousBill,
+    required BillModel currentBill,
+  }) {
+    modifiedBillTypeAccounts = findModifiedBillTypeAccounts(
+        previousBill: previousBill, currentBill: currentBill);
+
+    deletedMaterials = findDeletedMaterials(
+        previousBill: previousBill, currentBill: currentBill);
+
+    if (hasModelId(currentBill.billId) &&
+        hasModelItems(currentBill.items.itemList) &&
+        hasModelId(previousBill.billId) &&
+        hasModelItems(previousBill.items.itemList)) {
+      generateAndSendPdf(
+        fileName: AppStrings.updatedBill,
+        itemModel: [previousBill, currentBill],
+      );
+    }
+  }
+
   Future<void> handleSaveOrUpdateSuccess({
     BillModel? previousBill,
     required BillModel currentBill,
@@ -212,30 +247,14 @@ class BillDetailsService
     Map<String, List<BillItem>> deletedMaterials = {};
 
     if (isSave) {
-      billController.updateIsBillSaved = true;
-
-      if (hasModelId(currentBill.billId) &&
-          hasModelItems(currentBill.items.itemList)) {
-        generateAndSendPdf(
-          fileName: AppStrings.newBill,
-          itemModel: currentBill,
-        );
-      }
+      _handelAdd(currentBill);
     } else {
-      modifiedBillTypeAccounts = findModifiedBillTypeAccounts(
-          previousBill: previousBill!, currentBill: currentBill);
-      deletedMaterials = findDeletedMaterials(
-          previousBill: previousBill, currentBill: currentBill);
-
-      if (hasModelId(currentBill.billId) &&
-          hasModelItems(currentBill.items.itemList) &&
-          hasModelId(previousBill.billId) &&
-          hasModelItems(previousBill.items.itemList)) {
-        generateAndSendPdf(
-          fileName: AppStrings.updatedBill,
-          itemModel: [previousBill, currentBill],
-        );
-      }
+      _handelUpdate(
+        modifiedBillTypeAccounts: modifiedBillTypeAccounts,
+        deletedMaterials: deletedMaterials,
+        currentBill: currentBill,
+        previousBill: previousBill!,
+      );
     }
 
     billSearchController.updateBill(currentBill);
@@ -246,17 +265,6 @@ class BillDetailsService
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
       );
-
-      // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBill);
-      //
-      // entryBondController.saveEntryBondModel(
-      //   modifiedAccounts: modifiedBillTypeAccounts,
-      //   entryBondModel: creator.createEntryBond(
-      //     isSimulatedVat: false,
-      //     originType: EntryBondType.bill,
-      //     model: currentBill,
-      //   ),
-      // );
     }
 
     if (currentBill.status == Status.approved) {
