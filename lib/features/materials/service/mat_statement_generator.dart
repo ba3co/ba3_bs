@@ -11,7 +11,6 @@ import 'mat_statement_creator.dart';
 mixin MatsStatementsGenerator {
   final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
 
-//dd
   Future<void> generateAndSaveMatsStatements({
     required List sourceModels,
     void Function(double progress)? onProgress,
