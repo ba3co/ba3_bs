@@ -196,16 +196,39 @@ class BillDetailsService
     );
   }
 
-  _handelAdd(BillModel currentBill) {
-    billController.updateIsBillSaved = true;
+  // Helper function to compare bill items.
+  Map<String, List<BillItem>> findBillItemChanges({
+    required List<BillItem> previousItems,
+    required List<BillItem> currentItems,
+  }) {
+    // Create maps for fast lookup by item id.
+    final previousMap = {for (var item in previousItems) item.itemGuid: item};
+    final currentMap = {for (var item in currentItems) item.itemGuid: item};
 
-    if (hasModelId(currentBill.billId) &&
-        hasModelItems(currentBill.items.itemList)) {
-      generateAndSendPdf(
-        fileName: AppStrings.newBill,
-        itemModel: currentBill,
-      );
-    }
+    // Items in current that are not in previous are "new".
+    final newItems = currentItems
+        .where((item) => !previousMap.containsKey(item.itemGuid))
+        .toList();
+
+    // Items in previous that are not in current are "deleted".
+    final deletedItems = previousItems
+        .where((item) => !currentMap.containsKey(item.itemGuid))
+        .toList();
+
+    // Items that exist in both but with a different quantity are "updated".
+    final updatedItems = currentItems.where((item) {
+      if (previousMap.containsKey(item.itemGuid)) {
+        final previousItem = previousMap[item.itemGuid]!;
+        return item.itemQuantity != previousItem.itemQuantity;
+      }
+      return false;
+    }).toList();
+
+    return {
+      'new': newItems,
+      'deleted': deletedItems,
+      'updated': updatedItems,
+    };
   }
 
   _handelUpdate({
@@ -231,47 +254,137 @@ class BillDetailsService
     }
   }
 
+// Updated handleSaveOrUpdateSuccess method.
   Future<void> handleSaveOrUpdateSuccess({
     BillModel? previousBill,
     required BillModel currentBill,
     required BillSearchController billSearchController,
     required bool isSave,
   }) async {
-    final successMessage =
-        isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
+    // 1. Display the success message.
+    _showSuccessMessage(isSave);
 
-    AppUIUtils.onSuccess(successMessage);
+    // 2. Prepare containers for modified accounts and deleted materials.
+    final modifiedBillTypeAccounts = <String, AccountModel>{};
+    final deletedMaterials = <String, List<BillItem>>{};
+    Map<String, List<BillItem>>? itemChanges;
 
-    Map<String, AccountModel> modifiedBillTypeAccounts = {};
-
-    Map<String, List<BillItem>> deletedMaterials = {};
-
+    // 3. Process the bill: add if new, update if modifying.
     if (isSave) {
-      _handelAdd(currentBill);
+      _handleAdd(currentBill);
     } else {
-      _handelUpdate(
+      // Process update and compute the differences between bill items.
+      itemChanges = _processUpdate(
+        previousBill: previousBill!,
+        currentBill: currentBill,
         modifiedBillTypeAccounts: modifiedBillTypeAccounts,
         deletedMaterials: deletedMaterials,
-        currentBill: currentBill,
-        previousBill: previousBill!,
       );
     }
 
-    billSearchController.updateBill(currentBill);
+    // 4. Update the bill search controller.
+    _updateBillSearchController(billSearchController, currentBill);
 
-    if (currentBill.status == Status.approved &&
-        currentBill.billTypeModel.billPatternType!.hasMaterialAccount) {
+    // 5. Create an entry bond if the bill is approved and its pattern requires a material account.
+    if (_shouldCreateEntryBond(currentBill)) {
       createAndStoreEntryBond(
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
       );
     }
 
-    if (currentBill.status == Status.approved) {
+    // 6. Determine whether to generate a material statement.
+    final shouldGenerateMatStatement = _determineIfShouldGenerateMatStatement(
+        isSave, currentBill, itemChanges);
+    // For updates, extract the list of updated materials (or an empty list for a new bill).
+    final updatedMaterials =
+        isSave ? <BillItem>[] : (itemChanges?['updated'] ?? []);
+
+    // 7. Generate and save the material statement if the bill is approved and changes exist.
+    if (currentBill.status == Status.approved && shouldGenerateMatStatement) {
       generateAndSaveMatStatement(
-          model: currentBill, deletedMaterials: deletedMaterials);
+        model: currentBill,
+        deletedMaterials: deletedMaterials,
+        updatedMaterials: updatedMaterials,
+      );
     }
   }
+
+  /// Displays a success message based on the operation type.
+  void _showSuccessMessage(bool isSave) {
+    final message =
+        isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
+    AppUIUtils.onSuccess(message);
+  }
+
+  /// Updates the bill search controller with the current bill.
+  void _updateBillSearchController(
+      BillSearchController controller, BillModel bill) {
+    controller.updateBill(bill);
+  }
+
+  /// Processes an update by calling the update handler and computing item changes.
+  Map<String, List<BillItem>> _processUpdate({
+    required BillModel previousBill,
+    required BillModel currentBill,
+    required Map<String, AccountModel> modifiedBillTypeAccounts,
+    required Map<String, List<BillItem>> deletedMaterials,
+  }) {
+    // Update the bill (PDF generation etc.) and collect modifications.
+    _handelUpdate(
+      modifiedBillTypeAccounts: modifiedBillTypeAccounts,
+      deletedMaterials: deletedMaterials,
+      previousBill: previousBill,
+      currentBill: currentBill,
+    );
+
+    // Compute the differences between the previous and current bill items.
+    final changes = findBillItemChanges(
+      previousItems: previousBill.items.itemList,
+      currentItems: currentBill.items.itemList,
+    );
+
+    log('New items: ${changes['new']}');
+    log('Deleted items: ${changes['deleted']}');
+    log('Updated items: ${changes['updated']}');
+
+    return changes;
+  }
+
+  /// Determines whether a material statement should be generated.
+  /// For new bills, a statement is generated if there is at least one item.
+  /// For updates, the statement is generated only if there are new, deleted, or updated items.
+  bool _determineIfShouldGenerateMatStatement(
+    bool isSave,
+    BillModel currentBill,
+    Map<String, List<BillItem>>? itemChanges,
+  ) {
+    if (isSave) {
+      return currentBill.items.itemList.isNotEmpty;
+    } else {
+      return (itemChanges?['new']?.isNotEmpty ?? false) ||
+          (itemChanges?['deleted']?.isNotEmpty ?? false) ||
+          (itemChanges?['updated']?.isNotEmpty ?? false);
+    }
+  }
+
+  /// Adds a new bill by marking it as saved and generating its PDF.
+  void _handleAdd(BillModel currentBill) {
+    billController.updateIsBillSaved = true;
+
+    if (hasModelId(currentBill.billId) &&
+        hasModelItems(currentBill.items.itemList)) {
+      generateAndSendPdf(
+        fileName: AppStrings.newBill,
+        itemModel: currentBill,
+      );
+    }
+  }
+
+  /// Returns `true` if the bill is approved and its pattern requires a material account.
+  bool _shouldCreateEntryBond(BillModel bill) =>
+      bill.status == Status.approved &&
+      bill.billTypeModel.billPatternType!.hasMaterialAccount;
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
     if (!hasModelId(billModel.billId)) return;

@@ -37,6 +37,7 @@ mixin MatsStatementsGenerator {
   Future<void> generateAndSaveMatStatement<T>({
     required T model,
     Map<String, List<BillItem>> deletedMaterials = const {},
+    List<BillItem> updatedMaterials = const [],
   }) async {
     final MatStatementCreator creator =
         MatStatementCreatorFactory.resolveMatStatementCreator(model);
