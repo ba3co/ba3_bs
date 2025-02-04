@@ -31,9 +31,7 @@ class MaterialsLocalDatasource extends LocalDatasourceBase<MaterialModel> {
 
   @override
   Future<void> removeAllData(List<MaterialModel> data) {
-    final List<String> ids = data.extract(
-      (item) => item.id!,
-    );
+    final List<String> ids = data.pluck((item) => item.id!);
     return database.deleteAll(ids);
   }
 

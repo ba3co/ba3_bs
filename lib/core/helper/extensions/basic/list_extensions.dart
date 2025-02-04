@@ -36,10 +36,12 @@ extension ListExtensions<T> on List<T> {
     }
     return mapped;
   }
-  List<String> extract(String? Function(T item) idSelector) {
+
+  /// Extracts a list of non-null values based on a selector function
+  List<K> pluck<K>(K? Function(T item) selector) {
     return [
       for (var item in this)
-        if (idSelector(item) != null) idSelector(item)!
+        if (selector(item) != null) selector(item) as K
     ];
   }
 }

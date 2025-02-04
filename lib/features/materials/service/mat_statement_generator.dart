@@ -9,7 +9,8 @@ import '../../bill/data/models/bill_items.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
-  final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
+  final MaterialsStatementController _materialsStatementController =
+      read<MaterialsStatementController>();
 
   Future<void> generateAndSaveMatsStatements({
     required List sourceModels,
@@ -26,7 +27,8 @@ mixin MatsStatementsGenerator {
   List<MatStatementModel> _generateMatsStatementsModels(List sourceModels) {
     return sourceModels.expand<MatStatementModel>(
       (model) {
-        final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
+        final MatStatementCreator creator =
+            MatStatementCreatorFactory.resolveMatStatementCreator(model);
         return creator.createMatStatement(model: model);
       },
     ).toList();
@@ -36,22 +38,29 @@ mixin MatsStatementsGenerator {
     required T model,
     Map<String, List<BillItem>> deletedMaterials = const {},
   }) async {
-    final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
+    final MatStatementCreator creator =
+        MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
+    await _materialsStatementController.saveAllMatsStatementsModels(
+        matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
       final originId = matsStatementsModels.first.originId;
 
       final matStatementsToDelete = deletedMaterials.entries.map((entry) {
         final matId = entry.key;
-        final matStatementModel = matsStatementsModels.firstWhere((matStatement) => matStatement.matId == entry.key);
+        final matStatementModel = matsStatementsModels
+            .firstWhere((matStatement) => matStatement.matId == entry.key);
 
-        return MatStatementModel(matId: matId, originId: originId, quantity: matStatementModel.quantity);
+        return MatStatementModel(
+            matId: matId,
+            originId: originId,
+            quantity: matStatementModel.quantity);
       }).toList();
 
-      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
+      await _materialsStatementController
+          .deleteAllMatStatementModel(matStatementsToDelete);
     }
   }
 
@@ -77,6 +86,7 @@ mixin MatsStatementsGenerator {
       ),
     );
 
-    await _materialsStatementController.deleteAllMatStatementModel(groupedMatMatStatementsModels);
+    await _materialsStatementController
+        .deleteAllMatStatementModel(groupedMatMatStatementsModels);
   }
 }
