@@ -32,7 +32,7 @@ class BillLayout extends StatelessWidget {
                     Icons.refresh,
                     color: AppColors.lightBlueColor,
                   ),
-                  onPressed: allBillsController.fetchXXXXXX,
+                  onPressed: allBillsController.refreshBillsTypes,
                 ),
                 actions: [
                   Padding(

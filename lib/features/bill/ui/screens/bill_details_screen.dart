@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
@@ -35,8 +34,6 @@ class BillDetailsScreen extends StatelessWidget {
         tag: tag,
         builder: (_) {
           final BillModel currentBill = billSearchController.getCurrentBill;
-          // log('currentBillStatus ${currentBill.status}, currentBillNumber ${currentBill.billDetails.billNumber}');
-
           return GetBuilder<BillDetailsController>(
               tag: tag,
               builder: (_) {

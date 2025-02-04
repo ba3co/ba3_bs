@@ -29,8 +29,6 @@ class BillDetailsButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // log('isPending: ${billSearchController.isPending}');
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Wrap(
@@ -38,26 +36,27 @@ class BillDetailsButtons extends StatelessWidget {
         spacing: 20,
         runSpacing: 20,
         children: [
-           _buildAddButton(),
-          if (!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission)
-            if (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending)
-              _buildApprovalOrBondButton(context),
-          _buildActionButton(
-            title: 'طباعة',
-            icon: Icons.print_outlined,
-            onPressed: () => billDetailsController.printBill(
-              context: context,
-              billModel: billModel,
-              invRecords: billDetailsPlutoController.generateRecords,
+          _buildAddButton(),
+          if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
+              (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
+            _buildApprovalOrBondButton(context),
+          if (!billSearchController.isPending)
+            _buildActionButton(
+              title: 'طباعة',
+              icon: Icons.print_outlined,
+              onPressed: () => billDetailsController.printBill(
+                context: context,
+                billModel: billModel,
+                invRecords: billDetailsPlutoController.generateRecords,
+              ),
             ),
-          ),
-          _buildActionButton(
-            title: 'E-Invoice',
-            icon: Icons.link,
-            onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
-          ),
+          if (!billSearchController.isPending)
+            _buildActionButton(
+              title: 'E-Invoice',
+              icon: Icons.link,
+              onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
+            ),
           if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
-
           Obx(() => !billDetailsController.isCash
               ? AppButton(
                   height: 20,
@@ -77,13 +76,15 @@ class BillDetailsButtons extends StatelessWidget {
     return Obx(() {
       final isBillSaved = billDetailsController.isBillSaved.value;
       return AppButton(
-        title: isBillSaved?'جديد':'إضافة',
+        title: isBillSaved ? 'جديد' : 'إضافة',
         height: 20,
         width: 100,
         fontSize: 14,
         color: isBillSaved ? Colors.green : Colors.blue.shade700,
-        onPressed: isBillSaved ? () =>billDetailsController.appendNewBill(
-            billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!): () => billDetailsController.saveBill(billModel.billTypeModel),
+        onPressed: isBillSaved
+            ? () => billDetailsController.appendNewBill(
+                billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
+            : () => billDetailsController.saveBill(billModel.billTypeModel),
         iconData: Icons.add_chart_outlined,
       );
     });
@@ -103,15 +104,16 @@ class BillDetailsButtons extends StatelessWidget {
 
   List<Widget> _buildEditDeletePdfButtons() {
     return [
-      _buildActionButton(
-        title: 'تعديل',
-        icon: Icons.edit_outlined,
-        onPressed: () => billDetailsController.updateBill(
-          billModel: billModel,
-          billTypeModel: billModel.billTypeModel,
+      if (!billSearchController.isPending)
+        _buildActionButton(
+          title: 'تعديل',
+          icon: Icons.edit_outlined,
+          onPressed: () => billDetailsController.updateBill(
+            billModel: billModel,
+            billTypeModel: billModel.billTypeModel,
+          ),
         ),
-      ),
-      if (RoleItemType.viewBill.hasAdminPermission)
+      if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
           title: 'Pdf-Email',
           icon: Icons.link,

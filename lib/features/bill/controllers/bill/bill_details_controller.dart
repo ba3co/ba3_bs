@@ -188,28 +188,36 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     // Validate the form first
     if (!validateForm()) return;
 
-    // Create the bill model from the provided data
-    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
-
-    // Handle null bill model
-    if (updatedBillModel == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
-      return;
-    }
+    // 2. Create the bill model or handle failure and exit
+    final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
+    if (updatedBillModel == null) return;
 
     // Ensure there are bill items
     if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
 
-    // Save the bill to Firestore
-    final result = await _billsFirebaseRepo.save(updatedBillModel);
+    if (_isNoUpdate(existingBill, updatedBillModel)) return;
 
-    // Handle the result (success or failure)
+    await _saveBillAndHandleResult(updatedBillModel, existingBill);
+  }
+
+  /// Checks if there's actually no change from the existing bill.
+  bool _isNoUpdate(BillModel? existingBill, BillModel updatedBill) {
+    final isNoUpdate = existingBill != null && updatedBill == existingBill;
+
+    if (isNoUpdate) AppUIUtils.onFailure('لم يتم تحديث اي شئ في الفاتورة');
+    return isNoUpdate;
+  }
+
+  /// Saves the [updatedBill] and handles success/failure UI feedback.
+  Future<void> _saveBillAndHandleResult(BillModel updatedBill, BillModel? existingBill) async {
+    final result = await _billsFirebaseRepo.save(updatedBill);
+
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (updatedBill) {
+      (savedBill) {
         _billService.handleSaveOrUpdateSuccess(
           previousBill: existingBill,
-          currentBill: updatedBill,
+          currentBill: savedBill,
           billSearchController: billSearchController,
           isSave: existingBill == null,
         );
@@ -221,6 +229,19 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
 
     billSearchController.insertLastAndUpdate(newBill);
+  }
+
+  /// Builds the new [BillModel] from the form data.
+  /// If required fields are missing, shows a failure message and returns `null`.
+  BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
+    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
+
+    if (updatedBillModel == null) {
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
+      return null;
+    }
+
+    return updatedBillModel;
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
