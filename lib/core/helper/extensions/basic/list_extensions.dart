@@ -816,7 +816,7 @@ extension ListExtensions<T> on List<T> {
     ];
   }
 
-  /// Finds items that exist in both lists and updates their quantity with the difference (`new - old`).
+  /// Computes the quantity difference (`new - old`) for items present in both lists.
   ///
   /// - [other]: The old list to compare with.
   /// - [keySelector]: A function to extract the key used to identify items.
@@ -825,17 +825,16 @@ extension ListExtensions<T> on List<T> {
   ///
   /// Returns a list of updated items where the quantity is replaced with the difference,
   /// excluding newly added or deleted items.
-  List<T> withQuantityDifference<K>(
+  List<T> quantityDiff<K>(
     List<T> other,
     K Function(T) keySelector,
     int Function(T) quantitySelector,
     T Function(T item, int newQuantity) updateQuantity,
   ) {
-    // Find only updated items that exist in both lists
     return updatedBy(
       other,
       keySelector,
-      (currentItem, previousItem) => quantitySelector(currentItem) != quantitySelector(previousItem), // Compare quantities
+      (currentItem, previousItem) => quantitySelector(currentItem) != quantitySelector(previousItem),
     ).map((currentItem) {
       final oldQuantity = quantitySelector(
         other.firstWhere(
@@ -844,7 +843,6 @@ extension ListExtensions<T> on List<T> {
       );
 
       final newQuantity = quantitySelector(currentItem);
-
       final difference = newQuantity - oldQuantity;
 
       return updateQuantity(currentItem, difference);

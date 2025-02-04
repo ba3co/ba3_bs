@@ -196,7 +196,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // Find updated items among common items.
     // Identify updated items with adjusted quantities.
-    final updatedItems = mergedCurrent.withQuantityDifference(
+    final updatedItems = mergedCurrent.quantityDiff(
       mergedPrevious,
       (item) => item.itemGuid, // Key selector
       (item) => item.itemQuantity, // Quantity selector
