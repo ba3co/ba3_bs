@@ -226,8 +226,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
   }
 
-  //يsave
-
 // Updated handleSaveOrUpdateSuccess method.
   Future<void> handleSaveOrUpdateSuccess({
     BillModel? previousBill,
