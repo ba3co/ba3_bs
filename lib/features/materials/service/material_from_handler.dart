@@ -66,7 +66,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     parentController.clear();
   }
 
-  bool validate() => formKey.currentState?.validate() ?? false;
+  bool validate() => formKey.currentState?.validate() ?? true;
 
   void dispose() {
     nameController.dispose();

@@ -84,9 +84,7 @@ class MaterialController extends GetxController with AppNavigator {
     });
   }
 
-
   Future<void> updateAllMaterial(List<MaterialModel> materialsToSave) async {
-
     final result = await _materialsHiveRepo.updateAll(materialsToSave);
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (savedMaterials) {
       log('materials length before update item: ${materials.length}');
@@ -245,6 +243,7 @@ class MaterialController extends GetxController with AppNavigator {
 
   Future<void> saveOrUpdateMaterial() async {
     // Validate the input before proceeding
+
     if (!materialFromHandler.validate()) return;
     // Create a material model based on the user input
     final updatedMaterialModel = _createMaterialModel();
@@ -316,7 +315,10 @@ class MaterialController extends GetxController with AppNavigator {
 
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save
-    final hiveResult = await _materialsHiveRepo.save(materialModel);
+
+
+    final hiveResult =  await _materialsHiveRepo.save(materialModel);
+
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -372,7 +374,8 @@ class MaterialController extends GetxController with AppNavigator {
     log('updateMaterialQuantity  matId $matId  quantity $quantity ');
     final materialModel = materials.firstWhere((material) => material.id == matId);
     log('materialModel ${materialModel.toJson()} ');
-    materialFromHandler.init(materialModel.copyWith(matPrevQty: (int.parse(materialModel.matPrevQty!) + quantity).toString()));
+    materialFromHandler
+        .init(materialModel.copyWith(matPrevQty: (double.parse(materialModel.matPrevQty!.toString()) + quantity).toString()));
     log('selectedMaterial ${selectedMaterial!.toJson()} ');
 
     await saveOrUpdateMaterial();
