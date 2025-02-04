@@ -87,11 +87,12 @@ class ChangesController extends GetxController {
 
       List<MaterialModel> materialsToSave = [];
       List<MaterialModel> materialsToDelete = [];
+      List<MaterialModel> materialsToUpdate = [];
 
       // Iterate over the changeItems and classify each one
       change.changeItems.forEach((collection, changes) {
         for (final changeItem in changes) {
-          _handleChangeItem(changeItem, materialsToSave, materialsToDelete); // Collect items for update or delete
+          _handleChangeItem(changeItem, materialsToSave, materialsToDelete,materialsToUpdate); // Collect items for update or delete
         }
       });
 
@@ -115,8 +116,7 @@ class ChangesController extends GetxController {
   }
 
   /// Determines how to process a specific change item based on its type and collection.
-  void _handleChangeItem(
-      ChangeItem changeItem, List<MaterialModel> materialsToSave, List<MaterialModel> materialsToDelete) {
+  void _handleChangeItem(ChangeItem changeItem, List<MaterialModel> materialsToSave, List<MaterialModel> materialsToDelete, List<MaterialModel> materialsToUpdate) {
     final targetCollection = changeItem.target.targetCollection;
     final changeType = changeItem.target.changeType;
 
@@ -125,9 +125,8 @@ class ChangesController extends GetxController {
         _handleAddMaterial(changeItem, materialsToSave); // Add/Update goes to materialsToSave
       } else if (changeType == ChangeType.remove) {
         _handleDelete(changeItem, materialsToDelete); // Delete goes to materialsToDelete
-      }
-      else if (changeType == ChangeType.update) {
-        _handleUpdateMaterial(changeItem, materialsToDelete); // Delete goes to materialsToDelete
+      } else if (changeType == ChangeType.update) {
+        _handleUpdateMaterial(changeItem, materialsToUpdate); // Delete goes to materialsToDelete
       }
     }
   }
@@ -140,10 +139,10 @@ class ChangesController extends GetxController {
     log("Add/Update operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
   }
 
-  void _handleUpdateMaterial(ChangeItem changeItem, List<MaterialModel> materialsToSave) {
+  void _handleUpdateMaterial(ChangeItem changeItem, List<MaterialModel> materialsToUpdate) {
     // Assuming changeItem contains the required material data for saving
     MaterialModel material = _extractMaterialsFromChangeItem(changeItem);
-    materialsToSave.add(material); // Add to the materials list for saving
+    materialsToUpdate.add(material); // Update to the materials list for saving
     log("Add/Update operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
   }
 
@@ -155,6 +154,14 @@ class ChangesController extends GetxController {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController.saveAllMaterial(materialsToSave); // Save all materials at once
+    }
+  }
+
+  /// Saves the materials after all change items have been processed.
+  void updateMaterials(List<MaterialModel> materialsToUpdate) {
+    if (materialsToUpdate.isNotEmpty) {
+      final materialController = read<MaterialController>();
+      materialController.updateAllMaterial(materialsToUpdate); // Save all materials at once
     }
   }
 

@@ -84,6 +84,18 @@ class MaterialController extends GetxController with AppNavigator {
     });
   }
 
+
+  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave) async {
+
+    final result = await _materialsHiveRepo.updateAll(materialsToSave);
+    result.fold((failure) => AppUIUtils.onFailure(failure.message), (savedMaterials) {
+      log('materials length before update item: ${materials.length}');
+      AppUIUtils.onSuccess('تم الحفظ بنجاح');
+      reloadMaterials();
+      log('materials length update add item: ${materials.length}');
+    });
+  }
+
   Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
     // Filter materials that match the IDs in materialsToDelete
     final copiedMaterials = materials.where((material) => materialsToDelete.any((e) => e.id == material.id)).toList();

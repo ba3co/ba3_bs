@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -69,8 +68,6 @@ class AccountModel implements PlutoAdaptable {
   });
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
-    print('docId ${json['docId']}');
-    print('AccCDate ${json['AccCDate']}');
 
     return AccountModel(
       id: json['AccPtr'] ?? json['docId'],
