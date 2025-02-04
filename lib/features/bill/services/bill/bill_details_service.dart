@@ -238,7 +238,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // 2. Prepare containers for modified accounts and deleted materials.
     final modifiedBillTypeAccounts = <String, AccountModel>{};
-    //  final deletedMaterials = <String, List<BillItem>>{};
+
     Map<String, List<BillItem>>? itemChanges;
 
     // 3. Process the bill: add if new, update if modifying.
