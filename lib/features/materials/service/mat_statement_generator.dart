@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
@@ -9,8 +9,7 @@ import '../../bill/data/models/bill_items.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
-  final MaterialsStatementController _materialsStatementController =
-      read<MaterialsStatementController>();
+  final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
 
   Future<void> generateAndSaveMatsStatements({
     required List sourceModels,
@@ -18,17 +17,13 @@ mixin MatsStatementsGenerator {
   }) async {
     final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(
-      matsStatements: matsStatementsModels,
-      onProgress: onProgress,
-    );
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress);
   }
 
   List<MatStatementModel> _generateMatsStatementsModels(List sourceModels) {
     return sourceModels.expand<MatStatementModel>(
       (model) {
-        final MatStatementCreator creator =
-            MatStatementCreatorFactory.resolveMatStatementCreator(model);
+        final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
         return creator.createMatStatement(model: model);
       },
     ).toList();
@@ -36,39 +31,43 @@ mixin MatsStatementsGenerator {
 
   Future<void> generateAndSaveMatStatement<T>({
     required T model,
-    Map<String, List<BillItem>> deletedMaterials = const {},
+    List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
   }) async {
-    final MatStatementCreator creator =
-        MatStatementCreatorFactory.resolveMatStatementCreator(model);
+    final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(
-        matsStatements: matsStatementsModels);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
       final originId = matsStatementsModels.first.originId;
 
-      final matStatementsToDelete = deletedMaterials.entries.map((entry) {
-        final matId = entry.key;
-        final matStatementModel = matsStatementsModels
-            .firstWhere((matStatement) => matStatement.matId == entry.key);
+      final matStatementsToDelete = deletedMaterials.map(
+        (material) {
+          final matId = material.itemGuid;
 
-        return MatStatementModel(
+          // final matStatementModel = matsStatementsModels.firstWhere(
+          //   (matStatement) => matStatement.matId == matId,
+          // );
+
+          return MatStatementModel(
             matId: matId,
             originId: originId,
-            quantity: matStatementModel.quantity);
-      }).toList();
+            quantity: material.itemQuantity,
+          );
+        },
+      ).toList();
 
-      await _materialsStatementController
-          .deleteAllMatStatementModel(matStatementsToDelete);
+      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
     }
   }
 
   Future<void> deleteMatsStatementsModels(BillModel billModel) async {
     final String originId = billModel.billId!;
 
-    final matMatStatementsModels = billModel.items.itemList
+    final mergedBillItems = billModel.items.itemList.merge();
+
+    final matStatementsModels = mergedBillItems
         .map(
           (item) => MatStatementModel(
             matId: item.itemGuid,
@@ -78,16 +77,6 @@ mixin MatsStatementsGenerator {
         )
         .toList();
 
-    final groupedMatMatStatementsModels = matMatStatementsModels.mergeBy(
-      (item) => item.matId,
-      (existing, current) => MatStatementModel(
-        matId: existing.matId,
-        originId: existing.originId,
-        quantity: existing.quantity! + current.quantity!,
-      ),
-    );
-
-    await _materialsStatementController
-        .deleteAllMatStatementModel(groupedMatMatStatementsModels);
+    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels);
   }
 }

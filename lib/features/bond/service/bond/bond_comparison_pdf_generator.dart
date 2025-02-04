@@ -12,11 +12,13 @@ import '../../../../core/services/pdf_generator/implementations/pdf_generator_ba
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../data/models/bond_model.dart';
 
-class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with PdfHelperMixin {
+class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
+    with PdfHelperMixin {
   final _accountsController = read<AccountsController>();
 
   @override
-  Widget buildHeader(List<BondModel> itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(List<BondModel> itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font}) {
     final afterUpdate = itemModel[1];
 
     return Row(
@@ -33,9 +35,14 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
-        buildDetailRow('الرقم التعريفي للسند: ', afterUpdate.payGuid.toString(), font: font),
-        buildDetailRow('رقم السند: ', afterUpdate.payNumber.toString().toString(), font: font),
-        buildDetailRow('نوع السند: ', BondType.byTypeGuide(afterUpdate.payTypeGuid!).value, font: font),
+        buildDetailRow('الرقم التعريفي للسند: ', afterUpdate.payGuid.toString(),
+            font: font),
+        buildDetailRow(
+            'رقم السند: ', afterUpdate.payNumber.toString().toString(),
+            font: font),
+        buildDetailRow(
+            'نوع السند: ', BondType.byTypeGuide(afterUpdate.payTypeGuid!).value,
+            font: font),
       ],
     );
   }
@@ -58,7 +65,8 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
       'البيان (${AppStrings.after})',
       'البيان (${AppStrings.after})',
     ];
-    final dataItems = _buildItemsComparisonData(beforeUpdate, afterUpdate, font);
+    final dataItems =
+        _buildItemsComparisonData(beforeUpdate, afterUpdate, font);
 
     return <Widget>[
       buildTitleText('تفاصيل التعديلات', 20, font: font),
@@ -102,7 +110,8 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
     ];
   }
 
-  List<List<dynamic>> _buildItemsComparisonData(BondModel beforeUpdate, BondModel afterUpdate, Font? font) {
+  List<List<dynamic>> _buildItemsComparisonData(
+      BondModel beforeUpdate, BondModel afterUpdate, Font? font) {
     // Create maps of items for easier lookup by item GUID
     final itemsBefore = beforeUpdate.payItems.itemList
         .mergeBy(
@@ -114,9 +123,8 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
               entryDebit: existing.entryDebit! + current.entryDebit!,
               entryDate: existing.entryDate),
         )
-        .toMap(
-          (e) => e.entryAccountGuid,
-        );
+        .toMap((e) => e.entryAccountGuid);
+
     final itemsAfter = afterUpdate.payItems.itemList
         .mergeBy(
           (payEntry) => payEntry.entryAccountGuid,
@@ -127,9 +135,7 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
               entryDebit: existing.entryDebit! + current.entryDebit!,
               entryDate: existing.entryDate),
         )
-        .toMap(
-          (e) => e.entryAccountGuid,
-        );
+        .toMap((e) => e.entryAccountGuid);
 
     // Combine all GUIDs from both before and after updates
     final allGuids = {...itemsBefore.keys, ...itemsAfter.keys};
@@ -196,13 +202,18 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>> with 
         7: Alignment.topCenter,
       };
 
-  List<List<dynamic>> _buildComparisonData(BondModel beforeUpdate, BondModel afterUpdate) {
-    final beforeCustomerName = _accountsController.getAccountNameById(beforeUpdate.payAccountGuid);
-    final afterCustomerName = _accountsController.getAccountNameById(afterUpdate.payAccountGuid);
+  List<List<dynamic>> _buildComparisonData(
+      BondModel beforeUpdate, BondModel afterUpdate) {
+    final beforeCustomerName =
+        _accountsController.getAccountNameById(beforeUpdate.payAccountGuid);
+    final afterCustomerName =
+        _accountsController.getAccountNameById(afterUpdate.payAccountGuid);
 
     return [
-      if (BondType.byTypeGuide(beforeUpdate.payTypeGuid!) == BondType.paymentVoucher ||
-          BondType.byTypeGuide(beforeUpdate.payTypeGuid!) == BondType.receiptVoucher)
+      if (BondType.byTypeGuide(beforeUpdate.payTypeGuid!) ==
+              BondType.paymentVoucher ||
+          BondType.byTypeGuide(beforeUpdate.payTypeGuid!) ==
+              BondType.receiptVoucher)
         ['الحساب', beforeCustomerName, afterCustomerName],
       ['التاريخ', beforeUpdate.payDate, afterUpdate.payDate],
       ['البيان', beforeUpdate.payNote ?? '', afterUpdate.payNote ?? ''],

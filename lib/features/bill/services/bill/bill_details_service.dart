@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
@@ -32,12 +33,7 @@ import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../ui/widgets/bill_shared/bill_header_field.dart';
 
-class BillDetailsService
-    with
-        PdfBase,
-        EntryBondsGenerator,
-        MatsStatementsGenerator,
-        FloatingLauncher {
+class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
   final IBillController billController;
 
@@ -73,8 +69,7 @@ class BillDetailsService
     );
   }
 
-  void launchFloatingEntryBondDetailsScreen(
-      {required BuildContext context, required BillModel billModel}) {
+  void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
 
     // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
@@ -89,8 +84,7 @@ class BillDetailsService
 
     launchFloatingWindow(
       context: context,
-      minimizedTitle:
-          'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
+      minimizedTitle: 'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
@@ -102,8 +96,7 @@ class BillDetailsService
   }) async {
     // Only fetchBills if open bill details by bill id from AllBillsScreen
     if (fromBillById) {
-      await read<AllBillsController>()
-          .fetchAllBillsByType(billModel.billTypeModel);
+      await read<AllBillsController>().fetchAllBillsByType(billModel.billTypeModel);
       Get.back();
     } else {
       billSearchController.removeBill(billModel);
@@ -111,8 +104,7 @@ class BillDetailsService
 
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
 
-    if (billModel.status == Status.approved &&
-        billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
     }
 
@@ -128,8 +120,7 @@ class BillDetailsService
     AppUIUtils.onSuccess('تم القبول بنجاح');
     billSearchController.updateBill(updatedBillModel);
 
-    if (updatedBillModel.status == Status.approved &&
-        updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (updatedBillModel.status == Status.approved && updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       createAndStoreEntryBond(model: updatedBillModel);
 
       // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
@@ -153,19 +144,16 @@ class BillDetailsService
     }
   }
 
-  Map<String, AccountModel> findModifiedBillTypeAccounts(
-      {required BillModel previousBill, required BillModel currentBill}) {
+  Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
     // Extract accounts from the bill type models or default to empty maps
     final previousAccounts = previousBill.billTypeModel.accounts ?? {};
     final currentAccounts = currentBill.billTypeModel.accounts ?? {};
 
     // Identify accounts that are present in both bills but have changed
     final Map<String, AccountModel> modifiedAccounts = Map.fromEntries(
-      previousAccounts.entries
-          .where((MapEntry<Account, AccountModel> previousAccount) {
+      previousAccounts.entries.where((MapEntry<Account, AccountModel> previousAccount) {
         final currentAccountModel = currentAccounts[previousAccount.key];
-        return currentAccountModel != null &&
-            currentAccountModel != previousAccount.value;
+        return currentAccountModel != null && currentAccountModel != previousAccount.value;
       }).map(
         // Use the account key's label for the map
         (entry) => MapEntry(entry.key.label, entry.value),
@@ -175,19 +163,15 @@ class BillDetailsService
     // Log modified accounts
     log('Modified accounts count: ${modifiedAccounts.length}');
     modifiedAccounts.forEach(
-      (key, account) =>
-          log('Account Key: $key, Account Model: ${account.toJson()}'),
+      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
     );
 
     return modifiedAccounts;
   }
 
-  Map<String, List<BillItem>> findDeletedMaterials(
-      {required BillModel previousBill, required BillModel currentBill}) {
-    final previousGroupedItems =
-        previousBill.items.itemList.groupBy((item) => item.itemGuid);
-    final currentGroupedItems =
-        currentBill.items.itemList.groupBy((item) => item.itemGuid);
+  Map<String, List<BillItem>> findDeletedMaterials({required BillModel previousBill, required BillModel currentBill}) {
+    final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
+    final currentGroupedItems = currentBill.items.itemList.groupBy((item) => item.itemGuid);
 
     return Map.fromEntries(
       previousGroupedItems.entries.where(
@@ -196,33 +180,26 @@ class BillDetailsService
     );
   }
 
-  // Helper function to compare bill items.
   Map<String, List<BillItem>> findBillItemChanges({
     required List<BillItem> previousItems,
     required List<BillItem> currentItems,
   }) {
-    // Create maps for fast lookup by item id.
-    final previousMap = {for (var item in previousItems) item.itemGuid: item};
-    final currentMap = {for (var item in currentItems) item.itemGuid: item};
+    // Merge repeated items in the previous list.
+    final mergedPrevious = previousItems.merge();
 
-    // Items in current that are not in previous are "new".
-    final newItems = currentItems
-        .where((item) => !previousMap.containsKey(item.itemGuid))
-        .toList();
+    // Merge repeated items in the current list.
+    final mergedCurrent = currentItems.merge();
 
-    // Items in previous that are not in current are "deleted".
-    final deletedItems = previousItems
-        .where((item) => !currentMap.containsKey(item.itemGuid))
-        .toList();
+    // Use extension methods to determine differences between the merged lists.
+    final newItems = mergedCurrent.subtract(mergedPrevious);
+    final deletedItems = mergedPrevious.subtract(mergedCurrent);
 
-    // Items that exist in both but with a different quantity are "updated".
-    final updatedItems = currentItems.where((item) {
-      if (previousMap.containsKey(item.itemGuid)) {
-        final previousItem = previousMap[item.itemGuid]!;
-        return item.itemQuantity != previousItem.itemQuantity;
-      }
-      return false;
-    }).toList();
+    // Find updated items among common items.
+    final updatedItems = mergedCurrent.updatedBy(
+      mergedPrevious,
+      (item) => item.itemGuid, // Key selector
+      (currentItem, previousItem) => currentItem.itemQuantity != previousItem.itemQuantity, // Comparison function
+    );
 
     return {
       'new': newItems,
@@ -233,15 +210,10 @@ class BillDetailsService
 
   _handelUpdate({
     required Map<String, AccountModel> modifiedBillTypeAccounts,
-    required Map<String, List<BillItem>> deletedMaterials,
     required BillModel previousBill,
     required BillModel currentBill,
   }) {
-    modifiedBillTypeAccounts = findModifiedBillTypeAccounts(
-        previousBill: previousBill, currentBill: currentBill);
-
-    deletedMaterials = findDeletedMaterials(
-        previousBill: previousBill, currentBill: currentBill);
+    modifiedBillTypeAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
     if (hasModelId(currentBill.billId) &&
         hasModelItems(currentBill.items.itemList) &&
@@ -266,7 +238,7 @@ class BillDetailsService
 
     // 2. Prepare containers for modified accounts and deleted materials.
     final modifiedBillTypeAccounts = <String, AccountModel>{};
-    final deletedMaterials = <String, List<BillItem>>{};
+    //  final deletedMaterials = <String, List<BillItem>>{};
     Map<String, List<BillItem>>? itemChanges;
 
     // 3. Process the bill: add if new, update if modifying.
@@ -278,7 +250,6 @@ class BillDetailsService
         previousBill: previousBill!,
         currentBill: currentBill,
         modifiedBillTypeAccounts: modifiedBillTypeAccounts,
-        deletedMaterials: deletedMaterials,
       );
     }
 
@@ -294,11 +265,12 @@ class BillDetailsService
     }
 
     // 6. Determine whether to generate a material statement.
-    final shouldGenerateMatStatement = _determineIfShouldGenerateMatStatement(
-        isSave, currentBill, itemChanges);
+    final shouldGenerateMatStatement = _determineIfShouldGenerateMatStatement(isSave, currentBill, itemChanges);
+
     // For updates, extract the list of updated materials (or an empty list for a new bill).
-    final updatedMaterials =
-        isSave ? <BillItem>[] : (itemChanges?['updated'] ?? []);
+    final updatedMaterials = isSave ? <BillItem>[] : (itemChanges?['updated'] ?? []);
+
+    final deletedMaterials = isSave ? <BillItem>[] : (itemChanges?['deleted'] ?? []);
 
     // 7. Generate and save the material statement if the bill is approved and changes exist.
     if (currentBill.status == Status.approved && shouldGenerateMatStatement) {
@@ -312,14 +284,12 @@ class BillDetailsService
 
   /// Displays a success message based on the operation type.
   void _showSuccessMessage(bool isSave) {
-    final message =
-        isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
+    final message = isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
     AppUIUtils.onSuccess(message);
   }
 
   /// Updates the bill search controller with the current bill.
-  void _updateBillSearchController(
-      BillSearchController controller, BillModel bill) {
+  void _updateBillSearchController(BillSearchController controller, BillModel bill) {
     controller.updateBill(bill);
   }
 
@@ -328,12 +298,10 @@ class BillDetailsService
     required BillModel previousBill,
     required BillModel currentBill,
     required Map<String, AccountModel> modifiedBillTypeAccounts,
-    required Map<String, List<BillItem>> deletedMaterials,
   }) {
     // Update the bill (PDF generation etc.) and collect modifications.
     _handelUpdate(
       modifiedBillTypeAccounts: modifiedBillTypeAccounts,
-      deletedMaterials: deletedMaterials,
       previousBill: previousBill,
       currentBill: currentBill,
     );
@@ -372,8 +340,7 @@ class BillDetailsService
   void _handleAdd(BillModel currentBill) {
     billController.updateIsBillSaved = true;
 
-    if (hasModelId(currentBill.billId) &&
-        hasModelItems(currentBill.items.itemList)) {
+    if (hasModelId(currentBill.billId) && hasModelItems(currentBill.items.itemList)) {
       generateAndSendPdf(
         fileName: AppStrings.newBill,
         itemModel: currentBill,
@@ -382,9 +349,7 @@ class BillDetailsService
   }
 
   /// Returns `true` if the bill is approved and its pattern requires a material account.
-  bool _shouldCreateEntryBond(BillModel bill) =>
-      bill.status == Status.approved &&
-      bill.billTypeModel.billPatternType!.hasMaterialAccount;
+  bool _shouldCreateEntryBond(BillModel bill) => bill.status == Status.approved && bill.billTypeModel.billPatternType!.hasMaterialAccount;
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
     if (!hasModelId(billModel.billId)) return;
@@ -402,8 +367,7 @@ class BillDetailsService
     );
   }
 
-  showFirstPayDialog(
-      BuildContext context, TextEditingController firstPayController) {
+  showFirstPayDialog(BuildContext context, TextEditingController firstPayController) {
     OverlayService.showDialog(
       color: AppColors.backGroundColor,
       context: context,
