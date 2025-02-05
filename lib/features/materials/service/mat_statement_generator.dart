@@ -44,10 +44,7 @@ mixin MatsStatementsGenerator {
 
       final matStatementsToDelete = deletedMaterials.map(
         (material) {
-
           final matId = material.itemGuid;
-
-
 
           return MatStatementModel(
             matId: matId,
@@ -57,13 +54,13 @@ mixin MatsStatementsGenerator {
         },
       ).toList();
 
-      if(updatedMaterials.isNotEmpty){
-        // for (var material in updatedMaterials) {
-        //   // await read<MaterialController>().updateMaterialQuantity(material.matId!, matStatement.quantity!);
-        //
-        // }
-
-      }
+      // if(updatedMaterials.isNotEmpty){
+      //   for (var material in updatedMaterials) {
+      //     await read<MaterialController>().updateMaterialQuantity(material.matId!, matStatement.quantity!);
+      //
+      //   }
+      //
+      // }
 
       await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
     }

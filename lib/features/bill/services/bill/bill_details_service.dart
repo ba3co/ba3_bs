@@ -191,14 +191,16 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final mergedCurrent = currentItems.merge();
 
     // Use extension methods to determine differences between the merged lists.
-    final newItems = mergedCurrent.subtract(mergedPrevious);
-    final deletedItems = mergedPrevious.subtract(mergedCurrent);
+    final newItems = mergedCurrent.subtract(mergedPrevious, (item) => item.itemGuid);
+    final deletedItems = mergedPrevious.subtract(mergedCurrent, (item) => item.itemGuid);
 
     // Find updated items among common items.
-    final updatedItems = mergedCurrent.updatedBy(
+    // Identify updated items with adjusted quantities.
+    final updatedItems = mergedCurrent.quantityDiff(
       mergedPrevious,
       (item) => item.itemGuid, // Key selector
-      (currentItem, previousItem) => currentItem.itemQuantity != previousItem.itemQuantity, // Comparison function
+      (item) => item.itemQuantity, // Quantity selector
+      (item, difference) => item.copyWith(itemQuantity: difference), // Update quantity
     );
 
     return {

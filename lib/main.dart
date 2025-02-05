@@ -16,7 +16,7 @@ void main() async {
     log("FlutterError Error: ${details.exception}");
     FlutterError.presentError(details);
   };
-//BASUES
+
   await initializeApp();
   runApp(const MyApp());
 }
