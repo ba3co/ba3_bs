@@ -1,11 +1,11 @@
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/user_all_holidays.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
-import '../../../controllers/user_management_controller.dart';
 import '../../widgets/user_management/user_all_working_hours.dart';
 import '../../widgets/user_management/user_details_form_widget.dart';
 
@@ -14,10 +14,9 @@ class AddUserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserManagementController userManagementController = read<UserManagementController>();
     SellersController sellersController = read<SellersController>();
 
-    return GetBuilder<UserManagementController>(builder: (controller) {
+    return GetBuilder<UserDetailsController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
@@ -28,7 +27,7 @@ class AddUserScreen extends StatelessWidget {
             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               UserDetailsForm(
-                userManagementController: userManagementController,
+                userDetailsController: controller,
                 sellerController: sellersController,
               ),
               UserAllWorkingHour(controller: controller),
@@ -41,7 +40,7 @@ class AddUserScreen extends StatelessWidget {
                     onPressed: () {
                       controller.saveOrUpdateUser();
                     },
-                    iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
+                    iconData:  controller.selectedUserModel?.userId == null ? Icons.add : Icons.edit,
                     color: controller.selectedUserModel?.userId == null ? null : Colors.green,
                   ),
                 ],

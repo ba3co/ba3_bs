@@ -41,12 +41,13 @@ class SplashScreen extends StatelessWidget {
       UserManagementController(rolesRepo, usersRepo, sharedPreferencesService),
       permanent: true,
     );
+
   }
 
   void _navigateToLogin() {
     // Delay navigation until after the current frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      read<UserManagementController>().navigateToLogin();
+      read<UserManagementController>().userNavigator.navigateToLogin();
     });
   }
 }

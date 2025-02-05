@@ -18,7 +18,7 @@ class UserTimeListScreen extends StatelessWidget {
         onLoaded: (event) {},
         onSelected: (selectedRow) {
           final userId = selectedRow.row?.cells[AppStrings.userIdFiled]?.value;
-          userManagementController.navigateToUserDetails(userId);
+          userManagementController. userNavigator.navigateToUserDetails(userId);
         },
       );
     });

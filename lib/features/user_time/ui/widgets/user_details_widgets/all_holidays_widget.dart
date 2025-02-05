@@ -1,18 +1,18 @@
 
+import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/utils/app_service_utils.dart';
 import '../../../../../core/widgets/organized_widget.dart';
-import '../../../../users_management/controllers/user_management_controller.dart';
 
 class AllHolidaysWidget extends StatelessWidget {
   const AllHolidaysWidget({
     super.key,
-    required this.userManagementController,
+    required this.userDetailsController,
   });
 
-  final UserManagementController userManagementController;
+  final UserDetailsController userDetailsController;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +30,17 @@ class AllHolidaysWidget extends StatelessWidget {
                 separatorBuilder: (context, index) => Divider(),
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
-                itemCount: userManagementController.userFormHandler.userHolidaysLength,
+                itemCount: userDetailsController.userFormHandler.userHolidaysLength,
                 padding: EdgeInsets.zero,
                 itemBuilder: (context, index) => Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      userManagementController.userFormHandler.userHolidays.elementAt(index),
+                      userDetailsController.userFormHandler.userHolidays.elementAt(index),
                       style: AppTextStyles.headLineStyle3,
                     ),
                     Text(
-                      AppServiceUtils.getDayNameAndMonthName(userManagementController.userFormHandler.userHolidays.elementAt(index)),
+                      AppServiceUtils.getDayNameAndMonthName(userDetailsController.userFormHandler.userHolidays.elementAt(index)),
                       style: AppTextStyles.headLineStyle3,
                     ),
                   ],

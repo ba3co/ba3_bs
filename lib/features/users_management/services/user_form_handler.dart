@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
@@ -7,11 +8,10 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/utils/app_service_utils.dart';
-import '../controllers/user_management_controller.dart';
 import '../data/models/user_model.dart';
 
 class UserFormHandler with AppValidator {
-  UserManagementController get userManagementController => read<UserManagementController>();
+  UserDetailsController get userManagementController => read<UserDetailsController>();
 
   final formKey = GlobalKey<FormState>();
   final userNameController = TextEditingController();
@@ -71,9 +71,7 @@ class UserFormHandler with AppValidator {
     selectedRoleId.value = roleId;
   }
 
-  void updatePasswordVisibility() {
-    userManagementController.isPasswordVisible.value = !userManagementController.isPasswordVisible.value;
-  }
+
 
   changeUserState() {
     if (isUserActive.value) {

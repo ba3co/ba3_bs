@@ -1,16 +1,16 @@
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/working_hour_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/app_spacer.dart';
-import '../../../controllers/user_management_controller.dart';
 
 class UserAllWorkingHour extends StatelessWidget {
   const UserAllWorkingHour({super.key, required this.controller});
 
-  final UserManagementController controller;
+  final UserDetailsController controller;
 
   @override
   Widget build(BuildContext context) {

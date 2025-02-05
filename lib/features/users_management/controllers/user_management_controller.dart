@@ -1,21 +1,15 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/dialogs/custom_date_picker_dialog.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time/time_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
-import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
+import 'package:ba3_bs/features/users_management/services/user_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/error/failure.dart';
 import '../../../core/router/app_routes.dart';
@@ -27,7 +21,6 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
 import '../services/role_form_handler.dart';
-import '../services/user_form_handler.dart';
 
 class UserManagementController extends GetxController with AppNavigator, FirestoreGuestUser {
   final RemoteDataSourceRepository<RoleModel> _rolesFirebaseRepo;
@@ -41,9 +34,9 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   // Services
   late final RoleService _roleService;
   late final UserService _userService;
+  late final UserNavigator userNavigator;
 
   // Form Handlers
-  late final UserFormHandler userFormHandler;
   late final RoleFormHandler roleFormHandler;
 
   // Data
@@ -53,7 +46,6 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   RoleModel? roleModel;
 
   UserModel? loggedInUserModel;
-  UserModel? selectedUserModel;
 
   TextEditingController loginPasswordController = TextEditingController();
   TextEditingController loginNameController = TextEditingController();
@@ -78,23 +70,18 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     _roleService = RoleService();
     _userService = UserService();
 
-    userFormHandler = UserFormHandler();
     roleFormHandler = RoleFormHandler();
+
+    userNavigator = UserNavigator(roleFormHandler, _sharedPreferencesService);
   }
-
-  Map<String, UserWorkingHours> workingHours = {};
-
-  int get workingHoursLength => workingHours.length;
-
-  Set<String> holidays = {};
-
-  int get holidaysLength => holidays.length;
 
   List<UserModel> get nonLoggedInUsers => allUsers
       .where(
         (user) => user.userId != loggedInUserModel?.userId,
       )
       .toList();
+
+  String get dateToDay => Timestamp.now().toDate().toString().split(' ')[0];
 
   RoleModel? getRoleById(String id) {
     try {
@@ -181,6 +168,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     AppUIUtils.onFailure(failure.message);
   }
 
+  void updatePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+  }
+
 // Handle success when fetching the user
   void _handleUserFetchSuccess(UserModel userModel) {
     _populateLoginFields(userModel);
@@ -256,15 +247,6 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     offAll(AppRoutes.mainLayout);
   }
 
-  void navigateToLogin() async {
-    debugPrint("navigateToLogin");
-    if (_sharedPreferencesService.getString(AppConstants.userIdKey) == null) {
-      offAll(AppRoutes.loginScreen);
-    } else {
-      fetchAndHandleUser(_sharedPreferencesService.getString(AppConstants.userIdKey)!);
-    }
-  }
-
   Future<void> checkGuestLoginButtonVisibility(UserModel guestUser) async {
     if (guestUser.userId != null) {
       isGuestLoginButtonVisible.value = await isGuestUserEnabled(guestUser.userId!);
@@ -284,30 +266,9 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     offAll(AppRoutes.mainLayout);
   }
 
-  void navigateToAddRoleScreen([RoleModel? role]) {
-    roleFormHandler.init(role);
-    to(AppRoutes.addRoleScreen);
-  }
-
-  void navigateToAddUserScreen([UserModel? user]) {
-    userFormHandler.init(user);
-    to(AppRoutes.addUserScreen);
-    // log(user!.toJson().toString());
-    // Get.to(() => AllAttendanceScreen());
-  }
-
-  void navigateToAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
-
-  void navigateToUserTimeListScreen() => to(AppRoutes.showUserTimeListScreen);
-
-  void navigateToLAllPermissionsScreen() {
-    log(allUsers.length.toString());
-    to(AppRoutes.showAllPermissionsScreen);
-  }
-
   Future<void> _handleNoMatch() async {
     if (Get.currentRoute != AppRoutes.loginScreen) {
-      navigateToLogin();
+      userNavigator.navigateToLogin();
     } else {
       AppUIUtils.onFailure('لا يوجد تطابق!');
     }
@@ -345,106 +306,13 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     update();
   }
 
-  Future<void> saveOrUpdateUser() async {
-    // Validate the form first
-    if (!userFormHandler.validate()) return;
-
-    final updatedUserModel = _createUserModel();
-
-    // Handle null user model
-    if (updatedUserModel == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
-      return;
-    }
-
-    final result = await _usersFirebaseRepo.save(updatedUserModel);
-
-    result.fold(
-      (failure) => _handleFailure(failure),
-      (userModel) => _onUserSaved(userModel),
-    );
-  }
-
-  UserModel? _createUserModel() => _userService.createUserModel(
-        userModel: selectedUserModel,
-        userName: userFormHandler.userNameController.text,
-        userPassword: userFormHandler.passController.text,
-        userRoleId: userFormHandler.selectedRoleId.value,
-        userSellerId: userFormHandler.selectedSellerId.value,
-        workingHour: workingHours,
-        userActiveState: userFormHandler.userActiveStatus.value,
-        holidays: holidays.toList(),
-      );
-
-  void _handleFailure(Failure failure) => AppUIUtils.onFailure(failure.message);
-
-  void _onUserSaved(UserModel userModel) {
-    AppUIUtils.onSuccess('تم الحفظ بنجاح');
-    getAllUsers();
-
-    // Check if the user was newly saved
-    final isSaved = selectedUserModel == null;
-    if (isSaved) {
-      _createChangeDocument(userModel.userId!);
-    }
-    update();
-  }
-
-  // Call the ChangesController to create the document
-  Future<void> _createChangeDocument(String userId) async => await read<ChangesController>().createChangeDocument(userId);
-
   void logOut() {
     _sharedPreferencesService.remove(AppConstants.userIdKey);
-    navigateToLogin();
-  }
-
-  setEnterTime(int index, Time time) {
-    workingHours.values.elementAt(index).enterTime = time.formatToAmPm();
-    update();
-  }
-
-  setOutTime(int index, Time time) {
-    workingHours.values.elementAt(index).outTime = time.formatToAmPm();
-    update();
-  }
-
-  void addWorkingHour() {
-    workingHours[workingHoursLength.toString()] =
-        UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
-    update();
-  }
-
-  void deleteWorkingHour({required int key}) {
-    workingHours.remove(key.toString());
-    update();
-  }
-
-  void addHoliday() {
-    Get.defaultDialog(
-      title: 'أختر يوم',
-      content: CustomDatePickerDialog(
-        onClose: () {
-          update();
-          Get.back();
-        },
-        onTimeSelect: (dateRangePickerSelectionChangedArgs) {
-          final selectedDateList = dateRangePickerSelectionChangedArgs.value as List<DateTime>;
-          holidays.addAll(
-            selectedDateList.map((e) => e.toIso8601String().split("T")[0]),
-          );
-        },
-      ),
-    );
-  }
-
-  void deleteHoliday({required String element}) {
-    holidays.remove(element);
-    update();
+    userNavigator.navigateToLogin();
   }
 
   @override
   void onClose() {
-    userFormHandler.dispose();
     roleFormHandler.dispose();
     super.onClose();
   }
@@ -457,71 +325,13 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     );
   }
 
-  void navigateToUserDetails(String? userId) {
-    selectedUserModel = allUsers.firstWhereOrNull(
-      (user) => user.userId == userId,
-    );
-
-    to(AppRoutes.showUserDetails);
-  }
-
-  String? calculateTotalLoginDelay(Map<String, UserWorkingHours> workingHours, UserTimeModel? timeModel) {
-    if (timeModel?.logInDateList == null || timeModel?.logInDateList?.length != workingHours.entries.length) {
-      return "لم يسجل بعد";
-    }
-    int totalMinutes = 0;
-    for (int i = 0; i < timeModel!.logInDateList!.length; i++) {
-      final enterTime = DateFormat("hh:mm a").parse(workingHours.values.elementAt(i).enterTime!);
-      final loginTime = timeModel.logInDateList!.elementAt(i);
-      final delay = loginTime.difference(DateTime(loginTime.year, loginTime.month, loginTime.day, enterTime.hour, enterTime.minute));
-      if (!delay.isNegative) {
-        totalMinutes += delay.inMinutes;
-      }
-    }
-    return totalMinutes > 0 ? formatDelay(totalMinutes) : null;
-  }
-
-  String? calculateTotalLogoutDelay(Map<String, UserWorkingHours> workingHours, UserTimeModel? timeModel) {
-    if (timeModel?.logOutDateList == null || timeModel?.logInDateList?.length != workingHours.entries.length) {
-      return "لم يسجل بعد";
-    }
-    int totalMinutes = 0;
-    for (int i = 0; i < timeModel!.logOutDateList!.length; i++) {
-      final enterTime = DateFormat("hh:mm a").tryParse(workingHours.values.elementAt(i).outTime!) ??
-          DateFormat("a hh:mm").parse(workingHours.values.elementAt(i).outTime!);
-      final logOut = timeModel.logOutDateList!.elementAt(i);
-      final delay = (DateTime(logOut.year, logOut.month, logOut.day, enterTime.hour, enterTime.minute)).difference(logOut);
-      if (!delay.isNegative) {
-        totalMinutes += delay.inMinutes;
-      }
-    }
-    return totalMinutes > 0 ? formatDelay(totalMinutes) : null;
-  }
-
-  String formatDelay(int totalMinutes) {
-    final hours = totalMinutes ~/ 60;
-    final minutes = totalMinutes % 60;
-    if (hours == 0) {
-      return "$minutes دقائق";
-    } else if (minutes == 0) {
-      return "$hours ساعات";
-    } else {
-      return "$hours ساعات و $minutes دقائق";
-    }
-  }
-
-  bool getIfHaveHoliday(String dayName, List<String> userHolidays) {
-    return userHolidays.contains(dayName);
-  }
-
-  
-  String get dateToDay =>Timestamp.now().toDate().toString().split(' ')[0];
-  
   List<UserModel> get filteredUsersWithDetails => allUsers
       .map((user) {
-        final loginDelay = calculateTotalLoginDelay(user.userWorkingHours!, user.userTimeModel![dateToDay]);
-        final logoutDelay = calculateTotalLogoutDelay(user.userWorkingHours!, user.userTimeModel![dateToDay]);
-        final haveHoliday = getIfHaveHoliday(dateToDay, user.userHolidays!);
+        final loginDelay = _userService.calculateTotalDelay(
+            workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: true);
+        final logoutDelay = _userService.calculateTotalDelay(
+            workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: false);
+        final haveHoliday = _userService.getIfHaveHoliday(dateToDay, user.userHolidays!);
 
         return user.copyWith(
           loginDelay: loginDelay,

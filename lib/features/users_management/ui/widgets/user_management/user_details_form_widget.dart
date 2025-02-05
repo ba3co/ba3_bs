@@ -4,10 +4,12 @@ import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
 import '../../../../sellers/controllers/sellers_controller.dart';
@@ -16,11 +18,11 @@ import '../../../controllers/user_management_controller.dart';
 class UserDetailsForm extends StatelessWidget {
   const UserDetailsForm({
     super.key,
-    required this.userManagementController,
+    required this.userDetailsController,
     required this.sellerController,
   });
 
-  final UserManagementController userManagementController;
+  final UserDetailsController userDetailsController;
   final SellersController sellerController;
 
   @override
@@ -34,7 +36,7 @@ class UserDetailsForm extends StatelessWidget {
           style: AppTextStyles.headLineStyle2,
         )),
         bodyWidget: Form(
-          key: userManagementController.userFormHandler.formKey,
+          key: userDetailsController.userFormHandler.formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             spacing: 10,
@@ -46,8 +48,8 @@ class UserDetailsForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userManagementController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
-                    textEditingController: userManagementController.userFormHandler.userNameController,
+                    validator: (value) => userDetailsController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
+                    textEditingController: userDetailsController.userFormHandler.userNameController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
@@ -57,8 +59,8 @@ class UserDetailsForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userManagementController.userFormHandler.passwordValidator(value, 'كلمة السر'),
-                    textEditingController: userManagementController.userFormHandler.passController,
+                    validator: (value) => userDetailsController.userFormHandler.passwordValidator(value, 'كلمة السر'),
+                    textEditingController: userDetailsController.userFormHandler.passController,
                     suffixIcon: const SizedBox.shrink(),
                     maxLength: 6,
                     inputFormatters: [
@@ -68,10 +70,13 @@ class UserDetailsForm extends StatelessWidget {
                 ),
               ),
               FormFieldRow(
+
                   firstItem: TextAndExpandedChildField(
                     label: 'الصلاحيات',
+                    height: 50,
                     child: Obx(() {
                       return Container(
+                        height: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: AppColors.backGroundColor,
@@ -80,8 +85,8 @@ class UserDetailsForm extends StatelessWidget {
                           hint: const Text('الصلاحيات'),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          value: userManagementController.userFormHandler.selectedRoleId.value,
-                          items: userManagementController.allRoles
+                          value: userDetailsController.userFormHandler.selectedRoleId.value,
+                          items: read<UserManagementController>().allRoles
                               .map(
                                 (role) => DropdownMenuItem(
                                   value: role.roleId,
@@ -91,7 +96,7 @@ class UserDetailsForm extends StatelessWidget {
                               .toList(),
                           onChanged: (role) {
                             log('selectedRoleId $role');
-                            userManagementController.userFormHandler.setRoleId = role;
+                            userDetailsController.userFormHandler.setRoleId = role;
                           },
                         ),
                       );
@@ -99,8 +104,10 @@ class UserDetailsForm extends StatelessWidget {
                   ),
                   secondItem: TextAndExpandedChildField(
                     label: 'البائع',
+                    height: 50,
                     child: Obx(() {
                       return Container(
+                        height: 50,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: AppColors.backGroundColor,
@@ -109,7 +116,7 @@ class UserDetailsForm extends StatelessWidget {
                           hint: const Text('البائع'),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          value: userManagementController.userFormHandler.selectedSellerId.value,
+                          value: userDetailsController.userFormHandler.selectedSellerId.value,
                           items: sellerController.sellers
                               .map(
                                 (seller) => DropdownMenuItem(
@@ -120,7 +127,7 @@ class UserDetailsForm extends StatelessWidget {
                               .toList(),
                           onChanged: (sellerId) {
                             log('selectedSellerId $sellerId');
-                            userManagementController.userFormHandler.setSellerId = sellerId;
+                            userDetailsController.userFormHandler.setSellerId = sellerId;
                           },
                         ),
                       );
@@ -128,7 +135,7 @@ class UserDetailsForm extends StatelessWidget {
                   )),
               InkWell(
                 onTap: (){
-                  userManagementController.userFormHandler.changeUserState();
+                  userDetailsController.userFormHandler.changeUserState();
 
                 },
                 child: AnimatedContainer(
@@ -138,11 +145,11 @@ class UserDetailsForm extends StatelessWidget {
                   padding: EdgeInsets.all(5),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: userManagementController.userFormHandler.isUserActive.value ? Colors.green : AppColors.grayColor,
+                    color: userDetailsController.userFormHandler.isUserActive.value ? Colors.green : AppColors.grayColor,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child:   Text(
-                    userManagementController.userFormHandler.userActiveStatus.value.label,
+                    userDetailsController.userFormHandler.userActiveStatus.value.label,
                     style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
                   ),
                 ),

@@ -1,20 +1,20 @@
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/organized_widget.dart';
-import '../../../../users_management/controllers/user_management_controller.dart';
 
 class TimeWidget extends StatelessWidget {
   const TimeWidget({
     super.key,
-    required this.userManagementController,
+    required this.userDetailsController,
   });
 
-  final UserManagementController userManagementController;
+  final UserDetailsController userDetailsController;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,10 @@ class TimeWidget extends StatelessWidget {
         bodyWidget: ListView.separated(
           physics: const ClampingScrollPhysics(),
           shrinkWrap: true,
-          itemCount: userManagementController.selectedUserModel?.userTimeModel?.values.length ?? 0,
+          itemCount: userDetailsController.selectedUserModel?.userTimeModel?.values.length ?? 0,
           separatorBuilder: (context, index) => VerticalSpace(),
           itemBuilder: (context, index) {
-            final userTimeModel = userManagementController.selectedUserModel?.userTimeModel?.values.toList()[index];
+            final userTimeModel = userDetailsController.selectedUserModel?.userTimeModel?.values.toList()[index];
 
             return Column(
               children: [

@@ -18,7 +18,7 @@ class AllUserScreen extends StatelessWidget {
               AppButton(
                   title: 'إضافة',
                   onPressed: () {
-                    controller.navigateToAddUserScreen();
+                    controller. userNavigator.navigateToAddUserScreen();
                   },
                   iconData: Icons.add),
               const SizedBox(
@@ -37,7 +37,7 @@ class AllUserScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: () {
-                        controller.navigateToAddUserScreen(controller.allUsers[index]);
+                        controller. userNavigator.navigateToAddUserScreen(controller.allUsers[index]);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4),

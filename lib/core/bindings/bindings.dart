@@ -73,6 +73,7 @@ import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/sellers/service/seller_import.dart';
 import '../../features/user_time/controller/user_time_controller.dart';
+import '../../features/users_management/controllers/user_details_controller.dart';
 import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
@@ -191,23 +192,18 @@ class AppBindings extends Bindings {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
       patternsRepo: RemoteDataSourceRepository(PatternsDatasource(databaseService: fireStoreService)),
-      billsRepo:
-          CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
-      bondsRepo:
-          CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
-      chequesRepo:
-          CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       rolesRepo: RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService)),
       usersRepo: FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService)),
       entryBondsRepo: RemoteDataSourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
-      accountsStatementsRepo:
-          CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
+      accountsStatementsRepo: CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
       billImportExportRepo: ImportExportRepository(billImportService, billExportService),
       chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
       userTimeRepo: UserTimeRepository(),
       sellersRepo: BulkSavableDatasourceRepository(SellersDatasource(databaseService: fireStoreService)),
-      materialsRemoteDatasourceRepo:
-          QueryableSavableRepository(MaterialsRemoteDatasource(databaseService: fireStoreService)),
+      materialsRemoteDatasourceRepo: QueryableSavableRepository(MaterialsRemoteDatasource(databaseService: fireStoreService)),
       accountsRep: BulkSavableDatasourceRepository(AccountsDatasource(databaseService: fireStoreService)),
       bondImportExportRepo: ImportExportRepository(bondImportService, bondExportService),
       materialImportExportRepo: ImportExportRepository(materialImportService, materialExportService),
@@ -240,6 +236,7 @@ class AppBindings extends Bindings {
 
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
+
     lazyPut(PlutoController());
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
     lazyPut(PatternController(repositories.patternsRepo));
@@ -266,6 +263,7 @@ class AppBindings extends Bindings {
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
 
     lazyPut(AddSellerController());
+    lazyPut(UserDetailsController(repositories.usersRepo));
   }
 }
 
