@@ -99,6 +99,7 @@ class ChangesController extends GetxController {
       // After processing all items, call saveMaterials and deleteMaterials to handle both
       saveMaterials(materialsToSave);
       deleteMaterials(materialsToDelete);
+      updateMaterials(materialsToUpdate);
 
       deleteChanges(change);
     } catch (e, stack) {
