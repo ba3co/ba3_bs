@@ -86,10 +86,10 @@ extension ListExtensions<T> on List<T> {
   /// Example:
   /// ```dart
   /// final items = ['apple', null, 'banana'];
-  /// final nonNullItems = items.pluck((item) => item);
+  /// final nonNullItems = items.select((item) => item);
   /// // nonNullItems: ['apple', 'banana']
   /// ```
-  List<K> pluck<K>(K? Function(T item) selector) {
+  List<K> select<K>(K? Function(T item) selector) {
     return [
       for (var item in this)
         if (selector(item) != null) selector(item) as K
@@ -784,18 +784,18 @@ extension ListExtensions<T> on List<T> {
     return this[random.nextInt(length)];
   }
 
-  /// Finds updated items between two lists based on a key selector and a comparison function.
+  /// Finds different (updated) items between two lists based on a key selector and a comparison function.
   ///
   /// - [other]: The other list to compare with.
   /// - [keySelector]: A function to extract the key used to identify items.
   /// - [compare]: A function to compare two items and determine if they are different.
   ///
-  /// Returns a list of items from the current list that are present in [other] but have been updated.
-  List<T> updatedBy<K>(List<T> other, K Function(T) keySelector, bool Function(T, T) compare) {
+  /// Returns a list of items from the current list that are present in [other] but have changed.
+  List<T> diffBy<K>(List<T> other, K Function(T) keySelector, bool Function(T, T) compare) {
     // Convert the 'other' list into a map for quick lookup.
     final otherMap = other.toMap(keySelector);
 
-    // Find common items based on the key selector and filter those updated.
+    // Find common items based on the key selector and filter those that are different.
     return intersectBy(other, keySelector).where((currentItem) {
       final previousItem = otherMap[keySelector(currentItem)];
       return previousItem != null && compare(currentItem, previousItem);
@@ -831,7 +831,7 @@ extension ListExtensions<T> on List<T> {
     int Function(T) quantitySelector,
     T Function(T item, int newQuantity) updateQuantity,
   ) {
-    return updatedBy(
+    return diffBy(
       other,
       keySelector,
       (currentItem, previousItem) => quantitySelector(currentItem) != quantitySelector(previousItem),

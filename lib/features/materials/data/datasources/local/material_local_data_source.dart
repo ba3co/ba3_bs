@@ -1,18 +1,19 @@
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/services/local_database/interfaces/local_datasource_base.dart';
+
 import '../../models/materials/material_model.dart';
 
 class MaterialsLocalDatasource extends LocalDatasourceBase<MaterialModel> {
   MaterialsLocalDatasource(super.database);
 
   @override
-  Future<void> saveData(MaterialModel data) {
-    return database.insert(data.id!, data);
+  Future<void> saveData(MaterialModel item) {
+    return database.insert(item.id!, item);
   }
 
   @override
-  Future<void> saveAllData(List<MaterialModel> data) {
-    final Map<String, MaterialModel> dataMap = data.toMap(
+  Future<void> saveAllData(List<MaterialModel> items) {
+    final Map<String, MaterialModel> dataMap = items.toMap(
       (material) => material.id!,
     );
     return database.insertAll(dataMap);
@@ -30,8 +31,8 @@ class MaterialsLocalDatasource extends LocalDatasourceBase<MaterialModel> {
   }
 
   @override
-  Future<void> removeAllData(List<MaterialModel> data) {
-    final List<String> ids = data.pluck((item) => item.id!);
+  Future<void> removeAllData(List<MaterialModel> items) {
+    final List<String> ids = items.select((item) => item.id!);
     return database.deleteAll(ids);
   }
 
@@ -39,13 +40,13 @@ class MaterialsLocalDatasource extends LocalDatasourceBase<MaterialModel> {
   Future<void> clearAllData() => database.clear();
 
   @override
-  Future<void> updateData(MaterialModel data) {
-    return database.update(data.id!, data);
+  Future<void> updateData(MaterialModel item) {
+    return database.update(item.id!, item);
   }
 
   @override
-  Future<void> updateAllData(List<MaterialModel> data) {
-    final dataMap = data.toMap(
+  Future<void> updateAllData(List<MaterialModel> items) {
+    final dataMap = items.toMap(
       (material) => material.id!,
     );
 
