@@ -180,7 +180,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
   }
 
-  Map<String, List<BillItem>> findBillItemChanges({
+  ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? findBillItemChanges({
     required List<BillItem> previousItems,
     required List<BillItem> currentItems,
   }) {
@@ -203,11 +203,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       (item, difference) => item.copyWith(itemQuantity: difference), // Update quantity
     );
 
-    return {
-      'new': newItems,
-      'deleted': deletedItems,
-      'updated': updatedItems,
-    };
+    return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
   }
 
   _handelUpdate({
@@ -241,7 +237,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // 2. Prepare containers for modified accounts and deleted materials.
     final modifiedBillTypeAccounts = <String, AccountModel>{};
 
-    Map<String, List<BillItem>>? itemChanges;
+    ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges;
 
     // 3. Process the bill: add if new, update if modifying.
     if (isSave) {
@@ -270,9 +266,9 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final shouldGenerateMatStatement = _determineIfShouldGenerateMatStatement(isSave, currentBill, itemChanges);
 
     // For updates, extract the list of updated materials (or an empty list for a new bill).
-    final updatedMaterials = isSave ? <BillItem>[] : (itemChanges?['updated'] ?? []);
+    final updatedMaterials = isSave ? <BillItem>[] : (itemChanges?.updatedItems ?? []);
 
-    final deletedMaterials = isSave ? <BillItem>[] : (itemChanges?['deleted'] ?? []);
+    final deletedMaterials = isSave ? <BillItem>[] : (itemChanges?.deletedItems ?? []);
 
     // 7. Generate and save the material statement if the bill is approved and changes exist.
     if (currentBill.status == Status.approved && shouldGenerateMatStatement) {
@@ -296,7 +292,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   /// Processes an update by calling the update handler and computing item changes.
-  Map<String, List<BillItem>> _processUpdate({
+  ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? _processUpdate({
     required BillModel previousBill,
     required BillModel currentBill,
     required Map<String, AccountModel> modifiedBillTypeAccounts,
@@ -311,10 +307,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // Compute the differences between the previous and current bill items.
     final changes = findBillItemChanges(previousItems: previousBill.items.itemList, currentItems: currentBill.items.itemList);
 
-    log('New items: ${changes['new']}');
-    log('Deleted items: ${changes['deleted']}');
-    log('Updated items: ${changes['updated']}');
-
     return changes;
   }
 
@@ -324,14 +316,14 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   bool _determineIfShouldGenerateMatStatement(
     bool isSave,
     BillModel currentBill,
-    Map<String, List<BillItem>>? itemChanges,
+    ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges,
   ) {
     if (isSave) {
       return currentBill.items.itemList.isNotEmpty;
     } else {
-      return (itemChanges?['new']?.isNotEmpty ?? false) ||
-          (itemChanges?['deleted']?.isNotEmpty ?? false) ||
-          (itemChanges?['updated']?.isNotEmpty ?? false);
+      return (itemChanges?.newItems.isNotEmpty ?? false) ||
+          (itemChanges?.deletedItems.isNotEmpty ?? false) ||
+          (itemChanges?.updatedItems.isNotEmpty ?? false);
     }
   }
 

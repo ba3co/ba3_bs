@@ -180,22 +180,6 @@ extension ListExtensions<T> on List<T> {
     sort((a, b) => keySelector(b).compareTo(keySelector(a)));
   }
 
-  /// Returns the first element that satisfies [predicate] or `null` if none is found.
-  ///
-  /// Example:
-  /// ```dart
-  /// final numbers = [1, 2, 3];
-  /// final even = numbers.firstWhereOrNull((n) => n % 2 == 0);
-  /// // even: 2
-  /// ```
-  T? firstWhereOrNull(bool Function(T) predicate) {
-    for (var item in this) {
-      if (predicate(item)) {
-        return item;
-      }
-    }
-    return null;
-  }
 
   /// Computes the sum of values obtained by applying [selector] to each element.
   ///
