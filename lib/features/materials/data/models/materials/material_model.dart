@@ -167,6 +167,12 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   @HiveField(51)
   final List<MatExtraBarcodeModel>? matExtraBarcode;
 
+  @HiveField(52)
+  final int? matQuantity;
+
+
+  final double? calcMinPrice;
+
   MaterialModel({
     this.id,
     this.matCode,
@@ -220,6 +226,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     this.endUserPrice,
     this.matVatGuid,
     this.matExtraBarcode,
+    this.matQuantity,
+    this.calcMinPrice,
   });
 
   // Factory constructor to create an instance from JSON
@@ -277,6 +285,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       endUserPrice: json['EndUser2']?.toString(),
       matVatGuid: json['matVatGuid']?.toString(),
       matExtraBarcode: List.from(json['matExtraBarcode'] ?? []),
+      matQuantity: json['MatQuantity'] ?? 0,
+      calcMinPrice: json['calcMinPrice'] ?? 0.0,
     );
   }
 
@@ -334,6 +344,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'EndUser2': endUserPrice,
         'matVatGuid': matVatGuid,
         'matExtraBarcode': matExtraBarcode,
+        'MatQuantity': matQuantity,
+        'calcMinPrice': calcMinPrice,
       };
 
   @override
@@ -346,6 +358,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           matPrevQty,
       PlutoColumn(title: 'التكلفة', field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
           retailPrice,
+      PlutoColumn(title: 'التكلفة', field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+      calcMinPrice,
       PlutoColumn(title: 'المستهلك', field: 'المستهلك', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
           endUserPrice,
       PlutoColumn(title: 'الجملة', field: 'الجملة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
@@ -416,59 +430,63 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     String? retailPrice,
     String? endUserPrice,
     String? matVatGuid,
+    int? matQuantity,
+    double? calcMinPrice,
   }) {
     return MaterialModel(
-      id: id ?? this.id,
-      matCode: matCode ?? this.matCode,
-      matName: matName ?? this.matName,
-      matBarCode: matBarCode ?? this.matBarCode,
-      matGroupGuid: matGroupGuid ?? this.matGroupGuid,
-      matUnity: matUnity ?? this.matUnity,
-      matPriceType: matPriceType ?? this.matPriceType,
-      matBonus: matBonus ?? this.matBonus,
-      matBonusOne: matBonusOne ?? this.matBonusOne,
-      matCurrencyGuid: matCurrencyGuid ?? this.matCurrencyGuid,
-      matCurrencyVal: matCurrencyVal ?? this.matCurrencyVal,
-      matPictureGuid: matPictureGuid ?? this.matPictureGuid,
-      matType: matType ?? this.matType,
-      matSecurity: matSecurity ?? this.matSecurity,
-      matFlag: matFlag ?? this.matFlag,
-      matExpireFlag: matExpireFlag ?? this.matExpireFlag,
-      matProdFlag: matProdFlag ?? this.matProdFlag,
-      matUnit2FactFlag: matUnit2FactFlag ?? this.matUnit2FactFlag,
-      matUnit3FactFlag: matUnit3FactFlag ?? this.matUnit3FactFlag,
-      matSNFlag: matSNFlag ?? this.matSNFlag,
-      matForceInSN: matForceInSN ?? this.matForceInSN,
-      matForceOutSN: matForceOutSN ?? this.matForceOutSN,
-      matVAT: matVAT ?? this.matVAT,
-      matDefUnit: matDefUnit ?? this.matDefUnit,
-      matBranchMask: matBranchMask ?? this.matBranchMask,
-      matAss: matAss ?? this.matAss,
-      matOldGUID: matOldGUID ?? this.matOldGUID,
-      matNewGUID: matNewGUID ?? this.matNewGUID,
-      matCalPriceFromDetail: matCalPriceFromDetail ?? this.matCalPriceFromDetail,
-      matForceInExpire: matForceInExpire ?? this.matForceInExpire,
-      matForceOutExpire: matForceOutExpire ?? this.matForceOutExpire,
-      matCreateDate: matCreateDate ?? this.matCreateDate,
-      matIsIntegerQuantity: matIsIntegerQuantity ?? this.matIsIntegerQuantity,
-      matClassFlag: matClassFlag ?? this.matClassFlag,
-      matForceInClass: matForceInClass ?? this.matForceInClass,
-      matForceOutClass: matForceOutClass ?? this.matForceOutClass,
-      matDisableLastPrice: matDisableLastPrice ?? this.matDisableLastPrice,
-      matLastPriceCurVal: matLastPriceCurVal ?? this.matLastPriceCurVal,
-      matPrevQty: matPrevQty ?? this.matPrevQty,
-      matFirstCostDate: matFirstCostDate ?? this.matFirstCostDate,
-      matHasSegments: matHasSegments ?? this.matHasSegments,
-      matParent: matParent ?? this.matParent,
-      matIsCompositionUpdated: matIsCompositionUpdated ?? this.matIsCompositionUpdated,
-      matInheritsParentSpecs: matInheritsParentSpecs ?? this.matInheritsParentSpecs,
-      matCompositionName: matCompositionName ?? this.matCompositionName,
-      matCompositionLatinName: matCompositionLatinName ?? this.matCompositionLatinName,
-      movedComposite: movedComposite ?? this.movedComposite,
-      wholesalePrice: wholesalePrice ?? this.wholesalePrice,
-      retailPrice: retailPrice ?? this.retailPrice,
-      endUserPrice: endUserPrice ?? this.endUserPrice,
-      matVatGuid: matVatGuid ?? this.matVatGuid,
+        id: id ?? this.id,
+        matCode: matCode ?? this.matCode,
+        matName: matName ?? this.matName,
+        matBarCode: matBarCode ?? this.matBarCode,
+        matGroupGuid: matGroupGuid ?? this.matGroupGuid,
+        matUnity: matUnity ?? this.matUnity,
+        matPriceType: matPriceType ?? this.matPriceType,
+        matBonus: matBonus ?? this.matBonus,
+        matBonusOne: matBonusOne ?? this.matBonusOne,
+        matCurrencyGuid: matCurrencyGuid ?? this.matCurrencyGuid,
+        matCurrencyVal: matCurrencyVal ?? this.matCurrencyVal,
+        matPictureGuid: matPictureGuid ?? this.matPictureGuid,
+        matType: matType ?? this.matType,
+        matSecurity: matSecurity ?? this.matSecurity,
+        matFlag: matFlag ?? this.matFlag,
+        matExpireFlag: matExpireFlag ?? this.matExpireFlag,
+        matProdFlag: matProdFlag ?? this.matProdFlag,
+        matUnit2FactFlag: matUnit2FactFlag ?? this.matUnit2FactFlag,
+        matUnit3FactFlag: matUnit3FactFlag ?? this.matUnit3FactFlag,
+        matSNFlag: matSNFlag ?? this.matSNFlag,
+        matForceInSN: matForceInSN ?? this.matForceInSN,
+        matForceOutSN: matForceOutSN ?? this.matForceOutSN,
+        matVAT: matVAT ?? this.matVAT,
+        matDefUnit: matDefUnit ?? this.matDefUnit,
+        matBranchMask: matBranchMask ?? this.matBranchMask,
+        matAss: matAss ?? this.matAss,
+        matOldGUID: matOldGUID ?? this.matOldGUID,
+        matNewGUID: matNewGUID ?? this.matNewGUID,
+        matCalPriceFromDetail: matCalPriceFromDetail ?? this.matCalPriceFromDetail,
+        matForceInExpire: matForceInExpire ?? this.matForceInExpire,
+        matForceOutExpire: matForceOutExpire ?? this.matForceOutExpire,
+        matCreateDate: matCreateDate ?? this.matCreateDate,
+        matIsIntegerQuantity: matIsIntegerQuantity ?? this.matIsIntegerQuantity,
+        matClassFlag: matClassFlag ?? this.matClassFlag,
+        matForceInClass: matForceInClass ?? this.matForceInClass,
+        matForceOutClass: matForceOutClass ?? this.matForceOutClass,
+        matDisableLastPrice: matDisableLastPrice ?? this.matDisableLastPrice,
+        matLastPriceCurVal: matLastPriceCurVal ?? this.matLastPriceCurVal,
+        matPrevQty: matPrevQty ?? this.matPrevQty,
+        matFirstCostDate: matFirstCostDate ?? this.matFirstCostDate,
+        matHasSegments: matHasSegments ?? this.matHasSegments,
+        matParent: matParent ?? this.matParent,
+        matIsCompositionUpdated: matIsCompositionUpdated ?? this.matIsCompositionUpdated,
+        matInheritsParentSpecs: matInheritsParentSpecs ?? this.matInheritsParentSpecs,
+        matCompositionName: matCompositionName ?? this.matCompositionName,
+        matCompositionLatinName: matCompositionLatinName ?? this.matCompositionLatinName,
+        movedComposite: movedComposite ?? this.movedComposite,
+        wholesalePrice: wholesalePrice ?? this.wholesalePrice,
+        retailPrice: retailPrice ?? this.retailPrice,
+        endUserPrice: endUserPrice ?? this.endUserPrice,
+        matVatGuid: matVatGuid ?? this.matVatGuid,
+        matQuantity: matQuantity ?? this.matQuantity,
+      calcMinPrice: calcMinPrice ?? this.calcMinPrice,
     );
   }
 }
