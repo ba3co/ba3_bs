@@ -28,7 +28,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     for (final matStatement in matsStatements) {
       await saveMatStatementModel(matStatementModel: matStatement);
 
-      await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.quantity!);
+      await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
 
       onProgress?.call((++counter) / matsStatements.length);
     }
@@ -60,16 +60,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       deletedTasks.add(
         deleteMatStatementModel(matStatementModel),
 
-        /*   _matStatementsRepo.delete(matStatementModel).then(
-          (deleteResult) {
-            deleteResult.fold(
-              (failure) => errors.add(failure.message), // Collect errors.
-              (_) {},
-            );
-          },
-        ),*/
       );
-
       deletedTasks.add(read<MaterialController>().updateMaterialQuantity(matStatementModel.matId!, matStatementModel.quantity!));
     }
 

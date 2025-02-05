@@ -6,6 +6,8 @@ import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../bill/data/models/bill_items.dart';
+import '../../bill/services/bill/quantity_strategy.dart';
+import '../../bill/services/bill/quantity_strategy_factory.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
@@ -35,11 +37,13 @@ mixin MatsStatementsGenerator {
     List<BillItem> updatedMaterials = const [],
   }) async {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
-    final matsStatementsModels = creator.createMatStatement(model: model);
+    final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
 
     await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
+      final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(model as BillModel);
+
       final originId = matsStatementsModels.first.originId;
 
       final matStatementsToDelete = deletedMaterials.map(
@@ -49,18 +53,10 @@ mixin MatsStatementsGenerator {
           return MatStatementModel(
             matId: matId,
             originId: originId,
-            quantity: material.itemQuantity,
+            quantity: -quantityStrategy.calculateQuantity(material.itemQuantity),
           );
         },
       ).toList();
-
-      // if(updatedMaterials.isNotEmpty){
-      //   for (var material in updatedMaterials) {
-      //     await read<MaterialController>().updateMaterialQuantity(material.matId!, matStatement.quantity!);
-      //
-      //   }
-      //
-      // }
 
       await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
     }
@@ -68,6 +64,7 @@ mixin MatsStatementsGenerator {
 
   Future<void> deleteMatsStatementsModels(BillModel billModel) async {
     final String originId = billModel.billId!;
+    final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(billModel);
 
     final mergedBillItems = billModel.items.itemList.merge();
 
@@ -76,7 +73,7 @@ mixin MatsStatementsGenerator {
           (item) => MatStatementModel(
             matId: item.itemGuid,
             originId: originId,
-            quantity: item.itemQuantity,
+            quantity: -quantityStrategy.calculateQuantity(item.itemQuantity),
           ),
         )
         .toList();
