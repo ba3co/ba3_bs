@@ -6,7 +6,6 @@ import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../bill/data/models/bill_items.dart';
-import '../controllers/material_controller.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
@@ -59,10 +58,10 @@ mixin MatsStatementsGenerator {
       ).toList();
 
       if(updatedMaterials.isNotEmpty){
-        for (var material in updatedMaterials) {
-          await read<MaterialController>().updateMaterialQuantity(material.matId!, matStatement.quantity!);
-
-        }
+        // for (var material in updatedMaterials) {
+        //   // await read<MaterialController>().updateMaterialQuantity(material.matId!, matStatement.quantity!);
+        //
+        // }
 
       }
 

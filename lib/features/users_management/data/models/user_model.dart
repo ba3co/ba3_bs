@@ -13,6 +13,9 @@ class UserModel implements PlutoAdaptable {
   final String? userPassword;
   final String? userRoleId;
   final String? userSellerId;
+  final String? loginDelay;
+  final String? logoutDelay;
+  final bool? haveHoliday;
 
   final UserWorkStatus? userWorkStatus;
   final UserActiveStatus? userActiveStatus;
@@ -33,6 +36,10 @@ class UserModel implements PlutoAdaptable {
     this.userActiveStatus,
     this.userHolidays,
     this.userWorkingHours,
+    this.haveHoliday,
+    this.loginDelay,
+    this.logoutDelay,
+
   });
 
   Map<String, dynamic> toJson() {
@@ -91,6 +98,9 @@ class UserModel implements PlutoAdaptable {
     final List<String>? userHolidays,
     final Map<String, UserTimeModel>? userTimeModel,
     final Map<String, UserWorkingHours>? userWorkingHours,
+    final String? loginDelay,
+    final String? logoutDelay,
+    final bool? haveHoliday,
   }) =>
       UserModel(
         userId: userId ?? this.userId,
@@ -103,6 +113,9 @@ class UserModel implements PlutoAdaptable {
         userActiveStatus: userActiveStatus ?? this.userActiveStatus,
         userHolidays: userHolidays ?? this.userHolidays,
         userWorkingHours: userWorkingHours ?? this.userWorkingHours,
+        loginDelay: loginDelay ?? this.loginDelay,
+        logoutDelay: logoutDelay ?? this.logoutDelay,
+        haveHoliday: haveHoliday ?? this.haveHoliday,
       );
 
   @override

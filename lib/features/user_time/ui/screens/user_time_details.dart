@@ -14,7 +14,8 @@ class UserTimeDetails extends StatelessWidget {
     return Scaffold(
       body: GetBuilder<UserTimeController>(builder: (userTimeController) {
 
-        return Column(
+        return ListView(
+          physics: ClampingScrollPhysics(),
           children: [
             AddTimeWidget(
               userTimeController: userTimeController,

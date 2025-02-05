@@ -42,8 +42,9 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
   late final BondUtils _bondUtils;
 
   // Initializer
-  void _initializeServices() {
+  void _initializeServices() async {
     _bondUtils = BondUtils();
+    await fetchAllBondsCountsByTypes(BondType.values);
   }
 
   @override
@@ -109,13 +110,13 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     update();
   }
 
-  Future<List<BondModel>> billsCountByType(BondType bondType) async {
-    int billsCountByType = await getLastNumber(
+  Future<List<BondModel>> bondsCountByType(BondType bondType) async {
+    int bondsCountByType = await getLastNumber(
       category: ApiConstants.bonds,
       entityType: bondType.label,
     );
 
-    return _bondUtils.appendEmptyBillModelNew(bondType, billsCountByType);
+    return _bondUtils.appendEmptyBondModelNew(bondType, bondsCountByType);
   }
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondType, {BondModel? currentBondModel}) async {
@@ -133,7 +134,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     //   bondType: bondTypeModel,
     // );
 
-    final bonds = await billsCountByType(bondType);
+    final bonds = await bondsCountByType(bondType);
 
     if (!context.mounted) return;
 
@@ -231,5 +232,37 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
       bondDetailsController: bondDetailsController,
       bondDetailsPlutoController: bondDetailsPlutoController,
     );
+  }
+
+  final allBondsCountsByType = <BondType, int>{};
+
+  int allBondsCounts(BondType bondTypeModel) {
+    return allBondsCountsByType[bondTypeModel] ?? 0;
+  }
+
+  Future<void> fetchAllBondsCountsByTypes(List<BondType> fetchedBondTypes) async {
+    final List<Future<void>> fetchTasks = [];
+    final errors = <String>[]; // Collect error messages.
+
+    for (final bondTypeModel in fetchedBondTypes) {
+      fetchTasks.add(
+        _bondsFirebaseRepo.count(itemIdentifier: bondTypeModel).then((result) {
+          result.fold(
+            (failure) => errors.add('Failed to fetch count for ${bondTypeModel.label}: ${failure.message}'),
+            (count) {
+              allBondsCountsByType[bondTypeModel] = count;
+            },
+          );
+        }),
+      );
+    }
+
+    // Wait for all tasks to complete.
+    await Future.wait(fetchTasks);
+    update();
+    // Handle errors if any.
+    if (errors.isNotEmpty) {
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+    }
   }
 }

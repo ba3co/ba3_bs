@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/sellers_layout.dart';
+import 'package:ba3_bs/features/user_time/ui/screens/all_attendance_screen.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -87,6 +88,15 @@ class MainLayoutController extends GetxController {
       icon: AppAssets.usersTimeIcon,
       unSelectedIcon: AppAssets.usersTimeUnselectedIcon
     ),
+
+    if (RoleItemType.administrator.hasReadPermission)
+      (
+      name: 'لوحة التحكم',
+      layout: const AllAttendanceScreen(),
+      role: RoleItemType.administrator,
+      icon: AppAssets.billsIcon,
+      unSelectedIcon: AppAssets.billsUnselectedIcon
+      ),
   ];
 
   PageController pageController = PageController();

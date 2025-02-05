@@ -73,7 +73,8 @@ enum RoleItemType {
   viewTime('الدوام'),
   viewDataBase('ادارة قواعد البيانات'),
   viewCard('ادارة البطاقات'),
-  viewHome('الصفحة الرئيسية');
+  viewHome('الصفحة الرئيسية'),
+  administrator('الادمن');
 
   final String value;
 

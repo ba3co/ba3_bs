@@ -8,12 +8,13 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/features/changes/controller/changes_controller.dart';
-import 'package:ba3_bs/features/user_time/ui/screens/all_attendance_screen.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/error/failure.dart';
@@ -289,11 +290,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   void navigateToAddUserScreen([UserModel? user]) {
-    // userFormHandler.init(user);
-    // to(AppRoutes.addUserScreen);
-    log(user!.toJson().toString());
-    Get.to(() => AllAttendanceScreen(users: allUsers,));
-
+    userFormHandler.init(user);
+    to(AppRoutes.addUserScreen);
+    // log(user!.toJson().toString());
+    // Get.to(() => AllAttendanceScreen());
   }
 
   void navigateToAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
@@ -464,4 +464,71 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
     to(AppRoutes.showUserDetails);
   }
+
+  String? calculateTotalLoginDelay(Map<String, UserWorkingHours> workingHours, UserTimeModel? timeModel) {
+    if (timeModel?.logInDateList == null || timeModel?.logInDateList?.length != workingHours.entries.length) {
+      return "لم يسجل بعد";
+    }
+    int totalMinutes = 0;
+    for (int i = 0; i < timeModel!.logInDateList!.length; i++) {
+      final enterTime = DateFormat("hh:mm a").parse(workingHours.values.elementAt(i).enterTime!);
+      final loginTime = timeModel.logInDateList!.elementAt(i);
+      final delay = loginTime.difference(DateTime(loginTime.year, loginTime.month, loginTime.day, enterTime.hour, enterTime.minute));
+      if (!delay.isNegative) {
+        totalMinutes += delay.inMinutes;
+      }
+    }
+    return totalMinutes > 0 ? formatDelay(totalMinutes) : null;
+  }
+
+  String? calculateTotalLogoutDelay(Map<String, UserWorkingHours> workingHours, UserTimeModel? timeModel) {
+    if (timeModel?.logOutDateList == null || timeModel?.logInDateList?.length != workingHours.entries.length) {
+      return "لم يسجل بعد";
+    }
+    int totalMinutes = 0;
+    for (int i = 0; i < timeModel!.logOutDateList!.length; i++) {
+      final enterTime = DateFormat("hh:mm a").tryParse(workingHours.values.elementAt(i).outTime!) ??
+          DateFormat("a hh:mm").parse(workingHours.values.elementAt(i).outTime!);
+      final logOut = timeModel.logOutDateList!.elementAt(i);
+      final delay = (DateTime(logOut.year, logOut.month, logOut.day, enterTime.hour, enterTime.minute)).difference(logOut);
+      if (!delay.isNegative) {
+        totalMinutes += delay.inMinutes;
+      }
+    }
+    return totalMinutes > 0 ? formatDelay(totalMinutes) : null;
+  }
+
+  String formatDelay(int totalMinutes) {
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    if (hours == 0) {
+      return "$minutes دقائق";
+    } else if (minutes == 0) {
+      return "$hours ساعات";
+    } else {
+      return "$hours ساعات و $minutes دقائق";
+    }
+  }
+
+  bool getIfHaveHoliday(String dayName, List<String> userHolidays) {
+    return userHolidays.contains(dayName);
+  }
+
+  
+  String get dateToDay =>Timestamp.now().toDate().toString().split(' ')[0];
+  
+  List<UserModel> get filteredUsersWithDetails => allUsers
+      .map((user) {
+        final loginDelay = calculateTotalLoginDelay(user.userWorkingHours!, user.userTimeModel![dateToDay]);
+        final logoutDelay = calculateTotalLogoutDelay(user.userWorkingHours!, user.userTimeModel![dateToDay]);
+        final haveHoliday = getIfHaveHoliday(dateToDay, user.userHolidays!);
+
+        return user.copyWith(
+          loginDelay: loginDelay,
+          logoutDelay: logoutDelay,
+          haveHoliday: haveHoliday,
+        );
+      })
+      .where((user) => !(user.loginDelay == null && user.logoutDelay == null) && !(user.haveHoliday ?? false))
+      .toList();
 }

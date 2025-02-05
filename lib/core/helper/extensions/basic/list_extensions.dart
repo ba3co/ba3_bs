@@ -819,7 +819,7 @@ extension ListExtensions<T> on List<T> {
   /// - [updateQuantity]: A function to update the quantity field.
   ///
   /// Returns a new list where each item's quantity is replaced with the difference (`new - old`).
-  List<T> withQuantityDifference<K>(
+/*  List<T> withQuantityDifference<K>(
     List<T> other,
     K Function(T) keySelector,
     int Function(T) quantitySelector,
@@ -835,7 +835,7 @@ extension ListExtensions<T> on List<T> {
 
       return updateQuantity(item, difference.toInt());
     }).toList();
-  }
+  }*/
 
   /// Maps values of an existing map while keeping the same keys.
   ///
@@ -847,7 +847,7 @@ extension ListExtensions<T> on List<T> {
   /// ```
   Map<K, V> mapValues<K, V>(V Function(K key, V value) transform) {
     final Map<K, V> result = {};
-    for (var entry in this.asMap().entries) {
+    for (var entry in asMap().entries) {
       result[entry.key as K] = transform(entry.key as K, entry.value as V);
     }
     return result;

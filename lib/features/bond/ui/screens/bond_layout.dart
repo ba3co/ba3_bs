@@ -47,6 +47,7 @@ class BondLayout extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: BondItemWidget(
+                                bondsController:    controller,
                                 onTap: () {
                                   controller.openFloatingBondDetails(context, bondType);
                                 },
