@@ -336,4 +336,12 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);
 
   void openFirstPayDialog(BuildContext context) => _billService.showFirstPayDialog(context, firstPayController);
+
+
+  /// this for mobile
+  /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
+      context: context,
+      stateManager: billDetailsPlutoController.recordsTableStateManager,
+      plutoController: billDetailsPlutoController,
+      billTypeModel: billTypeModel);*/
 }
