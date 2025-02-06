@@ -59,10 +59,17 @@ class UserModel implements PlutoAdaptable {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+
     Map<String, UserTimeModel> userTimeModel = <String, UserTimeModel>{};
+
     (json['userTime'] ?? {}).forEach((k, v) {
-      userTimeModel[k] = UserTimeModel.fromJson(v);
+    userTimeModel[k] = UserTimeModel.fromJson(v);
     });
+
+    var sortedEntries = userTimeModel.entries.toList()
+    ..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
+
+    userTimeModel = Map.fromEntries(sortedEntries);
 
     Map<String, UserWorkingHours> userDailyTime = <String, UserWorkingHours>{};
 
@@ -71,6 +78,7 @@ class UserModel implements PlutoAdaptable {
         userDailyTime[workingHourId] = UserWorkingHours.fromJson(userWorkingHourJson);
       },
     );
+
 
     return UserModel(
       userId: json['docId'],
@@ -167,7 +175,7 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
           ? 'اجازة'
-          : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
+          : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.toList().lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
       PlutoColumn(
         title: 'اخر خروج',
         field: 'اخر خروج',

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/materials/ui/screens/material_statement_screen.dart';
@@ -27,10 +28,19 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     int counter = 0;
     for (final matStatement in matsStatements) {
       await saveMatStatementModel(matStatementModel: matStatement);
-
-      await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
-
       onProgress?.call((++counter) / matsStatements.length);
+      final materialStatementList = await fetchMatStatementById(matStatement.matId!);
+      if (materialStatementList != null) {
+        if (matStatement.quantity! > 0) {
+          await read<MaterialController>().updateMaterialQuantityAndPrice(
+              matId: matStatement.matId!,
+              quantity: _calculateQuantity(matsStatements),
+              quantityInStatement: matStatement.quantity!,
+              priceInStatement: matStatement.price!);
+        } else {
+          await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
+        }
+      }
     }
   }
 
@@ -50,6 +60,22 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
     );
+
+    final materialStatementList = await fetchMatStatementById(matStatementModel.matId!);
+    if (materialStatementList != null) {
+      if (matStatementModel.quantity! < 0) {
+
+        await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
+            matId: matStatementModel.matId!,
+            quantity: _calculateQuantity(materialStatementList),
+            currentMinPrice: _calculateMinPrice(materialStatementList));
+      } else {
+        await read<MaterialController>().setMaterialQuantity(
+          matStatementModel.matId!,
+          _calculateQuantity(materialStatementList),
+        );
+      }
+    }
   }
 
   Future<void> deleteAllMatStatementModel(List<MatStatementModel> matStatementsModels) async {
@@ -59,9 +85,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     for (final matStatementModel in matStatementsModels) {
       deletedTasks.add(
         deleteMatStatementModel(matStatementModel),
-
       );
-      deletedTasks.add(read<MaterialController>().updateMaterialQuantity(matStatementModel.matId!, matStatementModel.quantity!));
     }
 
     await Future.wait(deletedTasks);
@@ -114,6 +138,14 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     );
   }
 
+  Future<List<MatStatementModel>?> fetchMatStatementById(String matId) async {
+    final result = await _matStatementsRepo.getAll(matId);
+    return result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedItems) => fetchedItems,
+    );
+  }
+
   /// Calculates debit, credit, and total values
   void _calculateValues(List<MatStatementModel> items) {
     if (items.isEmpty) {
@@ -128,13 +160,32 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   }
 
   _updateValues(List<MatStatementModel> items) {
-    totalQuantity = _calculateSum(items);
+    totalQuantity = _calculateQuantity(items);
   }
 
-  int _calculateSum(List<MatStatementModel> items) => items.fold(
+  int _calculateQuantity(List<MatStatementModel> items) => items.fold(
         0,
         (sum, item) => sum + (item.quantity ?? 0),
       );
+
+  double _calculateMinPrice(List<MatStatementModel> items) {
+    if (items.isEmpty) return 0.0;
+    items.sortBy((item) => item.date!);
+    double currentPrice = 0.0;
+    int currentQuantity = 0;
+    for (final matStatementModel in items) {
+      if (matStatementModel.quantity! > 0) {
+        currentPrice = ((currentPrice * currentQuantity) +
+            (matStatementModel.price! * matStatementModel.quantity!)) / (currentQuantity + matStatementModel.quantity!);
+        currentQuantity += matStatementModel.quantity!;
+
+      } else {
+        currentQuantity += matStatementModel.quantity!;
+      }
+    }
+    log('final price is $currentPrice');
+    return currentPrice;
+  }
 
   String get screenTitle => 'حركات ${selectedMat?.matName}';
 }

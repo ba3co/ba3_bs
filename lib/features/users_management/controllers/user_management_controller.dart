@@ -339,6 +339,9 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
           haveHoliday: haveHoliday,
         );
       })
-      .where((user) => !(user.loginDelay == null && user.logoutDelay == null) && !(user.haveHoliday ?? false))
+      .where((user) =>
+          user.loginDelay != null && user.logoutDelay != null && !(user.haveHoliday ?? false) && user.userWorkingHours!.isNotEmpty)
       .toList();
+
+  List<UserModel> get filteredAllUsersWithNunTime => allUsers.where((user) => user.userWorkingHours!.isNotEmpty).toList();
 }

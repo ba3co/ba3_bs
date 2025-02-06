@@ -50,8 +50,11 @@ class UserService {
   }) {
     // التحقق من وجود البيانات
     final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
-    if (dateList == null || dateList.length != workingHours.entries.length) {
+    if (dateList == null ) {
       return "لم يسجل بعد";
+    }
+    if(workingHours.isEmpty){
+      return 'لم يتم تسجيل الدوام له';
     }
 
     int totalMinutes = 0;

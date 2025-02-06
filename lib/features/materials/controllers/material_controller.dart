@@ -322,10 +322,10 @@ class MaterialController extends GetxController with AppNavigator {
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) {
-        log('materials length before add item: ${materials.length}');
         AppUIUtils.onSuccess('تم الحفظ بنجاح');
         reloadMaterials();
         log('materials length after add item: ${materials.length}');
+        log('material is  ${materials.length}');
       },
     );
   }
@@ -369,14 +369,84 @@ class MaterialController extends GetxController with AppNavigator {
     update();
   }
 
-  updateMaterialQuantity(String matId, int quantity) async {
-    log('updateMaterialQuantity  matId $matId  quantity $quantity ');
+  /// Updates a material's data using a provided update function.
+  /// This function finds the material by `matId`, applies `updateFn` to modify it,
+  /// and then saves the updated material.
+  Future<void> updateMaterial(String matId, MaterialModel Function(MaterialModel) updateFn) async {
     final materialModel = materials.firstWhere((material) => material.id == matId);
-    log('materialModel ${materialModel.toJson()} ');
-    materialFromHandler
-        .init(materialModel.copyWith(matPrevQty: (double.parse(materialModel.matPrevQty!.toString()) + quantity).toString()));
-    log('selectedMaterial ${selectedMaterial!.toJson()} ');
-
+    materialFromHandler.init(updateFn(materialModel));
     await saveOrUpdateMaterial();
   }
+
+  /// Increases the quantity of a material by a given amount.
+  /// Uses `updateMaterial` to modify `matQuantity`.
+  Future<void> updateMaterialQuantity(String matId, int quantity) async {
+    await updateMaterial(
+      matId,
+          (material) => material.copyWith(
+        matQuantity: (material.matQuantity ?? 0) + quantity,
+      ),
+    );
+  }
+
+  /// Sets the quantity of a material to a specific value.
+  /// Unlike `updateMaterialQuantity`, this function replaces the quantity instead of adding to it.
+  Future<void> setMaterialQuantity(String matId, int quantity) async {
+    await updateMaterial(matId, (material) => material.copyWith(matQuantity: quantity));
+  }
+
+  /// Updates both the quantity and minimum price of a material.
+  /// The new price is calculated based on previous price and quantity using `_calcMinPrice`.
+  Future<void> updateMaterialQuantityAndPrice({
+    required String matId,
+    required int quantity,
+    required double priceInStatement,
+    required int quantityInStatement,
+  }) async {
+    await updateMaterial(
+      matId,
+          (material) => material.copyWith(
+        matQuantity: (material.matQuantity ?? 0) + quantity,
+        calcMinPrice: _calcMinPrice(
+          oldMinPrice: material.calcMinPrice ?? 0,
+          oldQuantity: material.matQuantity ?? 0,
+          priceInStatement: priceInStatement,
+          quantityInStatement: quantityInStatement,
+        ),
+      ),
+    );
+  }
+
+  /// Updates the material's quantity and minimum price when a bill is deleted.
+  /// This function sets a new quantity and applies a given minimum price.
+  Future<void> updateMaterialQuantityAndPriceWhenDeleteBill({
+    required String matId,
+    required int quantity,
+    required double currentMinPrice,
+  }) async {
+    await updateMaterial(
+      matId,
+          (material) => material.copyWith(
+        matQuantity: quantity,
+        calcMinPrice: currentMinPrice,
+      ),
+    );
+  }
+
+  /// Calculates the new minimum price after adding a new statement.
+  /// Uses the weighted average formula:
+  /// (old price * old quantity) + (new price * new quantity) / total quantity.
+  /// If `totalQuantity` is 0, it avoids division by zero by returning 0.0.
+  double _calcMinPrice({
+    required double oldMinPrice,
+    required int oldQuantity,
+    required double priceInStatement,
+    required int quantityInStatement,
+  }) {
+    int totalQuantity = oldQuantity + quantityInStatement;
+    return totalQuantity > 0
+        ? ((oldMinPrice * oldQuantity) + (priceInStatement * quantityInStatement)) / totalQuantity
+        : 0.0;
+  }
+
 }

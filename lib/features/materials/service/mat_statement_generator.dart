@@ -39,10 +39,10 @@ mixin MatsStatementsGenerator {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
 
+
     await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
-      final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(model as BillModel);
 
       final originId = matsStatementsModels.first.originId;
 
@@ -53,7 +53,6 @@ mixin MatsStatementsGenerator {
           return MatStatementModel(
             matId: matId,
             originId: originId,
-            quantity: -quantityStrategy.calculateQuantity(material.itemQuantity),
           );
         },
       ).toList();

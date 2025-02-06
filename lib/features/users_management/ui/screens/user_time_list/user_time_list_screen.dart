@@ -14,7 +14,7 @@ class UserTimeListScreen extends StatelessWidget {
       return PlutoGridWithAppBar(
         title: 'جميع الموظفين',
         isLoading: userManagementController.isLoading,
-        tableSourceModels: userManagementController.allUsers,
+        tableSourceModels: userManagementController.filteredAllUsersWithNunTime,
         onLoaded: (event) {},
         onSelected: (selectedRow) {
           final userId = selectedRow.row?.cells[AppStrings.userIdFiled]?.value;
