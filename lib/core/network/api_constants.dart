@@ -24,6 +24,8 @@ class ApiConstants {
   static const String storeCart = 'StoreCart';
   static const String materialsStatements = 'materials_statements';
 
+  static const String largeBills = 'large_bills';
+
   // Documents
   static const String guest = 'guest';
 

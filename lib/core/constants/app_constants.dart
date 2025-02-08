@@ -267,11 +267,7 @@ abstract class AppConstants {
     AppConstants.roleViewCard,
     AppConstants.roleViewHome
   ];
-  static const accountTypeList = [
-    AppConstants.accountTypeDefault,
-    AppConstants.accountTypeFinalAccount,
-    AppConstants.accountTypeAggregateAccount
-  ];
+  static const accountTypeList = [AppConstants.accountTypeDefault, AppConstants.accountTypeFinalAccount, AppConstants.accountTypeAggregateAccount];
 
   static const userName = "ali";
 
@@ -379,6 +375,8 @@ abstract class AppConstants {
   static const String userIdKey = 'userIdKey';
 
   static const String recipientEmail = 'burjalarab000@gmail.com';
+
   // static const String recipientEmail = 'ahmed.zein1896@gmail.com';
-// static const String recipientEmail = 'alidabol567@gmail.com';
+  // static const String recipientEmail = 'alidabol567@gmail.com';
+  static const int maxItemsPerBill = 100;
 }

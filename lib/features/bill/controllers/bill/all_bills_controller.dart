@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
@@ -17,6 +18,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/network/error/failure.dart';
@@ -26,6 +28,7 @@ import '../../../../core/services/firebase/implementations/repos/compound_dataso
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
+import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
@@ -123,7 +126,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
-      saveAllBillsRequestState.value = RequestState.loading;
+      // saveAllBillsRequestState.value = RequestState.loading;
       final result = await _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
@@ -137,45 +140,66 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   void _onFetchBillsFromLocalSuccess(List<BillModel> currentBills) async {
+    saveAllBillsRequestState.value = RequestState.loading;
     final fetchedBills = currentBills;
-    log("fetchedBills length ${fetchedBills.length}");
 
-    bills.assignAll(
-      fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
-    );
-    if (bills.isNotEmpty) {
-      await generateAndSaveMatsStatements(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
-      await _billsFirebaseRepo.saveAllNested(
-        bills,
-        billsTypes,
-        (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+    final firstPeriodInventoryBills =
+        fetchedBills.where((element) => element.billTypeModel.billTypeId == '5a9e7782-cde5-41db-886a-ac89732feda7').toList();
 
-      await createAndStoreEntryBonds(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+    if (firstPeriodInventoryBills.isNotEmpty) {
+      for (final bill in firstPeriodInventoryBills) {
+        if (bill.items.itemList.length > AppConstants.maxItemsPerBill) {
+          await uploadLargeBill(bill);
+        } else {
+          await _billsFirebaseRepo.save(bill);
+        }
+      }
     }
     saveAllBillsRequestState.value = RequestState.success;
 
     AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
   }
 
+  // void _onFetchBillsFromLocalSuccess(List<BillModel> currentBills) async {
+  //   final fetchedBills = currentBills;
+  //   log("fetchedBills length ${fetchedBills.length}");
+  //
+  //   bills.assignAll(
+  //     fetchedBills.where((element) => element.billId != 'bf23c92d-a69d-419e-a000-1043b94d16c8').toList(),
+  //   );
+  //
+  //   if (bills.isNotEmpty) {
+  //     await generateAndSaveMatsStatements(
+  //       sourceModels: bills,
+  //       onProgress: (progress) {
+  //         uploadProgress.value = progress; // Update progress
+  //         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+  //       },
+  //     );
+  //     await _billsFirebaseRepo.saveAllNested(
+  //       bills,
+  //       billsTypes,
+  //       (progress) {
+  //         uploadProgress.value = progress; // Update progress
+  //         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+  //       },
+  //     );
+  //
+  //     await createAndStoreEntryBonds(
+  //       sourceModels: bills,
+  //       onProgress: (progress) {
+  //         uploadProgress.value = progress; // Update progress
+  //         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+  //       },
+  //     );
+  //   }
+  //   saveAllBillsRequestState.value = RequestState.success;
+  //
+  //   AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
+  // }
+
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result =
-        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -231,7 +255,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
             .then((result) {
           result.fold(
             (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-            (count) => pendingBillsCountsByType[billTypeModel] = count,
+            (int count) => pendingBillsCountsByType[billTypeModel] = count,
           );
         }),
       );
@@ -255,7 +279,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         _billsFirebaseRepo.count(itemIdentifier: billTypeModel).then((result) {
           result.fold(
             (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-            (count) => allBillsCountsByType[billTypeModel] = count,
+            (int count) => allBillsCountsByType[billTypeModel] = count,
           );
         }),
       );
@@ -292,15 +316,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     // final BillModel billModel = await fetchBillById(billId);
-    final BillModel billModel = await fetchBillById(billId, bilTypeModel);
+    final BillModel? billModel = await fetchBillById(billId, bilTypeModel);
+
+    if (billModel == null) return;
 
     if (!context.mounted) return;
 
-    openFloatingBillDetails(
-      context,
-      billModel.billTypeModel,
-      currentBill: billModel,
-    );
+    openFloatingBillDetails(context, billModel.billTypeModel, currentBill: billModel);
   }
 
   Future<List<BillModel>> billsCountByType(BillTypeModel billTypeModel) async {
@@ -312,8 +334,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return _billUtils.appendEmptyBillModelNew(billTypeModel, billsCountByType);
   }
 
-  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel,
-      {BillModel? currentBill}) async {
+  Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? currentBill}) async {
     // plutoGridIsLoading = false;
     //
     // await fetchAllBillsByType(billTypeModel);
@@ -398,16 +419,16 @@ class AllBillsController extends FloatingBillDetailsLauncher
     );
   }
 
-  Future<BillModel> fetchBillById(String billId, BillTypeModel billTypeModel) async {
-    late BillModel billModel;
-
+  Future<BillModel?> fetchBillById(String billId, BillTypeModel billTypeModel) async {
     final result = await _billsFirebaseRepo.getById(id: billId, itemIdentifier: billTypeModel);
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBill) => billModel = fetchedBill,
+    return result.fold(
+      (failure) {
+        AppUIUtils.onFailure(failure.message);
+        return null;
+      },
+      (fetchedBill) => fetchedBill,
     );
-    return billModel;
   }
 
   Future<void> fetchAllBillsMetaDataByTypes(List<BillTypeModel> fetchedBillTypes) async {
@@ -419,12 +440,11 @@ class AllBillsController extends FloatingBillDetailsLauncher
         _billsFirebaseRepo.getMetaData(id: billTypeModel.billTypeId!, itemIdentifier: billTypeModel).then((result) {
           result.fold(
             (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-            (count) => allBillsCountsByType[billTypeModel] = (count ?? 0).toInt(),
+            (double? count) => allBillsCountsByType[billTypeModel] = (count ?? 0).toInt(),
           );
         }),
       );
     }
-
 
     // Wait for all tasks to complete.
     await Future.wait(fetchTasks);
@@ -439,12 +459,62 @@ class AllBillsController extends FloatingBillDetailsLauncher
     _billsFirebaseRepo.getMetaData(id: BillType.transferOut.typeGuide, itemIdentifier: BillType.transferOut.billTypeModel).then((result) {
       result.fold(
         (failure) => AppUIUtils.onFailure('Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
-
-        (count) {
-
+        (double? count) {
           log(count.toString());
         },
       );
     });
+  }
+
+  Future<void> uploadLargeBill(BillModel bill, {int maxItemsPerBill = AppConstants.maxItemsPerBill}) async {
+    saveAllBillsRequestState.value = RequestState.loading;
+
+    // 1. Split the bill into multiple bills if it has > 100 items
+    final splitBills = _splitBillIntoSmallerBills(bill, maxItemsPerBill: maxItemsPerBill);
+
+    log("Original Bill had ${bill.items.itemList.length} items");
+    log("Split into ${splitBills.length} smaller bills");
+
+    int uploadedBillsCount = 0;
+
+    // 2. Upload each bill separately
+    for (final bill in splitBills) {
+      final result = await _billsFirebaseRepo.save(bill);
+
+      result.fold(
+        (failure) {
+          AppUIUtils.onFailure(failure.message);
+          saveAllBillsRequestState.value = RequestState.error;
+        },
+        (_) {
+          uploadedBillsCount++;
+        },
+      );
+    }
+
+    saveAllBillsRequestState.value = RequestState.success;
+
+    log('uploadedBillsCount $uploadedBillsCount');
+    AppUIUtils.onSuccess("All bills uploaded successfully!");
+  }
+
+  /// Splits a large bill into multiple smaller bills, each having at most `maxItemsPerBill` items.
+  List<BillModel> _splitBillIntoSmallerBills(BillModel bill, {required int maxItemsPerBill}) {
+    final List<BillModel> splitBills = [];
+    final items = bill.items.itemList;
+    final chunks = items.chunkBy((maxItemsPerBill));
+
+    for (int i = 0; i < chunks.length; i++) {
+      final newBill = bill.copyWith(
+        billId: "${bill.billId}_part${i + 1}", // Assign new unique ID
+        billDetails: bill.billDetails.copyWith(
+          billNumber: bill.billDetails.billNumber! + i,
+        ),
+        items: BillItems(itemList: chunks[i]),
+      );
+      splitBills.add(newBill);
+    }
+
+    return splitBills;
   }
 }

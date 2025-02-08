@@ -2,6 +2,8 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/services/compound_firestore_service.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_service.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
@@ -80,8 +82,6 @@ import '../network/api_constants.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
-import '../services/firebase/implementations/services/compound_firestore_service.dart';
-import '../services/firebase/implementations/services/firestore_service.dart';
 import '../services/firebase/interfaces/i_compound_database_service.dart';
 import '../services/json_file_operations/interfaces/export/i_export_service.dart';
 import '../services/json_file_operations/interfaces/import/i_import_service.dart';
@@ -236,7 +236,6 @@ class AppBindings extends Bindings {
 
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
-
     lazyPut(PlutoController());
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
     lazyPut(PatternController(repositories.patternsRepo));

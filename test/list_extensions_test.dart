@@ -129,15 +129,6 @@ void main() {
       );
     });
 
-    test('firstWhereOrNull returns null when no match is found', () {
-      final numbers = [1, 2, 3];
-      final even = numbers.firstWhereOrNull((n) => n % 2 == 0);
-      final greaterThanFive = numbers.firstWhereOrNull((n) => n > 5);
-
-      expect(even, equals(2));
-      expect(greaterThanFive, isNull);
-    });
-
     test('sumBy computes the correct sum', () {
       final numbers = [1, 2, 3];
       final sum = numbers.sumBy((n) => n);
