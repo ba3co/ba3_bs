@@ -21,25 +21,27 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
   MaterialsStatementController(this._matStatementsRepo);
 
-  Future<void> saveAllMatsStatementsModels({
-    required List<MatStatementModel> matsStatements,
-    void Function(double progress)? onProgress,
-  }) async {
+  Future<void> saveAllMatsStatementsModels({required List<MatStatementModel> matsStatements, void Function(double progress)? onProgress}) async {
     int counter = 0;
+
     for (final matStatement in matsStatements) {
       await saveMatStatementModel(matStatementModel: matStatement);
+
       onProgress?.call((++counter) / matsStatements.length);
-      final materialStatementList = await fetchMatStatementById(matStatement.matId!);
-      if (materialStatementList != null) {
-        if (matStatement.quantity! > 0) {
+
+      if (matStatement.quantity! > 0) {
+        final materialStatementList = await fetchMatStatementById(matStatement.matId!);
+
+        if (materialStatementList != null) {
           await read<MaterialController>().updateMaterialQuantityAndPrice(
-              matId: matStatement.matId!,
-              quantity: _calculateQuantity(matsStatements),
-              quantityInStatement: matStatement.quantity!,
-              priceInStatement: matStatement.price!);
-        } else {
-          await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
+            matId: matStatement.matId!,
+            quantity: _calculateQuantity(materialStatementList),
+            quantityInStatement: matStatement.quantity!,
+            priceInStatement: matStatement.price!,
+          );
         }
+      } else {
+        await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
       }
     }
   }
@@ -64,7 +66,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     final materialStatementList = await fetchMatStatementById(matStatementModel.matId!);
     if (materialStatementList != null) {
       if (matStatementModel.quantity! < 0) {
-
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: matStatementModel.matId!,
             quantity: _calculateQuantity(materialStatementList),
@@ -175,10 +176,9 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     int currentQuantity = 0;
     for (final matStatementModel in items) {
       if (matStatementModel.quantity! > 0) {
-        currentPrice = ((currentPrice * currentQuantity) +
-            (matStatementModel.price! * matStatementModel.quantity!)) / (currentQuantity + matStatementModel.quantity!);
+        currentPrice = ((currentPrice * currentQuantity) + (matStatementModel.price! * matStatementModel.quantity!)) /
+            (currentQuantity + matStatementModel.quantity!);
         currentQuantity += matStatementModel.quantity!;
-
       } else {
         currentQuantity += matStatementModel.quantity!;
       }

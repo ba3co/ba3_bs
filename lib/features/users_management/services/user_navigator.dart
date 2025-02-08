@@ -18,7 +18,7 @@ class UserNavigator with AppNavigator {
 
   UserDetailsController get _userDetailsController => read<UserDetailsController>();
 
-  UserNavigator(this._roleFormHandler,  this._sharedPreferencesService);
+  UserNavigator(this._roleFormHandler, this._sharedPreferencesService);
 
   void navigateToAddRoleScreen([RoleModel? role]) {
     _roleFormHandler.init(role);

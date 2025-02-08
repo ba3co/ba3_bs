@@ -10,6 +10,7 @@ import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/error/failure.dart';
 import '../../../core/router/app_routes.dart';
@@ -75,11 +76,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     userNavigator = UserNavigator(roleFormHandler, _sharedPreferencesService);
   }
 
-  List<UserModel> get nonLoggedInUsers => allUsers
-      .where(
-        (user) => user.userId != loggedInUserModel?.userId,
-      )
-      .toList();
+  List<UserModel> get nonLoggedInUsers => allUsers.where((user) => user.userId != loggedInUserModel?.userId).toList();
 
   String get dateToDay => Timestamp.now().toDate().toString().split(' ')[0];
 
@@ -140,14 +137,15 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   Future<void> getAllUsers() async {
     log('getAllUsers');
     final result = await _usersFirebaseRepo.getAll();
+
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedUsers) async {
         allUsers.assignAll(fetchedUsers);
 
-        checkGuestLoginButtonVisibility(
-          fetchedUsers.firstWhere((user) => user.userName == ApiConstants.guest),
-        );
+        if (fetchedUsers.isNotEmpty) {
+          checkGuestLoginButtonVisibility(fetchedUsers.firstWhere((user) => user.userName == ApiConstants.guest));
+        }
       },
     );
   }
@@ -327,10 +325,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   List<UserModel> get filteredUsersWithDetails => allUsers
       .map((user) {
-        final loginDelay = _userService.calculateTotalDelay(
-            workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: true);
-        final logoutDelay = _userService.calculateTotalDelay(
-            workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: false);
+        final loginDelay =
+            _userService.calculateTotalDelay(workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: true);
+        final logoutDelay =
+            _userService.calculateTotalDelay(workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: false);
         final haveHoliday = _userService.getIfHaveHoliday(dateToDay, user.userHolidays!);
 
         return user.copyWith(
@@ -339,8 +337,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
           haveHoliday: haveHoliday,
         );
       })
-      .where((user) =>
-          user.loginDelay != null && user.logoutDelay != null && !(user.haveHoliday ?? false) && user.userWorkingHours!.isNotEmpty)
+      .where((user) => user.loginDelay != null && user.logoutDelay != null && !(user.haveHoliday ?? false) && user.userWorkingHours!.isNotEmpty)
       .toList();
 
   List<UserModel> get filteredAllUsersWithNunTime => allUsers.where((user) => user.userWorkingHours!.isNotEmpty).toList();

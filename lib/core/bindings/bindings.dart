@@ -2,8 +2,8 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/services/compound_firestore_service.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_service.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/services/compound_firestore_test_service.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_test_service.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
@@ -37,7 +37,6 @@ import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_sou
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
 import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
-import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -101,6 +100,12 @@ class AppBindings extends Bindings {
 
     final fireStoreService = _initializeFireStoreService();
 
+    final rolesRepo = RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService));
+    final usersRepo = FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService));
+
+    lazyPut(rolesRepo);
+    lazyPut(usersRepo);
+
     final materialsHiveService = await _initializeHiveService<MaterialModel>(boxName: ApiConstants.materials);
 
     final compoundFireStoreService = _initializeCompoundFireStoreService();
@@ -154,9 +159,9 @@ class AppBindings extends Bindings {
   // Initialize external services
   IAPiClient _initializeDioClient() => DioClient<Map<String, dynamic>>(Dio());
 
-  IRemoteDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreService();
+  IRemoteDatabaseService<Map<String, dynamic>> _initializeFireStoreService() => FireStoreTestService();
 
-  ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService() => CompoundFireStoreService();
+  ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService() => CompoundFireStoreTestService();
 
   ITranslationService _initializeTranslationService(IAPiClient dioClient) => GoogleTranslationService(
         baseUrl: ApiConstants.translationBaseUrl,
@@ -195,8 +200,6 @@ class AppBindings extends Bindings {
       billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
-      rolesRepo: RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService)),
-      usersRepo: FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService)),
       entryBondsRepo: RemoteDataSourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
       accountsStatementsRepo: CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
       billImportExportRepo: ImportExportRepository(billImportService, billExportService),
@@ -237,8 +240,11 @@ class AppBindings extends Bindings {
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
     lazyPut(PlutoController());
+
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
+
     lazyPut(PatternController(repositories.patternsRepo));
+
     lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
 
     lazyPut(
@@ -248,21 +254,34 @@ class AppBindings extends Bindings {
         repositories.listenableDatasourceRepo,
       ),
     );
+
     lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
+
     lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billImportExportRepo));
+
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
+
     lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
+
     lazyPut(BillDetailsPlutoController());
+
     lazyPut(CustomersController(repositories.customersRepo, repositories.customerImportRepo));
+
     lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
+
     lazyPut(PrintingController(repositories.translationRepo));
+
     lazyPut(BillSearchController());
+
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
-    lazyPut(UserTimeController(repositories.usersRepo, repositories.userTimeRepo));
+
+    lazyPut(UserTimeController(read<FilterableDataSourceRepository<UserModel>>(), repositories.userTimeRepo));
+
     lazyPut(SellerSalesController(repositories.billsRepo, repositories.sellersRepo));
 
     lazyPut(AddSellerController());
-    lazyPut(UserDetailsController(repositories.usersRepo));
+
+    lazyPut(UserDetailsController(read<FilterableDataSourceRepository<UserModel>>()));
   }
 }
 
@@ -273,8 +292,7 @@ class _Repositories {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> billsRepo;
   final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
   final CompoundDatasourceRepository<ChequesModel, ChequesType> chequesRepo;
-  final RemoteDataSourceRepository<RoleModel> rolesRepo;
-  final FilterableDataSourceRepository<UserModel> usersRepo;
+
   final RemoteDataSourceRepository<EntryBondModel> entryBondsRepo;
   final CompoundDatasourceRepository<EntryBondItems, AccountEntity> accountsStatementsRepo;
   final ImportExportRepository<BillModel> billImportExportRepo;
@@ -301,8 +319,6 @@ class _Repositories {
     required this.billsRepo,
     required this.bondsRepo,
     required this.chequesRepo,
-    required this.rolesRepo,
-    required this.usersRepo,
     required this.entryBondsRepo,
     required this.accountsStatementsRepo,
     required this.billImportExportRepo,

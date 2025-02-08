@@ -10,6 +10,7 @@ import 'package:xml/xml.dart';
 
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
+import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 
 class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNumbers {
@@ -34,6 +35,26 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   }
 
   List<List<dynamic>> _itemsChunks(List<Map<String, dynamic>> items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
+
+  /// Splits a large bill into multiple smaller bills, each having at most `maxItemsPerBill` items.
+  List<BillModel> _splitBillIntoSmallerBills(BillModel bill, {required int maxItemsPerBill}) {
+    final List<BillModel> splitBills = [];
+    final items = bill.items.itemList;
+    final chunks = items.chunkBy((maxItemsPerBill));
+
+    for (int i = 0; i < chunks.length; i++) {
+      final newBill = bill.copyWith(
+        billId: "${bill.billId}_part${i + 1}", // Assign new unique ID
+        billDetails: bill.billDetails.copyWith(
+          billNumber: bill.billDetails.billNumber! + i,
+        ),
+        items: BillItems(itemList: chunks[i]),
+      );
+      splitBills.add(newBill);
+    }
+
+    return splitBills;
+  }
 
   int getLastBillNumber({required String billTypeGuid, required List<Map<String, dynamic>> items}) {
     if (!billsNumbers.containsKey(billTypeGuid)) {
@@ -83,7 +104,9 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       sellerNameID[selGuid] = selName;
     }
 
-    List<BillModel> bills = billsXml.map((billElement) {
+    List<BillModel> bills = [];
+
+    for (var billElement in billsXml) {
       final itemsElement = billElement.findElements('Items').single;
       final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
         return {
@@ -118,20 +141,17 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           'BillNumber': getLastBillNumber(
             billTypeGuid: billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
             items: itemsJson,
-          ) /*billElement.findElements('B').single.findElements('BillNumber').single.text*/,
+          ),
           'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
-          // 'BillCustPtr': customerId,
           'BillCustName': read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
           'BillStoreGuid': billElement.findElements('B').single.findElements('BillStoreGuid').single.text,
           'Note': billElement.findElements('B').single.findElements('Note').single.text,
-          'BillCustAcc': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
           'BillCostGuid': read<SellersController>()
               .getSellerIdByName(sellerNameID[billElement.findElements('B').single.findElements('BillCostGuid').single.text]),
-          // 'BillCostGuid': billElement.findElements('B').single.findElements('BillCostGuid').single.text,
           'BillVendorSalesMan': billElement.findElements('B').single.findElements('BillVendorSalesMan').single.text,
           'BillFirstPay': billElement.findElements('B').single.findElements('BillFirstPay').single.text,
           'BillFPayAccGuid': billElement.findElements('B').single.findElements('BillFPayAccGuid').single.text,
@@ -155,8 +175,18 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       billJson['Items'] = {"I": itemsJson};
 
-      return BillModel.fromImportedJsonFile(billJson);
-    }).toList();
+      final BillModel bill = BillModel.fromImportedJsonFile(billJson);
+
+      final chunks = _itemsChunks(itemsJson, AppConstants.maxItemsPerBill);
+
+      if (chunks.length > 1) {
+        final List<BillModel> splitBills = _splitBillIntoSmallerBills(bill, maxItemsPerBill: AppConstants.maxItemsPerBill);
+        bills.addAll(splitBills);
+      } else {
+        bills.add(bill);
+      }
+    }
+
     await setLastNumber();
     return bills;
   }

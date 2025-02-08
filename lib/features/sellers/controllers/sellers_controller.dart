@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
@@ -41,11 +42,11 @@ class SellersController extends GetxController with AppNavigator {
     getAllSellers();
   }
 
-  fetchProbabilitySellers() async{
+  fetchProbabilitySellers() async {
     if (RoleItemType.viewSellers.hasAdminPermission) {
-   await   getAllSellers();
+      await getAllSellers();
     } else {
-   await   fetchLoginSellers();
+      await fetchLoginSellers();
     }
   }
 
@@ -81,25 +82,24 @@ class SellersController extends GetxController with AppNavigator {
   }
 
   void _handelFetchAllSellersFromLocalSuccess(List<SellerModel> fetchedSellers) async {
-    logger.d("fetchedSellers length ${fetchedSellers.length}");
-    logger.d('sellers length is ${sellers.length}');
-    logger.d('getAllSellersNotExist length is ${getAllSellersNotExist(sellers, fetchedSellers).length}');
-    if (sellers.isNotEmpty && getAllSellersNotExist(sellers, fetchedSellers).isNotEmpty) {
-      await _sellersFirebaseRepo.saveAll(getAllSellersNotExist(sellers, fetchedSellers));
-      AppUIUtils.onSuccess("تم اضافة  ${getAllSellersNotExist(sellers, fetchedSellers).length}");
-      sellers.addAll(getAllSellersNotExist(sellers, fetchedSellers));
-    }
-  }
+    log("fetchedSellers length ${fetchedSellers.length}");
+    log('current sellers length is ${sellers.length}');
 
-  List<SellerModel> getAllSellersNotExist(List<SellerModel> currentMaterials, List<SellerModel> fetchedMaterials) {
-    List<SellerModel> sellers = [];
-    final existingMatNames = currentMaterials.map((e) => e.costName).toSet();
-    for (var element in fetchedMaterials) {
-      if (!existingMatNames.contains(element.costName)) {
-        sellers.add(element);
-      }
+    final newSellers = fetchedSellers.subtract(sellers, (seller) => seller.costName);
+    log('newSellers length is ${newSellers.length}');
+
+    if (newSellers.isNotEmpty) {
+      final result = await _sellersFirebaseRepo.saveAll(newSellers);
+
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedSellers) {
+          AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}');
+
+          sellers.addAll(newSellers);
+        },
+      );
     }
-    return sellers;
   }
 
   Future<void> addSeller(SellerModel seller) async {
@@ -127,9 +127,8 @@ class SellersController extends GetxController with AppNavigator {
 
   // Search for sellers by text query
 
-  List<SellerModel> searchSellersByNameOrCode(text) => sellers
-      .where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
-      .toList();
+  List<SellerModel> searchSellersByNameOrCode(text) =>
+      sellers.where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text)).toList();
 
   List<String> getSellersNames(String query) {
     return searchSellersByNameOrCode(query).map((seller) => seller.costName!).toList();
@@ -145,8 +144,6 @@ class SellersController extends GetxController with AppNavigator {
 
   // Get seller ID by name
   String getSellerIdByName(String? name) {
-
-
     if (name == null || name.isEmpty) return '';
     return sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid ?? '';
   }

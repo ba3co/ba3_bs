@@ -126,7 +126,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
     for (final entryBond in entryBonds) {
       await saveEntryBondModel(entryBondModel: entryBond);
 
-      onProgress?.call((counter++) / entryBonds.length);
+      onProgress?.call((++counter) / entryBonds.length);
     }
   }
 
@@ -156,13 +156,11 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final entryBondItems = entryBondModel.items!.itemList;
 
     for (final entryBondItem in entryBondItems) {
-      final itemsGroupedByAccount =
-          entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
+      final itemsGroupedByAccount = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
 
       deletedTasks.add(
         _accountsStatementsFirebaseRepo
-            .delete(EntryBondItems(
-                docId: entryBondItem.docId, id: entryBondItem.originId!, itemList: itemsGroupedByAccount))
+            .delete(EntryBondItems(docId: entryBondItem.docId, id: entryBondItem.originId!, itemList: itemsGroupedByAccount))
             .then(
           (deleteResult) {
             deleteResult.fold(
@@ -210,12 +208,12 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
 
     final actions = {
-      EntryBondType.bond: () => read<AllBondsController>()
-          .openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
-      EntryBondType.bill: () => read<AllBillsController>().openFloatingBillDetailsById(
-          origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
-      EntryBondType.cheque: () => read<AllChequesController>().openChequesDetailsById(
-          origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bond: () =>
+          read<AllBondsController>().openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bill: () => read<AllBillsController>()
+          .openFloatingBillDetailsById(origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
+      EntryBondType.cheque: () => read<AllChequesController>()
+          .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];
