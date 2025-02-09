@@ -28,8 +28,8 @@ class AllBillsTypesList extends StatelessWidget {
                       text: billTypeModel.fullName!,
                       color: Color(billTypeModel.color!),
                       onTap: () {
-                        // allBillsController.openFloatingBillDetails(context, billTypeModel);
-                        allBillsController.fetchAllBillsByType( billTypeModel);
+                        allBillsController.openFloatingBillDetails(context, billTypeModel);
+                        // allBillsController.fetchAllBillsByType( billTypeModel);
                       },
                       pendingBillsCounts: allBillsController.pendingBillsCounts(billTypeModel),
                       allBillsCounts: allBillsController.allBillsCounts(billTypeModel),
