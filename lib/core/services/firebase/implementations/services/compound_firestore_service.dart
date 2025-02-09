@@ -97,14 +97,14 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     if (data['docId'] == null) data['docId'] = docId;
 
     final subDocRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
-    final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId);
+    // final docRef = _firestore.collection(rootCollectionPath).doc(rootDocumentId);
 
-    log('metaValue is $metaValue');
+    // log('metaValue is $metaValue');
 
-    /// we need SetOptions(merge: true) to ensure increment or decrement
-    await docRef.set({
-      ApiConstants.metaValue: FieldValue.increment(metaValue ?? 0),
-    }, SetOptions(merge: true));
+    // /// we need SetOptions(merge: true) to ensure increment or decrement
+    // await docRef.set({
+    //   ApiConstants.metaValue: FieldValue.increment(metaValue ?? 0),
+    // }, SetOptions(merge: true));
     final subDocSnapshot = await subDocRef.get();
 
     if (subDocSnapshot.exists && subDocumentId != null) {

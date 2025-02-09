@@ -165,22 +165,29 @@ class AllBillsController extends FloatingBillDetailsLauncher
     bills.assignAll(fetchedBills);
 
     if (bills.isNotEmpty) {
-      await generateAndSaveMatsStatements(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      // await generateAndSaveMatsStatements(
+      //   sourceModels: bills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
 
-      await _billsFirebaseRepo.saveAllNested(
-        bills,
-        billsTypes,
-        (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      for (final bill in bills) {
+        log(bill.billId!);
+        await _billsFirebaseRepo.save(
+          bill,
+        );
+      }
+      //
+      // await _billsFirebaseRepo.saveAllNested(
+      //   bills,
+      //   billsTypes,
+      //   (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
 
       await createAndStoreEntryBonds(
         sourceModels: bills,
@@ -196,7 +203,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),

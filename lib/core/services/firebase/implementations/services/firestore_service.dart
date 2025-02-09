@@ -4,12 +4,13 @@ import 'dart:developer';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import '../../../../models/date_filter.dart';
 
 // FirebaseFirestoreService Implementation
 class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instanceFor(app: Firebase.app());
 
   @override
   Future<List<Map<String, dynamic>>> fetchAll({required String path}) async {

@@ -91,7 +91,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     Map<String, String> matNameWithId = {};
 
     for (var mat in materialXml) {
-      String matGuid = mat.findElements('mp tr').first.text;
+      String matGuid = mat.findElements('mptr').first.text;
       String amtName = mat.findElements('MatName').first.text;
       matNameWithId[matGuid] = amtName;
     }
