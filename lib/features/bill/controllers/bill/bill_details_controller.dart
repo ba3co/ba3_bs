@@ -11,13 +11,17 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dar
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/network/api_constants.dart';
+import '../../../../core/network/error/failure.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -28,7 +32,7 @@ import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
-class BillDetailsController extends IBillController with AppValidator, AppNavigator implements IStoreSelectionHandler {
+class BillDetailsController extends IBillController with AppValidator, AppNavigator, FirestoreSequentialNumbers implements IStoreSelectionHandler {
   // Repositories
 
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -107,7 +111,10 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   // Initializer
   void _initializeServices() {
-    _billService = BillDetailsService(billDetailsPlutoController, this);
+    _billService = BillDetailsService(
+      plutoController: billDetailsPlutoController,
+      billDetailsController: this,
+    );
     _billUtils = BillUtils();
     _accountHandler = AccountHandler();
   }
@@ -189,7 +196,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     if (!validateForm()) return;
 
     // 2. Create the bill model or handle failure and exit
-    final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
+    final updatedBillModel = await _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
     if (updatedBillModel == null) return;
 
     // Ensure there are bill items
@@ -225,6 +232,12 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
+  Future<Either<Failure, BillModel>> updatePreviousBill(BillModel previousBill) async {
+    final result = await _billsFirebaseRepo.save(previousBill);
+
+    return result;
+  }
+
   appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber}) {
     BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
 
@@ -233,8 +246,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
-  BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
-    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
+  Future<BillModel?> _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) async {
+    final updatedBillModel = await _createBillModelFromBillData(billTypeModel, existingBill);
 
     if (updatedBillModel == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
@@ -244,7 +257,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     return updatedBillModel;
   }
 
-  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
+  Future<BillModel?> _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) async {
     final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts
@@ -279,6 +292,15 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
+  Future<int> getLastBillNumberForType(BillTypeModel billTypeModel) async {
+    int billsCountByType = await getLastNumber(
+      category: ApiConstants.bills,
+      entityType: billTypeModel.billTypeLabel!,
+    );
+
+    return billsCountByType;
+  }
+
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareBillMaterialsRows(
         billItems.getMaterialRecords,
@@ -307,7 +329,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     setBillDate = bill.billDetails.billDate!;
     isBillSaved.value = bill.billId != null;
-    noteController.text = bill.billDetails.note ?? '';
+    noteController.text = bill.billDetails.billNote ?? '';
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
     initBillNumberController(bill.billDetails.billNumber);
@@ -337,9 +359,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   void openFirstPayDialog(BuildContext context) => _billService.showFirstPayDialog(context, firstPayController);
 
-
   /// this for mobile
-  /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
+/*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
       context: context,
       stateManager: billDetailsPlutoController.recordsTableStateManager,
       plutoController: billDetailsPlutoController,

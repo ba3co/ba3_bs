@@ -13,11 +13,9 @@ class CompoundDatasourceRepository<T, I> {
 
   CompoundDatasourceRepository(this._dataSource);
 
-  Future<Either<Failure, List<T>>> fetchWhere<V>(
-      {required I itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
+  Future<Either<Failure, List<T>>> fetchWhere<V>({required I itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
     try {
-      final savedItems = await _dataSource.fetchWhere(
-          itemIdentifier: itemIdentifier, field: field, value: value, dateFilter: dateFilter);
+      final savedItems = await _dataSource.fetchWhere(itemIdentifier: itemIdentifier, field: field, value: value, dateFilter: dateFilter);
       return Right(savedItems); // Return the list of saved items
     } catch (e, stackTrace) {
       log('Error in fetchWhere: $e', stackTrace: stackTrace);
@@ -57,8 +55,7 @@ class CompoundDatasourceRepository<T, I> {
 
   Future<Either<Failure, int>> count({required I itemIdentifier, QueryFilter? countQueryFilter}) async {
     try {
-      final count =
-          await _dataSource.countDocuments(itemIdentifier: itemIdentifier, countQueryFilter: countQueryFilter);
+      final count = await _dataSource.countDocuments(itemIdentifier: itemIdentifier, countQueryFilter: countQueryFilter);
       return Right(count); // Return the found item
     } catch (e, stackTrace) {
       log('Error in count: $e', stackTrace: stackTrace);
@@ -91,9 +88,10 @@ class CompoundDatasourceRepository<T, I> {
     List<I> itemIdentifiers,
     void Function(double progress)? onProgress,
   ) async {
+    log('saveAllNested bills on CompoundDatasourceRepository length ${items.length}');
+
     try {
-      final savedItems =
-          await _dataSource.saveAllNested(items: items, itemIdentifiers: itemIdentifiers, onProgress: onProgress);
+      final savedItems = await _dataSource.saveAllNested(items: items, itemIdentifiers: itemIdentifiers, onProgress: onProgress);
       return Right(savedItems); // Return the list of saved items
     } catch (e, stackTrace) {
       log('Error in saveAllNested: $e', stackTrace: stackTrace);
@@ -110,7 +108,6 @@ class CompoundDatasourceRepository<T, I> {
       return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
-
 
   Future<Either<Failure, double?>> getMetaData({required String id, required I itemIdentifier}) async {
     try {

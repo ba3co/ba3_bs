@@ -42,7 +42,7 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
   _setLastNumber() async {
     bondsNumbers.forEach(
       (billTypeGuid, number) async {
-        await satNumber(ApiConstants.bonds, BondType.byTypeGuide(billTypeGuid).label, number);
+        await setLastUsedNumber(ApiConstants.bonds, BondType.byTypeGuide(billTypeGuid).label, number);
       },
     );
   }
@@ -106,7 +106,7 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
         // payNote: node.getElement('PayNote')?.text,
         payCurrencyGuid: node.getElement('CEntryCurrencyGuid')?.text,
         // payCurrencyGuid: node.getElement('PayCurrencyGuid')?.text,
-        payCurVal: double.tryParse((node.getElement('CEntryDebit')?.text )!.replaceAll(',', '')),
+        payCurVal: double.tryParse((node.getElement('CEntryDebit')?.text)!.replaceAll(',', '')),
         // payCurVal: double.tryParse(node.getElement('PayCurVal')?.text ?? '0'),
         // payAccountGuid: node.getElement('PayAccountGuid')?.text,
         payAccountGuid: '00000000-0000-0000-0000-000000000000',

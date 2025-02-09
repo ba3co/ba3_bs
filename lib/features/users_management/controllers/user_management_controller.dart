@@ -140,14 +140,18 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedUsers) async {
-        allUsers.assignAll(fetchedUsers);
-
-        if (fetchedUsers.isNotEmpty) {
-          checkGuestLoginButtonVisibility(fetchedUsers.firstWhere((user) => user.userName == ApiConstants.guest));
-        }
-      },
+      (fetchedUsers) => _onGetAllUsersSuccess(fetchedUsers),
     );
+  }
+
+  void _onGetAllUsersSuccess(List<UserModel> fetchedUsers) {
+    allUsers.assignAll(fetchedUsers);
+
+    if (fetchedUsers.isNotEmpty) {
+      final guestUser = fetchedUsers.firstWhereOrNull((user) => user.userName == ApiConstants.guest);
+
+      checkGuestLoginButtonVisibility(guestUser);
+    }
   }
 
   // Fetch user by ID using the repository
@@ -245,8 +249,8 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     offAll(AppRoutes.mainLayout);
   }
 
-  Future<void> checkGuestLoginButtonVisibility(UserModel guestUser) async {
-    if (guestUser.userId != null) {
+  Future<void> checkGuestLoginButtonVisibility(UserModel? guestUser) async {
+    if (guestUser != null && guestUser.userId != null) {
       isGuestLoginButtonVisible.value = await isGuestUserEnabled(guestUser.userId!);
     }
   }

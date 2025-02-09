@@ -5,8 +5,14 @@ class BillDetails with EquatableMixin {
   final String? billGuid;
   final int? billPayType;
   final int? billNumber;
+
+  /// The number of the previous bill
+  final int? previous;
+
+  /// The number of the next bill
+  final int? next;
   final DateTime? billDate;
-  final String? note;
+  final String? billNote;
   final String? billSellerId;
   final String? billCustomerId;
   final double? billTotal;
@@ -21,8 +27,10 @@ class BillDetails with EquatableMixin {
     this.billGuid,
     this.billPayType,
     this.billNumber,
+    this.previous,
+    this.next,
     this.billDate,
-    this.note,
+    this.billNote,
     this.billCustomerId,
     this.billTotal,
     this.billVatTotal,
@@ -38,8 +46,10 @@ class BillDetails with EquatableMixin {
         billGuid: json['billGuid'],
         billPayType: json['billPayType'],
         billNumber: json['billNumber'],
+        previous: json['previous'],
+        next: json['next'],
         billDate: (json['billDate'] as Timestamp).toDate(),
-        note: json['note'],
+        billNote: json['billNote'],
         billCustomerId: json['billCustomerId'],
         billSellerId: json['billSellerId'],
         billTotal: json['billTotal'],
@@ -53,7 +63,7 @@ class BillDetails with EquatableMixin {
 
   factory BillDetails.fromBillData({
     BillDetails? existingDetails,
-    String? note,
+    String? billNote,
     required String billCustomerId,
     required String billSellerId,
     required int billPayType,
@@ -69,7 +79,9 @@ class BillDetails with EquatableMixin {
       BillDetails(
         billGuid: existingDetails?.billGuid,
         billNumber: existingDetails?.billNumber,
-        note: note,
+        previous: existingDetails?.previous,
+        next: existingDetails?.next,
+        billNote: billNote,
         billFirstPay: billFirstPay,
         billCustomerId: billCustomerId,
         billSellerId: billSellerId,
@@ -87,8 +99,10 @@ class BillDetails with EquatableMixin {
         'billGuid': billGuid,
         'billPayType': billPayType,
         'billNumber': billNumber,
+        'previous': previous,
+        'next': next,
         'billDate': Timestamp.fromDate(billDate!),
-        'note': note,
+        'billNote': billNote,
         'billCustomerId': billCustomerId,
         'billTotal': billTotal,
         'billWithoutVatTotal': billBeforeVatTotal,
@@ -104,8 +118,10 @@ class BillDetails with EquatableMixin {
     final String? billGuid,
     final int? billPayType,
     final int? billNumber,
+    final int? previous,
+    final int? next,
     final DateTime? billDate,
-    final String? note,
+    final String? billNote,
     final String? billCustomerId,
     final String? billSellerId,
     final double? billTotal,
@@ -120,8 +136,10 @@ class BillDetails with EquatableMixin {
         billGuid: billGuid ?? this.billGuid,
         billPayType: billPayType ?? this.billPayType,
         billNumber: billNumber ?? this.billNumber,
+        previous: previous ?? this.previous,
+        next: next ?? this.next,
         billDate: billDate ?? this.billDate,
-        note: note ?? this.note,
+        billNote: billNote ?? this.billNote,
         billTotal: billTotal ?? this.billTotal,
         billVatTotal: billVatTotal ?? this.billVatTotal,
         billBeforeVatTotal: billBeforeVatTotal ?? this.billBeforeVatTotal,
@@ -138,8 +156,10 @@ class BillDetails with EquatableMixin {
         billGuid,
         billPayType,
         billNumber,
+        previous,
+        next,
         billDate,
-        note,
+        billNote,
         billCustomerId,
         billSellerId,
         billTotal,

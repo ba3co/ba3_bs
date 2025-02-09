@@ -180,7 +180,6 @@ extension ListExtensions<T> on List<T> {
     sort((a, b) => keySelector(b).compareTo(keySelector(a)));
   }
 
-
   /// Computes the sum of values obtained by applying [selector] to each element.
   ///
   /// The numeric type [K] (typically [int] or [double]) is used for the sum.
@@ -831,5 +830,15 @@ extension ListExtensions<T> on List<T> {
 
       return updateQuantity(currentItem, difference);
     }).toList();
+  }
+}
+
+extension FlattenExtension<E> on List<List<E>> {
+  List<E> flatten() {
+    final List<E> flattened = [];
+    for (var sublist in this) {
+      flattened.addAll(sublist);
+    }
+    return flattened;
   }
 }

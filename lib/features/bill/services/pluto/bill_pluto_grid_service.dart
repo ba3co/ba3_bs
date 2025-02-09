@@ -120,8 +120,7 @@ class BillPlutoGridService {
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecQuantity, quantity);
   }
 
-  void updateSelectedRowCellValue(
-      PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {
+  void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {
     if (selectedRow.cells.containsKey(field)) {
       // Update the cell value in the previous row.
       stateManager.changeCellValue(
@@ -142,9 +141,7 @@ class BillPlutoGridService {
       final fields = [AppConstants.discount, AppConstants.addition];
 
       for (final field in fields) {
-        total == 0
-            ? updateAdditionsDiscountsCellValue(row.cells[field]!, '')
-            : _updateCell(field, row, total, invoiceUtils);
+        total == 0 ? updateAdditionsDiscountsCellValue(row.cells[field]!, '') : _updateCell(field, row, total, invoiceUtils);
       }
     }
   }
@@ -159,11 +156,9 @@ class BillPlutoGridService {
     updateAdditionsDiscountsCellValue(valueCell, newValue);
   }
 
-  String _getTargetField(String field) =>
-      field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
+  String _getTargetField(String field) => field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
 
-  List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records, BillTypeModel billTypeModel) =>
-      records.map((record) {
+  List<PlutoRow> convertRecordsToRows(List<InvoiceRecordModel> records, BillTypeModel billTypeModel) => records.map((record) {
         final rowData = record.toEditedMap(billTypeModel);
         final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);

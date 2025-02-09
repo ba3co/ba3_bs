@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
@@ -90,32 +91,27 @@ class AccountsController extends GetxController with AppNavigator {
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
       final result = await _jsonImportExportRepo.importXmlFile(file);
+
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedAccounts) async {
-          log("fetchedAccounts length ${fetchedAccounts.length}");
-          log('accounts length is ${accounts.length}');
-          log('AllAccountNotExist length is ${getAllAccountNotExist(accounts, fetchedAccounts).length}');
-          if (accounts.isNotEmpty && getAllAccountNotExist(accounts, fetchedAccounts).isNotEmpty) {
-            await addAccounts(getAllAccountNotExist(accounts, fetchedAccounts));
-            accounts.assignAll(getAllAccountNotExist(accounts, fetchedAccounts));
-          }
-        },
+        (fetchedAccounts) => _handelFetchAllAccountsFromLocalSuccess(fetchedAccounts),
       );
     }
 
     update();
   }
 
-  List<AccountModel> getAllAccountNotExist(List<AccountModel> currentMaterials, List<AccountModel> fetchedMaterials) {
-    List<AccountModel> accounts = [];
-    final existingMatNames = currentMaterials.map((e) => e.accName).toSet();
-    for (var element in fetchedMaterials) {
-      if (!existingMatNames.contains(element.accName)) {
-        accounts.add(element);
-      }
+  void _handelFetchAllAccountsFromLocalSuccess(List<AccountModel> fetchedAccounts) async {
+    log("fetchedAccounts length ${fetchedAccounts.length}");
+    log('current accounts length is ${accounts.length}');
+
+    final newAccounts = fetchedAccounts.subtract(accounts, (account) => account.accName);
+    log('newAccounts length is ${newAccounts.length}');
+
+    if (newAccounts.isNotEmpty) {
+      await addAccounts(newAccounts);
+      accounts.assignAll(newAccounts);
     }
-    return accounts;
   }
 
   Future<void> fetchAccounts() async {
@@ -157,7 +153,7 @@ class AccountsController extends GetxController with AppNavigator {
 
     // البحث عن تطابق كامل أولاً
     var exactMatch = accounts.firstWhereOrNull(
-          (item) => item.accName?.toLowerCase() == text.toLowerCase() || item.accCode == text,
+      (item) => item.accName?.toLowerCase() == text.toLowerCase() || item.accCode == text,
     );
 
     if (exactMatch != null) {
@@ -166,7 +162,7 @@ class AccountsController extends GetxController with AppNavigator {
 
     // البحث عن تطابق جزئي متتابع
     var partialMatch = accounts.firstWhereOrNull(
-          (item) {
+      (item) {
         String name = item.accName!.toLowerCase();
         return searchParts.every((part) => name.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
       },
@@ -177,9 +173,7 @@ class AccountsController extends GetxController with AppNavigator {
     }
 
     // البحث العادي عند عدم وجود تطابق متتابع
-    return accounts.where(
-            (item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)
-    ).toList();
+    return accounts.where((item) => item.accName!.toLowerCase().contains(text.toLowerCase()) || item.accCode!.contains(text)).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {

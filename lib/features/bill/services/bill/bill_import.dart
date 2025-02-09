@@ -24,44 +24,40 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
   late Map<String, int> billsNumbers;
 
-  Future<void> initializeNumbers() async {
+  Future<void> _fetchBillsTypesNumbers() async {
     billsNumbers = {
-      for (var billType in BillType.values)
-        billType.typeGuide: await getLastNumber(
-          category: ApiConstants.bills,
-          entityType: billType.label,
-        )
+      for (var billType in BillType.values) billType.typeGuide: await getLastNumber(category: ApiConstants.bills, entityType: billType.label)
     };
   }
 
-  List<List<dynamic>> _itemsChunks(List<Map<String, dynamic>> items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
+  List<List<dynamic>> _splitItemsIntoChunks(List<Map<String, dynamic>> items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
 
   /// Splits a large bill into multiple smaller bills, each having at most `maxItemsPerBill` items.
-  List<BillModel> _splitBillIntoSmallerBills(BillModel bill, {required int maxItemsPerBill}) {
+  List<BillModel> _divideLargeBill(BillModel bill, {required int maxItemsPerBill}) {
     final List<BillModel> splitBills = [];
     final items = bill.items.itemList;
     final chunks = items.chunkBy((maxItemsPerBill));
 
     for (int i = 0; i < chunks.length; i++) {
       final newBill = bill.copyWith(
-        billId: "${bill.billId}_part${i + 1}", // Assign new unique ID
-        billDetails: bill.billDetails.copyWith(
-          billNumber: bill.billDetails.billNumber! + i,
-        ),
+        // Assign new unique ID
+        billId: "${bill.billId}_part${i + 1}",
+        billDetails: bill.billDetails.copyWith(billNumber: bill.billDetails.billNumber! + i),
         items: BillItems(itemList: chunks[i]),
       );
+
       splitBills.add(newBill);
     }
 
     return splitBills;
   }
 
-  int getLastBillNumber({required String billTypeGuid, required List<Map<String, dynamic>> items}) {
+  int _getNextBillNumber({required String billTypeGuid, required List<Map<String, dynamic>> items}) {
     if (!billsNumbers.containsKey(billTypeGuid)) {
       throw Exception('Bill type not found');
     }
 
-    final chunks = _itemsChunks(items, AppConstants.maxItemsPerBill);
+    final chunks = _splitItemsIntoChunks(items, AppConstants.maxItemsPerBill);
 
     if (chunks.length > 1) {
       final lastBillNumber = billsNumbers[billTypeGuid];
@@ -73,17 +69,43 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     return billsNumbers[billTypeGuid]!;
   }
 
-  setLastNumber() async {
+  _saveBillsTypesNumbers() async {
     billsNumbers.forEach(
       (billTypeGuid, number) async {
-        await satNumber(ApiConstants.bills, BillType.byTypeGuide(billTypeGuid).label, number);
+        await setLastUsedNumber(ApiConstants.bills, BillType.byTypeGuide(billTypeGuid).label, number);
       },
     );
   }
 
+  List<BillModel> convertToBillsLinkedList(List<BillModel> bills) {
+    // 1. Group bills by type
+    final groupedBills = bills.groupBy((bill) => bill.billTypeModel.billTypeId!);
+
+    // 2. For each group, sort by billNumber and assign previous/next
+    final updatedGroups = groupedBills.values.map(
+      (group) {
+        group.sortBy((bill) => bill.billDetails.billNumber!);
+        return group
+            .mapIndexed(
+              (index, bill) => bill.copyWith(
+                billDetails: bill.billDetails.copyWith(
+                  previous: index == 0 ? null : group[index - 1].billDetails.billNumber,
+                  next: index == group.length - 1 ? null : group[index + 1].billDetails.billNumber,
+                ),
+              ),
+            )
+            .toList();
+      },
+    ).toList(); // => List<List<BillModel>>
+
+    // 3. Flatten the updated groups back into a single list using the flatten extension.
+    return updatedGroups.flatten();
+  }
+
   @override
   Future<List<BillModel>> fromImportXml(XmlDocument document) async {
-    await initializeNumbers();
+    await _fetchBillsTypesNumbers();
+
     final billsXml = document.findAllElements('Bill');
     final materialXml = document.findAllElements('M');
     final sellersXml = document.findAllElements('Q');
@@ -91,7 +113,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     Map<String, String> matNameWithId = {};
 
     for (var mat in materialXml) {
-      String matGuid = mat.findElements('mp tr').first.text;
+      String matGuid = mat.findElements('mptr').first.text;
       String amtName = mat.findElements('MatName').first.text;
       matNameWithId[matGuid] = amtName;
     }
@@ -138,7 +160,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           'BillBranch': billElement.findElements('B').single.findElements('BillBranch').single.text,
           'BillPayType': billElement.findElements('B').single.findElements('BillPayType').single.text,
           'BillCheckTypeGuid': billElement.findElements('B').single.findElements('BillCheckTypeGuid').single.text,
-          'BillNumber': getLastBillNumber(
+          'BillNumber': _getNextBillNumber(
             billTypeGuid: billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
             items: itemsJson,
           ),
@@ -177,17 +199,20 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       final BillModel bill = BillModel.fromImportedJsonFile(billJson);
 
-      final chunks = _itemsChunks(itemsJson, AppConstants.maxItemsPerBill);
+      final chunks = _splitItemsIntoChunks(itemsJson, AppConstants.maxItemsPerBill);
 
       if (chunks.length > 1) {
-        final List<BillModel> splitBills = _splitBillIntoSmallerBills(bill, maxItemsPerBill: AppConstants.maxItemsPerBill);
+        final List<BillModel> splitBills = _divideLargeBill(bill, maxItemsPerBill: AppConstants.maxItemsPerBill);
         bills.addAll(splitBills);
       } else {
         bills.add(bill);
       }
     }
 
-    await setLastNumber();
-    return bills;
+    final linkedBills = convertToBillsLinkedList(bills);
+
+    await _saveBillsTypesNumbers();
+
+    return linkedBills;
   }
 }

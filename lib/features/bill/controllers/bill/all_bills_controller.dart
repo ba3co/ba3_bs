@@ -123,7 +123,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
-      saveAllBillsRequestState.value = RequestState.loading;
+      //     saveAllBillsRequestState.value = RequestState.loading;
       final result = await _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
@@ -158,23 +158,24 @@ class AllBillsController extends FloatingBillDetailsLauncher
   //   AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
   // }
 
-  void _onFetchBillsFromLocalSuccess(List<BillModel> currentBills) async {
-    final fetchedBills = currentBills;
+  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) async {
+    saveAllBillsRequestState.value = RequestState.loading;
+
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(fetchedBills);
 
-    if (bills.isNotEmpty) {
-      await generateAndSaveMatsStatements(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+    if (fetchedBills.isNotEmpty) {
+      // await generateAndSaveMatsStatements(
+      //   sourceModels: bills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
 
       await _billsFirebaseRepo.saveAllNested(
-        bills,
+        fetchedBills,
         billsTypes,
         (progress) {
           uploadProgress.value = progress; // Update progress
@@ -182,13 +183,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
         },
       );
 
-      await createAndStoreEntryBonds(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      // await createAndStoreEntryBonds(
+      //   sourceModels: bills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
     }
     saveAllBillsRequestState.value = RequestState.success;
 

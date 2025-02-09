@@ -32,8 +32,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   @override
-  Future<List<BondModel>> fetchWhere<V>(
-      {required BondType itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
+  Future<List<BondModel>> fetchWhere<V>({required BondType itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemIdentifier),
@@ -95,11 +94,10 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
     final newBondNumber = await getNextNumber(rootCollectionPath, BondType.byTypeGuide(bond.payTypeGuid!).label);
-    return bond.copyWith(payNumber: newBondNumber);
+    return bond.copyWith(payNumber: newBondNumber.nextNumber);
   }
 
-  Future<Map<String, dynamic>> _saveBondData(
-          String rootDocumentId, String subCollectionPath, String? bondId, Map<String, dynamic> data) async =>
+  Future<Map<String, dynamic>> _saveBondData(String rootDocumentId, String subCollectionPath, String? bondId, Map<String, dynamic> data) async =>
       compoundDatabaseService.add(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,

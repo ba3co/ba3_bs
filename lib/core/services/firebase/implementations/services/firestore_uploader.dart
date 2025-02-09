@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../helper/extensions/getx_controller_extensions.dart';
+
 class FirestoreUploader {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestoreInstance = read<FirebaseFirestore>();
 
   /// Concurrent approach: uploads all items in parallel batches with progress tracking.
   Future<void> concurrently({
@@ -35,12 +37,12 @@ class FirestoreUploader {
     int batchSize = 50, //Firestore batch limit
   }) async {
     int counter = 1;
-    WriteBatch batch = _firestore.batch();
+    WriteBatch batch = _firestoreInstance.batch();
 
     for (int i = 0; i < data.length; i++) {
-      final docId = data[i].putIfAbsent('docId', () => _firestore.collection(collectionPath).doc().id);
+      final docId = data[i].putIfAbsent('docId', () => _firestoreInstance.collection(collectionPath).doc().id);
 
-      final docRef = _firestore.collection(collectionPath).doc(docId);
+      final docRef = _firestoreInstance.collection(collectionPath).doc(docId);
       batch.set(docRef, data[i]);
 
       // Commit batch every 50 documents or at the end
@@ -48,7 +50,7 @@ class FirestoreUploader {
         log('Start upload batch $counter');
         await batch.commit();
         log('Finish upload batch $counter');
-        batch = _firestore.batch(); // Reset batch for the next set
+        batch = _firestoreInstance.batch(); // Reset batch for the next set
 
         counter++;
       }
@@ -59,11 +61,11 @@ class FirestoreUploader {
 
   /// Helper method to commit a batch of items.
   Future<void> _addBatch(List<Map<String, dynamic>> data, String collectionPath) async {
-    WriteBatch batch = _firestore.batch();
+    WriteBatch batch = _firestoreInstance.batch();
 
     for (Map<String, dynamic> item in data) {
-      final docId = item.putIfAbsent('docId', () => _firestore.collection(collectionPath).doc().id);
-      final docRef = _firestore.collection(collectionPath).doc(docId);
+      final docId = item.putIfAbsent('docId', () => _firestoreInstance.collection(collectionPath).doc().id);
+      final docRef = _firestoreInstance.collection(collectionPath).doc(docId);
       batch.set(docRef, item);
     }
 

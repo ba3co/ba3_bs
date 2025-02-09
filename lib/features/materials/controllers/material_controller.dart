@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/core/dialogs/search_material_group_text_dialog.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
@@ -135,17 +136,19 @@ class MaterialController extends GetxController with AppNavigator {
 
   void _handelFetchAllMaterialFromLocalSuccess(List<MaterialModel> fetchedMaterial) async {
     saveAllMaterialsRequestState.value = RequestState.loading;
-    logger.d("fetchedMaterial.length ${fetchedMaterial.length}");
-    logger.d("new Materials length ${_materialService.getAllMaterialNotExist(materials, fetchedMaterial).length}");
 
-    if (_materialService.getAllMaterialNotExist(materials, fetchedMaterial).isNotEmpty) {
+    log("fetchedMaterial length ${fetchedMaterial.length}");
+    log('current Materials length is ${materials.length}');
+
+    final newMaterials = fetchedMaterial.subtract(materials, (mat) => mat.matName);
+    log('newMaterials length is ${newMaterials.length}');
+
+    if (newMaterials.isNotEmpty) {
       // Show progress in the UI
       FirestoreUploader firestoreUploader = FirestoreUploader();
+
       await firestoreUploader.sequentially(
-        data: _materialService
-            .getAllMaterialNotExist(materials, fetchedMaterial)
-            .map((item) => {...item.toJson(), 'docId': item.id})
-            .toList(),
+        data: newMaterials.map((item) => {...item.toJson(), 'docId': item.id}).toList(),
         collectionPath: ApiConstants.materials,
         onProgress: (progress) {
           uploadProgress.value = progress; // Update progress
@@ -316,8 +319,7 @@ class MaterialController extends GetxController with AppNavigator {
   void _onSaveSuccess(MaterialModel materialModel) async {
     // Persist the data in Hive upon successful save
 
-    final hiveResult =
-        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -383,7 +385,7 @@ class MaterialController extends GetxController with AppNavigator {
   Future<void> updateMaterialQuantity(String matId, int quantity) async {
     await updateMaterial(
       matId,
-          (material) => material.copyWith(
+      (material) => material.copyWith(
         matQuantity: (material.matQuantity ?? 0) + quantity,
       ),
     );
@@ -405,7 +407,7 @@ class MaterialController extends GetxController with AppNavigator {
   }) async {
     await updateMaterial(
       matId,
-          (material) => material.copyWith(
+      (material) => material.copyWith(
         matQuantity: (material.matQuantity ?? 0) + quantity,
         calcMinPrice: _calcMinPrice(
           oldMinPrice: material.calcMinPrice ?? 0,
@@ -426,7 +428,7 @@ class MaterialController extends GetxController with AppNavigator {
   }) async {
     await updateMaterial(
       matId,
-          (material) => material.copyWith(
+      (material) => material.copyWith(
         matQuantity: quantity,
         calcMinPrice: currentMinPrice,
       ),
@@ -444,9 +446,6 @@ class MaterialController extends GetxController with AppNavigator {
     required int quantityInStatement,
   }) {
     int totalQuantity = oldQuantity + quantityInStatement;
-    return totalQuantity > 0
-        ? ((oldMinPrice * oldQuantity) + (priceInStatement * quantityInStatement)) / totalQuantity
-        : 0.0;
+    return totalQuantity > 0 ? ((oldMinPrice * oldQuantity) + (priceInStatement * quantityInStatement)) / totalQuantity : 0.0;
   }
-
 }

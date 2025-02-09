@@ -374,9 +374,10 @@ abstract class AppConstants {
 
   static const String userIdKey = 'userIdKey';
 
-  static const String recipientEmail = 'burjalarab000@gmail.com';
+  //static const String recipientEmail = 'burjalarab000@gmail.com';
+  static const String recipientEmail = 'ahmed.zein1896@gmail.com';
 
-  // static const String recipientEmail = 'ahmed.zein1896@gmail.com';
   // static const String recipientEmail = 'alidabol567@gmail.com';
+
   static const int maxItemsPerBill = 100;
 }

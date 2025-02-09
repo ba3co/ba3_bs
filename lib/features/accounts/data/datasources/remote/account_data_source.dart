@@ -42,7 +42,7 @@ class AccountsDatasource extends BulkSavableDatasource<AccountModel> with Firest
 
   Future<AccountModel> _assignAccountNumber(AccountModel item) async {
     final newBillNumber = await getNextNumber(path, "account");
-    return item.copyWith(accNumber: newBillNumber);
+    return item.copyWith(accNumber: newBillNumber.nextNumber);
   }
 
   @override

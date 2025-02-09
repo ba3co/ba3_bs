@@ -1,6 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 
 void main() {
   group('ListExtensions', () {

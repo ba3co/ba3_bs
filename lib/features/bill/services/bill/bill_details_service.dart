@@ -5,9 +5,9 @@ import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
-import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,9 +35,13 @@ import '../../ui/widgets/bill_shared/bill_header_field.dart';
 
 class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
-  final IBillController billController;
 
-  BillDetailsService(this.plutoController, this.billController);
+  final BillDetailsController billDetailsController;
+
+  BillDetailsService({
+    required this.plutoController,
+    required this.billDetailsController,
+  });
 
   BillModel? createBillModel({
     BillModel? billModel,
@@ -48,26 +52,25 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required int billPayType,
     required DateTime billDate,
     required double billFirstPay,
-  }) {
-    return BillModel.fromBillData(
-      billModel: billModel,
-      billTypeModel: billTypeModel,
-      status: RoleItemType.viewBill.status,
-      note: billNote,
-      billCustomerId: billCustomerId,
-      billSellerId: billSellerId,
-      billPayType: billPayType,
-      billDate: billDate,
-      billFirstPay: billFirstPay,
-      billTotal: plutoController.calculateFinalTotal,
-      billVatTotal: plutoController.computeTotalVat,
-      billWithoutVatTotal: plutoController.computeBeforeVatTotal,
-      billGiftsTotal: plutoController.computeGifts,
-      billDiscountsTotal: plutoController.computeDiscounts,
-      billAdditionsTotal: plutoController.computeAdditions,
-      billRecordsItems: plutoController.generateRecords,
-    );
-  }
+  }) =>
+      BillModel.fromBillData(
+        billModel: billModel,
+        billTypeModel: billTypeModel,
+        status: RoleItemType.viewBill.status,
+        note: billNote,
+        billCustomerId: billCustomerId,
+        billSellerId: billSellerId,
+        billPayType: billPayType,
+        billDate: billDate,
+        billFirstPay: billFirstPay,
+        billTotal: plutoController.calculateFinalTotal,
+        billVatTotal: plutoController.computeTotalVat,
+        billWithoutVatTotal: plutoController.computeBeforeVatTotal,
+        billGiftsTotal: plutoController.computeGifts,
+        billDiscountsTotal: plutoController.computeDiscounts,
+        billAdditionsTotal: plutoController.computeAdditions,
+        billRecordsItems: plutoController.generateRecords,
+      );
 
   void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
@@ -241,7 +244,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // 3. Process the bill: add if new, update if modifying.
     if (isSave) {
-      _handleAdd(currentBill);
+      _handleAdd(savedBill: currentBill, billSearchController: billSearchController);
     } else {
       // Process update and compute the differences between bill items.
       itemChanges = _processUpdate(
@@ -328,15 +331,76 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   /// Adds a new bill by marking it as saved and generating its PDF.
-  void _handleAdd(BillModel currentBill) {
-    billController.updateIsBillSaved = true;
+  Future<void> _handleAdd({
+    required BillModel savedBill,
+    required BillSearchController billSearchController,
+  }) async {
+    // 1. Mark the bill as saved
+    billDetailsController.updateIsBillSaved = true;
 
-    if (hasModelId(currentBill.billId) && hasModelItems(currentBill.items.itemList)) {
+    // 2. If the bill has an ID and items, we generate & send a PDF
+    if (_isValidBillForPdf(savedBill)) {
       generateAndSendPdf(
         fileName: AppStrings.newBill,
-        itemModel: currentBill,
+        itemModel: savedBill,
       );
     }
+
+    // 3. If there is no "previous" bill number, nothing more to do
+    final previousBillNumber = savedBill.billDetails.previous;
+    if (previousBillNumber == null) {
+      return;
+    }
+
+    // 4. Fetch the previous bill
+    final result = await read<AllBillsController>().fetchBillByNumber(
+      billTypeModel: savedBill.billTypeModel,
+      billNumber: previousBillNumber,
+    );
+
+    // 5. Handle the fetch result
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBills) => _updatePreviousBill(
+        fetchedBills: fetchedBills,
+        billSearchController: billSearchController,
+        newBillNumber: savedBill.billDetails.billNumber,
+      ),
+    );
+  }
+
+  /// Returns true if [bill] has an ID and at least one item in its item list.
+  /// This helps us decide whether to generate/send a PDF.
+  bool _isValidBillForPdf(BillModel bill) {
+    return hasModelId(bill.billId) && hasModelItems(bill.items.itemList);
+  }
+
+  /// Updates the 'next' field of the previously fetched bill if necessary.
+  Future<void> _updatePreviousBill({
+    required List<BillModel> fetchedBills,
+    required BillSearchController billSearchController,
+    required int? newBillNumber,
+  }) async {
+    // No bills or a null newBillNumber means we can’t update anything
+    if (fetchedBills.isEmpty || newBillNumber == null) {
+      return;
+    }
+
+    final previousBill = fetchedBills.first;
+
+    // Assign 'next' = new bill number
+    final updatedPreviousBill = previousBill.copyWith(
+      billDetails: previousBill.billDetails.copyWith(next: newBillNumber),
+    );
+
+    // Attempt the update
+    final updateResult = await billDetailsController.updatePreviousBill(updatedPreviousBill);
+
+    // Either show an error or update the controller state
+    updateResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _updateBillSearchController(billSearchController, updatedPreviousBill),
+    );
   }
 
   /// Returns `true` if the bill is approved and its pattern requires a material account.
@@ -349,7 +413,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       context: context,
       title: 'Invoice QR Code',
       content: EInvoiceDialogContent(
-        billController: billController,
+        billController: billDetailsController,
         billId: billModel.billId!,
       ),
       onCloseCallback: () {

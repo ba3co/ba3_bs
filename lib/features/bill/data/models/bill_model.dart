@@ -78,7 +78,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     final billDetails = BillDetails.fromBillData(
       existingDetails: billModel?.billDetails,
       billFirstPay: billFirstPay,
-      note: note,
+      billNote: note,
       billCustomerId: billCustomerId,
       billSellerId: billSellerId,
       billPayType: billPayType,
@@ -208,7 +208,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
               ],
       ),
       billDetails: BillDetails(
-        billFirstPay: double.tryParse(billData['B']['BillFirstPay'])??0.0,
+        billFirstPay: double.tryParse(billData['B']['BillFirstPay']) ?? 0.0,
         billGuid: billData['B']['BillGuid'],
         billPayType: int.parse(billData['B']['BillPayType']),
         billNumber: (billData['B']['BillNumber']),
@@ -221,7 +221,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billDiscountsTotal: 0,
         billAdditionsTotal: 0,
         billBeforeVatTotal: billTotal - billVatTotal,
-        note: billData['B']['Note'].toString(),
+        billNote: billData['B']['Note'].toString(),
       ),
       billTypeModel: BillTypeModel(
           billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
@@ -317,15 +317,13 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: 'مجموع الاضافات', field: 'مجموع الاضافات', type: PlutoColumnType.text()):
             AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
         PlutoColumn(title: 'مجموع الهدايا', field: 'مجموع الهدايا', type: PlutoColumnType.text()): billDetails.billGiftsTotal ?? 0,
-        PlutoColumn(title: 'نوع الدفع', field: 'نوع الدفع', type: PlutoColumnType.text()):
-            InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
+        PlutoColumn(title: 'نوع الدفع', field: 'نوع الدفع', type: PlutoColumnType.text()): InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
         PlutoColumn(title: 'حساب العميل', field: 'حساب العميل', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         PlutoColumn(title: 'حساب البائع', field: 'حساب البائع', type: PlutoColumnType.text()):
             read<SellersController>().getSellerNameById(billDetails.billSellerId),
-        PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()):
-            billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
-        PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.note ?? '',
+        PlutoColumn(title: 'المستودع', field: 'المستودع', type: PlutoColumnType.text()): billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
+        PlutoColumn(title: 'وصف', field: 'وصف', type: PlutoColumnType.text()): billDetails.billNote ?? '',
       };
 
   List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;

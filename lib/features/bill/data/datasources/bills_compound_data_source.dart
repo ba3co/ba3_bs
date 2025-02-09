@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -94,12 +96,16 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   Future<BillModel> _assignBillNumber(BillModel bill) async {
-    final billNumber = await getNextNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
-    return bill.copyWith(billDetails: bill.billDetails.copyWith(billNumber: billNumber));
+    final billEntitySequence = await getNextNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
+    return bill.copyWith(
+      billDetails: bill.billDetails.copyWith(
+        billNumber: billEntitySequence.nextNumber,
+        previous: billEntitySequence.currentNumber,
+      ),
+    );
   }
 
-  Future<Map<String, dynamic>> _saveBillData(
-      String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> _saveBillData(String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async {
     return compoundDatabaseService.add(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
@@ -150,22 +156,31 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     required List<BillModel> items,
     void Function(double progress)? onProgress,
   }) async {
+    log('saveAllNested bills on BillCompoundDatasource length ${items.length}');
+
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
-    final List<Future<void>> fetchTasks = [];
-    // Create tasks to fetch all bills for each type
+    final int totalTypes = itemIdentifiers.length;
+    int completedTasks = 0;
 
+    final List<Future<void>> fetchTasks = [];
+
+    // Iterate through each BillTypeModel
     for (final billTypeModel in itemIdentifiers) {
       fetchTasks.add(
         saveAll(
           itemIdentifier: billTypeModel,
-          items: items
-              .where(
-                (element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId,
-              )
-              .toList(),
+          items: items.where((element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId).toList(),
         ).then((result) {
           billsByType[billTypeModel] = result;
+
+          // Increment completed tasks
+          completedTasks++;
+
+          // Call onProgress with updated percentage
+          if (onProgress != null) {
+            onProgress(completedTasks / totalTypes);
+          }
         }),
       );
     }
@@ -173,11 +188,18 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     // Wait for all tasks to complete
     await Future.wait(fetchTasks);
 
+    // Ensure onProgress is set to 100% when everything is done
+    if (onProgress != null) {
+      onProgress(1.0);
+    }
+
     return billsByType;
   }
 
   @override
   Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemIdentifier}) async {
+    log('saveAll bills length ${items.length}');
+
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 

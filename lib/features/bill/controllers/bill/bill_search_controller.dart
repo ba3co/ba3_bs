@@ -128,10 +128,12 @@ class BillSearchController extends GetxController {
   Future<void> goToBillByNumber(int? billNumber) async => await _navigateToBill(billNumber!, NavigationDirection.specific);
 
   /// Moves to the next bill if possible.
-  Future<void> next() async => await _navigateToBill(currentBill.billDetails.billNumber! + 1, NavigationDirection.next);
+  Future<void> next() async =>
+      await _navigateToBill(currentBill.billDetails.next ?? currentBill.billDetails.billNumber! + 1, NavigationDirection.next);
 
   /// Moves to the previous bill if possible.
-  Future<void> previous() async => await _navigateToBill(currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
+  Future<void> previous() async =>
+      await _navigateToBill(currentBill.billDetails.previous ?? currentBill.billDetails.billNumber! - 1, NavigationDirection.previous);
 
   /// Jumps forward by 10 bills from the current bill number.
   Future<void> jumpForwardByTen() async => await _navigateToBill(currentBill.billDetails.billNumber! + 10, NavigationDirection.next);
