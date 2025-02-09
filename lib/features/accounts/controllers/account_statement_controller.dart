@@ -30,8 +30,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   final groupForSearchController = TextEditingController();
   final accountNameController = TextEditingController();
   final storeForSearchController = TextEditingController();
-  final startDateController = TextEditingController()..text = _formattedToday;
-  final endDateController = TextEditingController()..text = _formattedToday;
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
 
   // Data
   final List<EntryBondItemModel> entryBondItems = [];
@@ -55,7 +55,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     productForSearchController.clear();
     groupForSearchController.clear();
     storeForSearchController.clear();
-    startDateController.text = _formattedToday;
+    startDateController.text = _formattedFirstDay;
     endDateController.text = _formattedToday;
 
     if (initialAccount != null) {
@@ -90,7 +90,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   Future<void> fetchAccountEntryBondItems() async {
     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
     if (accountModel == null) {
-      _showErrorSnackBar("خطأ إدخال", "يرجى إدخال اسم الحساب");
+      AppUIUtils.onFailure( "يرجى إدخال اسم الحساب");
       return;
     }
 
@@ -173,10 +173,9 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   // Helper Methods
   static String get _formattedToday => DateTime.now().dayMonthYear;
+  static String get _formattedFirstDay => DateTime.now().copyWith(month: 1,day: 1).dayMonthYear;
 
-  void _showErrorSnackBar(String title, String message) {
-    Get.snackbar(title, message, icon: const Icon(Icons.error_outline));
-  }
+
 
   void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
     EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(entryId: originId);
