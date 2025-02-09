@@ -256,15 +256,17 @@ class MaterialController extends GetxController with AppNavigator {
       return;
     }
     // Prepare user change queue for saving
-    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
+    // final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
 
     // Save changes and handle results
-    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+    // final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
 
-    changesResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onSaveSuccess(updatedMaterialModel),
-    );
+    // changesResult.fold(
+    //   (failure) => AppUIUtils.onFailure(failure.message),
+    //   (_) => _onSaveSuccess(updatedMaterialModel),
+    // );
+
+    _onSaveSuccess(updatedMaterialModel);
   }
 
   void deleteMaterial() async {
@@ -324,10 +326,10 @@ class MaterialController extends GetxController with AppNavigator {
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        reloadMaterials();
-        log('materials length after add item: ${materials.length}');
-        log('material is  ${materials.length}');
+        // AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        // reloadMaterials();
+        // log('materials length after add item: ${materials.length}');
+        // log('material is  ${materials.length}');
       },
     );
   }
