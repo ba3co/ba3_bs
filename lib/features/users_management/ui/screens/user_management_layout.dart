@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
@@ -14,38 +13,29 @@ class UserManagementLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserManagementController userManagementController = read<UserManagementController>();
-    log('userModel ${userManagementController.loggedInUserModel?.userName}');
-    return Column(
-      children: [
-        Expanded(
-          child: Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
+    return Scaffold(
 
-              body: Column(
-                children: [
-                  if(RoleItemType.administrator.hasReadPermission)
-                  ...[  AppMenuItem(
-                      text: 'إدارة المستخدمين',
-                      onTap: () {
-                        userManagementController. userNavigator.navigateToAllUsersScreen();
-                      }),
-                  AppMenuItem(
-                      text: 'إدارة الصلاحيات',
-                      onTap: () {
-                        userManagementController. userNavigator.navigateToLAllPermissionsScreen();
-                      })],
-                  AppMenuItem(
-                      text: 'سجل الدوام',
-                      onTap: () {
-                        userManagementController. userNavigator.navigateToUserTimeListScreen();
-                      }),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+      body: Column(
+        children: [
+          AppMenuItem(
+              text: 'إدارة المستخدمين',
+              onTap: () {
+                userManagementController. userNavigator.navigateToAllUsersScreen();
+              }),
+          if(RoleItemType.administrator.hasReadPermission)
+          ...[
+          AppMenuItem(
+              text: 'إدارة الصلاحيات',
+              onTap: () {
+                userManagementController. userNavigator.navigateToLAllPermissionsScreen();
+              })],
+          AppMenuItem(
+              text: 'سجل الدوام',
+              onTap: () {
+                userManagementController. userNavigator.navigateToUserTimeListScreen();
+              }),
+        ],
+      ),
     );
   }
 }

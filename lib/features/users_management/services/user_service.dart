@@ -48,7 +48,6 @@ class UserService {
     required UserTimeModel? timeModel,
     required bool isLogin,
   }) {
-    // التحقق من وجود البيانات
     final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
     if (dateList == null ) {
       return "لم يسجل بعد";
@@ -81,14 +80,14 @@ class UserService {
         userDateTime.month,
         userDateTime.day,
         workingDateTime.hour,
-        workingDateTime.minute,
+        workingDateTime.minute+4,
       ))
           : DateTime(
         userDateTime.year,
         userDateTime.month,
         userDateTime.day,
         workingDateTime.hour,
-        workingDateTime.minute,
+        workingDateTime.minute-4,
       ).difference(userDateTime);
 
       // إضافة الفرق إذا لم يكن سالبًا

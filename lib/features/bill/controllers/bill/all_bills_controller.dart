@@ -177,13 +177,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
     bills.assignAll(fetchedBills);
 
     if (fetchedBills.isNotEmpty) {
-      await generateAndSaveMatsStatements(
-        sourceModels: bills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      // await generateAndSaveMatsStatements(
+      //   sourceModels: bills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
 
       await _billsFirebaseRepo.saveAllNested(
         fetchedBills,
@@ -194,13 +194,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
         },
       );
 
-      // await createAndStoreEntryBonds(
-      //   sourceModels: bills,
-      //   onProgress: (progress) {
-      //     uploadProgress.value = progress; // Update progress
-      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      //   },
-      // );
+      await createAndStoreEntryBonds(
+        sourceModels: bills,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+      );
     }
     saveAllBillsRequestState.value = RequestState.success;
 

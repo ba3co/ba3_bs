@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +24,7 @@ class AllBillsTypesList extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.start,
           children: allBillsController.getBillsTypesRequestState.value == RequestState.loading
               ? List.generate(10, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
-              : allBillsController.billsTypes
+              :RoleItemType.viewBill.hasAdminPermission? allBillsController.billsTypes
                   .map(
                     (billTypeModel) => BillTypeItemWidget(
                       text: billTypeModel.fullName!,
@@ -38,7 +40,22 @@ class AllBillsTypesList extends StatelessWidget {
                       },
                     ),
                   )
-                  .toList(),
+                  .toList()
+              : [
+            BillTypeItemWidget(
+              text: BillType.sales.billTypeModel.fullName!,
+              color: Color(BillType.sales.billTypeModel.color!),
+              onTap: () {
+                allBillsController.openFloatingBillDetails(context, BillType.sales.billTypeModel);
+                // allBillsController.fetchAllBillsByType( billTypeModel);
+              },
+              pendingBillsCounts: allBillsController.pendingBillsCounts(BillType.sales.billTypeModel),
+              allBillsCounts: allBillsController.allBillsCounts(BillType.sales.billTypeModel),
+              onPendingBillsPressed: () {
+                allBillsController.fetchPendingBills(BillType.sales.billTypeModel);
+              },
+            )
+          ],
         );
       },
     );
