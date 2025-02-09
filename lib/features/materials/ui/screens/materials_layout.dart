@@ -68,8 +68,7 @@ class MaterialLayout extends StatelessWidget {
                   AppMenuItem(
                       text: "معاينة المجموعات",
                       onTap: () {
-                        read<MaterialGroupController>()
-                          .navigateToAllMaterialScreen();
+                        read<MaterialGroupController>().navigateToAllMaterialScreen();
                       }),
                   if (RoleItemType.viewProduct.hasAdminPermission)
                     AppMenuItem(
@@ -79,6 +78,9 @@ class MaterialLayout extends StatelessWidget {
                         }),
                 ],
               ),
+              floatingActionButton: (RoleItemType.administrator.hasAdminPermission)
+                  ? FloatingActionButton(onPressed: read<MaterialController>().resetMaterialQuantityAndPrice, child: Icon(Icons.lock_reset))
+                  : SizedBox(),
             ),
             LoadingDialog(
               isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,

@@ -21,7 +21,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
   MaterialsStatementController(this._matStatementsRepo);
 
-  Future<void> saveAllMatsStatementsModels({required List<MatStatementModel> matsStatements, void Function(double progress)? onProgress}) async {
+  Future<void> saveAllMatsStatementsModels(
+      {required List<MatStatementModel> matsStatements, void Function(double progress)? onProgress}) async {
     int counter = 0;
 
     for (final matStatement in matsStatements) {
@@ -30,16 +31,12 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       onProgress?.call((++counter) / matsStatements.length);
 
       if (matStatement.quantity! > 0) {
-        final materialStatementList = await fetchMatStatementById(matStatement.matId!);
-
-        if (materialStatementList != null) {
-          await read<MaterialController>().updateMaterialQuantityAndPrice(
-            matId: matStatement.matId!,
-            quantity: _calculateQuantity(materialStatementList),
-            quantityInStatement: matStatement.quantity!,
-            priceInStatement: matStatement.price!,
-          );
-        }
+        await read<MaterialController>().updateMaterialQuantityAndPrice(
+          matId: matStatement.matId!,
+          quantity: matStatement.defQuantity!,
+          quantityInStatement: matStatement.quantity!,
+          priceInStatement: matStatement.price!,
+        );
       } else {
         await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
       }

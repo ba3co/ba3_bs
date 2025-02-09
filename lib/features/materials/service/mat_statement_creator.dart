@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
 import 'package:get/get.dart';
@@ -29,14 +28,14 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
             originId: model.billId,
             quantity: quantityStrategy.calculateQuantity(matItem.itemQuantity),
             date: model.billDetails.billDate!,
-            price: matItem.itemSubTotalPrice,
+            price: double.parse(matItem.itemTotalPrice) / matItem.itemQuantity,
             note: '${model.billTypeModel.fullName}',
-            defQuantity:quantityStrategy.calculateQuantity(updatedMaterials
+            defQuantity: quantityStrategy.calculateQuantity(updatedMaterials
                     .firstWhereOrNull(
                       (mat) => mat.itemGuid == matItem.itemGuid,
                     )
                     ?.itemQuantity ??
-               matItem.itemQuantity));
+                matItem.itemQuantity));
       },
     ).toList();
   }

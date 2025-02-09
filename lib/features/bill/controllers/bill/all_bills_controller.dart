@@ -98,7 +98,18 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBills) => bills.assignAll(fetchedBills),
+      (fetchedBills) async{
+
+        log('fetchedBills ${fetchedBills.length}');
+        bills.assignAll(fetchedBills);
+        await generateAndSaveMatsStatements(
+          sourceModels: bills,
+          onProgress: (progress) {
+            uploadProgress.value = progress; // Update progress
+            log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+          },
+        );
+      },
     );
 
     plutoGridIsLoading = false;
@@ -166,13 +177,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
     bills.assignAll(fetchedBills);
 
     if (fetchedBills.isNotEmpty) {
-      // await generateAndSaveMatsStatements(
-      //   sourceModels: bills,
-      //   onProgress: (progress) {
-      //     uploadProgress.value = progress; // Update progress
-      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      //   },
-      // );
+      await generateAndSaveMatsStatements(
+        sourceModels: bills,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+      );
 
       await _billsFirebaseRepo.saveAllNested(
         fetchedBills,
