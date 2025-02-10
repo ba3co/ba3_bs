@@ -54,11 +54,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
       return;
     }
-
-    // AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
-
-
-
     for (final material in read<MaterialController>().materials) {
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
@@ -69,16 +64,17 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       }
 
     }
+/*
+    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
 
-    /*
-      // 3. Update each material's quantity in parallel
+    // 3. Update each material's quantity in parallel
     int completed = 0;
     final total = allSavedStatements.length;
 
-     await Future.wait(
+    await Future.wait(
       allSavedStatements.map(
         (statement) async {
-         if (statement.quantity != null && statement.quantity! > 0) {
+          if (statement.quantity != null && statement.quantity! > 0) {
             await read<MaterialController>().updateMaterialQuantityAndPrice(
               matId: statement.matId!,
               quantity: statement.defQuantity!,
