@@ -21,7 +21,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
   MaterialsStatementController(this._matStatementsRepo);
 
-
   Future<void> saveAllMatsStatementsModels({
     required List<MatStatementModel> matsStatements,
     void Function(double progress)? onProgress,
@@ -29,10 +28,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     log("saveAllNested");
     // 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
     final result = await _matStatementsRepo.saveAllNested(
-      items: matsStatements,
-      itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId),
-      onProgress: onProgress
-    );
+        items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
 
     log("saveAllNested");
 
@@ -60,24 +56,11 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       return;
     }
 
-    log("message");
     int completed = 0;
     final total = allSavedStatements.length;
-    for (final material in read<MaterialController>().materials) {
-      final materialStatementList = await fetchMatStatementById(material.id!);
-      if (materialStatementList != null) {
-        await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
-            matId: material.id!,
-            quantity: _calculateQuantity(materialStatementList),
-            currentMinPrice: _calculateMinPrice(materialStatementList));
-      }
-      onProgress?.call(++completed / total);
-
-    }
-/*    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
+    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
 
     // 3. Update each material's quantity in parallel
-
 
     await Future.wait(
       allSavedStatements.map(
@@ -100,7 +83,19 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
           onProgress?.call(++completed / total);
         },
       ),
-    );*/
+    );
+  }
+
+  setupAllMaterials() async {
+    for (final material in read<MaterialController>().materials) {
+      final materialStatementList = await fetchMatStatementById(material.id!);
+      if (materialStatementList != null) {
+        await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
+            matId: material.id!,
+            quantity: _calculateQuantity(materialStatementList),
+            currentMinPrice: _calculateMinPrice(materialStatementList));
+      }
+    }
   }
 
   Future<void> deleteMatStatementModel(MatStatementModel matStatementModel) async {
