@@ -139,6 +139,7 @@ class BillTypeModel extends PlutoAdaptable with EquatableMixin {
         latinShortName,
         latinFullName,
         billTypeLabel,
+        billPatternType,
         color,
         accounts,
         discountAdditionAccounts,

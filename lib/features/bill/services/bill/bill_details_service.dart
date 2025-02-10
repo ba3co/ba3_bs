@@ -17,6 +17,7 @@ import '../../../../core/dialogs/e_invoice_dialog_content.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
+import '../../../../core/network/api_constants.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/app_button.dart';
@@ -90,6 +91,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // 2. Update previous and next bill references.
     await _updatePreviousBillLink(billModel, billSearchController);
     await _updateNextBillLink(billModel, billSearchController);
+
+    await billDetailsController.decrementLastNumber(ApiConstants.bills, billModel.billTypeModel.billTypeLabel!);
 
     // 3. Show success message.
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
