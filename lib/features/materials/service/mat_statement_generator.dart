@@ -20,6 +20,8 @@ mixin MatsStatementsGenerator {
     final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
 
     await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress);
+
+
   }
 
   List<MatStatementModel> _generateMatsStatementsModels(List sourceModels) {

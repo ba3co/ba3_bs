@@ -47,6 +47,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   List<BillModel> bills = [];
   Map<BillTypeModel, List<BillModel>> nestedBills = {};
+  List<BillModel> allNestedBills = [];
 
   List<BillModel> pendingBills = [];
 
@@ -103,6 +104,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     );
 
     nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
+
+    allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
     getAllNestedBillsRequestState.value = RequestState.success;
   }
 
@@ -161,7 +164,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
