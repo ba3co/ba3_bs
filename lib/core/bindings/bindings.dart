@@ -100,8 +100,8 @@ class AppBindings extends Bindings {
     // Initialize services
     final dioClient = _initializeDioClient();
 
-    final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
-    // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'test');
+    // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
+    final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'test');
 
     final fireStoreService = _initializeFireStoreService(firestoreInstance);
 
