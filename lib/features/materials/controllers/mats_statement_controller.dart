@@ -29,6 +29,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     final result = await _matStatementsRepo.saveAllNested(
       items: matsStatements,
       itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId),
+      onProgress: onProgress
     );
 
     // 2. Flatten the map into a single list of MatStatementModel
@@ -37,7 +38,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedStatements) => onSaveAllMatsStatementsModelsSuccess(
-        mapOfStatements: savedStatements,
+        mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
         onProgress: onProgress,
       ),
     );
@@ -54,7 +55,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
       return;
     }
-    for (final material in read<MaterialController>().materials) {
+/*    for (final material in read<MaterialController>().materials) {
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
@@ -63,8 +64,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
             currentMinPrice: _calculateMinPrice(materialStatementList));
       }
 
-    }
-/*
+    }*/
     AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
 
     // 3. Update each material's quantity in parallel
@@ -92,7 +92,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
           onProgress?.call(++completed / total);
         },
       ),
-    );*/
+    );
   }
 
   Future<void> deleteMatStatementModel(MatStatementModel matStatementModel) async {

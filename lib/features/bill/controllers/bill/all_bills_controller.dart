@@ -142,13 +142,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
       );
       log("saveAllNested _billsFirebaseRepo Finished......");
 
-      // await createAndStoreMatsStatements(
-      //   sourceModels: fetchedBills,
-      //   onProgress: (progress) {
-      //     uploadProgress.value = progress; // Update progress
-      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      //   },
-      // );
+      await createAndStoreMatsStatements(
+        sourceModels: fetchedBills,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+      );
       //
       // await createAndStoreEntryBonds(
       //   sourceModels: fetchedBills,
