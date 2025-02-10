@@ -77,16 +77,21 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     final materialController = read<MaterialController>();
 
     // Search for matching materials
-    var searchedMaterials =  materialController.searchOfProductByText(productText);
+    var searchedMaterials = materialController.searchOfProductByText(productText);
+
     MaterialModel? selectedMaterial;
+
     log("searchedMaterials  length ${searchedMaterials.length}");
+
     if (searchedMaterials.length == 1) {
       // Single match
       selectedMaterial = searchedMaterials.first;
+
       updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
     } else if (searchedMaterials.isEmpty) {
-      AppUIUtils.onFailure("هذه المادة غير موجودة");
       // No matches
+      AppUIUtils.onFailure('هذه المادة غير موجودة');
+
       updateWithSelectedMaterial(null, stateManager, plutoController);
     } else {
       // Multiple matches, show search dialog
@@ -121,7 +126,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           OverlayService.back();
         },
         onSubmitted: (_) async {
-          searchedMaterials =  materialController.searchOfProductByText(productTextController.text);
+          searchedMaterials = materialController.searchOfProductByText(productTextController.text);
           materialController.update();
         },
         productTextController: productTextController,

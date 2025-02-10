@@ -142,10 +142,10 @@ class BillSearchController extends GetxController {
   Future<void> jumpBackwardByTen() async => await _navigateToBill(currentBill.billDetails.billNumber! - 10, NavigationDirection.previous);
 
   /// Navigates to the first bill in the list.
-  Future<void> first() async => await _navigateToBill(1, NavigationDirection.next);
+  Future<void> head() async => await _navigateToBill(1, NavigationDirection.next);
 
   /// Navigates to the last bill in the list.
-  Future<void> last() async => await _navigateToBill(bills.last.billDetails.billNumber!, NavigationDirection.previous);
+  Future<void> tail() async => await _navigateToBill(bills.last.billDetails.billNumber!, NavigationDirection.previous);
 
   /// Helper method to fetch or navigate to a specific bill.
   Future<void> _navigateToBill(int billNumber, NavigationDirection direction) async {
@@ -236,10 +236,10 @@ class BillSearchController extends GetxController {
   BillModel get getCurrentBill => bills[currentBillIndex];
 
   /// Checks if the current bill is the last in the list
-  bool get isLast => currentBillIndex == bills.length - 1;
+  bool get isTail => currentBillIndex == bills.length - 1;
 
   /// Checks if the current bill is the last in the list
-  bool get isFirst => currentBillIndex == 0;
+  bool get isHead => currentBillIndex == 0;
 
   bool get isNew => currentBill.billId == null;
 

@@ -47,6 +47,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   List<BillModel> bills = [];
   Map<BillTypeModel, List<BillModel>> nestedBills = {};
+  List<BillModel> allNestedBills = [];
 
   List<BillModel> pendingBills = [];
 
@@ -92,30 +93,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> fetchAllBillsByType(BillTypeModel billTypeModel) async {
-    log('fetchBills');
-    final result = await _billsFirebaseRepo.getAll(billTypeModel);
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBills) async{
-
-        log('fetchedBills ${fetchedBills.length}');
-        bills.assignAll(fetchedBills);
-        await generateAndSaveMatsStatements(
-          sourceModels: bills,
-          onProgress: (progress) {
-            uploadProgress.value = progress; // Update progress
-            log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-          },
-        );
-      },
-    );
-
-    plutoGridIsLoading = false;
-    update();
-  }
-
   Future<void> fetchAllNestedBills() async {
     getAllNestedBillsRequestState.value = RequestState.loading;
 
@@ -127,6 +104,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     );
 
     nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
+
+    allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
     getAllNestedBillsRequestState.value = RequestState.success;
   }
 
@@ -142,65 +121,42 @@ class AllBillsController extends FloatingBillDetailsLauncher
         (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
       );
     }
-
-    plutoGridIsLoading = false;
-    update();
   }
 
-  // void _onFetchBillsFromLocalSuccess(List<BillModel> currentBills) async {
-  //   saveAllBillsRequestState.value = RequestState.loading;
-  //   final fetchedBills = currentBills;
-  //
-  //   final firstPeriodInventoryBills =
-  //       fetchedBills.where((element) => element.billTypeModel.billTypeId == '5a9e7782-cde5-41db-886a-ac89732feda7').toList();
-  //
-  //   if (firstPeriodInventoryBills.isNotEmpty) {
-  //     await _billsFirebaseRepo.saveAllNested(
-  //       firstPeriodInventoryBills,
-  //       billsTypes,
-  //       (progress) {
-  //         uploadProgress.value = progress; // Update progress
-  //         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-  //       },
-  //     );
-  //   }
-  //   saveAllBillsRequestState.value = RequestState.success;
-  //
-  //   AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
-  // }
-
   void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) async {
-    saveAllBillsRequestState.value = RequestState.loading;
-
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(fetchedBills);
 
+    saveAllBillsRequestState.value = RequestState.loading;
+
     if (fetchedBills.isNotEmpty) {
-      // await generateAndSaveMatsStatements(
-      //   sourceModels: bills,
-      //   onProgress: (progress) {
-      //     uploadProgress.value = progress; // Update progress
-      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      //   },
-      // );
-
+      log("saveAllNested _billsFirebaseRepo Started......");
       await _billsFirebaseRepo.saveAllNested(
-        fetchedBills,
-        billsTypes,
-        (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
-
-      await createAndStoreEntryBonds(
-        sourceModels: bills,
+        items: fetchedBills,
+        itemIdentifiers: billsTypes,
         onProgress: (progress) {
           uploadProgress.value = progress; // Update progress
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
         },
       );
+      log("saveAllNested _billsFirebaseRepo Finished......");
+
+      // await createAndStoreMatsStatements(
+      //   sourceModels: fetchedBills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
+      //
+      // await createAndStoreEntryBonds(
+      //   sourceModels: fetchedBills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
     }
     saveAllBillsRequestState.value = RequestState.success;
 
@@ -208,7 +164,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -256,11 +213,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
       fetchTasks.add(
         _billsFirebaseRepo
             .count(
-                itemIdentifier: billTypeModel,
-                countQueryFilter: QueryFilter(
-                  field: ApiConstants.status,
-                  value: Status.pending.value,
-                ))
+          itemIdentifier: billTypeModel,
+          countQueryFilter: QueryFilter(field: ApiConstants.status, value: Status.pending.value),
+        )
             .then((result) {
           result.fold(
             (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
@@ -344,23 +299,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? currentBill}) async {
-    // plutoGridIsLoading = false;
-    //
-    // await fetchAllBillsByType(billTypeModel);
-    //
-    // log("billNumber  ${bills.last.billDetails.billNumber.toString()}");
-    // _billsFirebaseRepo.saveLastTypeNumber(bills.last);
-    //
-    // if (!context.mounted) return;
-    //
-    // final BillModel lastBillModel = billModel ?? _billUtils.appendEmptyBillModel(bills, billTypeModel);
-    //
-    // _openBillDetailsFloatingWindow(
-    //   context: context,
-    //   modifiedBills: bills,
-    //   lastBillModel: lastBillModel,
-    // );
-
     final bills = await billsCountByType(billTypeModel);
 
     if (!context.mounted) return;
@@ -404,7 +342,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
       context: context,
       minimizedTitle: BillType.byLabel(currentBill.billTypeModel.billTypeLabel!).value,
       floatingScreen: BillDetailsScreen(
-        fromBillById: false,
         billDetailsController: billDetailsController,
         billDetailsPlutoController: billDetailsPlutoController,
         billSearchController: billSearchController,

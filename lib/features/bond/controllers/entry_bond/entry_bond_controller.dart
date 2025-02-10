@@ -1,21 +1,25 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/network/error/failure.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
-import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/entry_bond_model.dart';
 
 class EntryBondController extends GetxController with FloatingLauncher {
-  final RemoteDataSourceRepository<EntryBondModel> _entryBondsFirebaseRepo;
+  final BulkSavableDatasourceRepository<EntryBondModel> _entryBondsFirebaseRepo;
 
   final CompoundDatasourceRepository<EntryBondItems, AccountEntity> _accountsStatementsFirebaseRepo;
 
@@ -37,51 +41,97 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
+  /// Saves a list of EntryBondModels in a single batch (if the repo supports `saveAll`).
+  Future<void> saveAllEntryBondModels({
+    required List<EntryBondModel> entryBonds,
+    void Function(double progress)? onProgress,
+  }) async {
+    log('Start SaveAllEntryBondModels');
+
+    // 1. Perform a single batch save in your repository
+    final saveResult = await _entryBondsFirebaseRepo.saveAll(entryBonds);
+
+    log('Finish SaveAllEntryBondModels');
+
+    // 2. Check if the batch save succeeded/failed
+    return saveResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedBonds) async {
+        // 3. For each successfully saved bond, run post-save logic
+        int counter = 0;
+        for (final savedBond in savedBonds) {
+          await _onEntryBondSaved(entryBondModel: savedBond);
+
+          // Update progress
+          onProgress?.call(++counter / savedBonds.length);
+        }
+      },
+    );
+  }
+
   /// Handles logic after an Entry Bond is successfully saved
   Future<void> _onEntryBondSaved({
     required EntryBondModel entryBondModel,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
-    final entryBondItems = entryBondModel.items?.itemList;
+    log('Start _onEntryBondSaved');
 
-    // Exit early if there are no items
+    final entryBondItems = entryBondModel.items?.itemList;
     if (entryBondItems == null || entryBondItems.isEmpty) return;
 
-    // Group items by account and save them
-    await _saveGroupedEntryBondItems(entryBondItems);
+    // Run grouped-item saving and item modifications in parallel
+    await Future.wait([
+      _saveGroupedEntryBondItems(entryBondItems),
+      _handleModifiedEntryBondItems(
+        entryBondModel: entryBondModel,
+        modifiedAccounts: modifiedAccounts,
+      ),
+    ]);
 
-    // Handle modifications to the Entry Bond items
-    await _handleModifiedEntryBondItems(
-      entryBondModel: entryBondModel,
-      modifiedAccounts: modifiedAccounts,
-    );
+    log('Finish _onEntryBondSaved');
   }
 
-  /// Saves grouped Entry Bond items by account
+  /// Saves grouped Entry Bond items by account, in parallel
   Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems) async {
-    // Group items by account ID
-
+    log('Start _saveGroupedEntryBondItems');
     final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
-    // log('itemsGroupedByAccount $itemsGroupedByAccount');
+
+    // Build a list of futures
+    final List<Future<Either<Failure, EntryBondItems>>> futures = [];
 
     for (final accountId in itemsGroupedByAccount.keys) {
       final groupedItems = itemsGroupedByAccount[accountId]!;
 
-      await _accountsStatementsFirebaseRepo.save(
-        EntryBondItems(
-          id: groupedItems.first.originId!,
-          docId: groupedItems.first.docId,
-          itemList: groupedItems,
-        ),
+      final bondItems = EntryBondItems(
+        id: groupedItems.first.originId!,
+        docId: groupedItems.first.docId,
+        itemList: groupedItems,
+      );
+
+      futures.add(_accountsStatementsFirebaseRepo.save(bondItems));
+    }
+
+    // Wait for all to complete
+    final results = await Future.wait(futures);
+
+    // Handle potential failures
+    for (final result in results) {
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (_) => {}, // or success
       );
     }
+
+    log('Finish _saveGroupedEntryBondItems');
   }
 
-  /// Handles modifications to the Entry Bond items
+  /// Deletes modified Entry Bond items in parallel
   Future<void> _handleModifiedEntryBondItems({
     required EntryBondModel entryBondModel,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
+    log('Start _handleModifiedEntryBondItems');
+
     final modifiedEntryBondItems = _mapToEntryBondItems(
       originId: entryBondModel.origin!.originId!,
       modifiedAccounts: modifiedAccounts,
@@ -89,15 +139,22 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     if (modifiedEntryBondItems.isEmpty) return;
 
-    // Delete modified Entry Bond items
-    for (final entryBondItem in modifiedEntryBondItems) {
-      final result = await _accountsStatementsFirebaseRepo.delete(entryBondItem);
+    // Build a list of futures for parallel deletes
+    final futures = modifiedEntryBondItems.map((entryBondItem) {
+      return _accountsStatementsFirebaseRepo.delete(entryBondItem);
+    });
 
+    final results = await Future.wait(futures);
+
+    // Handle potential failures
+    for (final result in results) {
       result.fold(
         (failure) => AppUIUtils.onFailure('${failure.message} in _handleModifiedEntryBondItems'),
-        (_) {},
+        (_) => {},
       );
     }
+
+    log('Finish _handleModifiedEntryBondItems');
   }
 
   /// Converts modified bill type accounts to EntryBondItems
@@ -116,18 +173,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
         ],
       );
     }).toList();
-  }
-
-  Future<void> saveAllEntryBondModels({
-    required List<EntryBondModel> entryBonds,
-    void Function(double progress)? onProgress,
-  }) async {
-    int counter = 0;
-    for (final entryBond in entryBonds) {
-      await saveEntryBondModel(entryBondModel: entryBond);
-
-      onProgress?.call((++counter) / entryBonds.length);
-    }
   }
 
   Future<EntryBondModel> getEntryBondById({required String entryId}) async {

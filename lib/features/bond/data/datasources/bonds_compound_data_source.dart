@@ -178,7 +178,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
-    final savedData = await compoundDatabaseService.saveAll(
+    final savedData = await compoundDatabaseService.addAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,

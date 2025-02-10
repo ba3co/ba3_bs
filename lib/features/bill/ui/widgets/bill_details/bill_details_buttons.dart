@@ -18,14 +18,12 @@ class BillDetailsButtons extends StatelessWidget {
     required this.billDetailsPlutoController,
     required this.billSearchController,
     required this.billModel,
-    required this.fromBillById,
   });
 
   final BillDetailsController billDetailsController;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
   final BillModel billModel;
-  final bool fromBillById;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +122,7 @@ class BillDetailsButtons extends StatelessWidget {
           title: 'حذف',
           icon: Icons.delete_outline,
           color: Colors.red,
-          onPressed: () => billDetailsController.deleteBill(billModel, fromBillById: fromBillById),
+          onPressed: () => billDetailsController.deleteBill(billModel),
         ),
     ];
   }

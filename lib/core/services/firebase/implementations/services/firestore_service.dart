@@ -1,9 +1,11 @@
 // Firebase-Specific Implementation
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pool/pool.dart';
 
 import '../../../../models/date_filter.dart';
 
@@ -110,24 +112,46 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     required String path,
     required List<Map<String, dynamic>> data,
   }) async {
-    final batch = _firestoreInstance.batch();
-    final addedItems = <Map<String, dynamic>>[];
+    // 1. Break the data into chunks of up to 500 items
+    final chunks = data.chunkBy(500);
 
-    for (final item in data) {
-      // Generate a document ID if not already set
-      final docId = item['docId'] ?? _firestoreInstance.collection(path).doc().id;
-      item['docId'] = docId;
+    final int maxConcurrency = 5;
 
-      // Add the item to the batch
-      final docRef = _firestoreInstance.collection(path).doc(docId);
-      batch.set(docRef, item);
+    // 2. Create a Pool to limit concurrency (e.g., 5 commits at once)
+    final pool = Pool(maxConcurrency);
+    final futures = <Future<List<Map<String, dynamic>>>>[];
 
-      // Collect the processed item
-      addedItems.add(item);
+    for (final chunk in chunks) {
+      // Wrap each chunk commit in withResource()
+      final future = pool.withResource(
+        () async {
+          final batch = _firestoreInstance.batch();
+          final chunkAdded = <Map<String, dynamic>>[];
+
+          for (final item in chunk) {
+            final docId = item['docId'] ?? _firestoreInstance.collection(path).doc().id;
+            item['docId'] = docId;
+
+            final docRef = _firestoreInstance.collection(path).doc(docId);
+            batch.set(docRef, item);
+
+            chunkAdded.add(item);
+          }
+
+          await batch.commit();
+          return chunkAdded;
+        },
+      );
+
+      futures.add(future);
     }
 
-    await batch.commit();
-    return addedItems;
+    // 3. Wait for all futures to complete, then close the pool
+    final results = await Future.wait(futures);
+    await pool.close();
+
+    // 4. Flatten and return
+    return results.flatten();
   }
 
   @override
@@ -165,6 +189,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     for (final item in items) {
       // Extract the document ID
       final docId = item[docIdField];
+
       if (docId == null) {
         throw ArgumentError('Document ID is missing in one of the items');
       }

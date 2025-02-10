@@ -107,12 +107,13 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   Future<Map<String, dynamic>> _saveBillData(String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async {
     return compoundDatabaseService.add(
-        rootCollectionPath: rootCollectionPath,
-        rootDocumentId: rootDocumentId,
-        subCollectionPath: subCollectionPath,
-        subDocumentId: billId,
-        data: data,
-        metaValue: 1);
+      rootCollectionPath: rootCollectionPath,
+      rootDocumentId: rootDocumentId,
+      subCollectionPath: subCollectionPath,
+      subDocumentId: billId,
+      data: data,
+      metaValue: 1,
+    );
   }
 
   @override
@@ -156,8 +157,6 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
     required List<BillModel> items,
     void Function(double progress)? onProgress,
   }) async {
-    log('saveAllNested bills on BillCompoundDatasource length ${items.length}');
-
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
     final int totalTypes = itemIdentifiers.length;
@@ -198,12 +197,12 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   @override
   Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemIdentifier}) async {
-    log('saveAll bills length ${items.length}');
+    log('Save bills of type [${itemIdentifier.billTypeLabel}] length: ${items.length}');
 
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
-    final savedData = await compoundDatabaseService.saveAll(
+    final savedData = await compoundDatabaseService.addAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,

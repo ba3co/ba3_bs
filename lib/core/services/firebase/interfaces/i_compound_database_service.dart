@@ -33,7 +33,6 @@ abstract class ICompoundDatabaseService<T> {
     String? subDocumentId,
   });
 
-
   Future<void> update({
     required String rootCollectionPath,
     required String rootDocumentId,
@@ -57,7 +56,7 @@ abstract class ICompoundDatabaseService<T> {
     QueryFilter? countQueryFilter,
   });
 
-  Future<List<T>> saveAll({
+  Future<List<T>> addAll({
     required List<T> items,
     required String rootCollectionPath,
     required String rootDocumentId,

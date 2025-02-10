@@ -37,14 +37,14 @@ class BillLayout extends StatelessWidget {
                   onPressed: allBillsController.refreshBillsTypes,
                 ),
                 actions: [
-                  if(RoleItemType.administrator.hasAdminPermission)
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: AppButton(
-                      title: "تحميل الفواتيير",
-                      onPressed: () => allBillsController.fetchAllBillsFromLocal(),
+                  if (RoleItemType.administrator.hasAdminPermission)
+                    Padding(
+                      padding: EdgeInsets.all(8),
+                      child: AppButton(
+                        title: "تحميل الفواتيير",
+                        onPressed: () => allBillsController.fetchAllBillsFromLocal(),
+                      ),
                     ),
-                  ),
                 ],
               ),
               body: Padding(
@@ -70,6 +70,16 @@ class BillLayout extends StatelessWidget {
                   ),
                 ),
               ),
+              floatingActionButton: RoleItemType.administrator.hasAdminPermission
+                  ? FloatingActionButton(
+                      backgroundColor: Colors.blue,
+                      onPressed: () => allBillsController.fetchAllNestedBills(),
+                      child: Icon(
+                        Icons.ac_unit_rounded,
+                        color: Colors.white,
+                      ),
+                    )
+                  : null,
             ),
             LoadingDialog(
               isLoading: allBillsController.saveAllBillsRequestState.value == RequestState.loading,

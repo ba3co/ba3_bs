@@ -127,7 +127,7 @@ class MaterialController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess("تم حذف المواد بنجاح"),
+      (_) => AppUIUtils.onSuccess('تم حذف المواد بنجاح'),
     );
   }
 
@@ -172,14 +172,11 @@ class MaterialController extends GetxController with AppNavigator {
       log('Materials list is empty');
     }
 
-    // تحويل الأرقام العربية إلى إنجليزية
     query = AppServiceUtils.replaceArabicNumbersWithEnglish(query);
     String lowerQuery = query.toLowerCase().trim();
 
-    // تقسيم الإدخال إلى كلمات مع إزالة الفراغات الزائدة
-    List<String> searchParts = lowerQuery.split(RegExp(r'\s+')); // يدعم أي عدد من الفراغات
+    List<String> searchParts = lowerQuery.split(RegExp(r'\s+'));
 
-    // 1️⃣ البحث عن تطابق كامل
     var exactMatch = materials.firstWhereOrNull(
       (item) =>
           item.matName!.toLowerCase() == lowerQuery ||
@@ -188,10 +185,9 @@ class MaterialController extends GetxController with AppNavigator {
     );
 
     if (exactMatch != null) {
-      return [exactMatch]; // إرجاع المنتج المطابق فقط
+      return [exactMatch];
     }
 
-    // 2️⃣ البحث عن المنتجات التي يبدأ اسمها أو كودها بالكلمات المدخلة
     var startsWithMatches = materials
         .where(
           (item) =>
@@ -202,10 +198,9 @@ class MaterialController extends GetxController with AppNavigator {
         .toList();
 
     if (startsWithMatches.isNotEmpty) {
-      return startsWithMatches; // إرجاع المنتجات التي تبدأ بالكلمات المدخلة
+      return startsWithMatches;
     }
 
-    // 3️⃣ البحث عن أي تطابق جزئي لكل الكلمات المدخلة
     return materials
         .where(
           (item) =>
@@ -233,6 +228,11 @@ class MaterialController extends GetxController with AppNavigator {
 
   MaterialModel? getMaterialById(String id) {
     return materials.firstWhereOrNull((material) => material.id == id);
+  }
+
+  bool doesMaterialExist(String? materialName) {
+    if (materialName == null) return false;
+    return materials.any((material) => material.matName?.trim() == materialName.trim());
   }
 
   MaterialModel? getMaterialByName(name) {
@@ -382,18 +382,24 @@ class MaterialController extends GetxController with AppNavigator {
     await saveOrUpdateMaterial();
   }
 
-
   Future<void> updateMaterialByModel(MaterialModel materialModel, MaterialModel Function(MaterialModel) updateFn) async {
     materialFromHandler.init(updateFn(materialModel));
     await saveOrUpdateMaterial();
   }
 
   resetMaterialQuantityAndPrice() {
-    log( materials.where((element) => element.matQuantity != 0&& element.calcMinPrice != 0,).length.toString());
-    for (final material in materials.where((element) => element.matQuantity != 0&& element.calcMinPrice != 0,)) {
+    log(materials
+        .where(
+          (element) => element.matQuantity != 0 && element.calcMinPrice != 0,
+        )
+        .length
+        .toString());
+    for (final material in materials.where(
+      (element) => element.matQuantity != 0 && element.calcMinPrice != 0,
+    )) {
       updateMaterialByModel(
         material,
-            (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, calcMinPrice: 0),
+        (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, calcMinPrice: 0),
       );
     }
   }

@@ -22,11 +22,15 @@ class FirestoreUploader {
     int uploadedItems = 0;
 
     // Process all chunks in parallel
-    await Future.wait(chunks.map((chunk) async {
-      await _addBatch(chunk, collectionPath);
-      uploadedItems += chunk.length;
-      onProgress(uploadedItems / data.length); // Report progress
-    }));
+    await Future.wait(
+      chunks.map(
+        (chunk) async {
+          await _addBatch(chunk, collectionPath);
+          uploadedItems += chunk.length;
+          onProgress(uploadedItems / data.length); // Report progress
+        },
+      ),
+    );
   }
 
   /// Sequential approach: uploads items batch by batch in order with progress tracking.

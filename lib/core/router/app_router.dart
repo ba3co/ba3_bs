@@ -53,7 +53,6 @@ List<GetPage<dynamic>>? appRouter = [
       page: () {
         final Map<String, dynamic> arguments = Get.arguments as Map<String, dynamic>;
         return BillDetailsScreen(
-          fromBillById: arguments['fromBillById'],
           billDetailsController: arguments['billDetailsController'],
           billDetailsPlutoController: arguments['billDetailsPlutoController'],
           billSearchController: arguments['billSearchController'],
@@ -150,8 +149,6 @@ List<GetPage<dynamic>>? appRouter = [
   ),
   GetPage(
     name: AppRoutes.showUserDetails,
-
-
     page: () => const UserDetails(),
   ),
 ];

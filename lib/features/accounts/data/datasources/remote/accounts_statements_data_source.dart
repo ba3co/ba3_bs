@@ -115,8 +115,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
   }
 
   @override
-  Future<Map<AccountEntity, List<EntryBondItems>>> fetchAllNested(
-      {required List<AccountEntity> itemIdentifiers}) async {
+  Future<Map<AccountEntity, List<EntryBondItems>>> fetchAllNested({required List<AccountEntity> itemIdentifiers}) async {
     final billsByType = <AccountEntity, List<EntryBondItems>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -168,12 +167,11 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
   }
 
   @override
-  Future<List<EntryBondItems>> saveAll(
-      {required List<EntryBondItems> items, required AccountEntity itemIdentifier}) async {
+  Future<List<EntryBondItems>> saveAll({required List<EntryBondItems> items, required AccountEntity itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
-    final savedData = await compoundDatabaseService.saveAll(
+    final savedData = await compoundDatabaseService.addAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
