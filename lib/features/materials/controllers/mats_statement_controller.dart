@@ -21,16 +21,20 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
   MaterialsStatementController(this._matStatementsRepo);
 
+
   Future<void> saveAllMatsStatementsModels({
     required List<MatStatementModel> matsStatements,
     void Function(double progress)? onProgress,
   }) async {
+    log("saveAllNested");
     // 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
     final result = await _matStatementsRepo.saveAllNested(
       items: matsStatements,
       itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId),
       onProgress: onProgress
     );
+
+    log("saveAllNested");
 
     // 2. Flatten the map into a single list of MatStatementModel
     //    mapOfStatements.values is an Iterable<List<MatStatementModel>>
@@ -55,7 +59,11 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
       return;
     }
-/*    for (final material in read<MaterialController>().materials) {
+
+    log("message");
+    int completed = 0;
+    final total = allSavedStatements.length;
+    for (final material in read<MaterialController>().materials) {
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
@@ -63,13 +71,13 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
             quantity: _calculateQuantity(materialStatementList),
             currentMinPrice: _calculateMinPrice(materialStatementList));
       }
+      onProgress?.call(++completed / total);
 
-    }*/
-    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
+    }
+/*    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
 
     // 3. Update each material's quantity in parallel
-    int completed = 0;
-    final total = allSavedStatements.length;
+
 
     await Future.wait(
       allSavedStatements.map(
@@ -92,7 +100,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
           onProgress?.call(++completed / total);
         },
       ),
-    );
+    );*/
   }
 
   Future<void> deleteMatStatementModel(MatStatementModel matStatementModel) async {

@@ -103,9 +103,18 @@ class AllBillsController extends FloatingBillDetailsLauncher
       (fetchedNestedBills) => nestedBills.assignAll(fetchedNestedBills),
     );
 
-    nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
+    // nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
 
     allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
+
+    log("allNestedBills is ${allNestedBills.length}");
+    await createAndStoreMatsStatements(
+      sourceModels: allNestedBills,
+      onProgress: (progress) {
+        uploadProgress.value = progress; // Update progress
+        log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      },
+    );
     getAllNestedBillsRequestState.value = RequestState.success;
   }
 
@@ -142,13 +151,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
       );
       log("saveAllNested _billsFirebaseRepo Finished......");
 
-      await createAndStoreMatsStatements(
-        sourceModels: fetchedBills,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-      );
+      // await createAndStoreMatsStatements(
+      //   sourceModels: fetchedBills,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      // );
       //
       // await createAndStoreEntryBonds(
       //   sourceModels: fetchedBills,
