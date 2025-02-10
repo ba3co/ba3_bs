@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
@@ -114,8 +116,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
     for (var mat in materialXml) {
       String matGuid = mat.findElements('mptr').first.text;
-      String amtName = mat.findElements('MatName').first.text;
-      matNameWithId[matGuid] = amtName;
+      String matName = mat.findElements('MatName').first.text;
+      matNameWithId[matGuid] = matName;
     }
 
     Map<String, String> sellerNameID = {};
@@ -131,6 +133,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     for (var billElement in billsXml) {
       final itemsElement = billElement.findElements('Items').single;
       final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
+        log('mat guide ${iElement.findElements('MatPtr').single.text}');
         return {
           'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
           'MatName': matNameWithId[iElement.findElements('MatPtr').single.text],
