@@ -11,7 +11,6 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
@@ -75,14 +74,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) {
     if (!hasModelId(billModel.billId)) return;
 
-    // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(billModel);
-    //
-    // final entryBondModel = creator.createEntryBond(
-    //   isSimulatedVat: true,
-    //   originType: EntryBondType.bill,
-    //   model: billModel,
-    // );
-
     final entryBondModel = createSimulatedVatEntryBond(billModel);
 
     launchFloatingWindow(
@@ -92,28 +83,91 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
   }
 
-  Future<void> handleDeleteSuccess({
-    required BillModel billModel,
-    required BillSearchController billSearchController,
-    bool fromBillById = false,
-  }) async {
-    // Only fetchBills if open bill details by bill id from AllBillsScreen
-    if (fromBillById) {
-      await read<AllBillsController>().fetchAllBillsByType(billModel.billTypeModel);
-      Get.back();
-    } else {
-      billSearchController.removeBill(billModel);
-    }
+  Future<void> handleDeleteSuccess({required BillModel billModel, required BillSearchController billSearchController}) async {
+    // 1. Remove the bill locally from the search controller
+    billSearchController.removeBill(billModel);
 
+    // 2. Update previous and next bill references.
+    await _updatePreviousBillLink(billModel, billSearchController);
+    await _updateNextBillLink(billModel, billSearchController);
+
+    // 3. Show success message.
     AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
 
-    if (billModel.status == Status.approved && billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+    // 4. Clean up bonds/mats statements if this is an approved bill with materials
+    if (billModel.status == Status.approved) {
+      _handleApprovedBillDeletions(billModel);
+    }
+  }
+
+  /// Updates the reference of the previous bill to maintain correct linkage.
+  Future<void> _updatePreviousBillLink(BillModel billModel, BillSearchController billSearchController) async {
+    final previousNumber = billModel.billDetails.previous;
+    if (previousNumber == null) return;
+
+    final previousBillResult = await read<AllBillsController>().fetchBillByNumber(
+      billTypeModel: billModel.billTypeModel,
+      billNumber: previousNumber,
+    );
+
+    previousBillResult.fold(
+      (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة السابقة: ${failure.message}'),
+      (previousBills) async {
+        if (previousBills.isEmpty) return;
+
+        final oldPrevBill = previousBills.first;
+        if (oldPrevBill.billDetails.next == billModel.billDetails.billNumber) {
+          final updatedPrevBill = oldPrevBill.copyWith(
+            billDetails: oldPrevBill.billDetails.copyWith(next: billModel.billDetails.next),
+          );
+          await _updateAndNotifyBillSearch(updatedPrevBill, billSearchController);
+        }
+      },
+    );
+  }
+
+  /// Updates the reference of the next bill to maintain correct linkage.
+  Future<void> _updateNextBillLink(BillModel billModel, BillSearchController billSearchController) async {
+    final nextNumber = billModel.billDetails.next;
+    if (nextNumber == null) return;
+
+    final nextBillResult = await read<AllBillsController>().fetchBillByNumber(
+      billTypeModel: billModel.billTypeModel,
+      billNumber: nextNumber,
+    );
+
+    nextBillResult.fold(
+      (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة اللاحقة: ${failure.message}'),
+      (nextBills) async {
+        if (nextBills.isEmpty) return;
+
+        final oldNextBill = nextBills.first;
+        if (oldNextBill.billDetails.previous == billModel.billDetails.billNumber) {
+          final updatedNextBill = oldNextBill.copyWith(
+            billDetails: oldNextBill.billDetails.copyWith(previous: billModel.billDetails.previous),
+          );
+          await _updateAndNotifyBillSearch(updatedNextBill, billSearchController);
+        }
+      },
+    );
+  }
+
+  /// Updates a bill in the database and refreshes the search controller.
+  Future<void> _updateAndNotifyBillSearch(BillModel updatedBill, BillSearchController billSearchController) async {
+    final updateResult = await billDetailsController.updateOnly(updatedBill);
+    updateResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _updateBillSearchController(billSearchController, updatedBill),
+    );
+  }
+
+  /// Removes the related bond and statements if the bill is approved
+  /// and the pattern type requires a material account.
+  void _handleApprovedBillDeletions(BillModel billModel) {
+    if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
     }
-
-    if (billModel.status == Status.approved) {
-      deleteMatsStatementsModels(billModel);
-    }
+    deleteMatsStatementsModels(billModel);
   }
 
   Future<void> handleUpdateBillStatusSuccess({
@@ -125,20 +179,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     if (updatedBillModel.status == Status.approved && updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       createAndStoreEntryBond(model: updatedBillModel);
-
-      // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(updatedBillModel);
-      //
-      // entryBondController.saveEntryBondModel(
-      //   entryBondModel: creator.createEntryBond(
-      //     isSimulatedVat: false,
-      //     originType: EntryBondType.bill,
-      //     model: updatedBillModel,
-      //   ),
-      // );
     }
 
     if (updatedBillModel.status == Status.approved) {
-      generateAndSaveMatsStatements(
+      createAndStoreMatsStatements(
         sourceModels: [updatedBillModel],
         onProgress: (progress) {
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
@@ -154,13 +198,14 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // Identify accounts that are present in both bills but have changed
     final Map<String, AccountModel> modifiedAccounts = Map.fromEntries(
-      previousAccounts.entries.where((MapEntry<Account, AccountModel> previousAccount) {
-        final currentAccountModel = currentAccounts[previousAccount.key];
-        return currentAccountModel != null && currentAccountModel != previousAccount.value;
-      }).map(
-        // Use the account key's label for the map
-        (entry) => MapEntry(entry.key.label, entry.value),
-      ),
+      previousAccounts.entries.where(
+        (MapEntry<Account, AccountModel> previousAccount) {
+          final currentAccountModel = currentAccounts[previousAccount.key];
+          return currentAccountModel != null && currentAccountModel != previousAccount.value;
+        },
+      ).map(
+          // Use the account key's label for the map
+          (entry) => MapEntry(entry.key.label, entry.value)),
     );
 
     // Log modified accounts
@@ -176,11 +221,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
     final currentGroupedItems = currentBill.items.itemList.groupBy((item) => item.itemGuid);
 
-    return Map.fromEntries(
-      previousGroupedItems.entries.where(
-        (entry) => !currentGroupedItems.containsKey(entry.key),
-      ),
-    );
+    return Map.fromEntries(previousGroupedItems.entries.where((entry) => !currentGroupedItems.containsKey(entry.key)));
   }
 
   ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? findBillItemChanges({
@@ -275,7 +316,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // 7. Generate and save the material statement if the bill is approved and changes exist.
     if (currentBill.status == Status.approved && shouldGenerateMatStatement) {
-      generateAndSaveMatStatement(
+      createAndStoreMatStatement(
         model: currentBill,
         deletedMaterials: deletedMaterials,
         updatedMaterials: updatedMaterials,
@@ -393,14 +434,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       billDetails: previousBill.billDetails.copyWith(next: newBillNumber),
     );
 
-    // Attempt the update
-    final updateResult = await billDetailsController.updatePreviousBill(updatedPreviousBill);
-
-    // Either show an error or update the controller state
-    updateResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _updateBillSearchController(billSearchController, updatedPreviousBill),
-    );
+    await _updateAndNotifyBillSearch(updatedPreviousBill, billSearchController);
   }
 
   /// Returns `true` if the bill is approved and its pattern requires a material account.

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -52,18 +55,26 @@ class BillPlutoGridService {
   }
 
   void restoreCurrentCell(PlutoGridStateManager stateManager) {
-    final currentCell = stateManager.currentCell;
-    if (currentCell != null) {
-      stateManager.changeCellValue(
-        stateManager.currentRow!.cells[AppConstants.invRecProduct]!,
-        currentCell.value,
-        callOnChangedEvent: false,
-        notify: true,
-      );
-    }
+    _clearRowValues(stateManager);
+
+    // final currentCell = stateManager.currentCell;
+    // if (currentCell != null) {
+    //   stateManager.changeCellValue(
+    //     stateManager.currentRow!.cells[AppConstants.invRecProduct]!,
+    //     currentCell.value,
+    //     callOnChangedEvent: false,
+    //     notify: true,
+    //   );
+    // }
   }
 
   void updateInvoiceValuesByQuantity(int quantity, double subtotal, double vat) {
+    // Check if the material exists, otherwise clear all values
+    if (!isCurrentMaterialExisting(mainTableStateManager)) {
+      _clearRowValues(mainTableStateManager);
+      return;
+    }
+
     final isZeroSubtotal = subtotal == 0 || quantity == 0;
 
     final total = isZeroSubtotal ? '' : ((subtotal + vat) * quantity).toStringAsFixed(2);
@@ -73,6 +84,12 @@ class BillPlutoGridService {
   }
 
   void updateInvoiceValues(double subTotal, int quantity, BillTypeModel billTypeModel) {
+    // Check if the material exists, otherwise clear all values
+    if (!isCurrentMaterialExisting(mainTableStateManager)) {
+      _clearRowValues(mainTableStateManager);
+      return;
+    }
+
     final isZeroSubtotal = subTotal == 0;
 
     final subTotalStr = isZeroSubtotal ? '' : subTotal.toStringAsFixed(2);
@@ -82,15 +99,23 @@ class BillPlutoGridService {
         : billTypeModel.billPatternType!.hasVat
             ? ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2)
             : (subTotal * quantity).toStringAsFixed(2);
+
     if (billTypeModel.billPatternType!.hasVat) {
       updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
     }
+
     updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotalStr);
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, total);
     updateCellValue(mainTableStateManager, AppConstants.invRecQuantity, quantity);
   }
 
   void updateInvoiceValuesByTotal(double total, int quantity) {
+    // Check if the material exists, otherwise clear all values
+    if (!isCurrentMaterialExisting(mainTableStateManager)) {
+      _clearRowValues(mainTableStateManager);
+      return;
+    }
+
     final isZeroTotal = total == 0 || quantity == 0;
 
     final subTotalStr = isZeroTotal ? '' : (total / (quantity * 1.05)).toStringAsFixed(2);
@@ -103,11 +128,7 @@ class BillPlutoGridService {
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, totalStr);
   }
 
-  void updateInvoiceValuesBySubTotal({
-    required PlutoRow selectedRow,
-    required double subTotal,
-    required int quantity,
-  }) {
+  void updateInvoiceValuesBySubTotal({required PlutoRow selectedRow, required double subTotal, required int quantity}) {
     final isZeroSubtotal = subTotal == 0;
 
     final subTotalStr = isZeroSubtotal ? '' : subTotal.toStringAsFixed(2);
@@ -118,6 +139,19 @@ class BillPlutoGridService {
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecSubTotal, subTotalStr);
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecTotal, total);
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecQuantity, quantity);
+  }
+
+  void _clearRowValues(PlutoGridStateManager stateManager) {
+    updateCellValue(stateManager, AppConstants.invRecProduct, '');
+    updateCellValue(stateManager, AppConstants.invRecVat, '');
+    updateCellValue(stateManager, AppConstants.invRecSubTotal, '');
+    updateCellValue(stateManager, AppConstants.invRecTotal, '');
+    updateCellValue(stateManager, AppConstants.invRecQuantity, '');
+  }
+
+  bool isCurrentMaterialExisting(PlutoGridStateManager stateManager) {
+    log('isCurrentMaterialExisting for mat name: ${stateManager.currentRow!.cells[AppConstants.invRecProduct]!.value}');
+    return read<MaterialController>().doesMaterialExist(stateManager.currentRow!.cells[AppConstants.invRecProduct]!.value);
   }
 
   void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {

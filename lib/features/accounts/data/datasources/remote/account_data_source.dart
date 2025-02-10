@@ -35,7 +35,11 @@ class AccountsDatasource extends BulkSavableDatasource<AccountModel> with Firest
   Future<AccountModel> save(AccountModel item) async {
     final updatedItem = item.id == null ? await _assignAccountNumber(item) : item;
 
-    final savedData = await databaseService.add(path: path, documentId: updatedItem.id, data: updatedItem.toJson());
+    final savedData = await databaseService.add(
+      path: path,
+      documentId: updatedItem.id,
+      data: updatedItem.toJson(),
+    );
 
     return item.id == null ? AccountModel.fromJson(savedData) : updatedItem;
   }

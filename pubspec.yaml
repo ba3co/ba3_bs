@@ -53,6 +53,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
   multi_select_flutter: ^4.1.3
   shimmer: ^3.0.0
+  pool: ^1.5.1
   
 dev_dependencies:
   flutter_test:

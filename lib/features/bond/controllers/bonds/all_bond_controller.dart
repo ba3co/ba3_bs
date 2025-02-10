@@ -87,11 +87,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
             saveAllBondsRequestState.value = RequestState.loading;
 
-            await _bondsFirebaseRepo.saveAllNested(
-              bonds,
-              BondType.values,
-              (progress) {},
-            );
+            await _bondsFirebaseRepo.saveAllNested(items: bonds, itemIdentifiers: BondType.values);
             await createAndStoreEntryBonds(
               sourceModels: bonds,
               onProgress: (progress) {

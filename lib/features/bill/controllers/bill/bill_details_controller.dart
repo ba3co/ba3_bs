@@ -169,17 +169,13 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
-  Future<void> deleteBill(BillModel billModel, {bool fromBillById = false}) async {
+  Future<void> deleteBill(BillModel billModel) async {
     log('billModel json ${billModel.toJson()}');
     final result = await _billsFirebaseRepo.delete(billModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _billService.handleDeleteSuccess(
-        billModel: billModel,
-        billSearchController: billSearchController,
-        fromBillById: fromBillById,
-      ),
+      (success) => _billService.handleDeleteSuccess(billModel: billModel, billSearchController: billSearchController),
     );
   }
 
@@ -232,8 +228,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
-  Future<Either<Failure, BillModel>> updatePreviousBill(BillModel previousBill) async {
-    final result = await _billsFirebaseRepo.save(previousBill);
+  Future<Either<Failure, BillModel>> updateOnly(BillModel bill) async {
+    final result = await _billsFirebaseRepo.save(bill);
 
     return result;
   }

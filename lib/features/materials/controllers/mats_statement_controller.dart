@@ -21,34 +21,67 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
   MaterialsStatementController(this._matStatementsRepo);
 
-  Future<void> saveAllMatsStatementsModels(
-      {required List<MatStatementModel> matsStatements, void Function(double progress)? onProgress}) async {
-    int counter = 0;
+  Future<void> saveAllMatsStatementsModels({
+    required List<MatStatementModel> matsStatements,
+    void Function(double progress)? onProgress,
+  }) async {
+    // 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
+    final result = await _matStatementsRepo.saveAllNested(
+      items: matsStatements,
+      itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId),
+    );
 
-    for (final matStatement in matsStatements) {
-      await saveMatStatementModel(matStatementModel: matStatement);
-
-      onProgress?.call((++counter) / matsStatements.length);
-
-      if (matStatement.quantity! > 0) {
-        await read<MaterialController>().updateMaterialQuantityAndPrice(
-          matId: matStatement.matId!,
-          quantity: matStatement.defQuantity!,
-          quantityInStatement: matStatement.quantity!,
-          priceInStatement: matStatement.price!,
-        );
-      } else {
-        await read<MaterialController>().updateMaterialQuantity(matStatement.matId!, matStatement.defQuantity!);
-      }
-    }
-  }
-
-  Future<void> saveMatStatementModel({required MatStatementModel matStatementModel}) async {
-    final result = await _matStatementsRepo.save(matStatementModel);
-
+    // 2. Flatten the map into a single list of MatStatementModel
+    //    mapOfStatements.values is an Iterable<List<MatStatementModel>>
+    //    We expand those lists, then .toList() the result
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedStatementModel) => AppUIUtils.onSuccess('تم الحفظ بنجاح'),
+      (savedStatements) => onSaveAllMatsStatementsModelsSuccess(
+        mapOfStatements: savedStatements,
+        onProgress: onProgress,
+      ),
+    );
+  }
+
+  Future<void> onSaveAllMatsStatementsModelsSuccess({
+    required Map<String, List<MatStatementModel>> mapOfStatements,
+    void Function(double progress)? onProgress,
+  }) async {
+    final allSavedStatements = mapOfStatements.values.expand((list) => list).toList(); // List<MatStatementModel>
+
+    // If we have none, exit early
+    if (allSavedStatements.isEmpty) {
+      AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
+      return;
+    }
+
+    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
+
+    // 3. Update each material's quantity in parallel
+    int completed = 0;
+    final total = allSavedStatements.length;
+
+    await Future.wait(
+      allSavedStatements.map(
+        (statement) async {
+          if (statement.quantity != null && statement.quantity! > 0) {
+            await read<MaterialController>().updateMaterialQuantityAndPrice(
+              matId: statement.matId!,
+              quantity: statement.defQuantity!,
+              quantityInStatement: statement.quantity!,
+              priceInStatement: statement.price!,
+            );
+          } else {
+            await read<MaterialController>().updateMaterialQuantity(
+              statement.matId!,
+              statement.defQuantity!,
+            );
+          }
+
+          // Update progress after each statement finishes
+          onProgress?.call(++completed / total);
+        },
+      ),
     );
   }
 

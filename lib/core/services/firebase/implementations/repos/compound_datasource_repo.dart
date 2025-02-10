@@ -83,13 +83,11 @@ class CompoundDatasourceRepository<T, I> {
     }
   }
 
-  Future<Either<Failure, Map<I, List<T>>>> saveAllNested(
-    List<T> items,
-    List<I> itemIdentifiers,
+  Future<Either<Failure, Map<I, List<T>>>> saveAllNested({
+    required List<T> items,
+    required List<I> itemIdentifiers,
     void Function(double progress)? onProgress,
-  ) async {
-    log('saveAllNested bills on CompoundDatasourceRepository length ${items.length}');
-
+  }) async {
     try {
       final savedItems = await _dataSource.saveAllNested(items: items, itemIdentifiers: itemIdentifiers, onProgress: onProgress);
       return Right(savedItems); // Return the list of saved items

@@ -13,7 +13,7 @@ import 'mat_statement_creator.dart';
 mixin MatsStatementsGenerator {
   final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
 
-  Future<void> generateAndSaveMatsStatements({
+  Future<void> createAndStoreMatsStatements({
     required List sourceModels,
     void Function(double progress)? onProgress,
   }) async {
@@ -31,7 +31,7 @@ mixin MatsStatementsGenerator {
     ).toList();
   }
 
-  Future<void> generateAndSaveMatStatement<T>({
+  Future<void> createAndStoreMatStatement<T>({
     required T model,
     List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
@@ -39,11 +39,9 @@ mixin MatsStatementsGenerator {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
 
-
     await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
-
       final originId = matsStatementsModels.first.originId;
 
       final matStatementsToDelete = deletedMaterials.map(

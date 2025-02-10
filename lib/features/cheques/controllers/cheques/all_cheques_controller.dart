@@ -46,8 +46,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     // getAllChequesTypes();
   }
 
-  ChequesModel getChequesById(String chequesId) =>
-      chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
+  ChequesModel getChequesById(String chequesId) => chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
 
   Future<void> fetchAllChequesLocal() async {
     log('fetchAllChequesLocal');
@@ -68,11 +67,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
 
           chequesList.assignAll(fetchedCheques);
           if (chequesList.isNotEmpty) {
-            await _chequesFirebaseRepo.saveAllNested(
-              chequesList,
-              ChequesType.values,
-              (progress) {},
-            );
+            await _chequesFirebaseRepo.saveAllNested(items: chequesList, itemIdentifiers: ChequesType.values);
 
             await createAndStoreEntryBonds(sourceModels: chequesList);
           }
@@ -97,14 +92,12 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     update();
   }
 
-  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel,
-      {ChequesModel? chequesModel}) async {
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel}) async {
     await fetchAllChequesByType(chequesTypeModel);
 
     if (!context.mounted) return;
 
-    final ChequesModel lastChequesModel =
-        chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
+    final ChequesModel lastChequesModel = chequesModel ?? _chequesUtils.appendEmptyChequesModel(chequesList, chequesTypeModel);
 
     _openChequesDetailsFloatingWindow(
       context: context,
@@ -175,8 +168,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     final ChequesModel chequesModel = await fetchChequesById(chequesId, itemTypeModel);
     if (!context.mounted) return;
 
-    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
-        chequesModel: chequesModel);
+    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel);
   }
 
   Future<ChequesModel> fetchChequesById(String chequesId, ChequesType itemTypeModel) async {

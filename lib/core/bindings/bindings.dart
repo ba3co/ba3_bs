@@ -209,7 +209,7 @@ class AppBindings extends Bindings {
       billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
-      entryBondsRepo: RemoteDataSourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
+      entryBondsRepo: BulkSavableDatasourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
       accountsStatementsRepo: CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: compoundFireStoreService)),
       billImportExportRepo: ImportExportRepository(billImportService, billExportService),
       chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
@@ -302,7 +302,7 @@ class _Repositories {
   final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
   final CompoundDatasourceRepository<ChequesModel, ChequesType> chequesRepo;
 
-  final RemoteDataSourceRepository<EntryBondModel> entryBondsRepo;
+  final BulkSavableDatasourceRepository<EntryBondModel> entryBondsRepo;
   final CompoundDatasourceRepository<EntryBondItems, AccountEntity> accountsStatementsRepo;
   final ImportExportRepository<BillModel> billImportExportRepo;
   final ImportExportRepository<BondModel> bondImportExportRepo;

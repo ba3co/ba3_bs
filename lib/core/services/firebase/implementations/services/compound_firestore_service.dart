@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pool/pool.dart';
 
 import '../../../../models/date_filter.dart';
 import '../../../../models/query_filter.dart';
@@ -100,11 +101,14 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
     final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
 
-
     /// we need SetOptions(merge: true) to ensure increment or decrement
-    await docRef.set({
-      ApiConstants.metaValue: FieldValue.increment(metaValue ?? 0),
-    }, SetOptions(merge: true));
+    await docRef.set(
+      {
+        ApiConstants.metaValue: FieldValue.increment(metaValue ?? 0),
+      },
+      SetOptions(merge: true),
+    );
+
     final subDocSnapshot = await subDocRef.get();
 
     if (subDocSnapshot.exists && subDocumentId != null) {
@@ -179,59 +183,59 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     return countSnapshot.count ?? 0;
   }
 
-
   @override
-  Future<List<Map<String, dynamic>>> saveAll({
+  Future<List<Map<String, dynamic>>> addAll({
     required List<Map<String, dynamic>> items,
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
     double? metaValue,
   }) async {
-    final addedItems = <Map<String, dynamic>>[];
-
-    // Divide items into chunks of 500 using the provided chunkBy extension
+    // 1. Split items into sub-lists of size up to 500
     final chunks = items.chunkBy(500);
 
-    // Process each chunk in its own batch
-    for (final chunk in chunks) {
-      final batch = _firestoreInstance.batch();
+    final int maxConcurrency = 5;
 
-      for (final item in chunk) {
-        // Ensure the document ID is set
-        final docId = item.putIfAbsent(
-          'docId',
-              () => _firestoreInstance
-              .collection(rootCollectionPath)
-              .doc(rootDocumentId)
-              .collection(subCollectionPath)
-              .doc()
-              .id,
-        );
+    // 2. Create a Pool to limit concurrency
+    final pool = Pool(maxConcurrency);
 
-        // Create references for the sub-document and the main document
-        final subDocRef = _firestoreInstance
-            .collection(rootCollectionPath)
-            .doc(rootDocumentId)
-            .collection(subCollectionPath)
-            .doc(docId);
-        final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
+    // 3. Map each chunk to a future that writes the chunk in one batch
+    final futures = chunks.map((chunk) => pool.withResource(() async {
+          final batch = _firestoreInstance.batch();
+          final chunkAdded = <Map<String, dynamic>>[];
 
-        // Add set operations to the batch
-        batch.set(subDocRef, item);
-        batch.set(docRef, {ApiConstants.metaValue: metaValue}, SetOptions(merge: true));
+          for (final item in chunk) {
+            // Ensure the document ID is set
+            final docId = item.putIfAbsent(
+              'docId',
+              () => _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id,
+            );
 
-        // Collect the processed item
-        addedItems.add(item);
-      }
+            // Create references for the sub-document and the main document
+            final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
 
-      // Commit the batch for the current chunk
-      await batch.commit();
-    }
+            final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
 
-    return addedItems;
+            // Add set operations to the batch
+            batch.set(subDocRef, item);
+            batch.set(docRef, {ApiConstants.metaValue: metaValue}, SetOptions(merge: true));
+
+            // Collect the processed item for return
+            chunkAdded.add(item);
+          }
+
+          // Commit this chunk’s batch
+          await batch.commit();
+          return chunkAdded;
+        }));
+
+    // 4. Kick off all chunk writes in parallel, respecting concurrency limit
+    final results = await Future.wait(futures);
+
+    // 5. Close the pool (clean up) and flatten results
+    await pool.close();
+    return results.flatten();
   }
-
 
   @override
   Future<double?> fetchMetaData(
