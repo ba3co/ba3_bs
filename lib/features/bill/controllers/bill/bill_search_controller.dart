@@ -119,8 +119,6 @@ class BillSearchController extends GetxController {
         billTypeModel: billToDelete.billTypeModel,
         lastBillNumber: billToDelete.billDetails.billNumber!,
       );
-
-      //   _displayErrorMessage('لا يوجد فاتورة أخرى');
     }
   }
 
@@ -157,8 +155,6 @@ class BillSearchController extends GetxController {
   }
 
   bool _validateAndHandleBillNumber(int billNumber) {
-    log('billNumber: $billNumber');
-    log('bills.last.billDetails.billNumber: ${bills.last.billDetails.billNumber}');
     if (!_isValidBillNumber(billNumber)) {
       _showInvalidBillNumberError(billNumber);
       return false;

@@ -99,7 +99,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) => _gridService.moveToNextRow(stateManager, cellField);
 
   @override
-  void restoreCurrentCell(PlutoGridStateManager stateManager) => _gridService.restoreCurrentCell(stateManager);
+  void restoreCurrentCell(PlutoGridStateManager stateManager) => _gridService.restoreCurrentCell(stateManager, billTypeModel!);
 
   @override
   void onInit() {
@@ -159,9 +159,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     if (columnField == AppConstants.invRecSubTotal) {
       _gridService.updateInvoiceValues(subTotal, quantity, billTypeModel!);
     } else if (columnField == AppConstants.invRecTotal) {
-      _gridService.updateInvoiceValuesByTotal(total, quantity);
+      _gridService.updateInvoiceValuesByTotal(total, quantity, billTypeModel!);
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
-      _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat);
+      _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat, billTypeModel!);
     }
     if (billTypeModel?.billPatternType?.hasDiscountsAccount ?? true) {
       updateAdditionDiscountCell(computeWithVatTotal);

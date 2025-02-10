@@ -108,9 +108,6 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                   CustomIconButton(
                     disabled: billSearchController.isTail,
                     onPressed: () {
-                      log('previous: ${billSearchController.currentBill.billDetails.previous}');
-                      log('next: ${billSearchController.currentBill.billDetails.next}');
-
                       billSearchController.next();
                     },
                     icon: FaIcon(
@@ -131,9 +128,6 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                   HorizontalSpace(5),
                   CustomIconButton(
                     onPressed: () {
-                      log('previous: ${billSearchController.currentBill.billDetails.previous}');
-                      log('next: ${billSearchController.currentBill.billDetails.next}');
-
                       billSearchController.previous();
                     },
                     disabled: billSearchController.isHead,
