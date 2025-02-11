@@ -78,11 +78,13 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
         cursorHeight: 15,
         scrollPadding: EdgeInsets.zero,
 
+
         controller: widget.textEditingController,
         inputFormatters: widget.inputFormatters,
         onTap: () => widget.textEditingController.selection =
             TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
-        style: widget.textStyle ?? const TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 12),
+
         decoration: InputDecoration(
             fillColor: Colors.white,
             filled: true,
@@ -103,7 +105,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
             suffixIcon: IconButton(
               onPressed: widget.onIconPressed,
               focusNode: FocusNode(skipTraversal: true),
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search,size: 14,),
             ),
             // Add an icon as a prefix
             contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 4)

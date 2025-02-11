@@ -16,12 +16,13 @@ class FloatingWindowService {
     VoidCallback? onCloseCallback,
     double? defaultWidth,
     double? defaultHeight,
+    bool? isResizing = true,
   }) {
     final String tag = AppServiceUtils.generateUniqueTag('FloatingWindowController');
 
     // Initialize the floating window controller
     FloatingWindowController floatingWindowController =
-        _initializeFloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight, tag: tag);
+        _initializeFloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight, tag: tag,isResizing:isResizing);
 
     // Get the initial target position for the floating window
     Offset targetPositionRatio = floatingWindowController.initWindowPositionManager();
@@ -38,13 +39,13 @@ class FloatingWindowService {
   }
 
   /// Initializes and returns a new instance of [FloatingWindowController].
-  static FloatingWindowController _initializeFloatingWindowController(
-      {double? defaultWidth, double? defaultHeight, String? tag}) {
+  static FloatingWindowController _initializeFloatingWindowController({double? defaultWidth, double? defaultHeight, String? tag,bool? isResizing}) {
+
+
     // Create the controller if not already created
 
     if (!Get.isRegistered<FloatingWindowController>(tag: tag)) {
-      Get.create(() => FloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight),
-          tag: tag, permanent: false);
+      Get.create(() => FloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight,isResizing: isResizing), tag: tag, permanent: false);
     }
 
     // Return the controller instance

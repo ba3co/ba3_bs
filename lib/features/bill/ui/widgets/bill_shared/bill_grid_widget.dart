@@ -29,7 +29,8 @@ class BillGridWidget extends StatelessWidget {
         onLoaded: onLoaded,
         configuration: PlutoGridConfiguration(
           shortcut: shortCut ?? const PlutoGridShortcut(),
-          style: buildGridStyleConfig(evenRowColor: rowColor),
+          style: buildGridStyleConfig(evenRowColor: rowColor,
+          ),
           localeText: const PlutoGridLocaleText.arabic(),
         ),
         columns: columns,

@@ -17,11 +17,12 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   // Get the singleton instance of WindowPositionManager
   WindowPositionManager windowPositionManager = WindowPositionManager.instance;
 
-  FloatingWindowController({double? defaultWidth, double? defaultHeight}) {
+  FloatingWindowController({double? defaultWidth, double? defaultHeight,bool? isResizing}) {
     log('call FloatingWindowController constructor');
 
     defaultWidthRatio = defaultWidth != null ? defaultWidth / 1.sw : 0.7;
     defaultHeightRatio = defaultHeight != null ? defaultHeight / 1.sh : 0.85;
+    this.isResizing=isResizing??true;
 
     _initializeWindow(defaultHeight: defaultHeight, defaultWidth: defaultWidth);
   }

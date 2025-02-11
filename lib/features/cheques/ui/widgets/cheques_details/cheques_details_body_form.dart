@@ -68,7 +68,7 @@ class AddChequeForm extends StatelessWidget {
             FormFieldRow(
                 firstItem: SearchableAccountField(
                   label: 'الحساب',
-                  onSubmitted:  (text) async {
+                  onSubmitted: (text) async {
                     AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                       query: text,
                       context: context,
@@ -84,7 +84,7 @@ class AddChequeForm extends StatelessWidget {
                   label: "دفع إلى",
                   textEditingController: chequesDetailsController.chequesAccPtrController,
                   validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
-                  onSubmitted:  (text) async {
+                  onSubmitted: (text) async {
                     AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                       query: text,
                       context: context,
@@ -95,17 +95,22 @@ class AddChequeForm extends StatelessWidget {
                   },
                 )),
             const VerticalSpace(),
-            FormFieldRow(
-                firstItem: TextAndExpandedChildField(
-                  label: "البيان",
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text("البيان"),
+                HorizontalSpace(70),
+                Expanded(
                   child: CustomTextFieldWithoutIcon(
+                    height: 60,
                     keyboardType: TextInputType.multiline,
                     maxLine: 4,
                     textEditingController: chequesDetailsController.chequesNoteController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
-                ),
-                secondItem: const SizedBox()),
+                )
+              ],
+            )
           ],
         ),
       ),

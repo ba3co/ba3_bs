@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
@@ -29,43 +30,46 @@ class BillDetailsButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end,
-        spacing: 20,
-        runSpacing: 20,
-        children: [
-          _buildAddButton(),
-          if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
-              (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
-            _buildApprovalOrBondButton(context),
-          if (!billSearchController.isPending)
-            _buildActionButton(
-              title: 'طباعة',
-              icon: Icons.print_outlined,
-              onPressed: () => billDetailsController.printBill(
-                context: context,
-                billModel: billModel,
-                invRecords: billDetailsPlutoController.generateRecords,
+      child: SizedBox(
+        width: 1.sw,
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.end,
+          spacing: 20,
+          runSpacing: 20,
+          children: [
+            _buildAddButton(),
+            if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
+                (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
+              _buildApprovalOrBondButton(context),
+            if (!billSearchController.isPending)
+              _buildActionButton(
+                title: 'طباعة',
+                icon: Icons.print_outlined,
+                onPressed: () => billDetailsController.printBill(
+                  context: context,
+                  billModel: billModel,
+                  invRecords: billDetailsPlutoController.generateRecords,
+                ),
               ),
-            ),
-          if (!billSearchController.isPending)
-            _buildActionButton(
-              title: 'E-Invoice',
-              icon: Icons.link,
-              onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
-            ),
-          if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
-          Obx(() => !billDetailsController.isCash
-              ? AppButton(
-                  height: 20,
-                  width: 100,
-                  fontSize: 14,
-                  title: "المزيد",
-                  onPressed: () {
-                    billDetailsController.openFirstPayDialog(context);
-                  })
-              : SizedBox()),
-        ],
+            if (!billSearchController.isPending)
+              _buildActionButton(
+                title: 'E-Invoice',
+                icon: Icons.link,
+                onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
+              ),
+            if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
+            Obx(() => !billDetailsController.isCash
+                ? AppButton(
+                    height: 20,
+
+                    fontSize: 14,
+                    title: "المزيد",
+                    onPressed: () {
+                      billDetailsController.openFirstPayDialog(context);
+                    })
+                : SizedBox()),
+          ],
+        ),
       ),
     );
   }
@@ -76,7 +80,7 @@ class BillDetailsButtons extends StatelessWidget {
       return AppButton(
         title: isBillSaved ? 'جديد' : 'إضافة',
         height: 20,
-        width: 100,
+
         fontSize: 14,
         color: isBillSaved ? Colors.green : Colors.blue.shade700,
         onPressed: isBillSaved
@@ -138,7 +142,7 @@ class BillDetailsButtons extends StatelessWidget {
       title: title,
       iconData: icon,
       height: 20,
-      width: width ?? 100,
+      width: width ?? 90,
       fontSize: 14,
       color: color ?? Colors.blue.shade700,
       onPressed: onPressed,

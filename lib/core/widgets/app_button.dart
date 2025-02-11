@@ -41,7 +41,7 @@ class AppButton extends StatelessWidget {
         ),
         onPressed: onPressed,
         child: SizedBox(
-          width: width ?? 120,
+          width: width ?? 90,
           height: height ?? 35,
           child: Center(
             child: Row(
@@ -53,7 +53,7 @@ class AppButton extends StatelessWidget {
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: fontSize ?? 15),
+                        style: TextStyle(fontSize: fontSize ?? 12),
                       ),
                 if (iconData != null) Icon(iconData, size: iconSize ?? 18, color: Colors.white),
               ],

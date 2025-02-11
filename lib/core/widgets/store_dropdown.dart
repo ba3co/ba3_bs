@@ -20,7 +20,7 @@ class StoreDropdown extends StatelessWidget {
       width: width ?? Get.width * 0.45,
       child: Row(
         children: [
-          const SizedBox(width: 100, child: Text('المستودع')),
+          const SizedBox(width: 100, child: Text('المستودع',)),
           Expanded(
             child: Container(
               width: (Get.width * 0.45) - 100,
@@ -35,7 +35,7 @@ class StoreDropdown extends StatelessWidget {
                   value: storeSelectionHandler.selectedStore.value,
                   items: StoreAccount.values,
                   onChanged: storeSelectionHandler.onSelectedStoreChanged,
-                  textStyle: const TextStyle(fontSize: 14),
+                  textStyle: const TextStyle(fontSize: 12),
                   itemLabelBuilder: (store) => store.value,
                   height: AppConstants.constHeightTextField,
                   decoration: BoxDecoration(

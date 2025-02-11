@@ -137,8 +137,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
 
     launchFloatingWindow(
       context: context,
-      defaultHeight: 600,
-      defaultWidth: 600,
+      defaultHeight: 300,
+      defaultWidth: 800,
+      isResizing: false,
       minimizedTitle: ChequesType.byTypeGuide(lastChequesModel.chequesTypeGuid!).value,
       floatingScreen: ChequesDetailsScreen(
         tag: controllerTag,

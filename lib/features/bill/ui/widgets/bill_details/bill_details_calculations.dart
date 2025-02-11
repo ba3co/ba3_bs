@@ -24,35 +24,39 @@ class BillDetailsCalculations extends StatelessWidget {
     return GetBuilder<BillDetailsPlutoController>(
       tag: tag,
       builder: (_) => Wrap(
-        crossAxisAlignment: WrapCrossAlignment.end,
+        crossAxisAlignment: WrapCrossAlignment.start,
         alignment: WrapAlignment.end,
-        runSpacing: 10.0,
+        runSpacing: 5.0,
+        spacing: 5,
         children: [
           CalculationCard(
             visible: billTypeModel.billPatternType!.hasVat,
-            height: 60.h,
+            height: 40.h,
+            width: 40.0.w,
             color: Colors.blueGrey.shade400,
             value: billDetailsPlutoController.computeTotalVat.toStringAsFixed(2),
             label: 'القيمة المضافة',
           ),
           CalculationCard(
             visible: billTypeModel.billPatternType!.hasVat,
-            height: 60.h,
+            height: 40.h,
+            width: 40.0.w,
             color: Colors.blueGrey.shade400,
             value: billDetailsPlutoController.computeBeforeVatTotal.toStringAsFixed(2),
             label: 'المجموع قبل الضريبة',
           ),
           CalculationCard(
             visible: billTypeModel.billPatternType!.hasVat,
-            height: 60.h,
+            height: 40.h,
+            width: 40.0.w,
             color: Colors.grey.shade600,
             value: billDetailsPlutoController.computeWithVatTotal.toStringAsFixed(2),
             label: 'النهائي الجزئي',
           ),
           CalculationCard(
 
-            width: 60.0.w,
-            height: 60.h,
+            width: 40.0.w,
+            height: 40.h,
             color: Colors.blue,
             value: billDetailsPlutoController.calculateFinalTotal.toStringAsFixed(2),
             label: 'النهائي',

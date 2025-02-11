@@ -11,6 +11,7 @@ mixin FloatingLauncher {
     VoidCallback? onCloseCallback,
     double? defaultHeight,
     double? defaultWidth,
+    bool? isResizing
   }) {
     FloatingWindowService.launchFloatingWindow(
       context: context,
@@ -19,6 +20,8 @@ mixin FloatingLauncher {
       minimizedTitle: minimizedTitle,
       defaultHeight: defaultHeight,
       defaultWidth: defaultWidth,
+      isResizing: isResizing
+
     );
   }
 }

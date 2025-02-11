@@ -3,6 +3,8 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 PlutoGridStyleConfig buildGridStyleConfig({evenRowColor}) {
   return PlutoGridStyleConfig(
+    rowHeight: 30,
+    columnHeight: 30,
     evenRowColor: _getEvenRowColor(evenRowColor: evenRowColor),
     columnTextStyle: _getColumnTextStyle(),
     activatedColor: _getActivatedColor(),
@@ -19,7 +21,7 @@ Color _getEvenRowColor({Color? evenRowColor}) {
 TextStyle _getColumnTextStyle() {
   return const TextStyle(
     color: Colors.black,
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: FontWeight.bold,
   );
 }
@@ -31,7 +33,7 @@ Color _getActivatedColor() {
 TextStyle _getCellTextStyle() {
   return const TextStyle(
     color: Colors.black,
-    fontSize: 14,
+    fontSize: 12,
   );
 }
 

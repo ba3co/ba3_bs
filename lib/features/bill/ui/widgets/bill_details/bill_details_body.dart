@@ -30,55 +30,56 @@ class BillDetailsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const VerticalSpace(),
-        Expanded(
-          flex: 2,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
-            child: GetBuilder<BillDetailsPlutoController>(
-                tag: tag,
-                builder: (_) {
-                  return FocusScope(
-                    autofocus: true,
-                    child: PlutoWithEdite(
-                      columns: billDetailsPlutoController.recordsTableColumns,
-                      rows: billDetailsPlutoController.recordsTableRows,
-                      onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
-                        billDetailsPlutoController.onMainTableRowSecondaryTap(event, context);
-                      },
-                      onChanged: billDetailsPlutoController.onMainTableStateManagerChanged,
-                      onLoaded: billDetailsPlutoController.onMainTableLoaded,
-                      shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),
-                      evenRowColor: Color(billTypeModel.color!),
-                    ),
-                  );
-                }),
+    return Expanded(
+      child: Column(
+        children: [
+      
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              child: GetBuilder<BillDetailsPlutoController>(
+                  tag: tag,
+                  builder: (_) {
+                    return FocusScope(
+                      autofocus: true,
+                      child: PlutoWithEdite(
+                        columns: billDetailsPlutoController.recordsTableColumns,
+                        rows: billDetailsPlutoController.recordsTableRows,
+                        onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
+                          billDetailsPlutoController.onMainTableRowSecondaryTap(event, context);
+                        },
+                        onChanged: billDetailsPlutoController.onMainTableStateManagerChanged,
+                        onLoaded: billDetailsPlutoController.onMainTableLoaded,
+                        shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),
+                        evenRowColor: Color(billTypeModel.color!),
+                      ),
+                    );
+                  }),
+            ),
           ),
-        ),
-        const VerticalSpace(),
-        if(billTypeModel.billPatternType?.hasDiscountsAccount??true)
-        GetBuilder<BillDetailsPlutoController>(
-            tag: tag,
-            builder: (_) {
-              return Expanded(
-                flex: 1,
-                child: BillGridWidget(
-                  rowColor: Colors.grey,
-                  columns: billDetailsPlutoController.additionsDiscountsColumns,
-                  rows: billDetailsPlutoController.additionsDiscountsRows,
-                  onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
-                  onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
-                  shortCut: customPlutoShortcut(GetAccountsByEnterAction(
-                    plutoController: billDetailsPlutoController,
-                    textFieldName: AppConstants.id,
-                    context: context,
-                  )),
-                ),
-              );
-            }),
-      ],
+          const VerticalSpace(5),
+          if(billTypeModel.billPatternType?.hasDiscountsAccount??true)
+            SizedBox(
+              height: 100,
+              child: GetBuilder<BillDetailsPlutoController>(
+                  tag: tag,
+                  builder: (_) {
+                    return BillGridWidget(
+                      rowColor: Colors.grey,
+                      columns: billDetailsPlutoController.additionsDiscountsColumns,
+                      rows: billDetailsPlutoController.additionsDiscountsRows,
+                      onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
+                      onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
+                      shortCut: customPlutoShortcut(GetAccountsByEnterAction(
+                        plutoController: billDetailsPlutoController,
+                        textFieldName: AppConstants.id,
+                        context: context,
+                      )),
+                    );
+                  }),
+            ),
+        ],
+      ),
     );
   }
 }

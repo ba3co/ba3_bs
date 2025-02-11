@@ -45,7 +45,7 @@ class DrawerListTile extends StatelessWidget {
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
                   color: index == tabIndex ? AppColors.whiteColor : AppColors.grayColor,
                 ),

@@ -32,7 +32,7 @@ class BillDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Form(
         key: billDetailsController.formKey,
         child: Column(
@@ -51,7 +51,7 @@ class BillDetailsHeader extends StatelessWidget {
               ),
               secondItem: StoreDropdown(storeSelectionHandler: billDetailsController),
             ),
-            const VerticalSpace(8),
+            const VerticalSpace(5),
             FormFieldRow(
               visible: billModel.billTypeModel.billPatternType?.hasCashesAccount,
               firstItem: TextAndExpandedChildField(
@@ -76,7 +76,7 @@ class BillDetailsHeader extends StatelessWidget {
                 },
               ),
             ),
-            const VerticalSpace(8),
+            const VerticalSpace(5),
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: 'البائع',

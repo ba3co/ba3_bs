@@ -47,46 +47,33 @@ class BillDetailsScreen extends StatelessWidget {
                     billDetailsController: billDetailsController,
                     billSearchController: billSearchController,
                   ),
-                  body: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          children: [
-                            BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
-                            const VerticalSpace(5),
-                          ],
+                  body: Column(
+                    children: [
+                      BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
+                      VerticalSpace(5),
+                      ...[
+                        BillDetailsBody(
+                          billTypeModel: currentBill.billTypeModel,
+                          billDetailsController: billDetailsController,
+                          billDetailsPlutoController: billDetailsPlutoController,
+                          tag: tag,
                         ),
-                      ),
-                      SliverFillRemaining(
-                        hasScrollBody: true,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                                child: BillDetailsBody(
+                        const VerticalSpace(10),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: BillDetailsCalculations(
                               billTypeModel: currentBill.billTypeModel,
-                              billDetailsController: billDetailsController,
                               billDetailsPlutoController: billDetailsPlutoController,
                               tag: tag,
                             )),
-                            const VerticalSpace(10),
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: BillDetailsCalculations(
-                                  billTypeModel: currentBill.billTypeModel,
-                                  billDetailsPlutoController: billDetailsPlutoController,
-                                  tag: tag,
-                                )),
-                            const Divider(height: 10),
-                            BillDetailsButtons(
-                              billDetailsController: billDetailsController,
-                              billDetailsPlutoController: billDetailsPlutoController,
-                              billSearchController: billSearchController,
-                              billModel: currentBill,
-                            ),
-                          ],
+                        const Divider(height: 10),
+                        BillDetailsButtons(
+                          billDetailsController: billDetailsController,
+                          billDetailsPlutoController: billDetailsPlutoController,
+                          billSearchController: billSearchController,
+                          billModel: currentBill,
                         ),
-                      ),
+                      ]
                     ],
                   ),
                 );
