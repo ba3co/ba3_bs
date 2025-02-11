@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+class _CopyWithSentinel {}
+
 class BillDetails with EquatableMixin {
   final String? billGuid;
   final int? billPayType;
@@ -114,42 +116,46 @@ class BillDetails with EquatableMixin {
         'billFirstPay': billFirstPay,
       };
 
+  // The magic: each field is an Object? that defaults to _CopyWithSentinel,
+  // so we know whether the user passed a new value, or not.
   BillDetails copyWith({
-    final String? billGuid,
-    final int? billPayType,
-    final int? billNumber,
-    final int? previous,
-    final int? next,
-    final DateTime? billDate,
-    final String? billNote,
-    final String? billCustomerId,
-    final String? billSellerId,
-    final double? billTotal,
-    final double? billVatTotal,
-    final double? billBeforeVatTotal,
-    final double? billGiftsTotal,
-    final double? billDiscountsTotal,
-    final double? billAdditionsTotal,
-    final double? billFirstPay,
-  }) =>
-      BillDetails(
-        billGuid: billGuid ?? this.billGuid,
-        billPayType: billPayType ?? this.billPayType,
-        billNumber: billNumber ?? this.billNumber,
-        previous: previous ?? this.previous,
-        next: next ?? this.next,
-        billDate: billDate ?? this.billDate,
-        billNote: billNote ?? this.billNote,
-        billTotal: billTotal ?? this.billTotal,
-        billVatTotal: billVatTotal ?? this.billVatTotal,
-        billBeforeVatTotal: billBeforeVatTotal ?? this.billBeforeVatTotal,
-        billCustomerId: billCustomerId ?? this.billCustomerId,
-        billSellerId: billSellerId ?? this.billSellerId,
-        billDiscountsTotal: billDiscountsTotal ?? this.billDiscountsTotal,
-        billGiftsTotal: billGiftsTotal ?? this.billGiftsTotal,
-        billAdditionsTotal: billAdditionsTotal ?? this.billAdditionsTotal,
-        billFirstPay: billFirstPay ?? this.billFirstPay,
-      );
+    Object? billGuid = _CopyWithSentinel,
+    Object? billPayType = _CopyWithSentinel,
+    Object? billNumber = _CopyWithSentinel,
+    Object? previous = _CopyWithSentinel,
+    Object? next = _CopyWithSentinel,
+    Object? billDate = _CopyWithSentinel,
+    Object? billNote = _CopyWithSentinel,
+    Object? billSellerId = _CopyWithSentinel,
+    Object? billCustomerId = _CopyWithSentinel,
+    Object? billTotal = _CopyWithSentinel,
+    Object? billVatTotal = _CopyWithSentinel,
+    Object? billBeforeVatTotal = _CopyWithSentinel,
+    Object? billGiftsTotal = _CopyWithSentinel,
+    Object? billDiscountsTotal = _CopyWithSentinel,
+    Object? billAdditionsTotal = _CopyWithSentinel,
+    Object? billFirstPay = _CopyWithSentinel,
+  }) {
+    return BillDetails(
+      billGuid: billGuid == _CopyWithSentinel ? this.billGuid : billGuid as String?,
+      billPayType: billPayType == _CopyWithSentinel ? this.billPayType : billPayType as int?,
+      billNumber: billNumber == _CopyWithSentinel ? this.billNumber : billNumber as int?,
+      previous: previous == _CopyWithSentinel ? this.previous : previous as int?,
+      next: next == _CopyWithSentinel ? this.next : next as int?,
+      // Now if next is passed as null, it will become null
+      billDate: billDate == _CopyWithSentinel ? this.billDate : billDate as DateTime?,
+      billNote: billNote == _CopyWithSentinel ? this.billNote : billNote as String?,
+      billSellerId: billSellerId == _CopyWithSentinel ? this.billSellerId : billSellerId as String?,
+      billCustomerId: billCustomerId == _CopyWithSentinel ? this.billCustomerId : billCustomerId as String?,
+      billTotal: billTotal == _CopyWithSentinel ? this.billTotal : billTotal as double?,
+      billVatTotal: billVatTotal == _CopyWithSentinel ? this.billVatTotal : billVatTotal as double?,
+      billBeforeVatTotal: billBeforeVatTotal == _CopyWithSentinel ? this.billBeforeVatTotal : billBeforeVatTotal as double?,
+      billGiftsTotal: billGiftsTotal == _CopyWithSentinel ? this.billGiftsTotal : billGiftsTotal as double?,
+      billDiscountsTotal: billDiscountsTotal == _CopyWithSentinel ? this.billDiscountsTotal : billDiscountsTotal as double?,
+      billAdditionsTotal: billAdditionsTotal == _CopyWithSentinel ? this.billAdditionsTotal : billAdditionsTotal as double?,
+      billFirstPay: billFirstPay == _CopyWithSentinel ? this.billFirstPay : billFirstPay as double?,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -168,5 +174,6 @@ class BillDetails with EquatableMixin {
         billGiftsTotal,
         billDiscountsTotal,
         billAdditionsTotal,
+        billFirstPay,
       ];
 }

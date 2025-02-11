@@ -16,7 +16,10 @@ class BillUtils {
 
   List<BillModel> appendEmptyBillModelNew(BillTypeModel billTypeModel, int lastBillNumber) {
     final List<BillModel> bills = [];
-    final emptyBillModel = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
+    final emptyBillModel = BillModel.empty(
+      billTypeModel: billTypeModel,
+      lastBillNumber: lastBillNumber,
+    );
 
     bills.add(emptyBillModel);
     return bills;

@@ -53,6 +53,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billDetails: BillDetails(
           billPayType: InvPayType.cash.index,
           billDate: DateTime.now(),
+          previous: lastBillNumber == 0 ? null : lastBillNumber,
           billNumber: lastBillNumber + 1,
         ),
       );
@@ -379,5 +380,6 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billTypeModel,
         items,
         billDetails,
+        status,
       ];
 }

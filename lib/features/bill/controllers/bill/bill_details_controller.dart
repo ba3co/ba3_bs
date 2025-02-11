@@ -192,7 +192,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     if (!validateForm()) return;
 
     // 2. Create the bill model or handle failure and exit
-    final updatedBillModel = await _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
+    final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
     if (updatedBillModel == null) return;
 
     // Ensure there are bill items
@@ -242,8 +242,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
-  Future<BillModel?> _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) async {
-    final updatedBillModel = await _createBillModelFromBillData(billTypeModel, existingBill);
+  BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
+    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
     if (updatedBillModel == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
@@ -253,7 +253,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     return updatedBillModel;
   }
 
-  Future<BillModel?> _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) async {
+  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
     final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts

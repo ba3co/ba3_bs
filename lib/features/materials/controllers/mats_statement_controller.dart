@@ -91,9 +91,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
-            matId: material.id!,
-            quantity: _calculateQuantity(materialStatementList),
-            currentMinPrice: _calculateMinPrice(materialStatementList));
+            matId: material.id!, quantity: _calculateQuantity(materialStatementList), currentMinPrice: _calculateMinPrice(materialStatementList));
       }
     }
   }
