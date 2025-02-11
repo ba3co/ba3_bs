@@ -24,6 +24,8 @@ class BillPlutoUtils {
         return double.tryParse(materialModel.wholesalePrice ?? '') ?? 0;
       case PriceType.retail:
         return double.tryParse(materialModel.retailPrice ?? '') ?? 0;
+      case PriceType.mainPrice:
+        return double.tryParse(materialModel.calcMinPrice.toString()) ?? 0;
     }
   }
 
