@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/searchable_material_field.dart';
 import 'package:ba3_bs/core/widgets/tax_dropdown.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
@@ -30,7 +31,7 @@ class AddMaterialScreen extends StatelessWidget {
               FormFieldRow(
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
-                  label: "المجموعة",
+                  label: AppStrings().group,
                   textController: controller.materialFromHandler.parentController,
                   onSubmitted: (text) {
                     controller.openMaterialSelectionDialog(
@@ -42,7 +43,7 @@ class AddMaterialScreen extends StatelessWidget {
                 ),
               ),
               AppButton(
-                title: controller.selectedMaterial?.id == null ? 'إضافة' : 'تعديل',
+                title: controller.selectedMaterial?.id == null ?AppStrings().add : AppStrings().edit,
                 onPressed: () {
                   controller.saveOrUpdateMaterial();
                 },
@@ -50,7 +51,7 @@ class AddMaterialScreen extends StatelessWidget {
                 color: controller.selectedMaterial?.id == null ? null : Colors.green,
               ),
               AppButton(
-                title: 'حذف',
+                title: AppStrings().delete,
                 onPressed: () {
                   controller.deleteMaterial();
                 },

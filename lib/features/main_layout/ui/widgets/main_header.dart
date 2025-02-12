@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/styling/app_colors.dart';
+import '../../../../core/widgets/language_dropdown.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
 
 class MainHeader extends StatelessWidget {
@@ -15,7 +17,7 @@ class MainHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing:(Platform.isWindows || Platform.isMacOS)? 10:4,
+      spacing:4,
       children: [
         SizedBox(
           height:(Platform.isWindows || Platform.isMacOS)?  0.025.sh:0.035.sh,
@@ -23,7 +25,7 @@ class MainHeader extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                'المستخدم: ',
+                '${AppStrings().user}: ',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
@@ -56,8 +58,8 @@ class MainHeader extends StatelessWidget {
             width: 0.15.sw,
             alignment: Alignment.center,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: AppColors.blueColor),
-            child: const Text(
-              'تسجيل الخروج',
+            child:  Text(
+              AppStrings().logout,
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
@@ -66,6 +68,7 @@ class MainHeader extends StatelessWidget {
             ),
           ),
         ),
+        LanguageDropdown(),
       ],
     );
   }

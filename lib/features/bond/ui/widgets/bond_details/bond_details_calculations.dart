@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
@@ -23,10 +24,10 @@ class BondDetailsCalculations extends StatelessWidget {
               width: 350,
               child: Row(
                 children: [
-                  const SizedBox(
+                   SizedBox(
                       width: 100,
                       child: Text(
-                        "المجموع",
+                       AppStrings().total,
                       )),
                   Container(width: 120, color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondDetailsPlutoController.calcDebitTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
                   const SizedBox(width: 10),
@@ -41,7 +42,7 @@ class BondDetailsCalculations extends StatelessWidget {
               width: 350,
               child: Row(
                 children: [
-                  const SizedBox(width: 100, child: Text("الفرق")),
+                   SizedBox(width: 100, child: Text(AppStrings().difference)),
                   Container(
                       width: 250,
                       color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,

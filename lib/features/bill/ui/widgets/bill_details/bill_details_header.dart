@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
@@ -39,7 +40,7 @@ class BillDetailsHeader extends StatelessWidget {
           children: [
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
-                label: 'تاريخ الفاتورة',
+                label: AppStrings().billDate,
                 child: Obx(() {
                   return DatePicker(
                     initDate: billDetailsController.billDate.value.dayMonthYear,
@@ -55,14 +56,14 @@ class BillDetailsHeader extends StatelessWidget {
             FormFieldRow(
               visible: billModel.billTypeModel.billPatternType?.hasCashesAccount,
               firstItem: TextAndExpandedChildField(
-                label: 'رقم الجوال',
+                label: AppStrings().mobileNumber,
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: billDetailsController.mobileNumberController,
                   // suffixIcon: const SizedBox.shrink(),
                 ),
               ),
               secondItem: SearchableAccountField(
-                label: 'حساب العميل',
+                label: AppStrings().customerAccount,
                 textEditingController: billDetailsController.customerAccountController,
                 validator: (value) => billDetailsController.validator(value, 'حساب العميل'),
                 onSubmitted: (text) async {
@@ -79,7 +80,7 @@ class BillDetailsHeader extends StatelessWidget {
             const VerticalSpace(5),
             FormFieldRow(
               firstItem: SearchableAccountField(
-                label: 'البائع',
+                label: AppStrings().seller,
                 readOnly: !RoleItemType.viewBill.hasReadPermission,
                 textEditingController: billDetailsController.sellerAccountController,
                 validator: (value) => billDetailsController.validator(value, 'البائع'),
@@ -92,7 +93,7 @@ class BillDetailsHeader extends StatelessWidget {
                 },
               ),
               secondItem: TextAndExpandedChildField(
-                label: 'البيان',
+                label: AppStrings().illustration,
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: billDetailsController.noteController,
                   suffixIcon: const SizedBox.shrink(),

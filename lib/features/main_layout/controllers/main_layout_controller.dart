@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/sellers_layout.dart';
 import 'package:ba3_bs/features/user_time/ui/screens/all_attendance_screen.dart';
@@ -16,10 +17,10 @@ import '../../user_time/ui/screens/user_time_details.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
 
 class MainLayoutController extends GetxController {
-  List<({String name, Widget layout, RoleItemType role, String icon, String unSelectedIcon})> appLayouts = [
+  RxList<({String name, Widget layout, RoleItemType role, String icon, String unSelectedIcon})> appLayouts = [
     if (RoleItemType.viewBill.hasReadPermission)
       (
-        name: 'الفواتير',
+        name: AppStrings().bills,
         layout: const BillLayout(),
         role: RoleItemType.viewBill,
         icon: AppAssets.billsIcon,
@@ -27,7 +28,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewPattern.hasReadPermission)
       (
-        name: 'أنماط البيع',
+        name: '${AppStrings().patterns} ${AppStrings().al+AppStrings().sell}',
         layout: const PatternLayout(),
         role: RoleItemType.viewPattern,
         icon: AppAssets.patternsIcon,
@@ -35,7 +36,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewProduct.hasReadPermission)
       (
-        name: 'المواد',
+        name:AppStrings().materials,
         layout: const MaterialLayout(),
         role: RoleItemType.viewProduct,
         icon: AppAssets.materialIcon,
@@ -43,7 +44,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewAccount.hasReadPermission)
       (
-        name: 'الحسابات',
+        name:AppStrings().accounts,
         layout: const AccountLayout(),
         role: RoleItemType.viewAccount,
         icon: AppAssets.accountsIcon,
@@ -51,7 +52,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewBond.hasReadPermission)
       (
-        name: 'السندات',
+        name: AppStrings().bonds,
         layout: const BondLayout(),
         role: RoleItemType.viewBond,
         icon: AppAssets.bondsIcon,
@@ -59,7 +60,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewCheques.hasReadPermission)
       (
-        name: 'الشيكات',
+        name: AppStrings().cheques,
         layout: const ChequeLayout(),
         role: RoleItemType.viewCheques,
         icon: AppAssets.chequesIcon,
@@ -67,7 +68,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewSellers.hasReadPermission)
       (
-        name: 'البائعون',
+        name: AppStrings().sellers,
         layout: const SellersLayout(),
         role: RoleItemType.viewSellers,
         icon: AppAssets.accountsIcon,
@@ -75,14 +76,14 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewUserManagement.hasAdminPermission)
       (
-        name: 'إدارة المستخدمين',
+        name: '${AppStrings().administration} ${AppStrings().users}',
         layout: const UserManagementLayout(),
         role: RoleItemType.viewUserManagement,
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon
       ),
     (
-      name: 'الدوام',
+      name: AppStrings().work,
       layout: const UserTimeDetails(),
       role: RoleItemType.viewTime,
       icon: AppAssets.usersTimeIcon,
@@ -91,13 +92,15 @@ class MainLayoutController extends GetxController {
 
     if (RoleItemType.administrator.hasReadPermission)
       (
-      name: 'لوحة التحكم',
+      name: '${AppStrings().panel} ${AppStrings().control}',
       layout: const AllAttendanceScreen(),
       role: RoleItemType.administrator,
       icon: AppAssets.billsIcon,
       unSelectedIcon: AppAssets.billsUnselectedIcon
       ),
-  ];
+
+
+  ].obs;
 
   PageController pageController = PageController();
 
@@ -107,4 +110,33 @@ class MainLayoutController extends GetxController {
     tabIndex = index;
     update();
   }
+
+  String getLanguageName(Locale locale) {
+    switch (locale.toString()) {
+      case 'en_US':
+        return "English";
+      case 'ar_AR':
+        return "العربية";
+      case 'ur_PK':
+        return "اردو";
+      default:
+        return locale.toString();
+    }
+  }
+
+  String getFlagAsset(Locale locale) {
+    switch (locale.toString()) {
+      case 'en_US':
+        return AppAssets.enFlag;
+      case 'ar_AR':
+        return AppAssets.arFlag;
+      case 'ur_PK':
+        return AppAssets.urFlag;
+      default:
+        return AppAssets.enFlag;
+    }
+  }
+  Locale get currentLocale => Get.locale ?? Locale('en', 'US');
+  bool get currentLocaleIsArabic =>  currentLocale!= Locale('en', 'US');
+
 }

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../../../core/widgets/app_button.dart';
@@ -14,13 +15,13 @@ class AddAccountButtonsWidget extends StatelessWidget {
       spacing: 20,
       children: [
         AppButton(
-            title: controller.isEditAccount ? 'تعديل' : 'اضافة',
+            title: controller.isEditAccount ? AppStrings().edit : AppStrings().add,
             onPressed: () {
               controller.saveOrUpdateAccount();
             }),
         if (controller.isEditAccount)
           AppButton(
-              title: 'حذف',
+              title: AppStrings().delete,
               onPressed: () {
                 controller.deleteAccount();
               }),

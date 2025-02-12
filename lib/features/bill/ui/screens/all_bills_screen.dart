@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,7 +13,7 @@ class AllBillsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AllBillsController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: 'جميع الفواتير',
+        title: AppStrings().allBills,
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells['billId']?.value;

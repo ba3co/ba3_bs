@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,7 @@ class AddAccountScreen extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                controller.isEditAccount ? controller.selectedAccount!.accName! : "بطاقة حساب",
+                controller.isEditAccount ? controller.selectedAccount!.accName! :AppStrings().accountCard,
               ),
               Spacer(),
               SizedBox(

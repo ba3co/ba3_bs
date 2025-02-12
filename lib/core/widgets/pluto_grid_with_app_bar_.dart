@@ -70,7 +70,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                     evenRowColor: Colors.blueAccent.withAlpha(127),
                     cellTextStyle: TextStyle(fontFamily: 'Almarai')
                   ),
-                  localeText: const PlutoGridLocaleText.arabic(),
+                  localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
                 ),
                 createFooter: (stateManager) {
                   stateManager.setPageSize(100, notify: false);

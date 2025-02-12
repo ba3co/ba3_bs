@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,8 +19,8 @@ class SellerTargetScreen extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 actions: const [],
-                title: const Text(
-                  'لوحة الانجازات',
+                title:  Text(
+                  '${AppStrings().panel} ${AppStrings().achievements}',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -29,8 +30,8 @@ class SellerTargetScreen extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          const Text(
-                            'تارغيت الجوالات ',
+                           Text(
+                            '${AppStrings().target} ${AppStrings().mobiles}',
                             style: TextStyle(fontSize: 22),
                           ),
                           SizedBox(
@@ -47,8 +48,9 @@ class SellerTargetScreen extends StatelessWidget {
                       ),
                       Column(
                         children: [
-                          const Text(
-                            'تارغيت الاكسسوارات ',
+                           Text(
+                            '${AppStrings().target} ${AppStrings().accessories}'
+                        ,
                             style: TextStyle(fontSize: 22),
                           ),
                           SizedBox(

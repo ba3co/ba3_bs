@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class AddSellerScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("الاسم"),
+                        Text(AutofillHints.name),
                         HorizontalSpace(20),
                         Expanded(
                           child: CustomTextFieldWithoutIcon(
@@ -47,7 +48,7 @@ class AddSellerScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('الرمز'),
+                        Text(AppStrings().code),
                         HorizontalSpace(20),
                         Expanded(
                           child: CustomTextFieldWithoutIcon(
@@ -65,7 +66,7 @@ class AddSellerScreen extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(bottom: .15.sh),
                   child: AppButton(
-                    title: controller.selectedSellerModel?.costGuid == null ? 'إضافة' : 'تعديل',
+                    title: controller.selectedSellerModel?.costGuid == null ? AppStrings().add : AppStrings().edit,
                     onPressed: () {
                       controller.saveOrUpdateSeller();
                     },

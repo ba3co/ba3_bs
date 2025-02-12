@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
@@ -23,45 +24,49 @@ class BillDetailsCalculations extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<BillDetailsPlutoController>(
       tag: tag,
-      builder: (_) => Wrap(
-        crossAxisAlignment: WrapCrossAlignment.start,
-        alignment: WrapAlignment.end,
-        runSpacing: 5.0,
-        spacing: 5,
-        children: [
-          CalculationCard(
-            visible: billTypeModel.billPatternType!.hasVat,
-            height: 40.h,
-            width: 40.0.w,
-            color: Colors.blueGrey.shade400,
-            value: billDetailsPlutoController.computeTotalVat.toStringAsFixed(2),
-            label: 'القيمة المضافة',
-          ),
-          CalculationCard(
-            visible: billTypeModel.billPatternType!.hasVat,
-            height: 40.h,
-            width: 40.0.w,
-            color: Colors.blueGrey.shade400,
-            value: billDetailsPlutoController.computeBeforeVatTotal.toStringAsFixed(2),
-            label: 'المجموع قبل الضريبة',
-          ),
-          CalculationCard(
-            visible: billTypeModel.billPatternType!.hasVat,
-            height: 40.h,
-            width: 40.0.w,
-            color: Colors.grey.shade600,
-            value: billDetailsPlutoController.computeWithVatTotal.toStringAsFixed(2),
-            label: 'النهائي الجزئي',
-          ),
-          CalculationCard(
+      builder: (_) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Wrap(
 
-            width: 40.0.w,
-            height: 40.h,
-            color: Colors.blue,
-            value: billDetailsPlutoController.calculateFinalTotal.toStringAsFixed(2),
-            label: 'النهائي',
-          ),
-        ],
+          crossAxisAlignment: WrapCrossAlignment.start,
+          alignment: WrapAlignment.end,
+          runSpacing: 5.0,
+          spacing: 5,
+          children: [
+            CalculationCard(
+              visible: billTypeModel.billPatternType!.hasVat,
+              height: 40.h,
+              width: 40.0.w,
+              color: Colors.blueGrey.shade400,
+              value: billDetailsPlutoController.computeTotalVat.toStringAsFixed(2),
+              label: AppStrings().addedValue,
+            ),
+            CalculationCard(
+              visible: billTypeModel.billPatternType!.hasVat,
+              height: 40.h,
+              width: 40.0.w,
+              color: Colors.blueGrey.shade400,
+              value: billDetailsPlutoController.computeBeforeVatTotal.toStringAsFixed(2),
+              label: AppStrings().totalBeforeTax,
+            ),
+            CalculationCard(
+              visible: billTypeModel.billPatternType!.hasVat,
+              height: 40.h,
+              width: 40.0.w,
+              color: Colors.grey.shade600,
+              value: billDetailsPlutoController.computeWithVatTotal.toStringAsFixed(2),
+              label: AppStrings().subtotal,
+            ),
+            CalculationCard(
+
+              width: 40.0.w,
+              height: 40.h,
+              color: Colors.blue,
+              value: billDetailsPlutoController.calculateFinalTotal.toStringAsFixed(2),
+              label: AppStrings().total,
+            ),
+          ],
+        ),
       ),
     );
   }

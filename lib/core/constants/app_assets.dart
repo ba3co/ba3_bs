@@ -2,6 +2,7 @@ const _baseAssetsPath = 'assets';
 const _baseImagesPath = '$_baseAssetsPath/images';
 const _baseFontsPath = '$_baseAssetsPath/fonts';
 const _baseIconsPath = '$_baseAssetsPath/icons';
+const _baseFlagsPath = '$_baseAssetsPath/flags';
 
 class AppAssets {
   static const ba3Logo = '$_baseImagesPath/ba3_logo.jpg';
@@ -33,4 +34,7 @@ class AppAssets {
   static const paymentVoucherIcon = '$_baseIconsPath/Payment_Voucher_icon.png';
   static const journalVoucherIcon = '$_baseIconsPath/Journal_Voucher_icon.png';
   static const loginLogo = '$_baseImagesPath/login_logo.jpg';
+  static const enFlag = '$_baseFlagsPath/en.png';
+  static const arFlag = '$_baseFlagsPath/ar.png';
+  static const urFlag = '$_baseFlagsPath/ur.png';
 }

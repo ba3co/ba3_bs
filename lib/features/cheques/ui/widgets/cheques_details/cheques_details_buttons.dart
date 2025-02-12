@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_search_controller.dart';
@@ -29,7 +30,7 @@ class AddChequeButtons extends StatelessWidget {
         if (chequesSearchController.isNew)
           Obx(() {
             return AppButton(
-                title: 'إضافة',
+                title: AppStrings().add,
                 height: 20,
                 color: chequesDetailsController.isChequesSaved.value ? Colors.green : Colors.blue.shade700,
                 onPressed: chequesDetailsController.isChequesSaved.value
@@ -41,7 +42,7 @@ class AddChequeButtons extends StatelessWidget {
           }),
         if (!chequesSearchController.isNew) ...[
           AppButton(
-            title: "تعديل",
+            title: AppStrings().edit,
             height: 20,
             onPressed: () async {
               chequesDetailsController.updateCheques(
@@ -55,7 +56,7 @@ class AddChequeButtons extends StatelessWidget {
             onPressed: () {
               chequesDetailsController.deleteCheques(chequesModel);
             },
-            title: "حذف",
+            title: AppStrings().delete,
             iconData: Icons.delete_outline,
             color: Colors.red,
           ),
@@ -63,7 +64,7 @@ class AddChequeButtons extends StatelessWidget {
             onPressed: () {
               chequesDetailsController.launchEntryBondWindow(chequesModel, context);
             },
-            title: "السند",
+            title:AppStrings().bond,
             iconData: Icons.view_list_outlined,
           ),
           if (!chequesDetailsController.isRefundPay!)
@@ -73,7 +74,7 @@ class AddChequeButtons extends StatelessWidget {
                   ? chequesDetailsController.clearPayCheques(chequesModel)
                   : chequesDetailsController.savePayCheques(chequesModel);
             },
-            title: chequesDetailsController.isPayed! ? "حذف الدفع" : "دفع",
+            title: chequesDetailsController.isPayed! ? '${AppStrings().delete} ${AppStrings().payment}' :AppStrings().pay,
             color:chequesDetailsController.isPayed!
                 ?Colors.red: Colors.black,
             iconData: Icons.paid,
@@ -83,7 +84,7 @@ class AddChequeButtons extends StatelessWidget {
               onPressed: () {
                 chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
               },
-              title: "سند الدفع",
+              title: '${AppStrings().bond} ${AppStrings().payment}',
               iconData: Icons.view_list_outlined,
             ),
           if (!chequesDetailsController.isPayed!)
@@ -93,7 +94,7 @@ class AddChequeButtons extends StatelessWidget {
                     ? chequesDetailsController.deleteRefundPayCheques(chequesModel)
                     : chequesDetailsController.refundPayCheques(chequesModel);
               },
-              title: chequesDetailsController.isRefundPay! ? "حذف الاسترداد" : "استرداد",
+              title: chequesDetailsController.isRefundPay! ? '${AppStrings().delete} ${AppStrings().refund}' : AppStrings().refund,
               iconData: Icons.lock_reset_rounded,
               color:chequesDetailsController.isRefundPay!
                   ?Colors.red: Colors.grey,
@@ -103,7 +104,7 @@ class AddChequeButtons extends StatelessWidget {
               onPressed: () {
                 chequesDetailsController.launchRefundPayEntryBondWindow(chequesModel, context);
               },
-              title: "السند المسترد",
+              title: '${AppStrings().bond} ${AppStrings().refunded}',
               iconData: Icons.lock_reset_rounded,
             ),
         ]

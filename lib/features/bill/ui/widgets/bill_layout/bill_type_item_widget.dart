@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,7 +59,7 @@ class BillTypeItemWidget extends StatelessWidget {
                         spacing: 5,
                         children: [
                           Text(
-                            'كل الفواتير:',
+                          AppStrings().allBills,
                           ),
                           Text(
                             '$allBillsCounts',
@@ -72,7 +73,7 @@ class BillTypeItemWidget extends StatelessWidget {
                           spacing: 5,
                           children: [
                             Text(
-                              'الفواتير المعلقة:',
+                           AppStrings().pendingBill,
                             ),
                             Text(
                               '$pendingBillsCounts',
@@ -111,7 +112,7 @@ class BillTypeItemWidget extends StatelessWidget {
               child: Center(
                 child: AppButton(
                   isLoading: isLoading,
-                  title: 'جديد',
+                  title: AppStrings().newS,
                   onPressed: onTap,
                   iconData: Icons.add,
                   color: color,

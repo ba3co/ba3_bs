@@ -8,6 +8,7 @@ import 'core/bindings/bindings.dart';
 import 'core/constants/app_strings.dart';
 import 'core/helper/init_app/app_initializer.dart';
 import 'core/router/app_router.dart';
+import 'core/services/translation/app_translations.dart';
 import 'core/styling/app_themes.dart';
 import 'core/widgets/app_scroll_behavior.dart';
 
@@ -34,7 +35,11 @@ class MyApp extends StatelessWidget {
         initialBinding: AppBindings(),
         debugShowCheckedModeBanner: false,
         scrollBehavior: AppScrollBehavior(),
-        locale: const Locale("ar"),
+        translations: AppTranslations(),
+        locale: Locale('en', 'US'),
+        // locale: Locale('ar', 'AR'),
+
+        fallbackLocale: Locale('en', 'US'),
         title: AppStrings.appTitle,
         theme: AppThemes.defaultTheme,
         getPages: appRouter,

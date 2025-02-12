@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +14,7 @@ class AllPatternScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<PatternController>(
         builder: (controller) => PlutoGridWithAppBar(
-              title: 'أنماط البيع',
+              title: '${ApiConstants.patterns} ${AppStrings().al+AppStrings().sell}',
               isLoading: controller.isLoading,
               tableSourceModels: controller.billsTypes,
               onLoaded: (e) {},

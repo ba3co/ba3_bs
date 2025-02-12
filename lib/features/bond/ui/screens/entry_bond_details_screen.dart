@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
@@ -22,10 +23,10 @@ class EntryBondDetailsScreen extends StatelessWidget {
          title:Row(
            children: [
 
-             Text("التاريخ :"),
+             Text(AppStrings().date),
              Text(" ${entryBondModel.items!.itemList.first.date}"),
              Spacer(),
-             Text("رقم :"),
+             Text(AppStrings().number),
              Text(" ${entryBondModel.items!.docId}"),
 
            ],
@@ -48,29 +49,29 @@ class EntryBondDetailsScreen extends StatelessWidget {
             swipeMaxOffset: 200,
             columns: <GridColumn>[
               gridColumnItem(
-                label: 'الحساب',
+                label: AppConstants.account,
                 name: AppConstants.rowBondAccount,
                 color: Colors.blue,
               ),
               gridColumnItem(
-                label: ' مدين',
+                label:AppStrings().debtor,
                 name: AppConstants.rowBondDebitAmount,
                 color: Colors.blue,
               ),
               gridColumnItem(
-                label: ' دائن',
+                label:AppStrings().creditor,
                 name: AppConstants.rowBondCreditAmount,
                 color: Colors.blue,
               ),
               gridColumnItem(
-                label: "البيان",
+                label: AppStrings().illustration,
                 name: AppConstants.rowBondDescription,
                 color: Colors.blue,
               ),
             ],
           )),
           AppButton(
-            title: "عرض الاصل",
+            title: AppStrings().viewOrigin,
             onPressed: () {
               read<EntryBondController>().openEntryBondOrigin(entryBondModel, context);
             },

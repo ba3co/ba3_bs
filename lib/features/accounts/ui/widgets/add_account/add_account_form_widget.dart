@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class AddAccountFormWidget extends StatelessWidget {
         children: [
           FormFieldRow(
             firstItem: TextAndExpandedChildField(
-              label: "اسم الحساب",
+              label:AppStrings().accountName,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
                 validator: (value) => controller.accountFromHandler.defaultValidator(value, "اسم الحساب"),
@@ -28,7 +29,7 @@ class AddAccountFormWidget extends StatelessWidget {
               ),
             ),
             secondItem: TextAndExpandedChildField(
-              label: "اسم الحساب اللاتيني",
+              label: AppStrings().latinAccountName,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
                 textEditingController: controller.accountFromHandler.latinNameController,
@@ -38,7 +39,7 @@ class AddAccountFormWidget extends StatelessWidget {
           FormFieldRow(
             firstItem: SearchableAccountField(
               textEditingController: controller.accountFromHandler.accParentName,
-              label: 'الحساب الاب',
+              label:AppStrings().fatherAccount,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await controller.openAccountSelectionDialog(
                   query: text,
@@ -50,7 +51,7 @@ class AddAccountFormWidget extends StatelessWidget {
               },
             ),
             secondItem: TextAndExpandedChildField(
-              label: "رمز الحساب",
+              label:AppStrings().accountCode,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
                 validator: (value) => controller.accountFromHandler.defaultValidator(value, "رمز الحساب"),

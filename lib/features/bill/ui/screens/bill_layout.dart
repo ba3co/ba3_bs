@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
@@ -42,7 +43,7 @@ class BillLayout extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.all(8),
                       child: AppButton(
-                        title: "تحميل الفواتيير",
+                        title: "${AppStrings().download} ${AppStrings().bills}",
                         onPressed: () => allBillsController.fetchAllBillsFromLocal(),
                       ),
                     ),
@@ -54,7 +55,8 @@ class BillLayout extends StatelessWidget {
                   child: OrganizedWidget(
                     titleWidget: Align(
                       child: Text(
-                        'الفواتير',
+                      AppStrings
+                        ().bills,
                         style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                       ),
                     ),

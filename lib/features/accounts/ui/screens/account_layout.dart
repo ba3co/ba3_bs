@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_menu_item.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
@@ -17,19 +18,19 @@ class AccountLayout extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('الحسابات'),
+          title:  Text(AppStrings().accounts),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AppButton(
-                title: 'تحميل الحسابات',
+                title:AppStrings().downloadAccounts,
                 onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AppButton(
-                title: 'تحميل الزبائن',
+                title:AppStrings().downloadCustomers,
                 onPressed: () => read<CustomersController>().fetchAllCustomersFromLocal(),
               ),
             ),
@@ -38,7 +39,7 @@ class AccountLayout extends StatelessWidget {
         body: Column(
           children: [
             AppMenuItem(
-              text: 'معاينة الحسابات',
+              text:AppStrings().viewAccounts,
               onTap: () {
                 read<AccountsController>()
                   ..fetchAccounts()
@@ -46,14 +47,14 @@ class AccountLayout extends StatelessWidget {
               },
             ),
             AppMenuItem(
-              text: 'كشف حساب',
+              text: AppStrings().accountStatement,
               onTap: () {
                 showDialog<String>(
                     context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
               },
             ),
             AppMenuItem(
-              text: 'اضافة حساب',
+              text: AppStrings().addAccount,
               onTap: () {
                 read<AccountsController>().navigateToAddOrUpdateAccountScreen();
               },

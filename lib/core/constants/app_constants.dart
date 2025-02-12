@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import '../helper/enums/enums.dart';
 
 abstract class AppConstants {
@@ -375,4 +377,10 @@ abstract class AppConstants {
   // static const String recipientEmail = 'alidabol567@gmail.com';
 
   static const int maxItemsPerBill = 100;
+
+  static const List<Locale> locales = [
+    Locale('en', 'US'),
+    Locale('ar', 'AR'),
+    Locale('ur', 'PK'),
+  ];
 }

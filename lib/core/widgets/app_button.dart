@@ -41,7 +41,7 @@ class AppButton extends StatelessWidget {
         ),
         onPressed: onPressed,
         child: SizedBox(
-          width: width ?? 90,
+          width: width ?? 120,
           height: height ?? 35,
           child: Center(
             child: Row(

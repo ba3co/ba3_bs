@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
@@ -11,7 +12,7 @@ class AllAttendanceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("لوحة تحكم المستخدمين"),
+        title: Text(AppStrings().userControlPanel),
       ),
       body: GetBuilder<UserManagementController>(builder: (userManagementController) {
         return SingleChildScrollView(
@@ -42,8 +43,8 @@ class AllAttendanceScreen extends StatelessWidget {
                       if (user.loginDelay == "لم يسجل بعد" && user.logoutDelay == "لم يسجل بعد")
                         Text("لم يسجل بعد", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
                       else ...[
-                        Text("تأخير الدخول: ${user.loginDelay ?? 'لا يوجد'}"),
-                        Text("الخروج مبكرا: ${user.logoutDelay ?? 'لا يوجد'}"),
+                        Text("${AppStrings().delayedEntry}: ${user.loginDelay ?? 'لا يوجد'}"),
+                        Text("${AppStrings().leaveEarly}: ${user.logoutDelay ?? 'لا يوجد'}"),
                       ],
                     ],
                   ),

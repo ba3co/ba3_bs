@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
@@ -16,25 +17,25 @@ class SellersLayout extends StatelessWidget {
     final SellerSalesController sellerSalesController = read<SellerSalesController>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('البائعون'),
+        title:  Text(AppStrings().sellers),
         actions: [
           if(RoleItemType.administrator.hasReadPermission)
 
             Padding(
             padding: EdgeInsets.all(5),
-            child: AppButton(title: 'تحميل البائعين', onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
+            child: AppButton(title:    '${AppStrings().download} ${AppStrings().sellers}', onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
           )
         ],
       ),
       body: Column(
         children: [
           AppMenuItem(
-              text: 'إضافة بائع',
+              text:    '${AppStrings().add} ${AppStrings().sellers}',
               onTap: () {
                 sellerSalesController.navigateToAddSellerScreen();
               }),
           AppMenuItem(
-              text: 'معاينة البائعون',
+              text:    '${AppStrings().view} ${AppStrings().sellers}',
               onTap: () {
                 sellerSalesController.navigateToAllSellersScreen();
               }),

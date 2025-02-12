@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,7 +20,7 @@ class PatternTypeDropdown extends StatelessWidget {
       width: Get.width * 0.45,
       child: Row(
         children: [
-          const SizedBox(width: 100, child: Text('نوع الفاتورة')),
+           SizedBox(width: 100, child: Text('${AppStrings().type} ${AppStrings().al+AppStrings().bill}')),
           Container(
               width: (Get.width * 0.45) - 100,
               height: AppConstants.constHeightTextField,
@@ -29,7 +30,7 @@ class PatternTypeDropdown extends StatelessWidget {
                 color: Colors.white,
               ),
               child: DropdownButton(
-                hint: const Text('اختار نوع النمط'),
+                hint:  Text('${AppStrings().choose} ${AppStrings().type} ${AppStrings().al+AppStrings().pattern}'),
                 dropdownColor: Colors.white,
                 focusColor: Colors.white,
                 alignment: Alignment.center,

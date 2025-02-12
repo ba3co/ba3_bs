@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ AppBar chequesLayoutAppBar() {
         Padding(
         padding: const EdgeInsets.all(8.0),
         child: AppButton(
-          title: 'تحميل الشيكات',
+          title: '${AppStrings().download} ${AppStrings().cheques}',
           onPressed: () => read<AllChequesController>().fetchAllChequesLocal(),
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/cheques/ui/widgets/cheques_layout/cheques_layout
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../widgets/cheques_layout/cheques_type_item_widget.dart';
@@ -33,24 +34,24 @@ class _ChequeLayoutState extends State<ChequeLayout> {
             child: OrganizedWidget(
               titleWidget: Align(
                 child: Text(
-                  "الشيكات",
+                 AppStrings().cheques,
                   style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                 ),
               ),
               bodyWidget: Column(
                 spacing: 5,
                 children: [
-                  ChequesTypeItemWidget(text: "إضافة شيك", onPressed:() {
+                  ChequesTypeItemWidget(text: "${AppStrings().add} ${AppStrings().cheque}", onPressed:() {
                     controller.openFloatingChequesDetails(context, ChequesType.paidChecks);
                     // Get.to(() => const ChequesDetailsScreen());
                   }),
-                  ChequesTypeItemWidget(text: "الشيكات المستحقة", onPressed: () {
+                  ChequesTypeItemWidget(text:"${AppStrings().cheques} ${AppStrings().dues}", onPressed: () {
                     controller
                       ..fetchAllChequesByType(ChequesType.paidChecks)
                       ..navigateToChequesScreen(onlyDues:true);
 
                   }),
-                  ChequesTypeItemWidget(text: "معاينة الشيكات",onPressed:  () {
+                  ChequesTypeItemWidget(text: "${AppStrings().view} ${AppStrings().cheques}",onPressed:  () {
                     controller
                       ..fetchAllChequesByType(ChequesType.paidChecks)
                       ..navigateToChequesScreen(onlyDues:false);

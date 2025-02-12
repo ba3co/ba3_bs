@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,7 +20,7 @@ class AddPatternScreen extends StatelessWidget {
           Expanded(
             child: Scaffold(
               appBar: AppBar(
-                title: const Text('إنشاء نمط'),
+                title:  Text('${AppStrings().add} ${AppStrings().pattern}'),
               ),
               body: GetBuilder<PatternController>(
                 builder: (patternController) {

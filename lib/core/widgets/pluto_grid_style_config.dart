@@ -18,25 +18,25 @@ Color _getEvenRowColor({Color? evenRowColor}) {
   return evenRowColor!.withAlpha(204);
 }
 
-TextStyle _getColumnTextStyle() {
-  return const TextStyle(
-    // color: Colors.black,
-    // fontSize: 12,
-    fontFamily: 'Almarai',
-    // fontWeight: FontWeight.bold,
-  );
-}
+// TextStyle _getColumnTextStyle() {
+//   return const TextStyle(
+//     // color: Colors.black,
+//     // fontSize: 12,
+//     fontFamily: 'Almarai',
+//     // fontWeight: FontWeight.bold,
+//   );
+// }
 
 Color _getActivatedColor() {
   return Colors.white.withAlpha(127);
 }
 
-TextStyle _getCellTextStyle() {
-  return const TextStyle(
-    color: Colors.black,
-    fontSize: 12,
-  );
-}
+// TextStyle _getCellTextStyle() {
+//   return const TextStyle(
+//     color: Colors.black,
+//     fontSize: 12,
+//   );
+// }
 
 BorderRadius _getBorderRadius() {
   return BorderRadius.circular(5);

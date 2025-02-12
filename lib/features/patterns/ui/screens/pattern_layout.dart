@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/patterns/controllers/pattern_controller.dart';
@@ -25,7 +26,7 @@ class PatternLayout extends StatelessWidget {
             child: OrganizedWidget(
               titleWidget: Align(
                 child: Text(
-                  'انماط الفواتير',
+                  '${AppStrings().patterns} ${AppStrings().bills}',
                   style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                 ),
               ),
@@ -54,7 +55,7 @@ class PatternLayout extends StatelessWidget {
                             VerticalSpace(),
                             Center(
                               child: AppButton(
-                                title: 'إضافة نمط',
+                                title: '${AppStrings().add} ${AppStrings().pattern}',
                                 fontSize: 13.sp,
                                 color: AppColors.grayColor,
                                 onPressed: () {

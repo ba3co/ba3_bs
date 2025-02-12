@@ -45,7 +45,7 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText
                               tableSourceModels: searchedMaterials,
                               onLoaded: (PlutoGridOnLoadedEvent onLoadedEvent) {},
                               onSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
-                                final materialId = onSelectedEvent.row?.cells[ AppStrings.materialGroupIdFiled]?.value;
+                                final materialId = onSelectedEvent.row?.cells[AppStrings.materialGroupIdFiled]?.value;
                                 if (materialId != null) {
                                   selectedMaterial = materialController.getMaterialGroupById(materialId);
                                   Get.back();

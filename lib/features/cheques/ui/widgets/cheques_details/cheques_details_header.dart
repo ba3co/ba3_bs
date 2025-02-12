@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
@@ -14,7 +15,7 @@ class ChequesDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
-      label: 'الحالة ',
+      label:AppStrings().status,
       child: Container(
         // padding: const EdgeInsets.all(8),
 

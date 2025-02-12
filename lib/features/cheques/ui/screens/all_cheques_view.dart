@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/widgets/pluto_grid_with_app_bar_.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
@@ -23,7 +24,7 @@ class AllCheques extends StatelessWidget {
             logic.openChequesDetailsById(chequesId,context,ChequesType.paidChecks);
           },
           isLoading: logic.isLoading,
-          title: !onlyDues ? "جميع الشيكات" : "الشيكات المستحقة",
+          title: !onlyDues ? "${AppStrings().all} ${AppStrings().cheques}" : "${AppStrings().cheques} ${AppStrings().dues}",
           tableSourceModels: logic.chequesList.where(
             (element) {
               if (!onlyDues) {

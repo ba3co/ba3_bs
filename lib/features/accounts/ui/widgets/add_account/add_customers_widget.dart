@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class AddCustomersWidget extends StatelessWidget {
             child: OrganizedWidget(
               titleWidget: Center(
                 child: Text(
-                  "الزبائن",
+                 AppStrings().customers,
                   style: AppTextStyles.headLineStyle2,
                 ),
               ),
@@ -65,7 +66,7 @@ class AddCustomersWidget extends StatelessWidget {
                         FormFieldRow(
                           spacing: 40,
                           firstItem: TextAndExpandedChildField(
-                            label: 'اسم الزبون',
+                            label: AppStrings().customerName,
                             child: CustomTextFieldWithoutIcon(
                               suffixIcon: const SizedBox(),
                               textEditingController: controller.newCustomerNameController,
@@ -73,7 +74,7 @@ class AddCustomersWidget extends StatelessWidget {
                             ),
                           ),
                           secondItem: TextAndExpandedChildField(
-                            label: 'رقم الموبايل',
+                            label: AppStrings().mobileNumber,
                             child: CustomTextFieldWithoutIcon(
                               suffixIcon: const SizedBox(),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -84,7 +85,7 @@ class AddCustomersWidget extends StatelessWidget {
                         ),
                         VerticalSpace(),
                         TextAndExpandedChildField(
-                          label: 'نوع الضريبة',
+                          label: AppStrings().taxType,
                           child: DropdownButtonFormField<VatEnums>(
                             value: controller.selectedVat.value,
                             items: VatEnums.values.map(
@@ -104,7 +105,7 @@ class AddCustomersWidget extends StatelessWidget {
                             controller.addNewCustomer();
                           },
                           child: Text(
-                            'حفظ',
+                            AppStrings().save,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

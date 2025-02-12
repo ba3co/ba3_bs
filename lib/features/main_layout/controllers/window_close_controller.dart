@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
@@ -56,8 +57,8 @@ class WindowCloseController extends GetxController with WindowListener {
                       child: FlutterLogo(),
                     ),
                     const VerticalSpace(16),
-                    const Text(
-                      '?Do you really want to quit',
+                     Text(
+                      AppStrings().areYouSureYouWantToCloseTheProgram,
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
@@ -79,8 +80,8 @@ class WindowCloseController extends GetxController with WindowListener {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text(
-                              'Exit',
+                            child:  Text(
+                              AppStrings().exit,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -97,8 +98,8 @@ class WindowCloseController extends GetxController with WindowListener {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text(
-                              'Cancel',
+                            child:  Text(
+                              AppStrings().cancel,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -116,18 +117,18 @@ class WindowCloseController extends GetxController with WindowListener {
 
   Future<bool> _showDefaultExitDialog() async {
     return await Get.defaultDialog(
-          content: const Text('?Do you really want to quit'),
+          content:  Text(AppStrings().areYouSureYouWantToCloseTheProgram),
           confirm: ElevatedButton(
             onPressed: () {
               Get.back(result: true);
             },
-            child: const Text('Exit'),
+            child:  Text(AppStrings().exit),
           ),
           cancel: ElevatedButton(
             onPressed: () {
               Get.back(result: false);
             },
-            child: const Text('Cancel'),
+            child:  Text(AppStrings().cancel),
           ),
         ) ??
         false; // Default return if dismissed

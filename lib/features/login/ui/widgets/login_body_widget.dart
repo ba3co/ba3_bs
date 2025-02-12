@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
@@ -28,14 +29,14 @@ class LoginBodyWidget extends StatelessWidget {
         children: [
           const Spacer(),
           Text(
-            "تسجيل الدخول",
+            AppStrings().login,
             style: AppTextStyles.headLineStyle1,
           ),
           SizedBox(
             width: .25.sw,
             child: TextFormField(
               decoration: InputDecoration(
-                label: const Text('اسم الحساب'),
+                label:  Text('${AppStrings().name} ${AppStrings().account}'),
                 filled: true,
                 fillColor: AppColors.backGroundColor,
               ),
@@ -49,7 +50,7 @@ class LoginBodyWidget extends StatelessWidget {
                 maxLength: 6,
                 obscureText: !userManagementController.isPasswordVisible.value,
                 decoration: InputDecoration(
-                  label: const Text('كلمة السر'),
+                  label:  Text(AppStrings().password),
                   suffixIcon: IconButton(
                     icon: Icon(
                       userManagementController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
@@ -73,7 +74,7 @@ class LoginBodyWidget extends StatelessWidget {
           ),
           const VerticalSpace(20),
           LoginButtonWidget(
-            text: 'دخول',
+            text: AppStrings().enter,
             onTap: () {
               userManagementController.validateUserInputs();
             },
@@ -97,7 +98,7 @@ class LoginBodyWidget extends StatelessWidget {
                     ),
                   if (userManagementController.isGuestLoginButtonVisible.value)
                     LoginButtonWidget(
-                      text: 'تسجيل كضيف',
+                      text: '${AppStrings().registration} ${AppStrings().asA}${AppStrings().guest}',
                       width: RoleItemType.viewUserManagement.hasAdminPermission ? .15.sw : null,
                       onTap: userManagementController.loginAsGuest,
                     ),

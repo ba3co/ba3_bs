@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
@@ -14,13 +15,13 @@ class AllSellersScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text('جميع البائعون')),
+        appBar: AppBar(title:  Text("${AppStrings().all} ${AppStrings().sellers}")),
         body: GetBuilder<SellersController>(builder: (controller) {
           if (controller.isLoading) {
             return AppUIUtils.showLoadingIndicator();
           } else {
             if (controller.sellers.isEmpty) {
-              return const Center(child: Text('لا يوجد بائعون بعد'));
+              return  Center(child: Text(AppStrings().thereAreNoSellersYet));
             } else {
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(8.0),

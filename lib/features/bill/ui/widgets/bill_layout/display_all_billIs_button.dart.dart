@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 
 class DisplayAllBillsButton extends StatelessWidget {
@@ -16,9 +17,9 @@ class DisplayAllBillsButton extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
           padding: const EdgeInsets.all(30.0),
-          child: const Center(
+          child:  Center(
             child: Text(
-              "عرض جميع الفواتير",
+             AppStrings().allBills,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textDirection: TextDirection.rtl,
             ),

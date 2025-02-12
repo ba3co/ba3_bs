@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
@@ -26,29 +27,29 @@ class AddPatternForm extends StatelessWidget {
         runSpacing: 10,
         children: [
           TextFieldWithLabel(
-            label: 'الاختصار',
+            label: AppStrings().al+AppStrings().short,
             textEditingController: patternController.patternFormHandler.shortNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
           ),
           TextFieldWithLabel(
-            label: 'الاسم',
+            label: AppStrings().name,
             textEditingController: patternController.patternFormHandler.fullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
           ),
           TextFieldWithLabel(
-            label: 'اختصار لاتيني',
+            label: '${AppStrings().short} ${AppStrings().latin}',
             textEditingController: patternController.patternFormHandler.latinShortNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'اختصار لاتيني'),
           ),
           TextFieldWithLabel(
-            label: 'الاسم لاتيني',
+            label: '${AppStrings().latin} ${AppStrings().name}',
             textEditingController: patternController.patternFormHandler.latinFullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
           ),
           PatternTypeDropdown(patternController: patternController),
           if (patternController.selectedBillPatternType?.hasMaterialAccount ?? false)
             SearchableAccountField(
-              label: 'المواد',
+              label: AppStrings().materials,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -64,7 +65,7 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasDiscountsAccount ?? false)
             SearchableAccountField(
-              label: 'الحسميات',
+              label: AppStrings().discounts,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -81,7 +82,7 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasAdditionsAccount ?? false)
             SearchableAccountField(
-              label: 'الاضافات',
+              label:AppStrings().additions,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -98,7 +99,7 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasCashesAccount ?? false)
             SearchableAccountField(
-              label: 'النقديات',
+              label: AppStrings().cashes,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -115,7 +116,7 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasGiftsAccount ?? false)
             SearchableAccountField(
-              label: 'الهدايا',
+              label: AppStrings().gifts,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -143,7 +144,7 @@ class AddPatternForm extends StatelessWidget {
                   patternController.patternFormHandler.exchangeForGiftsController.text = (accountModel.accName!);
                 }
               },
-              label: 'مقابل الهدايا',
+              label: '${AppStrings().exchange} ${AppStrings().gifts}',
               textEditingController: patternController.patternFormHandler.exchangeForGiftsController,
               validator: (value) => patternController.patternFormHandler.validator(value, 'مقابل الهدايا'),
             ),

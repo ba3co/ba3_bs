@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ AppBar bondLayoutAppBar(AllBondsController controller) {
       Padding(
       padding: const EdgeInsets.all(8.0),
       child: AppButton(
-        title: "تحميل السندات",
+        title: "${AppStrings().download} ${AppStrings().bonds}",
         onPressed: () =>controller.fetchAllBondsLocal(),
       ),
     ),

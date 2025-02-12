@@ -206,7 +206,7 @@ class BondDetailsController extends GetxController with AppValidator {
     if (!_bondService.hasModelItems(bondModel.payItems.itemList)) return;
 
     _bondService.generateAndSendPdf(
-      fileName: AppStrings.bond,
+      fileName: AppStrings().bond,
       itemModel: bondModel,
     );
   }

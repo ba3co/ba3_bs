@@ -13,7 +13,7 @@ class AllMaterialsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<MaterialController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: 'جميع المواد',
+        title: '${AppStrings().all} ${AppStrings().materials}',
         isLoading: controller.isLoading,
         tableSourceModels: controller.materials,
         onLoaded: (event) {},

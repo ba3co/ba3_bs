@@ -1,4 +1,5 @@
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
@@ -53,10 +54,10 @@ class BondItemWidget extends StatelessWidget {
             ),
             Spacer(),
 
-            BodyBondLayoutWidget(firstText: "من  ${bondType.from}", secondText: "الى  ${bondsController.allBondsCounts(bondType)}"),
+            BodyBondLayoutWidget(firstText: "${AppStrings().from}  ${bondType.from}", secondText: "${AppStrings().to}  ${bondsController.allBondsCounts(bondType)}"),
             // BodyBondLayoutWidget(firstText: "العدد الكلي :", secondText: ((bondType.to-bondType.from)+1).toString()),
             Spacer(),
-            AppButton(title: "جديد", onPressed: onTap, iconData: Icons.add,color: Color(int.parse("0xff${bondType.color}")).withAlpha(220),)
+            AppButton(title: AppStrings().newS, onPressed: onTap, iconData: Icons.add,color: Color(int.parse("0xff${bondType.color}")).withAlpha(220),)
           ],
         ));
   }

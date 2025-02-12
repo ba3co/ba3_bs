@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class BondDetailsHeader extends StatelessWidget {
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: 'تاريخ السند',
+                  label: '${AppStrings().date} ${AppStrings().bond}',
                   child: Obx(() {
                     return DatePicker(
                       initDate: bondDetailsController.bondDate.value,
@@ -38,7 +39,7 @@ class BondDetailsHeader extends StatelessWidget {
                   }),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: "البيان",
+                  label: AppStrings().illustration,
 
                   child: CustomTextFieldWithoutIcon(
                     height: 30,
@@ -57,7 +58,7 @@ class BondDetailsHeader extends StatelessWidget {
                       }
                       return null;
                     },
-                    label: "الحساب : ",
+                    label: "${ AppStrings(). account} : ",
                     onSubmitted:  (text) async {
                       AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                         query: text,

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              'اسم الزبون',
+              AppStrings().customerName,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
@@ -41,7 +42,7 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              'رقم الموبايل',
+             AppStrings().mobileNumber,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
@@ -63,7 +64,7 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              'نوع الضريبة',
+             AppStrings().taxType,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),

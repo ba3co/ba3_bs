@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/widgets/pluto_grid_style_config.dart';
@@ -29,9 +30,10 @@ class BillGridWidget extends StatelessWidget {
         onLoaded: onLoaded,
         configuration: PlutoGridConfiguration(
           shortcut: shortCut ?? const PlutoGridShortcut(),
-          style: buildGridStyleConfig(evenRowColor: rowColor,
+          style: buildGridStyleConfig(
+            evenRowColor: rowColor,
           ),
-          localeText: const PlutoGridLocaleText.arabic(),
+          localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
         ),
         columns: columns,
         rows: rows,

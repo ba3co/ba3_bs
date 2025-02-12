@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -19,7 +20,7 @@ class DateRangePicker extends StatelessWidget {
       child: InkWell(
           onTap: () {
             Get.defaultDialog(
-                title: 'اختر فترة زمنية',
+                title: AppStrings().selectATimePeriod,
                 content: SizedBox(
                   height: MediaQuery.sizeOf(context).height / 1.6,
                   width: MediaQuery.sizeOf(context).height / 1,
@@ -45,12 +46,12 @@ class DateRangePicker extends StatelessWidget {
                         onSubmit();
                         Get.back();
                       },
-                      child: const Text('اختر')),
+                      child:  Text(AppStrings().select)),
                   ElevatedButton(
                       onPressed: () {
                         Get.back();
                       },
-                      child: const Text('الغاء'))
+                      child:  Text(AppStrings().cancel))
                 ]);
           },
           child: Padding(
@@ -58,7 +59,7 @@ class DateRangePicker extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  pickedDateRange == null ? 'اختر فترة زمنية' : date,
+                  pickedDateRange == null ? AppStrings().selectATimePeriod : date,
                 ),
                 const Spacer(),
                 const Icon(Icons.date_range)

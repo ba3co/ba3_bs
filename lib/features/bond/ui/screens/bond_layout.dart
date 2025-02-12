@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
@@ -32,7 +33,7 @@ class BondLayout extends StatelessWidget {
                 child: OrganizedWidget(
                   titleWidget: Align(
                     child: Text(
-                      "السندات",
+                     AppStrings().bonds,
                       style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                     ),
                   ),
@@ -65,7 +66,7 @@ class BondLayout extends StatelessWidget {
           }),
           LoadingDialog(
             isLoading: read<AllBondsController>().saveAllBondsRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% من السندات',
+            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings().from} ${AppStrings().bonds}',
             fontSize: 14.sp,
           )
         ],

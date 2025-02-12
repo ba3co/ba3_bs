@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import 'pluto_grid_style_config.dart';
@@ -25,20 +26,17 @@ class PlutoWithEdite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: PlutoGrid(
-        columns: columns,
-        rows: rows,
-        onRowSecondaryTap: onRowSecondaryTap,
-        onChanged: onChanged,
-        configuration: PlutoGridConfiguration(
-          shortcut: shortCut ?? const PlutoGridShortcut(),
-          style: buildGridStyleConfig(evenRowColor: evenRowColor),
-          localeText: const PlutoGridLocaleText.arabic(),
-        ),
-        onLoaded: onLoaded,
+    return PlutoGrid(
+      columns: columns,
+      rows: rows,
+      onRowSecondaryTap: onRowSecondaryTap,
+      onChanged: onChanged,
+      configuration: PlutoGridConfiguration(
+        shortcut: shortCut ?? const PlutoGridShortcut(),
+        style: buildGridStyleConfig(evenRowColor: evenRowColor),
+        localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
       ),
+      onLoaded: onLoaded,
     );
   }
 }
