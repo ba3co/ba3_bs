@@ -48,6 +48,7 @@ class MaterialLayout extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(6),
                           child: AppButton(
+                            width: 100,
                               title: "تحميل المجموعات",
                               onPressed: () {
                                 read<MaterialGroupController>().fetchAllMaterialGroupGroupFromLocal();

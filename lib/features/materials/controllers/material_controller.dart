@@ -387,21 +387,22 @@ class MaterialController extends GetxController with AppNavigator {
     await saveOrUpdateMaterial();
   }
 
-  resetMaterialQuantityAndPrice() {
+  resetMaterialQuantityAndPrice() async{
     log(materials
         .where(
-          (element) => element.matQuantity != 0 && element.calcMinPrice != 0,
+          (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
         )
         .length
         .toString());
     for (final material in materials.where(
-      (element) => element.matQuantity != 0 && element.calcMinPrice != 0,
+      (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
     )) {
-      updateMaterialByModel(
+    await  updateMaterialByModel(
         material,
         (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, calcMinPrice: 0),
       );
     }
+    log("Finished");
   }
 
   /// Increases the quantity of a material by a given amount.

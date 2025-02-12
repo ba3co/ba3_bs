@@ -103,7 +103,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       (fetchedNestedBills) => nestedBills.assignAll(fetchedNestedBills),
     );
 
-    // nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
+    nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
 
     allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
 
