@@ -46,14 +46,14 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         status: Status.byValue(json['status']),
       );
 
-  factory BillModel.empty({required BillTypeModel billTypeModel, int lastBillNumber = 0}) => BillModel(
+  factory BillModel.empty({required BillTypeModel billTypeModel, int lastBillNumber = 0, int? previousBillNumber}) => BillModel(
         billTypeModel: billTypeModel,
         status: Status.pending,
         items: const BillItems(itemList: []),
         billDetails: BillDetails(
           billPayType: InvPayType.cash.index,
           billDate: DateTime.now(),
-          previous: lastBillNumber == 0 ? null : lastBillNumber,
+          previous: previousBillNumber ?? (lastBillNumber == 0 ? null : lastBillNumber),
           billNumber: lastBillNumber + 1,
         ),
       );

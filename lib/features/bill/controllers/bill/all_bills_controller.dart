@@ -319,11 +319,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   // Opens the 'Bill Details' floating window.
-  void _openBillDetailsFloatingWindow({
-    required BuildContext context,
-    required int lastBillNumber,
-    required BillModel currentBill,
-  }) {
+
+  Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
     final Map<String, GetxController> controllers = setupControllers(
@@ -339,12 +336,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final billDetailsPlutoController = controllers['billDetailsPlutoController'] as BillDetailsPlutoController;
     final billSearchController = controllers['billSearchController'] as BillSearchController;
 
-    initializeBillSearch(
-        currentBill: currentBill,
-        lastBillNumber: lastBillNumber,
-        billSearchController: billSearchController,
-        billDetailsController: billDetailsController,
-        billDetailsPlutoController: billDetailsPlutoController);
+    await billSearchController.initialize(
+      initialBill: currentBill,
+      lastBillNumber: lastBillNumber,
+      billDetailsController: billDetailsController,
+      billDetailsPlutoController: billDetailsPlutoController,
+    );
+
+    if (!context.mounted) return;
 
     launchFloatingWindow(
       context: context,
@@ -355,21 +354,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
         billSearchController: billSearchController,
         tag: controllerTag,
       ),
-    );
-  }
-
-  void initializeBillSearch({
-    required BillModel currentBill,
-    required int lastBillNumber,
-    required BillSearchController billSearchController,
-    required BillDetailsController billDetailsController,
-    required BillDetailsPlutoController billDetailsPlutoController,
-  }) {
-    billSearchController.initialize(
-      currentBill: currentBill,
-      lastBillNumber: lastBillNumber,
-      billDetailsController: billDetailsController,
-      billDetailsPlutoController: billDetailsPlutoController,
     );
   }
 

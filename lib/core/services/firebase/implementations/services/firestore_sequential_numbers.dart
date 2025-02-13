@@ -71,13 +71,13 @@ mixin FirestoreSequentialNumbers {
     );
   }
 
-  Future<void> decrementLastNumber(String category, String entityType) async {
+  Future<void> decrementLastNumber(String category, String entityType, {int? number}) async {
     final docRef = _firestoreInstance.collection(_parentCollection).doc(category);
 
     await docRef.set(
       {
         entityType: {
-          ApiConstants.lastNumber: FieldValue.increment(-1),
+          ApiConstants.lastNumber: FieldValue.increment(number ?? -1),
         },
       },
       SetOptions(merge: true),

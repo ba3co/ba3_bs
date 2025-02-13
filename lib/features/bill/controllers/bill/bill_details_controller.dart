@@ -171,12 +171,11 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> deleteBill(BillModel billModel) async {
-    log('billModel json ${billModel.toJson()}');
     final result = await _billsFirebaseRepo.delete(billModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _billService.handleDeleteSuccess(billModel: billModel, billSearchController: billSearchController),
+      (success) => _billService.handleDeleteSuccess(billToDelete: billModel, billSearchController: billSearchController),
     );
   }
 
@@ -235,8 +234,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     return result;
   }
 
-  appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber}) {
-    BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
+  appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber, int? previousBillNumber}) {
+    BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber, previousBillNumber: previousBillNumber);
 
     billSearchController.insertLastAndUpdate(newBill);
   }
