@@ -147,6 +147,8 @@ class AppStrings {
   String delayedEntry = 'تأخير الدخول'.tr;
   String leaveEarly = 'الخروج مبكرا'.tr;
   String store = 'المستودع'.tr;
+  String userAdministration = 'إدارة المستخدمين'.tr;
+  String alPatterns = 'الأنماط'.tr;
 /* String type = ''.tr;
  String type = ''.tr;
  String type = ''.tr;

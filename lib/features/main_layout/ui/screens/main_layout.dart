@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
+import '../../../../core/services/translation/translation_controller.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../changes/controller/changes_controller.dart';
 import '../../../changes/data/model/changes_model.dart';
@@ -26,9 +27,9 @@ class MainLayout extends StatelessWidget {
         child: Scaffold(
           backgroundColor: AppColors.whiteColor,
           body: Row(
-            children: mainController.currentLocaleIsArabic
-                ? [RightMainWidget(mainController: mainController), LeftMainWidget(mainController: mainController)]
-                : [ LeftMainWidget(mainController: mainController),RightMainWidget(mainController: mainController)],
+            children: Get.find<TranslationController>().currentLocaleIsEnglish
+                ? [LeftMainWidget(mainController: mainController), RightMainWidget(mainController: mainController)]
+                : [RightMainWidget(mainController: mainController), LeftMainWidget(mainController: mainController)],
           ),
         ),
       );
