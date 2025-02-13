@@ -158,7 +158,6 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   void updateBillStatus(BillModel billModel, newStatus) async {
-
     final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
 
     result.fold(

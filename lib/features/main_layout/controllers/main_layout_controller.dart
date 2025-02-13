@@ -28,7 +28,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewPattern.hasReadPermission)
       (
-        name: '${AppStrings().patterns} ${AppStrings().al+AppStrings().sell}',
+        name: '${AppStrings().patterns} ${AppStrings().al + AppStrings().sell}',
         layout: const PatternLayout(),
         role: RoleItemType.viewPattern,
         icon: AppAssets.patternsIcon,
@@ -36,7 +36,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewProduct.hasReadPermission)
       (
-        name:AppStrings().materials,
+        name: AppStrings().materials,
         layout: const MaterialLayout(),
         role: RoleItemType.viewProduct,
         icon: AppAssets.materialIcon,
@@ -44,7 +44,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewAccount.hasReadPermission)
       (
-        name:AppStrings().accounts,
+        name: AppStrings().accounts,
         layout: const AccountLayout(),
         role: RoleItemType.viewAccount,
         icon: AppAssets.accountsIcon,
@@ -89,17 +89,14 @@ class MainLayoutController extends GetxController {
       icon: AppAssets.usersTimeIcon,
       unSelectedIcon: AppAssets.usersTimeUnselectedIcon
     ),
-
     if (RoleItemType.administrator.hasReadPermission)
       (
-      name: '${AppStrings().panel} ${AppStrings().control}',
-      layout: const AllAttendanceScreen(),
-      role: RoleItemType.administrator,
-      icon: AppAssets.billsIcon,
-      unSelectedIcon: AppAssets.billsUnselectedIcon
+        name: '${AppStrings().panel} ${AppStrings().control}',
+        layout: const AllAttendanceScreen(),
+        role: RoleItemType.administrator,
+        icon: AppAssets.billsIcon,
+        unSelectedIcon: AppAssets.billsUnselectedIcon
       ),
-
-
   ].obs;
 
   PageController pageController = PageController();
@@ -136,7 +133,8 @@ class MainLayoutController extends GetxController {
         return AppAssets.enFlag;
     }
   }
-  Locale get currentLocale => Get.locale ?? Locale('en', 'US');
-  bool get currentLocaleIsArabic =>  currentLocale!= Locale('en', 'US');
 
+  Locale get currentLocale => Get.locale ?? Locale('en', 'US');
+
+  bool get currentLocaleIsArabic => currentLocale != Locale('en', 'US');
 }

@@ -62,7 +62,6 @@ class BillDetailsButtons extends StatelessWidget {
             Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
-
                     fontSize: 14,
                     title:AppStrings().more,
                     onPressed: () {
@@ -81,7 +80,6 @@ class BillDetailsButtons extends StatelessWidget {
       return AppButton(
         title: isBillSaved ? AppStrings().newS : AppStrings().add,
         height: 20,
-
         fontSize: 14,
         color: isBillSaved ? Colors.green : Colors.blue.shade700,
         onPressed: isBillSaved

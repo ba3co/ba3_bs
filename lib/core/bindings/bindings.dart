@@ -118,6 +118,10 @@ class AppBindings extends Bindings {
 
     final materialsHiveService = await _initializeHiveService<MaterialModel>(boxName: ApiConstants.materials);
 
+    // final ILocalDatabaseService<String> appLocalLangService = await _initializeHiveService<String>(boxName: AppConstants.appLocalLangBox);
+    //
+    // put(TranslationController(appLocalLangService));
+
     final translationService = _initializeTranslationService(dioClient);
 
     final billImport = BillImport();

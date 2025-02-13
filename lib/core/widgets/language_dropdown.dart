@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../services/translation/translation_controller.dart';
+
 class LanguageDropdown extends StatelessWidget {
   const LanguageDropdown({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TranslationController translationController = Get.find<TranslationController>();
+
     return GetBuilder<MainLayoutController>(
       builder: (controller) {
         return Container(
@@ -19,7 +23,6 @@ class LanguageDropdown extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: DropdownButtonHideUnderline(
-
             child: DropdownButton2<Locale>(
               value: controller.currentLocale,
               dropdownStyleData: DropdownStyleData(
@@ -33,7 +36,7 @@ class LanguageDropdown extends StatelessWidget {
               ),
               onChanged: (Locale? newLocale) {
                 if (newLocale != null) {
-                  Get.updateLocale(newLocale);
+                  translationController.changeLang(newLocale.languageCode);
                 }
               },
               items: AppConstants.locales.map((Locale locale) {

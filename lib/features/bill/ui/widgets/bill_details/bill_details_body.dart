@@ -33,7 +33,6 @@ class BillDetailsBody extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-      
           Expanded(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -58,7 +57,7 @@ class BillDetailsBody extends StatelessWidget {
             ),
           ),
           const VerticalSpace(5),
-          if(billTypeModel.billPatternType?.hasDiscountsAccount??true)
+          if (billTypeModel.billPatternType?.hasDiscountsAccount ?? true)
             SizedBox(
               height: 100,
               child: GetBuilder<BillDetailsPlutoController>(

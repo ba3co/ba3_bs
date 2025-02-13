@@ -34,6 +34,8 @@ class BillDetailsScreen extends StatelessWidget {
         tag: tag,
         builder: (_) {
           final BillModel currentBill = billSearchController.getCurrentBill;
+          log('${currentBill.billDetails.previous} <=> (CurrentBill ${currentBill.billDetails.billNumber}) <=> ${currentBill.billDetails.next}');
+
           return GetBuilder<BillDetailsController>(
               tag: tag,
               builder: (_) {

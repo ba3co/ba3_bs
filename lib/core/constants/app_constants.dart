@@ -86,8 +86,6 @@ abstract class AppConstants {
   static const productTypeService = "productTypeService";
   static const productTypeStore = "productTypeStore";
 
-
-
   ////////////--------------------------------------------------
   static const patId = "patId";
   static const patCode = "patCode";
@@ -383,4 +381,8 @@ abstract class AppConstants {
     Locale('ar', 'AR'),
     Locale('ur', 'PK'),
   ];
+
+  static const String appLocalLangBox = 'appLocalLangBox';
+
+  static const String defaultLangCode = 'ar';
 }

@@ -11,7 +11,7 @@ abstract class LocalDatasourceBase<T> {
 
   Future<List<T>> getAllData();
 
-  Future<T?> getDataById(String id);
+  T? getDataById(String id);
 
   Future<void> updateData(T item);
 
