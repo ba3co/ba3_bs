@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import '../helper/enums/enums.dart';
 
 abstract class AppConstants {
@@ -376,13 +374,13 @@ abstract class AppConstants {
 
   static const int maxItemsPerBill = 100;
 
-  static const List<Locale> locales = [
-    Locale('en', 'US'),
-    Locale('ar', 'AR'),
-    Locale('ur', 'PK'),
+  static const List<String> locales = [
+    'en',
+    'ar',
+    'ur',
   ];
 
   static const String appLocalLangBox = 'appLocalLangBox';
 
-  static const String defaultLangCode = 'ar';
+  static const String defaultLangCode = 'en';
 }

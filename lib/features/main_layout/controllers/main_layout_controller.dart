@@ -107,34 +107,4 @@ class MainLayoutController extends GetxController {
     tabIndex = index;
     update();
   }
-
-  String getLanguageName(Locale locale) {
-    switch (locale.toString()) {
-      case 'en_US':
-        return "English";
-      case 'ar_AR':
-        return "العربية";
-      case 'ur_PK':
-        return "اردو";
-      default:
-        return locale.toString();
-    }
-  }
-
-  String getFlagAsset(Locale locale) {
-    switch (locale.toString()) {
-      case 'en_US':
-        return AppAssets.enFlag;
-      case 'ar_AR':
-        return AppAssets.arFlag;
-      case 'ur_PK':
-        return AppAssets.urFlag;
-      default:
-        return AppAssets.enFlag;
-    }
-  }
-
-  Locale get currentLocale => Get.locale ?? Locale('en', 'US');
-
-  bool get currentLocaleIsArabic => currentLocale != Locale('en', 'US');
 }
