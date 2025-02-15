@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/features/patterns/ui/widgets/add_pattern/text_field_with_label.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -27,29 +28,29 @@ class AddPatternForm extends StatelessWidget {
         runSpacing: 10,
         children: [
           TextFieldWithLabel(
-            label: AppStrings().al+AppStrings().short,
+            label: AppStrings.al.tr + AppStrings.short.tr,
             textEditingController: patternController.patternFormHandler.shortNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
           ),
           TextFieldWithLabel(
-            label: AppStrings().name,
+            label: AppStrings.name.tr,
             textEditingController: patternController.patternFormHandler.fullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
           ),
           TextFieldWithLabel(
-            label: '${AppStrings().short} ${AppStrings().latin}',
+            label: '${AppStrings.short.tr} ${AppStrings.latin.tr}',
             textEditingController: patternController.patternFormHandler.latinShortNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'اختصار لاتيني'),
           ),
           TextFieldWithLabel(
-            label: '${AppStrings().latin} ${AppStrings().name}',
+            label: '${AppStrings.latin.tr} ${AppStrings.name.tr}',
             textEditingController: patternController.patternFormHandler.latinFullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
           ),
           PatternTypeDropdown(patternController: patternController),
           if (patternController.selectedBillPatternType?.hasMaterialAccount ?? false)
             SearchableAccountField(
-              label: AppStrings().materials,
+              label: AppStrings.materials.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -57,7 +58,7 @@ class AddPatternForm extends StatelessWidget {
                 );
                 if (accountModel != null) {
                   patternController.patternFormHandler.materialsController.text = (accountModel.accName!);
-                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.materials,value:accountModel  ) ;
+                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.materials, value: accountModel);
                 }
               },
               textEditingController: patternController.patternFormHandler.materialsController,
@@ -65,14 +66,14 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasDiscountsAccount ?? false)
             SearchableAccountField(
-              label: AppStrings().discounts,
+              label: AppStrings.discounts.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.discounts,value:accountModel  );
+                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.discounts, value: accountModel);
 
                   patternController.patternFormHandler.discountsController.text = (accountModel.accName!);
                 }
@@ -82,14 +83,14 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasAdditionsAccount ?? false)
             SearchableAccountField(
-              label:AppStrings().additions,
+              label: AppStrings.additions.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.additions,value:accountModel  ) ;
+                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.additions, value: accountModel);
 
                   patternController.patternFormHandler.additionsController.text = (accountModel.accName!);
                 }
@@ -99,14 +100,14 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasCashesAccount ?? false)
             SearchableAccountField(
-              label: AppStrings().cashes,
+              label: AppStrings.cashes.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.caches,value:accountModel  )  ;
+                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.caches, value: accountModel);
 
                   patternController.patternFormHandler.cachesController.text = (accountModel.accName!);
                 }
@@ -116,14 +117,14 @@ class AddPatternForm extends StatelessWidget {
             ),
           if (patternController.selectedBillPatternType?.hasGiftsAccount ?? false)
             SearchableAccountField(
-              label: AppStrings().gifts,
+              label: AppStrings.gifts.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.materials,value:accountModel  );
+                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.materials, value: accountModel);
 
                   patternController.patternFormHandler.giftsController.text = (accountModel.accName!);
                 }
@@ -139,12 +140,12 @@ class AddPatternForm extends StatelessWidget {
                   context: context,
                 );
                 if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key:BillAccounts.exchangeForGifts,value:accountModel  ) ;
+                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.exchangeForGifts, value: accountModel);
 
                   patternController.patternFormHandler.exchangeForGiftsController.text = (accountModel.accName!);
                 }
               },
-              label: '${AppStrings().exchange} ${AppStrings().gifts}',
+              label: '${AppStrings.exchange.tr} ${AppStrings.gifts.tr}',
               textEditingController: patternController.patternFormHandler.exchangeForGiftsController,
               validator: (value) => patternController.patternFormHandler.validator(value, 'مقابل الهدايا'),
             ),

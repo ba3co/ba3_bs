@@ -171,7 +171,11 @@ class BondDetailsController extends GetxController with AppValidator {
     // Create and return the bond model
 
     return _bondService.createBondModel(
-        bondModel: bondModel, bondType: bondType, payDate: bondDate.value, payAccountGuid: selectedAccount?.id!??"00000000-0000-0000-0000-000000000000", note: noteController.text);
+        bondModel: bondModel,
+        bondType: bondType,
+        payDate: bondDate.value,
+        payAccountGuid: selectedAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+        note: noteController.text);
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
@@ -187,7 +191,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   void updateBondDetailsOnScreen(BondModel bond, BondDetailsPlutoController bondPlutoController) {
     setBondDate(bond.payDate!.toDate);
-    isBondSaved.value=bond.payGuid!=null;
+    isBondSaved.value = bond.payGuid != null;
     initBondNumberController(bond.payNumber);
 
     if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid) != null) {
@@ -206,11 +210,10 @@ class BondDetailsController extends GetxController with AppValidator {
     if (!_bondService.hasModelItems(bondModel.payItems.itemList)) return;
 
     _bondService.generateAndSendPdf(
-      fileName: AppStrings().bond,
+      fileName: AppStrings.bond.tr,
       itemModel: bondModel,
     );
   }
-
 
   appendNewBill({required BondType bondType, required int lastBondNumber}) {
     BondModel newBond = BondModel.empty(bondType: bondType, lastBondNumber: lastBondNumber);

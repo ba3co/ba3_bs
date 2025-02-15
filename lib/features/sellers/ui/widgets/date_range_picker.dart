@@ -13,14 +13,13 @@ class DateRangePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:
-          BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8), border: Border.all()),
+      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8), border: Border.all()),
       width: 250,
       height: 40,
       child: InkWell(
           onTap: () {
             Get.defaultDialog(
-                title: AppStrings().selectATimePeriod,
+                title: AppStrings.selectATimePeriod.tr,
                 content: SizedBox(
                   height: MediaQuery.sizeOf(context).height / 1.6,
                   width: MediaQuery.sizeOf(context).height / 1,
@@ -33,8 +32,7 @@ class DateRangePicker extends StatelessWidget {
                     navigationDirection: DateRangePickerNavigationDirection.vertical,
                     selectionMode: DateRangePickerSelectionMode.range,
                     monthViewSettings: const DateRangePickerMonthViewSettings(
-                        enableSwipeSelection: false,
-                        viewHeaderStyle: DateRangePickerViewHeaderStyle(backgroundColor: Colors.transparent)),
+                        enableSwipeSelection: false, viewHeaderStyle: DateRangePickerViewHeaderStyle(backgroundColor: Colors.transparent)),
                     showNavigationArrow: true,
                     navigationMode: DateRangePickerNavigationMode.scroll,
                     onSelectionChanged: onSelectionChanged,
@@ -46,12 +44,12 @@ class DateRangePicker extends StatelessWidget {
                         onSubmit();
                         Get.back();
                       },
-                      child:  Text(AppStrings().select)),
+                      child: Text(AppStrings.select.tr)),
                   ElevatedButton(
                       onPressed: () {
                         Get.back();
                       },
-                      child:  Text(AppStrings().cancel))
+                      child: Text(AppStrings.cancel.tr))
                 ]);
           },
           child: Padding(
@@ -59,7 +57,7 @@ class DateRangePicker extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  pickedDateRange == null ? AppStrings().selectATimePeriod : date,
+                  pickedDateRange == null ? AppStrings.selectATimePeriod.tr : date,
                 ),
                 const Spacer(),
                 const Icon(Icons.date_range)
@@ -69,6 +67,5 @@ class DateRangePicker extends StatelessWidget {
     );
   }
 
-  String get date =>
-      '${pickedDateRange?.startDate.toString().split(' ').first}  -->  ${pickedDateRange?.endDate.toString().split(' ').first}';
+  String get date => '${pickedDateRange?.startDate.toString().split(' ').first}  -->  ${pickedDateRange?.endDate.toString().split(' ').first}';
 }

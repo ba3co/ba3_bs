@@ -31,19 +31,18 @@ class AddMaterialScreen extends StatelessWidget {
               FormFieldRow(
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
-                  label: AppStrings().group,
+                  label: AppStrings.group.tr,
                   textController: controller.materialFromHandler.parentController,
                   onSubmitted: (text) {
                     controller.openMaterialSelectionDialog(
                       query: text,
                       context: context,
-
                     );
                   },
                 ),
               ),
               AppButton(
-                title: controller.selectedMaterial?.id == null ?AppStrings().add : AppStrings().edit,
+                title: controller.selectedMaterial?.id == null ? AppStrings.add.tr : AppStrings.edit.tr,
                 onPressed: () {
                   controller.saveOrUpdateMaterial();
                 },
@@ -51,7 +50,7 @@ class AddMaterialScreen extends StatelessWidget {
                 color: controller.selectedMaterial?.id == null ? null : Colors.green,
               ),
               AppButton(
-                title: AppStrings().delete,
+                title: AppStrings.delete.tr,
                 onPressed: () {
                   controller.deleteMaterial();
                 },

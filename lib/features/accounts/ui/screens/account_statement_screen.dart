@@ -1,8 +1,7 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/controllers/account_statement_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
@@ -35,8 +34,8 @@ class AccountStatementScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
-                     AppStrings().debtor,
+                    Text(
+                      AppStrings.debtor.tr,
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
                     ),
                     const SizedBox(
@@ -52,8 +51,8 @@ class AccountStatementScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
-                     AppStrings().creditor,
+                    Text(
+                      AppStrings.creditor.tr,
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
                     ),
                     const SizedBox(
@@ -69,8 +68,8 @@ class AccountStatementScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
-                     AppStrings().theTotal,
+                    Text(
+                      AppStrings.theTotal.tr,
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
                     ),
                     const SizedBox(

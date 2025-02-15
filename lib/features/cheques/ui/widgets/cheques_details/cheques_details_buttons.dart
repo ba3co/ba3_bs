@@ -30,7 +30,7 @@ class AddChequeButtons extends StatelessWidget {
         if (chequesSearchController.isNew)
           Obx(() {
             return AppButton(
-                title: AppStrings().add,
+                title: AppStrings.add.tr,
                 height: 20,
                 color: chequesDetailsController.isChequesSaved.value ? Colors.green : Colors.blue.shade700,
                 onPressed: chequesDetailsController.isChequesSaved.value
@@ -42,7 +42,7 @@ class AddChequeButtons extends StatelessWidget {
           }),
         if (!chequesSearchController.isNew) ...[
           AppButton(
-            title: AppStrings().edit,
+            title: AppStrings.edit.tr,
             height: 20,
             onPressed: () async {
               chequesDetailsController.updateCheques(
@@ -56,7 +56,7 @@ class AddChequeButtons extends StatelessWidget {
             onPressed: () {
               chequesDetailsController.deleteCheques(chequesModel);
             },
-            title: AppStrings().delete,
+            title: AppStrings.delete.tr,
             iconData: Icons.delete_outline,
             color: Colors.red,
           ),
@@ -64,27 +64,26 @@ class AddChequeButtons extends StatelessWidget {
             onPressed: () {
               chequesDetailsController.launchEntryBondWindow(chequesModel, context);
             },
-            title:AppStrings().bond,
+            title: AppStrings.bond.tr,
             iconData: Icons.view_list_outlined,
           ),
           if (!chequesDetailsController.isRefundPay!)
-          AppButton(
-            onPressed: () async {
-              chequesDetailsController.isPayed!
-                  ? chequesDetailsController.clearPayCheques(chequesModel)
-                  : chequesDetailsController.savePayCheques(chequesModel);
-            },
-            title: chequesDetailsController.isPayed! ? '${AppStrings().delete} ${AppStrings().payment}' :AppStrings().pay,
-            color:chequesDetailsController.isPayed!
-                ?Colors.red: Colors.black,
-            iconData: Icons.paid,
-          ),
+            AppButton(
+              onPressed: () async {
+                chequesDetailsController.isPayed!
+                    ? chequesDetailsController.clearPayCheques(chequesModel)
+                    : chequesDetailsController.savePayCheques(chequesModel);
+              },
+              title: chequesDetailsController.isPayed! ? '${AppStrings.delete.tr} ${AppStrings.payment.tr}' : AppStrings.pay.tr,
+              color: chequesDetailsController.isPayed! ? Colors.red : Colors.black,
+              iconData: Icons.paid,
+            ),
           if (chequesDetailsController.isPayed!)
             AppButton(
               onPressed: () {
                 chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
               },
-              title: '${AppStrings().bond} ${AppStrings().payment}',
+              title: '${AppStrings.bond.tr} ${AppStrings.payment.tr}',
               iconData: Icons.view_list_outlined,
             ),
           if (!chequesDetailsController.isPayed!)
@@ -94,17 +93,16 @@ class AddChequeButtons extends StatelessWidget {
                     ? chequesDetailsController.deleteRefundPayCheques(chequesModel)
                     : chequesDetailsController.refundPayCheques(chequesModel);
               },
-              title: chequesDetailsController.isRefundPay! ? '${AppStrings().delete} ${AppStrings().refund}' : AppStrings().refund,
+              title: chequesDetailsController.isRefundPay! ? '${AppStrings.delete.tr} ${AppStrings.refund.tr}' : AppStrings.refund.tr,
               iconData: Icons.lock_reset_rounded,
-              color:chequesDetailsController.isRefundPay!
-                  ?Colors.red: Colors.grey,
+              color: chequesDetailsController.isRefundPay! ? Colors.red : Colors.grey,
             ),
           if (chequesDetailsController.isRefundPay!)
             AppButton(
               onPressed: () {
                 chequesDetailsController.launchRefundPayEntryBondWindow(chequesModel, context);
               },
-              title: '${AppStrings().bond} ${AppStrings().refunded}',
+              title: '${AppStrings.bond.tr} ${AppStrings.refunded.tr}',
               iconData: Icons.lock_reset_rounded,
             ),
         ]

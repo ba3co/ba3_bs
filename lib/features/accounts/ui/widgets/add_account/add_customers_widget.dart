@@ -32,7 +32,7 @@ class AddCustomersWidget extends StatelessWidget {
             child: OrganizedWidget(
               titleWidget: Center(
                 child: Text(
-                 AppStrings().customers,
+                  AppStrings.customers.tr,
                   style: AppTextStyles.headLineStyle2,
                 ),
               ),
@@ -66,7 +66,7 @@ class AddCustomersWidget extends StatelessWidget {
                         FormFieldRow(
                           spacing: 40,
                           firstItem: TextAndExpandedChildField(
-                            label: AppStrings().customerName,
+                            label: AppStrings.customerName.tr,
                             child: CustomTextFieldWithoutIcon(
                               suffixIcon: const SizedBox(),
                               textEditingController: controller.newCustomerNameController,
@@ -74,7 +74,7 @@ class AddCustomersWidget extends StatelessWidget {
                             ),
                           ),
                           secondItem: TextAndExpandedChildField(
-                            label: AppStrings().mobileNumber,
+                            label: AppStrings.mobileNumber.tr,
                             child: CustomTextFieldWithoutIcon(
                               suffixIcon: const SizedBox(),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -85,7 +85,7 @@ class AddCustomersWidget extends StatelessWidget {
                         ),
                         VerticalSpace(),
                         TextAndExpandedChildField(
-                          label: AppStrings().taxType,
+                          label: AppStrings.taxType.tr,
                           child: DropdownButtonFormField<VatEnums>(
                             value: controller.selectedVat.value,
                             items: VatEnums.values.map(
@@ -105,7 +105,7 @@ class AddCustomersWidget extends StatelessWidget {
                             controller.addNewCustomer();
                           },
                           child: Text(
-                            AppStrings().save,
+                            AppStrings.save.tr,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

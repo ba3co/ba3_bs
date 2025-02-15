@@ -14,7 +14,7 @@ class AllPatternScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<PatternController>(
         builder: (controller) => PlutoGridWithAppBar(
-              title: '${ApiConstants.patterns} ${AppStrings().al+AppStrings().sell}',
+              title: '${ApiConstants.patterns} ${AppStrings.al.tr + AppStrings.sell.tr}',
               isLoading: controller.isLoading,
               tableSourceModels: controller.billsTypes,
               onLoaded: (e) {},

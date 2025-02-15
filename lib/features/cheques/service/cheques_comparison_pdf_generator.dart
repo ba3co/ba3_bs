@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/helper/mixin/pdf_helper.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
@@ -39,7 +40,7 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
     final ChequesModel beforeUpdate = itemModel[0];
     final ChequesModel afterUpdate = itemModel[1];
 
-    final headersComparison = ['Field', AppStrings.before, AppStrings.after];
+    final headersComparison = ['Field', AppStrings.before.tr, AppStrings.after.tr];
     final dataComparison = _buildComparisonData(beforeUpdate, afterUpdate);
 
     return <Widget>[

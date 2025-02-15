@@ -4,15 +4,16 @@ import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../../../firebase_options.dart';
 import '../../constants/app_constants.dart';
 import '../../services/local_database/implementations/services/hive_database_service.dart';
-import '../../services/local_database/interfaces/i_local_database_service.dart';
+import '../../services/translation/translation_controller.dart';
 
-Future<ILocalDatabaseService<String>> initializeApp() async {
+Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Configure window settings for desktop platforms
@@ -26,14 +27,15 @@ Future<ILocalDatabaseService<String>> initializeApp() async {
   // Initialize Hive
   await Hive.initializeApp();
 
-  final ILocalDatabaseService<String> appLocalLangService = await _initializeHiveService<String>(boxName: AppConstants.appLocalLangBox);
-
-  return appLocalLangService;
+  await _initializeAppLocalLangService(boxName: AppConstants.appLocalLangBox);
 }
 
-Future<ILocalDatabaseService<T>> _initializeHiveService<T>({required String boxName}) async {
-  Box<T> box = await Hive.openBox<T>(boxName);
-  return HiveDatabaseService(box);
+Future<void> _initializeAppLocalLangService({required String boxName}) async {
+  final Box<String> box = await Hive.openBox<String>(boxName);
+
+  final HiveDatabaseService<String> hiveLocalLangService = HiveDatabaseService(box);
+
+  Get.put(TranslationController(hiveLocalLangService));
 }
 
 Future<void> initializeWindowSettings() async {
@@ -47,6 +49,7 @@ Future<void> initializeWindowSettings() async {
     titleBarStyle: TitleBarStyle.normal,
     windowButtonVisibility: true,
   );
+
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();

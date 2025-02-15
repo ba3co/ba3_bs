@@ -11,6 +11,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/e_invoice_dialog_content.dart';
@@ -336,7 +337,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         hasModelId(previousBill.billId) &&
         hasModelItems(previousBill.items.itemList)) {
       generateAndSendPdf(
-        fileName: AppStrings.updatedBill,
+        fileName: AppStrings.updatedBill.tr,
         itemModel: [previousBill, currentBill],
       );
     }
@@ -472,7 +473,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // 2. If the bill has an ID and items, we generate & send a PDF
     if (_isValidBillForPdf(savedBill)) {
       generateAndSendPdf(
-        fileName: AppStrings.newBill,
+        fileName: AppStrings.newBill.tr,
         itemModel: savedBill,
       );
     }

@@ -3,7 +3,7 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 
@@ -39,7 +39,6 @@ class UserModel implements PlutoAdaptable {
     this.haveHoliday,
     this.loginDelay,
     this.logoutDelay,
-
   });
 
   Map<String, dynamic> toJson() {
@@ -59,15 +58,13 @@ class UserModel implements PlutoAdaptable {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-
     Map<String, UserTimeModel> userTimeModel = <String, UserTimeModel>{};
 
     (json['userTime'] ?? {}).forEach((k, v) {
-    userTimeModel[k] = UserTimeModel.fromJson(v);
+      userTimeModel[k] = UserTimeModel.fromJson(v);
     });
 
-    var sortedEntries = userTimeModel.entries.toList()
-    ..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
+    var sortedEntries = userTimeModel.entries.toList()..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
 
     userTimeModel = Map.fromEntries(sortedEntries);
 
@@ -78,7 +75,6 @@ class UserModel implements PlutoAdaptable {
         userDailyTime[workingHourId] = UserWorkingHours.fromJson(userWorkingHourJson);
       },
     );
-
 
     return UserModel(
       userId: json['docId'],
@@ -155,7 +151,7 @@ class UserModel implements PlutoAdaptable {
     return {
       PlutoColumn(
         title: 'الرقم التعريفي',
-        field: AppStrings.userIdFiled,
+        field: AppConstants.userIdFiled,
         type: PlutoColumnType.text(),
         hide: true,
       ): userId,
@@ -206,7 +202,6 @@ class UserModel implements PlutoAdaptable {
         renderer: (context) => buildStatusCell(context.cell.value.toString()),
         type: PlutoColumnType.text(),
       ): hasHolidayToday() ? 'اجازة' : userWorkStatus?.label,
-
     };
   }
 }

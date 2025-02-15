@@ -345,7 +345,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
     _billService.generateAndSendPdf(
-      fileName: AppStrings.existedBill,
+      fileName: AppStrings.existedBill.tr,
       itemModel: billModel,
     );
   }

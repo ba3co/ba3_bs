@@ -44,7 +44,7 @@ class BillDetailsButtons extends StatelessWidget {
               _buildApprovalOrBondButton(context),
             if (!billSearchController.isPending)
               _buildActionButton(
-                title: AppStrings().print,
+                title: AppStrings.print.tr,
                 icon: Icons.print_outlined,
                 onPressed: () => billDetailsController.printBill(
                   context: context,
@@ -54,7 +54,7 @@ class BillDetailsButtons extends StatelessWidget {
               ),
             if (!billSearchController.isPending)
               _buildActionButton(
-                title: AppStrings().eInvoice,
+                title: AppStrings.eInvoice.tr,
                 icon: Icons.link,
                 onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
               ),
@@ -63,7 +63,7 @@ class BillDetailsButtons extends StatelessWidget {
                 ? AppButton(
                     height: 20,
                     fontSize: 14,
-                    title:AppStrings().more,
+                    title: AppStrings.more.tr,
                     onPressed: () {
                       billDetailsController.openFirstPayDialog(context);
                     })
@@ -78,7 +78,7 @@ class BillDetailsButtons extends StatelessWidget {
     return Obx(() {
       final isBillSaved = billDetailsController.isBillSaved.value;
       return AppButton(
-        title: isBillSaved ? AppStrings().newS : AppStrings().add,
+        title: isBillSaved ? AppStrings.newS.tr : AppStrings.add.tr,
         height: 20,
         fontSize: 14,
         color: isBillSaved ? Colors.green : Colors.blue.shade700,
@@ -94,7 +94,7 @@ class BillDetailsButtons extends StatelessWidget {
   Widget _buildApprovalOrBondButton(BuildContext context) {
     final isPending = billSearchController.isPending;
     return _buildActionButton(
-      title: isPending ? AppStrings().approve : AppStrings().bond,
+      title: isPending ? AppStrings.approve.tr : AppStrings.bond.tr,
       icon: Icons.file_open_outlined,
       color: isPending ? Colors.orange : null,
       onPressed: isPending
@@ -107,7 +107,7 @@ class BillDetailsButtons extends StatelessWidget {
     return [
       if (!billSearchController.isPending)
         _buildActionButton(
-          title:AppStrings().edit,
+          title: AppStrings.edit.tr,
           icon: Icons.edit_outlined,
           onPressed: () => billDetailsController.updateBill(
             billModel: billModel,
@@ -116,13 +116,13 @@ class BillDetailsButtons extends StatelessWidget {
         ),
       if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
-          title: AppStrings().pdfEmail,
+          title: AppStrings.pdfEmail.tr,
           icon: Icons.link,
           onPressed: () => billDetailsController.generateAndSendBillPdf(billModel),
         ),
       if (RoleItemType.viewBill.hasAdminPermission)
         _buildActionButton(
-          title:AppStrings().delete,
+          title: AppStrings.delete.tr,
           icon: Icons.delete_outline,
           color: Colors.red,
           onPressed: () => billDetailsController.deleteBill(billModel),

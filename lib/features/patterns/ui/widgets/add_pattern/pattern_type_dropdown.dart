@@ -20,7 +20,7 @@ class PatternTypeDropdown extends StatelessWidget {
       width: Get.width * 0.45,
       child: Row(
         children: [
-           SizedBox(width: 100, child: Text('${AppStrings().type} ${AppStrings().al+AppStrings().bill}')),
+          SizedBox(width: 100, child: Text('${AppStrings.type.tr} ${AppStrings.al.tr + AppStrings.bill.tr}')),
           Container(
               width: (Get.width * 0.45) - 100,
               height: AppConstants.constHeightTextField,
@@ -30,7 +30,7 @@ class PatternTypeDropdown extends StatelessWidget {
                 color: Colors.white,
               ),
               child: DropdownButton(
-                hint:  Text('${AppStrings().choose} ${AppStrings().type} ${AppStrings().al+AppStrings().pattern}'),
+                hint: Text('${AppStrings.choose.tr} ${AppStrings.type.tr} ${AppStrings.al.tr + AppStrings.pattern.tr}'),
                 dropdownColor: Colors.white,
                 focusColor: Colors.white,
                 alignment: Alignment.center,

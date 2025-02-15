@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/pdf_helper.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
@@ -52,18 +53,18 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
     final BondModel beforeUpdate = itemModel[0];
     final BondModel afterUpdate = itemModel[1];
 
-    final headersComparison = ['Field', AppStrings.before, AppStrings.after];
+    final headersComparison = ['Field', AppStrings.before.tr, AppStrings.after.tr];
     final dataComparison = _buildComparisonData(beforeUpdate, afterUpdate);
 
     final headersItems = [
-      ' الحساب(${AppStrings.before})',
-      'الحساب (${AppStrings.after})',
-      'مدين (${AppStrings.before})',
-      'مدين (${AppStrings.after})',
-      'دائن (${AppStrings.before})',
-      'دائن (${AppStrings.after})',
-      'البيان (${AppStrings.after})',
-      'البيان (${AppStrings.after})',
+      ' الحساب(${AppStrings.before.tr})',
+      'الحساب (${AppStrings.after.tr})',
+      'مدين (${AppStrings.before.tr})',
+      'مدين (${AppStrings.after.tr})',
+      'دائن (${AppStrings.before.tr})',
+      'دائن (${AppStrings.after.tr})',
+      'البيان (${AppStrings.after.tr})',
+      'البيان (${AppStrings.after.tr})',
     ];
     final dataItems =
         _buildItemsComparisonData(beforeUpdate, afterUpdate, font);

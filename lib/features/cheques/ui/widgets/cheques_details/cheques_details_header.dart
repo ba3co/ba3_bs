@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
 import '../../../controllers/cheques/cheques_details_controller.dart';
@@ -15,7 +16,7 @@ class ChequesDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
-      label:AppStrings().status,
+      label: AppStrings.status.tr,
       child: Container(
         // padding: const EdgeInsets.all(8),
 

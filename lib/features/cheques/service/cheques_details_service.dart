@@ -103,13 +103,13 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     if (isSave) {
       chequesDetailsController.updateIsChequesSaved(true);
       generateAndSendPdf(
-        fileName: AppStrings.newBond,
+        fileName: AppStrings.newBond.tr,
         itemModel: currentChequesModel,
       );
     } else {
       chequesSearchController.updateCheques(currentChequesModel);
       generateAndSendPdf(
-        fileName: AppStrings.newBond,
+        fileName: AppStrings.newBond.tr,
         itemModel: [prevChequesModel!, currentChequesModel],
       );
     }

@@ -1,5 +1,5 @@
-import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +13,11 @@ class AttendanceScreen extends StatelessWidget {
   // حساب إجمالي التأخر في تسجيل الدخول
   String calculateTotalLoginDelay(Map<String, UserWorkingHours> workingHours, UserTimeModel timeModel) {
     if (timeModel.logInDateList == null || timeModel.logInDateList?.length != workingHours.entries.length) {
-      return "غير متوفر حاليا";
+      return AppStrings .currentlyUnavailable;
     }
     int totalMinutes = 0;
     for (int i = 0; i < timeModel.logInDateList!.length; i++) {
       final enterTime = DateFormat("hh:mm a").parse(workingHours.values.elementAt(i).enterTime!);
-      log('enterTime  $enterTime');
       final loginTime = timeModel.logInDateList!.elementAt(i);
       final delay = loginTime.difference(DateTime(loginTime.year, loginTime.month, loginTime.day, enterTime.hour, enterTime.minute));
       if (!delay.isNegative) {
@@ -31,7 +30,7 @@ class AttendanceScreen extends StatelessWidget {
   // حساب إجمالي التأخر في تسجيل الخروج
   String calculateTotalLogoutDelay(Map<String, UserWorkingHours> workingHours, UserTimeModel timeModel) {
     if (timeModel.logOutDateList == null) {
-      return "غير متوفر";
+      return AppStrings .currentlyUnavailable;
     }
     int totalMinutes = 0;
     for (var entry in workingHours.entries) {
@@ -51,11 +50,11 @@ class AttendanceScreen extends StatelessWidget {
     final hours = totalMinutes ~/ 60;
     final minutes = totalMinutes % 60;
     if (hours == 0) {
-      return "$minutes دقائق";
+      return "$minutes  ${AppStrings .minutes}";
     } else if (minutes == 0) {
-      return "$hours ساعات";
+      return "$hours ${AppStrings .hours}";
     } else {
-      return "$hours ساعات و $minutes دقائق";
+      return "$hours ${AppStrings .hours} ${AppStrings .and} $minutes ${AppStrings .minutes}";
     }
   }
 
@@ -63,7 +62,7 @@ class AttendanceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("لوحة تحكم المستخدم"),
+        title: Text("${AppStrings .controlPanel} ${AppStrings .user}"),
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -74,9 +73,9 @@ class AttendanceScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("اسم المستخدم: ${user.userName}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text("${AppStrings .name} ${AppStrings .user}: ${user.userName}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-                  Text("حالة العمل: ${user.userWorkStatus?.label}", style: TextStyle(fontSize: 16)),
+                  Text("${AppStrings .status} ${AppStrings .work}: ${user.userWorkStatus?.label}", style: TextStyle(fontSize: 16)),
                   SizedBox(height: 8),
                   Text("الحالة: ${user.userActiveStatus?.label}", style: TextStyle(fontSize: 16)),
                   SizedBox(height: 16),
@@ -90,9 +89,9 @@ class AttendanceScreen extends StatelessWidget {
                       return Column(
                         children: [
                           Text(userTimeModel.dayName.toString()),
-                          Text("إجمالي التأخر في تسجيل الدخول: ${calculateTotalLoginDelay(user.userWorkingHours!, userTimeModel)}"),
+                          Text("${AppStrings .totalLoginDelay}: ${calculateTotalLoginDelay(user.userWorkingHours!, userTimeModel)}"),
                           Text(
-                              "إجمالي التأخر في تسجيل الخروج: ${calculateTotalLogoutDelay(user.userWorkingHours!,userTimeModel)}"),
+                              "${AppStrings .totalLateCheckOut}: ${calculateTotalLogoutDelay(user.userWorkingHours!,userTimeModel)}"),
                         ],
                       );
                     },

@@ -12,12 +12,11 @@ class AllMaterialsGroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<MaterialGroupController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: '${AppStrings().all} ${AppStrings().groups}',
+        title: '${AppStrings.all.tr} ${AppStrings.groups.tr}',
         isLoading: controller.isLoading,
         tableSourceModels: controller.materialGroups,
         onLoaded: (event) {},
-        onSelected: (selectedRow) {
-        },
+        onSelected: (selectedRow) {},
       );
     });
   }

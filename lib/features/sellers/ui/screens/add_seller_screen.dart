@@ -48,7 +48,7 @@ class AddSellerScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(AppStrings().code),
+                        Text(AppStrings.code.tr),
                         HorizontalSpace(20),
                         Expanded(
                           child: CustomTextFieldWithoutIcon(
@@ -66,7 +66,7 @@ class AddSellerScreen extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(bottom: .15.sh),
                   child: AppButton(
-                    title: controller.selectedSellerModel?.costGuid == null ? AppStrings().add : AppStrings().edit,
+                    title: controller.selectedSellerModel?.costGuid == null ? AppStrings.add.tr : AppStrings.edit.tr,
                     onPressed: () {
                       controller.saveOrUpdateSeller();
                     },

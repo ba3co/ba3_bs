@@ -57,8 +57,8 @@ class WindowCloseController extends GetxController with WindowListener {
                       child: FlutterLogo(),
                     ),
                     const VerticalSpace(16),
-                     Text(
-                      AppStrings().areYouSureYouWantToCloseTheProgram,
+                    Text(
+                      AppStrings.areYouSureYouWantToCloseTheProgram.tr,
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 14,
@@ -80,8 +80,8 @@ class WindowCloseController extends GetxController with WindowListener {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child:  Text(
-                              AppStrings().exit,
+                            child: Text(
+                              AppStrings.exit.tr,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -98,8 +98,8 @@ class WindowCloseController extends GetxController with WindowListener {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child:  Text(
-                              AppStrings().cancel,
+                            child: Text(
+                              AppStrings.cancel.tr,
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -117,18 +117,18 @@ class WindowCloseController extends GetxController with WindowListener {
 
   Future<bool> _showDefaultExitDialog() async {
     return await Get.defaultDialog(
-          content:  Text(AppStrings().areYouSureYouWantToCloseTheProgram),
+          content: Text(AppStrings.areYouSureYouWantToCloseTheProgram.tr),
           confirm: ElevatedButton(
             onPressed: () {
               Get.back(result: true);
             },
-            child:  Text(AppStrings().exit),
+            child: Text(AppStrings.exit.tr),
           ),
           cancel: ElevatedButton(
             onPressed: () {
               Get.back(result: false);
             },
-            child:  Text(AppStrings().cancel),
+            child: Text(AppStrings.cancel.tr),
           ),
         ) ??
         false; // Default return if dismissed

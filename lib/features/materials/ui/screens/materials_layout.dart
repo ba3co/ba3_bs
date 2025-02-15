@@ -27,13 +27,13 @@ class MaterialLayout extends StatelessWidget {
           children: [
             Scaffold(
               appBar: AppBar(
-                title:  Text(AppStrings().materials),
+                title: Text(AppStrings.materials.tr),
                 actions: RoleItemType.administrator.hasAdminPermission
                     ? [
                         Padding(
                           padding: EdgeInsets.all(6),
                           child: AppButton(
-                              title: '${AppStrings().download} ${AppStrings().materials}',
+                              title: '${AppStrings.download.tr} ${AppStrings.materials.tr}',
                               onPressed: () {
                                 read<MaterialController>().fetchAllMaterialFromLocal();
                               }),
@@ -41,7 +41,7 @@ class MaterialLayout extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(6),
                           child: AppButton(
-                              title: '${AppStrings().delete} ${AppStrings().materials}',
+                              title: '${AppStrings.delete.tr} ${AppStrings.materials.tr}',
                               onPressed: () {
                                 read<MaterialController>().deleteAllMaterialFromLocal();
                               }),
@@ -49,8 +49,8 @@ class MaterialLayout extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(6),
                           child: AppButton(
-                            width: 100,
-                              title: '${AppStrings().download} ${AppStrings().groups}',
+                              width: 100,
+                              title: '${AppStrings.download.tr} ${AppStrings.groups.tr}',
                               onPressed: () {
                                 read<MaterialGroupController>().fetchAllMaterialGroupGroupFromLocal();
                               }),
@@ -61,20 +61,20 @@ class MaterialLayout extends StatelessWidget {
               body: Column(
                 children: [
                   AppMenuItem(
-                      text: '${AppStrings().view} ${AppStrings().materials}',
+                      text: '${AppStrings.view.tr} ${AppStrings.materials.tr}',
                       onTap: () {
                         read<MaterialController>()
                           ..reloadMaterials()
                           ..navigateToAllMaterialScreen();
                       }),
                   AppMenuItem(
-                      text:'${AppStrings().view} ${AppStrings().groups}',
+                      text: '${AppStrings.view.tr} ${AppStrings.groups.tr}',
                       onTap: () {
                         read<MaterialGroupController>().navigateToAllMaterialScreen();
                       }),
                   if (RoleItemType.viewProduct.hasAdminPermission)
                     AppMenuItem(
-                        text: '${AppStrings().add} ${AppStrings().materials}',
+                        text: '${AppStrings.add.tr} ${AppStrings.materials.tr}',
                         onTap: () {
                           read<MaterialController>().navigateToAddOrUpdateMaterialScreen();
                         }),
@@ -86,7 +86,7 @@ class MaterialLayout extends StatelessWidget {
             ),
             LoadingDialog(
               isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,
-              message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings().from} ${AppStrings().materials}',
+              message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.materials.tr}',
               fontSize: 14.sp,
             )
           ],

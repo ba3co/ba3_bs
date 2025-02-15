@@ -1,6 +1,8 @@
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/utils/app_service_utils.dart';
@@ -21,7 +23,7 @@ class AllHolidaysWidget extends StatelessWidget {
       child: OrganizedWidget(
           titleWidget: Center(
               child: Text(
-            'ايام العطل',
+            AppStrings.holidays.tr,
             style: AppTextStyles.headLineStyle2,
           )),
           bodyWidget: Column(

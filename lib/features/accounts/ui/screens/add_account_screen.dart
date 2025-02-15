@@ -21,15 +21,14 @@ class AddAccountScreen extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                controller.isEditAccount ? controller.selectedAccount!.accName! :AppStrings().accountCard,
+                controller.isEditAccount ? controller.selectedAccount!.accName! : AppStrings.accountCard.tr,
               ),
               Spacer(),
               SizedBox(
                   width: 400,
                   child: CustomTextFieldWithoutIcon(
                       enabled: true,
-                      textEditingController: TextEditingController()
-                        ..text = controller.isEditAccount ? controller.selectedAccount!.id! : '')),
+                      textEditingController: TextEditingController()..text = controller.isEditAccount ? controller.selectedAccount!.id! : '')),
               Spacer(),
             ],
           ),

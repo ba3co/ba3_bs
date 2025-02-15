@@ -19,8 +19,8 @@ class SellerTargetScreen extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 actions: const [],
-                title:  Text(
-                  '${AppStrings().panel} ${AppStrings().achievements}',
+                title: Text(
+                  '${AppStrings.panel.tr} ${AppStrings.achievements.tr}',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -30,8 +30,8 @@ class SellerTargetScreen extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                           Text(
-                            '${AppStrings().target} ${AppStrings().mobiles}',
+                          Text(
+                            '${AppStrings.target.tr} ${AppStrings.mobiles.tr}',
                             style: TextStyle(fontSize: 22),
                           ),
                           SizedBox(
@@ -48,9 +48,8 @@ class SellerTargetScreen extends StatelessWidget {
                       ),
                       Column(
                         children: [
-                           Text(
-                            '${AppStrings().target} ${AppStrings().accessories}'
-                        ,
+                          Text(
+                            '${AppStrings.target.tr} ${AppStrings.accessories.tr}',
                             style: TextStyle(fontSize: 22),
                           ),
                           SizedBox(

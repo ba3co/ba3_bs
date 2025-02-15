@@ -1,7 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/get.dart';
 
 class AllAttendanceScreen extends StatelessWidget {
   const AllAttendanceScreen({
@@ -12,7 +12,7 @@ class AllAttendanceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings().userControlPanel),
+        title: Text(AppStrings.userControlPanel.tr),
       ),
       body: GetBuilder<UserManagementController>(builder: (userManagementController) {
         return SingleChildScrollView(
@@ -40,11 +40,11 @@ class AllAttendanceScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(user.userName!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      if (user.loginDelay == "لم يسجل بعد" && user.logoutDelay == "لم يسجل بعد")
-                        Text("لم يسجل بعد", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
+                      if (user.loginDelay == AppStrings.notRegisteredYet.tr && user.logoutDelay == AppStrings.notRegisteredYet.tr)
+                        Text(AppStrings.notRegisteredYet.tr, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
                       else ...[
-                        Text("${AppStrings().delayedEntry}: ${user.loginDelay ?? 'لا يوجد'}"),
-                        Text("${AppStrings().leaveEarly}: ${user.logoutDelay ?? 'لا يوجد'}"),
+                        Text("${AppStrings.delayedEntry.tr}: ${user.loginDelay ?? AppStrings.nothing.tr}"),
+                        Text("${AppStrings.leaveEarly.tr}: ${user.logoutDelay ?? AppStrings.nothing.tr}"),
                       ],
                     ],
                   ),

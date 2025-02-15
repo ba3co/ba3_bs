@@ -93,7 +93,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
 
       if (hasModelId(currentBond.payGuid) && hasModelItems(currentBond.payItems.itemList)) {
         generateAndSendPdf(
-          fileName: AppStrings.newBond,
+          fileName: AppStrings.newBond.tr,
           itemModel: currentBond,
         );
       }
@@ -107,7 +107,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
           hasModelId(previousBond.payGuid) &&
           hasModelItems(previousBond.payItems.itemList)) {
         generateAndSendPdf(
-          fileName: AppStrings.updatedBond,
+          fileName: AppStrings.updatedBond.tr,
           itemModel: [previousBond, currentBond],
         );
       }

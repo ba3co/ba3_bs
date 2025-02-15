@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/app_spacer.dart';
@@ -20,15 +21,14 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              AppStrings().customerName,
+              AppStrings.customerName.tr,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
             Container(
               height: 30,
               width: 150,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   customerModel.name ?? '',
@@ -42,15 +42,14 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-             AppStrings().mobileNumber,
+              AppStrings.mobileNumber.tr,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
             Container(
               height: 30,
               width: 150,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   customerModel.phone1 ?? '',
@@ -64,15 +63,14 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-             AppStrings().taxType,
+              AppStrings.taxType.tr,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
             Container(
               height: 30,
               width: 250,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   VatEnums.byGuid(customerModel.cusVatGuid!).taxName ?? '',

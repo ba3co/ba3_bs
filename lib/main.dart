@@ -8,7 +8,6 @@ import 'core/bindings/bindings.dart';
 import 'core/constants/app_strings.dart';
 import 'core/helper/init_app/app_initializer.dart';
 import 'core/router/app_router.dart';
-import 'core/services/local_database/interfaces/i_local_database_service.dart';
 import 'core/services/translation/app_translations.dart';
 import 'core/services/translation/translation_controller.dart';
 import 'core/styling/app_themes.dart';
@@ -20,19 +19,17 @@ void main() async {
     FlutterError.presentError(details);
   };
 
-  final appLocalLangService = await initializeApp();
+  await initializeApp();
 
-  runApp(MyApp(appLocalLangService: appLocalLangService));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ILocalDatabaseService<String> appLocalLangService;
-
-  const MyApp({super.key, required this.appLocalLangService});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final translationController = Get.put(TranslationController(appLocalLangService));
+    final TranslationController translationController = Get.find<TranslationController>();
 
     return ScreenUtilInit(
       designSize: const Size(390, 852),
@@ -45,7 +42,7 @@ class MyApp extends StatelessWidget {
         locale: Locale(translationController.localLangCode),
         translations: AppTranslations(),
         fallbackLocale: Locale('en', 'US'),
-        title: AppStrings.appTitle,
+        title: AppStrings.appTitle.tr,
         theme: AppThemes.defaultTheme,
         getPages: appRouter,
       ),

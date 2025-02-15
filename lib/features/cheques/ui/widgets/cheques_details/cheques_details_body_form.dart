@@ -30,7 +30,7 @@ class AddChequeForm extends StatelessWidget {
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: '${AppStrings().date} ${AppStrings().editing}',
+                  label: '${AppStrings.date.tr} ${AppStrings.editing.tr}',
                   child: Obx(() {
                     return DatePicker(
                       initDate: chequesDetailsController.chequesDate.value,
@@ -39,7 +39,7 @@ class AddChequeForm extends StatelessWidget {
                   }),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: '${AppStrings().date} ${AppStrings().dues}',
+                  label: '${AppStrings.date.tr} ${AppStrings.dues.tr}',
                   child: Obx(() {
                     return DatePicker(
                       initDate: chequesDetailsController.chequesDueDate.value,
@@ -50,8 +50,7 @@ class AddChequeForm extends StatelessWidget {
             const VerticalSpace(),
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: "${AppStrings().number} ${AppStrings().cheque}"
-                  ,
+                  label: "${AppStrings.number.tr} ${AppStrings.cheque.tr}",
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
@@ -59,7 +58,7 @@ class AddChequeForm extends StatelessWidget {
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: '${AppStrings().value} ${AppStrings().cheque}',
+                  label: '${AppStrings.value.tr} ${AppStrings.cheque.tr}',
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),
@@ -69,7 +68,7 @@ class AddChequeForm extends StatelessWidget {
             const VerticalSpace(),
             FormFieldRow(
                 firstItem: SearchableAccountField(
-                  label: AppStrings().account,
+                  label: AppStrings.account.tr,
                   onSubmitted: (text) async {
                     AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                       query: text,
@@ -83,7 +82,7 @@ class AddChequeForm extends StatelessWidget {
                   validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
                 ),
                 secondItem: SearchableAccountField(
-                  label: '${AppStrings().pay} ${AppStrings().to}',
+                  label: '${AppStrings.pay.tr} ${AppStrings.to.tr}',
                   textEditingController: chequesDetailsController.chequesAccPtrController,
                   validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
                   onSubmitted: (text) async {
@@ -100,7 +99,7 @@ class AddChequeForm extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(AppStrings().illustration),
+                Text(AppStrings.illustration.tr),
                 HorizontalSpace(70),
                 Expanded(
                   child: CustomTextFieldWithoutIcon(

@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
@@ -70,7 +71,7 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
 
   Widget _buildComparisonTable(BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
     return TableHelper.fromTextArray(
-      headers: ['الحقل', AppStrings.before, AppStrings.after],
+      headers: ['الحقل', AppStrings.before.tr, AppStrings.after.tr],
       data: _buildComparisonData(beforeUpdate, afterUpdate, font),
       headerDirection: TextDirection.rtl,
       tableDirection: TextDirection.rtl,
@@ -289,14 +290,14 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
   final _itemHeaders = [
     'المادة',
     'الباركود',
-    'الكمية ${AppStrings.before}',
-    'الكمية ${AppStrings.after}',
-    'سعر الوحدة ${AppStrings.before}',
-    'سعر الوحدة ${AppStrings.after}',
-    'الضريبة ${AppStrings.before}',
-    'الضريبة ${AppStrings.after}',
-    'المجموع ${AppStrings.before}',
-    'المجموع ${AppStrings.after}'
+    'الكمية ${AppStrings.before.tr}',
+    'الكمية ${AppStrings.after.tr}',
+    'سعر الوحدة ${AppStrings.before.tr}',
+    'سعر الوحدة ${AppStrings.after.tr}',
+    'الضريبة ${AppStrings.before.tr}',
+    'الضريبة ${AppStrings.after.tr}',
+    'المجموع ${AppStrings.before.tr}',
+    'المجموع ${AppStrings.after.tr}'
   ];
 
   final _columnWidthsSummary = {

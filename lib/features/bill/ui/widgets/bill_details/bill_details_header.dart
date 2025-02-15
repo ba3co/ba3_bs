@@ -40,7 +40,7 @@ class BillDetailsHeader extends StatelessWidget {
           children: [
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
-                label: AppStrings().billDate,
+                label: AppStrings.billDate.tr,
                 child: Obx(() {
                   return DatePicker(
                     initDate: billDetailsController.billDate.value.dayMonthYear,
@@ -56,14 +56,14 @@ class BillDetailsHeader extends StatelessWidget {
             FormFieldRow(
               visible: billModel.billTypeModel.billPatternType?.hasCashesAccount,
               firstItem: TextAndExpandedChildField(
-                label: AppStrings().mobileNumber,
+                label: AppStrings.mobileNumber.tr,
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: billDetailsController.mobileNumberController,
                   // suffixIcon: const SizedBox.shrink(),
                 ),
               ),
               secondItem: SearchableAccountField(
-                label: AppStrings().customerAccount,
+                label: AppStrings.customerAccount.tr,
                 textEditingController: billDetailsController.customerAccountController,
                 validator: (value) => billDetailsController.validator(value, 'حساب العميل'),
                 onSubmitted: (text) async {
@@ -80,7 +80,7 @@ class BillDetailsHeader extends StatelessWidget {
             const VerticalSpace(5),
             FormFieldRow(
               firstItem: SearchableAccountField(
-                label: AppStrings().seller,
+                label: AppStrings.seller.tr,
                 readOnly: !RoleItemType.viewBill.hasReadPermission,
                 textEditingController: billDetailsController.sellerAccountController,
                 validator: (value) => billDetailsController.validator(value, 'البائع'),
@@ -93,7 +93,7 @@ class BillDetailsHeader extends StatelessWidget {
                 },
               ),
               secondItem: TextAndExpandedChildField(
-                label: AppStrings().illustration,
+                label: AppStrings.illustration.tr,
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: billDetailsController.noteController,
                   suffixIcon: const SizedBox.shrink(),

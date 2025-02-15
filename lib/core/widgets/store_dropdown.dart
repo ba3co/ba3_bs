@@ -21,7 +21,11 @@ class StoreDropdown extends StatelessWidget {
       width: width ?? Get.width * 0.45,
       child: Row(
         children: [
-           SizedBox(width: 100, child: Text(AppStrings().store,)),
+          SizedBox(
+              width: 100,
+              child: Text(
+                AppStrings.store.tr,
+              )),
           Expanded(
             child: Container(
               width: (Get.width * 0.45) - 100,

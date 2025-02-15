@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_menu_item.dart';
@@ -17,25 +18,25 @@ class SellersLayout extends StatelessWidget {
     final SellerSalesController sellerSalesController = read<SellerSalesController>();
     return Scaffold(
       appBar: AppBar(
-        title:  Text(AppStrings().sellers),
+        title: Text(AppStrings.sellers.tr),
         actions: [
-          if(RoleItemType.administrator.hasReadPermission)
-
+          if (RoleItemType.administrator.hasReadPermission)
             Padding(
-            padding: EdgeInsets.all(5),
-            child: AppButton(title:    '${AppStrings().download} ${AppStrings().sellers}', onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
-          )
+              padding: EdgeInsets.all(5),
+              child: AppButton(
+                  title: '${AppStrings.download.tr} ${AppStrings.sellers.tr}', onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
+            )
         ],
       ),
       body: Column(
         children: [
           AppMenuItem(
-              text:    '${AppStrings().add} ${AppStrings().sellers}',
+              text: '${AppStrings.add.tr} ${AppStrings.sellers.tr}',
               onTap: () {
                 sellerSalesController.navigateToAddSellerScreen();
               }),
           AppMenuItem(
-              text:    '${AppStrings().view} ${AppStrings().sellers}',
+              text: '${AppStrings.view.tr} ${AppStrings.sellers.tr}',
               onTap: () {
                 sellerSalesController.navigateToAllSellersScreen();
               }),

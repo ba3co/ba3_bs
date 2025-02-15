@@ -13,11 +13,11 @@ class AllBillsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AllBillsController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: AppStrings().allBills,
+        title: AppStrings.allBills.tr,
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells['billId']?.value;
-          controller.openFloatingBillDetailsById(billId, context,BillType.sales.billTypeModel);
+          controller.openFloatingBillDetailsById(billId, context, BillType.sales.billTypeModel);
         },
         isLoading: controller.plutoGridIsLoading,
         tableSourceModels: controller.bills,

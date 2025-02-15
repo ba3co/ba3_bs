@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../controllers/pluto/bond_details_pluto_controller.dart';
@@ -24,14 +24,24 @@ class BondDetailsCalculations extends StatelessWidget {
               width: 350,
               child: Row(
                 children: [
-                   SizedBox(
+                  SizedBox(
                       width: 100,
                       child: Text(
-                       AppStrings().total,
+                        AppStrings.total.tr,
                       )),
-                  Container(width: 120, color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondDetailsPlutoController.calcDebitTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                  Container(
+                      width: 120,
+                      color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                      padding: const EdgeInsets.all(5),
+                      child: Text(bondDetailsPlutoController.calcDebitTotal().toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.white, fontSize: 18))),
                   const SizedBox(width: 10),
-                  Container(width: 120, color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondDetailsPlutoController.calcCreditTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                  Container(
+                      width: 120,
+                      color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                      padding: const EdgeInsets.all(5),
+                      child: Text(bondDetailsPlutoController.calcCreditTotal().toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.white, fontSize: 18))),
                 ],
               ),
             ),
@@ -42,12 +52,13 @@ class BondDetailsCalculations extends StatelessWidget {
               width: 350,
               child: Row(
                 children: [
-                   SizedBox(width: 100, child: Text(AppStrings().difference)),
+                  SizedBox(width: 100, child: Text(AppStrings.difference.tr)),
                   Container(
                       width: 250,
                       color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
                       padding: const EdgeInsets.all(5),
-                      child: Text(bondDetailsPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                      child: Text(bondDetailsPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.white, fontSize: 18))),
                 ],
               ),
             ),
