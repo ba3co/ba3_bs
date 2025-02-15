@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/sellers_layout.dart';
 import 'package:ba3_bs/features/user_time/ui/screens/all_attendance_screen.dart';
@@ -18,7 +17,6 @@ import '../../users_management/ui/screens/user_management_layout.dart';
 import '../data/model/app_layout_item_model.dart';
 
 class MainLayoutController extends GetxController {
-
   RxList<AppLayoutItemModel> appLayouts = [
     if (RoleItemType.viewBill.hasReadPermission)
       AppLayoutItemModel(
@@ -30,7 +28,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewPattern.hasReadPermission)
       AppLayoutItemModel(
-        name: 'الانماط',
+        name: 'الأنماط',
         layout: const PatternLayout(),
         role: RoleItemType.viewPattern,
         icon: AppAssets.patternsIcon,
@@ -38,7 +36,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewProduct.hasReadPermission)
       AppLayoutItemModel(
-        name: "المواد",
+        name: 'المواد',
         layout: const MaterialLayout(),
         role: RoleItemType.viewProduct,
         icon: AppAssets.materialIcon,
@@ -46,7 +44,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewAccount.hasReadPermission)
       AppLayoutItemModel(
-        name:"الحسابات",
+        name: 'الحسابات',
         layout: const AccountLayout(),
         role: RoleItemType.viewAccount,
         icon: AppAssets.accountsIcon,
@@ -54,7 +52,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewBond.hasReadPermission)
       AppLayoutItemModel(
-        name: "السندات",
+        name: 'السندات',
         layout: const BondLayout(),
         role: RoleItemType.viewBond,
         icon: AppAssets.bondsIcon,
@@ -62,7 +60,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewCheques.hasReadPermission)
       AppLayoutItemModel(
-        name:"الشيكات",
+        name: 'الشيكات',
         layout: const ChequeLayout(),
         role: RoleItemType.viewCheques,
         icon: AppAssets.chequesIcon,
@@ -70,7 +68,7 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewSellers.hasReadPermission)
       AppLayoutItemModel(
-        name:"البائعين",
+        name: 'البائعون',
         layout: const SellersLayout(),
         role: RoleItemType.viewSellers,
         icon: AppAssets.accountsIcon,
@@ -78,14 +76,14 @@ class MainLayoutController extends GetxController {
       ),
     if (RoleItemType.viewUserManagement.hasAdminPermission)
       AppLayoutItemModel(
-        name: "إدارة المستخدمين",
+        name: 'إدارة المستخدمين',
         layout: const UserManagementLayout(),
         role: RoleItemType.viewUserManagement,
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon,
       ),
     AppLayoutItemModel(
-      name: "الدوام",
+      name: 'الدوام',
       layout: const UserTimeDetails(),
       role: RoleItemType.viewTime,
       icon: AppAssets.usersTimeIcon,
@@ -93,7 +91,7 @@ class MainLayoutController extends GetxController {
     ),
     if (RoleItemType.administrator.hasReadPermission)
       AppLayoutItemModel(
-        name: "لوحة التحكم",
+        name: 'لوحة التحكم',
         layout: const AllAttendanceScreen(),
         role: RoleItemType.administrator,
         icon: AppAssets.billsIcon,

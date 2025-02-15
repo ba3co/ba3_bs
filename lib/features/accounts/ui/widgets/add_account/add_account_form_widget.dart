@@ -21,7 +21,7 @@ class AddAccountFormWidget extends StatelessWidget {
         children: [
           FormFieldRow(
             firstItem: TextAndExpandedChildField(
-              label:AppStrings().accountName,
+              label: AppStrings.accountName,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
                 validator: (value) => controller.accountFromHandler.defaultValidator(value, "اسم الحساب"),
@@ -29,7 +29,7 @@ class AddAccountFormWidget extends StatelessWidget {
               ),
             ),
             secondItem: TextAndExpandedChildField(
-              label: AppStrings().latinAccountName,
+              label: AppStrings.latinAccountName,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
                 textEditingController: controller.accountFromHandler.latinNameController,
@@ -39,7 +39,7 @@ class AddAccountFormWidget extends StatelessWidget {
           FormFieldRow(
             firstItem: SearchableAccountField(
               textEditingController: controller.accountFromHandler.accParentName,
-              label:AppStrings().fatherAccount,
+              label: AppStrings.fatherAccount,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await controller.openAccountSelectionDialog(
                   query: text,
@@ -51,7 +51,7 @@ class AddAccountFormWidget extends StatelessWidget {
               },
             ),
             secondItem: TextAndExpandedChildField(
-              label:AppStrings().accountCode,
+              label: AppStrings.accountCode,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
                 validator: (value) => controller.accountFromHandler.defaultValidator(value, "رمز الحساب"),

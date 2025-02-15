@@ -17,15 +17,15 @@ class MainHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing:4,
+      spacing: 4,
       children: [
         SizedBox(
-          height:(Platform.isWindows || Platform.isMacOS)?  0.025.sh:0.035.sh,
+          height: (Platform.isWindows || Platform.isMacOS) ? 0.025.sh : 0.035.sh,
           width: 0.15.sw,
           child: Row(
             children: [
               Text(
-                '${AppStrings().user}: ',
+                '${AppStrings.user}: ',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: TextStyle(
@@ -54,12 +54,12 @@ class MainHeader extends StatelessWidget {
             read<UserManagementController>().logOut();
           },
           child: Container(
-            height: (Platform.isWindows || Platform.isMacOS)? 0.05.sh:0.06.sh,
+            height: (Platform.isWindows || Platform.isMacOS) ? 0.05.sh : 0.06.sh,
             width: 0.15.sw,
             alignment: Alignment.center,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: AppColors.blueColor),
-            child:  Text(
-              AppStrings().logout,
+            child: Text(
+              AppStrings.logout,
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,

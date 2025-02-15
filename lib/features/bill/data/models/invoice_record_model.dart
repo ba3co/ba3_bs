@@ -169,20 +169,13 @@ class InvoiceRecordModel {
   }
 
   Map<PlutoColumn, dynamic> toEditedMap(BillTypeModel billTypeModel) {
-
     final double total = invRecTotal ?? 0;
     final int quantity = invRecQuantity ?? 1;
     final bool hasVat = billTypeModel.billPatternType?.hasVat ?? false;
 
-    final double subTotalStr = (quantity > 0)
-        ? (hasVat
-        ? AppServiceUtils.toFixedDouble(total / (quantity * 1.05))
-        : total / quantity)
-        : total;
+    final double subTotalStr = (quantity > 0) ? (hasVat ? AppServiceUtils.toFixedDouble(total / (quantity * 1.05)) : total / quantity) : total;
 
-    final double vat = (quantity > 0 && hasVat)
-        ? AppServiceUtils.toFixedDouble(subTotalStr * 0.05)
-        : 0;
+    final double vat = (quantity > 0 && hasVat) ? AppServiceUtils.toFixedDouble(subTotalStr * 0.05) : 0;
     return {
       PlutoColumn(
         title: '#',
@@ -201,7 +194,7 @@ class InvoiceRecordModel {
         },
       ): invRecId,
       PlutoColumn(
-        title:AppStrings().material,
+        title: AppStrings.material,
         width: 300,
         field: AppConstants.invRecProduct,
         type: PlutoColumnType.text(),
@@ -210,7 +203,7 @@ class InvoiceRecordModel {
         },
       ): invRecProduct,
       PlutoColumn(
-        title: AppStrings().quantity ,
+        title: AppStrings.quantity,
         field: AppConstants.invRecQuantity,
         width: 110,
         type: PlutoColumnType.text(),
@@ -219,7 +212,7 @@ class InvoiceRecordModel {
         },
       ): invRecQuantity,
       PlutoColumn(
-        title: AppStrings().individual,
+        title: AppStrings.individual,
         field: AppConstants.invRecSubTotal,
         width: 110,
         type: PlutoColumnType.text(),
@@ -227,16 +220,16 @@ class InvoiceRecordModel {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): subTotalStr,
-      if(billTypeModel.billPatternType!.hasVat)
+      if (billTypeModel.billPatternType!.hasVat)
+        PlutoColumn(
+          title: AppStrings.tax,
+          width: 110,
+          field: AppConstants.invRecVat,
+          enableEditingMode: false,
+          type: PlutoColumnType.text(),
+        ): vat,
       PlutoColumn(
-        title: AppStrings().tax,
-        width: 110,
-        field: AppConstants.invRecVat,
-        enableEditingMode: false,
-        type: PlutoColumnType.text(),
-      ): vat,
-      PlutoColumn(
-        title:  AppStrings().total,
+        title: AppStrings.total,
         width: 150,
         field: AppConstants.invRecTotal,
         type: PlutoColumnType.text(),
@@ -244,16 +237,16 @@ class InvoiceRecordModel {
           return cell.row.cells[AppConstants.invRecProduct]?.value == '';
         },
       ): invRecTotal,
-      if(billTypeModel.billPatternType!.hasGiftsAccount)
-      PlutoColumn(
-        title: AppStrings().gifts,
-        width: 110,
-        field: AppConstants.invRecGift,
-        type: PlutoColumnType.text(),
-        checkReadOnly: (row, cell) {
-          return cell.row.cells[AppConstants.invRecProduct]?.value == '';
-        },
-      ): invRecGift,
+      if (billTypeModel.billPatternType!.hasGiftsAccount)
+        PlutoColumn(
+          title: AppStrings.gifts,
+          width: 110,
+          field: AppConstants.invRecGift,
+          type: PlutoColumnType.text(),
+          checkReadOnly: (row, cell) {
+            return cell.row.cells[AppConstants.invRecProduct]?.value == '';
+          },
+        ): invRecGift,
     };
   }
 
@@ -373,27 +366,27 @@ class AdditionsDiscountsRecordModel {
   Map<PlutoColumn, dynamic> toEditedMap() {
     return {
       PlutoColumn(
-        title:AppStrings().account,
+        title: AppStrings.account,
         field: AppConstants.id,
         type: PlutoColumnType.text(),
       ): account,
       PlutoColumn(
-        title:AppStrings().discount,
+        title: AppStrings.discount,
         field: AppConstants.discount,
         type: PlutoColumnType.text(),
       ): discount,
       PlutoColumn(
-        title:AppStrings().discountRatio,
+        title: AppStrings.discountRatio,
         field: AppConstants.discountRatio,
         type: PlutoColumnType.text(),
       ): discountRatio,
       PlutoColumn(
-        title:AppStrings().additions,
+        title: AppStrings.additions,
         field: AppConstants.addition,
         type: PlutoColumnType.text(),
       ): addition,
       PlutoColumn(
-        title: AppStrings().additionRatio,
+        title: AppStrings.additionRatio,
         field: AppConstants.additionRatio,
         type: PlutoColumnType.text(),
       ): additionRatio,

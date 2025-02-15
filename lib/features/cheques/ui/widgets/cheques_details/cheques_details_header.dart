@@ -15,7 +15,7 @@ class ChequesDetailsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
-      label:AppStrings().status,
+      label: AppStrings.status,
       child: Container(
         // padding: const EdgeInsets.all(8),
 

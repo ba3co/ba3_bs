@@ -30,7 +30,7 @@ class BondDetailsHeader extends StatelessWidget {
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: '${AppStrings().date} ${AppStrings().bond}',
+                  label: '${AppStrings.date} ${AppStrings.bond}',
                   child: Obx(() {
                     return DatePicker(
                       initDate: bondDetailsController.bondDate.value,
@@ -39,8 +39,7 @@ class BondDetailsHeader extends StatelessWidget {
                   }),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: AppStrings().illustration,
-
+                  label: AppStrings.illustration,
                   child: CustomTextFieldWithoutIcon(
                     height: 30,
                     textEditingController: bondDetailsController.noteController,
@@ -51,15 +50,14 @@ class BondDetailsHeader extends StatelessWidget {
             if (bondDetailsController.isDebitOrCredit == true) ...[
               FormFieldRow(
                   firstItem: SearchableAccountField(
-
                     validator: (value) {
                       if (bondDetailsController.isDebitOrCredit) {
                         return bondDetailsController.validator(value, 'الحساب');
                       }
                       return null;
                     },
-                    label: "${ AppStrings(). account} : ",
-                    onSubmitted:  (text) async {
+                    label: "${AppStrings.account} : ",
+                    onSubmitted: (text) async {
                       AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                         query: text,
                         context: context,

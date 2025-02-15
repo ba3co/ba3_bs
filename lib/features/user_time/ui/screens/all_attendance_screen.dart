@@ -12,7 +12,7 @@ class AllAttendanceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStrings().userControlPanel),
+        title: Text(AppStrings.userControlPanel),
       ),
       body: GetBuilder<UserManagementController>(builder: (userManagementController) {
         return SingleChildScrollView(
@@ -43,8 +43,8 @@ class AllAttendanceScreen extends StatelessWidget {
                       if (user.loginDelay == "لم يسجل بعد" && user.logoutDelay == "لم يسجل بعد")
                         Text("لم يسجل بعد", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))
                       else ...[
-                        Text("${AppStrings().delayedEntry}: ${user.loginDelay ?? 'لا يوجد'}"),
-                        Text("${AppStrings().leaveEarly}: ${user.logoutDelay ?? 'لا يوجد'}"),
+                        Text("${AppStrings.delayedEntry}: ${user.loginDelay ?? 'لا يوجد'}"),
+                        Text("${AppStrings.leaveEarly}: ${user.logoutDelay ?? 'لا يوجد'}"),
                       ],
                     ],
                   ),

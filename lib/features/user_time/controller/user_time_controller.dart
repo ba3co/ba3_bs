@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
-import '../../../core/constants/app_strings.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
@@ -32,8 +32,6 @@ class UserTimeController extends GetxController {
     initialize();
   }
 
-
-
   List<String>? get userHolidays => getUserById()
       ?.userHolidays
       ?.toList()
@@ -59,9 +57,9 @@ class UserTimeController extends GetxController {
       },
       (location) {
         return isWithinRegion =
-            _userTimeServices.isWithinRegion(location, AppStrings.targetLatitude, AppStrings.targetLongitude, AppStrings.radiusInMeters) ||
+            _userTimeServices.isWithinRegion(location, AppConstants.targetLatitude, AppConstants.targetLongitude, AppConstants.radiusInMeters) ||
                 _userTimeServices.isWithinRegion(
-                    location, AppStrings.secondTargetLatitude, AppStrings.secondTargetLongitude, AppStrings.secondRadiusInMeters);
+                    location, AppConstants.secondTargetLatitude, AppConstants.secondTargetLongitude, AppConstants.secondRadiusInMeters);
       },
     );
 
@@ -74,8 +72,7 @@ class UserTimeController extends GetxController {
     getLastOutTime();
   }
 
-  Future<void> checkUserLog(
-      {required UserWorkStatus logStatus, required Function(UserModel) onChecked, required String errorMessage}) async {
+  Future<void> checkUserLog({required UserWorkStatus logStatus, required Function(UserModel) onChecked, required String errorMessage}) async {
     if (logStatus == UserWorkStatus.online) {
       logInState.value = RequestState.loading;
     } else {

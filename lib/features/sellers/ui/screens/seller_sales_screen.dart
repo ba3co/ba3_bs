@@ -18,7 +18,7 @@ class SellerSalesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<SellerSalesController>(
         builder: (controller) => PlutoGridWithAppBar(
-          title: '${AppStrings().bills} ${controller.selectedSeller!.costName}',
+          title: '${AppStrings.bills} ${controller.selectedSeller!.costName}',
           appBar: _buildAppBar(context, controller),
           onLoaded: (e) {},
           onSelected: (event) {
@@ -41,7 +41,7 @@ class SellerSalesScreen extends StatelessWidget {
     return AppBar(
       leadingWidth: 400,
       leading: _buildLeadingSection(controller, context),
-      title: Text('${AppStrings().salesRecord} ${controller.selectedSeller?.costName}'),
+      title: Text('${AppStrings.salesRecord} ${controller.selectedSeller?.costName}'),
       centerTitle: true,
       actions: _buildActionButtons(controller),
     );
@@ -72,7 +72,7 @@ class SellerSalesScreen extends StatelessWidget {
             controller.inFilterMode ? Icons.filter_alt : Icons.filter_alt_off_outlined,
             color: Colors.blue.shade700,
           ),
-          tooltip: '${AppStrings().empty} ${AppStrings().filter}',
+          tooltip: '${AppStrings.empty} ${AppStrings.filter}',
         ),
       ],
     );
@@ -82,7 +82,7 @@ class SellerSalesScreen extends StatelessWidget {
   List<Widget> _buildActionButtons(SellerSalesController controller) {
     return [
       AppButton(
-        title: AppStrings().edit,
+        title: AppStrings.edit,
         borderRadius: BorderRadius.circular(25),
         onPressed: () {
           // TODO: Add navigation logic for editing
@@ -90,7 +90,7 @@ class SellerSalesScreen extends StatelessWidget {
       ),
       const HorizontalSpace(20),
       AppButton(
-        title: AppStrings().target,
+        title: AppStrings.target,
         borderRadius: BorderRadius.circular(25),
         onPressed: () {
           controller
@@ -114,8 +114,8 @@ class SellerSalesScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               Text(
-                '${AppStrings().total} :',
+              Text(
+                '${AppStrings.total} :',
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
               ),
               const HorizontalSpace(10),

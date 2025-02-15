@@ -10,14 +10,14 @@ import '../../../controllers/bill/all_bills_controller.dart';
 AppBar billLayoutAppBar() {
   return AppBar(
     actions: [
-      if(RoleItemType.administrator.hasReadPermission)
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: AppButton(
-          title: AppStrings().downloadBill,
-          onPressed: () => read<AllBillsController>().fetchAllBillsFromLocal(),
+      if (RoleItemType.administrator.hasReadPermission)
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AppButton(
+            title: AppStrings.downloadBill,
+            onPressed: () => read<AllBillsController>().fetchAllBillsFromLocal(),
+          ),
         ),
-      ),
     ],
   );
 }

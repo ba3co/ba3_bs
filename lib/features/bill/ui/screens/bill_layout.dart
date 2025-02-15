@@ -43,7 +43,7 @@ class BillLayout extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.all(8),
                       child: AppButton(
-                        title: "${AppStrings().download} ${AppStrings().bills}",
+                        title: "${AppStrings.download} ${AppStrings.bills}",
                         onPressed: () => allBillsController.fetchAllBillsFromLocal(),
                       ),
                     ),
@@ -55,8 +55,7 @@ class BillLayout extends StatelessWidget {
                   child: OrganizedWidget(
                     titleWidget: Align(
                       child: Text(
-                      AppStrings
-                        ().bills,
+                        AppStrings.bills,
                         style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                       ),
                     ),

@@ -10,9 +10,6 @@ import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../widgets/cheques_layout/cheques_type_item_widget.dart';
 
-
-
-
 class ChequeLayout extends StatefulWidget {
   const ChequeLayout({super.key});
 
@@ -21,7 +18,6 @@ class ChequeLayout extends StatefulWidget {
 }
 
 class _ChequeLayoutState extends State<ChequeLayout> {
-
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -34,28 +30,33 @@ class _ChequeLayoutState extends State<ChequeLayout> {
             child: OrganizedWidget(
               titleWidget: Align(
                 child: Text(
-                 AppStrings().cheques,
+                  AppStrings.cheques,
                   style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                 ),
               ),
               bodyWidget: Column(
                 spacing: 5,
                 children: [
-                  ChequesTypeItemWidget(text: "${AppStrings().add} ${AppStrings().cheque}", onPressed:() {
-                    controller.openFloatingChequesDetails(context, ChequesType.paidChecks);
-                    // Get.to(() => const ChequesDetailsScreen());
-                  }),
-                  ChequesTypeItemWidget(text:"${AppStrings().cheques} ${AppStrings().dues}", onPressed: () {
-                    controller
-                      ..fetchAllChequesByType(ChequesType.paidChecks)
-                      ..navigateToChequesScreen(onlyDues:true);
-
-                  }),
-                  ChequesTypeItemWidget(text: "${AppStrings().view} ${AppStrings().cheques}",onPressed:  () {
-                    controller
-                      ..fetchAllChequesByType(ChequesType.paidChecks)
-                      ..navigateToChequesScreen(onlyDues:false);
-                  }),
+                  ChequesTypeItemWidget(
+                      text: "${AppStrings.add} ${AppStrings.cheque}",
+                      onPressed: () {
+                        controller.openFloatingChequesDetails(context, ChequesType.paidChecks);
+                        // Get.to(() => const ChequesDetailsScreen());
+                      }),
+                  ChequesTypeItemWidget(
+                      text: "${AppStrings.cheques} ${AppStrings.dues}",
+                      onPressed: () {
+                        controller
+                          ..fetchAllChequesByType(ChequesType.paidChecks)
+                          ..navigateToChequesScreen(onlyDues: true);
+                      }),
+                  ChequesTypeItemWidget(
+                      text: "${AppStrings.view} ${AppStrings.cheques}",
+                      onPressed: () {
+                        controller
+                          ..fetchAllChequesByType(ChequesType.paidChecks)
+                          ..navigateToChequesScreen(onlyDues: false);
+                      }),
                 ],
               ),
             ),
@@ -64,6 +65,4 @@ class _ChequeLayoutState extends State<ChequeLayout> {
       }),
     );
   }
-
-
 }

@@ -33,7 +33,7 @@ class BondLayout extends StatelessWidget {
                 child: OrganizedWidget(
                   titleWidget: Align(
                     child: Text(
-                     AppStrings().bonds,
+                      AppStrings.bonds,
                       style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                     ),
                   ),
@@ -48,7 +48,7 @@ class BondLayout extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: BondItemWidget(
-                                bondsController:    controller,
+                                bondsController: controller,
                                 onTap: () {
                                   controller.openFloatingBondDetails(context, bondType);
                                 },
@@ -66,7 +66,7 @@ class BondLayout extends StatelessWidget {
           }),
           LoadingDialog(
             isLoading: read<AllBondsController>().saveAllBondsRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings().from} ${AppStrings().bonds}',
+            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from} ${AppStrings.bonds}',
             fontSize: 14.sp,
           )
         ],

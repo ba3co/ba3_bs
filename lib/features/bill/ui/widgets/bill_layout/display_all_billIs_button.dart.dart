@@ -17,9 +17,9 @@ class DisplayAllBillsButton extends StatelessWidget {
           width: double.infinity,
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
           padding: const EdgeInsets.all(30.0),
-          child:  Center(
+          child: Center(
             child: Text(
-             AppStrings().allBills,
+              AppStrings.allBills,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textDirection: TextDirection.rtl,
             ),

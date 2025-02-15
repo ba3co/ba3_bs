@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +118,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       content: ProductSelectionDialogContent(
         searchedMaterials: searchedMaterials,
         onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
-          final materialId = onSelectedEvent.row?.cells[AppStrings.materialIdFiled]?.value;
+          final materialId = onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
           final selectedMaterial = materialId != null ? materialController.getMaterialById(materialId) : null;
           updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController);
 

@@ -36,7 +36,6 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      
       automaticallyImplyLeading: false,
       actions: [
         Expanded(
@@ -45,20 +44,19 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             height: AppConstants.constHeightTextField,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
               children: [
                 Visibility(
                   visible: billTypeModel.billPatternType?.hasCashesAccount ?? true,
                   child: SizedBox(
                     width: 250,
                     child: Row(
-                       spacing: 10,
+                      spacing: 10,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                         SizedBox(
+                        SizedBox(
                           width: 70,
                           child: Text(
-                           AppStrings().billType,
+                            AppStrings.billType,
                             textDirection: TextDirection.rtl,
                           ),
                         ),
@@ -88,7 +86,6 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                 ),
-
                 Row(
                   children: [
                     CustomIconButton(

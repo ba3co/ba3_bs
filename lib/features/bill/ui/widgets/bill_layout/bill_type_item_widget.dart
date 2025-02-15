@@ -59,7 +59,7 @@ class BillTypeItemWidget extends StatelessWidget {
                         spacing: 5,
                         children: [
                           Text(
-                          AppStrings().allBills,
+                            AppStrings.allBills,
                           ),
                           Text(
                             '$allBillsCounts',
@@ -73,7 +73,7 @@ class BillTypeItemWidget extends StatelessWidget {
                           spacing: 5,
                           children: [
                             Text(
-                           AppStrings().pendingBill,
+                              AppStrings.pendingBill,
                             ),
                             Text(
                               '$pendingBillsCounts',
@@ -112,7 +112,7 @@ class BillTypeItemWidget extends StatelessWidget {
               child: Center(
                 child: AppButton(
                   isLoading: isLoading,
-                  title: AppStrings().newS,
+                  title: AppStrings.newS,
                   onPressed: onTap,
                   iconData: Icons.add,
                   color: color,

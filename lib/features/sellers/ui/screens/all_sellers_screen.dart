@@ -15,13 +15,13 @@ class AllSellersScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title:  Text("${AppStrings().all} ${AppStrings().sellers}")),
+        appBar: AppBar(title: Text("${AppStrings.all} ${AppStrings.sellers}")),
         body: GetBuilder<SellersController>(builder: (controller) {
           if (controller.isLoading) {
             return AppUIUtils.showLoadingIndicator();
           } else {
             if (controller.sellers.isEmpty) {
-              return  Center(child: Text(AppStrings().thereAreNoSellersYet));
+              return Center(child: Text(AppStrings.thereAreNoSellersYet));
             } else {
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(8.0),
@@ -36,8 +36,7 @@ class AllSellersScreen extends StatelessWidget {
                                 onTap: () => read<SellerSalesController>().onSelectSeller(controller.sellers[index]),
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.5), borderRadius: BorderRadius.circular(10)),
+                                  decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5), borderRadius: BorderRadius.circular(10)),
                                   height: 140,
                                   width: 140,
                                   child: Column(

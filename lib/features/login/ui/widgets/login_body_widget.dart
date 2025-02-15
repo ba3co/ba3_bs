@@ -29,14 +29,14 @@ class LoginBodyWidget extends StatelessWidget {
         children: [
           const Spacer(),
           Text(
-            AppStrings().login,
+            AppStrings.login,
             style: AppTextStyles.headLineStyle1,
           ),
           SizedBox(
             width: .25.sw,
             child: TextFormField(
               decoration: InputDecoration(
-                label:  Text('${AppStrings().name} ${AppStrings().account}'),
+                label: Text('${AppStrings.name} ${AppStrings.account}'),
                 filled: true,
                 fillColor: AppColors.backGroundColor,
               ),
@@ -50,7 +50,7 @@ class LoginBodyWidget extends StatelessWidget {
                 maxLength: 6,
                 obscureText: !userManagementController.isPasswordVisible.value,
                 decoration: InputDecoration(
-                  label:  Text(AppStrings().password),
+                  label: Text(AppStrings.password),
                   suffixIcon: IconButton(
                     icon: Icon(
                       userManagementController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
@@ -74,7 +74,7 @@ class LoginBodyWidget extends StatelessWidget {
           ),
           const VerticalSpace(20),
           LoginButtonWidget(
-            text: AppStrings().enter,
+            text: AppStrings.enter,
             onTap: () {
               userManagementController.validateUserInputs();
             },
@@ -88,9 +88,7 @@ class LoginBodyWidget extends StatelessWidget {
                   if (RoleItemType.viewUserManagement.hasAdminPermission)
                     IconButton(
                       icon: Icon(
-                        userManagementController.isGuestLoginButtonVisible.value
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                        userManagementController.isGuestLoginButtonVisible.value ? Icons.visibility : Icons.visibility_off,
                         size: 20,
                         color: AppColors.blueColor,
                       ),
@@ -98,7 +96,7 @@ class LoginBodyWidget extends StatelessWidget {
                     ),
                   if (userManagementController.isGuestLoginButtonVisible.value)
                     LoginButtonWidget(
-                      text: '${AppStrings().registration} ${AppStrings().asA}${AppStrings().guest}',
+                      text: '${AppStrings.registration} ${AppStrings.asA}${AppStrings.guest}',
                       width: RoleItemType.viewUserManagement.hasAdminPermission ? .15.sw : null,
                       onTap: userManagementController.loginAsGuest,
                     ),

@@ -12,7 +12,7 @@ class AllAccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<AccountsController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: AppStrings().allAccounts,
+        title: AppStrings.allAccounts,
         onLoaded: (e) {},
         onSelected: (p0) {
           final String accId = p0.row?.cells['الرقم التعريفي']?.value;

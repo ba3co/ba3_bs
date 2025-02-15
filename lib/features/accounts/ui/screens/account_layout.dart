@@ -18,19 +18,19 @@ class AccountLayout extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title:  Text(AppStrings().accounts),
+          title: Text(AppStrings.accounts),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AppButton(
-                title:AppStrings().downloadAccounts,
+                title: AppStrings.downloadAccounts,
                 onPressed: () => read<AccountsController>().fetchAllAccountsFromLocal(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: AppButton(
-                title:AppStrings().downloadCustomers,
+                title: AppStrings.downloadCustomers,
                 onPressed: () => read<CustomersController>().fetchAllCustomersFromLocal(),
               ),
             ),
@@ -39,7 +39,7 @@ class AccountLayout extends StatelessWidget {
         body: Column(
           children: [
             AppMenuItem(
-              text:AppStrings().viewAccounts,
+              text: AppStrings.viewAccounts,
               onTap: () {
                 read<AccountsController>()
                   ..fetchAccounts()
@@ -47,14 +47,13 @@ class AccountLayout extends StatelessWidget {
               },
             ),
             AppMenuItem(
-              text: AppStrings().accountStatement,
+              text: AppStrings.accountStatement,
               onTap: () {
-                showDialog<String>(
-                    context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
+                showDialog<String>(context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
               },
             ),
             AppMenuItem(
-              text: AppStrings().addAccount,
+              text: AppStrings.addAccount,
               onTap: () {
                 read<AccountsController>().navigateToAddOrUpdateAccountScreen();
               },

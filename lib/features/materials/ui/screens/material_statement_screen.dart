@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:flutter/material.dart';
@@ -28,13 +27,12 @@ class MaterialStatementScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Text(
-                      "${AppStrings().total} :",
+                    Text(
+                      "${AppStrings.total} :",
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
                     ),
                     const SizedBox(

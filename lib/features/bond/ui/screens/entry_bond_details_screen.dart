@@ -19,19 +19,17 @@ class EntryBondDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
-         title:Row(
-           children: [
-
-             Text(AppStrings().date),
-             Text(" ${entryBondModel.items!.itemList.first.date}"),
-             Spacer(),
-             Text(AppStrings().number),
-             Text(" ${entryBondModel.items!.docId}"),
-
-           ],
-         ) ,
-       ),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Text(AppStrings.date),
+            Text(" ${entryBondModel.items!.itemList.first.date}"),
+            Spacer(),
+            Text(AppStrings.number),
+            Text(" ${entryBondModel.items!.docId}"),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -54,24 +52,24 @@ class EntryBondDetailsScreen extends StatelessWidget {
                 color: Colors.blue,
               ),
               gridColumnItem(
-                label:AppStrings().debtor,
+                label: AppStrings.debtor,
                 name: AppConstants.rowBondDebitAmount,
                 color: Colors.blue,
               ),
               gridColumnItem(
-                label:AppStrings().creditor,
+                label: AppStrings.creditor,
                 name: AppConstants.rowBondCreditAmount,
                 color: Colors.blue,
               ),
               gridColumnItem(
-                label: AppStrings().illustration,
+                label: AppStrings.illustration,
                 name: AppConstants.rowBondDescription,
                 color: Colors.blue,
               ),
             ],
           )),
           AppButton(
-            title: AppStrings().viewOrigin,
+            title: AppStrings.viewOrigin,
             onPressed: () {
               read<EntryBondController>().openEntryBondOrigin(entryBondModel, context);
             },

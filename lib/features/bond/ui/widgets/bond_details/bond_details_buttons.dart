@@ -36,7 +36,7 @@ class BondDetailsButtons extends StatelessWidget {
         children: [
           Obx(() {
             return AppButton(
-                title: bondDetailsController.isBondSaved.value ? AppStrings().newS : AppStrings().add,
+                title: bondDetailsController.isBondSaved.value ? AppStrings.newS : AppStrings.add,
                 height: 20,
                 color: bondDetailsController.isBondSaved.value ? Colors.green : Colors.blue.shade700,
                 onPressed: bondDetailsController.isBondSaved.value
@@ -49,7 +49,7 @@ class BondDetailsButtons extends StatelessWidget {
           }),
           if (!bondSearchController.isNew) ...[
             AppButton(
-              title: AppStrings().bond,
+              title: AppStrings.bond,
               height: 20,
               onPressed: () async {
                 bondDetailsController.createEntryBond(bondModel, context);
@@ -57,7 +57,7 @@ class BondDetailsButtons extends StatelessWidget {
               iconData: Icons.file_open_outlined,
             ),
             AppButton(
-              title:AppStrings().edit,
+              title: AppStrings.edit,
               height: 20,
               onPressed: () async {
                 bondDetailsController.updateBond(
@@ -69,7 +69,7 @@ class BondDetailsButtons extends StatelessWidget {
             ),
             if (!bondSearchController.isNew)
               AppButton(
-                title: AppStrings().pdfEmail,
+                title: AppStrings.pdfEmail,
                 height: 20,
                 onPressed: () {
                   bondDetailsController.generateAndSendBondPdf(bondModel);
@@ -80,7 +80,7 @@ class BondDetailsButtons extends StatelessWidget {
               iconData: Icons.delete_outline,
               height: 20,
               color: Colors.red,
-              title:AppStrings().delete,
+              title: AppStrings.delete,
               onPressed: () async {
                 bondDetailsController.deleteBond(bondModel, fromBondById: fromBondById);
               },

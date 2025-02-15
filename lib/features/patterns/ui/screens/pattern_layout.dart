@@ -26,7 +26,7 @@ class PatternLayout extends StatelessWidget {
             child: OrganizedWidget(
               titleWidget: Align(
                 child: Text(
-                  '${AppStrings().patterns} ${AppStrings().bills}',
+                  '${AppStrings.patterns} ${AppStrings.bills}',
                   style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                 ),
               ),
@@ -55,7 +55,7 @@ class PatternLayout extends StatelessWidget {
                             VerticalSpace(),
                             Center(
                               child: AppButton(
-                                title: '${AppStrings().add} ${AppStrings().pattern}',
+                                title: '${AppStrings.add} ${AppStrings.pattern}',
                                 fontSize: 13.sp,
                                 color: AppColors.grayColor,
                                 onPressed: () {

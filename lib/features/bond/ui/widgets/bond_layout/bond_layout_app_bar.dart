@@ -6,17 +6,15 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../users_management/data/models/role_model.dart';
 
-
 AppBar bondLayoutAppBar(AllBondsController controller) {
   return AppBar(actions: [
-    if(RoleItemType.administrator.hasAdminPermission)
-
+    if (RoleItemType.administrator.hasAdminPermission)
       Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: AppButton(
-        title: "${AppStrings().download} ${AppStrings().bonds}",
-        onPressed: () =>controller.fetchAllBondsLocal(),
+        padding: const EdgeInsets.all(8.0),
+        child: AppButton(
+          title: "${AppStrings.download} ${AppStrings.bonds}",
+          onPressed: () => controller.fetchAllBondsLocal(),
+        ),
       ),
-    ),
   ]);
 }

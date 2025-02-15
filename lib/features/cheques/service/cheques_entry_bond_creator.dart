@@ -1,7 +1,7 @@
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/services/entry_bond_creator/implementations/base_entry_bond_creator.dart';
 import '../../accounts/data/models/account_model.dart';
@@ -28,8 +28,7 @@ class ChequesStrategyBondFactory {
   }
 
   /// Determines the appropriate strategies based on the ChequesModel.
-  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel,
-      {ChequesStrategyType? type}) {
+  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel, {ChequesStrategyType? type}) {
     if (type != null) {
       return _getStrategy(type);
     }
@@ -124,7 +123,7 @@ class PayBondStrategy extends BaseChequesBondStrategy {
       amount: amount,
       docId: model.chequesPayGuid,
       date: date,
-      creditAccount: AccountEntity(id: AppStrings.bankAccountId, name: AppStrings.bankToAccountName),
+      creditAccount: AccountEntity(id: AppConstants.bankAccountId, name: AppConstants.bankToAccountName),
       debitAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
     );
   }

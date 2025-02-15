@@ -20,15 +20,14 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-              AppStrings().customerName,
+              AppStrings.customerName,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
             Container(
               height: 30,
               width: 150,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   customerModel.name ?? '',
@@ -42,15 +41,14 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-             AppStrings().mobileNumber,
+              AppStrings.mobileNumber,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
             Container(
               height: 30,
               width: 150,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   customerModel.phone1 ?? '',
@@ -64,15 +62,14 @@ class CustomerItemWidget extends StatelessWidget {
         Row(
           children: [
             Text(
-             AppStrings().taxType,
+              AppStrings.taxType,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
             Container(
               height: 30,
               width: 250,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   VatEnums.byGuid(customerModel.cusVatGuid!).taxName ?? '',

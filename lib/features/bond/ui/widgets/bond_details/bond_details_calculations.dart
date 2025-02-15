@@ -24,14 +24,24 @@ class BondDetailsCalculations extends StatelessWidget {
               width: 350,
               child: Row(
                 children: [
-                   SizedBox(
+                  SizedBox(
                       width: 100,
                       child: Text(
-                       AppStrings().total,
+                        AppStrings.total,
                       )),
-                  Container(width: 120, color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondDetailsPlutoController.calcDebitTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                  Container(
+                      width: 120,
+                      color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                      padding: const EdgeInsets.all(5),
+                      child: Text(bondDetailsPlutoController.calcDebitTotal().toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.white, fontSize: 18))),
                   const SizedBox(width: 10),
-                  Container(width: 120, color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red, padding: const EdgeInsets.all(5), child: Text(bondDetailsPlutoController.calcCreditTotal().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                  Container(
+                      width: 120,
+                      color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
+                      padding: const EdgeInsets.all(5),
+                      child: Text(bondDetailsPlutoController.calcCreditTotal().toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.white, fontSize: 18))),
                 ],
               ),
             ),
@@ -42,12 +52,13 @@ class BondDetailsCalculations extends StatelessWidget {
               width: 350,
               child: Row(
                 children: [
-                   SizedBox(width: 100, child: Text(AppStrings().difference)),
+                  SizedBox(width: 100, child: Text(AppStrings.difference)),
                   Container(
                       width: 250,
                       color: bondDetailsPlutoController.checkIfBalancedBond() ? Colors.green : Colors.red,
                       padding: const EdgeInsets.all(5),
-                      child: Text(bondDetailsPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2), style: const TextStyle(color: Colors.white, fontSize: 18))),
+                      child: Text(bondDetailsPlutoController.getDefBetweenCreditAndDebt().toStringAsFixed(2),
+                          style: const TextStyle(color: Colors.white, fontSize: 18))),
                 ],
               ),
             ),
