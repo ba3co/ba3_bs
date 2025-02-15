@@ -157,4 +157,5 @@ class AppStrings {
   static const String totalLateCheckOut = 'إجمالي التأخر في تسجيل الخروج';
   static const String holidays = 'ايام العطل';
   // static const String controlPanel = '';
+
 }
