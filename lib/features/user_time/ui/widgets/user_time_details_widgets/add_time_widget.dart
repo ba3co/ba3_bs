@@ -1,7 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/styling/app_text_style.dart';
@@ -27,7 +26,7 @@ class AddTimeWidget extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
             child: Text(
-              AppStrings.work,
+              AppStrings.work.tr,
               style: AppTextStyles.headLineStyle2,
             )),
 
@@ -38,7 +37,7 @@ class AddTimeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AppButton(
-                    title: AppStrings.attendanceRegistration.tr,
+                    title: AppStrings.checkIn.tr,
                     onPressed: () => userTimeController.checkLogInAndSave(),
                     isLoading: userTimeController.logInState.value == RequestState.loading,
                   ),
