@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/widgets/language_switch_fa_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -33,7 +34,7 @@ class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             onPressed: () {
               chequesSearchController.previous();
             },
-            icon: const Icon(Icons.keyboard_double_arrow_right)),
+            icon: const LanguageSwitchFaIcon(iconData:  Icons.keyboard_double_arrow_right)),
         SizedBox(
           width: Get.width * 0.10,
           child: CustomTextFieldWithoutIcon(
@@ -49,7 +50,7 @@ class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             onPressed: () {
               chequesSearchController.next();
             },
-            icon: const Icon(Icons.keyboard_double_arrow_left)),
+            icon: const LanguageSwitchFaIcon(iconData:Icons.keyboard_double_arrow_left)),
       ],
     );
   }
