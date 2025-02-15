@@ -1,9 +1,7 @@
 
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -205,16 +203,17 @@ class AccountModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(field: AppStrings.identificationNumber.tr, type: PlutoColumnType.text(), title: 'الرقم التعريفي', hide: true): id,
+      PlutoColumn(field: 'الرقم التعريفي', type: PlutoColumnType.text(), title: 'الرقم التعريفي', hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(field: '${AppStrings.number.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), title: 'رقم الحساب', width: 180): accNumber,
-      PlutoColumn(field: '${AppStrings.code.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), title: 'رمز الحساب', width: 180): accCode,
-      PlutoColumn(field: '${AppStrings.name.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), title: 'اسم الحساب'): accName,
-      PlutoColumn(field: '${AppStrings.name.tr} ${AppStrings.account.tr} ${AppStrings.al.tr+AppStrings.latin.tr}', type: PlutoColumnType.text(), title: 'الاسم الاتيني'): accLatinName,
-      PlutoColumn(field:  '${AppStrings.type.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), title: 'نوع الحساب'): AppServiceUtils.getAccountType(accType),
-      PlutoColumn(field: AppStrings.fatherAccount.tr, type: PlutoColumnType.text(), title: 'حساب الاب'): accParentName,
-      PlutoColumn(field: AppStrings.children.tr, type: PlutoColumnType.text(), title: 'الاولاد'): read<AccountsController>().getAccountChildren(id).join(' , '),
-      PlutoColumn(field:AppStrings.customers.tr, type: PlutoColumnType.text(), title: 'الزبائن'): accCustomer?.toList().join(' , '),
+      PlutoColumn(field: 'رقم الحساب', type: PlutoColumnType.text(), title: 'رقم الحساب', width: 180): accNumber,
+      PlutoColumn(field: 'رمز الحساب', type: PlutoColumnType.text(), title: 'رمز الحساب', width: 180): accCode,
+      PlutoColumn(field: 'اسم الحساب', type: PlutoColumnType.text(), title: 'اسم الحساب'): accName,
+      PlutoColumn(field: 'الاسم الاتيني', type: PlutoColumnType.text(), title: 'الاسم الاتيني'): accLatinName,
+      PlutoColumn(field: 'نوع الحساب', type: PlutoColumnType.text(), title: 'نوع الحساب'): AppServiceUtils.getAccountType(accType),
+      PlutoColumn(field: 'Debit Or Credit', type: PlutoColumnType.text(), title: 'نوع الدفع', width: 150): AppServiceUtils.getAccountAccDebitOrCredit(accDebitOrCredit),
+      PlutoColumn(field: 'حساب الاب', type: PlutoColumnType.text(), title: 'حساب الاب'): accParentName,
+      PlutoColumn(field: 'الاولاد', type: PlutoColumnType.text(), title: 'الاولاد'): read<AccountsController>().getAccountChildren(id).join(' , '),
+      PlutoColumn(field: 'الزبائن', type: PlutoColumnType.text(), title: 'الزبائن'): accCustomer?.toList().join(' , '),
     };
   }
 }

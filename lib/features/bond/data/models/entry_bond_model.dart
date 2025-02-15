@@ -1,6 +1,4 @@
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -176,10 +174,10 @@ class EntryBondItemModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
-      PlutoColumn(hide: true, title:AppStrings.identificationNumber.tr, field: 'originId', type: PlutoColumnType.text()): originId ?? '',
+      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
       createAutoIdColumn(): '#',
       PlutoColumn(
-          title: AppStrings.debtor.tr,
+          title: 'مدين',
           field: 'مدين',
           type: PlutoColumnType.currency(
             format: '#,##0.00 AED',
@@ -187,17 +185,16 @@ class EntryBondItemModel implements PlutoAdaptable {
             symbol: 'AED',
           )): bondItemType == BondItemType.debtor ? amount : 0,
       PlutoColumn(
-          title: AppStrings.creditor.tr,
+          title: 'دائن',
           field: 'دائن',
           type: PlutoColumnType.currency(
             format: '#,##0.00 AED',
             locale: 'en_AE',
             symbol: 'AED',
           )): bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(title: AppStrings.account.tr
-          .tr, field: 'الحساب', type: PlutoColumnType.text()): account.name,
-      PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()): date,
-      PlutoColumn(title: AppStrings.illustration.tr, field: 'البيان', type: PlutoColumnType.text()): note,
+      PlutoColumn(title: 'الحساب', field: 'الحساب', type: PlutoColumnType.text()): account.name,
+      PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
+      PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
     };
   }
 }

@@ -1,9 +1,7 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
-import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/widgets/pluto_auto_id_column.dart';
@@ -383,27 +381,27 @@ class ChequesModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true): chequesGuid,
+      PlutoColumn(title: "رقم القيد", field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true): chequesGuid,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: AppStrings.serialNumber.tr, field: AppConstants.chequesNumber, type: PlutoColumnType.number()): chequesNumber,
-      PlutoColumn(title: "${AppStrings.number.tr} ${AppStrings.cheque.tr}", field: AppConstants.chequesNum, type: PlutoColumnType.number()): chequesNumber,
+      PlutoColumn(title: "الرقم التسلسلي", field: AppConstants.chequesNumber, type: PlutoColumnType.number()): chequesNumber,
+      PlutoColumn(title: "رقم الشيك", field: AppConstants.chequesNum, type: PlutoColumnType.number()): chequesNumber,
       PlutoColumn(
-          title: "${AppStrings.amount.tr} ${AppStrings.cheque.tr}",
+          title: "قيمة الشيك",
           field: AppConstants.chequesVal,
           type: PlutoColumnType.currency(
             format: '#,##0.00 AED',
             locale: 'en_AE',
             symbol: 'AED',
           )): chequesVal,
-      PlutoColumn(title:AppStrings.account.tr, field: AppConstants.chequesAccount2Guid, type: PlutoColumnType.text()): chequesAccount2Name,
-      PlutoColumn(title: "${AppStrings.pay.tr} ${AppStrings.to.tr}", field: AppConstants.accPtr, type: PlutoColumnType.text()): accPtrName,
-      PlutoColumn(title: "${AppStrings.date.tr} ${AppStrings.editing.tr}", field: AppConstants.chequesDate, type: PlutoColumnType.date()): chequesDate.toDate,
-      PlutoColumn(title:  "${AppStrings.date.tr} ${AppStrings.dues.tr}", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()): chequesDueDate.toDate,
-      PlutoColumn(title: AppStrings.illustration.tr, field: AppConstants.chequesNote, type: PlutoColumnType.text()): chequesNote,
-      PlutoColumn(title: "${AppStrings.type.tr} ${AppStrings.cheques.tr}", field: AppConstants.chequesTypeGuid, type: PlutoColumnType.text()):
+      PlutoColumn(title: "الحساب", field: AppConstants.chequesAccount2Guid, type: PlutoColumnType.text()): chequesAccount2Name,
+      PlutoColumn(title: "دفع الى", field: AppConstants.accPtr, type: PlutoColumnType.text()): accPtrName,
+      PlutoColumn(title: "تاريخ التحرير", field: AppConstants.chequesDate, type: PlutoColumnType.date()): chequesDate.toDate,
+      PlutoColumn(title: "تاريخ الاستحقاق", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()): chequesDueDate.toDate,
+      PlutoColumn(title: "البيان", field: AppConstants.chequesNote, type: PlutoColumnType.text()): chequesNote,
+      PlutoColumn(title: "نوع الشيك", field: AppConstants.chequesTypeGuid, type: PlutoColumnType.text()):
           ChequesType.byTypeGuide(chequesTypeGuid!).value,
       PlutoColumn(
-        title: AppStrings.status.tr,
+        title: "الحالة",
         field: AppConstants.isPayed,
         type: PlutoColumnType.text(),
       ): isPayed! ? ChequesStatus.paid.label : ChequesStatus.notPaid.label,

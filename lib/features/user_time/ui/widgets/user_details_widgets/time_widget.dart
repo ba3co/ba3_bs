@@ -24,7 +24,7 @@ class TimeWidget extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
           child: Text(
-            AppStrings.attendanceRecord.tr,
+            AppStrings.attendanceRecord,
             style: AppTextStyles.headLineStyle2,
           ),
         ),

@@ -58,7 +58,7 @@ class UserAllHolidays extends StatelessWidget {
                       ),
                       HorizontalSpace(),
                       Text(
-                        AppStrings.add.tr
+                        AppStrings.add
                         .tr,
                         style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
                       )
