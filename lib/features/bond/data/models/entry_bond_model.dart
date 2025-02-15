@@ -175,7 +175,7 @@ class EntryBondItemModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): originId ?? '',
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(
           title: 'مدين',
           field: 'مدين',

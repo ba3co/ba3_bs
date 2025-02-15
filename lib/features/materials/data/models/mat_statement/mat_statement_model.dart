@@ -96,7 +96,7 @@ class MatStatementModel implements PlutoAdaptable {
     return {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()):
           matOrigin?.originId ?? '',
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'فاتورة', field: 'فاتورة', type: PlutoColumnType.text()): originNameAndNumber,
       PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.number()): quantity,

@@ -204,7 +204,7 @@ class AccountModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
       PlutoColumn(field: 'الرقم التعريفي', type: PlutoColumnType.text(), title: 'الرقم التعريفي', hide: true): id,
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(field: 'رقم الحساب', type: PlutoColumnType.text(), title: 'رقم الحساب', width: 180): accNumber,
       PlutoColumn(field: 'رمز الحساب', type: PlutoColumnType.text(), title: 'رمز الحساب', width: 180): accCode,
       PlutoColumn(field: 'اسم الحساب', type: PlutoColumnType.text(), title: 'اسم الحساب'): accName,

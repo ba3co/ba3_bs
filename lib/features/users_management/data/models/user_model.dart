@@ -155,7 +155,7 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
         hide: true,
       ): userId,
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(
         title: 'اسم الموظف',
         field: 'اسم الموظف',

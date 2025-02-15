@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/locale_extensions.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_assets.dart';
@@ -25,6 +26,12 @@ class TranslationController extends GetxController {
         return 'العربية';
       case 'ur':
         return 'اردو';
+      case 'zh':
+        return '中国';
+      case 'fr':
+        return 'France';
+      case 'de':
+        return 'Deutsch';
       default:
         return langCode;
     }
@@ -38,6 +45,12 @@ class TranslationController extends GetxController {
         return AppAssets.arFlag;
       case 'ur':
         return AppAssets.urFlag;
+      case 'zh':
+        return AppAssets.zhFlag;
+      case 'fr':
+        return AppAssets.frFlag;
+      case 'de':
+        return AppAssets.deFlag;
       default:
         return AppAssets.enFlag;
     }
@@ -45,5 +58,5 @@ class TranslationController extends GetxController {
 
   String? get currentLangCode => Get.locale?.languageCode;
 
-  bool get currentLocaleIsEnglish => currentLangCode == 'en';
+  bool get currentLocaleIsRtl =>Locale(currentLangCode!) .isRtl;
 }

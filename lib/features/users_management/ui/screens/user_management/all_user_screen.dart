@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,10 +14,10 @@ class AllUserScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('إدارة المستخدمين'),
+            title:  Text('${AppStrings.administration.tr} ${AppStrings.users.tr}'),
             actions: [
               AppButton(
-                  title: 'إضافة',
+                  title: AppStrings.add.tr,
                   onPressed: () {
                     controller. userNavigator.navigateToAddUserScreen();
                   },

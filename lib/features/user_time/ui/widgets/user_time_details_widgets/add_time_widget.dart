@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
@@ -15,6 +17,9 @@ class AddTimeWidget extends StatelessWidget {
 
   final UserTimeController userTimeController;
 
+
+
+  ///print("total is ${0} vat is ${1}  " ,total,vat);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -22,7 +27,7 @@ class AddTimeWidget extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
             child: Text(
-              "الدوام",
+              AppStrings.work,
               style: AppTextStyles.headLineStyle2,
             )),
 
@@ -33,7 +38,7 @@ class AddTimeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AppButton(
-                    title: "دخول",
+                    title: AppStrings.attendanceRegistration.tr,
                     onPressed: () => userTimeController.checkLogInAndSave(),
                     isLoading: userTimeController.logInState.value == RequestState.loading,
                   ),
@@ -50,7 +55,7 @@ class AddTimeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   AppButton(
-                    title: "خروج",
+                    title: AppStrings.checkOut.tr,
                     onPressed: () => userTimeController.checkLogOutAndSave(),
                     isLoading: userTimeController.logOutState.value == RequestState.loading,
                   ),

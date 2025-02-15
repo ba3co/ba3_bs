@@ -16,8 +16,8 @@ class AppStrings {
   static const String viewAccounts = 'معاينة الحسابات';
   static const String accountStatement = 'كشف حساب';
   static const String addAccount = 'اضافة حساب';
-  static const String debtor = 'مدين :';
-  static const String creditor = "دائن :";
+  static const String debtor = 'مدين';
+  static const String creditor = "دائن";
   static const String theTotal = 'المجموع :';
   static const String accountCard = "بطاقة حساب";
   static const String allAccounts = 'جميع الحسابات';
@@ -104,6 +104,7 @@ class AppStrings {
   static const String groups = 'المجموعات';
   static const String pattern = 'نمط';
   static const String short = 'اختصار';
+  static const String shortcuts = 'الاختصار';
   static const String latin = 'لاتيني';
   static const String discounts = 'الحسميات';
   static const String discount = 'الحسم';
@@ -133,17 +134,6 @@ class AppStrings {
   static const String store = 'المستودع';
   static const String userAdministration = 'إدارة المستخدمين';
   static const String alPatterns = 'الأنماط';
-
-  /* String type = '';
- static const String type = '';
- static const String type = '';
- static const String type = '';
- static const String type = '';
- static const String type = '';
- static const String type = '';
- static const String type = '';
- static const String type = '';*/
-
   static const String quantity = 'الكمية';
   static const String individual = 'الإفرادي';
   static const String tax = 'الضريبة';
@@ -156,6 +146,17 @@ class AppStrings {
   static const String totalLoginDelay = 'إجمالي التأخر في تسجيل الدخول';
   static const String totalLateCheckOut = 'إجمالي التأخر في تسجيل الخروج';
   static const String holidays = 'ايام العطل';
-  // static const String controlPanel = '';
-
+  static const String attendanceRecord = 'سجل الحضور';
+  static const String attendanceRegistration = 'تسجيل الحضور';
+  static const String checkOut = 'المغادرة';
+  static const String holidaysForThisMonth = 'ايام العطل لهذا الشهر';
+  static const String workingHours = 'اوقات العمل';
+  static const String role = 'دور';
+  static const String roles = 'الصلاحيات';
+  static const String selectAll =    'تحديد الكل';
+  static const String employees = 'الموظفين';
+  static const String userWorkingHours = 'ساعات عمل المستخدم';
+  static const String information = 'معلومات';
+  static const String checkInTime =  'توقيت الدخول';
+  static const String checkOutTime =  'توقيت الخروج';
 }

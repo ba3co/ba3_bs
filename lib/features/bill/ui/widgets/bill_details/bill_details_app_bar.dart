@@ -14,6 +14,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
+import '../../../../../core/widgets/language_switch_fa_icon.dart';
 import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 
@@ -93,8 +94,9 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         billSearchController.tail();
                       },
                       disabled: billSearchController.isTail,
-                      icon: FaIcon(
-                        FontAwesomeIcons.arrowRotateRight,
+                      icon: LanguageSwitchFaIcon(
+
+                       iconData:  FontAwesomeIcons.arrowRotateRight,
                         size: 14,
                       ),
                     ),
@@ -104,8 +106,8 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: () {
                         billSearchController.jumpForwardByTen();
                       },
-                      icon: FaIcon(
-                        Icons.keyboard_double_arrow_right_outlined,
+                      icon: LanguageSwitchFaIcon(
+                       iconData:  Icons.keyboard_double_arrow_right_outlined,
                       ),
                     ),
                     CustomIconButton(
@@ -113,8 +115,8 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: () {
                         billSearchController.next();
                       },
-                      icon: FaIcon(
-                        Icons.keyboard_arrow_right_outlined,
+                      icon: LanguageSwitchFaIcon(
+                       iconData:  Icons.keyboard_arrow_right_outlined,
                       ),
                     ),
                     HorizontalSpace(5),
@@ -134,8 +136,8 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         billSearchController.previous();
                       },
                       disabled: billSearchController.isHead,
-                      icon: FaIcon(
-                        Icons.keyboard_arrow_left_outlined,
+                      icon: LanguageSwitchFaIcon(
+                       iconData:  Icons.keyboard_arrow_left_outlined,
                       ),
                     ),
                     CustomIconButton(
@@ -143,8 +145,8 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         billSearchController.jumpBackwardByTen();
                       },
                       disabled: billSearchController.isHead,
-                      icon: FaIcon(
-                        Icons.keyboard_double_arrow_left,
+                      icon: LanguageSwitchFaIcon(
+                       iconData:  Icons.keyboard_double_arrow_left,
                       ),
                     ),
                     HorizontalSpace(5),
@@ -153,8 +155,8 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         billSearchController.head();
                       },
                       disabled: billSearchController.isHead,
-                      icon: FaIcon(
-                        FontAwesomeIcons.arrowRotateLeft,
+                      icon: LanguageSwitchFaIcon(
+                      iconData:   FontAwesomeIcons.arrowRotateLeft,
                         size: 14,
                       ),
                     ),

@@ -8,6 +8,8 @@ PlutoColumn createAutoIdColumn({String title = '', double width = 50}) => PlutoC
       title: title,
       field: title,
       frozen: PlutoColumnFrozen.start,
+      enableContextMenu: false,
+      enableDropToResize: false,
       // Assuming field name matches the title.
       type: PlutoColumnType.number(),
       renderer: (rendererContext) {

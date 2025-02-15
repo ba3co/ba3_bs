@@ -351,7 +351,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
       PlutoColumn(title: 'الرقم التعريفي', field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true): id,
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
       PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center): matQuantity,
       PlutoColumn(title: 'التكلفة', field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center): retailPrice,

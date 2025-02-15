@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
@@ -32,7 +33,7 @@ class UserDetailsForm extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
             child: Text(
-          "معلومات المستخدم",
+          "${AppStrings.information.tr} ${AppStrings.user.tr}",
           style: AppTextStyles.headLineStyle2,
         )),
         bodyWidget: Form(
@@ -43,7 +44,7 @@ class UserDetailsForm extends StatelessWidget {
             children: [
               FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: 'اسم الحساب',
+                  label: '${AppStrings.name.tr} ${AppStrings.user.tr}',
                   height: 70,
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
@@ -54,7 +55,7 @@ class UserDetailsForm extends StatelessWidget {
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: 'كلمة السر',
+                  label: AppStrings.password.tr,
                   height: 70,
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
@@ -72,7 +73,7 @@ class UserDetailsForm extends StatelessWidget {
               FormFieldRow(
 
                   firstItem: TextAndExpandedChildField(
-                    label: 'الصلاحيات',
+                    label: AppStrings.roles.tr,
                     height: 50,
                     child: Obx(() {
                       return Container(
@@ -82,7 +83,7 @@ class UserDetailsForm extends StatelessWidget {
                           color: AppColors.backGroundColor,
                         ),
                         child: DropdownButton<String>(
-                          hint: const Text('الصلاحيات'),
+                          hint:  Text(AppStrings.roles.tr),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           value: userDetailsController.userFormHandler.selectedRoleId.value,

@@ -97,7 +97,7 @@ class MaterialGroupModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
       PlutoColumn(title: 'الرقم التعريفي', field: AppConstants.materialGroupIdFiled, type: PlutoColumnType.text(), hide: true): matGroupGuid,
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(title: 'اسم المجموعة', field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
       PlutoColumn(title: 'رمز المجموعة', field: 'رمز المادة', type: PlutoColumnType.text()): groupCode,
       PlutoColumn(title: 'رقم المجموعة', field: 'التكلفة', type: PlutoColumnType.text()): groupNumber,

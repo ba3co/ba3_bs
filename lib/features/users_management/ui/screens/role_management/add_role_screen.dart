@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,10 +15,10 @@ class AddRoleScreen extends StatelessWidget {
     return GetBuilder<UserManagementController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(controller.roleModel?.roleName ?? 'دور جديد'),
+          title: Text(controller.roleModel?.roleName ?? '${AppStrings.role.tr} ${AppStrings.newS.tr}'),
           actions: [
             AppButton(
-              title: controller.roleModel?.roleId == null ? 'إضافة' : 'تعديل',
+              title: controller.roleModel?.roleId == null ? AppStrings.add.tr : AppStrings.edit.tr,
               onPressed: () {
                 controller.saveOrUpdateRole(existingRoleModel: controller.roleModel);
               },
@@ -30,7 +31,7 @@ class AddRoleScreen extends StatelessWidget {
           padding: const EdgeInsets.all(30.0),
           child: ListView(
             children: [
-              const Text('الاسم', style: TextStyle(fontSize: 16)),
+               Text(AutofillHints.name.tr, style: TextStyle(fontSize: 16)),
               Form(
                 key: controller.roleFormHandler.formKey,
                 child: Container(
@@ -47,8 +48,8 @@ class AddRoleScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'تحديد الكل',
+                     Text(
+                     AppStrings.selectAll.tr,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     IconButton(

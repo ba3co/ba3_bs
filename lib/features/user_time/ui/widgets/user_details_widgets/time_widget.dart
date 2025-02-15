@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
@@ -23,7 +24,7 @@ class TimeWidget extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
           child: Text(
-            "سجل الحضور",
+            AppStrings.attendanceRecord,
             style: AppTextStyles.headLineStyle2,
           ),
         ),
