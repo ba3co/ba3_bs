@@ -1,6 +1,8 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -55,7 +57,7 @@ class AccountCustomer implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
       PlutoColumn(
-        title: 'الرقم',
+        title: AppStrings.number.tr,
         field: 'customerAccountId',
         readOnly: true,
         hide: true,
@@ -64,12 +66,12 @@ class AccountCustomer implements PlutoAdaptable {
       PlutoColumn(title: 'رقم بطاقة الزبون', field: 'customerCardNumber', type: PlutoColumnType.text()):
           customerCardNumber,
       PlutoColumn(
-        title: 'اسم الزبون',
+        title: AppStrings.customerName.tr,
         field: 'customerAccountName',
         type: PlutoColumnType.text(),
       ): customerAccountName,
       PlutoColumn(
-        title: 'نوع الضريبة',
+        title: '${AppStrings.type.tr} ${AppStrings.tax.tr}',
         field: 'customerVAT',
         type: PlutoColumnType.select([AppConstants.mainVATCategory, AppConstants.withoutVAT]),
       ): customerVAT,
@@ -78,11 +80,11 @@ class AccountCustomer implements PlutoAdaptable {
 
   Map<String, dynamic> toMap() {
     return {
-      'customerAccountId': customerAccountId,
-      'رقم بطاقة الزبون': customerCardNumber,
-      'اسم الزبون': customerAccountName,
-      'الحساب': read<AccountsController>().getAccountNameById(mainAccount),
-      'نوع الضريبة': customerVAT,
+      AppStrings.number.tr: customerAccountId,
+     AppStrings.customerCardNumber.tr: customerCardNumber,
+      AppStrings.customerName.tr: customerAccountName,
+    AppStrings.account.tr: read<AccountsController>().getAccountNameById(mainAccount),
+      '${AppStrings.type.tr} ${AppStrings.tax.tr}': customerVAT,
     };
   }
 

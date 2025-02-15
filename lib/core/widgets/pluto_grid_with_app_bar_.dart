@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -94,7 +95,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
               icon: Icon(leadingIcon),
             )
           : null,
-      title: Text(title ?? 'جدول البيانات'),
+      title: Text(title ?? AppStrings.dataTable.tr),
       actions: [
         if (icon != null)
           IconButton(
@@ -104,7 +105,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
           ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
-          child: Text('عدد العناصر المتأثرة: ${tableSourceModels.length}'),
+          child: Text('${AppStrings.numberOfAffectedItems.tr}: ${tableSourceModels.length}'),
         ),
       ],
     );

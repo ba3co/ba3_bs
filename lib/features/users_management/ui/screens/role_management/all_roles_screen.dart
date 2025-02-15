@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/user_management_controller.dart';
@@ -12,10 +13,10 @@ class AllRolesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('إدارة الصلاحيات'),
+          title:  Text('${AppStrings.administration.tr} ${AppStrings.roles.tr}'),
           actions: [
             AppButton(
-                title: 'إضافة',
+                title: AppStrings.add.tr,
                 onPressed: () {
                   read<UserManagementController>(). userNavigator.navigateToAddRoleScreen();
                 },

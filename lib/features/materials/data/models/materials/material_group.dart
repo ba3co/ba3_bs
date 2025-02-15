@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -96,13 +98,13 @@ class MaterialGroupModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: 'الرقم التعريفي', field: AppConstants.materialGroupIdFiled, type: PlutoColumnType.text(), hide: true): matGroupGuid,
-      createAutoIdColumn(): '',
-      PlutoColumn(title: 'اسم المجموعة', field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
-      PlutoColumn(title: 'رمز المجموعة', field: 'رمز المادة', type: PlutoColumnType.text()): groupCode,
-      PlutoColumn(title: 'رقم المجموعة', field: 'التكلفة', type: PlutoColumnType.text()): groupNumber,
-      PlutoColumn(title: 'الاسم اللاتيني', field: 'سعر المستهلك', type: PlutoColumnType.text()): groupLatinName,
-      PlutoColumn(title: 'المُلاحظات', field: 'سعر الجملة', type: PlutoColumnType.text()): groupNotes,
+      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialGroupIdFiled, type: PlutoColumnType.text(), hide: true): matGroupGuid,
+      createAutoIdColumn(): '#',
+      PlutoColumn(title: '${AppStrings.name.tr} ${AppStrings.group.tr}', field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
+      PlutoColumn(title:'${AppStrings.code.tr} ${AppStrings.group.tr}', field: 'رمز المجموعة', type: PlutoColumnType.text()): groupCode,
+      PlutoColumn(title: '${AppStrings.number.tr} ${AppStrings.group.tr}', field: 'رقم المجموعة', type: PlutoColumnType.text()): groupNumber,
+      PlutoColumn(title: '${AppStrings.al.tr+AppStrings.name.tr} ${AppStrings.al.tr+AppStrings.latin.tr}', field:'الاسم اللاتيني', type: PlutoColumnType.text()): groupLatinName,
+      PlutoColumn(title: AppStrings.notes.tr, field: 'المُلاحظات', type: PlutoColumnType.text()): groupNotes,
     };
   }
 }

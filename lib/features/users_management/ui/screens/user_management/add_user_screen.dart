@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/user_all_holidays.dart';
@@ -20,7 +21,7 @@ class AddUserScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(controller.selectedUserModel?.userName ?? 'مستخدم جديد'),
+          title: Text(controller.selectedUserModel?.userName ?? '${AppStrings.user.tr} ${AppStrings.newS.tr}'),
         ),
         body: Center(
           child: ListView(
@@ -36,7 +37,7 @@ class AddUserScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppButton(
-                    title: controller.selectedUserModel?.userId == null ? 'إضافة' : 'تعديل',
+                    title: controller.selectedUserModel?.userId == null ? AppStrings.add.tr : AppStrings.edit.tr,
                     onPressed: () {
                       controller.saveOrUpdateUser();
                     },

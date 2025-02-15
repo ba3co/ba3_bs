@@ -25,12 +25,10 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     required List<MatStatementModel> matsStatements,
     void Function(double progress)? onProgress,
   }) async {
-    log("saveAllMatsStatementsModels");
     // 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
     final result = await _matStatementsRepo.saveAllNested(
         items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
 
-    log("saveAllMatsStatementsModels finished");
 
     // 2. Flatten the map into a single list of MatStatementModel
     //    mapOfStatements.values is an Iterable<List<MatStatementModel>>
@@ -66,7 +64,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     await Future.wait(
       allSavedStatements.map(
         (statement) async {
-          if (statement.quantity != null && statement.quantity! > 0) {
+          if (statement.defQuantity != null && statement.defQuantity! > 0) {
             await read<MaterialController>().updateMaterialQuantityAndPrice(
               matId: statement.matId!,
               quantity: statement.defQuantity!,

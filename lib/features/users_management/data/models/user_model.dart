@@ -1,6 +1,8 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -150,39 +152,39 @@ class UserModel implements PlutoAdaptable {
 
     return {
       PlutoColumn(
-        title: 'الرقم التعريفي',
+        title: AppStrings.identificationNumber.tr,
         field: AppConstants.userIdFiled,
         type: PlutoColumnType.text(),
         hide: true,
       ): userId,
-      createAutoIdColumn(): '',
+      createAutoIdColumn(): '#',
       PlutoColumn(
-        title: 'اسم الموظف',
+        title: '${AppStrings.name.tr} ${AppStrings.employees.tr}',
         field: 'اسم الموظف',
         width: 120,
         frozen: PlutoColumnFrozen.start,
         type: PlutoColumnType.text(),
       ): userName,
       PlutoColumn(
-        title: 'اخر دخول',
+        title: AppStrings.lastcheckInTime.tr,
         field: 'اخر دخول',
         width: 120,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
-          ? 'اجازة'
+          ? AppStrings.holiday.tr
           : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.toList().lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
       PlutoColumn(
-        title: 'اخر خروج',
+        title: AppStrings.lastcheckOutTime.tr,
         field: 'اخر خروج',
         width: 120,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
-          ? 'اجازة'
+          ? AppStrings.holiday.tr
           : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logOutDateList?.lastOrNull?.toIso8601String()),
       PlutoColumn(
-        title: 'عطل هذا الشهر',
+        title: AppStrings.holidaysForThisMonth.tr,
         field: 'عطل هذا الشهر',
         width: 400,
         renderer: (context) => Center(
@@ -195,13 +197,13 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): userHolidays?.where((date) => date.split("-")[1] == DateTime.now().month.toString().padLeft(2, '0')).toList().join(" , "),
       PlutoColumn(
-        title: 'الحالة',
+        title: AppStrings.status.tr,
         field: 'الحالة',
         width: 120,
         textAlign: PlutoColumnTextAlign.center,
         renderer: (context) => buildStatusCell(context.cell.value.toString()),
         type: PlutoColumnType.text(),
-      ): hasHolidayToday() ? 'اجازة' : userWorkStatus?.label,
+      ): hasHolidayToday() ? AppStrings.holiday.tr: userWorkStatus?.label,
     };
   }
 }

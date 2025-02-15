@@ -1,7 +1,9 @@
 import 'dart:math';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/utils/app_service_utils.dart';
@@ -23,7 +25,7 @@ class HolidaysWidget extends StatelessWidget {
       child: OrganizedWidget(
           titleWidget: Center(
               child: Text(
-            'ايام العطل لهذا الشهر',
+                AppStrings.holidaysForThisMonth.tr,
             style: AppTextStyles.headLineStyle2,
           )),
           bodyWidget: Column(

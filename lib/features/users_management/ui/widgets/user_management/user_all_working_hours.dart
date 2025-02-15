@@ -1,7 +1,9 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/working_hour_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';
@@ -19,7 +21,7 @@ class UserAllWorkingHour extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
           child: Text(
-            "دوام المستخدم",
+            AppStrings.userWorkingHours.tr,
             style: AppTextStyles.headLineStyle2,
           ),
         ),

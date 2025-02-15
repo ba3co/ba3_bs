@@ -1,7 +1,9 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -168,7 +170,7 @@ class PayItem extends PlutoAdaptable<BondType> {
     return {
 
       PlutoColumn(
-        title: "رقم ",
+        title: "#",
         field: AppConstants.entryNumber,
         width: 100,
         type: PlutoColumnType.text(),
@@ -182,18 +184,18 @@ class PayItem extends PlutoAdaptable<BondType> {
         },
       ): entryNumber,
       PlutoColumn(
-          title: "دائن",
+          title: AppStrings.creditor.tr,
           field: AppConstants.entryCredit,
           type: PlutoColumnType.text(),
           hide: type == BondType.paymentVoucher): entryCredit,
       PlutoColumn(
-          title: "مدين",
+          title: AppStrings.debtor.tr,
           field: AppConstants.entryDebit,
           type: PlutoColumnType.text(),
           hide: type == BondType.receiptVoucher): entryDebit,
-      PlutoColumn(title: "الحساب", field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()):
+      PlutoColumn(title: AppStrings.account.tr, field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()):
           entryAccountName,
-      PlutoColumn(title: "البيان", field: AppConstants.entryNote, type: PlutoColumnType.text()): entryNote,
+      PlutoColumn(title: AppStrings.illustration.tr, field: AppConstants.entryNote, type: PlutoColumnType.text()): entryNote,
     };
   }
 

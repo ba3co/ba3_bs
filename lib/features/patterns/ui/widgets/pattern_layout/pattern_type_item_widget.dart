@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
@@ -7,6 +8,7 @@ import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/patterns/ui/widgets/pattern_layout/body_pattern_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class PatternTypeItemWidget extends StatelessWidget {
   const PatternTypeItemWidget({super.key, required this.onTap, required this.billTypeModel, this.color = Colors.white});
@@ -89,7 +91,7 @@ class PatternTypeItemWidget extends StatelessWidget {
                   secondText: billTypeModel.accounts?[BillAccounts.store]?.accName ?? "", ),
               VerticalSpace(5),
               AppButton(
-                title: 'تعديل',
+                title: AppStrings.edit.tr,
                 onPressed: onTap,
                 iconData: Icons.mode_edit_outline_rounded,
                 color: Colors.green,

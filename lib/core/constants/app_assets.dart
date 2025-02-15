@@ -37,4 +37,7 @@ class AppAssets {
   static const enFlag = '$_baseFlagsPath/en.png';
   static const arFlag = '$_baseFlagsPath/ar.png';
   static const urFlag = '$_baseFlagsPath/ur.png';
+  static const deFlag = '$_baseFlagsPath/de.png';
+  static const frFlag = '$_baseFlagsPath/fr.png';
+  static const zhFlag = '$_baseFlagsPath/zh.png';
 }

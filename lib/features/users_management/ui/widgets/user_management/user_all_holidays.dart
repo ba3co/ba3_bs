@@ -3,7 +3,9 @@ import 'package:ba3_bs/features/users_management/controllers/user_details_contro
 import 'package:ba3_bs/features/users_management/ui/widgets/user_management/holiday_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/app_spacer.dart';
@@ -20,7 +22,7 @@ class UserAllHolidays extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
           child: Text(
-            "عطل المستخدم",
+            "${AppStrings.holidays.tr} ${AppStrings.user.tr}",
             style: AppTextStyles.headLineStyle2,
           ),
         ),
@@ -56,7 +58,8 @@ class UserAllHolidays extends StatelessWidget {
                       ),
                       HorizontalSpace(),
                       Text(
-                        'اضافة',
+                        AppStrings.add.tr
+                        .tr,
                         style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
                       )
                     ],

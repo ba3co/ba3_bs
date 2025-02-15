@@ -27,9 +27,9 @@ class MainLayout extends StatelessWidget {
         child: Scaffold(
           backgroundColor: AppColors.whiteColor,
           body: Row(
-            children: Get.find<TranslationController>().currentLocaleIsEnglish
-                ? [LeftMainWidget(mainController: mainController), RightMainWidget(mainController: mainController)]
-                : [RightMainWidget(mainController: mainController), LeftMainWidget(mainController: mainController)],
+            children: Get.find<TranslationController>().currentLocaleIsRtl
+                ? [RightMainWidget(mainController: mainController), LeftMainWidget(mainController: mainController)]
+                : [LeftMainWidget(mainController: mainController), RightMainWidget(mainController: mainController)],
           ),
         ),
       );

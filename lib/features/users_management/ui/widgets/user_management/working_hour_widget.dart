@@ -1,5 +1,7 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/app_spacer.dart';
@@ -26,7 +28,7 @@ class WorkingHoursItem extends StatelessWidget {
         Row(
           children: [
             Text(
-              'توقيت الدخول',
+              AppStrings.checkInTime.tr,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),
@@ -62,7 +64,7 @@ class WorkingHoursItem extends StatelessWidget {
         Row(
           children: [
             Text(
-              'توقيت الخروج',
+              AppStrings.checkOutTime.tr,
               style: AppTextStyles.headLineStyle3,
             ),
             HorizontalSpace(),

@@ -375,9 +375,12 @@ abstract class AppConstants {
   static const int maxItemsPerBill = 100;
 
   static const List<String> locales = [
-    'en',
     'ar',
+    'en',
     'ur',
+    'fr',
+    'de',
+    'zh',
   ];
 
   static const String appLocalLangBox = 'appLocalLangBox';

@@ -58,7 +58,7 @@ class AddChequeForm extends StatelessWidget {
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: '${AppStrings.value.tr} ${AppStrings.cheque.tr}',
+                  label: '${AppStrings.amount.tr} ${AppStrings.cheque.tr}',
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),

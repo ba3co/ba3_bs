@@ -1,7 +1,9 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';
@@ -22,7 +24,7 @@ class UserDailyTimeWidget extends StatelessWidget {
       child: OrganizedWidget(
           titleWidget: Center(
               child: Text(
-            'اوقات العمل',
+                AppStrings.workingHours.tr,
             style: AppTextStyles.headLineStyle2,
           )),
           bodyWidget: Column(
