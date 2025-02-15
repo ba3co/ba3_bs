@@ -27,7 +27,7 @@ class TextFieldWithLabel extends StatelessWidget {
         width: Get.width * 0.45,
         child: Row(
           children: [
-            SizedBox(width: 100, child: Text(label)),
+            SizedBox(width: 150, child: Text(label)),
             Expanded(
               child: CustomTextFieldWithoutIcon(
                 textEditingController: textEditingController,

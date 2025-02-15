@@ -38,6 +38,8 @@ class SellerSalesController extends GetxController with AppNavigator {
 
   PickerDateRange? dateRange;
 
+  Rx<RequestState> profileScreenState = RequestState.initial.obs;
+
   final GlobalKey<TargetPointerWidgetState> accessoriesKey = GlobalKey<TargetPointerWidgetState>();
   final GlobalKey<TargetPointerWidgetState> mobilesKey = GlobalKey<TargetPointerWidgetState>();
 
@@ -147,12 +149,15 @@ class SellerSalesController extends GetxController with AppNavigator {
   }
 
   // Sets the selected seller and fetches their bills
-  void onSelectSeller(SellerModel sellerModel) {
+  Future<void> onSelectSeller({SellerModel? sellerModel, String? sellerId}) async {
+    if (sellerModel == null && sellerId == null) return;
+    profileScreenState.value = RequestState.loading;
+    sellerModel ??= read<SellersController>().getSellerById(sellerId!);
     setDateRange = defaultDateRange;
 
     setSelectedSeller = sellerModel;
 
-    fetchSellerBillsByDate(
+    await fetchSellerBillsByDate(
       sellerModel: sellerModel,
       dateTimeRange: DateTimeRange(start: defaultDateRange.startDate!, end: defaultDateRange.endDate!),
     );
@@ -171,13 +176,14 @@ class SellerSalesController extends GetxController with AppNavigator {
 
     result.fold(
       (failure) {
-        if (!inFilterMode) {
-          AppUIUtils.onFailure('لا توجد فواتير مسجلة ل${sellerModel.costName} ❌');
-        } else {
+        if (inFilterMode) {
           AppUIUtils.onFailure(' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
-
+          totalAccessoriesSales = 0;
+          totalMobilesSales = 0;
           clearFilter();
         }
+        sellerBills.clear();
+
       },
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
@@ -189,12 +195,10 @@ class SellerSalesController extends GetxController with AppNavigator {
     } else {
       sellerBills.assignAll(bills);
     }
-    navigateToSellerSalesScreen();
   }
 
   // Method to calculate the total sales
-  double calculateTotalSales(List<BillModel> bills) =>
-      bills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal ?? 0));
+  double calculateTotalSales(List<BillModel> bills) => bills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal ?? 0));
 
   void calculateTotalAccessoriesMobiles() {
     // Reset totals
@@ -202,6 +206,7 @@ class SellerSalesController extends GetxController with AppNavigator {
     totalMobilesSales = 0;
 
     final bills = inFilterMode ? filteredBills : sellerBills;
+    log("calculateTotalAccessoriesMobiles ${bills.length}");
 
     // Iterate through all bills
     for (final bill in bills) {
@@ -211,7 +216,6 @@ class SellerSalesController extends GetxController with AppNavigator {
           double itemTotal = item.itemTotalPrice.toDouble;
 
           if (item.itemSubTotalPrice! < 1000) {
-            log('${item.itemName} total price = $itemTotal');
             totalAccessoriesSales += itemTotal;
           } else {
             totalMobilesSales += itemTotal;
@@ -219,9 +223,8 @@ class SellerSalesController extends GetxController with AppNavigator {
         }
       }
     }
-
-    log('totalAccessoriesSales = $totalAccessoriesSales');
-    log('totalMobilesSales = $totalMobilesSales');
+    profileScreenState.value = RequestState.success;
+    update();
   }
 
   void navigateToAddSellerScreen([SellerModel? seller]) {
@@ -230,11 +233,18 @@ class SellerSalesController extends GetxController with AppNavigator {
   }
 
   void navigateToAllSellersScreen() async {
-    await read<SellersController>().fetchProbabilitySellers();
     to(AppRoutes.allSellersScreen);
   }
 
-  void navigateToSellerSalesScreen() => to(AppRoutes.sellerSalesScreen);
+  void navigateToSellerSalesScreen(SellerModel sellerModel) async {
+    sellerBills.clear();
+    await onSelectSeller(sellerModel: sellerModel);
+    if (sellerBills.isNotEmpty) {
+      to(AppRoutes.sellerSalesScreen);
+    } else {
+      AppUIUtils.onFailure(' لا توجد فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
+    }
+  }
 
   void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
 }

@@ -22,7 +22,7 @@ class StoreDropdown extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-              width: 100,
+              width: 150,
               child: Text(
                 AppStrings.store.tr,
               )),

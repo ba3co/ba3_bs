@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/features/profile/ui/screens/profile_screen.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/sellers_layout.dart';
 import 'package:ba3_bs/features/user_time/ui/screens/all_attendance_screen.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -12,7 +13,6 @@ import '../../bond/ui/screens/bond_layout.dart';
 import '../../cheques/ui/screens/cheque_layout.dart';
 import '../../materials/ui/screens/materials_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
-import '../../user_time/ui/screens/user_time_details.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
 import '../data/model/app_layout_item_model.dart';
 
@@ -22,7 +22,6 @@ class MainLayoutController extends GetxController {
       AppLayoutItemModel(
         name: 'الفواتير',
         layout: const BillLayout(),
-        role: RoleItemType.viewBill,
         icon: AppAssets.billsIcon,
         unSelectedIcon: AppAssets.billsUnselectedIcon,
       ),
@@ -30,15 +29,13 @@ class MainLayoutController extends GetxController {
       AppLayoutItemModel(
         name: 'الأنماط',
         layout: const PatternLayout(),
-        role: RoleItemType.viewPattern,
         icon: AppAssets.patternsIcon,
         unSelectedIcon: AppAssets.patternsUnselectedIcon,
       ),
-    if (RoleItemType.viewProduct.hasReadPermission)
+    if (RoleItemType.viewProduct.hasAdminPermission)
       AppLayoutItemModel(
         name: 'المواد',
         layout: const MaterialLayout(),
-        role: RoleItemType.viewProduct,
         icon: AppAssets.materialIcon,
         unSelectedIcon: AppAssets.materialUnselectedIcon,
       ),
@@ -46,7 +43,6 @@ class MainLayoutController extends GetxController {
       AppLayoutItemModel(
         name: 'الحسابات',
         layout: const AccountLayout(),
-        role: RoleItemType.viewAccount,
         icon: AppAssets.accountsIcon,
         unSelectedIcon: AppAssets.accountsUnselectedIcon,
       ),
@@ -54,7 +50,6 @@ class MainLayoutController extends GetxController {
       AppLayoutItemModel(
         name: 'السندات',
         layout: const BondLayout(),
-        role: RoleItemType.viewBond,
         icon: AppAssets.bondsIcon,
         unSelectedIcon: AppAssets.bondsUnselectedIcon,
       ),
@@ -62,15 +57,13 @@ class MainLayoutController extends GetxController {
       AppLayoutItemModel(
         name: 'الشيكات',
         layout: const ChequeLayout(),
-        role: RoleItemType.viewCheques,
         icon: AppAssets.chequesIcon,
         unSelectedIcon: AppAssets.chequesUnselectedIcon,
       ),
-    if (RoleItemType.viewSellers.hasReadPermission)
+    if (RoleItemType.viewSellers.hasAdminPermission)
       AppLayoutItemModel(
         name: 'البائعون',
         layout: const SellersLayout(),
-        role: RoleItemType.viewSellers,
         icon: AppAssets.accountsIcon,
         unSelectedIcon: AppAssets.accountsUnselectedIcon,
       ),
@@ -78,24 +71,21 @@ class MainLayoutController extends GetxController {
       AppLayoutItemModel(
         name: 'إدارة المستخدمين',
         layout: const UserManagementLayout(),
-        role: RoleItemType.viewUserManagement,
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon,
       ),
-    AppLayoutItemModel(
-      name: 'الدوام',
-      layout: const UserTimeDetails(),
-      role: RoleItemType.viewTime,
-      icon: AppAssets.usersTimeIcon,
-      unSelectedIcon: AppAssets.usersTimeUnselectedIcon,
-    ),
     if (RoleItemType.administrator.hasReadPermission)
       AppLayoutItemModel(
         name: 'لوحة التحكم',
         layout: const AllAttendanceScreen(),
-        role: RoleItemType.administrator,
         icon: AppAssets.billsIcon,
         unSelectedIcon: AppAssets.billsUnselectedIcon,
+      ),
+    AppLayoutItemModel(
+        name: 'الملف الشخصي',
+        layout: const ProfileScreen(),
+        icon: AppAssets.profileIcon,
+        unSelectedIcon: AppAssets.profileUnselectedIcon,
       ),
   ].obs;
   PageController pageController = PageController();

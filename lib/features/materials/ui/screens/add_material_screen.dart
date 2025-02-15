@@ -18,7 +18,7 @@ class AddMaterialScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(controller.selectedMaterial?.matName ?? '${AppStrings.material.tr} ${AppStrings.newS.tr}'),
+          title: Text(controller.selectedMaterial?.matName ?? AppStrings.newMaterial.tr),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),

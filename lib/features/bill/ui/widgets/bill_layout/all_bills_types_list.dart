@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/services/translation/translation_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ class AllBillsTypesList extends StatelessWidget {
               :RoleItemType.viewBill.hasAdminPermission? allBillsController.billsTypes
                   .map(
                     (billTypeModel) => BillTypeItemWidget(
-                      text: billTypeModel.fullName!,
+                      text:read<TranslationController>().currentLocaleIsRtl? billTypeModel.fullName!:billTypeModel.latinFullName!,
                       color: Color(billTypeModel.color!),
                       onTap: () {
                         allBillsController.openFloatingBillDetails(context, billTypeModel);
@@ -43,16 +45,16 @@ class AllBillsTypesList extends StatelessWidget {
                   .toList()
               : [
             BillTypeItemWidget(
-              text: BillType.sales.billTypeModel.fullName!,
-              color: Color(BillType.sales.billTypeModel.color!),
+              text:read<TranslationController>().currentLocaleIsRtl?allBillsController.billsTypeSales.fullName!:allBillsController.billsTypeSales.latinFullName!,
+              color: Color(allBillsController.billsTypeSales.color!),
               onTap: () {
-                allBillsController.openFloatingBillDetails(context, BillType.sales.billTypeModel);
+                allBillsController.openFloatingBillDetails(context, allBillsController.billsTypeSales);
                 // allBillsController.fetchAllBillsByType( billTypeModel);
               },
-              pendingBillsCounts: allBillsController.pendingBillsCounts(BillType.sales.billTypeModel),
-              allBillsCounts: allBillsController.allBillsCounts(BillType.sales.billTypeModel),
+              pendingBillsCounts: allBillsController.pendingBillsCounts(allBillsController.billsTypeSales),
+              allBillsCounts: allBillsController.allBillsCounts(allBillsController.billsTypeSales),
               onPendingBillsPressed: () {
-                allBillsController.fetchPendingBills(BillType.sales.billTypeModel);
+                allBillsController.fetchPendingBills(allBillsController.billsTypeSales);
               },
             )
           ],

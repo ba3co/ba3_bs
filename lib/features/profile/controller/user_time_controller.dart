@@ -8,10 +8,10 @@ import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
+import '../../user_time/data/repositories/user_time_repo.dart';
+import '../../user_time/services/user_time_services.dart';
 import '../../users_management/controllers/user_management_controller.dart';
 import '../../users_management/data/models/user_model.dart';
-import '../data/repositories/user_time_repo.dart';
-import '../services/user_time_services.dart';
 
 class UserTimeController extends GetxController {
   final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
@@ -21,8 +21,8 @@ class UserTimeController extends GetxController {
 
   late final UserTimeServices _userTimeServices;
 
-  Rx<String> lastEnterTime = AppStrings.notLoggedInYet.tr.obs;
-  Rx<String> lastOutTime = AppStrings.notLoggedOutYet.tr.obs;
+  Rx<String> lastEnterTime = AppStrings.notLoggedToday.tr.obs;
+  Rx<String> lastOutTime = AppStrings.notLoggedToday.tr.obs;
 
   Rx<RequestState> logInState = RequestState.initial.obs;
   Rx<RequestState> logOutState = RequestState.initial.obs;

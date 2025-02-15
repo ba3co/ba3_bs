@@ -30,7 +30,7 @@ class BondDetailsHeader extends StatelessWidget {
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: '${AppStrings.date.tr} ${AppStrings.bond.tr}',
+                  label: AppStrings.bondDate.tr,
                   child: Obx(() {
                     return DatePicker(
                       initDate: bondDetailsController.bondDate.value,

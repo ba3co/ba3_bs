@@ -3,9 +3,9 @@ import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/all_ho
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../profile/ui/widgets/user_time_details_widgets/user_daily_time_widget.dart';
 import '../../../users_management/controllers/user_details_controller.dart';
 import '../widgets/user_details_widgets/time_widget.dart';
-import '../widgets/user_time_details_widgets/user_daily_time_widget.dart';
 
 class UserDetails extends StatelessWidget {
   const UserDetails({super.key});

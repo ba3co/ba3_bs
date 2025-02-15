@@ -30,7 +30,7 @@ class AddChequeForm extends StatelessWidget {
           children: [
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: '${AppStrings.date.tr} ${AppStrings.editing.tr}',
+                  label: AppStrings.editingDate.tr,
                   child: Obx(() {
                     return DatePicker(
                       initDate: chequesDetailsController.chequesDate.value,
@@ -39,7 +39,7 @@ class AddChequeForm extends StatelessWidget {
                   }),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: '${AppStrings.date.tr} ${AppStrings.dues.tr}',
+                  label: AppStrings.duesDate.tr,
                   child: Obx(() {
                     return DatePicker(
                       initDate: chequesDetailsController.chequesDueDate.value,
@@ -50,7 +50,7 @@ class AddChequeForm extends StatelessWidget {
             const VerticalSpace(),
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: "${AppStrings.number.tr} ${AppStrings.cheque.tr}",
+                  label:AppStrings.chequesNumber.tr,
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
@@ -58,7 +58,7 @@ class AddChequeForm extends StatelessWidget {
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
-                  label: '${AppStrings.amount.tr} ${AppStrings.cheque.tr}',
+                  label: AppStrings.chequesAmount.tr,
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),

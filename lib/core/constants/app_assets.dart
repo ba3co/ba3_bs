@@ -30,6 +30,8 @@ class AppAssets {
   static const openingEntryIcon = '$_baseIconsPath/Opening_Entry_icon.png';
   static const usersTimeUnselectedIcon = '$_baseIconsPath/user_time_unselected_icon.png';
   static const usersTimeIcon = '$_baseIconsPath/user_time_icon.png';
+  static const profileUnselectedIcon = '$_baseIconsPath/profile_unselected_icon.png';
+  static const profileIcon = '$_baseIconsPath/profile_icon.png';
   static const receiptVoucherIcon = '$_baseIconsPath/Receipt_Voucher_icon.png';
   static const paymentVoucherIcon = '$_baseIconsPath/Payment_Voucher_icon.png';
   static const journalVoucherIcon = '$_baseIconsPath/Journal_Voucher_icon.png';

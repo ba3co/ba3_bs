@@ -354,7 +354,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     return {
       PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: '${AppStrings.name.tr} ${AppStrings.material.tr}', field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
+      PlutoColumn(title: AppStrings.materialName, field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
       PlutoColumn(title: AppStrings.quantity.tr, field: 'الكمية', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center): matQuantity,
       PlutoColumn(title: AppStrings.cost.tr, field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center): retailPrice,
       PlutoColumn(
@@ -369,7 +369,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       PlutoColumn(title: AppStrings.consumer.tr, field: 'المستهلك', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
           endUserPrice,
       PlutoColumn(title: AppStrings.wholesale.tr, field: 'الجملة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center): wholesalePrice,
-      PlutoColumn(title: '${AppStrings.code.tr} ${AppStrings.material.tr}', field: 'رمز المادة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+      PlutoColumn(title: AppStrings.materialCode, field: 'رمز المادة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
           matCode,
       PlutoColumn(title: AppStrings.barcode.tr, field: 'الباركود', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center): matBarCode,
       PlutoColumn(title: AppStrings.group.tr, field: 'المجموعة', type: PlutoColumnType.text()):

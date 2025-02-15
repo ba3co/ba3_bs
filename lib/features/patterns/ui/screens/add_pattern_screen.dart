@@ -20,7 +20,7 @@ class AddPatternScreen extends StatelessWidget {
           Expanded(
             child: Scaffold(
               appBar: AppBar(
-                title: Text('${AppStrings.add.tr} ${AppStrings.pattern.tr}'),
+                title: Text(AppStrings.addPattern.tr),
               ),
               body: GetBuilder<PatternController>(
                 builder: (patternController) {

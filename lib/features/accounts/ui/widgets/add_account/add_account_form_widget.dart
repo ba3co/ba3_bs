@@ -19,12 +19,13 @@ class AddAccountFormWidget extends StatelessWidget {
     return Form(
       key: controller.accountFromHandler.formKey,
       child: Column(
+        spacing: 20,
         children: [
           FormFieldRow(
+
             firstItem: TextAndExpandedChildField(
               label: AppStrings.accountName.tr,
               child: CustomTextFieldWithoutIcon(
-                suffixIcon: const SizedBox(),
                 validator: (value) => controller.accountFromHandler.defaultValidator(value, "اسم الحساب"),
                 textEditingController: controller.accountFromHandler.nameController,
               ),
@@ -32,12 +33,14 @@ class AddAccountFormWidget extends StatelessWidget {
             secondItem: TextAndExpandedChildField(
               label: AppStrings.latinAccountName.tr,
               child: CustomTextFieldWithoutIcon(
+
                 suffixIcon: const SizedBox(),
                 textEditingController: controller.accountFromHandler.latinNameController,
               ),
             ),
           ),
           FormFieldRow(
+
             firstItem: SearchableAccountField(
               textEditingController: controller.accountFromHandler.accParentName,
               label: AppStrings.fatherAccount.tr,
@@ -60,7 +63,7 @@ class AddAccountFormWidget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 15),
+
         ],
       ),
     );

@@ -15,7 +15,7 @@ AppBar chequesLayoutAppBar() {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: AppButton(
-            title: '${AppStrings.download.tr} ${AppStrings.cheques.tr}',
+            title: AppStrings.downloadCheques.tr,
             onPressed: () => read<AllChequesController>().fetchAllChequesLocal(),
           ),
         ),

@@ -23,7 +23,7 @@ class AllCheques extends StatelessWidget {
             logic.openChequesDetailsById(chequesId, context, ChequesType.paidChecks);
           },
           isLoading: logic.isLoading,
-          title: !onlyDues ? "${AppStrings.all.tr} ${AppStrings.cheques.tr}" : "${AppStrings.cheques.tr} ${AppStrings.dues.tr}",
+          title: !onlyDues ? AppStrings.allCheques.tr : AppStrings.chequesDues.tr,
           tableSourceModels: logic.chequesList.where(
             (element) {
               if (!onlyDues) {

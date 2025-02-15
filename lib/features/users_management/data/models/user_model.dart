@@ -159,14 +159,14 @@ class UserModel implements PlutoAdaptable {
       ): userId,
       createAutoIdColumn(): '#',
       PlutoColumn(
-        title: '${AppStrings.name.tr} ${AppStrings.employees.tr}',
+        title: AppStrings.employeeName.tr,
         field: 'اسم الموظف',
         width: 120,
         frozen: PlutoColumnFrozen.start,
         type: PlutoColumnType.text(),
       ): userName,
       PlutoColumn(
-        title: AppStrings.lastcheckInTime.tr,
+        title: AppStrings.lastCheckInTime.tr,
         field: 'اخر دخول',
         width: 120,
         textAlign: PlutoColumnTextAlign.center,
@@ -175,7 +175,7 @@ class UserModel implements PlutoAdaptable {
           ? AppStrings.holiday.tr
           : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.toList().lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
       PlutoColumn(
-        title: AppStrings.lastcheckOutTime.tr,
+        title: AppStrings.lastCheckOutTime.tr,
         field: 'اخر خروج',
         width: 120,
         textAlign: PlutoColumnTextAlign.center,

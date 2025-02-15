@@ -92,6 +92,7 @@ class BillTypeItemWidget extends StatelessWidget {
               top: 0,
               right: 0,
               child: Container(
+
                 width: 220,
                 height: 30,
                 decoration: BoxDecoration(

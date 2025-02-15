@@ -36,7 +36,7 @@ class LoginBodyWidget extends StatelessWidget {
             width: .25.sw,
             child: TextFormField(
               decoration: InputDecoration(
-                label: Text('${AppStrings.name.tr} ${AppStrings.account.tr}'),
+                label: Text(AppStrings.accountName.tr),
                 filled: true,
                 fillColor: AppColors.backGroundColor,
               ),
@@ -96,7 +96,7 @@ class LoginBodyWidget extends StatelessWidget {
                     ),
                   if (userManagementController.isGuestLoginButtonVisible.value)
                     LoginButtonWidget(
-                      text: '${AppStrings.registration.tr} ${AppStrings.asA.tr}${AppStrings.guest.tr}',
+                      text: AppStrings.registrationAsAGust.tr,
                       width: RoleItemType.viewUserManagement.hasAdminPermission ? .15.sw : null,
                       onTap: userManagementController.loginAsGuest,
                     ),

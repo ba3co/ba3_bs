@@ -40,7 +40,7 @@ class AddAccountScreen extends StatelessWidget {
             children: [
               AddAccountFormWidget(controller: controller),
               AccountTypeDropdown(accountSelectionHandler: controller.accountFromHandler),
-              const SizedBox(height: 15),
+
               // Button to add a new customer
               AddCustomersWidget(),
               AddAccountButtonsWidget(controller: controller),

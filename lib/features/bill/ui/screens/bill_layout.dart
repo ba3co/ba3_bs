@@ -43,7 +43,7 @@ class BillLayout extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.all(8),
                       child: AppButton(
-                        title: "${AppStrings.download.tr} ${AppStrings.bills.tr}",
+                        title:AppStrings.downloadBills.tr,
                         onPressed: () => allBillsController.fetchAllBillsFromLocal(),
                       ),
                     ),

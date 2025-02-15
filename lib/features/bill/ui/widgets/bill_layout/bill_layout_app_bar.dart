@@ -15,7 +15,7 @@ AppBar billLayoutAppBar() {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: AppButton(
-            title: AppStrings.downloadBill.tr,
+            title: AppStrings.downloadBills.tr,
             onPressed: () => read<AllBillsController>().fetchAllBillsFromLocal(),
           ),
         ),

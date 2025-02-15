@@ -74,7 +74,7 @@ class AddChequeButtons extends StatelessWidget {
                     ? chequesDetailsController.clearPayCheques(chequesModel)
                     : chequesDetailsController.savePayCheques(chequesModel);
               },
-              title: chequesDetailsController.isPayed! ? '${AppStrings.delete.tr} ${AppStrings.payment.tr}' : AppStrings.pay.tr,
+              title: chequesDetailsController.isPayed! ? AppStrings.paymentDelete.tr : AppStrings.pay.tr,
               color: chequesDetailsController.isPayed! ? Colors.red : Colors.black,
               iconData: Icons.paid,
             ),
@@ -83,7 +83,7 @@ class AddChequeButtons extends StatelessWidget {
               onPressed: () {
                 chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
               },
-              title: '${AppStrings.bond.tr} ${AppStrings.payment.tr}',
+              title: AppStrings.paymentBond .tr,
               iconData: Icons.view_list_outlined,
             ),
           if (!chequesDetailsController.isPayed!)
@@ -93,7 +93,7 @@ class AddChequeButtons extends StatelessWidget {
                     ? chequesDetailsController.deleteRefundPayCheques(chequesModel)
                     : chequesDetailsController.refundPayCheques(chequesModel);
               },
-              title: chequesDetailsController.isRefundPay! ? '${AppStrings.delete.tr} ${AppStrings.refund.tr}' : AppStrings.refund.tr,
+              title: chequesDetailsController.isRefundPay! ? AppStrings.deleteRefund.tr : AppStrings.refund.tr,
               iconData: Icons.lock_reset_rounded,
               color: chequesDetailsController.isRefundPay! ? Colors.red : Colors.grey,
             ),
@@ -102,7 +102,7 @@ class AddChequeButtons extends StatelessWidget {
               onPressed: () {
                 chequesDetailsController.launchRefundPayEntryBondWindow(chequesModel, context);
               },
-              title: '${AppStrings.bond.tr} ${AppStrings.refunded.tr}',
+              title:AppStrings.refundedBond.tr,
               iconData: Icons.lock_reset_rounded,
             ),
         ]

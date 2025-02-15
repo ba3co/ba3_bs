@@ -19,7 +19,7 @@ class AccountTypeDropdown extends StatelessWidget {
       width: width ?? Get.width * 0.45,
       child: Row(
         children: [
-          const SizedBox(width: 100, child: Text('نوع الحساب')),
+          const SizedBox(width: 150, child: Text('نوع الحساب')),
           Expanded(
             child: Container(
               width: (Get.width * 0.45) - 100,

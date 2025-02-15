@@ -205,16 +205,16 @@ class AccountModel implements PlutoAdaptable {
     return {
       PlutoColumn(field: AppStrings.identificationNumber.tr, type: PlutoColumnType.text(), title: 'الرقم التعريفي', hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: '${AppStrings.number.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), field: 'رقم الحساب', width: 180):
+      PlutoColumn(title: AppStrings.accountNumber.tr, type: PlutoColumnType.text(), field: 'رقم الحساب', width: 180):
           accNumber,
-      PlutoColumn(title: '${AppStrings.code.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), field: 'رمز الحساب', width: 180):
+      PlutoColumn(title: AppStrings.accountCode.tr, type: PlutoColumnType.text(), field: 'رمز الحساب', width: 180):
           accCode,
-      PlutoColumn(title: '${AppStrings.name.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), field: 'اسم الحساب'): accName,
+      PlutoColumn(title: AppStrings.accountName.tr, type: PlutoColumnType.text(), field: 'اسم الحساب'): accName,
       PlutoColumn(
-          title: '${AppStrings.name.tr} ${AppStrings.account.tr} ${AppStrings.al.tr + AppStrings.latin.tr}',
+          title: AppStrings.latinName.tr,
           type: PlutoColumnType.text(),
           field: 'الاسم الاتيني'): accLatinName,
-      PlutoColumn(title: '${AppStrings.type.tr} ${AppStrings.account.tr}', type: PlutoColumnType.text(), field: 'نوع الحساب'):
+      PlutoColumn(title: AppStrings.accountType.tr, type: PlutoColumnType.text(), field: 'نوع الحساب'):
           AppServiceUtils.getAccountType(accType),
       PlutoColumn(title: AppStrings.fatherAccount.tr, type: PlutoColumnType.text(), field: 'حساب الاب'): accParentName,
       PlutoColumn(title: AppStrings.children.tr, type: PlutoColumnType.text(), field: 'الاولاد'):

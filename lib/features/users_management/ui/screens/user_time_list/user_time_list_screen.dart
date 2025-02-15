@@ -13,7 +13,7 @@ class UserTimeListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<UserManagementController>(builder: (userManagementController) {
       return PlutoGridWithAppBar(
-        title: '${AppStrings.all.tr} ${AppStrings.users.tr}',
+        title: AppStrings.allUsers.tr,
         isLoading: userManagementController.isLoading,
         tableSourceModels: userManagementController.filteredAllUsersWithNunTime,
         onLoaded: (event) {},

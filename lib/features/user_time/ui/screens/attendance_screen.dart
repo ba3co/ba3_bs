@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class AttendanceScreen extends StatelessWidget {
@@ -61,7 +62,7 @@ class AttendanceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${AppStrings.controlPanel} ${AppStrings.user}"),
+        title: Text(AppStrings.userControlPanel.tr),
       ),
       body: ListView(
         padding: EdgeInsets.all(16),
@@ -72,12 +73,12 @@ class AttendanceScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${AppStrings.name} ${AppStrings.user}: ${user.userName}",
+                  Text("${AppStrings.userName.tr} : ${user.userName}",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-                  Text("${AppStrings.status} ${AppStrings.work}: ${user.userWorkStatus?.label}", style: TextStyle(fontSize: 16)),
+                  Text("${AppStrings.workStatus.tr}: ${user.userWorkStatus?.label}", style: TextStyle(fontSize: 16)),
                   SizedBox(height: 8),
-                  Text("الحالة: ${user.userActiveStatus?.label}", style: TextStyle(fontSize: 16)),
+                  Text("${AppStrings.status.tr}: ${user.userActiveStatus?.label}", style: TextStyle(fontSize: 16)),
                   SizedBox(height: 16),
                   ListView.separated(
                     shrinkWrap: true,
@@ -88,8 +89,8 @@ class AttendanceScreen extends StatelessWidget {
                       return Column(
                         children: [
                           Text(userTimeModel.dayName.toString()),
-                          Text("${AppStrings.totalLoginDelay}: ${calculateTotalLoginDelay(user.userWorkingHours!, userTimeModel)}"),
-                          Text("${AppStrings.totalLateCheckOut}: ${calculateTotalLogoutDelay(user.userWorkingHours!, userTimeModel)}"),
+                          Text("${AppStrings.totalLoginDelay.tr}: ${calculateTotalLoginDelay(user.userWorkingHours!, userTimeModel)}"),
+                          Text("${AppStrings.totalLateCheckOut.tr}: ${calculateTotalLogoutDelay(user.userWorkingHours!, userTimeModel)}"),
                         ],
                       );
                     },

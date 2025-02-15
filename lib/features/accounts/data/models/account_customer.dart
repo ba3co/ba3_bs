@@ -71,7 +71,7 @@ class AccountCustomer implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): customerAccountName,
       PlutoColumn(
-        title: '${AppStrings.type.tr} ${AppStrings.tax.tr}',
+        title: AppStrings.taxType.tr,
         field: 'customerVAT',
         type: PlutoColumnType.select([AppConstants.mainVATCategory, AppConstants.withoutVAT]),
       ): customerVAT,
@@ -84,7 +84,7 @@ class AccountCustomer implements PlutoAdaptable {
      AppStrings.customerCardNumber.tr: customerCardNumber,
       AppStrings.customerName.tr: customerAccountName,
     AppStrings.account.tr: read<AccountsController>().getAccountNameById(mainAccount),
-      '${AppStrings.type.tr} ${AppStrings.tax.tr}': customerVAT,
+      AppStrings. taxType.tr: customerVAT,
     };
   }
 

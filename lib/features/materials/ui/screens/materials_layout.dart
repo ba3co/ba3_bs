@@ -33,7 +33,7 @@ class MaterialLayout extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(6),
                           child: AppButton(
-                              title: '${AppStrings.download.tr} ${AppStrings.materials.tr}',
+                              title: AppStrings.downloadMaterials.tr,
                               onPressed: () {
                                 read<MaterialController>().fetchAllMaterialFromLocal();
                               }),
@@ -41,7 +41,7 @@ class MaterialLayout extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(6),
                           child: AppButton(
-                              title: '${AppStrings.delete.tr} ${AppStrings.materials.tr}',
+                              title: AppStrings.deletedMaterials.tr,
                               onPressed: () {
                                 read<MaterialController>().deleteAllMaterialFromLocal();
                               }),
@@ -50,7 +50,7 @@ class MaterialLayout extends StatelessWidget {
                           padding: EdgeInsets.all(6),
                           child: AppButton(
                               width: 100,
-                              title: '${AppStrings.download.tr} ${AppStrings.groups.tr}',
+                              title:AppStrings.downloadGroups.tr,
                               onPressed: () {
                                 read<MaterialGroupController>().fetchAllMaterialGroupGroupFromLocal();
                               }),
@@ -61,20 +61,20 @@ class MaterialLayout extends StatelessWidget {
               body: Column(
                 children: [
                   AppMenuItem(
-                      text: '${AppStrings.view.tr} ${AppStrings.materials.tr}',
+                      text: AppStrings.viewMaterial.tr,
                       onTap: () {
                         read<MaterialController>()
                           ..reloadMaterials()
                           ..navigateToAllMaterialScreen();
                       }),
                   AppMenuItem(
-                      text: '${AppStrings.view.tr} ${AppStrings.groups.tr}',
+                      text: AppStrings.viewMaterialGroups.tr,
                       onTap: () {
                         read<MaterialGroupController>().navigateToAllMaterialScreen();
                       }),
                   if (RoleItemType.viewProduct.hasAdminPermission)
                     AppMenuItem(
-                        text: '${AppStrings.add.tr} ${AppStrings.materials.tr}',
+                        text: AppStrings.addMaterials.tr,
                         onTap: () {
                           read<MaterialController>().navigateToAddOrUpdateMaterialScreen();
                         }),

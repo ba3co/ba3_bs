@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/constants/app_config.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -6,7 +8,6 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/app_spacer.dart';
 import '../../controllers/main_layout_controller.dart';
 import 'drawer_list_tile.dart';
-import 'main_header.dart';
 
 class RightMainWidget extends StatelessWidget {
   const RightMainWidget({super.key, required this.mainController});
@@ -18,7 +19,6 @@ class RightMainWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Column(
-        spacing: 10,
         children: [
           SizedBox(
             height: 0.15.sh,
@@ -26,7 +26,7 @@ class RightMainWidget extends StatelessWidget {
             child: Image.asset(AppAssets.logo),
           ),
           SizedBox(
-            height: 0.700.sh,
+            height: 0.810.sh,
             width: 0.15.sw,
             child: ListView.separated(
               padding: EdgeInsets.zero,
@@ -43,11 +43,16 @@ class RightMainWidget extends StatelessWidget {
                     mainController.setIndex = index;
                   },
                 );
-              }
-              ,
+              },
             ),
           ),
-          const MainHeader(),
+          VerticalSpace(),
+          Center(
+            child: Text(
+              "BA3 BS Version ${AppConfig.version}",
+              style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12.sp),
+            ),
+          )
         ],
       ),
     );

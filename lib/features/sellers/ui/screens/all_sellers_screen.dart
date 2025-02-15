@@ -15,7 +15,7 @@ class AllSellersScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: Text("${AppStrings.all.tr} ${AppStrings.sellers.tr}")),
+        appBar: AppBar(title: Text(AppStrings.allSellers.tr)),
         body: GetBuilder<SellersController>(builder: (controller) {
           if (controller.isLoading) {
             return AppUIUtils.showLoadingIndicator();
@@ -33,7 +33,9 @@ class AllSellersScreen extends StatelessWidget {
                         (index) => Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell(
-                                onTap: () => read<SellerSalesController>().onSelectSeller(controller.sellers[index]),
+                                onTap: () => read<SellerSalesController>()
+
+                                  .navigateToSellerSalesScreen( controller.sellers[index]),
                                 child: Container(
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5), borderRadius: BorderRadius.circular(10)),

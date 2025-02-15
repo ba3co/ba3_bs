@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,10 +19,9 @@ class TaxDropdown extends StatelessWidget {
       width: width ?? Get.width * 0.45,
       child: Row(
         children: [
-          const SizedBox(width: 100, child: Text('الضريبة')),
+           SizedBox(width: 150, child: Text(AppStrings.tax.tr)),
           Expanded(
             child: Container(
-              width: (Get.width * 0.45) - 100,
               height: AppConstants.constHeightTextField,
               alignment: Alignment.center,
               decoration: BoxDecoration(

@@ -14,7 +14,9 @@ class LanguageDropdown extends StatelessWidget {
     final TranslationController translationController = Get.find<TranslationController>();
 
     return Container(
-      height: AppConstants.constHeightTextField,
+      padding: EdgeInsets.symmetric( horizontal: 15.h),
+      height: AppConstants.constHeightTextField*2,
+      width: 1.sw,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),

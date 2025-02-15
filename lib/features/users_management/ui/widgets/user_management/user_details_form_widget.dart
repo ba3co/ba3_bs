@@ -33,7 +33,7 @@ class UserDetailsForm extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
             child: Text(
-          "${AppStrings.information.tr} ${AppStrings.user.tr}",
+              AppStrings.userInformation.tr,
           style: AppTextStyles.headLineStyle2,
         )),
         bodyWidget: Form(
@@ -44,7 +44,7 @@ class UserDetailsForm extends StatelessWidget {
             children: [
               FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label: '${AppStrings.name.tr} ${AppStrings.user.tr}',
+                  label: AppStrings.userName.tr,
                   height: 70,
                   child: CustomTextFieldWithoutIcon(
                     height: 70,

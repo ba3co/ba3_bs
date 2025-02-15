@@ -24,7 +24,7 @@ class AddCustomersWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = read<AccountsController>();
     return SizedBox(
-      height: 230,
+      height: 300,
       child: Obx(
         () {
           return Padding(
@@ -53,7 +53,7 @@ class AddCustomersWidget extends StatelessWidget {
                           ),
                           HorizontalSpace(),
                           Text(
-                            controller.showAddCustomerForm.value ? 'إخفاء' : 'اضافة',
+                            controller.showAddCustomerForm.value ? AppStrings.hide.tr : AppStrings.add.tr,
                             style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
                           )
                         ],
@@ -62,12 +62,14 @@ class AddCustomersWidget extends StatelessWidget {
                   ),
                   if (controller.showAddCustomerForm.value)
                     Column(
+                      spacing: 10,
                       children: [
                         FormFieldRow(
                           spacing: 40,
                           firstItem: TextAndExpandedChildField(
                             label: AppStrings.customerName.tr,
                             child: CustomTextFieldWithoutIcon(
+                              filedColor: AppColors.backGroundColor,
                               suffixIcon: const SizedBox(),
                               textEditingController: controller.newCustomerNameController,
                               // validator: (value) => controller.defaultValidator(value, "اسم العميل"),
@@ -76,6 +78,8 @@ class AddCustomersWidget extends StatelessWidget {
                           secondItem: TextAndExpandedChildField(
                             label: AppStrings.mobileNumber.tr,
                             child: CustomTextFieldWithoutIcon(
+                              filedColor: AppColors.backGroundColor,
+
                               suffixIcon: const SizedBox(),
                               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               textEditingController: controller.newCustomerPhoneController,
@@ -86,17 +90,28 @@ class AddCustomersWidget extends StatelessWidget {
                         VerticalSpace(),
                         TextAndExpandedChildField(
                           label: AppStrings.taxType.tr,
-                          child: DropdownButtonFormField<VatEnums>(
-                            value: controller.selectedVat.value,
-                            items: VatEnums.values.map(
-                              (vat) {
+                          height: 40,
+                          child: Container(
+                            color: AppColors.backGroundColor,
+                            child:DropdownButtonFormField<VatEnums>(
+                              value: controller.selectedVat.value,
+                              alignment: Alignment.center,
+
+                              isExpanded: true,
+                              items: VatEnums.values.map((vat) {
                                 return DropdownMenuItem<VatEnums>(
                                   value: vat,
-                                  child: Text(vat.taxName!),
+                                  child: Center(
+                                    child: Text(
+                                      vat.taxName!,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 );
-                              },
-                            ).toList(),
-                            onChanged: controller.onSelectedVatChanged,
+                              }).toList(),
+                              onChanged: controller.onSelectedVatChanged,
+                            )
+
                           ),
                         ),
                         VerticalSpace(20),

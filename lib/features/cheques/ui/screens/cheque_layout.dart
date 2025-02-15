@@ -38,20 +38,20 @@ class _ChequeLayoutState extends State<ChequeLayout> {
                 spacing: 5,
                 children: [
                   ChequesTypeItemWidget(
-                      text: "${AppStrings.add.tr} ${AppStrings.cheque.tr}",
+                      text: AppStrings.addCheques.tr,
                       onPressed: () {
                         controller.openFloatingChequesDetails(context, ChequesType.paidChecks);
                         // Get.to(() => const ChequesDetailsScreen());
                       }),
                   ChequesTypeItemWidget(
-                      text: "${AppStrings.cheques.tr} ${AppStrings.dues.tr}",
+                      text: AppStrings.chequesDues.tr,
                       onPressed: () {
                         controller
                           ..fetchAllChequesByType(ChequesType.paidChecks)
                           ..navigateToChequesScreen(onlyDues: true);
                       }),
                   ChequesTypeItemWidget(
-                      text: "${AppStrings.view.tr} ${AppStrings.cheques.tr}",
+                      text:AppStrings.viewCheques.tr,
                       onPressed: () {
                         controller
                           ..fetchAllChequesByType(ChequesType.paidChecks)

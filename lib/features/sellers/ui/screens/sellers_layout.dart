@@ -24,19 +24,19 @@ class SellersLayout extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(5),
               child: AppButton(
-                  title: '${AppStrings.download.tr} ${AppStrings.sellers.tr}', onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
+                  title: AppStrings.downloadSellers.tr, onPressed: () => read<SellersController>().fetchAllSellersFromLocal()),
             )
         ],
       ),
       body: Column(
         children: [
           AppMenuItem(
-              text: '${AppStrings.add.tr} ${AppStrings.sellers.tr}',
+              text: AppStrings.addSellers.tr,
               onTap: () {
                 sellerSalesController.navigateToAddSellerScreen();
               }),
           AppMenuItem(
-              text: '${AppStrings.view.tr} ${AppStrings.sellers.tr}',
+              text: AppStrings.viewSellers.tr,
               onTap: () {
                 sellerSalesController.navigateToAllSellersScreen();
               }),

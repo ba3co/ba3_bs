@@ -100,10 +100,10 @@ class MaterialGroupModel implements PlutoAdaptable {
     return {
       PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialGroupIdFiled, type: PlutoColumnType.text(), hide: true): matGroupGuid,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: '${AppStrings.name.tr} ${AppStrings.group.tr}', field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
-      PlutoColumn(title:'${AppStrings.code.tr} ${AppStrings.group.tr}', field: 'رمز المجموعة', type: PlutoColumnType.text()): groupCode,
-      PlutoColumn(title: '${AppStrings.number.tr} ${AppStrings.group.tr}', field: 'رقم المجموعة', type: PlutoColumnType.text()): groupNumber,
-      PlutoColumn(title: '${AppStrings.al.tr+AppStrings.name.tr} ${AppStrings.al.tr+AppStrings.latin.tr}', field:'الاسم اللاتيني', type: PlutoColumnType.text()): groupLatinName,
+      PlutoColumn(title: AppStrings.materialName.tr, field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
+      PlutoColumn(title:AppStrings.groupCode.tr, field: 'رمز المجموعة', type: PlutoColumnType.text()): groupCode,
+      PlutoColumn(title: AppStrings.groupNumber.tr, field: 'رقم المجموعة', type: PlutoColumnType.text()): groupNumber,
+      PlutoColumn(title:AppStrings.latinName.tr, field:'الاسم اللاتيني', type: PlutoColumnType.text()): groupLatinName,
       PlutoColumn(title: AppStrings.notes.tr, field: 'المُلاحظات', type: PlutoColumnType.text()): groupNotes,
     };
   }

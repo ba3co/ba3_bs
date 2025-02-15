@@ -13,7 +13,7 @@ AppBar bondLayoutAppBar(AllBondsController controller) {
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: AppButton(
-          title: "${AppStrings.download.tr} ${AppStrings.bonds.tr}",
+          title: AppStrings.downloadBonds.tr,
           onPressed: () => controller.fetchAllBondsLocal(),
         ),
       ),

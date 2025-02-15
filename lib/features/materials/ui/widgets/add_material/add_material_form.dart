@@ -21,34 +21,34 @@ class AddMaterialForm extends StatelessWidget {
           spacing: 20,
           children: [
             OrganizedWidget(
-                titleWidget: Center(child: Text("${AppStrings.information.tr} ${AppStrings.material.tr}")),
+                titleWidget: Center(child: Text(AppStrings.materialInformation.tr)),
                 bodyWidget: Column(
                   spacing: 8,
                   children: [
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "${AppStrings.name.tr} ${AppStrings.material.tr}",
+                          label: AppStrings.materialName.tr,
                           child: CustomTextFieldWithoutIcon(
                             filedColor: AppColors.backGroundColor,
                             textEditingController: controller.materialFromHandler.nameController,
                             validator: (value) => controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
                           )),
                       secondItem: TextAndExpandedChildField(
-                          label:"${AppStrings.name.tr} ${AppStrings.al+AppStrings.latin.tr}",
+                          label:AppStrings.latinName.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               textEditingController: controller.materialFromHandler.latinNameController)),
                     ),
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "${AppStrings.code.tr} ${AppStrings.material.tr}",
+                          label:AppStrings.materialCode.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               validator: (value) =>
                                   controller.materialFromHandler.defaultValidator(value, 'رمز المادة'),
                               textEditingController: controller.materialFromHandler.codeController)),
                       secondItem: TextAndExpandedChildField(
-                          label: "${AppStrings.code.tr} ${AppStrings.barcode.tr}",
+                          label: AppStrings.materialBarcode.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               validator: (value) =>

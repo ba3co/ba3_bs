@@ -28,22 +28,22 @@ class AddPatternForm extends StatelessWidget {
         runSpacing: 10,
         children: [
           TextFieldWithLabel(
-            label: AppStrings.al.tr + AppStrings.short.tr,
+            label: AppStrings.shortcuts.tr,
             textEditingController: patternController.patternFormHandler.shortNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
           ),
           TextFieldWithLabel(
-            label: AppStrings.name.tr,
+            label: AppStrings.al.tr+AppStrings.name.tr,
             textEditingController: patternController.patternFormHandler.fullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
           ),
           TextFieldWithLabel(
-            label: '${AppStrings.short.tr} ${AppStrings.latin.tr}',
+            label: AppStrings.latinShortCut.tr,
             textEditingController: patternController.patternFormHandler.latinShortNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'اختصار لاتيني'),
           ),
           TextFieldWithLabel(
-            label: '${AppStrings.latin.tr} ${AppStrings.name.tr}',
+            label: AppStrings.latinName.tr,
             textEditingController: patternController.patternFormHandler.latinFullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
           ),

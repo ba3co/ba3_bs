@@ -20,7 +20,7 @@ class TextAndExpandedChildField extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: 100,
+            width: 150,
             child: Text(label, style: const TextStyle()),
           ),
           Expanded(child: child),
