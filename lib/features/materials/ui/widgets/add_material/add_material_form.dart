@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
@@ -19,34 +21,34 @@ class AddMaterialForm extends StatelessWidget {
           spacing: 20,
           children: [
             OrganizedWidget(
-                titleWidget: Center(child: Text("معلومات المادة")),
+                titleWidget: Center(child: Text("${AppStrings.information.tr} ${AppStrings.material.tr}")),
                 bodyWidget: Column(
                   spacing: 8,
                   children: [
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "اسم المادة",
+                          label: "${AppStrings.name.tr} ${AppStrings.material.tr}",
                           child: CustomTextFieldWithoutIcon(
                             filedColor: AppColors.backGroundColor,
                             textEditingController: controller.materialFromHandler.nameController,
                             validator: (value) => controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
                           )),
                       secondItem: TextAndExpandedChildField(
-                          label: "الاسم اللاتيني",
+                          label:"${AppStrings.name.tr} ${AppStrings.al+AppStrings.latin.tr}",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               textEditingController: controller.materialFromHandler.latinNameController)),
                     ),
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "رمز المادة",
+                          label: "${AppStrings.code.tr} ${AppStrings.material.tr}",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               validator: (value) =>
                                   controller.materialFromHandler.defaultValidator(value, 'رمز المادة'),
                               textEditingController: controller.materialFromHandler.codeController)),
                       secondItem: TextAndExpandedChildField(
-                          label: "رمز الباركود",
+                          label: "${AppStrings.code.tr} ${AppStrings.barcode.tr}",
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               validator: (value) =>
@@ -56,26 +58,26 @@ class AddMaterialForm extends StatelessWidget {
                   ],
                 )),
             OrganizedWidget(
-                titleWidget: Center(child: Text("الاسعار")),
+                titleWidget: Center(child: Text(AppStrings.prices.tr)),
                 bodyWidget: Column(
                   spacing: 8,
                   children: [
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: " المستهلك",
+                          label: AppStrings.consumer.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               validator: (value) => controller.materialFromHandler.defaultValidator(value, 'المستهلك'),
                               textEditingController: controller.materialFromHandler.customerPriceController)),
                       secondItem: TextAndExpandedChildField(
-                          label: "المفرق",
+                          label:AppStrings.retail.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               textEditingController: controller.materialFromHandler.retailPriceController)),
                     ),
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label: "الجملة",
+                          label: AppStrings.wholesale.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               textEditingController: controller.materialFromHandler.wholePriceController)),

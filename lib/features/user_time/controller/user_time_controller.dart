@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
@@ -20,8 +21,8 @@ class UserTimeController extends GetxController {
 
   late final UserTimeServices _userTimeServices;
 
-  Rx<String> lastEnterTime = "لم يتم تسجيل الدخول بعد".obs;
-  Rx<String> lastOutTime = "لم يتم تسجيل الخروج بعد".obs;
+  Rx<String> lastEnterTime = AppStrings.notLoggedInYet.tr.obs;
+  Rx<String> lastOutTime = AppStrings.notLoggedOutYet.tr.obs;
 
   Rx<RequestState> logInState = RequestState.initial.obs;
   Rx<RequestState> logOutState = RequestState.initial.obs;

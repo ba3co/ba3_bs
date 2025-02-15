@@ -172,4 +172,12 @@ class AppStrings {
   static const String lastcheckInTime =  'اخر دخول';
   static const String lastcheckOutTime =  'اخر خروج';
   static const String holiday =  'اجازة';
+
+
+
+  ////
+  static const retail=  'المفرق';
+  static const prices=  'الاسعار';
+  static const notLoggedInYet=  'لم يتم تسجيل الدخول بعد';
+  static const notLoggedOutYet=  'لم يتم تسجيل الخروج بعد';
 }
