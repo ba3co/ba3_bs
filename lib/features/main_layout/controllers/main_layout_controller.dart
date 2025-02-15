@@ -15,90 +15,91 @@ import '../../materials/ui/screens/materials_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
 import '../../user_time/ui/screens/user_time_details.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
+import '../data/model/app_layout_item_model.dart';
 
 class MainLayoutController extends GetxController {
-  RxList<({String name, Widget layout, RoleItemType role, String icon, String unSelectedIcon})> appLayouts = [
+
+  RxList<AppLayoutItemModel> appLayouts = [
     if (RoleItemType.viewBill.hasReadPermission)
-      (
-        name: AppStrings().bills,
+      AppLayoutItemModel(
+        name: 'الفواتير',
         layout: const BillLayout(),
         role: RoleItemType.viewBill,
         icon: AppAssets.billsIcon,
-        unSelectedIcon: AppAssets.billsUnselectedIcon
+        unSelectedIcon: AppAssets.billsUnselectedIcon,
       ),
     if (RoleItemType.viewPattern.hasReadPermission)
-      (
-        name: '${AppStrings().patterns} ${AppStrings().al + AppStrings().sell}',
+      AppLayoutItemModel(
+        name: 'الانماط',
         layout: const PatternLayout(),
         role: RoleItemType.viewPattern,
         icon: AppAssets.patternsIcon,
-        unSelectedIcon: AppAssets.patternsUnselectedIcon
+        unSelectedIcon: AppAssets.patternsUnselectedIcon,
       ),
     if (RoleItemType.viewProduct.hasReadPermission)
-      (
-        name: AppStrings().materials,
+      AppLayoutItemModel(
+        name: "المواد",
         layout: const MaterialLayout(),
         role: RoleItemType.viewProduct,
         icon: AppAssets.materialIcon,
-        unSelectedIcon: AppAssets.materialUnselectedIcon
+        unSelectedIcon: AppAssets.materialUnselectedIcon,
       ),
     if (RoleItemType.viewAccount.hasReadPermission)
-      (
-        name: AppStrings().accounts,
+      AppLayoutItemModel(
+        name:"الحسابات",
         layout: const AccountLayout(),
         role: RoleItemType.viewAccount,
         icon: AppAssets.accountsIcon,
-        unSelectedIcon: AppAssets.accountsUnselectedIcon
+        unSelectedIcon: AppAssets.accountsUnselectedIcon,
       ),
     if (RoleItemType.viewBond.hasReadPermission)
-      (
-        name: AppStrings().bonds,
+      AppLayoutItemModel(
+        name: "السندات",
         layout: const BondLayout(),
         role: RoleItemType.viewBond,
         icon: AppAssets.bondsIcon,
-        unSelectedIcon: AppAssets.bondsUnselectedIcon
+        unSelectedIcon: AppAssets.bondsUnselectedIcon,
       ),
     if (RoleItemType.viewCheques.hasReadPermission)
-      (
-        name: AppStrings().cheques,
+      AppLayoutItemModel(
+        name:"الشيكات",
         layout: const ChequeLayout(),
         role: RoleItemType.viewCheques,
         icon: AppAssets.chequesIcon,
-        unSelectedIcon: AppAssets.chequesUnselectedIcon
+        unSelectedIcon: AppAssets.chequesUnselectedIcon,
       ),
     if (RoleItemType.viewSellers.hasReadPermission)
-      (
-        name: AppStrings().sellers,
+      AppLayoutItemModel(
+        name:"البائعين",
         layout: const SellersLayout(),
         role: RoleItemType.viewSellers,
         icon: AppAssets.accountsIcon,
-        unSelectedIcon: AppAssets.accountsUnselectedIcon
+        unSelectedIcon: AppAssets.accountsUnselectedIcon,
       ),
     if (RoleItemType.viewUserManagement.hasAdminPermission)
-      (
-        name: '${AppStrings().administration} ${AppStrings().users}',
+      AppLayoutItemModel(
+        name: "إدارة المستخدمين",
         layout: const UserManagementLayout(),
         role: RoleItemType.viewUserManagement,
         icon: AppAssets.usersIcon,
-        unSelectedIcon: AppAssets.usersUnselectedIcon
+        unSelectedIcon: AppAssets.usersUnselectedIcon,
       ),
-    (
-      name: AppStrings().work,
+    AppLayoutItemModel(
+      name: "الدوام",
       layout: const UserTimeDetails(),
       role: RoleItemType.viewTime,
       icon: AppAssets.usersTimeIcon,
-      unSelectedIcon: AppAssets.usersTimeUnselectedIcon
+      unSelectedIcon: AppAssets.usersTimeUnselectedIcon,
     ),
     if (RoleItemType.administrator.hasReadPermission)
-      (
-        name: '${AppStrings().panel} ${AppStrings().control}',
+      AppLayoutItemModel(
+        name: "لوحة التحكم",
         layout: const AllAttendanceScreen(),
         role: RoleItemType.administrator,
         icon: AppAssets.billsIcon,
-        unSelectedIcon: AppAssets.billsUnselectedIcon
+        unSelectedIcon: AppAssets.billsUnselectedIcon,
       ),
   ].obs;
-
   PageController pageController = PageController();
 
   int tabIndex = 0;
