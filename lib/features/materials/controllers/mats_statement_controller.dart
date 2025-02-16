@@ -29,7 +29,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     final result = await _matStatementsRepo.saveAllNested(
         items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
 
-
     // 2. Flatten the map into a single list of MatStatementModel
     //    mapOfStatements.values is an Iterable<List<MatStatementModel>>
     //    We expand those lists, then .toList() the result
@@ -94,9 +93,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       if (materialStatementList != null) {
         log(i.toString());
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
-            matId: material.id!,
-            quantity: _calculateQuantity(materialStatementList),
-            currentMinPrice: _calculateMinPrice(materialStatementList));
+            matId: material.id!, quantity: _calculateQuantity(materialStatementList), currentMinPrice: _calculateMinPrice(materialStatementList));
       }
     }
   }
@@ -160,15 +157,15 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     return true;
   }
 
-  Future<void> fetchMatStatements(String name, {required BuildContext context}) async {
-    log('name $name');
-    final materialByName = _materialsController.getMaterialByName(name);
+  Future<void> fetchMatStatements(MaterialModel materialModel, {required BuildContext context}) async {
+    log('name ${materialModel.matName}');
+    // final materialByName = _materialsController.getMaterialByName(name);
 
-    log('materialByName ${materialByName?.id}');
+    log('materialByName ${materialModel.id}');
 
-    if (!isMatValid(materialByName)) return;
+    if (!isMatValid(materialModel)) return;
 
-    final result = await _matStatementsRepo.getAll(materialByName!.id!);
+    final result = await _matStatementsRepo.getAll(materialModel.id!);
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedItems) {
@@ -179,6 +176,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
           floatingScreen: MaterialStatementScreen(),
           minimizedTitle: screenTitle,
         );
+
         // filterByDate();
         _calculateValues(fetchedItems);
       },

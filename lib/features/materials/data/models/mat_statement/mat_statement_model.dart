@@ -8,7 +8,6 @@ import '../../../../pluto/data/models/pluto_adaptable.dart';
 
 class MatStatementModel implements PlutoAdaptable {
   final MatOrigin? matOrigin;
-
   final int? quantity;
   final int? defQuantity;
 
@@ -94,8 +93,7 @@ class MatStatementModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
-      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()):
-          matOrigin?.originId ?? '',
+      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): matOrigin?.originId ?? '',
       createAutoIdColumn(): '#',
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
       PlutoColumn(title: 'فاتورة', field: 'فاتورة', type: PlutoColumnType.text()): originNameAndNumber,

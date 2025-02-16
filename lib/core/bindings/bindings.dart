@@ -25,6 +25,7 @@ import 'package:ba3_bs/features/customer/data/datasources/remote/customers_data_
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
+import 'package:ba3_bs/features/materials/data/datasources/remote/materials_serials_data_source.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/materials/service/material_export.dart';
@@ -210,6 +211,7 @@ class AppBindings extends Bindings {
       translationRepo: TranslationRepository(translationService),
       patternsRepo: RemoteDataSourceRepository(PatternsDatasource(databaseService: fireStoreService)),
       billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
+      serialNumbersRepo: QueryableSavableRepository(MaterialsSerialsDataSource(databaseService: fireStoreService)),
       bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: compoundFireStoreService)),
       entryBondsRepo: BulkSavableDatasourceRepository(EntryBondsDatasource(databaseService: fireStoreService)),
@@ -269,7 +271,7 @@ class AppBindings extends Bindings {
 
     lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
 
-    lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.billImportExportRepo));
+    lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.serialNumbersRepo, repositories.billImportExportRepo));
 
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
 
@@ -302,6 +304,7 @@ class _Repositories {
   final TranslationRepository translationRepo;
   final RemoteDataSourceRepository<BillTypeModel> patternsRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> billsRepo;
+  final QueryableSavableRepository<SerialNumberModel> serialNumbersRepo;
   final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
   final CompoundDatasourceRepository<ChequesModel, ChequesType> chequesRepo;
 
@@ -329,6 +332,7 @@ class _Repositories {
     required this.translationRepo,
     required this.patternsRepo,
     required this.billsRepo,
+    required this.serialNumbersRepo,
     required this.bondsRepo,
     required this.chequesRepo,
     required this.entryBondsRepo,

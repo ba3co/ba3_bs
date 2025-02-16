@@ -31,12 +31,70 @@ class BillLayout extends StatelessWidget {
           children: [
             Scaffold(
               appBar: AppBar(
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.refresh,
-                    color: AppColors.lightBlueColor,
-                  ),
-                  onPressed: allBillsController.refreshBillsTypes,
+                leadingWidth: 300,
+                leading: Row(
+                  children: [
+                    PopupMenuButton<String>(
+                      tooltip: 'الخيارات',
+                      onSelected: (value) {
+                        if (value == 'serialNumbersStatement') {
+                          // Local variable to hold the serial number input
+                          String serialNumberInput = "";
+                          Get.dialog(
+                            AlertDialog(
+                              title: Text('أدخل الرقم التسلسلي'),
+                              content: StatefulBuilder(
+                                builder: (context, setState) {
+                                  return TextField(
+                                    decoration: InputDecoration(
+                                      labelText: 'الرقم التسلسلي',
+                                    ),
+                                    onChanged: (value) {
+                                      serialNumberInput = value;
+                                    },
+                                  );
+                                },
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('إلغاء'),
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text('تأكيد'),
+                                  onPressed: () {
+                                    Get.back();
+                                    if (serialNumberInput.isEmpty) return;
+                                    allBillsController.getSerialNumberStatement(serialNumberInput, context: context);
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                        PopupMenuItem<String>(
+                          value: 'serialNumbersStatement',
+                          child: Text(AppStrings.serialNumbersStatement.tr),
+                        ),
+                      ],
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: AppColors.lightBlueColor,
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'تحديث',
+                      icon: Icon(
+                        Icons.refresh,
+                        color: AppColors.lightBlueColor,
+                      ),
+                      onPressed: allBillsController.refreshBillsTypes,
+                    ),
+                  ],
                 ),
                 actions: [
                   if (RoleItemType.administrator.hasAdminPermission)
@@ -65,7 +123,7 @@ class BillLayout extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           AllBillsTypesList(allBillsController: controller),
-                          //    if (RoleItemType.viewBill.hasAdminPermission) billLayoutAppBar(),
+                          // if (RoleItemType.viewBill.hasAdminPermission) billLayoutAppBar(),
                         ],
                       ),
                     ),

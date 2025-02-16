@@ -269,7 +269,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   Future<void> _handleNoMatch() async {
-    if (Get.currentRoute != AppRoutes.loginScreen) {
+    if (!isCurrentRoute(AppRoutes.loginScreen)) {
       userNavigator.navigateToLogin();
     } else {
       AppUIUtils.onFailure('لا يوجد تطابق!');

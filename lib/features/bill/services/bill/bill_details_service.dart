@@ -9,6 +9,7 @@ import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -412,6 +413,17 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         deletedMaterials: deletedMaterials,
         updatedMaterials: updatedMaterials,
       );
+    }
+
+    // 8. Save material serials.
+    saveMaterialsSerials(currentBill);
+  }
+
+  Future<void> saveMaterialsSerials(BillModel savedBill) async {
+    final Map<MaterialModel, List<TextEditingController>> serialControllers = plutoController.serialControllers;
+
+    if (serialControllers.isNotEmpty) {
+      billDetailsController.saveSerialNumbers(savedBill, serialControllers);
     }
   }
 

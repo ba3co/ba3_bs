@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../features/materials/data/models/materials/material_model.dart';
 import 'i_recodes_pluto_controller.dart';
 
 abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
@@ -36,9 +38,11 @@ abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
   /// Calculates the final total after applying discounts and additions.
   double get calculateFinalTotal;
 
-
-
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField);
 
   void restoreCurrentCell(PlutoGridStateManager stateManager);
+
+  Map<MaterialModel, List<TextEditingController>> get serialControllers => {};
+
+  void initSerialControllers(MaterialModel materialModel, int serialCount);
 }
