@@ -171,4 +171,5 @@ final Map<String, String> enUS = {
   AppStrings.lastcheckInTime: 'Last Check-In Time',
   AppStrings.lastcheckOutTime: 'Last Check-Out Time',
   AppStrings.holiday: 'Holiday',
+  AppStrings.serialNumbersStatement: 'Serial numbers statement',
 };

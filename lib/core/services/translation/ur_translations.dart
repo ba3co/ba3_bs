@@ -171,4 +171,5 @@ final Map<String, String> urPK = {
   AppStrings.lastcheckInTime: 'آخری داخل ہونے کا وقت',
   AppStrings.lastcheckOutTime: 'آخری باہر جانے کا وقت',
   AppStrings.holiday: 'چھٹی',
+  AppStrings.serialNumbersStatement: 'سیریل نمبر کا بیان',
 };

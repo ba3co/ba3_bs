@@ -12,19 +12,23 @@ import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_contro
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/service/mat_statement_generator.dart';
+import 'package:ba3_bs/features/materials/ui/screens/serials_statement_screen.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
 import '../../services/bill/bill_utils.dart';
@@ -36,9 +40,10 @@ class AllBillsController extends FloatingBillDetailsLauncher
   // Repositories
   final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+  final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final ImportExportRepository<BillModel> _jsonImportExportRepo;
 
-  AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._jsonImportExportRepo);
+  AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._serialNumbersRepo, this._jsonImportExportRepo);
 
   // Services
   late final BillUtils _billUtils;
@@ -327,6 +332,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
+        'serialNumbersRepo': _serialNumbersRepo,
         'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel: currentBill.billTypeModel),
         'billSearchController': BillSearchController(),
       },
@@ -403,4 +409,26 @@ class AllBillsController extends FloatingBillDetailsLauncher
       );
     });
   }
+
+  Future<void> getSerialNumberStatement(String serialNumberInput, {required BuildContext context}) async {
+    final result = await _serialNumbersRepo.getById(serialNumberInput);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedSerialNumberModel) {
+        serialNumberStatements.assign(fetchedSerialNumberModel);
+
+        launchFloatingWindow(
+          context: context,
+          floatingScreen: SerialsStatementScreenScreen(),
+          minimizedTitle: serialNumbersStatementScreenTitle,
+        );
+      },
+    );
+  }
+
+  bool isLoadingPlutoGrid = false;
+  final List<SerialNumberModel> serialNumberStatements = [];
+
+  String get serialNumbersStatementScreenTitle => AppStrings.serialNumbersStatement.tr;
 }

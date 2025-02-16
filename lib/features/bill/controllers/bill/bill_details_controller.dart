@@ -7,6 +7,7 @@ import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
@@ -24,6 +25,7 @@ import '../../../../core/services/firebase/implementations/repos/compound_dataso
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
@@ -36,11 +38,14 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   // Repositories
 
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+
+  final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
 
   BillDetailsController(
-    this._billsFirebaseRepo, {
+    this._billsFirebaseRepo,
+    this._serialNumbersRepo, {
     required this.billDetailsPlutoController,
     required this.billSearchController,
   });
@@ -225,6 +230,46 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         );
       },
     );
+  }
+
+  Future<void> saveSerialNumbers(BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers) async {
+    // Create a list to collect the serial number models.
+    final List<SerialNumberModel> items = [];
+
+    if (billModel.billTypeModel.billPatternType == BillPatternType.purchase) {
+      // Iterate through each material's controllers.
+      serialControllers.forEach((material, controllers) {
+        for (final controller in controllers) {
+          final serialText = controller.text.trim();
+          // If the text is not empty, create a SerialNumberModel.
+          if (serialText.isNotEmpty) {
+            items.add(
+              SerialNumberModel(
+                serialNumber: serialText,
+                matId: material.id,
+                matName: material.matName,
+                buyBillId: billModel.billId,
+                buyBillNumber: billModel.billDetails.billNumber,
+                entryDate: billModel.billDetails.billDate,
+                sold: false,
+              ),
+            );
+          }
+        }
+      });
+      log('saveSerialNumbers');
+      // Save all the serial numbers using your repository.
+      final result = await _serialNumbersRepo.saveAll(items);
+
+      // Handle the result of the save operation.
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (success) {
+          // Optionally, show a success message or perform further actions.
+          AppUIUtils.onSuccess('Serial numbers saved successfully.');
+        },
+      );
+    }
   }
 
   Future<Either<Failure, BillModel>> updateOnly(BillModel bill) async {
