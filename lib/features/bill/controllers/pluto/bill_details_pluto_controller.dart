@@ -41,6 +41,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   List<PlutoColumn> additionsDiscountsColumns = AdditionsDiscountsRecordModel().toEditedMap().keys.toList();
 
+  @override
+  Map<MaterialModel, List<TextEditingController>> serialControllers = {};
+
   // State managers
   @override
   PlutoGridStateManager recordsTableStateManager =
@@ -102,6 +105,39 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   void restoreCurrentCell(PlutoGridStateManager stateManager) => _gridService.restoreCurrentCell(stateManager, billTypeModel!);
 
   @override
+  void initSerialControllers(MaterialModel materialModel, int serialCount) {
+    serialControllers.update(
+      materialModel,
+      (existingList) => _matchControllerCount(existingList, serialCount),
+      ifAbsent: () => _createControllers(serialCount),
+    );
+  }
+
+  /// Ensures the [controllers] list has exactly [requiredCount] items.
+  /// Adds [TextEditingController] instances if there are fewer than required,
+  /// or disposes and removes any excess controllers.
+  List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount) {
+    final currentCount = controllers.length;
+
+    if (currentCount < requiredCount) {
+      // Add missing controllers
+      final needed = requiredCount - currentCount;
+      controllers.addAll(_createControllers(needed));
+    } else if (currentCount > requiredCount) {
+      // Dispose of and remove extras
+      for (var i = requiredCount; i < currentCount; i++) {
+        controllers[i].dispose();
+      }
+      controllers.removeRange(requiredCount, currentCount);
+    }
+
+    return controllers;
+  }
+
+  /// Creates a list of [TextEditingController] with [count] items.
+  List<TextEditingController> _createControllers(int count) => List.generate(count, (_) => TextEditingController());
+
+  @override
   void onInit() {
     super.onInit();
     _initializeServices();
@@ -117,7 +153,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     recordsTableColumns = InvoiceRecordModel().toEditedMap(billTypeModel!).keys.toList();
   }
 
-  onMainTableLoaded(PlutoGridOnLoadedEvent event) {
+  void onMainTableLoaded(PlutoGridOnLoadedEvent event) {
     recordsTableStateManager = event.stateManager;
 
     final newRows = recordsTableStateManager.getNewRows(count: 30);
@@ -131,7 +167,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     }
   }
 
-  onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
+  void onAdditionsDiscountsLoaded(PlutoGridOnLoadedEvent event) {
     additionsDiscountsStateManager = event.stateManager;
 
     final newRows = additionsDiscountsStateManager.getNewRows(count: 2);
@@ -197,7 +233,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
-    final materialModel = read<MaterialController>().getMaterialByName(materialName);
+    final MaterialModel? materialModel = read<MaterialController>().getMaterialByName(materialName);
     if (materialModel == null) return;
 
     _handleContextMenu(event, materialModel, context);
@@ -217,12 +253,13 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context) {
     _contextMenu.showPriceTypeMenu(
-        context: context,
-        index: event.rowIdx,
-        materialModel: materialModel,
-        tapPosition: event.offset,
-        invoiceUtils: _plutoUtils,
-        gridService: _gridService);
+      context: context,
+      index: event.rowIdx,
+      materialModel: materialModel,
+      tapPosition: event.offset,
+      invoiceUtils: _plutoUtils,
+      gridService: _gridService,
+    );
   }
 
   void _showMatMenu(event, MaterialModel materialModel, BuildContext context) {
@@ -334,9 +371,20 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     }
   }
 
-  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
-        update();
-      });
+  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
+        (value) {
+          update();
+        },
+      );
+
+  @override
+  void onClose() {
+    for (var controllerList in serialControllers.values) {
+      for (final controller in controllerList) {
+        controller.dispose();
+      }
+    }
+  }
 }
 
 // 530 - 236

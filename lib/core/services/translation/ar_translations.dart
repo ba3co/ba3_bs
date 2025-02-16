@@ -171,4 +171,5 @@ final Map<String, String> arAR = {
   AppStrings.lastcheckInTime: 'آخر توقيت للدخول',
   AppStrings.lastcheckOutTime: 'آخر توقيت للخروج',
   AppStrings.holiday: 'إجازة',
+  AppStrings.serialNumbersStatement: 'كشف حساب الرقم التسلسلي',
 };

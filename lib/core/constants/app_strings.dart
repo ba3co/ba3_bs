@@ -1,4 +1,3 @@
-
 class AppStrings {
   static const String appTitle = 'Ba3 Business';
   static const String existedBill = 'فاتورة موجودة';
@@ -135,9 +134,9 @@ class AppStrings {
   static const String individual = 'الإفرادي';
   static const String tax = 'الضريبة';
   static const String notRegisteredYet = 'لم يسجل بعد';
-  static const  String nothing = 'لا يوجد';
-  static const  String currentlyUnavailable = 'غير متوفر حاليا';
-  static const  String minutes = 'دقائق';
+  static const String nothing = 'لا يوجد';
+  static const String currentlyUnavailable = 'غير متوفر حاليا';
+  static const String minutes = 'دقائق';
   static const String hours = 'ساعات';
   static const String and = 'و';
   static const String totalLoginDelay = 'إجمالي التأخر في تسجيل الدخول';
@@ -150,32 +149,31 @@ class AppStrings {
   static const String workingHours = 'اوقات العمل';
   static const String role = 'دور';
   static const String roles = 'الصلاحيات';
-  static const String selectAll =    'تحديد الكل';
+  static const String selectAll = 'تحديد الكل';
   static const String employees = 'الموظفين';
   static const String userWorkingHours = 'ساعات عمل المستخدم';
   static const String information = 'معلومات';
-  static const String checkInTime =  'توقيت الدخول';
-  static const String checkOutTime =  'توقيت الخروج';
-  static const String identificationNumber =  'الرقم التعريفي';
-  static const String children =  'الاولاد';
-  static const String customerCardNumber =  'رقم بطاقة الزبون';
-  static const String dataTable =  'جدول البيانات';
-  static const String numberOfAffectedItems =  'عدد العناصر المتأثرة';
-  static const String cost =  'التكلفة';
-  static const String mediatorPrice =  'الوسطي';
-  static const String consumer =  'المستهلك';
-  static const String wholesale =  'الجملة';
-  static const String barcode =  'الباركود';
-  static const String serialNumber =  "الرقم التسلسلي";
-  static const String amount =  'قيمة';
-  static const String notes =  'المُلاحظات';
-  static const String lastcheckInTime =  'اخر دخول';
-  static const String lastcheckOutTime =  'اخر خروج';
-  static const String holiday =  'اجازة';
-
-
+  static const String checkInTime = 'توقيت الدخول';
+  static const String checkOutTime = 'توقيت الخروج';
+  static const String identificationNumber = 'الرقم التعريفي';
+  static const String children = 'الاولاد';
+  static const String customerCardNumber = 'رقم بطاقة الزبون';
+  static const String dataTable = 'جدول البيانات';
+  static const String numberOfAffectedItems = 'عدد العناصر المتأثرة';
+  static const String cost = 'التكلفة';
+  static const String mediatorPrice = 'الوسطي';
+  static const String consumer = 'المستهلك';
+  static const String wholesale = 'الجملة';
+  static const String barcode = 'الباركود';
+  static const String serialNumber = "الرقم التسلسلي";
+  static const String amount = 'قيمة';
+  static const String notes = 'المُلاحظات';
+  static const String lastcheckInTime = 'اخر دخول';
+  static const String lastcheckOutTime = 'اخر خروج';
+  static const String holiday = 'اجازة';
 
   ////
-  static const retail=  'المفرق';
-  static const prices=  'الاسعار';
+  static const retail = 'المفرق';
+  static const prices = 'الاسعار';
+  static const serialNumbersStatement = 'كشف حساب الرقم التسلسلي';
 }

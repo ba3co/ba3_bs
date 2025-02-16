@@ -70,13 +70,15 @@ class MaterialModelAdapter extends TypeAdapter<MaterialModel> {
       matVatGuid: fields[50] as String?,
       matExtraBarcode: (fields[51] as List?)?.cast<MatExtraBarcodeModel>(),
       matQuantity: fields[52] as int?,
+      calcMinPrice: fields[53] as double?,
+      serialNumbers: (fields[54] as List?)?.cast<SerialNumberModel>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, MaterialModel obj) {
     writer
-      ..writeByte(53)
+      ..writeByte(55)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -182,7 +184,11 @@ class MaterialModelAdapter extends TypeAdapter<MaterialModel> {
       ..writeByte(51)
       ..write(obj.matExtraBarcode)
       ..writeByte(52)
-      ..write(obj.matQuantity);
+      ..write(obj.matQuantity)
+      ..writeByte(53)
+      ..write(obj.calcMinPrice)
+      ..writeByte(54)
+      ..write(obj.serialNumbers);
   }
 
   @override
@@ -229,6 +235,64 @@ class MatExtraBarcodeModelAdapter extends TypeAdapter<MatExtraBarcodeModel> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is MatExtraBarcodeModelAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class SerialNumberModelAdapter extends TypeAdapter<SerialNumberModel> {
+  @override
+  final int typeId = 2;
+
+  @override
+  SerialNumberModel read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return SerialNumberModel(
+      serialNumber: fields[0] as String?,
+      matId: fields[1] as String?,
+      matName: fields[2] as String?,
+      buyBillId: fields[3] as String?,
+      buyBillNumber: fields[4] as int?,
+      sellBillId: fields[5] as String?,
+      sellBillNumber: fields[6] as int?,
+      entryDate: fields[7] as DateTime?,
+      sold: fields[8] as bool?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, SerialNumberModel obj) {
+    writer
+      ..writeByte(9)
+      ..writeByte(0)
+      ..write(obj.serialNumber)
+      ..writeByte(1)
+      ..write(obj.matId)
+      ..writeByte(2)
+      ..write(obj.matName)
+      ..writeByte(3)
+      ..write(obj.buyBillId)
+      ..writeByte(4)
+      ..write(obj.buyBillNumber)
+      ..writeByte(5)
+      ..write(obj.sellBillId)
+      ..writeByte(6)
+      ..write(obj.sellBillNumber)
+      ..writeByte(7)
+      ..write(obj.entryDate)
+      ..writeByte(8)
+      ..write(obj.sold);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SerialNumberModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
