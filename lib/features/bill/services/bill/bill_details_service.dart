@@ -584,27 +584,23 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   ///  this only in mobile app
-/*  Future<void> showBarCodeScanner({
+/*   Future<void> showBarCodeScanner({
     required BuildContext context,
     required PlutoGridStateManager stateManager,
     required IPlutoController plutoController,
+    required BillTypeModel billTypeModel,
   }) async {
     final barCode = await SimpleBarcodeScanner.scanBarcode(context, scanFormat: ScanFormat.ONLY_BARCODE) ?? '';
     // String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Cancel", false, ScanMode.DEFAULT);
 
-    _handleBarCodeScan(
-      stateManager: stateManager,
-      plutoController: plutoController,
-      barCode: barCode,
-    );
+    _handleBarCodeScan(stateManager: stateManager, plutoController: plutoController, barCode: barCode, billTypeModel: billTypeModel);
   }
 
-
-
- void _handleBarCodeScan({
+  void _handleBarCodeScan({
     required PlutoGridStateManager stateManager,
     required IPlutoController plutoController,
     required String barCode,
+    required BillTypeModel billTypeModel,
   }) async {
     final materialController = read<MaterialController>();
     final searchedMaterials = materialController.searchOfProductByText(barCode);
@@ -612,9 +608,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final MaterialModel? selectedMaterial = searchedMaterials.length == 1 ? searchedMaterials.first : null;
 
     plutoController.updateWithSelectedMaterial(
-      stateManager: stateManager,
-      materialModel: selectedMaterial,
-      plutoController: plutoController,
-    );
+        stateManager: stateManager, materialModel: selectedMaterial, plutoController: plutoController, billTypeModel: billTypeModel);
   }*/
 }
