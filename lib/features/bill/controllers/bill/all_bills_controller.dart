@@ -35,6 +35,7 @@ import '../../services/bill/bill_utils.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
 import 'bill_search_controller.dart';
 
+//
 class AllBillsController extends FloatingBillDetailsLauncher
     with AppNavigator, EntryBondsGenerator, MatsStatementsGenerator, FirestoreSequentialNumbers {
   // Repositories
