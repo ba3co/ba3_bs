@@ -278,9 +278,9 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
                 };
 
                 // Update the material model with new serial numbers
-                //  read<MaterialController>().updateMaterial(
-                //    materialModel.copyWith(serialNumbers: updatedSerialNumbers),
-                //  );
+                read<MaterialController>().updateMaterial(
+                  materialModel.copyWith(serialNumbers: updatedSerialNumbers),
+                );
               }
             },
           );
