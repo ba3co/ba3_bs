@@ -270,15 +270,18 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matCalPriceFromDetail: json['MatCalPriceFromDetail'],
       matForceInExpire: json['MatForceInExpire'],
       matForceOutExpire: json['MatForceOutExpire'],
-      matCreateDate: DateTime.tryParse(json['MatCreateDate'] ?? '') ?? DateTime.now(),
+      matCreateDate:
+          DateTime.tryParse(json['MatCreateDate'] ?? '') ?? DateTime.now(),
       matIsIntegerQuantity: json['MatIsIntegerQuantity'],
       matClassFlag: json['MatClassFlag'],
       matForceInClass: json['MatForceInClass'],
       matForceOutClass: json['MatForceOutClass'],
       matDisableLastPrice: json['MatDisableLastPrice'],
-      matLastPriceCurVal: double.tryParse(json['MatLastPriceCurVal'].toString()) ?? 0.0,
+      matLastPriceCurVal:
+          double.tryParse(json['MatLastPriceCurVal'].toString()) ?? 0.0,
       matPrevQty: json['MatPrevQty']?.toString(),
-      matFirstCostDate: DateTime.now().copyWith(year: 1980, day: 1, month: 1, minute: 0, hour: 0, second: 0),
+      matFirstCostDate: DateTime.now().copyWith(
+          year: 1980, day: 1, month: 1, minute: 0, hour: 0, second: 0),
       matHasSegments: json['MatHasSegments'],
       matParent: json['MatParent']?.toString(),
       matIsCompositionUpdated: json['MatIsCompositionUpdated'],
@@ -359,13 +362,29 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true): id,
+      PlutoColumn(
+          title: AppStrings.identificationNumber.tr,
+          field: AppConstants.materialIdFiled,
+          type: PlutoColumnType.text(),
+          hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: '${AppStrings.name.tr} ${AppStrings.material.tr}', field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
-      PlutoColumn(title: AppStrings.quantity.tr, field: 'الكمية', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          matQuantity,
-      PlutoColumn(title: AppStrings.cost.tr, field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          retailPrice,
+      PlutoColumn(
+          title: AppStrings.materialName,
+          field: 'اسم المادة',
+          type: PlutoColumnType.text(),
+          width: 400): matName,
+      PlutoColumn(
+          title: AppStrings.quantity.tr,
+          field: 'الكمية',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matQuantity,
+      PlutoColumn(
+          title: AppStrings.cost.tr,
+          field: 'التكلفة',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): retailPrice,
       PlutoColumn(
           title: AppStrings.mediatorPrice.tr,
           field: 'الوسطي',
@@ -375,20 +394,37 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           ),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): calcMinPrice,
-      PlutoColumn(title: AppStrings.consumer.tr, field: 'المستهلك', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          endUserPrice,
-      PlutoColumn(title: AppStrings.wholesale.tr, field: 'الجملة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          wholesalePrice,
       PlutoColumn(
-          title: '${AppStrings.code.tr} ${AppStrings.material.tr}',
+          title: AppStrings.consumer.tr,
+          field: 'المستهلك',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): endUserPrice,
+      PlutoColumn(
+          title: AppStrings.wholesale.tr,
+          field: 'الجملة',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): wholesalePrice,
+      PlutoColumn(
+          title: AppStrings.materialCode,
           field: 'رمز المادة',
           type: PlutoColumnType.text(),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): matCode,
-      PlutoColumn(title: AppStrings.barcode.tr, field: 'الباركود', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          matBarCode,
-      PlutoColumn(title: AppStrings.group.tr, field: 'المجموعة', type: PlutoColumnType.text()):
-          read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName ?? '',
+      PlutoColumn(
+          title: AppStrings.barcode.tr,
+          field: 'الباركود',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matBarCode,
+      PlutoColumn(
+          title: AppStrings.group.tr,
+          field: 'المجموعة',
+          type: PlutoColumnType.text()): read<MaterialGroupController>()
+              .getMaterialGroupById(matGroupGuid!)
+              ?.groupName ??
+          '',
     };
   }
 
@@ -478,7 +514,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matAss: matAss ?? this.matAss,
       matOldGUID: matOldGUID ?? this.matOldGUID,
       matNewGUID: matNewGUID ?? this.matNewGUID,
-      matCalPriceFromDetail: matCalPriceFromDetail ?? this.matCalPriceFromDetail,
+      matCalPriceFromDetail:
+          matCalPriceFromDetail ?? this.matCalPriceFromDetail,
       matForceInExpire: matForceInExpire ?? this.matForceInExpire,
       matForceOutExpire: matForceOutExpire ?? this.matForceOutExpire,
       matCreateDate: matCreateDate ?? this.matCreateDate,
@@ -492,10 +529,13 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matFirstCostDate: matFirstCostDate ?? this.matFirstCostDate,
       matHasSegments: matHasSegments ?? this.matHasSegments,
       matParent: matParent ?? this.matParent,
-      matIsCompositionUpdated: matIsCompositionUpdated ?? this.matIsCompositionUpdated,
-      matInheritsParentSpecs: matInheritsParentSpecs ?? this.matInheritsParentSpecs,
+      matIsCompositionUpdated:
+          matIsCompositionUpdated ?? this.matIsCompositionUpdated,
+      matInheritsParentSpecs:
+          matInheritsParentSpecs ?? this.matInheritsParentSpecs,
       matCompositionName: matCompositionName ?? this.matCompositionName,
-      matCompositionLatinName: matCompositionLatinName ?? this.matCompositionLatinName,
+      matCompositionLatinName:
+          matCompositionLatinName ?? this.matCompositionLatinName,
       movedComposite: movedComposite ?? this.movedComposite,
       wholesalePrice: wholesalePrice ?? this.wholesalePrice,
       retailPrice: retailPrice ?? this.retailPrice,
@@ -571,7 +611,9 @@ class SerialNumberModel implements PlutoAdaptable {
       buyBillNumber: json['buyBillNumber'] as int?,
       sellBillId: json['sellBillId'] as String?,
       sellBillNumber: json['sellBillNumber'] as int?,
-      entryDate: json['entryDate'] != null ? DateTime.parse(json['entryDate'] as String) : null,
+      entryDate: json['entryDate'] != null
+          ? DateTime.parse(json['entryDate'] as String)
+          : null,
       sold: json['sold'] as bool?,
     );
   }

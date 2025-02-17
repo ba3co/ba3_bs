@@ -168,7 +168,6 @@ final Map<String, String> frFR = {
   AppStrings.amount: 'Montant',
   AppStrings.notes: 'Remarques',
   AppStrings.lastCheckInTime: "Dernière heure d'enregistrement",
-  AppStrings.lastCheckOutTime: 'Dernière heure de départ',
   AppStrings.holiday: 'Congé',
   AppStrings.retail: 'Détail',
   AppStrings.prices: 'Prix',
@@ -235,6 +234,5 @@ final Map<String, String> frFR = {
   AppStrings.accessoriesTarget: 'Cible des accessoires',
   AppStrings.achievementsPanel: 'Panneau des réalisations',
   AppStrings.profile: 'Profil',
-  AppStrings.totalSales: 'Ventes Totales',
 
 };

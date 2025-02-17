@@ -278,9 +278,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
                 };
 
                 // Update the material model with new serial numbers
-                read<MaterialController>().updateMaterial(
-                  materialModel.copyWith(serialNumbers: updatedSerialNumbers),
-                );
+                read<MaterialController>().updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
               }
             },
           );
@@ -290,6 +288,29 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         },
       );
     }
+  }
+
+  onSaveSerialsSuccess(
+      {required Map<MaterialModel, List<TextEditingController>> serialControllers, required Map<String, bool> updatedSerialNumbers}) {
+    // Update the material's serial numbers after saving successfully.
+    serialControllers.forEach(
+      (material, controllers) {
+        final materialModel = read<MaterialController>().getMaterialById(material.id!);
+
+        if (materialModel != null) {
+          final updatedSerialNumbers = {
+            ...?materialModel.serialNumbers, // Preserve existing serials if any
+            for (final controller in controllers) controller.text.trim(): false, // New serials default to unsold
+          };
+
+          // Update the material model with new serial numbers
+          read<MaterialController>().updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+        }
+      },
+    );
+
+    // Optionally, show a success message or perform further actions.
+    AppUIUtils.onSuccess('Serial numbers saved successfully.');
   }
 
   Future<Either<Failure, BillModel>> updateOnly(BillModel bill) async {
