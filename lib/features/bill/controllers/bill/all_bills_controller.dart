@@ -181,8 +181,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result =
-        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -329,8 +328,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   // Opens the 'Bill Details' floating window.
 
-  Future<void> _openBillDetailsFloatingWindow(
-      {required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
+  Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
     final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
 
     final Map<String, GetxController> controllers = setupControllers(
@@ -420,9 +418,38 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedSerialNumberModel) {
-        serialNumberStatements.assign(fetchedSerialNumberModel);
+      (SerialNumberModel fetchedSerialNumberModel) {
+        // Clear previous statements before adding new ones.
+        serialNumberStatements.clear();
 
+        // Iterate through transactions and create SerialTransactionModels.
+        List<SerialTransactionModel> transactionsList = [];
+
+        for (SerialTransactionModel transaction in fetchedSerialNumberModel.transactions) {
+          // Always add the transaction as a buy transaction
+          transactionsList.add(
+            SerialTransactionModel(
+              buyBillId: transaction.buyBillId,
+              buyBillNumber: transaction.buyBillNumber,
+              buyBillTypeId: transaction.buyBillTypeId,
+              sellBillId: transaction.sellBillId,
+              sellBillNumber: transaction.sellBillNumber,
+              sellBillTypeId: transaction.sellBillTypeId,
+              entryDate: transaction.entryDate,
+              sold: transaction.sold,
+              transactionOrigin: SerialTransactionOrigin(
+                serialNumber: fetchedSerialNumberModel.serialNumber,
+                matId: fetchedSerialNumberModel.matId,
+                matName: fetchedSerialNumberModel.matName,
+              ),
+            ),
+          );
+        }
+
+        // Assign the generated list to serialNumberStatements
+        serialNumberStatements.assignAll(transactionsList);
+
+        // Open the statement screen to display results
         launchFloatingWindow(
           context: context,
           floatingScreen: SerialsStatementScreenScreen(),
@@ -433,7 +460,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   bool isLoadingPlutoGrid = false;
-  final List<SerialNumberModel> serialNumberStatements = [];
+  final List<SerialTransactionModel> serialNumberStatements = [];
 
   String get serialNumbersStatementScreenTitle => AppStrings.serialNumbersStatement.tr;
 }

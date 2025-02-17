@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/accounts/data/models/account_model.dart';
 import '../constants/app_constants.dart';
+import '../helper/enums/enums.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 
 class AppServiceUtils {
@@ -153,8 +154,7 @@ class AppServiceUtils {
     }
   }
 
-  static double toFixedDouble(double? value, [int fractionDigits = 2]) =>
-      double.tryParse(value?.toStringAsFixed(fractionDigits) ?? '0') ?? 0.0;
+  static double toFixedDouble(double? value, [int fractionDigits = 2]) => double.tryParse(value?.toStringAsFixed(fractionDigits) ?? '0') ?? 0.0;
 
   static double calcSub(int vatRatio, double subTotal) {
     double sub = subTotal * (1 + (vatRatio / 100));
@@ -267,5 +267,20 @@ class AppServiceUtils {
         "${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $period";
 
     return formattedDateTime;
+  }
+
+  static String billNameAndNumberFormat(String? billTypeId, int? billNumber) {
+    if (billTypeId == null && billNumber == null) {
+      return '';
+    }
+
+    final originName = billTypeId != null ? BillType.byTypeGuide(billTypeId).billPatternType.label : '';
+    final originNumber = billNumber != null ? billNumber.toString() : '';
+
+    if (originName.isEmpty && originNumber.isEmpty) {
+      return '';
+    }
+
+    return '$originName: $originNumber';
   }
 }

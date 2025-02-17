@@ -22,6 +22,7 @@ class InvoiceRecordModel {
   double? invRecVat;
   double? invRecGiftTotal;
   bool? invRecIsLocal;
+  String? invRecProductSerial;
 
   InvoiceRecordModel({
     this.invRecId,
@@ -34,6 +35,7 @@ class InvoiceRecordModel {
     this.invRecIsLocal,
     this.invRecGift,
     this.invRecGiftTotal,
+    this.invRecProductSerial,
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
@@ -78,6 +80,7 @@ class InvoiceRecordModel {
     final subTotal = (total / (quantity * (1 + vatRatio)));
     final vat = subTotal * vatRatio;
     final String? prodName = map[AppConstants.invRecProduct];
+    final String? productSerial = map[AppConstants.invRecProductSerial];
     final int? giftsNumber = _parseInteger(map[AppConstants.invRecGift]);
 
     // final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
@@ -99,6 +102,7 @@ class InvoiceRecordModel {
       invRecIsLocal: map[AppConstants.invRecIsLocal],
       invRecGift: giftsNumber,
       invRecGiftTotal: giftTotal,
+      invRecProductSerial: productSerial,
     );
   }
 
@@ -198,6 +202,15 @@ class InvoiceRecordModel {
         title: AppStrings.material.tr,
         width: 300,
         field: AppConstants.invRecProduct,
+        type: PlutoColumnType.text(),
+        checkReadOnly: (row, cell) {
+          return false;
+        },
+      ): invRecProduct,
+      PlutoColumn(
+        title: AppStrings.serialNumber.tr,
+        width: 110,
+        field: AppConstants.invRecProductSerial,
         type: PlutoColumnType.text(),
         checkReadOnly: (row, cell) {
           return false;
@@ -366,31 +379,11 @@ class AdditionsDiscountsRecordModel {
 
   Map<PlutoColumn, dynamic> toEditedMap() {
     return {
-      PlutoColumn(
-        title: AppStrings.account.tr,
-        field: AppConstants.id,
-        type: PlutoColumnType.text(),
-      ): account,
-      PlutoColumn(
-        title: AppStrings.discount.tr,
-        field: AppConstants.discount,
-        type: PlutoColumnType.text(),
-      ): discount,
-      PlutoColumn(
-        title: AppStrings.discountRatio.tr,
-        field: AppConstants.discountRatio,
-        type: PlutoColumnType.text(),
-      ): discountRatio,
-      PlutoColumn(
-        title: AppStrings.additions.tr,
-        field: AppConstants.addition,
-        type: PlutoColumnType.text(),
-      ): addition,
-      PlutoColumn(
-        title: AppStrings.additionRatio.tr,
-        field: AppConstants.additionRatio,
-        type: PlutoColumnType.text(),
-      ): additionRatio,
+      PlutoColumn(title: AppStrings.account.tr, field: AppConstants.id, type: PlutoColumnType.text()): account,
+      PlutoColumn(title: AppStrings.discount.tr, field: AppConstants.discount, type: PlutoColumnType.text()): discount,
+      PlutoColumn(title: AppStrings.discountRatio.tr, field: AppConstants.discountRatio, type: PlutoColumnType.text()): discountRatio,
+      PlutoColumn(title: AppStrings.additions.tr, field: AppConstants.addition, type: PlutoColumnType.text()): addition,
+      PlutoColumn(title: AppStrings.additionRatio.tr, field: AppConstants.additionRatio, type: PlutoColumnType.text()): additionRatio,
     };
   }
 }

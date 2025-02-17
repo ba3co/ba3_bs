@@ -126,19 +126,23 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       final future = pool.withResource(
         () async {
           final batch = _firestoreInstance.batch();
+
           final chunkAdded = <Map<String, dynamic>>[];
 
           for (final item in chunk) {
             final docId = item['docId'] ?? _firestoreInstance.collection(path).doc().id;
+
             item['docId'] = docId;
 
             final docRef = _firestoreInstance.collection(path).doc(docId);
-            batch.set(docRef, item);
+
+            batch.set(docRef, item, SetOptions(merge: true));
 
             chunkAdded.add(item);
           }
 
           await batch.commit();
+
           return chunkAdded;
         },
       );
@@ -148,6 +152,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
 
     // 3. Wait for all futures to complete, then close the pool
     final results = await Future.wait(futures);
+
     await pool.close();
 
     // 4. Flatten and return
@@ -175,7 +180,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnion({
+  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnionOnMap({
     required String path,
     required List<Map<String, dynamic>> items,
     required String docIdField,
@@ -227,6 +232,71 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     // Commit the batch operation
     await batch.commit();
 
+    return processedItems;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnionOnList({
+    required String path,
+    required List<Map<String, dynamic>> items,
+    required String docIdField,
+    required String nestedFieldPath,
+  }) async {
+    final batch = _firestoreInstance.batch();
+    final processedItems = <Map<String, dynamic>>[];
+
+    for (final item in items) {
+      // Extract the document ID dynamically
+      final docId = item[docIdField];
+      if (docId == null) {
+        throw ArgumentError('Document ID is missing in one of the items');
+      }
+
+      // Reference to the document
+      final docRef = _firestoreInstance.collection(path).doc(docId);
+
+      // Check if the document exists
+      final docSnapshot = await docRef.get();
+
+      // Extract transactions safely
+      final transactions = (item[nestedFieldPath] as List<dynamic>?)?.map((e) => e as Map<String, dynamic>).toList() ?? [];
+
+      if (!docSnapshot.exists) {
+        // Remove the `docIdField` key to avoid duplication in Firestore
+        final itemWithoutTransactions = Map<String, dynamic>.from(item)..remove(nestedFieldPath);
+
+        // Create the document with all fields + transactions
+        batch.set(
+          docRef,
+          {
+            ...itemWithoutTransactions, // Store all dynamic fields
+            nestedFieldPath: transactions, // Save transactions as an array
+          },
+        );
+
+        processedItems.add(item);
+      } else {
+        // Prepare update data dynamically without overwriting non-nested fields
+        final updateData = <String, dynamic>{};
+
+        item.forEach((key, value) {
+          if (key == nestedFieldPath) {
+            // Apply arrayUnion only for the nested transactions list
+            updateData[key] = FieldValue.arrayUnion(transactions);
+          } else if (key != docIdField) {
+            // Keep all other fields updated normally (without arrayUnion)
+            updateData[key] = value;
+          }
+        });
+
+        // Perform batch update
+        batch.update(docRef, updateData);
+        processedItems.add(item);
+      }
+    }
+
+    // Commit the batch operation
+    await batch.commit();
     return processedItems;
   }
 }

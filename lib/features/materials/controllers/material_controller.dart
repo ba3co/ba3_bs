@@ -183,7 +183,8 @@ class MaterialController extends GetxController with AppNavigator {
           item.matName!.toLowerCase() == lowerQuery ||
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
-          (item.serialNumbers != null && item.serialNumbers!.keys.any((serial) => serial.toLowerCase() == lowerQuery)),
+          (item.serialNumbers != null &&
+              item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
     if (exactMatch != null) {
@@ -198,7 +199,12 @@ class MaterialController extends GetxController with AppNavigator {
               searchParts.every((part) => item.matCode.toString().toLowerCase().startsWith(part)) ||
               (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))) ||
               (item.serialNumbers != null &&
-                  searchParts.every((part) => item.serialNumbers!.keys.any((serial) => serial.toLowerCase().startsWith(part)))),
+                  searchParts.every(
+                    (part) => item.serialNumbers!.entries.any(
+                      // Only allow unsold serials
+                      (entry) => entry.key.toLowerCase().startsWith(part) && entry.value == false,
+                    ),
+                  )),
         )
         .toList();
 
@@ -214,7 +220,9 @@ class MaterialController extends GetxController with AppNavigator {
               searchParts.every((part) => item.matCode.toString().toLowerCase().contains(part)) ||
               (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))) ||
               (item.serialNumbers != null &&
-                  searchParts.every((part) => item.serialNumbers!.keys.any((serial) => serial.toLowerCase().contains(part)))),
+                  searchParts.every(
+                    (part) => item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
+                  )), // Only allow unsold serials
         )
         .toList();
   }
@@ -257,39 +265,19 @@ class MaterialController extends GetxController with AppNavigator {
 
     if (!materialFromHandler.validate()) return;
     // Create a material model based on the user input
-    final updatedMaterialModel = _createMaterialModel();
+    final materialModel = _createMaterialModel();
     // Handle null material model
-    if (updatedMaterialModel == null) {
+    if (materialModel == null) {
       AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
       return;
     }
-    // Prepare user change queue for saving
-    // final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
 
-    // Save changes and handle results
-    // final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
-    // changesResult.fold(
-    //   (failure) => AppUIUtils.onFailure(failure.message),
-    //   (_) => _onSaveSuccess(updatedMaterialModel),
-    // );
-
-    _onSaveSuccess(updatedMaterialModel);
-  }
-
-  Future<void> updateMaterial(MaterialModel updatedMaterialModel, {ChangeType changeType = ChangeType.update}) async {
-    // Prepare user change queue for saving
-    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, changeType);
-
-    // Save changes and handle results
-    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-
-    changesResult.fold(
+    hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onSaveSuccess(updatedMaterialModel),
+      (savedMaterial) => _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add),
     );
-
-    _onSaveSuccess(updatedMaterialModel);
   }
 
   void deleteMaterial() async {
@@ -341,18 +329,27 @@ class MaterialController extends GetxController with AppNavigator {
       )
       .toList();
 
-  void _onSaveSuccess(MaterialModel materialModel) async {
-    // Persist the data in Hive upon successful save
-
-    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+  Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
+    final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterial) {
-        // AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        // reloadMaterials();
-        // log('materials length after add item: ${materials.length}');
-      },
+      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
+    );
+  }
+
+  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType}) async {
+    reloadMaterials();
+
+    // Prepare user change queue for saving
+    final userChangeQueue = _prepareUserChangeQueue(materialModel, changeType);
+
+    // Save changes and handle results
+    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+
+    changesResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) {},
     );
   }
 

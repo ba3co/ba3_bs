@@ -39,7 +39,7 @@ class BillLayout extends StatelessWidget {
                       onSelected: (value) {
                         if (value == 'serialNumbersStatement') {
                           // Local variable to hold the serial number input
-                          String serialNumberInput = "";
+                          String serialNumberInput = '';
                           Get.dialog(
                             AlertDialog(
                               title: Text(AppStrings.enterSerialNumber.tr),
@@ -101,7 +101,7 @@ class BillLayout extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.all(8),
                       child: AppButton(
-                        title:AppStrings.downloadBills.tr,
+                        title: AppStrings.downloadBills.tr,
                         onPressed: () => allBillsController.fetchAllBillsFromLocal(),
                       ),
                     ),

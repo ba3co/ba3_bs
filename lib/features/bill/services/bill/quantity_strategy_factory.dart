@@ -1,25 +1,16 @@
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/quantity_strategy.dart';
 
-import '../../../../core/helper/enums/enums.dart';
+import 'bill_type_utils.dart';
 
 class QuantityStrategyFactory {
   static QuantityStrategy getStrategy(BillModel billModel) {
-    final BillType billType = BillType.byLabel(billModel.billTypeModel.billTypeLabel!);
+    final bool isPurchaseRelated = BillTypeUtils.isPurchaseRelated(billModel);
 
-    switch (billType) {
-      case BillType.purchase:
-      case BillType.salesReturn:
-      case BillType.adjustmentEntry:
-      case BillType.firstPeriodInventory:
-      case BillType.transferIn:
-        return AddQuantityStrategy();
-
-      case BillType.sales:
-      case BillType.purchaseReturn:
-      case BillType.outputAdjustment:
-      case BillType.transferOut:
-        return SubtractQuantityStrategy();
+    if (isPurchaseRelated) {
+      return AddQuantityStrategy();
+    } else {
+      return SubtractQuantityStrategy();
     }
   }
 }
