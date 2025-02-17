@@ -235,7 +235,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
   Future<void> saveSerialNumbers(BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers) async {
     // Create a list to collect the serial number models.
-    final List<SerialNumberModel> items = {};
+    final List<SerialNumberModel> items = [];
 
     if (billModel.billTypeModel.billPatternType == BillPatternType.purchase) {
       // Iterate through each material's controllers.
@@ -278,9 +278,9 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
                 };
 
                 // Update the material model with new serial numbers
-                // read<MaterialController>().updateMaterial(
-                //   materialModel.copyWith(serialNumbers: updatedSerialNumbers),
-                // );
+                //  read<MaterialController>().updateMaterial(
+                //    materialModel.copyWith(serialNumbers: updatedSerialNumbers),
+                //  );
               }
             },
           );
