@@ -277,6 +277,21 @@ class MaterialController extends GetxController with AppNavigator {
     _onSaveSuccess(updatedMaterialModel);
   }
 
+  Future<void> updateMaterial(MaterialModel updatedMaterialModel, {ChangeType changeType = ChangeType.update}) async {
+    // Prepare user change queue for saving
+    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, changeType);
+
+    // Save changes and handle results
+    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+
+    changesResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _onSaveSuccess(updatedMaterialModel),
+    );
+
+    _onSaveSuccess(updatedMaterialModel);
+  }
+
   void deleteMaterial() async {
     if (selectedMaterial == null) return;
 
@@ -337,7 +352,6 @@ class MaterialController extends GetxController with AppNavigator {
         // AppUIUtils.onSuccess('تم الحفظ بنجاح');
         // reloadMaterials();
         // log('materials length after add item: ${materials.length}');
-        // log('material is  ${materials.length}');
       },
     );
   }
@@ -384,7 +398,7 @@ class MaterialController extends GetxController with AppNavigator {
   /// Updates a material's data using a provided update function.
   /// This function finds the material by `matId`, applies `updateFn` to modify it,
   /// and then saves the updated material.
-  Future<void> updateMaterial(String matId, MaterialModel Function(MaterialModel) updateFn) async {
+  Future<void> updateAndSaveMaterial(String matId, MaterialModel Function(MaterialModel) updateFn) async {
     final materialModel = materials.firstWhere((material) => material.id == matId);
     materialFromHandler.init(updateFn(materialModel));
     await saveOrUpdateMaterial();
@@ -416,7 +430,7 @@ class MaterialController extends GetxController with AppNavigator {
   /// Increases the quantity of a material by a given amount.
   /// Uses `updateMaterial` to modify `matQuantity`.
   Future<void> updateMaterialQuantity(String matId, int quantity) async {
-    await updateMaterial(
+    await updateAndSaveMaterial(
       matId,
       (material) => material.copyWith(
         matQuantity: (material.matQuantity ?? 0) + quantity,
@@ -427,7 +441,7 @@ class MaterialController extends GetxController with AppNavigator {
   /// Sets the quantity of a material to a specific value.
   /// Unlike `updateMaterialQuantity`, this function replaces the quantity instead of adding to it.
   Future<void> setMaterialQuantity(String matId, int quantity) async {
-    await updateMaterial(matId, (material) => material.copyWith(matQuantity: quantity));
+    await updateAndSaveMaterial(matId, (material) => material.copyWith(matQuantity: quantity));
   }
 
   /// Updates both the quantity and minimum price of a material.
@@ -438,7 +452,7 @@ class MaterialController extends GetxController with AppNavigator {
     required double priceInStatement,
     required int quantityInStatement,
   }) async {
-    await updateMaterial(
+    await updateAndSaveMaterial(
       matId,
       (material) => material.copyWith(
         matQuantity: (material.matQuantity ?? 0) + quantity,
@@ -459,7 +473,7 @@ class MaterialController extends GetxController with AppNavigator {
     required int quantity,
     required double currentMinPrice,
   }) async {
-    await updateMaterial(
+    await updateAndSaveMaterial(
       matId,
       (material) => material.copyWith(
         matQuantity: quantity,

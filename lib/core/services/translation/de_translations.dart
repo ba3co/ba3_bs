@@ -167,7 +167,6 @@ final Map<String, String> deDE = {
   AppStrings.amount: 'Betrag',
   AppStrings.notes: 'Notizen',
   AppStrings.lastCheckInTime: 'Letzte Check-In-Zeit',
-  AppStrings.lastCheckOutTime: 'Letzte Check-Out-Zeit',
   AppStrings.holiday: 'Feiertag',
   AppStrings.retail: 'Einzelhandel',
   AppStrings.prices: 'Preise',
@@ -235,6 +234,5 @@ final Map<String, String> deDE = {
   AppStrings.accessoriesTarget: 'Zubehörziel',
   AppStrings.achievementsPanel: 'Erfolgsanzeige',
   AppStrings.profile: 'Profil',
-  AppStrings.totalSales: 'Gesamtumsatz',
 
 };

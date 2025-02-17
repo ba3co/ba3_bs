@@ -168,7 +168,6 @@ final Map<String, String> zhCN = {
   AppStrings.amount: '金额',
   AppStrings.notes: '备注',
   AppStrings.lastCheckInTime: '最后签到时间',
-  AppStrings.lastCheckOutTime: '最后签退时间',
   AppStrings.holiday: '假期',
   AppStrings.retail: '零售',
   AppStrings.prices: '价格',
@@ -234,5 +233,4 @@ final Map<String, String> zhCN = {
   AppStrings.accessoriesTarget: '配件目标',
   AppStrings.achievementsPanel: '成就面板',
   AppStrings.profile: '个人资料',
-  AppStrings.totalSales: '总销售额',
 };
