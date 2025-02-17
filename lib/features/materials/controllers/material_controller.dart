@@ -14,6 +14,7 @@ import 'package:ba3_bs/features/materials/controllers/material_group_controller.
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
+import 'package:ba3_bs/features/materials/ui/screens/add_material_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,6 +22,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
@@ -28,7 +30,7 @@ import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/materials/material_model.dart';
 
-class MaterialController extends GetxController with AppNavigator {
+class MaterialController extends GetxController with AppNavigator , FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
@@ -256,6 +258,7 @@ class MaterialController extends GetxController with AppNavigator {
     // Validate the input before proceeding
 
     if (!materialFromHandler.validate()) return;
+
     // Create a material model based on the user input
     final updatedMaterialModel = _createMaterialModel();
     // Handle null material model
@@ -264,15 +267,13 @@ class MaterialController extends GetxController with AppNavigator {
       return;
     }
     // Prepare user change queue for saving
-    // final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
-
-    // Save changes and handle results
-    // final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-
-    // changesResult.fold(
-    //   (failure) => AppUIUtils.onFailure(failure.message),
-    //   (_) => _onSaveSuccess(updatedMaterialModel),
-    // );
+    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
+   // Save changes and handle results
+    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+    changesResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _onSaveSuccess(updatedMaterialModel),
+    );
 
     _onSaveSuccess(updatedMaterialModel);
   }
@@ -349,8 +350,8 @@ class MaterialController extends GetxController with AppNavigator {
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) {
-        // AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        // reloadMaterials();
+        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        reloadMaterials();
         // log('materials length after add item: ${materials.length}');
       },
     );
@@ -373,11 +374,19 @@ class MaterialController extends GetxController with AppNavigator {
     );
   }
 
-  void navigateToAddOrUpdateMaterialScreen({String? matId}) {
+  void navigateToAddOrUpdateMaterialScreen({String? matId,required BuildContext context}) {
     selectedMaterial = null;
     if (matId != null) selectedMaterial = getMaterialById(matId);
+
+
+
     materialFromHandler.init(selectedMaterial);
-    to(AppRoutes.addMaterialScreen);
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: ApiConstants.materials.tr,
+        floatingScreen: AddMaterialScreen()
+    );
+    // to(AppRoutes.addMaterialScreen);
   }
 
   void openMaterialSelectionDialog({

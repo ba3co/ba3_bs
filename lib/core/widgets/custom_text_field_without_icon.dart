@@ -94,6 +94,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
         inputFormatters: widget.inputFormatters,
         style: const TextStyle(fontSize: 12),
         decoration: InputDecoration(
+            helperText: ' ', // حجز مساحة لرسالة الخطأ حتى وإن لم تظهر
             fillColor: widget.filedColor ?? Colors.white,
             filled: true,
             isDense: true,
@@ -112,7 +113,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
               borderRadius: BorderRadius.circular(5.0),
             ),
             suffixIcon: SizedBox.shrink(),
-            contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 0)),
+            contentPadding: const EdgeInsets.fromLTRB(0, 24,0, 0)),
         textAlign: TextAlign.center,
         // Center the text horizontally
       ),
