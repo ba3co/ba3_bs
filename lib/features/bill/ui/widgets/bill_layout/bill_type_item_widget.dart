@@ -100,7 +100,7 @@ class BillTypeItemWidget extends StatelessWidget {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  text,
+                  text.tr,
                   style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
                   textDirection: TextDirection.rtl,
                 ),

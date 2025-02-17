@@ -641,11 +641,7 @@ enum VatEnums {
       taxName: 'ضريبة القيمة المضافة رأس الخيمة',
       taxRatio: 0.05,
       taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16'),
-  withOutVat(
-      taxGuid: 'kCfkUHwNyRbxTlD71uXV',
-      taxName: 'معفى',
-      taxRatio: 0,
-      taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
+  withOutVat(taxGuid: 'kCfkUHwNyRbxTlD71uXV', taxName: 'معفى', taxRatio: 0, taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
 
   final String? taxGuid;
   final String? taxName;

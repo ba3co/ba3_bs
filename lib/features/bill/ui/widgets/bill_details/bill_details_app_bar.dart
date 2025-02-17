@@ -66,7 +66,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                             return OverlayService.showDropdown<InvPayType>(
                               value: billDetailsController.selectedPayType.value,
                               items: InvPayType.values,
-                              itemLabelBuilder: (type) => type.label,
+                              itemLabelBuilder: (type) => type.label.tr,
                               onChanged: (selectedType) {
                                 billDetailsController.onPayTypeChanged(selectedType);
                               },
@@ -95,8 +95,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                       disabled: billSearchController.isTail,
                       icon: LanguageSwitchFaIcon(
-
-                       iconData:  FontAwesomeIcons.arrowRotateRight,
+                        iconData: FontAwesomeIcons.arrowRotateRight,
                         size: 14,
                       ),
                     ),
@@ -107,7 +106,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         billSearchController.jumpForwardByTen();
                       },
                       icon: LanguageSwitchFaIcon(
-                       iconData:  Icons.keyboard_double_arrow_right_outlined,
+                        iconData: Icons.keyboard_double_arrow_right_outlined,
                       ),
                     ),
                     CustomIconButton(
@@ -116,7 +115,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                         billSearchController.next();
                       },
                       icon: LanguageSwitchFaIcon(
-                       iconData:  Icons.keyboard_arrow_right_outlined,
+                        iconData: Icons.keyboard_arrow_right_outlined,
                       ),
                     ),
                     HorizontalSpace(5),
@@ -137,7 +136,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                       disabled: billSearchController.isHead,
                       icon: LanguageSwitchFaIcon(
-                       iconData:  Icons.keyboard_arrow_left_outlined,
+                        iconData: Icons.keyboard_arrow_left_outlined,
                       ),
                     ),
                     CustomIconButton(
@@ -146,7 +145,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                       disabled: billSearchController.isHead,
                       icon: LanguageSwitchFaIcon(
-                       iconData:  Icons.keyboard_double_arrow_left,
+                        iconData: Icons.keyboard_double_arrow_left,
                       ),
                     ),
                     HorizontalSpace(5),
@@ -156,7 +155,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                       disabled: billSearchController.isHead,
                       icon: LanguageSwitchFaIcon(
-                      iconData:   FontAwesomeIcons.arrowRotateLeft,
+                        iconData: FontAwesomeIcons.arrowRotateLeft,
                         size: 14,
                       ),
                     ),

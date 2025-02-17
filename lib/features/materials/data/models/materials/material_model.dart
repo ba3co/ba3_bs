@@ -176,7 +176,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   final double? calcMinPrice;
 
   @HiveField(54)
-  List<SerialNumberModel>? serialNumbers;
+  final Map<String, bool>? serialNumbers;
 
   MaterialModel({
     this.id,
@@ -293,9 +293,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matExtraBarcode: List.from(json['matExtraBarcode'] ?? []),
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice: json['calcMinPrice'] ?? 0.0,
-      serialNumbers: json['serialNumbers'] == null
-          ? null
-          : (json['serialNumbers'] as List<dynamic>).map((e) => SerialNumberModel.fromJson(e as Map<String, dynamic>)).toList(),
+      serialNumbers: json['serialNumbers'] ?? {},
     );
   }
 
@@ -319,7 +317,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'matExtraBarcode': matExtraBarcode,
         'MatQuantity': matQuantity,
         'calcMinPrice': calcMinPrice,
-        'serialNumbers': serialNumbers?.map((e) => e.toJson()).toList(),
+        'serialNumbers': serialNumbers,
         // 'MatUnity': matUnity,
         // 'MatPriceType': matPriceType,
         // 'MatBonus': matBonus,
@@ -449,7 +447,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     final String? matVatGuid,
     final int? matQuantity,
     final double? calcMinPrice,
-    final List<SerialNumberModel>? serialNumbers,
+    final Map<String, bool>? serialNumbers,
   }) {
     return MaterialModel(
       id: id ?? this.id,
@@ -531,33 +529,24 @@ class MatExtraBarcodeModel {
   }
 }
 
-@HiveType(typeId: 2)
 class SerialNumberModel implements PlutoAdaptable {
-  @HiveField(0)
   final String? serialNumber;
 
-  @HiveField(1)
   final String? matId; // Foreign key linking to MaterialModel.id
 
-  @HiveField(2)
   final String? matName;
 
   @HiveField(3)
   final String? buyBillId; // Bill ID for buying the material
 
-  @HiveField(4)
   final int? buyBillNumber; // Bill Number for buying the material
 
-  @HiveField(5)
   final String? sellBillId; // Bill ID for selling the material
 
-  @HiveField(6)
   final int? sellBillNumber; // Sell Number for buying the material
 
-  @HiveField(7)
   final DateTime? entryDate;
 
-  @HiveField(8)
   final bool? sold; // Indicates whether the item is sold
 
   SerialNumberModel({
@@ -630,7 +619,7 @@ class SerialNumberModel implements PlutoAdaptable {
     return {
       // Visible column for the serial number.
       PlutoColumn(
-        title: 'الرقم التسلسلي',
+        title: AppStrings.serialNumber.tr,
         field: 'serialNumber',
         type: PlutoColumnType.text(),
       ): serialNumber ?? '',
@@ -644,7 +633,7 @@ class SerialNumberModel implements PlutoAdaptable {
       ): matId ?? '',
       // Hidden column for the material ID.
       PlutoColumn(
-        title: 'اسم المادة',
+        title: AppStrings.materialName.tr,
         field: 'matName',
         type: PlutoColumnType.text(),
       ): matName ?? '',
@@ -652,46 +641,46 @@ class SerialNumberModel implements PlutoAdaptable {
       // Column for the buy bill ID.
       PlutoColumn(
         hide: true,
-        title: 'فاتورة الشراء',
+        title: AppStrings.purchaseBill.tr,
         field: 'buyBillId',
         type: PlutoColumnType.text(),
       ): buyBillId ?? '',
 
       // Column for the buy bill ID.
       PlutoColumn(
-        title: 'رقم فاتورة الشراء',
+        title: AppStrings.purchaseBillNumber.tr,
         field: 'buyBillNumber',
-        type: PlutoColumnType.number(),
+        type: PlutoColumnType.text(),
       ): buyBillNumber ?? '',
 
       // Column for the sell bill ID.
       PlutoColumn(
         hide: true,
-        title: 'فاتورة البيع',
+        title: AppStrings.salesBill.tr,
         field: 'sellBillId',
         type: PlutoColumnType.text(),
       ): sellBillId ?? '',
 
       // Column for the sell bill ID.
       PlutoColumn(
-        title: 'رقم فاتورة البيع',
+        title: AppStrings.salesBillNumber.tr,
         field: 'sellBillNumber',
-        type: PlutoColumnType.number(),
+        type: PlutoColumnType.text(),
       ): sellBillNumber ?? '',
 
       // Column for the entry date.
       PlutoColumn(
-        title: 'تاريخ الإدخال',
+        title: AppStrings.entryDate.tr,
         field: 'entryDate',
         type: PlutoColumnType.date(),
       ): entryDate,
 
       // Column for the sold status (displaying a simple "Yes/No").
       PlutoColumn(
-        title: 'تم البيع',
+        title: AppStrings.sold.tr,
         field: 'sold',
         type: PlutoColumnType.text(),
-      ): sold == true ? 'نعم' : 'لا',
+      ): sold == true ? AppStrings.yes.tr : AppStrings.no.tr,
     };
   }
 }

@@ -165,7 +165,7 @@ class AppStrings {
   static const String consumer = 'المستهلك';
   static const String wholesale = 'الجملة';
   static const String barcode = 'الباركود';
-  static const String serialNumber = "الرقم التسلسلي";
+
   static const String amount = 'قيمة';
   static const String notes = 'المُلاحظات';
   static const String lastcheckInTime = 'اخر دخول';
@@ -173,7 +173,42 @@ class AppStrings {
   static const String holiday = 'اجازة';
 
   ////
-  static const retail = 'المفرق';
-  static const prices = 'الاسعار';
-  static const serialNumbersStatement = 'كشف حساب الرقم التسلسلي';
+  static const String retail = 'المفرق';
+  static const String prices = 'الاسعار';
+  static const String serialNumbersStatement = 'كشف حساب الرقم التسلسلي';
+
+  static const String options = 'الخيارات';
+
+  static const String enterSerialNumber = 'أدخل الرقم التسلسلي';
+
+  static const String serialNumber = 'الرقم التسلسلي';
+
+  static const String confirm = 'تأكيد';
+
+  static const String refresh = 'تحديث';
+
+  static const String sales = 'فاتورة مبيعات';
+  static const String purchase = 'فاتورة مشتريات';
+  static const String salesReturn = 'فاتورة مرتجع مبيعات';
+  static const String purchaseReturn = 'فاتورة مرتجع مشتريات';
+  static const String adjustmentEntry = 'فاتورة تسوية ادخال';
+  static const String outputAdjustment = 'فاتورة تسوية اخراج';
+  static const String firstPeriodInventory = 'بضاعة اول مدة';
+  static const String transferIn = 'تسوية الزيادة';
+  static const String transferOut = 'تسوية النقص';
+
+  static const String cash = 'نقدي';
+
+  static const String due = 'اجل';
+  static const String mainWarehouse = 'المستودع الرئيسي';
+
+  static const String materialName = 'اسم المادة';
+  static const String purchaseBill = 'فاتورة الشراء';
+  static const String purchaseBillNumber = 'رقم فاتورة الشراء';
+  static const String salesBill = 'فاتورة البيع';
+  static const String salesBillNumber = 'رقم فاتورة البيع';
+  static const String entryDate = 'تاريخ الإدخال';
+  static const String sold = 'تم البيع';
+  static const String yes = 'نعم';
+  static const String no = 'لا';
 }

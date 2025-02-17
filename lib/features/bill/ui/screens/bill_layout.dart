@@ -35,19 +35,19 @@ class BillLayout extends StatelessWidget {
                 leading: Row(
                   children: [
                     PopupMenuButton<String>(
-                      tooltip: 'الخيارات',
+                      tooltip: AppStrings.options.tr,
                       onSelected: (value) {
                         if (value == 'serialNumbersStatement') {
                           // Local variable to hold the serial number input
                           String serialNumberInput = "";
                           Get.dialog(
                             AlertDialog(
-                              title: Text('أدخل الرقم التسلسلي'),
+                              title: Text(AppStrings.enterSerialNumber.tr),
                               content: StatefulBuilder(
                                 builder: (context, setState) {
                                   return TextField(
                                     decoration: InputDecoration(
-                                      labelText: 'الرقم التسلسلي',
+                                      labelText: AppStrings.serialNumber.tr,
                                     ),
                                     onChanged: (value) {
                                       serialNumberInput = value;
@@ -57,13 +57,13 @@ class BillLayout extends StatelessWidget {
                               ),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('إلغاء'),
+                                  child: Text(AppStrings.cancel.tr),
                                   onPressed: () {
                                     Get.back();
                                   },
                                 ),
                                 TextButton(
-                                  child: Text('تأكيد'),
+                                  child: Text(AppStrings.confirm.tr),
                                   onPressed: () {
                                     Get.back();
                                     if (serialNumberInput.isEmpty) return;
@@ -87,7 +87,7 @@ class BillLayout extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'تحديث',
+                      tooltip: AppStrings.refresh.tr,
                       icon: Icon(
                         Icons.refresh,
                         color: AppColors.lightBlueColor,
