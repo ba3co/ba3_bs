@@ -65,7 +65,7 @@ class BillDetailsHeader extends StatelessWidget {
               secondItem: SearchableAccountField(
                 label: AppStrings.customerAccount.tr,
                 textEditingController: billDetailsController.customerAccountController,
-                validator: (value) => billDetailsController.validator(value, 'حساب العميل'),
+                validator: (value) => billDetailsController.validator(value, AppStrings.customerAccount.tr),
                 onSubmitted: (text) async {
                   AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                     query: text,
@@ -83,7 +83,6 @@ class BillDetailsHeader extends StatelessWidget {
                 label: AppStrings.seller.tr,
                 readOnly: !RoleItemType.viewBill.hasReadPermission,
                 textEditingController: billDetailsController.sellerAccountController,
-                validator: (value) => billDetailsController.validator(value, 'البائع'),
                 onSubmitted: (text) {
                   read<SellersController>().openSellerSelectionDialog(
                     query: text,

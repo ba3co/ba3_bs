@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/controllers/account_statement_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +17,10 @@ class AccountStatementScreen extends StatelessWidget {
     return GetBuilder<AccountStatementController>(
       builder: (controller) {
         return PlutoGridWithAppBar(
-          title: controller.screenTitle,
+          title: controller.screenTitle.tr,
           onLoaded: (e) {},
           onSelected: (event) {
-            String originId = event.row?.cells['originId']?.value;
+            String originId = event.row?.cells[AppConstants.entryBonIdFiled]?.value;
             controller.launchBondEntryBondScreen(context: context, originId: originId);
           },
           isLoading: controller.isLoading,

@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -96,7 +97,7 @@ class AccountModel implements PlutoAdaptable {
       // accBranchMask: json['AccBranchMask']??'',
       accParentName: json['accParentName'] ?? '',
       accCustomer: List<String>.from(json['accCustomer'] ?? []),
-      // billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHfavRu"],
+      // billsId: json['billsId'] ?? ["AQGmxAyLwBsHi9gTTsXn", "BuXK4e6GR6f5GFHf avRu"],
     );
   }
 
@@ -203,7 +204,7 @@ class AccountModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(field: AppStrings.identificationNumber.tr, type: PlutoColumnType.text(), title: 'الرقم التعريفي', hide: true): id,
+      PlutoColumn(field: AppStrings.identificationNumber.tr, type: PlutoColumnType.text(), title: AppConstants.accountIdFiled, hide: true): id,
       createAutoIdColumn(): '#',
       PlutoColumn(title: AppStrings.accountNumber.tr, type: PlutoColumnType.text(), field: 'رقم الحساب', width: 180):
           accNumber,

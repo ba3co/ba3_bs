@@ -1,5 +1,7 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class UserService {
@@ -50,7 +52,7 @@ class UserService {
   }) {
     final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
     if (dateList == null ) {
-      return "لم يسجل بعد";
+      return AppStrings.notLoggedToday.tr;
     }
     if(workingHours.isEmpty){
       return 'لم يتم تسجيل الدوام له';
@@ -64,7 +66,7 @@ class UserService {
           : workingHours.values.elementAtOrNull(i)?.outTime;
 
       if (workingTime == null) {
-        continue; // تخطي إذا كانت القيمة فارغة
+        continue;
       }
 
       // تحويل الوقت المحدد (الدخول أو الخروج) إلى كائن DateTime

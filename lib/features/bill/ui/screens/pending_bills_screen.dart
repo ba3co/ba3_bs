@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class PendingBillsScreen extends StatelessWidget {
         title: AppStrings.pendingBill.tr,
         onLoaded: (e) {},
         onSelected: (event) {
-          String billId = event.row?.cells['billId']?.value;
+          String billId = event.row?.cells[AppConstants.billIdFiled]?.value;
           controller.openFloatingBillDetailsById(billId, context, BillType.sales.billTypeModel);
         },
         isLoading: controller.isPendingBillsLoading,
