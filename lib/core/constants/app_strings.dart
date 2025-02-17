@@ -169,8 +169,6 @@ class AppStrings {
 
   static const String amount = 'قيمة';
   static const String notes = 'المُلاحظات';
-  static const String lastcheckInTime = 'اخر دخول';
-  static const String lastcheckOutTime = 'اخر خروج';
   static const String holiday = 'اجازة';
 
   ////
@@ -278,6 +276,6 @@ class AppStrings {
   static const achievementsPanel = 'لوحة الأنجازات';
   static const profile = 'الملف الشخصي';
   static const totalSales = 'اجمالي المبيعات';
-  static const lastCheckInTime = 'اجمالي المبيعات';
-  static const lastCheckOutTime = 'اجمالي المبيعات';
+  static const lastCheckInTime = 'آخر توقيت للدخول';
+  static const lastCheckOutTime =  'آخر توقيت للخروج';
 }

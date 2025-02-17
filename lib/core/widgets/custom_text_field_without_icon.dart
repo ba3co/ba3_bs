@@ -111,8 +111,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
               ),
               borderRadius: BorderRadius.circular(5.0),
             ),
-            suffixIcon: SizedBox.shrink(),
-            contentPadding: const EdgeInsets.fromLTRB(12, 8, 12, 0)),
+            // suffixIcon: SizedBox.shrink(),
+            contentPadding: const EdgeInsets.fromLTRB(0, 12,0, 12)),
         textAlign: TextAlign.center,
         // Center the text horizontally
       ),

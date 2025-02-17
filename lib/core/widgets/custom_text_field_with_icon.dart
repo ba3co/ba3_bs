@@ -15,7 +15,7 @@ class CustomTextFieldWithIcon extends StatefulWidget {
     this.inputFormatters,
     this.isNumeric = false,
     this.textStyle,
-    required this.readOnly,
+     this.readOnly=false,
   });
 
   final TextEditingController textEditingController;

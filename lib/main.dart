@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import 'core/bindings/bindings.dart';
 import 'core/constants/app_strings.dart';
+import 'core/helper/extensions/getx_controller_extensions.dart';
 import 'core/helper/init_app/app_initializer.dart';
 import 'core/router/app_router.dart';
 import 'core/services/translation/app_translations.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TranslationController translationController = Get.find<TranslationController>();
+    final TranslationController translationController = read<TranslationController>();
 
     return ScreenUtilInit(
       designSize: const Size(390, 852),

@@ -45,7 +45,9 @@ class BillDetailsScreen extends StatelessWidget {
                     billDetailsController: billDetailsController,
                     billSearchController: billSearchController,
                   ),
-                  body: Column(children: [
+                  body: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
                     BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
                     VerticalSpace(5),
                     BillDetailsBody(
@@ -55,13 +57,11 @@ class BillDetailsScreen extends StatelessWidget {
                       tag: tag,
                     ),
                     const VerticalSpace(10),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: BillDetailsCalculations(
-                          billTypeModel: currentBill.billTypeModel,
-                          billDetailsPlutoController: billDetailsPlutoController,
-                          tag: tag,
-                        )),
+                    BillDetailsCalculations(
+                      billTypeModel: currentBill.billTypeModel,
+                      billDetailsPlutoController: billDetailsPlutoController,
+                      tag: tag,
+                    ),
                     const Divider(height: 10),
                     BillDetailsButtons(
                       billDetailsController: billDetailsController,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../features/bill/ui/widgets/bill_shared/custom_text_field.dart';
+import 'custom_text_field_with_icon.dart';
 
 class OptionTextWidget extends StatelessWidget {
   const OptionTextWidget({required this.title, super.key, required this.controller, required this.onSubmitted});
@@ -20,7 +20,7 @@ class OptionTextWidget extends StatelessWidget {
           SizedBox(width: 100, child: Text(title)),
           SizedBox(
             width: Get.width / 3,
-            child: CustomTextFieldWithIcon(controller: controller, onSubmitted: onSubmitted),
+            child: CustomTextFieldWithIcon(textEditingController: controller, onSubmitted: onSubmitted),
           ),
         ],
       ),
@@ -47,7 +47,7 @@ class OptionTextWithoutIconWidget extends StatelessWidget {
           SizedBox(
             width: Get.width / 3,
             child: CustomTextFieldWithIcon(
-              controller: controller,
+              textEditingController: controller,
               onSubmitted: onSubmitted,
             ),
           ),

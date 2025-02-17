@@ -169,8 +169,8 @@ final Map<String, String> arAR = {
   AppStrings.barcode: 'الباركود',
   AppStrings.serialNumber: 'الرقم التسلسلي',
   AppStrings.notes: 'الملاحظات',
-  AppStrings.lastcheckInTime: 'آخر توقيت للدخول',
-  AppStrings.lastcheckOutTime: 'آخر توقيت للخروج',
+  AppStrings.lastCheckInTime: 'آخر توقيت للدخول',
+  AppStrings.lastCheckOutTime: 'آخر توقيت للخروج',
   AppStrings.holiday: 'إجازة',
   AppStrings.serialNumbersStatement: 'كشف حساب الرقم التسلسلي',
   AppStrings.options: "الخيارات",
@@ -261,4 +261,5 @@ final Map<String, String> arAR = {
   AppStrings.accessoriesTarget: 'تارغت الأكسسوارات',
   AppStrings.achievementsPanel: 'لوحة الأنجازات',
   AppStrings.profile: 'الملف الشخصي',
+
 };

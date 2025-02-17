@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../features/bill/ui/widgets/bill_shared/custom_text_field.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
+import '../widgets/custom_text_field_with_icon.dart';
 import '../widgets/pluto_grid_with_app_bar_.dart';
 
 Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText) async {
@@ -56,7 +56,7 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: CustomTextFieldWithIcon(
-                            controller: productGroupTextController,
+                            textEditingController: productGroupTextController,
                             onSubmitted: (_) async {
                               searchedMaterials = await materialController.searchOfProductByText(productGroupTextController.text);
                               materialController.update();

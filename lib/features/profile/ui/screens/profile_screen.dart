@@ -2,7 +2,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/profile/ui/widgets/profile_info_row_shimmer_widget.dart';
 import 'package:ba3_bs/features/profile/ui/widgets/profile_info_row_widget.dart';
-import 'package:ba3_bs/features/profile/ui/widgets/user_target_shimmer_widget.dart';
+import 'package:ba3_bs/core/widgets/user_target_shimmer_widget.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
