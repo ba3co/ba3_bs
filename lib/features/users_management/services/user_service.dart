@@ -60,8 +60,8 @@ class UserService {
 
     for (int i = 0; i < dateList.length; i++) {
       final workingTime = isLogin
-          ? workingHours.values.elementAt(i).enterTime
-          : workingHours.values.elementAt(i).outTime;
+          ? workingHours.values.elementAtOrNull(i)?.enterTime
+          : workingHours.values.elementAtOrNull(i)?.outTime;
 
       if (workingTime == null) {
         continue; // تخطي إذا كانت القيمة فارغة
