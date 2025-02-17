@@ -50,10 +50,11 @@ class AppStrings {
   static const String seller = 'البائع';
   static const String sellers = 'البائعون';
   static const String illustration = 'البيان';
+  static const String downloadBill = 'تحميل الفواتير';
   static const String view = 'عرض';
   static const String bonds = 'السندات';
   static const String date = 'التاريخ';
-  static const String number = 'رقم';
+  static const String number = '';
   static const String viewOrigin = 'عرض الاصل';
   static const String difference = 'الفرق';
   static const String account = 'الحساب';
@@ -90,8 +91,7 @@ class AppStrings {
   static const String panel = 'لوحة';
 
   static const String controlPanel = 'لوحة التحكم';
-  static const String areYouSureYouWantToCloseTheProgram =
-      'هل انت متأكد انك تريد إغلاق البرنامج';
+  static const String areYouSureYouWantToCloseTheProgram = 'هل انت متأكد انك تريد إغلاق البرنامج';
   static const String exit = 'خروج';
   static const String cancel = 'الغاء';
   static const String user = 'المستخدم';
@@ -133,6 +133,7 @@ class AppStrings {
   static const String quantity = 'الكمية';
   static const String individual = 'الإفرادي';
   static const String tax = 'الضريبة';
+  static const String notRegisteredYet = 'لم يسجل بعد';
   static const String nothing = 'لا يوجد';
   static const String currentlyUnavailable = 'غير متوفر حاليا';
   static const String minutes = 'دقائق';
@@ -164,80 +165,50 @@ class AppStrings {
   static const String consumer = 'المستهلك';
   static const String wholesale = 'الجملة';
   static const String barcode = 'الباركود';
-  static const String serialNumber = "الرقم التسلسلي";
+
   static const String amount = 'قيمة';
   static const String notes = 'المُلاحظات';
-  static const String lastCheckInTime = 'اخر دخول';
-  static const String lastCheckOutTime = 'اخر خروج';
+  static const String lastcheckInTime = 'اخر دخول';
+  static const String lastcheckOutTime = 'اخر خروج';
   static const String holiday = 'اجازة';
 
   ////
-  static const retail = 'المفرق';
-  static const prices = 'الاسعار';
-  static const notLoggedToday = 'لم يسجيل اليوم';
-  static const exchangeForGifts = 'مقابل الهدايا';
-  static const materialName = 'اسم المادة';
-  static const materialCode = 'رمز المادة';
-  static const materialBarcode = 'باركود المادة';
-  static const latinShortCut = 'الاختصار اللاتيني';
-  static const latinName = 'الاسم اللاتيني';
-  static const hide = 'إخفاء';
-  static const newMaterial = 'مادة جديدة';
-  static const bondDate = 'تاريخ السند';
-  static const editingDate = 'تاريخ التحرير';
-  static const duesDate = 'تاريخ الاستحقاق';
-  static const chequesNumber = 'رقم الشيك';
-  static const chequesAmount = 'قيمة الشيك';
-  static const billStatus = 'حالة الفاتورة';
-  static const billNumber = 'رقم الفاتورة';
-  static const taxTotal = 'مجموع الضريبة';
-  static const discountTotal = 'مجموع الحسم';
-  static const additionsTotal = 'مجموع الاضافات';
-  static const giftsTotal = 'مجموع الهدايا';
-  static const payType = 'نوع الدفع';
-  static const sellerAccount = 'حساب البائع';
-  static const accountNumber = 'رقم الحساب';
-  static const accountType = 'نوع الحساب';
-  static const groupCode = 'رمز المجموعة';
-  static const groupNumber = 'رقم المجموعة';
-  static const userName = 'اسم المستخدم';
-  static const workStatus = 'حالة العمل';
-  static const employeeName = 'اسم الموظف';
-  static const allCheques = 'جميع الشيكات';
-  static const allGroups = 'جميع المجموعات';
-  static const allMaterials = 'جميع المواد';
-  static const allSellers = 'جميع البائعين';
-  static const allUsers = 'جميع المستخدمين';
-  static const chequesDues = 'الشكات المستحقة';
-  static const registrationAsAGust = 'تسجيل ك ضيف';
-  static const materialInformation = 'معلومات المادة';
-  static const userInformation = 'معلومات المستخدم';
-  static const choosePatternType = 'اختر نوع النمط';
-  static const billsPatterns = 'انماط الفواتير';
-  static const refundedBond = 'سند مسترد';
-  static const paymentBond = 'سند الدفع';
-  static const deleteRefund = 'حذف الاسترداد';
-  static const paymentDelete = 'حذف الدفعة';
+  static const String retail = 'المفرق';
+  static const String prices = 'الاسعار';
+  static const String serialNumbersStatement = 'كشف حساب الرقم التسلسلي';
 
-  static const addCheques = 'اضافة شيك';
-  static const viewCheques = 'عرض الشيكات';
-  static const viewMaterial = 'عرض المواد';
-  static const viewMaterialGroups = 'عرض مجموعات المواد';
-  static const downloadBonds = 'تحميل السندات';
-  static const downloadBills = 'تحميل الفواتير';
-  static const downloadCheques = 'تحميل الشيكات';
-  static const downloadMaterials = 'تحميل المواد';
-  static const downloadGroups = 'تحميل المجموعات';
-  static const downloadSellers = 'تحميل البائعين';
-  static const deletedMaterials = 'حذف المواد';
-  static const addMaterials = 'اضافة مواد';
-  static const addSellers = 'اضافة بائعين';
-  static const viewSellers = 'عرض البائعين';
-  static const addPattern = 'اضافة نمط';
-  static const mobileTarget = 'تارغت الموبايلات';
-  static const accessoriesTarget = 'تارغت الأكسسوارات';
-  static const achievementsPanel = 'لوحة الأنجازات';
-  static const profile = 'الملف الشخصي';
-  static const totalSales = 'اجمالي المبيعات';
+  static const String options = 'الخيارات';
 
+  static const String enterSerialNumber = 'أدخل الرقم التسلسلي';
+
+  static const String serialNumber = 'الرقم التسلسلي';
+
+  static const String confirm = 'تأكيد';
+
+  static const String refresh = 'تحديث';
+
+  static const String sales = 'فاتورة مبيعات';
+  static const String purchase = 'فاتورة مشتريات';
+  static const String salesReturn = 'فاتورة مرتجع مبيعات';
+  static const String purchaseReturn = 'فاتورة مرتجع مشتريات';
+  static const String adjustmentEntry = 'فاتورة تسوية ادخال';
+  static const String outputAdjustment = 'فاتورة تسوية اخراج';
+  static const String firstPeriodInventory = 'بضاعة اول مدة';
+  static const String transferIn = 'تسوية الزيادة';
+  static const String transferOut = 'تسوية النقص';
+
+  static const String cash = 'نقدي';
+
+  static const String due = 'اجل';
+  static const String mainWarehouse = 'المستودع الرئيسي';
+
+  static const String materialName = 'اسم المادة';
+  static const String purchaseBill = 'فاتورة الشراء';
+  static const String purchaseBillNumber = 'رقم فاتورة الشراء';
+  static const String salesBill = 'فاتورة البيع';
+  static const String salesBillNumber = 'رقم فاتورة البيع';
+  static const String entryDate = 'تاريخ الإدخال';
+  static const String sold = 'تم البيع';
+  static const String yes = 'نعم';
+  static const String no = 'لا';
 }

@@ -25,6 +25,7 @@ import '../../../../core/services/firebase/implementations/repos/compound_dataso
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../materials/controllers/material_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
@@ -257,7 +258,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
           }
         }
       });
-      log('saveSerialNumbers');
+
       // Save all the serial numbers using your repository.
       final result = await _serialNumbersRepo.saveAll(items);
 
@@ -265,6 +266,25 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (success) {
+          // Update the material's serial numbers after saving successfully.
+          serialControllers.forEach(
+            (material, controllers) {
+              final materialModel = read<MaterialController>().getMaterialById(material.id!);
+
+              if (materialModel != null) {
+                final updatedSerialNumbers = {
+                  ...?materialModel.serialNumbers, // Preserve existing serials if any
+                  for (final controller in controllers) controller.text.trim(): false, // New serials default to unsold
+                };
+
+                // Update the material model with new serial numbers
+                read<MaterialController>().updateMaterial(
+                  materialModel.copyWith(serialNumbers: updatedSerialNumbers),
+                );
+              }
+            },
+          );
+
           // Optionally, show a success message or perform further actions.
           AppUIUtils.onSuccess('Serial numbers saved successfully.');
         },

@@ -177,23 +177,28 @@ class MaterialController extends GetxController with AppNavigator {
 
     List<String> searchParts = lowerQuery.split(RegExp(r'\s+'));
 
+    // Check for exact match first
     var exactMatch = materials.firstWhereOrNull(
       (item) =>
           item.matName!.toLowerCase() == lowerQuery ||
           item.matCode!.toString().toLowerCase() == lowerQuery ||
-          (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery),
+          (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
+          (item.serialNumbers != null && item.serialNumbers!.keys.any((serial) => serial.toLowerCase() == lowerQuery)),
     );
 
     if (exactMatch != null) {
       return [exactMatch];
     }
 
+    // Check for matches where name, code, barcode, or serial numbers start with the query
     var startsWithMatches = materials
         .where(
           (item) =>
               searchParts.every((part) => item.matName!.toLowerCase().startsWith(part)) ||
               searchParts.every((part) => item.matCode.toString().toLowerCase().startsWith(part)) ||
-              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))),
+              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))) ||
+              (item.serialNumbers != null &&
+                  searchParts.every((part) => item.serialNumbers!.keys.any((serial) => serial.toLowerCase().startsWith(part)))),
         )
         .toList();
 
@@ -201,12 +206,15 @@ class MaterialController extends GetxController with AppNavigator {
       return startsWithMatches;
     }
 
+    // Check for matches where name, code, barcode, or serial numbers contain the query
     return materials
         .where(
           (item) =>
               searchParts.every((part) => item.matName.toString().toLowerCase().contains(part)) ||
               searchParts.every((part) => item.matCode.toString().toLowerCase().contains(part)) ||
-              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))),
+              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))) ||
+              (item.serialNumbers != null &&
+                  searchParts.every((part) => item.serialNumbers!.keys.any((serial) => serial.toLowerCase().contains(part)))),
         )
         .toList();
   }
@@ -387,7 +395,7 @@ class MaterialController extends GetxController with AppNavigator {
     await saveOrUpdateMaterial();
   }
 
-  resetMaterialQuantityAndPrice() async{
+  resetMaterialQuantityAndPrice() async {
     log(materials
         .where(
           (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
@@ -397,7 +405,7 @@ class MaterialController extends GetxController with AppNavigator {
     for (final material in materials.where(
       (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
     )) {
-    await  updateMaterialByModel(
+      await updateMaterialByModel(
         material,
         (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, calcMinPrice: 0),
       );
