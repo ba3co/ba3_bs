@@ -21,14 +21,16 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/materials/material_model.dart';
+import '../ui/screens/add_material_screen.dart';
 
-class MaterialController extends GetxController with AppNavigator {
+class MaterialController extends GetxController with AppNavigator,FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
@@ -370,11 +372,11 @@ class MaterialController extends GetxController with AppNavigator {
     );
   }
 
-  void navigateToAddOrUpdateMaterialScreen({String? matId}) {
+  void navigateToAddOrUpdateMaterialScreen({String? matId, required BuildContext context}) {
     selectedMaterial = null;
     if (matId != null) selectedMaterial = getMaterialById(matId);
-    materialFromHandler.init(selectedMaterial);
-    to(AppRoutes.addMaterialScreen);
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AddMaterialScreen());
+    // to(AppRoutes.addMaterialScreen);
   }
 
   void openMaterialSelectionDialog({
