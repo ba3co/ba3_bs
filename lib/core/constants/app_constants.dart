@@ -283,6 +283,8 @@ abstract class AppConstants {
   //bill
   static const String invRecId = 'invRecId';
   static const String invRecProduct = 'invRecProduct';
+
+  static const String invRecProductSerial = 'invRecProductSerial';
   static const String invRecTotal = 'invRecTotal';
   static const String invRecSubTotal = 'invRecSubTotal';
   static const String invRecVat = 'invRecVat';

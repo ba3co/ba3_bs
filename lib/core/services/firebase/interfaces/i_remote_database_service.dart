@@ -35,7 +35,14 @@ abstract class IRemoteDatabaseService<T> {
   /// For each item in [items]:
   /// - If the document (identified by [docIdField]) does not exist, it creates it with [nestedFieldPath].
   /// - If the document exists, it updates [nestedFieldPath] using `FieldValue.arrayUnion`.
-  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnion({
+  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnionOnMap({
+    required String path,
+    required List<Map<String, dynamic>> items,
+    required String docIdField,
+    required String nestedFieldPath,
+  });
+
+  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnionOnList({
     required String path,
     required List<Map<String, dynamic>> items,
     required String docIdField,

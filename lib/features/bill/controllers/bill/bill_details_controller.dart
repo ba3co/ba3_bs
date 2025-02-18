@@ -27,6 +27,7 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../materials/controllers/material_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
+import '../../../materials/service/serial_number_model_factory.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../data/models/bill_items.dart';
@@ -234,83 +235,57 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> saveSerialNumbers(BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers) async {
+    log('sellSerialsControllers $serialControllers');
+
     // Create a list to collect the serial number models.
     final List<SerialNumberModel> items = [];
 
-    if (billModel.billTypeModel.billPatternType == BillPatternType.purchase) {
-      // Iterate through each material's controllers.
-      serialControllers.forEach((material, controllers) {
-        for (final controller in controllers) {
-          final serialText = controller.text.trim();
+    // Iterate through each material's controllers.
+    serialControllers.forEach(
+      (MaterialModel material, List<TextEditingController> serials) {
+        for (final TextEditingController serialController in serials) {
+          final serialText = serialController.text.trim();
+          log('serialText $serialText');
+
           // If the text is not empty, create a SerialNumberModel.
           if (serialText.isNotEmpty) {
-            items.add(
-              SerialNumberModel(
-                serialNumber: serialText,
-                matId: material.id,
-                matName: material.matName,
-                buyBillId: billModel.billId,
-                buyBillNumber: billModel.billDetails.billNumber,
-                entryDate: billModel.billDetails.billDate,
-                sold: false,
-              ),
-            );
+            final SerialNumberModel serialNumberModel = SerialNumberModelFactory.getModel(serialText, billModel: billModel, material: material);
+            items.add(serialNumberModel);
           }
-        }
-      });
-
-      // Save all the serial numbers using your repository.
-      final result = await _serialNumbersRepo.saveAll(items);
-
-      // Handle the result of the save operation.
-      result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
-        (success) {
-          // Update the material's serial numbers after saving successfully.
-          serialControllers.forEach(
-            (material, controllers) {
-              final materialModel = read<MaterialController>().getMaterialById(material.id!);
-
-              if (materialModel != null) {
-                final updatedSerialNumbers = {
-                  ...?materialModel.serialNumbers, // Preserve existing serials if any
-                  for (final controller in controllers) controller.text.trim(): false, // New serials default to unsold
-                };
-
-                // Update the material model with new serial numbers
-                read<MaterialController>().updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
-              }
-            },
-          );
-
-          // Optionally, show a success message or perform further actions.
-          AppUIUtils.onSuccess('Serial numbers saved successfully.');
-        },
-      );
-    }
-  }
-
-  onSaveSerialsSuccess(
-      {required Map<MaterialModel, List<TextEditingController>> serialControllers, required Map<String, bool> updatedSerialNumbers}) {
-    // Update the material's serial numbers after saving successfully.
-    serialControllers.forEach(
-      (material, controllers) {
-        final materialModel = read<MaterialController>().getMaterialById(material.id!);
-
-        if (materialModel != null) {
-          final updatedSerialNumbers = {
-            ...?materialModel.serialNumbers, // Preserve existing serials if any
-            for (final controller in controllers) controller.text.trim(): false, // New serials default to unsold
-          };
-
-          // Update the material model with new serial numbers
-          read<MaterialController>().updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
         }
       },
     );
 
-    // Optionally, show a success message or perform further actions.
-    AppUIUtils.onSuccess('Serial numbers saved successfully.');
+    // Save all the serial numbers using your repository.
+    final result = await _serialNumbersRepo.saveAll(items);
+
+    // Handle the result of the save operation.
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (List<SerialNumberModel> savedSerialsModels) => onSaveSerialsSuccess(serialControllers, savedSerialsModels),
+    );
+  }
+
+  void onSaveSerialsSuccess(Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels) {
+    serialControllers.forEach((MaterialModel material, List<TextEditingController> serials) {
+      final materialModel = read<MaterialController>().getMaterialById(material.id!);
+
+      for (final serial in savedSerialsModels) {
+        log('onSaveSerialsSuccess serial: ${serial.toJson()}');
+      }
+
+      if (materialModel != null) {
+        // Ensure non-null keys and values
+        final Map<String, bool> updatedSerialNumbers = {
+          ...?materialModel.serialNumbers, // Preserve existing serials
+          for (final serial in savedSerialsModels.where((s) => s.matId == material.id))
+            if (serial.serialNumber != null && serial.transactions.last.sold != null) serial.serialNumber!: serial.transactions.last.sold!,
+        };
+
+        // Update the material model with new serial numbers
+        read<MaterialController>().updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+      }
+    });
   }
 
   Future<Either<Failure, BillModel>> updateOnly(BillModel bill) async {

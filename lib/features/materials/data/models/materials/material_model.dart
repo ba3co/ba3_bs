@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:get/get.dart';
@@ -270,18 +271,15 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matCalPriceFromDetail: json['MatCalPriceFromDetail'],
       matForceInExpire: json['MatForceInExpire'],
       matForceOutExpire: json['MatForceOutExpire'],
-      matCreateDate:
-          DateTime.tryParse(json['MatCreateDate'] ?? '') ?? DateTime.now(),
+      matCreateDate: DateTime.tryParse(json['MatCreateDate'] ?? '') ?? DateTime.now(),
       matIsIntegerQuantity: json['MatIsIntegerQuantity'],
       matClassFlag: json['MatClassFlag'],
       matForceInClass: json['MatForceInClass'],
       matForceOutClass: json['MatForceOutClass'],
       matDisableLastPrice: json['MatDisableLastPrice'],
-      matLastPriceCurVal:
-          double.tryParse(json['MatLastPriceCurVal'].toString()) ?? 0.0,
+      matLastPriceCurVal: double.tryParse(json['MatLastPriceCurVal'].toString()) ?? 0.0,
       matPrevQty: json['MatPrevQty']?.toString(),
-      matFirstCostDate: DateTime.now().copyWith(
-          year: 1980, day: 1, month: 1, minute: 0, hour: 0, second: 0),
+      matFirstCostDate: DateTime.now().copyWith(year: 1980, day: 1, month: 1, minute: 0, hour: 0, second: 0),
       matHasSegments: json['MatHasSegments'],
       matParent: json['MatParent']?.toString(),
       matIsCompositionUpdated: json['MatIsCompositionUpdated'],
@@ -362,29 +360,13 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(
-          title: AppStrings.identificationNumber.tr,
-          field: AppConstants.materialIdFiled,
-          type: PlutoColumnType.text(),
-          hide: true): id,
+      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(
-          title: AppStrings.materialName,
-          field: 'اسم المادة',
-          type: PlutoColumnType.text(),
-          width: 400): matName,
-      PlutoColumn(
-          title: AppStrings.quantity.tr,
-          field: 'الكمية',
-          type: PlutoColumnType.text(),
-          width: 120,
-          textAlign: PlutoColumnTextAlign.center): matQuantity,
-      PlutoColumn(
-          title: AppStrings.cost.tr,
-          field: 'التكلفة',
-          type: PlutoColumnType.text(),
-          width: 120,
-          textAlign: PlutoColumnTextAlign.center): retailPrice,
+      PlutoColumn(title: AppStrings.materialName, field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
+      PlutoColumn(title: AppStrings.quantity.tr, field: 'الكمية', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          matQuantity,
+      PlutoColumn(title: AppStrings.cost.tr, field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          retailPrice,
       PlutoColumn(
           title: AppStrings.mediatorPrice.tr,
           field: 'الوسطي',
@@ -394,37 +376,20 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           ),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): calcMinPrice,
-      PlutoColumn(
-          title: AppStrings.consumer.tr,
-          field: 'المستهلك',
-          type: PlutoColumnType.text(),
-          width: 120,
-          textAlign: PlutoColumnTextAlign.center): endUserPrice,
-      PlutoColumn(
-          title: AppStrings.wholesale.tr,
-          field: 'الجملة',
-          type: PlutoColumnType.text(),
-          width: 120,
-          textAlign: PlutoColumnTextAlign.center): wholesalePrice,
+      PlutoColumn(title: AppStrings.consumer.tr, field: 'المستهلك', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          endUserPrice,
+      PlutoColumn(title: AppStrings.wholesale.tr, field: 'الجملة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          wholesalePrice,
       PlutoColumn(
           title: AppStrings.materialCode,
           field: 'رمز المادة',
           type: PlutoColumnType.text(),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): matCode,
-      PlutoColumn(
-          title: AppStrings.barcode.tr,
-          field: 'الباركود',
-          type: PlutoColumnType.text(),
-          width: 120,
-          textAlign: PlutoColumnTextAlign.center): matBarCode,
-      PlutoColumn(
-          title: AppStrings.group.tr,
-          field: 'المجموعة',
-          type: PlutoColumnType.text()): read<MaterialGroupController>()
-              .getMaterialGroupById(matGroupGuid!)
-              ?.groupName ??
-          '',
+      PlutoColumn(title: AppStrings.barcode.tr, field: 'الباركود', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
+          matBarCode,
+      PlutoColumn(title: AppStrings.group.tr, field: 'المجموعة', type: PlutoColumnType.text()):
+          read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName ?? '',
     };
   }
 
@@ -514,8 +479,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matAss: matAss ?? this.matAss,
       matOldGUID: matOldGUID ?? this.matOldGUID,
       matNewGUID: matNewGUID ?? this.matNewGUID,
-      matCalPriceFromDetail:
-          matCalPriceFromDetail ?? this.matCalPriceFromDetail,
+      matCalPriceFromDetail: matCalPriceFromDetail ?? this.matCalPriceFromDetail,
       matForceInExpire: matForceInExpire ?? this.matForceInExpire,
       matForceOutExpire: matForceOutExpire ?? this.matForceOutExpire,
       matCreateDate: matCreateDate ?? this.matCreateDate,
@@ -529,13 +493,10 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matFirstCostDate: matFirstCostDate ?? this.matFirstCostDate,
       matHasSegments: matHasSegments ?? this.matHasSegments,
       matParent: matParent ?? this.matParent,
-      matIsCompositionUpdated:
-          matIsCompositionUpdated ?? this.matIsCompositionUpdated,
-      matInheritsParentSpecs:
-          matInheritsParentSpecs ?? this.matInheritsParentSpecs,
+      matIsCompositionUpdated: matIsCompositionUpdated ?? this.matIsCompositionUpdated,
+      matInheritsParentSpecs: matInheritsParentSpecs ?? this.matInheritsParentSpecs,
       matCompositionName: matCompositionName ?? this.matCompositionName,
-      matCompositionLatinName:
-          matCompositionLatinName ?? this.matCompositionLatinName,
+      matCompositionLatinName: matCompositionLatinName ?? this.matCompositionLatinName,
       movedComposite: movedComposite ?? this.movedComposite,
       wholesalePrice: wholesalePrice ?? this.wholesalePrice,
       retailPrice: retailPrice ?? this.retailPrice,
@@ -545,6 +506,11 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       calcMinPrice: calcMinPrice ?? this.calcMinPrice,
       serialNumbers: serialNumbers ?? this.serialNumbers,
     );
+  }
+
+  @override
+  String toString() {
+    return 'MaterialModel(id: $id, matName: $matName)';
   }
 }
 
@@ -569,90 +535,136 @@ class MatExtraBarcodeModel {
   }
 }
 
-class SerialNumberModel implements PlutoAdaptable {
+class SerialNumberModel {
   final String? serialNumber;
-
   final String? matId; // Foreign key linking to MaterialModel.id
-
   final String? matName;
-
-  @HiveField(3)
-  final String? buyBillId; // Bill ID for buying the material
-
-  final int? buyBillNumber; // Bill Number for buying the material
-
-  final String? sellBillId; // Bill ID for selling the material
-
-  final int? sellBillNumber; // Sell Number for buying the material
-
-  final DateTime? entryDate;
-
-  final bool? sold; // Indicates whether the item is sold
+  final List<SerialTransactionModel> transactions; // List of buy/sell records
 
   SerialNumberModel({
     this.serialNumber,
     this.matId,
     this.matName,
-    this.buyBillId,
-    this.buyBillNumber,
-    this.sellBillId,
-    this.sellBillNumber,
-    this.entryDate,
-    this.sold,
+    required this.transactions,
   });
 
-  /// Factory constructor to create a SerialNumberModel from JSON.
+  /// Factory constructor to create a SerialNumberModel from JSON safely.
   factory SerialNumberModel.fromJson(Map<String, dynamic> json) {
     return SerialNumberModel(
-      serialNumber: json['docId'] as String?,
-      matId: json['matId'] as String?,
-      matName: json['matName'] as String?,
-      buyBillId: json['buyBillId'] as String?,
-      buyBillNumber: json['buyBillNumber'] as int?,
-      sellBillId: json['sellBillId'] as String?,
-      sellBillNumber: json['sellBillNumber'] as int?,
-      entryDate: json['entryDate'] != null
-          ? DateTime.parse(json['entryDate'] as String)
-          : null,
-      sold: json['sold'] as bool?,
+      serialNumber: json.containsKey('docId') ? json['docId'] as String? : null,
+      matId: json.containsKey('matId') ? json['matId'] as String? : null,
+      matName: json.containsKey('matName') ? json['matName'] as String? : null,
+      transactions: json.containsKey('transactions')
+          ? (json['transactions'] as List<dynamic>?)?.map((e) => SerialTransactionModel.fromJson(e)).toList() ?? []
+          : [],
     );
   }
 
-  /// Convert a SerialNumberModel to JSON.
-  Map<String, dynamic> toJson() => {
-        'docId': serialNumber,
-        'matId': matId,
-        'matName': matName,
-        'buyBillId': buyBillId,
-        'buyBillNumber': buyBillNumber,
-        'sellBillId': sellBillId,
-        'sellBillNumber': sellBillNumber,
-        'entryDate': entryDate?.toIso8601String(),
-        'sold': sold,
-      };
+  /// Convert a SerialNumberModel to JSON without null properties.
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    if (serialNumber != null) data['docId'] = serialNumber;
+    if (matId != null) data['matId'] = matId;
+    if (matName != null) data['matName'] = matName;
+    if (transactions.isNotEmpty) {
+      data['transactions'] = transactions.map((e) => e.toJson()).toList();
+    }
+    return data;
+  }
 
   /// Creates a new instance with updated properties.
   SerialNumberModel copyWith({
     String? serialNumber,
     String? matId,
     String? matName,
-    String? buyBillId,
-    int? buyBillNumber,
-    String? sellBillId,
-    int? sellBillNumber,
-    DateTime? entryDate,
-    bool? sold,
+    List<SerialTransactionModel>? transactions,
   }) {
     return SerialNumberModel(
       serialNumber: serialNumber ?? this.serialNumber,
       matId: matId ?? this.matId,
       matName: matName ?? this.matName,
+      transactions: transactions ?? this.transactions,
+    );
+  }
+}
+
+class SerialTransactionModel implements PlutoAdaptable {
+  final String? buyBillId;
+  final int? buyBillNumber;
+  final String? buyBillTypeId;
+  final String? sellBillId;
+  final int? sellBillNumber;
+  final String? sellBillTypeId;
+  final DateTime? entryDate;
+  final bool? sold;
+  final SerialTransactionOrigin? transactionOrigin;
+
+  SerialTransactionModel({
+    this.buyBillId,
+    this.buyBillNumber,
+    this.buyBillTypeId,
+    this.sellBillId,
+    this.sellBillNumber,
+    this.sellBillTypeId,
+    this.entryDate,
+    this.sold,
+    this.transactionOrigin,
+  });
+
+  /// Factory constructor to create a SerialTransactionModel from JSON safely.
+  factory SerialTransactionModel.fromJson(Map<String, dynamic> json) {
+    return SerialTransactionModel(
+      buyBillId: json.containsKey('buyBillId') ? json['buyBillId'] as String? : null,
+      buyBillNumber: json.containsKey('buyBillNumber') ? json['buyBillNumber'] as int? : null,
+      buyBillTypeId: json.containsKey('buyBillTypeId') ? json['buyBillTypeId'] as String? : null,
+      sellBillId: json.containsKey('sellBillId') ? json['sellBillId'] as String? : null,
+      sellBillNumber: json.containsKey('sellBillNumber') ? json['sellBillNumber'] as int? : null,
+      sellBillTypeId: json.containsKey('sellBillTypeId') ? json['sellBillTypeId'] as String? : null,
+      entryDate: json.containsKey('entryDate') && json['entryDate'] != null ? DateTime.tryParse(json['entryDate'] as String) : null,
+      sold: json.containsKey('sold') ? json['sold'] as bool? : null,
+      transactionOrigin: json.containsKey('transactionOrigin') && json['transactionOrigin'] != null
+          ? SerialTransactionOrigin.fromJson(json['transactionOrigin'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+
+  /// Convert a SerialTransactionModel to JSON.
+  Map<String, dynamic> toJson() {
+    return {
+      if (buyBillId != null) 'buyBillId': buyBillId,
+      if (buyBillNumber != null) 'buyBillNumber': buyBillNumber,
+      if (buyBillTypeId != null) 'buyBillTypeId': buyBillTypeId,
+      if (sellBillId != null) 'sellBillId': sellBillId,
+      if (sellBillNumber != null) 'sellBillNumber': sellBillNumber,
+      if (sellBillTypeId != null) 'sellBillTypeId': sellBillTypeId,
+      if (entryDate != null) 'entryDate': entryDate!.toIso8601String(),
+      if (sold != null) 'sold': sold,
+      if (transactionOrigin != null) 'transactionOrigin': transactionOrigin?.toJson(),
+    };
+  }
+
+  /// Creates a new instance with updated properties while keeping existing ones.
+  SerialTransactionModel copyWith({
+    String? buyBillId,
+    int? buyBillNumber,
+    String? buyBillTypeId,
+    String? sellBillId,
+    int? sellBillNumber,
+    String? sellBillTypeId,
+    DateTime? entryDate,
+    bool? sold,
+    final SerialTransactionOrigin? transactionOrigin,
+  }) {
+    return SerialTransactionModel(
       buyBillId: buyBillId ?? this.buyBillId,
       buyBillNumber: buyBillNumber ?? this.buyBillNumber,
+      buyBillTypeId: buyBillTypeId ?? this.buyBillTypeId,
       sellBillId: sellBillId ?? this.sellBillId,
       sellBillNumber: sellBillNumber ?? this.sellBillNumber,
+      sellBillTypeId: sellBillTypeId ?? this.sellBillTypeId,
       entryDate: entryDate ?? this.entryDate,
       sold: sold ?? this.sold,
+      transactionOrigin: transactionOrigin ?? this.transactionOrigin,
     );
   }
 
@@ -660,69 +672,71 @@ class SerialNumberModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([_]) {
     return {
       // Visible column for the serial number.
-      PlutoColumn(
-        title: AppStrings.serialNumber.tr,
-        field: 'serialNumber',
-        type: PlutoColumnType.text(),
-      ): serialNumber ?? '',
+      PlutoColumn(title: AppStrings.serialNumber.tr, field: 'serialNumber', type: PlutoColumnType.text()): transactionOrigin?.serialNumber ?? '',
 
       // Hidden column for the material ID.
-      PlutoColumn(
-        hide: true,
-        title: 'معرف المادة',
-        field: 'matId',
-        type: PlutoColumnType.text(),
-      ): matId ?? '',
+      PlutoColumn(hide: true, title: 'معرف المادة', field: 'matId', type: PlutoColumnType.text()): transactionOrigin?.matId ?? '',
+
       // Hidden column for the material ID.
-      PlutoColumn(
-        title: AppStrings.materialName.tr,
-        field: 'matName',
-        type: PlutoColumnType.text(),
-      ): matName ?? '',
+      PlutoColumn(title: AppStrings.materialName.tr, field: 'matName', type: PlutoColumnType.text()): transactionOrigin?.matName ?? '',
 
       // Column for the buy bill ID.
-      PlutoColumn(
-        hide: true,
-        title: AppStrings.purchaseBill.tr,
-        field: 'buyBillId',
-        type: PlutoColumnType.text(),
-      ): buyBillId ?? '',
+      PlutoColumn(hide: true, title: 'buyBillId', field: 'buyBillId', type: PlutoColumnType.text()): buyBillId ?? '',
 
-      // Column for the buy bill ID.
-      PlutoColumn(
-        title: AppStrings.purchaseBillNumber.tr,
-        field: 'buyBillNumber',
-        type: PlutoColumnType.text(),
-      ): buyBillNumber ?? '',
+      PlutoColumn(title: AppStrings.purchaseBill.tr, field: AppStrings.purchaseBill.tr, type: PlutoColumnType.text()):
+          AppServiceUtils.billNameAndNumberFormat(buyBillTypeId, buyBillNumber),
 
       // Column for the sell bill ID.
-      PlutoColumn(
-        hide: true,
-        title: AppStrings.salesBill.tr,
-        field: 'sellBillId',
-        type: PlutoColumnType.text(),
-      ): sellBillId ?? '',
+      PlutoColumn(hide: true, title: 'sellBillId', field: 'sellBillId', type: PlutoColumnType.text()): sellBillId ?? '',
 
-      // Column for the sell bill ID.
-      PlutoColumn(
-        title: AppStrings.salesBillNumber.tr,
-        field: 'sellBillNumber',
-        type: PlutoColumnType.text(),
-      ): sellBillNumber ?? '',
+      PlutoColumn(title: AppStrings.salesBill.tr, field: AppStrings.salesBill.tr, type: PlutoColumnType.text()):
+          AppServiceUtils.billNameAndNumberFormat(sellBillTypeId, sellBillNumber),
 
       // Column for the entry date.
-      PlutoColumn(
-        title: AppStrings.entryDate.tr,
-        field: 'entryDate',
-        type: PlutoColumnType.date(),
-      ): entryDate,
+      PlutoColumn(title: AppStrings.entryDate.tr, field: 'entryDate', type: PlutoColumnType.date()): entryDate,
 
       // Column for the sold status (displaying a simple "Yes/No").
-      PlutoColumn(
-        title: AppStrings.sold.tr,
-        field: 'sold',
-        type: PlutoColumnType.text(),
-      ): sold == true ? AppStrings.yes.tr : AppStrings.no.tr,
+      PlutoColumn(title: AppStrings.sold.tr, field: 'sold', type: PlutoColumnType.text()): sold == true ? AppStrings.yes.tr : AppStrings.no.tr,
     };
+  }
+}
+
+class SerialTransactionOrigin {
+  /// Unique identifier for the bond entry, which is the same as the origin ID (e.g., billId).
+  final String? serialNumber;
+
+  /// Refers to the origin entity type id of the bond entry (e.g., billTypeId for bills).
+  final String? matId;
+
+  final String? matName;
+
+  SerialTransactionOrigin({this.serialNumber, this.matId, this.matName});
+
+  factory SerialTransactionOrigin.fromJson(Map<String, dynamic> json) {
+    return SerialTransactionOrigin(
+      serialNumber: json['serialNumber'] as String?,
+      matId: json['matId'] as String?,
+      matName: json['matName'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'serialNumber': serialNumber,
+      'matId': matId,
+      'matName': matName,
+    };
+  }
+
+  SerialTransactionOrigin copyWith({
+    String? serialNumber,
+    String? matId,
+    String? matName,
+  }) {
+    return SerialTransactionOrigin(
+      serialNumber: serialNumber ?? this.serialNumber,
+      matId: matId ?? this.matId,
+      matName: matName ?? this.matName,
+    );
   }
 }

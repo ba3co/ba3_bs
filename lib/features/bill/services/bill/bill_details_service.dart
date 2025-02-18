@@ -34,6 +34,7 @@ import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../ui/widgets/bill_shared/bill_header_field.dart';
+import 'bill_type_utils.dart';
 
 class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
@@ -420,7 +421,13 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   Future<void> saveMaterialsSerials(BillModel savedBill) async {
-    final Map<MaterialModel, List<TextEditingController>> serialControllers = plutoController.serialControllers;
+    final Map<MaterialModel, List<TextEditingController>> buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
+    final Map<MaterialModel, List<TextEditingController>> sellSerialsControllers = plutoController.sellMaterialsSerialsControllers;
+
+    log('BillTypeUtils.isPurchaseRelated(savedBill) ${BillTypeUtils.isPurchaseRelated(savedBill)}');
+
+    final Map<MaterialModel, List<TextEditingController>> serialControllers =
+        BillTypeUtils.isPurchaseRelated(savedBill) ? buySerialsControllers : sellSerialsControllers;
 
     if (serialControllers.isNotEmpty) {
       billDetailsController.saveSerialNumbers(savedBill, serialControllers);

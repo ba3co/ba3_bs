@@ -10,9 +10,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   /// Subscribe to changes for a specific document ID
   @override
   Stream<ChangesModel> subscribeToDoc({required String documentId}) {
-    return databaseService
-        .subscribeToDoc(path: path, documentId: documentId)
-        .map((data) => ChangesModel.fromJson(data));
+    return databaseService.subscribeToDoc(path: path, documentId: documentId).map((data) => ChangesModel.fromJson(data));
   }
 
   @override
@@ -64,7 +62,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
     }).toList();
 
     // Call batchUpdateWithArrayUnion to handle the batch update with arrayUnion logic
-    final updatedItems = await databaseService.batchUpdateWithArrayUnion(
+    final updatedItems = await databaseService.batchUpdateWithArrayUnionOnMap(
       path: path,
       items: itemsToUpdate,
       docIdField: 'docId', // The field in the map that contains the docId

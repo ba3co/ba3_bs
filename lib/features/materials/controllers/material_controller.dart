@@ -14,7 +14,6 @@ import 'package:ba3_bs/features/materials/controllers/material_group_controller.
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
-import 'package:ba3_bs/features/materials/ui/screens/add_material_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +21,6 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../../core/helper/enums/enums.dart';
-import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
@@ -30,7 +28,7 @@ import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/materials/material_model.dart';
 
-class MaterialController extends GetxController with AppNavigator , FloatingLauncher {
+class MaterialController extends GetxController with AppNavigator {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
@@ -185,7 +183,8 @@ class MaterialController extends GetxController with AppNavigator , FloatingLaun
           item.matName!.toLowerCase() == lowerQuery ||
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
-          (item.serialNumbers != null && item.serialNumbers!.keys.any((serial) => serial.toLowerCase() == lowerQuery)),
+          (item.serialNumbers != null &&
+              item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
     if (exactMatch != null) {
@@ -200,7 +199,12 @@ class MaterialController extends GetxController with AppNavigator , FloatingLaun
               searchParts.every((part) => item.matCode.toString().toLowerCase().startsWith(part)) ||
               (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))) ||
               (item.serialNumbers != null &&
-                  searchParts.every((part) => item.serialNumbers!.keys.any((serial) => serial.toLowerCase().startsWith(part)))),
+                  searchParts.every(
+                    (part) => item.serialNumbers!.entries.any(
+                      // Only allow unsold serials
+                      (entry) => entry.key.toLowerCase().startsWith(part) && entry.value == false,
+                    ),
+                  )),
         )
         .toList();
 
@@ -216,7 +220,9 @@ class MaterialController extends GetxController with AppNavigator , FloatingLaun
               searchParts.every((part) => item.matCode.toString().toLowerCase().contains(part)) ||
               (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))) ||
               (item.serialNumbers != null &&
-                  searchParts.every((part) => item.serialNumbers!.keys.any((serial) => serial.toLowerCase().contains(part)))),
+                  searchParts.every(
+                    (part) => item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
+                  )), // Only allow unsold serials
         )
         .toList();
   }
@@ -258,39 +264,20 @@ class MaterialController extends GetxController with AppNavigator , FloatingLaun
     // Validate the input before proceeding
 
     if (!materialFromHandler.validate()) return;
-
     // Create a material model based on the user input
-    final updatedMaterialModel = _createMaterialModel();
+    final materialModel = _createMaterialModel();
     // Handle null material model
-    if (updatedMaterialModel == null) {
+    if (materialModel == null) {
       AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
       return;
     }
-    // Prepare user change queue for saving
-    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, selectedMaterial != null ? ChangeType.update : ChangeType.add);
-   // Save changes and handle results
-    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-    changesResult.fold(
+
+    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+
+    hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onSaveSuccess(updatedMaterialModel),
+      (savedMaterial) => _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add),
     );
-
-    _onSaveSuccess(updatedMaterialModel);
-  }
-
-  Future<void> updateMaterial(MaterialModel updatedMaterialModel, {ChangeType changeType = ChangeType.update}) async {
-    // Prepare user change queue for saving
-    final userChangeQueue = _prepareUserChangeQueue(updatedMaterialModel, changeType);
-
-    // Save changes and handle results
-    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
-
-    changesResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onSaveSuccess(updatedMaterialModel),
-    );
-
-    _onSaveSuccess(updatedMaterialModel);
   }
 
   void deleteMaterial() async {
@@ -342,18 +329,27 @@ class MaterialController extends GetxController with AppNavigator , FloatingLaun
       )
       .toList();
 
-  void _onSaveSuccess(MaterialModel materialModel) async {
-    // Persist the data in Hive upon successful save
-
-    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+  Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
+    final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterial) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح');
-        reloadMaterials();
-        // log('materials length after add item: ${materials.length}');
-      },
+      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
+    );
+  }
+
+  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType}) async {
+    reloadMaterials();
+
+    // Prepare user change queue for saving
+    final userChangeQueue = _prepareUserChangeQueue(materialModel, changeType);
+
+    // Save changes and handle results
+    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+
+    changesResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) {},
     );
   }
 
@@ -374,19 +370,11 @@ class MaterialController extends GetxController with AppNavigator , FloatingLaun
     );
   }
 
-  void navigateToAddOrUpdateMaterialScreen({String? matId,required BuildContext context}) {
+  void navigateToAddOrUpdateMaterialScreen({String? matId}) {
     selectedMaterial = null;
     if (matId != null) selectedMaterial = getMaterialById(matId);
-
-
-
     materialFromHandler.init(selectedMaterial);
-    launchFloatingWindow(
-        context: context,
-        minimizedTitle: ApiConstants.materials.tr,
-        floatingScreen: AddMaterialScreen()
-    );
-    // to(AppRoutes.addMaterialScreen);
+    to(AppRoutes.addMaterialScreen);
   }
 
   void openMaterialSelectionDialog({

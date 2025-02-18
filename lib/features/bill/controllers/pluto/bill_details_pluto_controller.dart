@@ -42,7 +42,10 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   List<PlutoColumn> additionsDiscountsColumns = AdditionsDiscountsRecordModel().toEditedMap().keys.toList();
 
   @override
-  Map<MaterialModel, List<TextEditingController>> serialControllers = {};
+  Map<MaterialModel, List<TextEditingController>> buyMaterialsSerialsControllers = {};
+
+  @override
+  Map<MaterialModel, List<TextEditingController>> sellMaterialsSerialsControllers = {};
 
   // State managers
   @override
@@ -89,8 +92,10 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
     final materialController = read<MaterialController>();
 
-    final invoiceRecords =
+    final List<InvoiceRecordModel> invoiceRecords =
         recordsTableStateManager.rows.map((row) => _processBillRow(row, materialController)).whereType<InvoiceRecordModel>().toList();
+
+    generateSellMaterialsSerialsControllers(invoiceRecords);
 
     recordsTableStateManager.setShowLoading(false);
     return invoiceRecords;
@@ -106,11 +111,33 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   @override
   void initSerialControllers(MaterialModel materialModel, int serialCount) {
-    serialControllers.update(
+    buyMaterialsSerialsControllers.update(
       materialModel,
       (existingList) => _matchControllerCount(existingList, serialCount),
       ifAbsent: () => _createControllers(serialCount),
     );
+  }
+
+  void generateSellMaterialsSerialsControllers(List<InvoiceRecordModel> invRecords) {
+    // Clear existing data to avoid duplicates
+    sellMaterialsSerialsControllers.clear();
+
+    for (final record in invRecords) {
+      // Extract MaterialModel and serial number
+      MaterialModel? material = read<MaterialController>().getMaterialByName(record.invRecProduct);
+      String? serialNumber = record.invRecProductSerial;
+
+      if (material != null && serialNumber != null && serialNumber.isNotEmpty) {
+        // Ensure the material exists in the map
+        sellMaterialsSerialsControllers.putIfAbsent(material, () => []);
+
+        // Add the serial number as a TextEditingController
+        sellMaterialsSerialsControllers[material]!.add(TextEditingController(text: serialNumber));
+      }
+    }
+
+    // Log for debugging
+    log('📌 Generated sellMaterialsSerialsControllers: ${sellMaterialsSerialsControllers.map((key, value) => MapEntry(key.toString(), value.map((controller) => controller.text).toList()))}');
   }
 
   /// Ensures the [controllers] list has exactly [requiredCount] items.
@@ -379,7 +406,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   @override
   void onClose() {
-    for (var controllerList in serialControllers.values) {
+    for (var controllerList in buyMaterialsSerialsControllers.values) {
       for (final controller in controllerList) {
         controller.dispose();
       }
