@@ -6,7 +6,7 @@ abstract class AppConstants {
 
   static const EnvType env = EnvType.debug; //"debug" or "release"
   static const vatGCC = 0.05;
-  static const constHeightTextField = 45.0;
+  static const constHeightTextField = 25.0;
   static const vat0_01 = 0.01;
   static const rowCustomBondAmount = 'rowCustomBondAmount';
   static const rowBondId = 'id';

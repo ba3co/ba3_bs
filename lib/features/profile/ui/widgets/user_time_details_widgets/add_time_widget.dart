@@ -45,7 +45,7 @@ class AddTimeWidget extends StatelessWidget {
                 SizedBox(
                   width: 45.w,
                   child: Text(
-                    userTimeController.lastEnterTime.value,
+                    userTimeController.lastEnterTime.value.tr,
                     style: AppTextStyles.headLineStyle3,
                   ),
                 ),
@@ -68,7 +68,7 @@ class AddTimeWidget extends StatelessWidget {
                 SizedBox(
                   width: 45.w,
                   child: Text(
-                    userTimeController.lastOutTime.value,
+                    userTimeController.lastOutTime.value.tr,
                     style: AppTextStyles.headLineStyle3,
                   ),
                 ),

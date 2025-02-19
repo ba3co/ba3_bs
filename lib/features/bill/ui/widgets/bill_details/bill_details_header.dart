@@ -2,19 +2,19 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
 import '../../../../../core/widgets/searchable_account_field.dart';
 import '../../../../accounts/data/models/account_model.dart';
-import '../../../../users_management/data/models/role_model.dart';
+import '../../../../floating_window/services/overlay_service.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../data/models/bill_model.dart';
 import '../bill_shared/bill_header_field.dart';
@@ -34,10 +34,38 @@ class BillDetailsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Form(
+      child:  Form(
         key: billDetailsController.formKey,
         child: Column(
           children: [
+            FormFieldRow(
+              firstItem: TextAndExpandedChildField(
+                label: AppStrings.billType.tr,
+                child: Obx(() {
+                  return OverlayService.showDropdown<InvPayType>(
+                    value: billDetailsController.selectedPayType.value,
+                    items: InvPayType.values,
+                    itemLabelBuilder: (type) => type.label.tr,
+                    onChanged: (selectedType) {
+                      if (billModel.billTypeModel.billPatternType?.hasCashesAccount ?? true) {
+                        billDetailsController.onPayTypeChanged(selectedType);
+                      }
+                    },
+                    textStyle: const TextStyle(fontSize: 14),
+                    height: AppConstants.constHeightTextField,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black38),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    onCloseCallback: () {
+                    },
+                  );
+                }),
+              ),
+              secondItem: StoreDropdown(storeSelectionHandler: billDetailsController),
+            ),
+            const VerticalSpace(8),
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
                 label: AppStrings.billDate.tr,
@@ -49,18 +77,6 @@ class BillDetailsHeader extends StatelessWidget {
                     },
                   );
                 }),
-              ),
-              secondItem: StoreDropdown(storeSelectionHandler: billDetailsController),
-            ),
-            const VerticalSpace(5),
-            FormFieldRow(
-              visible: billModel.billTypeModel.billPatternType?.hasCashesAccount,
-              firstItem: TextAndExpandedChildField(
-                label: AppStrings.mobileNumber.tr,
-                child: CustomTextFieldWithoutIcon(
-                  textEditingController: billDetailsController.mobileNumberController,
-                  // suffixIcon: const SizedBox.shrink(),
-                ),
               ),
               secondItem: SearchableAccountField(
                 label: AppStrings.customerAccount.tr,
@@ -77,19 +93,13 @@ class BillDetailsHeader extends StatelessWidget {
                 },
               ),
             ),
-            const VerticalSpace(5),
+            const VerticalSpace(8),
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: AppStrings.seller.tr,
-                readOnly: !RoleItemType.viewBill.hasReadPermission,
+                readOnly: true,
                 textEditingController: billDetailsController.sellerAccountController,
-                onSubmitted: (text) {
-                  read<SellersController>().openSellerSelectionDialog(
-                    query: text,
-                    textEditingController: billDetailsController.sellerAccountController,
-                    context: context,
-                  );
-                },
+                onSubmitted: (text) {},
               ),
               secondItem: TextAndExpandedChildField(
                 label: AppStrings.illustration.tr,
