@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
 import 'package:get/get.dart';
 

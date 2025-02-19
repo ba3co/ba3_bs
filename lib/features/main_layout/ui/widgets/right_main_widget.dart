@@ -49,7 +49,7 @@ class RightMainWidget extends StatelessWidget {
           VerticalSpace(),
           Center(
             child: Text(
-              "BA3 BS Version ${AppConfig.version}",
+              'BA3 BS Version ${AppConfig.version}',
               style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12.sp),
             ),
           )

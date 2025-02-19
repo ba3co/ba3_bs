@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
-import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
@@ -56,13 +55,14 @@ class BillPlutoContextMenu {
     'إضافة serial',
   ];
 
-  void showMaterialMenu(
-      {required BuildContext context,
-      required Offset tapPosition,
-      required MaterialModel materialModel,
-      required BillPlutoUtils invoiceUtils,
-      required BillPlutoGridService gridService,
-      required int index}) {
+  void showMaterialMenu({
+    required BuildContext context,
+    required Offset tapPosition,
+    required MaterialModel materialModel,
+    required BillPlutoUtils invoiceUtils,
+    required BillPlutoGridService gridService,
+    required int index,
+  }) {
     OverlayService.showPopupMenu(
       context: context,
       tapPosition: tapPosition,
@@ -78,15 +78,32 @@ class BillPlutoContextMenu {
           final PlutoRow selectedRow = controller.recordsTableStateManager.rows[index];
           final String matQuantity = AppServiceUtils.getCellValue(selectedRow, AppConstants.invRecQuantity);
           debugPrint('matQuantity $matQuantity');
+
           OverlayService.showDialog(
             context: context,
             content: AddSerialWidget(
               plutoController: controller,
               materialModel: materialModel,
-              serialCount: matQuantity.toInt,
+              serialCount: int.tryParse(matQuantity) ?? 0,
             ),
             onCloseCallback: () {
-              debugPrint('Material serial dialog closed.');
+              final List<TextEditingController> serialsControllers = controller.buyMaterialsSerialsControllers[materialModel] ?? [];
+
+              if (serialsControllers.isNotEmpty) {
+                // Extract serial numbers from controllers
+                final List<String> serialNumbers =
+                    serialsControllers.map((controller) => controller.text.trim()).where((text) => text.isNotEmpty).toList();
+
+                // Update the cell value with the extracted serial numbers
+                gridService.updateSelectedRowCellValue(
+                  controller.recordsTableStateManager,
+                  selectedRow,
+                  AppConstants.invRecProductSerialNumbers,
+                  serialNumbers,
+                );
+              }
+
+              debugPrint('Material serial dialog closed. Serial Numbers: ${serialsControllers.map((c) => c.text).toList()}');
             },
           );
         }

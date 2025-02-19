@@ -1,5 +1,6 @@
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
+
 import '../../bill/data/models/bill_model.dart';
-import '../../bill/services/bill/bill_type_utils.dart';
 import '../data/models/materials/material_model.dart';
 
 class SerialNumberModelFactory {
@@ -16,7 +17,7 @@ class SerialNumberModelFactory {
 
   /// Creates a SerialTransactionModel based on whether it's a purchase or a sale.
   static SerialTransactionModel _createTransaction(String serialText, BillModel billModel) {
-    bool isPurchase = BillTypeUtils.isPurchaseRelated(billModel);
+    bool isPurchase = billModel.isPurchaseRelated;
 
     return SerialTransactionModel(
       buyBillId: isPurchase ? billModel.billId : null,

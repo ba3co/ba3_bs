@@ -1,14 +1,16 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/i_controllers/i_pluto_controller.dart';
 import 'package:ba3_bs/core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,7 +36,6 @@ import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../ui/widgets/bill_shared/bill_header_field.dart';
-import 'bill_type_utils.dart';
 
 class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
@@ -96,6 +97,13 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     log('billSearchController.bills.length: ${billSearchController.bills.length}');
     log('isLastValidBill(billToDelete): ${billSearchController.isLastValidBill(billToDelete)}');
 
+    if (billToDelete.isSellRelated) {
+      await _updateSoldSerialNumbers(billToDelete);
+      await billDetailsController.deleteSellSerialTransactions(billToDelete);
+    } else if (billToDelete.isPurchaseRelated) {
+      await billDetailsController.deleteBuySerialTransactions(billToDelete);
+    }
+
     if (billSearchController.isLastValidBill(billToDelete)) {
       final decrementedBillNumber = (billToDelete.billDetails.previous ?? 0) - billToDelete.billDetails.billNumber!;
       log('decrementedBillNumber: $decrementedBillNumber');
@@ -121,6 +129,33 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // 4. Clean up bonds/mats statements if this is an approved bill with materials
     if (billToDelete.status == Status.approved) {
       _handleApprovedBillDeletions(billToDelete);
+    }
+  }
+
+  /// Updates the sold serial numbers by setting their `sold` status to false.
+  Future<void> _updateSoldSerialNumbers(BillModel billToDelete) async {
+    final materialController = read<MaterialController>();
+
+    for (final billItem in billToDelete.items.itemList) {
+      final materialModel = materialController.getMaterialById(billItem.itemGuid);
+      final soldSerialNumber = billItem.soldSerialNumber;
+
+      if (materialModel?.serialNumbers == null) {
+        continue; // Skip if the material is not found or has no serial numbers
+      }
+
+      final updatedSerialNumbers = Map<String, bool>.from(materialModel!.serialNumbers!);
+
+      if (soldSerialNumber != null && updatedSerialNumbers.containsKey(soldSerialNumber)) {
+        updatedSerialNumbers[soldSerialNumber] = false; // Mark as unsold
+
+        // Apply the update to the material model
+        materialController.updateMaterial(
+          materialModel.copyWith(serialNumbers: updatedSerialNumbers),
+        );
+
+        log('✅ Serial number [$soldSerialNumber] of material (${materialModel.matName}) marked as unsold.');
+      }
     }
   }
 
@@ -424,10 +459,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final Map<MaterialModel, List<TextEditingController>> buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
     final Map<MaterialModel, List<TextEditingController>> sellSerialsControllers = plutoController.sellMaterialsSerialsControllers;
 
-    log('BillTypeUtils.isPurchaseRelated(savedBill) ${BillTypeUtils.isPurchaseRelated(savedBill)}');
+    log('BillTypeUtils.isPurchaseRelated(savedBill) ${savedBill.isPurchaseRelated}');
 
     final Map<MaterialModel, List<TextEditingController>> serialControllers =
-        BillTypeUtils.isPurchaseRelated(savedBill) ? buySerialsControllers : sellSerialsControllers;
+        savedBill.isPurchaseRelated ? buySerialsControllers : sellSerialsControllers;
 
     if (serialControllers.isNotEmpty) {
       billDetailsController.saveSerialNumbers(savedBill, serialControllers);

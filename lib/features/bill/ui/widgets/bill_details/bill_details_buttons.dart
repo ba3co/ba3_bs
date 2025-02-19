@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -68,7 +68,7 @@ class BillPlutoGridService {
 
   void updateInvoiceValuesByQuantity(int quantity, double subtotal, double vat, BillTypeModel billTypeModel) {
     // Check if the material exists, otherwise clear all values
-    if (!isCurrentMaterialExisting(mainTableStateManager)) {
+    if (!isMaterialExisting(mainTableStateManager)) {
       _clearRowValues(mainTableStateManager, billTypeModel);
       return;
     }
@@ -83,7 +83,7 @@ class BillPlutoGridService {
 
   void updateInvoiceValues(double subTotal, int quantity, BillTypeModel billTypeModel) {
     // Check if the material exists, otherwise clear all values
-    if (!isCurrentMaterialExisting(mainTableStateManager)) {
+    if (!isMaterialExisting(mainTableStateManager)) {
       _clearRowValues(mainTableStateManager, billTypeModel);
       return;
     }
@@ -109,7 +109,7 @@ class BillPlutoGridService {
 
   void updateInvoiceValuesByTotal(double total, int quantity, BillTypeModel billTypeModel) {
     // Check if the material exists, otherwise clear all values
-    if (!isCurrentMaterialExisting(mainTableStateManager)) {
+    if (!isMaterialExisting(mainTableStateManager)) {
       _clearRowValues(mainTableStateManager, billTypeModel);
       return;
     }
@@ -150,7 +150,7 @@ class BillPlutoGridService {
     updateCellValue(stateManager, AppConstants.invRecQuantity, '');
   }
 
-  bool isCurrentMaterialExisting(PlutoGridStateManager stateManager) =>
+  bool isMaterialExisting(PlutoGridStateManager stateManager) =>
       read<MaterialController>().doesMaterialExist(stateManager.currentRow!.cells[AppConstants.invRecProduct]!.value);
 
   void updateSelectedRowCellValue(PlutoGridStateManager stateManager, PlutoRow selectedRow, String field, dynamic value) {

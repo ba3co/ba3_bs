@@ -14,18 +14,22 @@ class BillItems extends Equatable {
   }
 
   factory BillItems.fromBillRecords(List<InvoiceRecordModel> invoiceRecords) {
-    final itemList = invoiceRecords.map((invoiceRecord) {
-      return BillItem(
-        itemGuid: invoiceRecord.invRecId!,
-        itemName: invoiceRecord.invRecProduct!,
-        itemQuantity: invoiceRecord.invRecQuantity!,
-        itemTotalPrice: invoiceRecord.invRecTotal.toString(),
-        itemSubTotalPrice: invoiceRecord.invRecSubTotal,
-        itemVatPrice: invoiceRecord.invRecVat,
-        itemGiftsPrice: invoiceRecord.invRecGiftTotal,
-        itemGiftsNumber: invoiceRecord.invRecGift,
-      );
-    }).toList();
+    final itemList = invoiceRecords.map(
+      (invoiceRecord) {
+        return BillItem(
+          itemGuid: invoiceRecord.invRecId!,
+          itemName: invoiceRecord.invRecProduct!,
+          itemQuantity: invoiceRecord.invRecQuantity!,
+          itemTotalPrice: invoiceRecord.invRecTotal.toString(),
+          itemSubTotalPrice: invoiceRecord.invRecSubTotal,
+          itemVatPrice: invoiceRecord.invRecVat,
+          itemGiftsPrice: invoiceRecord.invRecGiftTotal,
+          itemGiftsNumber: invoiceRecord.invRecGift,
+          soldSerialNumber: invoiceRecord.invRecProductSoldSerial,
+          itemSerialNumbers: invoiceRecord.invRecProductSerialNumbers,
+        );
+      },
+    ).toList();
 
     return BillItems(itemList: itemList);
   }
@@ -62,6 +66,9 @@ class BillItem extends Equatable {
   final int? itemGiftsNumber;
   final double? itemGiftsPrice;
 
+  final String? soldSerialNumber;
+  final List<String>? itemSerialNumbers;
+
   const BillItem({
     required this.itemGuid,
     this.itemName,
@@ -71,6 +78,8 @@ class BillItem extends Equatable {
     this.itemVatPrice,
     this.itemGiftsNumber,
     this.itemGiftsPrice,
+    this.soldSerialNumber,
+    this.itemSerialNumbers,
   });
 
   factory BillItem.fromJson(Map<String, dynamic> json) => BillItem(
@@ -82,6 +91,8 @@ class BillItem extends Equatable {
         itemVatPrice: json['itemVatPrice'],
         itemGiftsNumber: json['itemGiftsNumber'],
         itemGiftsPrice: json['itemGiftsPrice'],
+        soldSerialNumber: json.containsKey('soldSerialNumber') ? json['soldSerialNumber'] as String? : null,
+        itemSerialNumbers: (json['itemSerialNumbers'] is List) ? List<String>.from(json['itemSerialNumbers'] as List) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -93,6 +104,8 @@ class BillItem extends Equatable {
         if (itemVatPrice != null) 'itemVatPrice': itemVatPrice,
         if (itemGiftsNumber != null) 'itemGiftsNumber': itemGiftsNumber,
         if (itemGiftsPrice != null) 'itemGiftsPrice': itemGiftsPrice,
+        if (soldSerialNumber != null && soldSerialNumber!.isNotEmpty) 'soldSerialNumber': soldSerialNumber,
+        if (itemSerialNumbers != null && itemSerialNumbers!.isNotEmpty) 'itemSerialNumbers': itemSerialNumbers,
       };
 
   BillItem copyWith({
@@ -104,6 +117,8 @@ class BillItem extends Equatable {
     final double? itemVatPrice,
     final int? itemGiftsNumber,
     final double? itemGiftsPrice,
+    final String? soldSerialNumber,
+    final List<String>? itemSerialNumbers,
   }) =>
       BillItem(
         itemGuid: itemGuid ?? this.itemGuid,
@@ -114,6 +129,8 @@ class BillItem extends Equatable {
         itemVatPrice: itemVatPrice ?? this.itemVatPrice,
         itemGiftsNumber: itemGiftsNumber ?? this.itemGiftsNumber,
         itemGiftsPrice: itemGiftsPrice ?? this.itemGiftsPrice,
+        soldSerialNumber: soldSerialNumber ?? this.soldSerialNumber,
+        itemSerialNumbers: itemSerialNumbers ?? this.itemSerialNumbers,
       );
 
   @override
@@ -126,5 +143,7 @@ class BillItem extends Equatable {
         itemVatPrice,
         itemGiftsNumber,
         itemGiftsPrice,
+        soldSerialNumber,
+        itemSerialNumbers,
       ];
 }

@@ -171,10 +171,10 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
     if (searchedSerial != null && searchedSerial.isNotEmpty) {
       // Update the grid with the found serial number
-      updateCellValue(stateManager, AppConstants.invRecProductSerial, searchedSerial);
+      updateCellValue(stateManager, AppConstants.invRecProductSoldSerial, searchedSerial);
     } else {
       // Clear the grid value for the serial number
-      updateCellValue(stateManager, AppConstants.invRecProductSerial, '');
+      updateCellValue(stateManager, AppConstants.invRecProductSoldSerial, '');
     }
 
     // Update other fields with material data

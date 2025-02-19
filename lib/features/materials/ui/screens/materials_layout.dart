@@ -50,7 +50,7 @@ class MaterialLayout extends StatelessWidget {
                           padding: EdgeInsets.all(6),
                           child: AppButton(
                               width: 100,
-                              title:AppStrings.downloadGroups.tr,
+                              title: AppStrings.downloadGroups.tr,
                               onPressed: () {
                                 read<MaterialGroupController>().fetchAllMaterialGroupGroupFromLocal();
                               }),
@@ -76,7 +76,7 @@ class MaterialLayout extends StatelessWidget {
                     AppMenuItem(
                         text: AppStrings.addMaterials.tr,
                         onTap: () {
-                          read<MaterialController>().navigateToAddOrUpdateMaterialScreen(context: context);
+                          read<MaterialController>().navigateToAddOrUpdateMaterialScreen();
                         }),
                 ],
               ),

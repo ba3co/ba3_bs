@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_items_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_details.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';

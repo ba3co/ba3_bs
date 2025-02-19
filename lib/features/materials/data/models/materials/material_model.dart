@@ -294,7 +294,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matExtraBarcode: List.from(json['matExtraBarcode'] ?? []),
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice: json['calcMinPrice'] ?? 0.0,
-      serialNumbers: json['serialNumbers'] ?? {},
+      serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
     );
   }
 
@@ -683,11 +683,17 @@ class SerialTransactionModel implements PlutoAdaptable {
       // Column for the buy bill ID.
       PlutoColumn(hide: true, title: 'buyBillId', field: 'buyBillId', type: PlutoColumnType.text()): buyBillId ?? '',
 
+      // Column for the buy bill ID.
+      PlutoColumn(hide: true, title: 'buyBillTypeId', field: 'buyBillTypeId', type: PlutoColumnType.text()): buyBillTypeId ?? '',
+
       PlutoColumn(title: AppStrings.purchaseBill.tr, field: AppStrings.purchaseBill.tr, type: PlutoColumnType.text()):
           AppServiceUtils.billNameAndNumberFormat(buyBillTypeId, buyBillNumber),
 
       // Column for the sell bill ID.
       PlutoColumn(hide: true, title: 'sellBillId', field: 'sellBillId', type: PlutoColumnType.text()): sellBillId ?? '',
+
+      // Column for the buy bill ID.
+      PlutoColumn(hide: true, title: 'sellBillTypeId', field: 'sellBillTypeId', type: PlutoColumnType.text()): sellBillTypeId ?? '',
 
       PlutoColumn(title: AppStrings.salesBill.tr, field: AppStrings.salesBill.tr, type: PlutoColumnType.text()):
           AppServiceUtils.billNameAndNumberFormat(sellBillTypeId, sellBillNumber),

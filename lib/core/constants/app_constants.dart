@@ -284,7 +284,9 @@ abstract class AppConstants {
   static const String invRecId = 'invRecId';
   static const String invRecProduct = 'invRecProduct';
 
-  static const String invRecProductSerial = 'invRecProductSerial';
+  static const String invRecProductSoldSerial = 'invRecProductSoldSerial';
+
+  static const String invRecProductSerialNumbers = 'invRecProductSerialNumbers';
   static const String invRecTotal = 'invRecTotal';
   static const String invRecSubTotal = 'invRecSubTotal';
   static const String invRecVat = 'invRecVat';

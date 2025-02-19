@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

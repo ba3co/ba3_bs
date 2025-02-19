@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -309,23 +309,25 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         PlutoColumn(title: AppStrings.billType.tr, field: 'نوع الفاتورة', type: PlutoColumnType.text()):
             BillType.byLabel(billTypeModel.billTypeLabel ?? '').value,
         PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()): billDetails.billDate?.dayMonthYear ?? '',
-        PlutoColumn(title: AppStrings.taxTotal.tr, field: 'مجموع الضريبة', type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.taxTotal.tr, field: 'مجموع الضريبة', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
-        PlutoColumn(title: AppStrings.totalBeforeTax.tr, field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.totalBeforeTax.tr, field: 'المجموع قبل الضريبة', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billBeforeVatTotal),
-        PlutoColumn(title: AppStrings.total.tr, field: 'المجموع الكلي', type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.total.tr, field: 'المجموع الكلي', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billTotal),
-        PlutoColumn(title: AppStrings.discountTotal.tr, field: 'مجموع الحسم', type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.discountTotal.tr, field: 'مجموع الحسم', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
-        PlutoColumn(title:AppStrings.additionsTotal.tr, field: 'مجموع الاضافات', type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.additionsTotal.tr, field: 'مجموع الاضافات', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
-        PlutoColumn(title: AppStrings.giftsTotal.tr, field: 'مجموع الهدايا', type: PlutoColumnType.text()): billDetails.billGiftsTotal ?? 0,
-        PlutoColumn(title: AppStrings.payType.tr, field: 'نوع الدفع', type: PlutoColumnType.text()): InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
+        PlutoColumn(title: AppStrings.giftsTotal.tr, field: 'مجموع الهدايا', type: PlutoColumnType.number()): billDetails.billGiftsTotal ?? 0,
+        PlutoColumn(title: AppStrings.payType.tr, field: 'نوع الدفع', type: PlutoColumnType.text()):
+            InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
         PlutoColumn(title: AppStrings.customerAccount.tr, field: 'حساب العميل', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         PlutoColumn(title: '${AppStrings.account.tr} ${AppStrings.seller.tr}', field: 'حساب البائع', type: PlutoColumnType.text()):
             read<SellersController>().getSellerNameById(billDetails.billSellerId),
-        PlutoColumn(title: AppStrings.store.tr, field: 'المستودع', type: PlutoColumnType.text()): billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
+        PlutoColumn(title: AppStrings.store.tr, field: 'المستودع', type: PlutoColumnType.text()):
+            billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
         PlutoColumn(title: AppStrings.illustration.tr, field: 'وصف', type: PlutoColumnType.text()): billDetails.billNote ?? '',
       };
 

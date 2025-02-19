@@ -17,6 +17,7 @@ import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
@@ -295,7 +296,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
   List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
-    // final BillModel billModel = await fetchBillById(billId);
     final BillModel? billModel = await fetchBillById(billId, bilTypeModel);
 
     if (billModel == null) return;
@@ -457,6 +457,28 @@ class AllBillsController extends FloatingBillDetailsLauncher
         );
       },
     );
+  }
+
+  void onSerialSelected(PlutoGridOnSelectedEvent event, BuildContext context) {
+    // Extract cell values safely
+    final String? sold = event.row?.cells['sold']?.value;
+    final String? buyBillId = event.row?.cells['buyBillId']?.value;
+    final String? sellBillId = event.row?.cells['sellBillId']?.value;
+    final String? buyBillTypeId = event.row?.cells['buyBillTypeId']?.value;
+    final String? sellBillTypeId = event.row?.cells['sellBillTypeId']?.value;
+
+    // Determine bill details based on sold status
+    final bool isSold = sold == AppStrings.yes.tr;
+    final String? billId = isSold ? sellBillId : buyBillId;
+    final String? billTypeId = isSold ? sellBillTypeId : buyBillTypeId;
+
+    log('isSold: $isSold');
+
+    if (billId != null && billTypeId != null) {
+      openFloatingBillDetailsById(billId, context, BillType.byTypeGuide(billTypeId).billTypeModel);
+    } else {
+      AppUIUtils.onFailure('⚠️ Missing Bill ID or Bill Type ID');
+    }
   }
 
   bool isLoadingPlutoGrid = false;

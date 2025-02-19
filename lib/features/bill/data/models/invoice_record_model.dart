@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,7 +22,8 @@ class InvoiceRecordModel {
   double? invRecVat;
   double? invRecGiftTotal;
   bool? invRecIsLocal;
-  String? invRecProductSerial;
+  String? invRecProductSoldSerial;
+  List<String>? invRecProductSerialNumbers;
 
   InvoiceRecordModel({
     this.invRecId,
@@ -35,7 +36,8 @@ class InvoiceRecordModel {
     this.invRecIsLocal,
     this.invRecGift,
     this.invRecGiftTotal,
-    this.invRecProductSerial,
+    this.invRecProductSoldSerial,
+    this.invRecProductSerialNumbers,
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
@@ -48,6 +50,8 @@ class InvoiceRecordModel {
         invRecVat: billItem.itemVatPrice,
         invRecGift: billItem.itemGiftsNumber,
         invRecGiftTotal: billItem.itemGiftsPrice,
+        invRecProductSoldSerial: billItem.soldSerialNumber,
+        invRecProductSerialNumbers: billItem.itemSerialNumbers,
       );
 
   factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) => InvoiceRecordModel(
@@ -79,9 +83,13 @@ class InvoiceRecordModel {
     final double total = _parseDouble(map[AppConstants.invRecTotal]) ?? 0;
     final subTotal = (total / (quantity * (1 + vatRatio)));
     final vat = subTotal * vatRatio;
-    final String? prodName = map[AppConstants.invRecProduct];
-    final String? productSerial = map[AppConstants.invRecProductSerial];
     final int? giftsNumber = _parseInteger(map[AppConstants.invRecGift]);
+
+    final String? prodName = map[AppConstants.invRecProduct];
+    final String? productSoldSerial = map[AppConstants.invRecProductSoldSerial];
+
+    final List<String>? productSerialNumbers =
+        (map[AppConstants.invRecProductSerialNumbers] is List) ? List<String>.from(map[AppConstants.invRecProductSerialNumbers] as List) : null;
 
     // final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
     // final double? vat = _parseDouble(map[AppConstants.invRecVat]);
@@ -102,7 +110,8 @@ class InvoiceRecordModel {
       invRecIsLocal: map[AppConstants.invRecIsLocal],
       invRecGift: giftsNumber,
       invRecGiftTotal: giftTotal,
-      invRecProductSerial: productSerial,
+      invRecProductSoldSerial: productSoldSerial,
+      invRecProductSerialNumbers: productSerialNumbers,
     );
   }
 
@@ -208,14 +217,19 @@ class InvoiceRecordModel {
         },
       ): invRecProduct,
       PlutoColumn(
-        title: AppStrings.serialNumber.tr,
+        title: AppStrings.productSoldSerialNumber.tr,
         width: 110,
-        field: AppConstants.invRecProductSerial,
+        field: AppConstants.invRecProductSoldSerial,
         type: PlutoColumnType.text(),
-        checkReadOnly: (row, cell) {
-          return false;
-        },
-      ): invRecProduct,
+        enableEditingMode: false,
+      ): invRecProductSoldSerial,
+      PlutoColumn(
+        title: AppStrings.productSerialNumbers.tr,
+        width: 110,
+        field: AppConstants.invRecProductSerialNumbers,
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+      ): invRecProductSerialNumbers,
       PlutoColumn(
         title: AppStrings.quantity.tr,
         field: AppConstants.invRecQuantity,

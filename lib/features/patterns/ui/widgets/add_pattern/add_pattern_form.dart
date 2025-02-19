@@ -1,5 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/features/patterns/ui/widgets/add_pattern/text_field_with_label.dart';
@@ -33,7 +33,7 @@ class AddPatternForm extends StatelessWidget {
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
           ),
           TextFieldWithLabel(
-            label: AppStrings.al.tr+AppStrings.name.tr,
+            label: AppStrings.al.tr + AppStrings.name.tr,
             textEditingController: patternController.patternFormHandler.fullNameController,
             validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
           ),

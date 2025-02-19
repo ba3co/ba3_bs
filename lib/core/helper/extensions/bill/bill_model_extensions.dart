@@ -1,14 +1,12 @@
-import '../../../../core/helper/enums/enums.dart';
-import '../../data/models/bill_model.dart';
+import '../../../../features/bill/data/models/bill_model.dart';
+import '../../enums/enums.dart';
 
-class BillTypeUtils {
+extension BillModelExtensions on BillModel {
   /// Retrieves the BillType from the BillModel.
-  static BillType getBillType(BillModel billModel) => BillType.byLabel(billModel.billTypeModel.billTypeLabel!);
+  BillType get billType => BillType.byLabel(billTypeModel.billTypeLabel!);
 
   /// Checks if the BillType is related to a **purchase transaction**.
-  static bool isPurchaseRelated(BillModel billModel) {
-    final BillType billType = getBillType(billModel);
-
+  bool get isPurchaseRelated {
     return {
       BillType.purchase,
       BillType.salesReturn,
@@ -19,9 +17,7 @@ class BillTypeUtils {
   }
 
   /// Checks if the BillType is related to a **sales transaction**.
-  static bool isSellRelated(BillModel billModel) {
-    final BillType billType = getBillType(billModel);
-
+  bool get isSellRelated {
     return {
       BillType.sales,
       BillType.purchaseReturn,

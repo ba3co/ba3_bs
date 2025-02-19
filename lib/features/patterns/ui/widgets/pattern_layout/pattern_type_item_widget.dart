@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
@@ -25,16 +25,13 @@ class PatternTypeItemWidget extends StatelessWidget {
     return SizedBox(
         width: 500,
         child: Container(
-
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), topLeft: Radius.circular(12)),
+            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12), bottomRight: Radius.circular(12), topLeft: Radius.circular(12)),
             border: Border.all(color: AppColors.grayColor, width: 2),
           ),
           child: Column(
-
             children: [
               Align(
                 alignment: Alignment.topCenter,
@@ -47,7 +44,7 @@ class PatternTypeItemWidget extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    read<TranslationController>().currentLocaleIsRtl?    billTypeModel.shortName!:billTypeModel.latinShortName!,
+                    read<TranslationController>().currentLocaleIsRtl ? billTypeModel.shortName! : billTypeModel.latinShortName!,
                     style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
                     textDirection: TextDirection.rtl,
                   ),
@@ -58,40 +55,30 @@ class PatternTypeItemWidget extends StatelessWidget {
                   visible: billTypeModel.billPatternType?.hasCashesAccount,
                   firstText: '${BillAccounts.caches.label.tr} :',
                   secondText: billTypeModel.accounts?[BillAccounts.caches]?.accName ?? ""),
-
               BodyPatternWidget(
                   visible: billTypeModel.billPatternType?.hasMaterialAccount,
-
                   firstText: '${BillAccounts.materials.label.tr} :',
                   secondText: billTypeModel.accounts?[BillAccounts.materials]?.accName ?? ""),
-
               BodyPatternWidget(
                   visible: billTypeModel.billPatternType?.hasAdditionsAccount,
-
                   firstText: '${BillAccounts.additions.label.tr} :',
                   secondText: billTypeModel.accounts?[BillAccounts.additions]?.accName ?? ""),
-
               BodyPatternWidget(
                   visible: billTypeModel.billPatternType?.hasDiscountsAccount,
-
                   firstText: '${BillAccounts.discounts.label.tr} :',
                   secondText: billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? ""),
-
               BodyPatternWidget(
                   visible: billTypeModel.billPatternType?.hasGiftsAccount,
                   firstText: '${BillAccounts.gifts.label.tr} :',
                   secondText: billTypeModel.accounts?[BillAccounts.gifts]?.accName ?? ""),
-
               BodyPatternWidget(
                   visible: billTypeModel.billPatternType?.hasGiftsAccount,
                   firstText: "${BillAccounts.exchangeForGifts.label.tr} :",
                   secondText: billTypeModel.accounts?[BillAccounts.exchangeForGifts]?.accName ?? ""),
-
               BodyPatternWidget(
-
-
-                  firstText: "${BillAccounts.store.label.tr} :",
-                  secondText: billTypeModel.accounts?[BillAccounts.store]?.accName ?? "", ),
+                firstText: "${BillAccounts.store.label.tr} :",
+                secondText: billTypeModel.accounts?[BillAccounts.store]?.accName ?? "",
+              ),
               VerticalSpace(5),
               AppButton(
                 title: AppStrings.edit.tr,

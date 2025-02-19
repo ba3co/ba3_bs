@@ -91,8 +91,7 @@ class AppStrings {
   static const String panel = 'لوحة';
 
   static const String controlPanel = 'لوحة التحكم';
-  static const String areYouSureYouWantToCloseTheProgram =
-      'هل انت متأكد انك تريد إغلاق البرنامج';
+  static const String areYouSureYouWantToCloseTheProgram = 'هل انت متأكد انك تريد إغلاق البرنامج';
   static const String exit = 'خروج';
   static const String cancel = 'الغاء';
   static const String user = 'المستخدم';
@@ -210,6 +209,7 @@ class AppStrings {
   static const String sold = 'تم البيع';
   static const String yes = 'نعم';
   static const String no = 'لا';
+
   ////
   static const notLoggedToday = 'لم يسجيل اليوم';
   static const exchangeForGifts = 'مقابل الهدايا';
@@ -277,5 +277,8 @@ class AppStrings {
   static const profile = 'الملف الشخصي';
   static const totalSales = 'اجمالي المبيعات';
   static const lastCheckInTime = 'آخر توقيت للدخول';
-  static const lastCheckOutTime =  'آخر توقيت للخروج';
+  static const lastCheckOutTime = 'آخر توقيت للخروج';
+
+  static const String productSoldSerialNumber = 'الرقم التسلسلي المُباع';
+  static const String productSerialNumbers = 'الأرقام التسلسلية للمنتج';
 }

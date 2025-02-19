@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
@@ -98,6 +98,11 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     generateSellMaterialsSerialsControllers(invoiceRecords);
 
     recordsTableStateManager.setShowLoading(false);
+
+    for (final record in invoiceRecords) {
+      log('invRecProductSerialNumbers ${record.invRecProductSerialNumbers}');
+    }
+
     return invoiceRecords;
   }
 
@@ -125,7 +130,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     for (final record in invRecords) {
       // Extract MaterialModel and serial number
       MaterialModel? material = read<MaterialController>().getMaterialByName(record.invRecProduct);
-      String? serialNumber = record.invRecProductSerial;
+      String? serialNumber = record.invRecProductSoldSerial;
 
       if (material != null && serialNumber != null && serialNumber.isNotEmpty) {
         // Ensure the material exists in the map
