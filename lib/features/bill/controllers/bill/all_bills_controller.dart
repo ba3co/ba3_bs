@@ -52,7 +52,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   List<BillTypeModel> billsTypes = [];
 
-  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.id == BillType.sales.typeGuide);
+  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
 
   List<BillModel> bills = [];
   Map<BillTypeModel, List<BillModel>> nestedBills = {};
@@ -402,16 +402,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     }
   }
 
-  Future<void> fetchXXXXXX() async {
-    _billsFirebaseRepo.getMetaData(id: BillType.transferOut.typeGuide, itemIdentifier: BillType.transferOut.billTypeModel).then((result) {
-      result.fold(
-        (failure) => AppUIUtils.onFailure('Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
-        (double? count) {
-          log(count.toString());
-        },
-      );
-    });
-  }
+
 
   Future<void> getSerialNumberStatement(String serialNumberInput, {required BuildContext context}) async {
     final result = await _serialNumbersRepo.getById(serialNumberInput);

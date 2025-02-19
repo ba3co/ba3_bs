@@ -270,7 +270,7 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
     final materialModel = _createMaterialModel();
     // Handle null material model
     if (materialModel == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
+      AppUIUtils.onFailure('من فضلك قم!');
       return;
     }
 
@@ -278,7 +278,11 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedMaterial) => _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add),
+      (savedMaterial) {
+/*
+        _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add);
+*/
+      },
     );
   }
 
@@ -307,7 +311,6 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
         matCode: materialFromHandler.codeController.text.toInt,
         matBarCode: materialFromHandler.barcodeController.text,
         endUserPrice: materialFromHandler.customerPriceController.text,
-        matCurrencyVal: materialFromHandler.costPriceController.text.toDouble,
         materialModel: selectedMaterial,
       );
 
@@ -375,6 +378,8 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
   void navigateToAddOrUpdateMaterialScreen({String? matId, required BuildContext context}) {
     selectedMaterial = null;
     if (matId != null) selectedMaterial = getMaterialById(matId);
+
+    materialFromHandler.init(selectedMaterial);
     launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AddMaterialScreen());
     // to(AppRoutes.addMaterialScreen);
   }

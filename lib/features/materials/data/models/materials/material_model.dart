@@ -360,13 +360,16 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true): id,
+      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true):
+          id,
       createAutoIdColumn(): '#',
       PlutoColumn(title: AppStrings.materialName, field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
-      PlutoColumn(title: AppStrings.quantity.tr, field: 'الكمية', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          matQuantity,
-      PlutoColumn(title: AppStrings.cost.tr, field: 'التكلفة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          retailPrice,
+      PlutoColumn(
+          title: AppStrings.quantity.tr,
+          field: 'الكمية',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matQuantity,
       PlutoColumn(
           title: AppStrings.mediatorPrice.tr,
           field: 'الوسطي',
@@ -376,18 +379,36 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           ),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): calcMinPrice,
-      PlutoColumn(title: AppStrings.consumer.tr, field: 'المستهلك', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          endUserPrice,
-      PlutoColumn(title: AppStrings.wholesale.tr, field: 'الجملة', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          wholesalePrice,
+      PlutoColumn(
+          title: AppStrings.retailPrice.tr,
+          field: 'المفرق',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): retailPrice,
+      PlutoColumn(
+          title: AppStrings.consumer.tr,
+          field: 'المستهلك',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): endUserPrice,
+      PlutoColumn(
+          title: AppStrings.wholesale.tr,
+          field: 'الجملة',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): wholesalePrice,
       PlutoColumn(
           title: AppStrings.materialCode,
           field: 'رمز المادة',
           type: PlutoColumnType.text(),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): matCode,
-      PlutoColumn(title: AppStrings.barcode.tr, field: 'الباركود', type: PlutoColumnType.text(), width: 120, textAlign: PlutoColumnTextAlign.center):
-          matBarCode,
+      PlutoColumn(
+          title: AppStrings.barcode.tr,
+          field: 'الباركود',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matBarCode,
       PlutoColumn(title: AppStrings.group.tr, field: 'المجموعة', type: PlutoColumnType.text()):
           read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName ?? '',
     };
@@ -672,7 +693,8 @@ class SerialTransactionModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([_]) {
     return {
       // Visible column for the serial number.
-      PlutoColumn(title: AppStrings.serialNumber.tr, field: 'serialNumber', type: PlutoColumnType.text()): transactionOrigin?.serialNumber ?? '',
+      PlutoColumn(title: AppStrings.serialNumber.tr, field: 'serialNumber', type: PlutoColumnType.text()):
+          transactionOrigin?.serialNumber ?? '',
 
       // Hidden column for the material ID.
       PlutoColumn(hide: true, title: 'معرف المادة', field: 'matId', type: PlutoColumnType.text()): transactionOrigin?.matId ?? '',
@@ -702,7 +724,8 @@ class SerialTransactionModel implements PlutoAdaptable {
       PlutoColumn(title: AppStrings.entryDate.tr, field: 'entryDate', type: PlutoColumnType.date()): entryDate,
 
       // Column for the sold status (displaying a simple "Yes/No").
-      PlutoColumn(title: AppStrings.sold.tr, field: 'sold', type: PlutoColumnType.text()): sold == true ? AppStrings.yes.tr : AppStrings.no.tr,
+      PlutoColumn(title: AppStrings.sold.tr, field: 'sold', type: PlutoColumnType.text()):
+          sold == true ? AppStrings.yes.tr : AppStrings.no.tr,
     };
   }
 }

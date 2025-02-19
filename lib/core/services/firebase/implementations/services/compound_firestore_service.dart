@@ -191,8 +191,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String subCollectionPath,
     double? metaValue,
   }) async {
-
-    log('addAll Start');
+    log('addAll start');
     // 1. Split items into sub-lists of size up to 500
     final chunks = items.chunkBy(500);
 

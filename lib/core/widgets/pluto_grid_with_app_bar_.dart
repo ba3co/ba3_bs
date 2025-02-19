@@ -22,6 +22,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     this.type,
     this.child,
     this.appBar,
+    this.onRowSecondaryTap,
   });
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -38,6 +39,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   final T? type;
   final Widget? child;
   final AppBar? appBar;
+  final Function(PlutoGridOnRowSecondaryTapEvent)? onRowSecondaryTap;
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +57,15 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
         return Column(
           children: [
             Expanded(
+
               child: PlutoGrid(
                 key: controller.plutoKey,
                 onLoaded: (event) {
                   event.stateManager.setShowColumnFilter(true); // تفعيل الفلترة
                   onLoaded(event);
                 },
+
+                onRowSecondaryTap: onRowSecondaryTap,
                 onSelected: onSelected,
                 onRowDoubleTap: onRowDoubleTap,
                 columns: controller.generateColumns<T>(tableSourceModels, type),

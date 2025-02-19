@@ -133,7 +133,11 @@ class BillLayout extends StatelessWidget {
               floatingActionButton: RoleItemType.administrator.hasAdminPermission
                   ? FloatingActionButton(
                       backgroundColor: Colors.blue,
-                      onPressed: () => read<MaterialsStatementController>().setupAllMaterials(),
+                      onPressed: () {
+
+                        // allBillsController.fetchAllNestedBills();
+                        read<MaterialsStatementController>().setupAllMaterials();
+                      },
                       child: Icon(
                         Icons.ac_unit_rounded,
                         color: Colors.white,

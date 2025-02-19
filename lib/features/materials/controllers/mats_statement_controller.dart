@@ -25,21 +25,28 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     required List<MatStatementModel> matsStatements,
     void Function(double progress)? onProgress,
   }) async {
-    // 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
-    final result = await _matStatementsRepo.saveAllNested(
+    /// 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
+    int i = 0;
+    for (var element in matsStatements) {
+      await _matStatementsRepo.save(element);
+      log("i is  ${i++}");
+    }
+
+/*    final result = await _matStatementsRepo.saveAllNested(
         items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
 
-    // 2. Flatten the map into a single list of MatStatementModel
-    //    mapOfStatements.values is an Iterable<List<MatStatementModel>>
-    //    We expand those lists, then .toList() the result
+    /// 2. Flatten the map into a single list of MatStatementModel
+    ///    mapOfStatements.values is an Iterable<List<MatStatementModel>>
+    ///    We expand those lists, then .toList() the result
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (savedStatements) =>
-      (), /*onSaveAllMatsStatementsModelsSuccess(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedStatements) {
+        *//*onSaveAllMatsStatementsModelsSuccess(
         mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
         onProgress: onProgress,
-      ),*/
-    );
+      ),*//*
+      },
+    );*/
   }
 
   Future<void> onSaveAllMatsStatementsModelsSuccess({
@@ -62,7 +69,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
     await Future.wait(
       allSavedStatements.map(
-            (statement) async {
+        (statement) async {
           if (statement.defQuantity != null && statement.defQuantity! > 0) {
             await read<MaterialController>().updateMaterialQuantityAndPrice(
               matId: statement.matId!,
@@ -87,13 +94,15 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   setupAllMaterials() async {
     int i = 0;
     for (final material in read<MaterialController>().materials) {
-      i++;
+
 
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
-        log(i.toString());
+        log("mat num  ${++i}");
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
-            matId: material.id!, quantity: _calculateQuantity(materialStatementList), currentMinPrice: _calculateMinPrice(materialStatementList));
+            matId: material.id!,
+            quantity: _calculateQuantity(materialStatementList),
+            currentMinPrice: _calculateMinPrice(materialStatementList));
       }
     }
   }
@@ -102,8 +111,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     final result = await _matStatementsRepo.delete(matStatementModel);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
     );
 
     final materialStatementList = await fetchMatStatementById(matStatementModel.matId!);
@@ -167,8 +176,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
 
     final result = await _matStatementsRepo.getAll(materialModel.id!);
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedItems) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedItems) {
         matStatements.assignAll(fetchedItems.map((item) => item).toList());
 
         launchFloatingWindow(
@@ -186,8 +195,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   Future<List<MatStatementModel>?> fetchMatStatementById(String matId) async {
     final result = await _matStatementsRepo.getAll(matId);
     return result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedItems) => fetchedItems,
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedItems) => fetchedItems,
     );
   }
 
@@ -209,9 +218,9 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   }
 
   int _calculateQuantity(List<MatStatementModel> items) => items.fold(
-    0,
+        0,
         (sum, item) => sum + (item.quantity ?? 0),
-  );
+      );
 
   double _calculateMinPrice(List<MatStatementModel> items) {
     if (items.isEmpty) return 0.0;
