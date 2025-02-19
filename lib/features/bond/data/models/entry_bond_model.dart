@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:get/get.dart';
@@ -176,7 +177,7 @@ class EntryBondItemModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
-      PlutoColumn(hide: true, title:AppStrings.identificationNumber.tr, field: 'originId', type: PlutoColumnType.text()): originId ?? '',
+      PlutoColumn(hide: true, title:AppStrings.identificationNumber.tr, field:AppConstants.entryBonIdFiled, type: PlutoColumnType.text()): originId ?? '',
       createAutoIdColumn(): '#',
       PlutoColumn(
           title: AppStrings.debtor.tr,

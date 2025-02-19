@@ -281,6 +281,105 @@ class BillPlutoGridService {
       accounts[accountType] = [accountModel];
     }
   }
+ /* void getProduct(String productText, PlutoGridStateManager stateManager, IPlutoController plutoController, BuildContext context,
+      BillTypeModel billTypeModel) async {
+    // Initialize variables
+
+    final productTextController = TextEditingController()..text = productText;
+    final materialController = read<MaterialController>();
+
+    // Search for matching materials
+    var searchedMaterials = materialController.searchOfProductByText(productText);
+    MaterialModel? selectedMaterial;
+
+    if (searchedMaterials.length == 1) {
+      // Single match
+      selectedMaterial = searchedMaterials.first;
+      updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController, billTypeModel);
+    } else if (searchedMaterials.isEmpty) {
+      // No matches
+      updateWithSelectedMaterial(null, stateManager, plutoController, billTypeModel);
+    } else {
+      if (!context.mounted) return;
+      // Clear focus from PlutoWithEdite before showing the dialog
+      FocusScope.of(context).unfocus();
+
+      // Multiple matches, show search dialog
+      _showSearchDialog(
+          context: context,
+          productTextController: productTextController,
+          searchedMaterials: searchedMaterials,
+          materialController: materialController,
+          stateManager: stateManager,
+          plutoController: plutoController,
+          billTypeModel: billTypeModel);
+    }
+  }
+
+  void _showSearchDialog(
+      {required TextEditingController productTextController,
+        required List<MaterialModel> searchedMaterials,
+        required MaterialController materialController,
+        required PlutoGridStateManager stateManager,
+        required IPlutoController plutoController,
+        required BillTypeModel billTypeModel,
+        required BuildContext context}) {
+    OverlayService.showDialog(
+      context: context,
+      height: 1.sh,
+      width: .8.sw,
+      content: ProductSelectionDialogContent(
+        searchedMaterials: searchedMaterials,
+        onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
+          final materialId = onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
+
+          final selectedMaterial = materialId != null ? materialController.getMaterialById(materialId) : null;
+
+          updateWithSelectedMaterial(selectedMaterial, stateManager, plutoController, billTypeModel);
+
+          OverlayService.back();
+        },
+        onSubmitted: (_) async {
+          searchedMaterials = materialController.searchOfProductByText(productTextController.text);
+          materialController.update();
+        },
+        productTextController: productTextController,
+      ),
+      onCloseCallback: () {
+        log('Product Selection Dialog Closed.');
+      },
+    );
+  }
+
+  void updateWithSelectedMaterial(
+      MaterialModel? materialModel, PlutoGridStateManager stateManager, IPlutoController plutoController, BillTypeModel billTypeModel) {
+    if (materialModel != null) {
+      _updateRowWithMaterial(materialModel, stateManager, billTypeModel);
+      plutoController.moveToNextRow(stateManager, AppConstants.invRecProduct);
+    } else {
+      plutoController.restoreCurrentCell(stateManager);
+    }
+
+    stateManager.notifyListeners();
+    plutoController.update();
+  }
+
+  void _updateRowWithMaterial(MaterialModel materialModel, PlutoGridStateManager stateManager, BillTypeModel billTypeModel) {
+    final subTotal = materialModel.endUserPrice?.toDouble ?? 0;
+
+    final isZeroSubtotal = subTotal == 0;
+
+    final vat = isZeroSubtotal ? '' : (subTotal * 0.05).toStringAsFixed(2);
+    final total = isZeroSubtotal ? '' : ((subTotal + subTotal * 0.05) * 1).toStringAsFixed(2);
+
+    updateCellValue(stateManager, AppConstants.invRecProduct, materialModel.matName);
+    updateCellValue(stateManager, AppConstants.invRecSubTotal, subTotal);
+    updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
+    if (billTypeModel.billPatternType!.hasVat) {
+      updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
+    }
+    updateCellValue(stateManager, AppConstants.invRecTotal, total);
+  }*/
 }
 
 // Data class for discount data

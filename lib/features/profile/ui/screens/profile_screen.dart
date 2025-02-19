@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/user_target.dart';
-import '../../../main_layout/ui/widgets/main_header.dart';
+import '../widgets/profile_footer.dart';
 import '../../controller/user_time_controller.dart';
 import '../widgets/user_time_details_widgets/add_time_widget.dart';
 import '../widgets/user_time_details_widgets/holidays_widget.dart';
@@ -72,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
                               userModel: read<UserTimeController>().getUserById()!,
                             ),
                             Spacer(),
-                            const MainHeader(),
+                            const ProfileFooter(),
                           ],
                         );
                 })),

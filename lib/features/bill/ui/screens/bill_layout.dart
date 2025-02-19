@@ -143,12 +143,12 @@ class BillLayout extends StatelessWidget {
             ),
             LoadingDialog(
               isLoading: allBillsController.saveAllBillsRequestState.value == RequestState.loading,
-              message: '${(progress * 100).toStringAsFixed(2)}% من الفواتير',
+              message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bills.tr}',
               fontSize: 14.sp,
             ),
             LoadingDialog(
               isLoading: allBillsController.saveAllBillsBondRequestState.value == RequestState.loading,
-              message: '${(progress * 100).toStringAsFixed(2)}% من سندات الفواتير',
+              message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr} ${AppStrings.bills.tr}',
               fontSize: 14.sp,
             ),
           ],

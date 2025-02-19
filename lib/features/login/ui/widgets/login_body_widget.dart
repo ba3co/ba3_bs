@@ -85,7 +85,7 @@ class LoginBodyWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (RoleItemType.viewUserManagement.hasAdminPermission)
+        /*          if (RoleItemType.viewUserManagement.hasAdminPermission)
                     IconButton(
                       icon: Icon(
                         userManagementController.isGuestLoginButtonVisible.value ? Icons.visibility : Icons.visibility_off,
@@ -93,7 +93,7 @@ class LoginBodyWidget extends StatelessWidget {
                         color: AppColors.blueColor,
                       ),
                       onPressed: userManagementController.toggleGuestButtonVisibility,
-                    ),
+                    ),*/
                   if (userManagementController.isGuestLoginButtonVisible.value)
                     LoginButtonWidget(
                       text: AppStrings.registrationAsAGust.tr,

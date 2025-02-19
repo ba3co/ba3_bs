@@ -64,15 +64,7 @@ class BillTypeShimmerWidget extends StatelessWidget {
             right: 0,
             child: _buildShimmerBox(width: 220, height: 30, borderRadius: 5),
           ),
-          // Button placeholder with shimmer effect
-          // Positioned(
-          //   bottom: 15,
-          //   right: 0,
-          //   left: 0,
-          //   child: Center(
-          //     child: _buildShimmerBox(width: 146, height: 35, borderRadius: 5),
-          //   ),
-          // ),
+
 
           Positioned(
             bottom: 15,
