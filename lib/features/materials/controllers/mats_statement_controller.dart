@@ -17,6 +17,7 @@ import 'material_controller.dart';
 class MaterialsStatementController extends GetxController with FloatingLauncher, AppNavigator {
   // Dependencies
   final CompoundDatasourceRepository<MatStatementModel, String> _matStatementsRepo;
+  final MaterialController _materialsController = read<MaterialController>();
 
   MaterialsStatementController(this._matStatementsRepo);
 
@@ -24,21 +25,28 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     required List<MatStatementModel> matsStatements,
     void Function(double progress)? onProgress,
   }) async {
-    // 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
-    final result = await _matStatementsRepo.saveAllNested(
+    /// 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
+    int i = 0;
+    for (var element in matsStatements) {
+      await _matStatementsRepo.save(element);
+      log("i is  ${i++}");
+    }
+
+/*    final result = await _matStatementsRepo.saveAllNested(
         items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
 
-    // 2. Flatten the map into a single list of MatStatementModel
-    //    mapOfStatements.values is an Iterable<List<MatStatementModel>>
-    //    We expand those lists, then .toList() the result
+    /// 2. Flatten the map into a single list of MatStatementModel
+    ///    mapOfStatements.values is an Iterable<List<MatStatementModel>>
+    ///    We expand those lists, then .toList() the result
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedStatements) =>
-          (), /*onSaveAllMatsStatementsModelsSuccess(
+      (savedStatements) {
+        *//*onSaveAllMatsStatementsModelsSuccess(
         mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
         onProgress: onProgress,
-      ),*/
-    );
+      ),*//*
+      },
+    );*/
   }
 
   Future<void> onSaveAllMatsStatementsModelsSuccess({
@@ -86,13 +94,15 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   setupAllMaterials() async {
     int i = 0;
     for (final material in read<MaterialController>().materials) {
-      i++;
+
 
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
-        log(i.toString());
+        log("mat num  ${++i}");
         await read<MaterialController>().updateMaterialQuantityAndPriceWhenDeleteBill(
-            matId: material.id!, quantity: _calculateQuantity(materialStatementList), currentMinPrice: _calculateMinPrice(materialStatementList));
+            matId: material.id!,
+            quantity: _calculateQuantity(materialStatementList),
+            currentMinPrice: _calculateMinPrice(materialStatementList));
       }
     }
   }

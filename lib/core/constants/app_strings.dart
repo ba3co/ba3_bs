@@ -194,12 +194,9 @@ class AppStrings {
   static const String firstPeriodInventory = 'بضاعة اول مدة';
   static const String transferIn = 'تسوية الزيادة';
   static const String transferOut = 'تسوية النقص';
-
   static const String cash = 'نقدي';
-
   static const String due = 'اجل';
   static const String mainWarehouse = 'المستودع الرئيسي';
-
   static const String materialName = 'اسم المادة';
   static const String purchaseBill = 'فاتورة الشراء';
   static const String purchaseBillNumber = 'رقم فاتورة الشراء';
@@ -210,7 +207,6 @@ class AppStrings {
   static const String yes = 'نعم';
   static const String no = 'لا';
 
-  ////
   static const notLoggedToday = 'لم يسجيل اليوم';
   static const exchangeForGifts = 'مقابل الهدايا';
   static const exchangeForCashes = 'مقابل النقديات';
@@ -281,4 +277,6 @@ class AppStrings {
 
   static const String productSoldSerialNumber = 'الرقم التسلسلي المُباع';
   static const String productSerialNumbers = 'الأرقام التسلسلية للمنتج';
+  static const String retailPrice = 'المفرق';
+
 }
