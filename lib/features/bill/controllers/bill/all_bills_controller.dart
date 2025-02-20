@@ -27,9 +27,10 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
-import '../../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../floating_window/controllers/floating_window_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
+import '../../../patterns/controllers/pattern_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
 import '../../services/bill/bill_utils.dart';
@@ -40,25 +41,21 @@ import 'bill_search_controller.dart';
 class AllBillsController extends FloatingBillDetailsLauncher
     with AppNavigator, EntryBondsGenerator, MatsStatementsGenerator, FirestoreSequentialNumbers {
   // Repositories
-  final RemoteDataSourceRepository<BillTypeModel> _patternsFirebaseRepo;
+
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
   final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final ImportExportRepository<BillModel> _jsonImportExportRepo;
 
-  AllBillsController(this._patternsFirebaseRepo, this._billsFirebaseRepo, this._serialNumbersRepo, this._jsonImportExportRepo);
+  AllBillsController(this._billsFirebaseRepo, this._serialNumbersRepo, this._jsonImportExportRepo);
 
   // Services
   late final BillUtils _billUtils;
 
-  List<BillTypeModel> billsTypes = [];
+  final List<BillModel> bills = [];
+  final Map<BillTypeModel, List<BillModel>> nestedBills = {};
+  final List<BillModel> allNestedBills = [];
 
-  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.id == BillType.sales.typeGuide);
-
-  List<BillModel> bills = [];
-  Map<BillTypeModel, List<BillModel>> nestedBills = {};
-  List<BillModel> allNestedBills = [];
-
-  List<BillModel> pendingBills = [];
+  final List<BillModel> pendingBills = [];
 
   final pendingBillsCountsByType = <BillTypeModel, int>{};
   final allBillsCountsByType = <BillTypeModel, int>{};
@@ -67,15 +64,15 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   bool isPendingBillsLoading = true;
 
-  Rx<RequestState> getBillsTypesRequestState = RequestState.initial.obs;
+  final Rx<RequestState> getBillsTypesRequestState = RequestState.initial.obs;
 
-  Rx<RequestState> getAllNestedBillsRequestState = RequestState.initial.obs;
+  final Rx<RequestState> getAllNestedBillsRequestState = RequestState.initial.obs;
 
-  Rx<RequestState> saveAllBillsRequestState = RequestState.initial.obs;
-  Rx<RequestState> saveAllBillsBondRequestState = RequestState.initial.obs;
+  final Rx<RequestState> saveAllBillsRequestState = RequestState.initial.obs;
+  final Rx<RequestState> saveAllBillsBondRequestState = RequestState.initial.obs;
 
   // Initialize a progress observable
-  RxDouble uploadProgress = 0.0.obs;
+  final RxDouble uploadProgress = 0.0.obs;
 
   // Initializer
   void _initializeServices() {
@@ -92,9 +89,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     read<MaterialController>().reloadMaterials();
   }
 
-  Future<void> refreshBillsTypes() async {
-    fetchBillsTypes();
-  }
+  Future<void> refreshBillsTypes() async => fetchBillsTypes();
 
   int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;
 
@@ -102,7 +97,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> fetchAllNestedBills() async {
+  Future<void> fetchAllNestedBills(List<BillTypeModel> billsTypes) async {
     getAllNestedBillsRequestState.value = RequestState.loading;
 
     final result = await _billsFirebaseRepo.fetchAllNested(billsTypes);
@@ -152,7 +147,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       log("saveAllNested _billsFirebaseRepo Started......");
       await _billsFirebaseRepo.saveAllNested(
         items: fetchedBills,
-        itemIdentifiers: billsTypes,
+        itemIdentifiers: read<PatternController>().billsTypes,
         onProgress: (progress) {
           uploadProgress.value = progress; // Update progress
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
@@ -205,17 +200,12 @@ class AllBillsController extends FloatingBillDetailsLauncher
   Future<void> fetchBillsTypes() async {
     getBillsTypesRequestState.value = RequestState.loading;
 
-    final result = await _patternsFirebaseRepo.getAll();
+    final List<BillTypeModel> fetchedBillTypes = await read<PatternController>().getAllBillTypes();
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedBillTypes) => _handleFetchBillTypesSuccess(fetchedBillTypes),
-    );
+    _handleFetchBillTypesSuccess(fetchedBillTypes);
   }
 
   Future<void> _handleFetchBillTypesSuccess(List<BillTypeModel> fetchedBillTypes) async {
-    billsTypes.assignAll(fetchedBillTypes);
-
     await fetchPendingBillsCountsByTypes(fetchedBillTypes);
     await fetchAllBillsCountsByTypes(fetchedBillTypes);
 
@@ -329,15 +319,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
   // Opens the 'Bill Details' floating window.
 
   Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
-    final String controllerTag = AppServiceUtils.generateUniqueTag('BillDetailsController');
+    final String controllerTag = AppServiceUtils.generateUniqueTag('FloatingBillDetails');
 
     final Map<String, GetxController> controllers = setupControllers(
       params: {
         'tag': controllerTag,
         'billsFirebaseRepo': _billsFirebaseRepo,
         'serialNumbersRepo': _serialNumbersRepo,
-        'billDetailsPlutoController': BillDetailsPlutoController(billTypeModel: currentBill.billTypeModel),
-        'billSearchController': BillSearchController(),
+        'billTypeModel': currentBill.billTypeModel,
       },
     );
 
@@ -356,6 +345,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     launchFloatingWindow(
       context: context,
+      tag: controllerTag,
       minimizedTitle: BillType.byLabel(currentBill.billTypeModel.billTypeLabel!).value,
       floatingScreen: BillDetailsScreen(
         billDetailsController: billDetailsController,
@@ -363,6 +353,12 @@ class AllBillsController extends FloatingBillDetailsLauncher
         billSearchController: billSearchController,
         tag: controllerTag,
       ),
+      onCloseCallback: () {
+        delete<BillSearchController>(tag: controllerTag, force: true);
+        delete<BillDetailsController>(tag: controllerTag, force: true);
+        delete<BillDetailsPlutoController>(tag: controllerTag, force: true);
+        delete<FloatingWindowController>(tag: controllerTag, force: true);
+      },
     );
   }
 
@@ -417,7 +413,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _serialNumbersRepo.getById(serialNumberInput);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure('⚠️ لم يتم العثور على أي فواتير  تم ذكر فيها هذا الرقم التسلسلي [$serialNumberInput] ❌'),
       (SerialNumberModel fetchedSerialNumberModel) {
         // Clear previous statements before adding new ones.
         serialNumberStatements.clear();

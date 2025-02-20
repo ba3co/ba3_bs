@@ -12,7 +12,6 @@ import 'package:ba3_bs/core/services/translation/interfaces/i_translation_servic
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_source.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
 import 'package:ba3_bs/features/changes/data/datasources/changes_datasource.dart';
@@ -51,7 +50,6 @@ import '../../features/accounts/data/datasources/remote/entry_bonds_data_source.
 import '../../features/accounts/service/account_export.dart';
 import '../../features/accounts/service/account_import.dart';
 import '../../features/bill/controllers/bill/all_bills_controller.dart';
-import '../../features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import '../../features/bill/data/datasources/bills_compound_data_source.dart';
 import '../../features/bill/data/models/bill_model.dart';
 import '../../features/bill/services/bill/bil_export.dart';
@@ -272,21 +270,17 @@ class AppBindings extends Bindings {
 
     lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
 
-    lazyPut(AllBillsController(repositories.patternsRepo, repositories.billsRepo, repositories.serialNumbersRepo, repositories.billImportExportRepo));
+    lazyPut(AllBillsController(repositories.billsRepo, repositories.serialNumbersRepo, repositories.billImportExportRepo));
 
     lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
 
     lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
-
-    lazyPut(BillDetailsPlutoController());
 
     lazyPut(CustomersController(repositories.customersRepo, repositories.customerImportRepo));
 
     lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
 
     lazyPut(PrintingController(repositories.translationRepo));
-
-    lazyPut(BillSearchController());
 
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
 

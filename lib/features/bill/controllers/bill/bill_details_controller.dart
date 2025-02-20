@@ -317,20 +317,43 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
           return;
         }
 
-        // Update Firestore with filtered transactions
-        final updatedSerialModel = serialsModel.copyWith(transactions: updatedTransactions);
-        final updateResult = await _serialNumbersRepo.save(updatedSerialModel);
+        if (updatedTransactions.isEmpty) {
+          // No transactions remain, so delete the serial document
+          await _deleteSerialDocument(serialNumber, materialModel, updatedSerialNumbers);
+        } else {
+          // Update Firestore with filtered transactions
+          final updatedSerialModel = serialsModel.copyWith(transactions: updatedTransactions);
+          final updateResult = await _serialNumbersRepo.save(updatedSerialModel);
 
-        await updateResult.fold(
-          (failure) async {
-            log('❌ Failed to update transactions for serial [$serialNumber]: ${failure.message}');
-          },
-          (success) async {
-            log('✅ Successfully removed purchase transactions linked to bill [${billToDelete.billId}] for serial [$serialNumber].');
+          await updateResult.fold(
+            (failure) async {
+              log('❌ Failed to update transactions for serial [$serialNumber]: ${failure.message}');
+            },
+            (success) async {
+              log('✅ Successfully removed purchase transactions linked to bill [${billToDelete.billId}] for serial [$serialNumber].');
+              _updateSerialNumberStatus(materialModel, serialNumber, updatedSerialNumbers, updatedTransactions);
+            },
+          );
+        }
+      },
+    );
+  }
 
-            _updateSerialNumberStatus(materialModel, serialNumber, updatedSerialNumbers, updatedTransactions);
-          },
-        );
+  /// Deletes the serial document from Firestore if there are no transactions left.
+  Future<void> _deleteSerialDocument(
+    String serialNumber,
+    MaterialModel materialModel,
+    Map<String, bool> updatedSerialNumbers,
+  ) async {
+    final deleteResult = await _serialNumbersRepo.delete(serialNumber);
+
+    await deleteResult.fold(
+      (failure) async {
+        log('❌ Failed to delete serial document [$serialNumber]: ${failure.message}');
+      },
+      (success) async {
+        log('🗑️ Serial document [$serialNumber] deleted from Firestore.');
+        updatedSerialNumbers.remove(serialNumber); // Remove from materialModel
       },
     );
   }
@@ -343,11 +366,9 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     List<SerialTransactionModel> updatedTransactions,
   ) {
     if (updatedTransactions.isEmpty) {
-      // If no transactions remain, remove the serial number
       updatedSerialNumbers.remove(serialNumber);
       log('🗑️ Serial number [$serialNumber] removed from material (${materialModel.matName}).');
     } else {
-      // If transactions remain, mark the serial as sold
       updatedSerialNumbers[serialNumber] = true;
       log('✅ Serial number [$serialNumber] of material (${materialModel.matName}) marked as sold.');
     }

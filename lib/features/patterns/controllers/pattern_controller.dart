@@ -15,13 +15,9 @@ import '../services/pattern_form_handler.dart';
 class PatternController extends GetxController with AppNavigator {
   final RemoteDataSourceRepository<BillTypeModel> _repository;
 
-  PatternController(this._repository) {
-    getAllBillTypes();
-  }
+  PatternController(this._repository);
 
-  List<BillTypeModel> billsTypes = [];
-
-  bool isLoading = true;
+  final List<BillTypeModel> billsTypes = [];
 
   final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
 
@@ -29,6 +25,8 @@ class PatternController extends GetxController with AppNavigator {
   late final PatternFormHandler patternFormHandler;
 
   BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType;
+
+  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.id == BillType.sales.typeGuide);
 
   @override
   void onInit() {
@@ -102,7 +100,7 @@ class PatternController extends GetxController with AppNavigator {
     to(AppRoutes.addPatternsScreen);
   }
 
-  Future<void> getAllBillTypes() async {
+  Future<List<BillTypeModel>> getAllBillTypes() async {
     final result = await _repository.getAll();
 
     result.fold(
@@ -110,8 +108,7 @@ class PatternController extends GetxController with AppNavigator {
       (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
     );
 
-    isLoading = false;
-    update();
+    return billsTypes;
   }
 
   Future<void> addNewPattern() async {
