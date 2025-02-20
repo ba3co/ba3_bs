@@ -3,7 +3,6 @@ import 'package:ba3_bs/core/helper/extensions/bill_type_model.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
-import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:get/get.dart';
 
 import '../../bill/data/models/bill_items.dart';
