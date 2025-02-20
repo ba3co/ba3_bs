@@ -257,7 +257,7 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
     // log('name $name');
     // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
     if (name != null && name != " " && name != "") {
-      return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
+      return materials.where((element) => (element.matName==name)).firstOrNull;
     }
     return null;
   }

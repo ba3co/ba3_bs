@@ -136,7 +136,8 @@ class BillLayout extends StatelessWidget {
                       onPressed: () {
 
                         // allBillsController.fetchAllNestedBills();
-                        read<MaterialsStatementController>().setupAllMaterials();
+                        // read<MaterialsStatementController>().setupAllMaterials();
+                        read<MaterialsStatementController>().setupOneMaterials("bb270eea-4af2-421b-a06c-709c2fc46c4b");
                       },
                       child: Icon(
                         Icons.ac_unit_rounded,

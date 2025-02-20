@@ -32,6 +32,7 @@ class BillGridWidget extends StatelessWidget {
           shortcut: shortCut ?? const PlutoGridShortcut(),
           style: buildGridStyleConfig(
             evenRowColor: rowColor,
+
           ),
           localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
         ),

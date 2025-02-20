@@ -61,7 +61,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
               child: PlutoGrid(
                 key: controller.plutoKey,
                 onLoaded: (event) {
-                  event.stateManager.setShowColumnFilter(true); // تفعيل الفلترة
+                  event.stateManager.setShowColumnFilter(true);
                   onLoaded(event);
                 },
 
@@ -74,8 +74,11 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
                     evenRowColor: Colors.blueAccent.withAlpha(127),
-                    cellTextStyle: TextStyle(fontFamily: 'Almarai')
+                    cellTextStyle: TextStyle(fontFamily: 'Almarai'),
+                    columnTextStyle: TextStyle(fontFamily: 'Almarai'),
+                    activatedBorderColor: Colors.teal
                   ),
+
                   localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
                 ),
                 createFooter: (stateManager) {
