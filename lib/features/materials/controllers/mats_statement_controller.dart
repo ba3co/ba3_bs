@@ -91,6 +91,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     );
   }
 
+  /// to recalculate main price and quantity from mat statement list after we add all statement to materials
   setupAllMaterials() async {
     int i = 0;
     for (final material in _materialsController.materials) {
@@ -236,6 +237,9 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     items.sortBy((item) => item.date!);
     double currentPrice = 0.0;
     int currentQuantity = 0;
+
+    /// user helper Quantity to if you have list of bill in same date
+    /// We need to add the input bills first and then add the output bills.
     int helperQuantity = 0;
     for (final matStatementModel in items) {
       if (matStatementModel.quantity! > 0) {
