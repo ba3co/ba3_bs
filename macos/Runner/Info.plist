@@ -36,6 +36,7 @@
     <string>Access to Documents folder is needed to read files</string>
     <key>NSDownloadsFolderUsageDescription</key>
     <string>Access to Downloads folder is needed to read files</string>
-
+ <key>FLTEnableImpeller</key>
+ <false />
 </dict>
 </plist>

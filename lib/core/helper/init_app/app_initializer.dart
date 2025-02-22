@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:window_manager/window_manager.dart';
+// import 'package:window_manager/window_manager.dart';
 
 import '../../../firebase_options.dart';
 import '../../constants/app_constants.dart';
@@ -15,7 +15,7 @@ Future<void> initializeApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Configure window settings for desktop platforms
-    await initializeWindowSettings();
+  //   await initializeWindowSettings();
 
 
   // Initialize the default Firebase app
@@ -35,20 +35,20 @@ Future<void> _initializeAppLocalLangService({required String boxName}) async {
   Get.put(TranslationController(hiveLocalLangService));
 }
 
-Future<void> initializeWindowSettings() async {
-  await windowManager.ensureInitialized();
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(1000, 800),
-    minimumSize: Size(1000, 800),
-    center: true,
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.normal,
-    windowButtonVisibility: true,
-  );
-
-  await windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
-}
+// Future<void> initializeWindowSettings() async {
+//   await windowManager.ensureInitialized();
+//   WindowOptions windowOptions = const WindowOptions(
+//     size: Size(1000, 800),
+//     minimumSize: Size(1000, 800),
+//     center: true,
+//     backgroundColor: Colors.transparent,
+//     skipTaskbar: false,
+//     titleBarStyle: TitleBarStyle.normal,
+//     windowButtonVisibility: true,
+//   );
+//
+//   await windowManager.waitUntilReadyToShow(windowOptions, () async {
+//     await windowManager.show();
+//     await windowManager.focus();
+//   });
+// }

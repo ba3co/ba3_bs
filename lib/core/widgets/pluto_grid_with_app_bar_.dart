@@ -74,8 +74,8 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
                     evenRowColor: Colors.blueAccent.withAlpha(127),
-                    cellTextStyle: TextStyle(fontFamily: 'Almarai'),
-                    columnTextStyle: TextStyle(fontFamily: 'Almarai'),
+                    // cellTextStyle: TextStyle(fontFamily: 'Almarai'),
+                    // columnTextStyle: TextStyle(fontFamily: 'Almarai'),
                     activatedBorderColor: Colors.teal
                   ),
 

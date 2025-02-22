@@ -6,9 +6,9 @@ PlutoGridStyleConfig buildGridStyleConfig({evenRowColor}) {
     rowHeight: 30,
     columnHeight: 30,
     evenRowColor: _getEvenRowColor(evenRowColor: evenRowColor),
-    columnTextStyle: _getColumnTextStyle(),
+    // columnTextStyle: _getColumnTextStyle(),
     activatedColor: _getActivatedColor(),
-    cellTextStyle: _getCellTextStyle(),
+    // cellTextStyle: _getCellTextStyle(),
     gridPopupBorderRadius: _getBorderRadius(),
     gridBorderRadius: _getBorderRadius(),
   );

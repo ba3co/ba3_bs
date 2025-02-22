@@ -8,8 +8,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_platform_alert
   geolocator_windows
   print_bluetooth_thermal
-  screen_retriever_windows
-  window_manager
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
