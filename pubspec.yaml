@@ -55,6 +55,7 @@ dependencies:
   shimmer: ^3.0.0
   pool: ^1.5.1
   dropdown_button2: ^2.3.9
+  flutter_thermal_printer: ^1.1.0
 
 dev_dependencies:
   flutter_test:
