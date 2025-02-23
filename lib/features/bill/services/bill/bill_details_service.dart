@@ -309,24 +309,24 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     final currentAccounts = currentBill.billTypeModel.accounts ?? {};
 
     // Identify accounts that are present in both bills but have changed
-    final Map<String, AccountModel> modifiedAccounts = Map.fromEntries(
+    final modifiedBillTypeAccounts = Map.fromEntries(
       previousAccounts.entries.where(
         (MapEntry<Account, AccountModel> previousAccount) {
           final currentAccountModel = currentAccounts[previousAccount.key];
           return currentAccountModel != null && currentAccountModel != previousAccount.value;
-        },
+        }, // Use the account key's label for the map
       ).map(
-          // Use the account key's label for the map
-          (entry) => MapEntry(entry.key.label, entry.value)),
+        (entry) => MapEntry(entry.key.label, entry.value),
+      ),
     );
 
     // Log modified accounts
-    log('Modified accounts count: ${modifiedAccounts.length}');
-    modifiedAccounts.forEach(
+    log('Modified accounts count: ${modifiedBillTypeAccounts.length}');
+    modifiedBillTypeAccounts.forEach(
       (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
     );
 
-    return modifiedAccounts;
+    return modifiedBillTypeAccounts;
   }
 
   Map<String, List<BillItem>> findDeletedMaterials({required BillModel previousBill, required BillModel currentBill}) {
@@ -362,12 +362,11 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
   }
 
-  _handelUpdate({
-    required Map<String, AccountModel> modifiedBillTypeAccounts,
+  Map<String, AccountModel> _handelModifiedAccountsUpdate({
     required BillModel previousBill,
     required BillModel currentBill,
   }) {
-    modifiedBillTypeAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
+    final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
     if (hasModelId(currentBill.billId) &&
         hasModelItems(currentBill.items.itemList) &&
@@ -378,9 +377,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         itemModel: [previousBill, currentBill],
       );
     }
+    return modifiedAccounts;
   }
 
-// Updated handleSaveOrUpdateSuccess method.
+  // Updated handleSaveOrUpdateSuccess method.
   Future<void> handleSaveOrUpdateSuccess({
     BillModel? previousBill,
     required BillModel currentBill,
@@ -391,7 +391,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     _showSuccessMessage(isSave);
 
     // 2. Prepare containers for modified accounts and deleted materials.
-    final modifiedBillTypeAccounts = <String, AccountModel>{};
+    Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
 
     ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges;
 
@@ -399,12 +399,11 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     if (isSave) {
       _handleAdd(savedBill: currentBill, billSearchController: billSearchController);
     } else {
+      // Update the bill (PDF generation etc.) and collect modifications.
+      modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill!, currentBill: currentBill);
+
       // Process update and compute the differences between bill items.
-      itemChanges = _processUpdate(
-        previousBill: previousBill!,
-        currentBill: currentBill,
-        modifiedBillTypeAccounts: modifiedBillTypeAccounts,
-      );
+      itemChanges = _processUpdate(previousBill: previousBill, currentBill: currentBill);
     }
 
     // 4. Update the bill search controller.
@@ -426,6 +425,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       );
     }
 
+    //  log('if Modified accounts count: ${modifiedBillTypeAccounts.length}');
     // 5. Create an entry bond if the bill is approved and its pattern requires a material account.
     if (_shouldCreateEntryBond(currentBill)) {
       createAndStoreEntryBond(
@@ -481,18 +481,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   /// Processes an update by calling the update handler and computing item changes.
-  ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? _processUpdate({
-    required BillModel previousBill,
-    required BillModel currentBill,
-    required Map<String, AccountModel> modifiedBillTypeAccounts,
-  }) {
-    // Update the bill (PDF generation etc.) and collect modifications.
-    _handelUpdate(
-      modifiedBillTypeAccounts: modifiedBillTypeAccounts,
-      previousBill: previousBill,
-      currentBill: currentBill,
-    );
-
+  ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? _processUpdate(
+      {required BillModel previousBill, required BillModel currentBill}) {
     // Compute the differences between the previous and current bill items.
     final changes = findBillItemChanges(previousItems: previousBill.items.itemList, currentItems: currentBill.items.itemList);
 

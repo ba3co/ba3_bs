@@ -222,6 +222,7 @@ class InvoiceRecordModel {
         field: AppConstants.invRecProductSoldSerial,
         type: PlutoColumnType.text(),
         enableEditingMode: false,
+        hide: AppConstants.hideInvRecProductSoldSerialAndSerialNumbers,
       ): invRecProductSoldSerial,
       PlutoColumn(
         title: AppStrings.productSerialNumbers.tr,
@@ -229,6 +230,7 @@ class InvoiceRecordModel {
         field: AppConstants.invRecProductSerialNumbers,
         type: PlutoColumnType.text(),
         enableEditingMode: false,
+        hide: AppConstants.hideInvRecProductSoldSerialAndSerialNumbers,
       ): invRecProductSerialNumbers,
       PlutoColumn(
         title: AppStrings.quantity.tr,

@@ -130,19 +130,28 @@ class EntryBondController extends GetxController with FloatingLauncher {
     required EntryBondModel entryBondModel,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
-    log('Start _handleModifiedEntryBondItems');
+    log('Start _handleModifiedEntryBondItems ${modifiedAccounts.length}');
 
     final modifiedEntryBondItems = _mapToEntryBondItems(
       originId: entryBondModel.origin!.originId!,
       modifiedAccounts: modifiedAccounts,
     );
 
+    log('modifiedEntryBondItems ${modifiedEntryBondItems.length}');
+
     if (modifiedEntryBondItems.isEmpty) return;
 
+    for (final entryBondItem in modifiedEntryBondItems) {
+      log(' ======================= modifiedEntryBondItems =======================');
+      log('Account Key: ${entryBondItem.id}, Account Model: ${entryBondItem.toJson()}');
+    }
+
     // Build a list of futures for parallel deletes
-    final futures = modifiedEntryBondItems.map((entryBondItem) {
-      return _accountsStatementsFirebaseRepo.delete(entryBondItem);
-    });
+    final futures = modifiedEntryBondItems.map(
+      (entryBondItem) {
+        return _accountsStatementsFirebaseRepo.delete(entryBondItem);
+      },
+    );
 
     final results = await Future.wait(futures);
 
