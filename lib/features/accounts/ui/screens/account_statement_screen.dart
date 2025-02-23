@@ -1,6 +1,8 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/account_statement_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,7 +26,20 @@ class AccountStatementScreen extends StatelessWidget {
             controller.launchBondEntryBondScreen(context: context, originId: originId);
           },
           isLoading: controller.isLoading,
-          tableSourceModels: controller.filteredEntryBondItems,
+          tableSourceModels: controller.filteredEntryBondItems
+              .mergeBy(
+                (entry) => entry.originId,
+                (accumulated, current) => EntryBondItemModel(
+                  account: current.account,
+                  amount: accumulated.amount! + current.amount!,
+                  bondItemType: current.bondItemType,
+                  date: current.date,
+                  note: '${current.note} + ${accumulated.note}',
+                  originId: current.originId,
+                  docId: current.docId,
+                ),
+              )
+              .toList(),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(

@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,9 +46,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar ?? _buildAppBar(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildGrid(context),
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : _buildGrid(context),
     );
   }
 
@@ -57,33 +56,39 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
         return Column(
           children: [
             Expanded(
-
               child: PlutoGrid(
                 key: controller.plutoKey,
                 onLoaded: (event) {
                   event.stateManager.setShowColumnFilter(true);
                   onLoaded(event);
                 },
-
                 onRowSecondaryTap: onRowSecondaryTap,
                 onSelected: onSelected,
                 onRowDoubleTap: onRowDoubleTap,
                 columns: controller.generateColumns<T>(tableSourceModels, type),
                 rows: controller.generateRows<T>(tableSourceModels, type),
                 mode: PlutoGridMode.selectWithOneTap,
+
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
-                    evenRowColor: Colors.blueAccent.withAlpha(127),
-                    // cellTextStyle: TextStyle(fontFamily: 'Almarai'),
-                    // columnTextStyle: TextStyle(fontFamily: 'Almarai'),
-                    activatedBorderColor: Colors.teal
-                  ),
+                    gridBackgroundColor: AppColors.backGroundColor,
+                      rowHeight: 30,
+                      evenRowColor: Colors.blue.shade200,
+                      borderColor: Colors.blue,
+                      gridBorderColor:  AppColors.backGroundColor,
 
+
+                      // cellTextStyle: TextStyle(fontFamily: 'Almarai'),
+                      // columnTextStyle: TextStyle(fontFamily: 'Almarai'),
+                      activatedBorderColor: Colors.teal),
                   localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
                 ),
                 createFooter: (stateManager) {
                   stateManager.setPageSize(100, notify: false);
-                  return PlutoPagination(stateManager);
+                  return Container(
+                    color: Colors.white, // حدد اللون المطلوب هنا
+                    child: PlutoPagination(stateManager),
+                  );
                 },
               ),
             ),
@@ -97,6 +102,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   AppBar _buildAppBar() {
     return AppBar(
       centerTitle: true,
+      backgroundColor: Colors.white,
       leading: leadingIcon != null
           ? IconButton(
               onPressed: onLeadingIconPressed,
