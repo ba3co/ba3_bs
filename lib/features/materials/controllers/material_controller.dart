@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:ba3_bs/core/dialogs/search_material_group_text_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
@@ -30,7 +31,7 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/materials/material_model.dart';
 import '../ui/screens/add_material_screen.dart';
 
-class MaterialController extends GetxController with AppNavigator,FloatingLauncher {
+class MaterialController extends GetxController with AppNavigator, FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
@@ -186,7 +187,8 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
           (item.serialNumbers != null &&
-              item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
+              item.serialNumbers!.entries
+                  .any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
     if (exactMatch != null) {
@@ -257,7 +259,7 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
     // log('name $name');
     // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
     if (name != null && name != " " && name != "") {
-      return materials.where((element) => (element.matName==name)).firstOrNull;
+      return materials.where((element) => (element.matName == name)).firstOrNull;
     }
     return null;
   }
@@ -274,7 +276,8 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
       return;
     }
 
-    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+    final hiveResult =
+        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -498,5 +501,16 @@ class MaterialController extends GetxController with AppNavigator,FloatingLaunch
   }) {
     int totalQuantity = oldQuantity + quantityInStatement;
     return totalQuantity > 0 ? ((oldMinPrice * oldQuantity) + (priceInStatement * quantityInStatement)) / totalQuantity : 0.0;
+  }
+
+  Future<void> updateAllMaterialWithDecodeProblematic() async {
+    int i=0;
+    log('material length ${materials.length}');
+    for (var mat in materials) {
+
+      materialFromHandler.init(mat.copyWith(matName: mat.matName!.encodeProblematic()));
+      await saveOrUpdateMaterial();
+      log('mat number ${++i}');
+    }
   }
 }

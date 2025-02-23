@@ -39,6 +39,7 @@ class ProductSelectionDialogContent extends StatelessWidget {
                 child: PlutoGridWithAppBar(
                   title: 'اختيار مادة',
                   leadingIcon: Icons.close,
+
                   tableSourceModels: searchedMaterials,
                   onLoaded: (event) {
                     event.stateManager.setShowColumnFilter(true);

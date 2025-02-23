@@ -187,7 +187,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   void onMainTableLoaded(PlutoGridOnLoadedEvent event) {
     recordsTableStateManager = event.stateManager;
-
+    recordsTableStateManager.setAutoEditing(true);
     final newRows = recordsTableStateManager.getNewRows(count: 30);
     recordsTableStateManager.appendRows(newRows);
 
@@ -358,7 +358,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   void updateAdditionDiscountCell(double total) => _gridService.updateAdditionDiscountCells(total, _plutoUtils);
 
   InvoiceRecordModel? _processBillRow(PlutoRow row, MaterialController materialController) {
-    final materialModel = materialController.getMaterialByName(row.cells[AppConstants.invRecProduct]!.value);
+    final materialModel = materialController.getMaterialByName(row.cells[AppConstants.invRecProduct]!.value.toString());
 
     if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
       if (billTypeModel?.billPatternType?.hasVat ?? false) {
