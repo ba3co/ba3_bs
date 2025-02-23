@@ -411,5 +411,6 @@ abstract class AppConstants {
   static const String entryBonIdFiled = 'entryBonIdFiled';
 
   static const String billIdFiled = 'billIdFiled';
-  static const bool hideInvRecProductSoldSerialAndSerialNumbers = true;
+  static const bool hideInvRecProductSoldSerial = false;
+  static const bool hideInvRecProductSerialNumbers = true;
 }

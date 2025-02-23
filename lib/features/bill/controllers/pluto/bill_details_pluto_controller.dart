@@ -21,14 +21,15 @@ import '../../services/pluto/bill_pluto_grid_service.dart';
 import '../../services/pluto/bill_pluto_utils.dart';
 
 class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
+  final BillTypeModel? billTypeModel;
+
+  BillDetailsPlutoController({this.billTypeModel});
+
   // Services
   late final BillPlutoGridService _gridService;
   late final BillPlutoCalculator _calculator;
   late final BillPlutoUtils _plutoUtils;
   late final BillPlutoContextMenu _contextMenu;
-  final BillTypeModel? billTypeModel;
-
-  BillDetailsPlutoController({this.billTypeModel});
 
   late List<PlutoColumn> recordsTableColumns;
 
@@ -98,10 +99,6 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     generateSellMaterialsSerialsControllers(invoiceRecords);
 
     recordsTableStateManager.setShowLoading(false);
-
-    for (final record in invoiceRecords) {
-      log('invRecProductSerialNumbers ${record.invRecProductSerialNumbers}');
-    }
 
     return invoiceRecords;
   }
@@ -362,7 +359,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
     if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
       if (billTypeModel?.billPatternType?.hasVat ?? false) {
-        return _createInvoiceRecord(row, materialModel.id!, VatEnums.byGuid(materialModel.matVatGuid ?? "2").taxRatio ?? 0);
+        return _createInvoiceRecord(row, materialModel.id!, VatEnums.byGuid(materialModel.matVatGuid ?? '2').taxRatio ?? 0);
       } else {
         return _createInvoiceRecord(row, materialModel.id!, 0);
       }

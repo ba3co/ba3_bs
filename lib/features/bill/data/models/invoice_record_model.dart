@@ -41,7 +41,8 @@ class InvoiceRecordModel {
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
-  factory InvoiceRecordModel.fromBillItem(BillItem billItem) => InvoiceRecordModel(
+  factory InvoiceRecordModel.fromBillItem(BillItem billItem) =>
+      InvoiceRecordModel(
         invRecId: billItem.itemGuid,
         invRecProduct: billItem.itemName,
         invRecQuantity: billItem.itemQuantity,
@@ -54,7 +55,8 @@ class InvoiceRecordModel {
         invRecProductSerialNumbers: billItem.itemSerialNumbers,
       );
 
-  factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) => InvoiceRecordModel(
+  factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) =>
+      InvoiceRecordModel(
         invRecId: map[AppConstants.invRecId],
         invRecProduct: map[AppConstants.invRecProduct],
         invRecQuantity: int.tryParse(map[AppConstants.invRecQuantity].toString()),
@@ -66,7 +68,8 @@ class InvoiceRecordModel {
         invRecGiftTotal: (map[AppConstants.invRecGiftTotal] ?? 0) * 1.0,
       );
 
-  toJson() => {
+  toJson() =>
+      {
         AppConstants.invRecId: invRecId,
         AppConstants.invRecProduct: invRecProduct,
         AppConstants.invRecQuantity: invRecQuantity,
@@ -89,7 +92,7 @@ class InvoiceRecordModel {
     final String? productSoldSerial = map[AppConstants.invRecProductSoldSerial];
 
     final List<String>? productSerialNumbers =
-        (map[AppConstants.invRecProductSerialNumbers] is List) ? List<String>.from(map[AppConstants.invRecProductSerialNumbers] as List) : null;
+    (map[AppConstants.invRecProductSerialNumbers] is List) ? List<String>.from(map[AppConstants.invRecProductSerialNumbers] as List) : null;
 
     // final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
     // final double? vat = _parseDouble(map[AppConstants.invRecVat]);
@@ -217,20 +220,12 @@ class InvoiceRecordModel {
         },
       ): invRecProduct,
       PlutoColumn(
-        title: AppStrings.productSoldSerialNumber.tr,
-        width: 110,
-        field: AppConstants.invRecProductSoldSerial,
-        type: PlutoColumnType.text(),
-        enableEditingMode: false,
-        hide: AppConstants.hideInvRecProductSoldSerialAndSerialNumbers,
-      ): invRecProductSoldSerial,
-      PlutoColumn(
         title: AppStrings.productSerialNumbers.tr,
         width: 110,
         field: AppConstants.invRecProductSerialNumbers,
         type: PlutoColumnType.text(),
         enableEditingMode: false,
-        hide: AppConstants.hideInvRecProductSoldSerialAndSerialNumbers,
+        hide: AppConstants.hideInvRecProductSerialNumbers,
       ): invRecProductSerialNumbers,
       PlutoColumn(
         title: AppStrings.quantity.tr,
@@ -277,6 +272,17 @@ class InvoiceRecordModel {
             return cell.row.cells[AppConstants.invRecProduct]?.value == '';
           },
         ): invRecGift,
+      PlutoColumn(
+        title: AppStrings.productSoldSerialNumber.tr,
+        readOnly: true,
+        width: 0,
+        enableContextMenu: false,
+        enableDropToResize: false,
+        field: AppConstants.invRecProductSoldSerial,
+        type: PlutoColumnType.text(),
+        enableEditingMode: false,
+        hide: AppConstants.hideInvRecProductSoldSerial,
+      ): invRecProductSoldSerial,
     };
   }
 
@@ -318,7 +324,8 @@ class AdditionsDiscountsRecordModel {
     );
   }
 
-  factory AdditionsDiscountsRecordModel.fromJson(Map<dynamic, dynamic> map) => AdditionsDiscountsRecordModel(
+  factory AdditionsDiscountsRecordModel.fromJson(Map<dynamic, dynamic> map) =>
+      AdditionsDiscountsRecordModel(
         account: map[AppConstants.id],
         discount: _parseDouble(map[AppConstants.discount]),
         discountRatio: _parseDouble(map[AppConstants.discountRatio]),
@@ -326,7 +333,8 @@ class AdditionsDiscountsRecordModel {
         additionRatio: _parseDouble(map[AppConstants.additionRatio]),
       );
 
-  toJson() => {
+  toJson() =>
+      {
         AppConstants.id: account,
         AppConstants.discount: discount,
         AppConstants.discountRatio: discountRatio,

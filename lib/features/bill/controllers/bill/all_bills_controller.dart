@@ -89,7 +89,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     read<MaterialController>().reloadMaterials();
   }
 
-  Future<void> refreshBillsTypes() async => fetchBillsTypes();
+  Future<void> refreshBillsTypes() async => await fetchBillsTypes();
 
   int pendingBillsCounts(BillTypeModel billTypeModel) => pendingBillsCountsByType[billTypeModel] ?? 0;
 
@@ -103,8 +103,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _billsFirebaseRepo.fetchAllNested(billsTypes);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedNestedBills) => nestedBills.assignAll(fetchedNestedBills),
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedNestedBills) => nestedBills.assignAll(fetchedNestedBills),
     );
 
     nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
@@ -130,8 +130,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
       final result = await _jsonImportExportRepo.importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
       );
     }
   }
@@ -180,8 +180,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
-      (fetchedPendingBills) {
+          (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
+          (fetchedPendingBills) {
         pendingBills.assignAll(fetchedPendingBills);
         navigateToPendingBillsScreen();
       },
@@ -213,6 +213,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBillsCountsByTypes(List<BillTypeModel> fetchedBillTypes) async {
+    // Clear the existing counts to avoid accumulation
+    pendingBillsCountsByType.clear();
+
     final List<Future<void>> fetchTasks = [];
     final errors = <String>[]; // Collect error messages.
 
@@ -225,8 +228,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
         )
             .then((result) {
           result.fold(
-            (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-            (int count) => pendingBillsCountsByType[billTypeModel] = count,
+                (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+                (int count) => pendingBillsCountsByType[billTypeModel] = count,
           );
         }),
       );
@@ -235,13 +238,15 @@ class AllBillsController extends FloatingBillDetailsLauncher
     // Wait for all tasks to complete.
     await Future.wait(fetchTasks);
 
-    // Handle errors if any.
     if (errors.isNotEmpty) {
       AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
     }
   }
 
   Future<void> fetchAllBillsCountsByTypes(List<BillTypeModel> fetchedBillTypes) async {
+    // Clear the existing counts to avoid accumulation
+    allBillsCountsByType.clear();
+
     final List<Future<void>> fetchTasks = [];
     final errors = <String>[]; // Collect error messages.
 
@@ -249,8 +254,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
       fetchTasks.add(
         _billsFirebaseRepo.count(itemIdentifier: billTypeModel).then((result) {
           result.fold(
-            (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-            (int count) => allBillsCountsByType[billTypeModel] = count,
+                (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+                (int count) => allBillsCountsByType[billTypeModel] = count,
           );
         }),
       );
@@ -259,11 +264,11 @@ class AllBillsController extends FloatingBillDetailsLauncher
     // Wait for all tasks to complete.
     await Future.wait(fetchTasks);
 
-    // Handle errors if any.
     if (errors.isNotEmpty) {
       AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
     }
   }
+
 
   Future<void> exportBillsJsonFile() async {
     if (bills.isEmpty) {
@@ -274,8 +279,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _jsonImportExportRepo.exportJsonFile(bills);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
-      (filePath) => AppUIUtils.showExportSuccessDialog(filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:'),
+          (failure) => AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
+          (filePath) => AppUIUtils.showExportSuccessDialog(filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:'),
     );
   }
 
@@ -346,7 +351,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
     launchFloatingWindow(
       context: context,
       tag: controllerTag,
-      minimizedTitle: BillType.byLabel(currentBill.billTypeModel.billTypeLabel!).value,
+      minimizedTitle: BillType
+          .byLabel(currentBill.billTypeModel.billTypeLabel!)
+          .value,
       floatingScreen: BillDetailsScreen(
         billDetailsController: billDetailsController,
         billDetailsPlutoController: billDetailsPlutoController,
@@ -366,11 +373,11 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _billsFirebaseRepo.getById(id: billId, itemIdentifier: billTypeModel);
 
     return result.fold(
-      (failure) {
+          (failure) {
         AppUIUtils.onFailure(failure.message);
         return null;
       },
-      (fetchedBill) => fetchedBill,
+          (fetchedBill) => fetchedBill,
     );
   }
 
@@ -382,8 +389,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
       fetchTasks.add(
         _billsFirebaseRepo.getMetaData(id: billTypeModel.billTypeId!, itemIdentifier: billTypeModel).then((result) {
           result.fold(
-            (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
-            (double? count) => allBillsCountsByType[billTypeModel] = (count ?? 0).toInt(),
+                (failure) => errors.add('Failed to fetch count for ${billTypeModel.fullName}: ${failure.message}'),
+                (double? count) => allBillsCountsByType[billTypeModel] = (count ?? 0).toInt(),
           );
         }),
       );
@@ -401,8 +408,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   Future<void> fetchXXXXXX() async {
     _billsFirebaseRepo.getMetaData(id: BillType.transferOut.typeGuide, itemIdentifier: BillType.transferOut.billTypeModel).then((result) {
       result.fold(
-        (failure) => AppUIUtils.onFailure('Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
-        (double? count) {
+            (failure) => AppUIUtils.onFailure('Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
+            (double? count) {
           log(count.toString());
         },
       );
@@ -413,8 +420,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _serialNumbersRepo.getById(serialNumberInput);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('⚠️ لم يتم العثور على أي فواتير  تم ذكر فيها هذا الرقم التسلسلي [$serialNumberInput] ❌'),
-      (SerialNumberModel fetchedSerialNumberModel) {
+          (failure) => AppUIUtils.onFailure('⚠️ لم يتم العثور على أي فواتير  تم ذكر فيها هذا الرقم التسلسلي [$serialNumberInput] ❌'),
+          (SerialNumberModel fetchedSerialNumberModel) {
         // Clear previous statements before adding new ones.
         serialNumberStatements.clear();
 
@@ -471,7 +478,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
     log('isSold: $isSold');
 
     if (billId != null && billTypeId != null) {
-      openFloatingBillDetailsById(billId, context, BillType.byTypeGuide(billTypeId).billTypeModel);
+      openFloatingBillDetailsById(billId, context, BillType
+          .byTypeGuide(billTypeId)
+          .billTypeModel);
     } else {
       AppUIUtils.onFailure('⚠️ Missing Bill ID or Bill Type ID');
     }

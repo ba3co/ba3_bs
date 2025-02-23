@@ -169,7 +169,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           (serial) => serial.toLowerCase().startsWith(inputSearch.toLowerCase().trim()),
         );
 
-    if (!AppConstants.hideInvRecProductSoldSerialAndSerialNumbers) {
+    if (!AppConstants.hideInvRecProductSoldSerial) {
       if (searchedSerial != null && searchedSerial.isNotEmpty) {
         // Update the grid with the found serial number
         updateCellValue(stateManager, AppConstants.invRecProductSoldSerial, searchedSerial);
