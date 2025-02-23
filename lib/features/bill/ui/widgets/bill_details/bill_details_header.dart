@@ -15,6 +15,7 @@ import '../../../../../core/widgets/date_picker.dart';
 import '../../../../../core/widgets/searchable_account_field.dart';
 import '../../../../accounts/data/models/account_model.dart';
 import '../../../../floating_window/services/overlay_service.dart';
+import '../../../../sellers/controllers/sellers_controller.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 import '../../../data/models/bill_model.dart';
 import '../bill_shared/bill_header_field.dart';
@@ -97,9 +98,16 @@ class BillDetailsHeader extends StatelessWidget {
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: AppStrings.seller.tr,
-                readOnly: true,
+                readOnly: false,
                 textEditingController: billDetailsController.sellerAccountController,
-                onSubmitted: (text) {},
+                onSubmitted: (text) {
+                  read<SellersController>().openSellerSelectionDialog(
+                    query: text,
+                    textEditingController: billDetailsController.sellerAccountController,
+                    context: context,
+                  );
+
+                },
               ),
               secondItem: TextAndExpandedChildField(
                 label: AppStrings.illustration.tr,

@@ -263,6 +263,14 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     }
     return null;
   }
+  MaterialModel? searchMaterialByName(name) {
+    // log('name $name');
+    // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
+    if (name != null && name != " " && name != "") {
+      return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull ;
+    }
+    return null;
+  }
 
   Future<void> saveOrUpdateMaterial() async {
     // Validate the input before proceeding

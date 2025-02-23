@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -50,9 +51,9 @@ class PrintingController extends GetxController {
 
   Future<void> startPrinting(
       {required BuildContext context,
-      required int billNumber,
-      required List<InvoiceRecordModel> invRecords,
-      required String invDate}) async {
+        required int billNumber,
+        required List<InvoiceRecordModel> invRecords,
+        required String invDate}) async {
     _showLoadingDialog(context);
 
     await _printBill(billNumber: billNumber, invRecords: invRecords, invDate: invDate);
@@ -65,7 +66,7 @@ class PrintingController extends GetxController {
     OverlayService.showDialog(
       context: context,
       title: '',
-      width: 150,
+      width: 200,
       height: 100,
       content: const PrintingLoadingDialog(),
       contentPadding: EdgeInsets.zero,
@@ -87,7 +88,7 @@ class PrintingController extends GetxController {
 
     // Check if the specified printer is among the paired devices
     bool isPrinterAvailable =
-        bluetoothDevices.any((device) => device.macAdress.toLowerCase() == targetPrinterMacAddress.toLowerCase());
+    bluetoothDevices.any((device) => device.macAdress.toLowerCase() == targetPrinterMacAddress.toLowerCase());
 
     if (isPrinterAvailable) {
       if (!isPrinterConnected) await _connectToPrinter(targetPrinterMacAddress);
@@ -165,6 +166,7 @@ class PrintingController extends GetxController {
     final materialController = read<MaterialController>();
 
     for (var record in invoiceRecords) {
+
       final material = materialController.getMaterialById(record.invRecId!);
       final recordTotals = _computeRecordTotals(record);
 
@@ -198,7 +200,7 @@ class PrintingController extends GetxController {
 // Generates the item details for each invoice record
   Future<List<int>> _generateItemDetails(
       Generator generator, MaterialModel material, InvoiceRecordModel record, Map<String, double> totals) async {
-    final itemName = (material.matName ?? '').substring(0, (material.matName?.length ?? 0).clamp(0, 64));
+    final itemName = (material.matName!.decodeProblematic() ?? '').substring(0, (material.matName!.decodeProblematic().length ?? 0).clamp(0, 64));
     final translatedName = await _translationRepository.translateText(itemName);
 
     return [
@@ -206,7 +208,7 @@ class PrintingController extends GetxController {
       ...generator.text(material.matBarCode ?? '', styles: PrinterTextStyles.left),
       ...generator.text(
         '${record.invRecQuantity} x ${totals['unitPriceWithVat']!.toStringAsFixed(2)} -> '
-        '${PrinterConstants.totalLabel}${totals['lineTotal']!.toStringAsFixed(2)}',
+            '${PrinterConstants.totalLabel}${totals['lineTotal']!.toStringAsFixed(2)}',
         styles: PrinterTextStyles.left,
         linesAfter: 1,
       ),
