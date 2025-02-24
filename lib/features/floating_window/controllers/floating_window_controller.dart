@@ -17,12 +17,13 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   // Get the singleton instance of WindowPositionManager
   WindowPositionManager windowPositionManager = WindowPositionManager.instance;
 
-  FloatingWindowController({double? defaultWidth, double? defaultHeight,bool? isResizing}) {
+  FloatingWindowController({double? defaultWidth, double? defaultHeight, bool? isResizing}) {
     log('call FloatingWindowController constructor');
 
     defaultWidthRatio = defaultWidth != null ? defaultWidth / 1.sw : 0.7;
     defaultHeightRatio = defaultHeight != null ? defaultHeight / 1.sh : 0.85;
-    this.isResizing=isResizing??true;
+
+    this.isResizing = isResizing ?? true;
 
     _initializeWindow(defaultHeight: defaultHeight, defaultWidth: defaultWidth);
   }
@@ -78,8 +79,8 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
     final double windowWidth = bottomWindowWidthRatio * parentSize.value.width; // Width for the minimized container
     final double windowHeight = bottomWindowHeightRatio * parentSize.value.height; // Height for the minimized container
 
-    final targetPositionRatio = windowPositionManager.getNextWindowPositionRatio(
-        windowWidth, windowHeight, parentSize.value.width, parentSize.value.height);
+    final targetPositionRatio =
+        windowPositionManager.getNextWindowPositionRatio(windowWidth, windowHeight, parentSize.value.width, parentSize.value.height);
 
     return targetPositionRatio;
   }
@@ -238,8 +239,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
         x += dx;
       }
     }
-    if (resizeManager.isOnRightEdge(details.localPosition, width) &&
-        !resizeManager.isOnLeftEdge(resizeStartPosition!)) {
+    if (resizeManager.isOnRightEdge(details.localPosition, width) && !resizeManager.isOnLeftEdge(resizeStartPosition!)) {
       final newWidth = width + dx;
       if (newWidth >= minWidth && newWidth <= screenWidth * .95) {
         width = newWidth;
@@ -252,8 +252,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
         y += dy;
       }
     }
-    if (resizeManager.isOnBottomEdge(details.localPosition, height) &&
-        !resizeManager.isOnTopEdge(resizeStartPosition!)) {
+    if (resizeManager.isOnBottomEdge(details.localPosition, height) && !resizeManager.isOnTopEdge(resizeStartPosition!)) {
       final newHeight = height + dy;
       if (newHeight >= minHeight && newHeight <= screenHeight * .95) {
         height = newHeight;
@@ -277,8 +276,7 @@ class FloatingWindowController extends GetxController with CursorUpdateMixin {
   }
 
   void onPanStart(DragStartDetails details) {
-    final Offset localPosition =
-        getLocalPosition(floatingWindowKey: floatingWindowKey, globalPosition: details.globalPosition);
+    final Offset localPosition = getLocalPosition(floatingWindowKey: floatingWindowKey, globalPosition: details.globalPosition);
 
     if (resizeManager.isOnEdge(localPosition, width, height)) {
       isResizing = true;
