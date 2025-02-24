@@ -205,7 +205,7 @@ class InvoiceRecordModel {
         customRenderer: (rendererContext) {
           if (rendererContext.row.cells[AppConstants.invRecProduct]?.value != '') {
             rendererContext.cell.value = rendererContext.rowIdx.toString();
-            return Text(rendererContext.rowIdx.toString());
+            return Text((rendererContext.rowIdx+1).toString());
           }
           return const Text("");
         },
@@ -236,16 +236,6 @@ class InvoiceRecordModel {
         width: 110,
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): subTotalStr,
-
-      // Total Column
-      buildPlutoColumn(
-        title: AppStrings.total.tr,
-        field: AppConstants.invRecTotal,
-        type: PlutoColumnType.text(),
-        width: 150,
-        readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
-      ): invRecTotal,
-
       // Tax Column (Only if VAT is enabled)
       if (billTypeModel.billPatternType!.hasVat)
         buildPlutoColumn(
@@ -255,6 +245,16 @@ class InvoiceRecordModel {
           width: 110,
           isEditable: false,
         ): vat,
+      // Total Column
+      buildPlutoColumn(
+        title: AppStrings.total.tr,
+        field: AppConstants.invRecTotal,
+        type: PlutoColumnType.text(),
+        width: 150,
+        readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
+      ): invRecTotal,
+
+
 
       // Gifts Column (Only if Gifts Account is enabled)
       if (billTypeModel.billPatternType!.hasGiftsAccount)
@@ -265,6 +265,17 @@ class InvoiceRecordModel {
           width: 110,
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
         ): invRecGift,
+      // Gifts Column (Only if Gifts Account is enabled)
+      if (billTypeModel.billPatternType!.hasGiftsAccount)
+        buildPlutoColumn(
+          title: AppStrings.invRecSubTotalWithVat.tr,
+          field:AppConstants.invRecSubTotalWithVat,
+          type: PlutoColumnType.text(),
+          width: 150,
+          // isEditable: false,
+          isReadOnly: true,
+          readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
+        ): ((invRecSubTotal??0)+(invRecVat??0)).toStringAsFixed(2),
 
       // Serial Numbers Column
       buildPlutoColumn(

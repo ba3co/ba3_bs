@@ -166,7 +166,6 @@ class AccountsController extends GetxController with AppNavigator {
         return searchParts.every((part) => name.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
       },
     );
-    log(partialMatch.length.toString());
     if (partialMatch.length == 1) {
       return [partialMatch.first]; // إرجاع أول تطابق جزئي متتابع
     }else if(partialMatch.length > 1){

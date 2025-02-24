@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
@@ -100,6 +101,8 @@ class BillPlutoGridService {
 
     if (billTypeModel.billPatternType!.hasVat) {
       updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
+      updateCellValue(mainTableStateManager, AppConstants.invRecSubTotalWithVat, (subTotalStr.toDouble+vat.toDouble).toStringAsFixed(2));
+
     }
 
     updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotalStr);
@@ -121,9 +124,15 @@ class BillPlutoGridService {
 
     final totalStr = isZeroTotal ? '' : total.toStringAsFixed(2);
 
-    updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
+
     updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotalStr);
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, totalStr);
+    if (billTypeModel.billPatternType!.hasVat) {
+      updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
+
+      updateCellValue(mainTableStateManager, AppConstants.invRecSubTotalWithVat,(subTotalStr.toDouble+vat.toDouble).toStringAsFixed(2));
+    }
+
   }
 
   void updateInvoiceValuesBySubTotal({required PlutoRow selectedRow, required double subTotal, required int quantity}) {
@@ -142,6 +151,7 @@ class BillPlutoGridService {
   void _clearRowValues(PlutoGridStateManager stateManager, BillTypeModel billTypeModel) {
     if (billTypeModel.billPatternType!.hasVat) {
       updateCellValue(stateManager, AppConstants.invRecVat, '');
+      updateCellValue(stateManager, AppConstants.invRecSubTotalWithVat, '');
     }
 
     updateCellValue(stateManager, AppConstants.invRecProduct, '');

@@ -181,7 +181,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     List<String> searchParts = lowerQuery.split(RegExp(r'\s+'));
 
     // Check for exact match first
-    var exactMatch = materials.firstWhereOrNull(
+    var exactMatch = materials.where(
       (item) =>
           item.matName!.toLowerCase() == lowerQuery ||
           item.matCode!.toString().toLowerCase() == lowerQuery ||
@@ -190,8 +190,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
               item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
-    if (exactMatch != null) {
-      return [exactMatch];
+    if (exactMatch .length==1) {
+      return [exactMatch.first];
+    }else if (exactMatch .length>1){
+
+      return exactMatch.toList();
     }
 
     // Check for matches where name, code, barcode, or serial numbers start with the query

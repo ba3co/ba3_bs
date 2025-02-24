@@ -279,4 +279,8 @@ class AppStrings {
   static const String productSerialNumbers = 'الأرقام التسلسلية للمنتج';
   static const String retailPrice = 'المفرق';
 
+
+  //////
+  static const String invRecSubTotalWithVat='الافرادي شامل الضريبة';
+
 }
