@@ -1,8 +1,8 @@
-import 'package:ba3_bs/core/utils/generate_id.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/helper/enums/enums.dart';
+import '../../../core/utils/utils.dart';
 
 class MaterialService {
   MaterialModel? createMaterialModel({

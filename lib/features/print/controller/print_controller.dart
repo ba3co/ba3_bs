@@ -291,6 +291,7 @@ class PrintingController extends GetxController {
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
+import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -487,11 +488,11 @@ class PrintingController extends GetxController {
 // Generates the item details for each invoice record
   Future<List<int>> _generateItemDetails(
       Generator generator, MaterialModel material, InvoiceRecordModel record, Map<String, double> totals) async {
-    final itemName = (material.matName ?? '').substring(0, (material.matName?.length ?? 0).clamp(0, 64));
-    // final translatedName = await _translationRepository.translateText(itemName);
+    final itemName = (material.matName?.decodeProblematic() ?? '').substring(0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
+    final translatedName = await _translationRepository.translateText(itemName);
 
     return [
-      ...generator.text(itemName, styles: PrinterTextStyles.left),
+      ...generator.text(translatedName, styles: PrinterTextStyles.left),
       ...generator.text(material.matBarCode ?? '', styles: PrinterTextStyles.left),
       ...generator.text(
         '${record.invRecQuantity} x ${totals['unitPriceWithVat']!.toStringAsFixed(2)} -> '
