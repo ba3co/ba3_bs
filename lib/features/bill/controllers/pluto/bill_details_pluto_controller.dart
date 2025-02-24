@@ -127,7 +127,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
     for (final record in invRecords) {
       // Extract MaterialModel and serial number
-      MaterialModel? material = read<MaterialController>().getMaterialByName(record.invRecProduct);
+      MaterialModel? material = read<MaterialController>().searchMaterialByName(record.invRecProduct);
       String? serialNumber = record.invRecProductSoldSerial;
 
       if (material != null && serialNumber != null && serialNumber.isNotEmpty) {
@@ -362,7 +362,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   void updateAdditionDiscountCell(double total) => _gridService.updateAdditionDiscountCells(total, _plutoUtils);
 
   InvoiceRecordModel? _processBillRow(PlutoRow row, MaterialController materialController) {
-    final materialModel = materialController.getMaterialByName(row.cells[AppConstants.invRecProduct]!.value.toString());
+    final materialModel = materialController.searchMaterialByName(row.cells[AppConstants.invRecProduct]!.value.toString());
 
     if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
       if (billTypeModel.billPatternType?.hasVat ?? false) {
