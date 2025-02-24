@@ -391,12 +391,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // 1. Display the success message.
     _showSuccessMessage(isSave);
 
-    billDetailsController.printBill(
-      context: context,
-      billModel: currentBill,
-      invRecords: plutoController.generateRecords,
-    );
-
     // 2. Prepare containers for modified accounts and deleted materials.
     Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
 
@@ -431,6 +425,12 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         'handleSaveOrUpdateSuccess isSave $isSave',
       );
     }
+
+    billDetailsController.printBill(
+      context: context,
+      billModel: currentBill,
+      invRecords: plutoController.generateRecords,
+    );
 
     //  log('if Modified accounts count: ${modifiedBillTypeAccounts.length}');
     // 5. Create an entry bond if the bill is approved and its pattern requires a material account.
