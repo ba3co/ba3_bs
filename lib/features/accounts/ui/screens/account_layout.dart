@@ -5,7 +5,7 @@ import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/dialogs/Account_Option_Dialog.dart';
+import '../../../../core/dialogs/account_filter_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_button.dart';
 
@@ -49,7 +49,7 @@ class AccountLayout extends StatelessWidget {
             AppMenuItem(
               text: AppStrings.accountStatement.tr,
               onTap: () {
-                showDialog<String>(context: Get.context!, builder: (BuildContext context) => accountOptionDialog(context));
+                showDialog<String>(context: Get.context!, builder: (BuildContext context) => showAccountFilterDialog(context));
               },
             ),
             AppMenuItem(
