@@ -4,7 +4,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 
-class BillTypeModel  with EquatableMixin {
+class BillTypeModel with EquatableMixin {
   final String? id;
   final String? billTypeId;
   final String? shortName;
@@ -60,12 +60,13 @@ class BillTypeModel  with EquatableMixin {
     return discountAdditionAccountsJson.map((billAccountLabel, discountListJson) {
       Account billAccount = getBillAccountFromLabel(billAccountLabel);
       List<DiscountAdditionAccountModel> discountList =
-          (discountListJson as List).map((discountJson) => DiscountAdditionAccountModel.fromJson(discountJson)).toList();
+      (discountListJson as List).map((discountJson) => DiscountAdditionAccountModel.fromJson(discountJson)).toList();
       return MapEntry(billAccount, discountList);
     });
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'docId': id,
         'billTypeId': billTypeId,
         'shortName': shortName,
@@ -116,9 +117,9 @@ class BillTypeModel  with EquatableMixin {
           billPatternType: billPatternType ?? this.billPatternType);
 
 
-
   @override
-  List<Object?> get props => [
+  List<Object?> get props =>
+      [
         id,
         billTypeId,
         shortName,

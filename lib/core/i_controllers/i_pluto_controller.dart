@@ -47,7 +47,8 @@ abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
   Map<MaterialModel, List<TextEditingController>> get sellMaterialsSerialsControllers => {};
 
   void initSerialControllers(MaterialModel materialModel, int serialCount);
-/// this for mobile
+
+  /// this for mobile
 /*  void updateWithSelectedMaterial({
     required PlutoGridStateManager stateManager,
     required IPlutoController plutoController,

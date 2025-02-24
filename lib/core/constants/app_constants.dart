@@ -75,7 +75,7 @@ abstract class AppConstants {
   static const rowViewAccountLength = "rowViewAccountLength";
 
   ////////////--------------------------------------------------
-  static const rowProductRecProduct = "rowProductRecProduct";
+  static const rowProductRecProduct = 'rowProductRecProduct';
   static const rowProductType = "rowProductType";
   static const rowProductQuantity = "rowProductQuantity";
   static const rowProductDate = "rowProductDate";
@@ -371,8 +371,8 @@ abstract class AppConstants {
 
   static const String userIdKey = 'userIdKey';
 
-  //static const String recipientEmail = 'burjalarab000@gmail.com';
-  static const String recipientEmail = 'ahmed.zein1896@gmail.com';
+  static const String recipientEmail = 'burjalarab000@gmail.com';
+  // static const String recipientEmail = 'ahmed.zein1896@gmail.com';
 
   // static const String recipientEmail = 'alidabol567@gmail.com';
 
@@ -411,5 +411,6 @@ abstract class AppConstants {
   static const String entryBonIdFiled = 'entryBonIdFiled';
 
   static const String billIdFiled = 'billIdFiled';
-  static const bool hideInvRecProductSoldSerialAndSerialNumbers = true;
+  static const bool hideInvRecProductSoldSerial = false;
+  static const bool hideInvRecProductSerialNumbers = true;
 }

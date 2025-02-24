@@ -424,7 +424,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> saveSerialNumbers(BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers) async {
-    log('sellSerialsControllers $serialControllers');
+    log('saveSerialNumbers $serialControllers');
 
     // Create a list to collect the serial number models.
     final List<SerialNumberModel> items = [];

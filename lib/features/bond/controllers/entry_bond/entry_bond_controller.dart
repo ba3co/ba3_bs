@@ -33,11 +33,12 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final result = await _entryBondsFirebaseRepo.save(entryBondModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (savedEntryBondModel) => _onEntryBondSaved(
-        entryBondModel: savedEntryBondModel,
-        modifiedAccounts: modifiedAccounts,
-      ),
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (savedEntryBondModel) =>
+          _onEntryBondSaved(
+            entryBondModel: savedEntryBondModel,
+            modifiedAccounts: modifiedAccounts,
+          ),
     );
   }
 
@@ -55,8 +56,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     // 2. Check if the batch save succeeded/failed
     return saveResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (savedBonds) async {
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (savedBonds) async {
         // 3. For each successfully saved bond, run post-save logic
         int counter = 0;
         for (final savedBond in savedBonds) {
@@ -117,8 +118,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
     // Handle potential failures
     for (final result in results) {
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
-        (_) => {}, // or success
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (_) => {}, // or success
       );
     }
 
@@ -137,18 +138,11 @@ class EntryBondController extends GetxController with FloatingLauncher {
       modifiedAccounts: modifiedAccounts,
     );
 
-    log('modifiedEntryBondItems ${modifiedEntryBondItems.length}');
-
     if (modifiedEntryBondItems.isEmpty) return;
-
-    for (final entryBondItem in modifiedEntryBondItems) {
-      log(' ======================= modifiedEntryBondItems =======================');
-      log('Account Key: ${entryBondItem.id}, Account Model: ${entryBondItem.toJson()}');
-    }
 
     // Build a list of futures for parallel deletes
     final futures = modifiedEntryBondItems.map(
-      (entryBondItem) {
+          (entryBondItem) {
         return _accountsStatementsFirebaseRepo.delete(entryBondItem);
       },
     );
@@ -158,8 +152,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
     // Handle potential failures
     for (final result in results) {
       result.fold(
-        (failure) => AppUIUtils.onFailure('${failure.message} in _handleModifiedEntryBondItems'),
-        (_) => {},
+            (failure) => AppUIUtils.onFailure('${failure.message} in _handleModifiedEntryBondItems'),
+            (_) => {},
       );
     }
 
@@ -188,8 +182,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     return result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (entryBondModel) => entryBondModel,
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (entryBondModel) => entryBondModel,
     );
   }
 
@@ -198,8 +192,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (entryBondModel) async => await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId),
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (entryBondModel) async => await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId),
     );
   }
 
@@ -216,10 +210,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
         _accountsStatementsFirebaseRepo
             .delete(EntryBondItems(docId: entryBondItem.docId, id: entryBondItem.originId!, itemList: itemsGroupedByAccount))
             .then(
-          (deleteResult) {
+              (deleteResult) {
             deleteResult.fold(
-              (failure) => errors.add(failure.message), // Collect errors.
-              (_) {},
+                  (failure) => errors.add(failure.message), // Collect errors.
+                  (_) {},
             );
           },
         ),
@@ -235,8 +229,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     final deleteBondResult = await _entryBondsFirebaseRepo.delete(entryId);
     deleteBondResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (_) {},
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (_) {},
     );
   }
 
@@ -264,10 +258,14 @@ class EntryBondController extends GetxController with FloatingLauncher {
     final actions = {
       EntryBondType.bond: () =>
           read<AllBondsController>().openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
-      EntryBondType.bill: () => read<AllBillsController>()
-          .openFloatingBillDetailsById(origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel),
-      EntryBondType.cheque: () => read<AllChequesController>()
-          .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bill: () =>
+          read<AllBillsController>()
+              .openFloatingBillDetailsById(origin.originId!, context, BillType
+              .byTypeGuide(entryBondModel.origin!.originTypeId!)
+              .billTypeModel),
+      EntryBondType.cheque: () =>
+          read<AllChequesController>()
+              .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];
