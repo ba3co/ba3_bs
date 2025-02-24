@@ -59,7 +59,10 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
               child: PlutoGrid(
                 key: controller.plutoKey,
                 onLoaded: (event) {
+                  event.stateManager.activateColumnsAutoSize();
+
                   event.stateManager.setShowColumnFilter(true);
+
                   onLoaded(event);
                 },
                 onRowSecondaryTap: onRowSecondaryTap,
