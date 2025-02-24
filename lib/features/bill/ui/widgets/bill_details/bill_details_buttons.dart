@@ -39,9 +39,10 @@ class BillDetailsButtons extends StatelessWidget {
           spacing: 20,
           runSpacing: 20,
           children: [
-            _buildAddButton(),
             if(!billDetailsController.isBillSaved.value)
-            _buildAddAndPrintButton(),
+              _buildAddAndPrintButton(context),
+            _buildAddButton(),
+
             if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
                 (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
               _buildApprovalOrBondButton(context),
@@ -95,7 +96,7 @@ class BillDetailsButtons extends StatelessWidget {
       );
     });
   }
-  Widget _buildAddAndPrintButton() {
+  Widget _buildAddAndPrintButton(BuildContext context) {
     return Obx(() {
       final isBillSaved = billDetailsController.isBillSaved.value;
       return AppButton(
@@ -104,7 +105,16 @@ class BillDetailsButtons extends StatelessWidget {
         width: 90,
         fontSize: 14,
         color: Colors.blue.shade700,
-        onPressed:  () => billDetailsController.saveBill(billModel.billTypeModel),
+        onPressed:  () async{
+       await   billDetailsController.saveBill(billModel.billTypeModel);
+       //TODO:
+       // if(!context.mounted) return;
+       //    billDetailsController.printBill(
+       //      context: context,
+       //      billModel: billModel,
+       //      invRecords: billDetailsPlutoController.generateRecords,
+       //    );
+        },
         iconData: FontAwesomeIcons.plusSquare,
       );
     });
