@@ -211,6 +211,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   onMainTableLoaded(PlutoGridOnLoadedEvent event) {
     recordsTableStateManager = event.stateManager;
+    recordsTableStateManager.setAutoEditing(true);
 
     final newRows = recordsTableStateManager.getNewRows(count: 30);
     recordsTableStateManager.appendRows(newRows);
