@@ -386,9 +386,16 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required BillModel currentBill,
     required BillSearchController billSearchController,
     required bool isSave,
+    required BuildContext context,
   }) async {
     // 1. Display the success message.
     _showSuccessMessage(isSave);
+
+    billDetailsController.printBill(
+      context: context,
+      billModel: currentBill,
+      invRecords: plutoController.generateRecords,
+    );
 
     // 2. Prepare containers for modified accounts and deleted materials.
     Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};

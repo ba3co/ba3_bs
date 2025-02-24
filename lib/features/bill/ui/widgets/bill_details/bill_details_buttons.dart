@@ -39,17 +39,15 @@ class BillDetailsButtons extends StatelessWidget {
           spacing: 20,
           runSpacing: 20,
           children: [
-            if(!billDetailsController.isBillSaved.value)
-              _buildAddAndPrintButton(context),
-            _buildAddButton(),
-
+            if (!billDetailsController.isBillSaved.value) _buildAddAndPrintButton(context),
+            _buildAddButton(context),
             if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
                 (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
               _buildApprovalOrBondButton(context),
             if (!billSearchController.isPending)
               _buildActionButton(
                 title: AppStrings.print.tr,
-                icon:FontAwesomeIcons.print,
+                icon: FontAwesomeIcons.print,
                 onPressed: () => billDetailsController.printBill(
                   context: context,
                   billModel: billModel,
@@ -59,11 +57,10 @@ class BillDetailsButtons extends StatelessWidget {
             if (!billSearchController.isPending)
               _buildActionButton(
                 title: AppStrings.eInvoice.tr,
-                icon:FontAwesomeIcons.fileLines,
-
+                icon: FontAwesomeIcons.fileLines,
                 onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
               ),
-            if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(),
+            if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(context),
             Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
@@ -79,7 +76,7 @@ class BillDetailsButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildAddButton() {
+  Widget _buildAddButton(BuildContext context) {
     return Obx(() {
       final isBillSaved = billDetailsController.isBillSaved.value;
       return AppButton(
@@ -91,11 +88,12 @@ class BillDetailsButtons extends StatelessWidget {
         onPressed: isBillSaved
             ? () => billDetailsController.appendNewBill(
                 billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
-            : () => billDetailsController.saveBill(billModel.billTypeModel),
+            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context),
         iconData: FontAwesomeIcons.floppyDisk,
       );
     });
   }
+
   Widget _buildAddAndPrintButton(BuildContext context) {
     return Obx(() {
       final isBillSaved = billDetailsController.isBillSaved.value;
@@ -105,16 +103,7 @@ class BillDetailsButtons extends StatelessWidget {
         width: 90,
         fontSize: 14,
         color: Colors.blue.shade700,
-        onPressed:  () async{
-       await   billDetailsController.saveBill(billModel.billTypeModel);
-       //TODO:
-       // if(!context.mounted) return;
-       //    billDetailsController.printBill(
-       //      context: context,
-       //      billModel: billModel,
-       //      invRecords: billDetailsPlutoController.generateRecords,
-       //    );
-        },
+        onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context),
         iconData: FontAwesomeIcons.plusSquare,
       );
     });
@@ -124,7 +113,7 @@ class BillDetailsButtons extends StatelessWidget {
     final isPending = billSearchController.isPending;
     return _buildActionButton(
       title: isPending ? AppStrings.approve.tr : AppStrings.bond.tr,
-      icon:FontAwesomeIcons.check,
+      icon: FontAwesomeIcons.check,
       color: isPending ? Colors.orange : null,
       onPressed: isPending
           ? () => billDetailsController.updateBillStatus(billModel, Status.approved)
@@ -132,13 +121,14 @@ class BillDetailsButtons extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildEditDeletePdfButtons() {
+  List<Widget> _buildEditDeletePdfButtons(BuildContext context) {
     return [
       if (!billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.edit.tr,
-          icon:FontAwesomeIcons.solidPenToSquare,
+          icon: FontAwesomeIcons.solidPenToSquare,
           onPressed: () => billDetailsController.updateBill(
+            context: context,
             billModel: billModel,
             billTypeModel: billModel.billTypeModel,
           ),
@@ -146,13 +136,13 @@ class BillDetailsButtons extends StatelessWidget {
       if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,
-          icon:FontAwesomeIcons.solidEnvelope,
+          icon: FontAwesomeIcons.solidEnvelope,
           onPressed: () => billDetailsController.generateAndSendBillPdf(billModel),
         ),
       if (RoleItemType.viewBill.hasAdminPermission)
         _buildActionButton(
           title: AppStrings.delete.tr,
-          icon:FontAwesomeIcons.eraser,
+          icon: FontAwesomeIcons.eraser,
           color: Colors.red,
           onPressed: () => billDetailsController.deleteBill(billModel),
         ),

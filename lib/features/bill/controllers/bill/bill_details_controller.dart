@@ -374,15 +374,15 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     }
   }
 
-  Future<void> saveBill(BillTypeModel billTypeModel) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel);
+  Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context}) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context);
   }
 
-  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel}) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel);
+  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context}) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context);
   }
 
-  Future<void> _saveOrUpdateBill({required BillTypeModel billTypeModel, BillModel? existingBill}) async {
+  Future<void> _saveOrUpdateBill({required BuildContext context, required BillTypeModel billTypeModel, BillModel? existingBill}) async {
     // Validate the form first
     if (!validateForm()) return;
 
@@ -395,7 +395,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     if (_isNoUpdate(existingBill, updatedBillModel)) return;
 
-    await _saveBillAndHandleResult(updatedBillModel, existingBill);
+    await _saveBillAndHandleResult(context, updatedBillModel, existingBill);
   }
 
   /// Checks if there's actually no change from the existing bill.
@@ -407,13 +407,14 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
-  Future<void> _saveBillAndHandleResult(BillModel updatedBill, BillModel? existingBill) async {
+  Future<void> _saveBillAndHandleResult(BuildContext context, BillModel updatedBill, BillModel? existingBill) async {
     final result = await _billsFirebaseRepo.save(updatedBill);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedBill) {
         _billService.handleSaveOrUpdateSuccess(
+          context: context,
           previousBill: existingBill,
           currentBill: savedBill,
           billSearchController: billSearchController,
