@@ -7,7 +7,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/utils/generate_id.dart';
+import '../../../../core/utils/utils.dart';
 
 class AccountCustomer implements PlutoAdaptable {
   String? customerVAT;
@@ -64,7 +64,7 @@ class AccountCustomer implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): customerAccountId,
       PlutoColumn(title: 'رقم بطاقة الزبون', field: 'customerCardNumber', type: PlutoColumnType.text()):
-          customerCardNumber,
+      customerCardNumber,
       PlutoColumn(
         title: AppStrings.customerName.tr,
         field: 'customerAccountName',
@@ -81,10 +81,10 @@ class AccountCustomer implements PlutoAdaptable {
   Map<String, dynamic> toMap() {
     return {
       AppStrings.number.tr: customerAccountId,
-     AppStrings.customerCardNumber.tr: customerCardNumber,
+      AppStrings.customerCardNumber.tr: customerCardNumber,
       AppStrings.customerName.tr: customerAccountName,
-    AppStrings.account.tr: read<AccountsController>().getAccountNameById(mainAccount),
-      AppStrings. taxType.tr: customerVAT,
+      AppStrings.account.tr: read<AccountsController>().getAccountNameById(mainAccount),
+      AppStrings.taxType.tr: customerVAT,
     };
   }
 
@@ -98,10 +98,10 @@ class AccountCustomer implements PlutoAdaptable {
   @override
   int get hashCode {
     return customerVAT.hashCode ^
-        customerCardNumber.hashCode ^
-        customerAccountName.hashCode ^
-        mainAccount.hashCode ^
-        customerAccountId.hashCode;
+    customerCardNumber.hashCode ^
+    customerAccountName.hashCode ^
+    mainAccount.hashCode ^
+    customerAccountId.hashCode;
   }
 
   // Override for equality (==): للمقارنة بين الكائنات
