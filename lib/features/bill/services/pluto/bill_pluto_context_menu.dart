@@ -50,12 +50,8 @@ class BillPlutoContextMenu {
     );
   }
 
-  List<String> materialMenu = [
-    'حركة المادة',
-    'إضافة serial',
-  ];
-
   void showMaterialMenu({
+    required List<String> materialMenu,
     required BuildContext context,
     required Offset tapPosition,
     required MaterialModel materialModel,
@@ -89,7 +85,7 @@ class BillPlutoContextMenu {
             onCloseCallback: () {
               final List<TextEditingController> serialsControllers = controller.buyMaterialsSerialsControllers[materialModel] ?? [];
 
-              if (serialsControllers.isNotEmpty) {
+              if (serialsControllers.isNotEmpty && !AppConstants.hideInvRecProductSerialNumbers) {
                 // Extract serial numbers from controllers
                 final List<String> serialNumbers =
                     serialsControllers.map((controller) => controller.text.trim()).where((text) => text.isNotEmpty).toList();
