@@ -75,7 +75,7 @@ abstract class AppConstants {
   static const rowViewAccountLength = "rowViewAccountLength";
 
   ////////////--------------------------------------------------
-  static const rowProductRecProduct = "rowProductRecProduct";
+  static const rowProductRecProduct = 'rowProductRecProduct';
   static const rowProductType = "rowProductType";
   static const rowProductQuantity = "rowProductQuantity";
   static const rowProductDate = "rowProductDate";
