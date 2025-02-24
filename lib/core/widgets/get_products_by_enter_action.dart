@@ -202,7 +202,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     }
 
     // تحقق مما إذا كان في الخلية الأخيرة
-    bool isLastCellInRow = stateManager.currentColumn?.field == stateManager.columns.last.field;
+    bool isLastCellInRow = stateManager.currentColumn?.field == stateManager.columns.elementAt(6).field;
+    bool isFirstCellInRow = stateManager.currentColumn?.field == stateManager.columns.elementAt(1).field ;
     bool isLastRow = stateManager.currentRowIdx == stateManager.rows.length - 1;
 
     if (enterKeyAction.isEditingAndMoveDown || enterKeyAction.isEditingAndMoveRight) {
@@ -216,7 +217,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       } else if (isLastCellInRow && !isLastRow) {
         // إذا كانت الخلية الأخيرة في السطر الحالي، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
-          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.elementAt(1).field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );
@@ -228,7 +229,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       }
-    } else if (enterKeyAction.isEditingAndMoveRight) {
+    } else if (enterKeyAction.isEditingAndMoveRight||isFirstCellInRow) {
       if (HardwareKeyboard.instance.isShiftPressed) {
         // الانتقال لليمين إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
@@ -244,12 +245,17 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       } else {
-        // الانتقال لليمين إذا لم تكن في آخر خلية
+        stateManager.setCurrentCell(
+          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.currentRowIdx! + 1,
+          notify: true,
+        );
+     /*   // الانتقال لليمين إذا لم تكن في آخر خلية
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
           force: true,
           notify: false,
-        );
+        );*/
       }
     }
   }

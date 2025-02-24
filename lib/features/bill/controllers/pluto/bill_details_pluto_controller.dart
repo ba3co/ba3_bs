@@ -260,6 +260,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {
+    log("message  ${event.rowIdx}");
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 

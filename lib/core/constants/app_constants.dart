@@ -294,6 +294,7 @@ abstract class AppConstants {
   static const String invRecIsLocal = 'invRecIsLocal';
   static const String invRecGift = 'invRecGift';
   static const String invRecGiftTotal = 'invRecGiftTotal';
+  static const String invRecSubTotalWithVat = 'invRecSubTotalWithVat';
   static const String ratio = 'النسبة';
   static const String value = 'القيمة';
   static const String accountName = 'اسم الحساب';

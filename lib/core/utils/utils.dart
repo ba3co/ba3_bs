@@ -70,10 +70,18 @@ PlutoColumn buildPlutoColumn({
       type: type,
       width: isUIHidden ? 0 : width,
       readOnly: isUIHidden ? true : isReadOnly,
-      enableEditingMode: isUIHidden ? false : isEditable,
-      enableContextMenu: isUIHidden ? false : hasContextMenu,
-      enableDropToResize: isUIHidden ? false : isResizable,
+      // enableEditingMode: isUIHidden ? false : isEditable,
+      // enableContextMenu: isUIHidden ? false : hasContextMenu,
+      // enableDropToResize: isUIHidden ? false : isResizable,
+      enableEditingMode: false,
+      enableContextMenu: false,
+      enableDropToResize: false,
       hide: isFullyHidden,
       checkReadOnly: readOnlyCondition,
       renderer: customRenderer,
+      enableColumnDrag: false,
+      enableFilterMenuItem: false,
+      enableHideColumnMenuItem: false,
+
+
     );
