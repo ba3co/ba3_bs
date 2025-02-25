@@ -2,7 +2,6 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
@@ -37,7 +36,7 @@ class AddSellerController extends GetxController with AppNavigator {
     final code = int.tryParse(codeController.text.trim());
 
     if (name.isEmpty || code == null) {
-      AppUIUtils.onFailure("Please enter valid name and code.");
+      AppUIUtils.onFailure("يرجى إدخال اسم ورمز صالحين.");
       return;
     }
 
@@ -47,28 +46,41 @@ class AddSellerController extends GetxController with AppNavigator {
         costName: name,
         costCode: code,
       );
-      await addSeller(newSeller);
+      await addSeller(newSeller, isNew: true);
     } else {
       // Updating existing seller
       final updatedSeller = selectedSellerModel!.copyWith(
         costName: name,
         costCode: code,
       );
-      await addSeller(updatedSeller);
+      await addSeller(updatedSeller, isNew: false);
     }
   }
 
-  Future<void> addSeller(SellerModel seller) async {
+  Future<void> addSeller(SellerModel seller, {required bool isNew}) async {
     final result = await _sellersFirebaseRepo.save(seller);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (savedSellers) => onSuccess(savedSellers),
+      (savedSeller) => onSuccess(savedSeller, isNew: isNew),
     );
   }
 
-  onSuccess(SellerModel savedSellers) {
+  void onSuccess(SellerModel savedSeller, {required bool isNew}) {
+    final sellersController = Get.find<SellersController>(); // Ensure Get.find is used correctly
+
     AppUIUtils.onSuccess('تم حفظ البائع بنجاح!');
-    read<SellersController>().sellers.add(savedSellers);
+
+    if (isNew) {
+      sellersController.sellers.add(savedSeller);
+    } else {
+      final index = sellersController.sellers.indexWhere(
+        (seller) => savedSeller.costGuid == seller.costGuid,
+      );
+
+      if (index != -1) {
+        sellersController.sellers[index] = savedSeller;
+      }
+    }
   }
 }
