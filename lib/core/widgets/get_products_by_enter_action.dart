@@ -183,6 +183,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     updateCellValue(stateManager, AppConstants.invRecProduct, materialModel.matName);
     updateCellValue(stateManager, AppConstants.invRecSubTotal, materialModel.endUserPrice);
     updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
+
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {
@@ -201,6 +202,9 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       return;
     }
 
+
+
+
     // تحقق مما إذا كان في الخلية الأخيرة
     bool isLastCellInRow = stateManager.currentColumn?.field == stateManager.columns.elementAt(6).field;
     bool isFirstCellInRow = stateManager.currentColumn?.field == stateManager.columns.elementAt(1).field ;
@@ -208,6 +212,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
     if (enterKeyAction.isEditingAndMoveDown || enterKeyAction.isEditingAndMoveRight) {
       if (HardwareKeyboard.instance.isShiftPressed) {
+        log('i am here 1');
         // الانتقال للأعلى إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
           PlutoMoveDirection.up,
@@ -215,13 +220,17 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       } else if (isLastCellInRow && !isLastRow) {
+        log('i am here 2');
+
         // إذا كانت الخلية الأخيرة في السطر الحالي، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
           stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.elementAt(1).field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );
-      } else {
+      } else if(keyEvent.event.physicalKey.usbHidUsage== 0x00070058){
+        log('i am here 3');
+
         // إذا لم تكن في آخر خلية، انتقل إلى الخلية التالية
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
@@ -230,7 +239,11 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
         );
       }
     } else if (enterKeyAction.isEditingAndMoveRight||isFirstCellInRow) {
+      log('i am here 4');
+
       if (HardwareKeyboard.instance.isShiftPressed) {
+        log('i am here 5');
+
         // الانتقال لليمين إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
@@ -238,6 +251,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: false,
         );
       } else if (isLastCellInRow && !isLastRow) {
+        log('i am here 6');
+
         // إذا كانت الخلية الأخيرة في السطر، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
           stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
@@ -245,6 +260,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       } else {
+        log('i am here 7');
+
         stateManager.setCurrentCell(
           stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
           stateManager.currentRowIdx! + 1,
