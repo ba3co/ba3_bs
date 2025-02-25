@@ -18,39 +18,35 @@ class AllHolidaysWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: OrganizedWidget(
-          titleWidget: Center(
-              child: Text(
-            AppStrings.holidays.tr,
-            style: AppTextStyles.headLineStyle2,
-          )),
-          bodyWidget: Column(
-            children: [
-              ListView.separated(
-                separatorBuilder: (context, index) => Divider(),
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemCount: userDetailsController.userFormHandler.userHolidaysLength,
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      userDetailsController.userFormHandler.userHolidays.elementAt(index),
-                      style: AppTextStyles.headLineStyle3,
-                    ),
-                    Text(
-                      AppServiceUtils.getDayNameAndMonthName(userDetailsController.userFormHandler.userHolidays.elementAt(index)),
-                      style: AppTextStyles.headLineStyle3,
-                    ),
-                  ],
-                ),
+    return OrganizedWidget(
+        titleWidget: Center(
+            child: Text(
+          AppStrings.holidays.tr,
+          style: AppTextStyles.headLineStyle2,
+        )),
+        bodyWidget: Column(
+          children: [
+            ListView.separated(
+              separatorBuilder: (context, index) => Divider(),
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+              itemCount: userDetailsController.userFormHandler.userHolidaysLengthAtMonth,
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, index) => Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    userDetailsController.userFormHandler.userHolidaysAtMoth.elementAt(index),
+                    style: AppTextStyles.headLineStyle3,
+                  ),
+                  Text(
+                    userDetailsController.userFormHandler.userHolidaysWithDayAtMoth!.elementAt(index),
+                    style: AppTextStyles.headLineStyle3,
+                  ),
+                ],
               ),
-            ],
-          )),
-    );
+            ),
+          ],
+        ));
   }
 }
-

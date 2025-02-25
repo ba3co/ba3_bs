@@ -414,4 +414,19 @@ abstract class AppConstants {
   static const String billIdFiled = 'billIdFiled';
   static const bool hideInvRecProductSoldSerial = false;
   static const bool hideInvRecProductSerialNumbers = true;
+
+  static const  Map<String, String> months = {
+    "يناير (1)": "01",
+    "فبراير (2)": "02",
+    "مارس (3)": "03",
+    "أبريل (4)": "04",
+    "مايو (5)": "05",
+    "يونيو (6)": "06",
+    "يوليو (7)": "07",
+    "أغسطس (8)": "08",
+    "سبتمبر (9)": "09",
+    "أكتوبر (10)": "10",
+    "نوفمبر (11)": "11",
+    "ديسمبر (12)": "12",
+  };
 }

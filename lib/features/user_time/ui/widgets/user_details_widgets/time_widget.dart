@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
@@ -19,52 +20,73 @@ class TimeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: OrganizedWidget(
-        titleWidget: Center(
-          child: Text(
-            AppStrings.attendanceRecord,
-            style: AppTextStyles.headLineStyle2,
-          ),
+    return OrganizedWidget(
+      titleWidget: Center(
+        child: Text(
+          AppStrings.attendanceRecord,
+          style: AppTextStyles.headLineStyle2,
         ),
-        bodyWidget: ListView.separated(
-          physics: const ClampingScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: userDetailsController.selectedUserModel?.userTimeModel?.values.length ?? 0,
-          separatorBuilder: (context, index) => VerticalSpace(),
-          itemBuilder: (context, index) {
-            final userTimeModel = userDetailsController.selectedUserModel?.userTimeModel?.values.toList()[index];
+      ),
+      bodyWidget: ListView.separated(
+        physics: const ClampingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: userDetailsController.userFormHandler.userTimeAtMonthLength,
+        separatorBuilder: (context, index) => VerticalSpace(),
+        itemBuilder: (context, index) {
+          final userTimeModel = userDetailsController.userFormHandler.userTimeModelAtMonth.values.toList()[index];
 
-            return Column(
-              children: [
-                _buildDayHeader(userTimeModel?.dayName ?? ''),
-                VerticalSpace(),
-                _buildLogTimes(userTimeModel),
-              ],
-            );
-          },
-        ),
+          return Column(
+            children: [
+              _buildDayHeader(userTimeModel.dayName ?? ''),
+              VerticalSpace(),
+              _buildLogTimes(userTimeModel),
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget _buildDayHeader(String dayName) {
     return Container(
-      decoration: BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: Colors.red))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      width: 1.sw,
+
+      decoration: BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: AppColors.grayColor))),
+      child: Wrap(
+        alignment: WrapAlignment.spaceEvenly,
+        runAlignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        runSpacing: 10,
         children: [
-          Spacer(),
-          Text("اليوم :", style: AppTextStyles.headLineStyle2),
-          Text(dayName, style: AppTextStyles.headLineStyle2),
-          Spacer(),
-          Text("التأخير :", style: AppTextStyles.headLineStyle2),
-          Text(userDetailsController.userDelay(dayName), style: AppTextStyles.headLineStyle2),
-          Spacer(),
-          Text("الخرةج المبكر :", style: AppTextStyles.headLineStyle2),
-          Text(userDetailsController.userEarlier(dayName), style: AppTextStyles.headLineStyle2),
-          Spacer(),
+
+          Row(
+             mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("اليوم :", style: AppTextStyles.headLineStyle2),
+              Text(dayName, style: AppTextStyles.headLineStyle2),
+            ],
+          ),
+
+          Container(
+            decoration: BoxDecoration(border: Border.symmetric(vertical: BorderSide(color: Colors.red))),
+            padding: EdgeInsets.all(8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+
+              children: [
+                Text("التأخير :", style: AppTextStyles.headLineStyle4.copyWith(color: Colors.red)),
+                Text(userDetailsController.userDelay(dayName), style: AppTextStyles.headLineStyle4),
+                // VerticalSpace(),
+                VerticalDivider(),
+                Text("الخروج المبكر :", style: AppTextStyles.headLineStyle4.copyWith(color: Colors.red)),
+                Text(userDetailsController.userEarlier(dayName), style: AppTextStyles.headLineStyle4),
+              ],
+            ),
+          )
+
+
         ],
       ),
     );
@@ -75,6 +97,12 @@ class TimeWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildLogList("دخول :", userTimeModel?.logInDateList),
+      Container(
+        color: AppColors.grayColor,
+        width: 1,
+        height: 50,
+
+      ),
         _buildLogList("خروج :", userTimeModel?.logOutDateList),
       ],
     );
