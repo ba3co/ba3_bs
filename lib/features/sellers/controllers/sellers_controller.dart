@@ -27,8 +27,7 @@ class SellersController extends GetxController with AppNavigator {
 
   SellersController(this._sellersFirebaseRepo, this._sellersImportRepo);
 
-  List<SellerModel> sellers = [];
-  bool isLoading = true;
+  RxList<SellerModel> sellers = <SellerModel>[].obs;
 
   SellerModel? selectedSellerAccount;
   final logger = Logger();
@@ -40,8 +39,6 @@ class SellersController extends GetxController with AppNavigator {
     getAllSellers();
   }
 
-
-
   // Fetch sellers from the repository
   Future<void> getAllSellers() async {
     final result = await _sellersFirebaseRepo.getAll();
@@ -49,9 +46,7 @@ class SellersController extends GetxController with AppNavigator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedSellers) {
-        sellers = fetchedSellers;
-        isLoading = false;
-        update();
+        sellers.assignAll(fetchedSellers);
       },
     );
   }
@@ -88,19 +83,10 @@ class SellersController extends GetxController with AppNavigator {
         (fetchedSellers) {
           AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}');
 
-          sellers.addAll(newSellers);
+          sellers.assignAll(newSellers);
         },
       );
     }
-  }
-
-  Future<void> addSeller(SellerModel seller) async {
-    final result = await _sellersFirebaseRepo.save(seller);
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedSellers) {},
-    );
   }
 
   Future<void> addSellers() async {
@@ -109,6 +95,18 @@ class SellersController extends GetxController with AppNavigator {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (addedSellers) => AppUIUtils.onSuccess('Add ${addedSellers.length} sellers'),
+    );
+  }
+
+  Future<void> deleteSeller(String sellerId) async {
+    final result = await _sellersFirebaseRepo.delete(sellerId);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}'),
+      (success) {
+        AppUIUtils.onSuccess('تم الحذف البائع بنجاح!');
+        sellers.removeWhere((seller) => seller.costGuid == sellerId);
+      },
     );
   }
 

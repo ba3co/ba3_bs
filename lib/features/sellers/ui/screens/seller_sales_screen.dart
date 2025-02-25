@@ -81,16 +81,10 @@ class SellerSalesScreen extends StatelessWidget {
   /// Generates action buttons in the app bar.
   List<Widget> _buildActionButtons(SellerSalesController controller) {
     return [
-      AppButton(
-        title: AppStrings.edit.tr,
-        borderRadius: BorderRadius.circular(25),
-        onPressed: () {
-          // TODO: Add navigation logic for editing
-        },
-      ),
-      const HorizontalSpace(20),
+      const HorizontalSpace(10),
       AppButton(
         title: AppStrings.target.tr,
+        width: 80,
         borderRadius: BorderRadius.circular(25),
         onPressed: () {
           controller

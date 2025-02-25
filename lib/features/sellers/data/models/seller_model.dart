@@ -67,9 +67,28 @@ class SellerModel {
   }
 
   // Factory method to create a CostModel from JSON
-  factory SellerModel.fromJson(Map<String, dynamic> json) {
+  factory SellerModel.fromLocalImport(Map<String, dynamic> json) {
     return SellerModel(
       costGuid: json['CostGuid'],
+      costCode: json['CostCode'],
+      costName: json['CostName'],
+      costLatinName: json['CostLatinName'],
+      costParentGuid: json['CostParentGuid'],
+      costNote: json['CostNote'],
+      costDebit: json['CostDebit'].toString(),
+      costCredit: json['CostCredit'].toString(),
+      costType: json['CostType'],
+      costSecurity: json['CostSecurity'],
+      costRes1: json['CostRes1'],
+      costRes2: json['CostRes2'],
+      costBranchMask: json['CostBranchMask'],
+      costIsChangeableRatio: json['CostIsChangeableRatio'],
+    );
+  }
+
+  factory SellerModel.fromJson(Map<String, dynamic> json) {
+    return SellerModel(
+      costGuid: json['docId'],
       costCode: json['CostCode'],
       costName: json['CostName'],
       costLatinName: json['CostLatinName'],
@@ -89,7 +108,7 @@ class SellerModel {
   // Method to convert a CostModel instance to JSON
   Map<String, dynamic> toJson() {
     return {
-      'CostGuid': costGuid,
+      'docId': costGuid,
       'CostCode': costCode,
       'CostName': costName,
       'CostLatinName': costLatinName,

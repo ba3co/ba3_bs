@@ -5,7 +5,6 @@ import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/features/pluto/controllers/pluto_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -24,9 +23,9 @@ import '../ui/widgets/target_pointer_widget.dart';
 
 class SellerSalesController extends GetxController with AppNavigator {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
-  final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
-  SellerSalesController(this._billsFirebaseRepo, this._sellersFirebaseRepo);
+
+  SellerSalesController(this._billsFirebaseRepo);
 
   // List of bills for the seller
   final List<BillModel> sellerBills = [];
@@ -52,23 +51,7 @@ class SellerSalesController extends GetxController with AppNavigator {
   double totalAccessoriesSales = 0.0;
   double totalMobilesSales = 0.0;
 
-  Future<void> addSeller(SellerModel seller) async {
-    final result = await _sellersFirebaseRepo.save(seller);
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedSellers) {},
-    );
-  }
-
-  Future<void> addSellers(List<SellerModel> sellers) async {
-    final result = await _sellersFirebaseRepo.saveAll(sellers);
-
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedSellers) {},
-    );
-  }
 
   set setSelectedSeller(SellerModel sellerModel) {
     selectedSeller = sellerModel;
@@ -183,7 +166,6 @@ class SellerSalesController extends GetxController with AppNavigator {
           clearFilter();
         }
         sellerBills.clear();
-
       },
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );

@@ -9,11 +9,11 @@ class SellerImport extends ImportServiceBase<SellerModel> {
   List<SellerModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> materialsJson = jsonContent['Materials']['M'] ?? [];
 
-    return materialsJson.map((materialJson) => SellerModel.fromJson(materialJson as Map<String, dynamic>)).toList();
+    return materialsJson.map((materialJson) => SellerModel.fromLocalImport(materialJson as Map<String, dynamic>)).toList();
   }
 
   @override
-  Future<List<SellerModel>> fromImportXml(XmlDocument document) async{
+  Future<List<SellerModel>> fromImportXml(XmlDocument document) async {
     final materialsXml = document.findAllElements('Q');
 
     List<SellerModel> sellers = materialsXml.map((materialElement) {
@@ -47,6 +47,4 @@ class SellerImport extends ImportServiceBase<SellerModel> {
 
     return sellers;
   }
-
-
 }
