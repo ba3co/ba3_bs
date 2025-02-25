@@ -24,6 +24,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     this.child,
     this.appBar,
     this.onRowSecondaryTap,
+    this.rowHeight,
   });
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -39,6 +40,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   final VoidCallback? onLeadingIconPressed;
   final T? type;
   final Widget? child;
+  final double? rowHeight;
   final AppBar? appBar;
   final Function(PlutoGridOnRowSecondaryTapEvent)? onRowSecondaryTap;
 
@@ -75,7 +77,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
                     gridBackgroundColor: AppColors.backGroundColor,
-                      rowHeight: 30,
+                      rowHeight:rowHeight?? 30,
                       evenRowColor: Colors.blue.shade200,
                       borderColor: Colors.blue,
                       gridBorderColor:  AppColors.backGroundColor,

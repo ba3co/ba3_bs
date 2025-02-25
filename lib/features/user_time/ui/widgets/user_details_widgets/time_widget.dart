@@ -59,6 +59,12 @@ class TimeWidget extends StatelessWidget {
           Text("اليوم :", style: AppTextStyles.headLineStyle2),
           Text(dayName, style: AppTextStyles.headLineStyle2),
           Spacer(),
+          Text("التأخير :", style: AppTextStyles.headLineStyle2),
+          Text(userDetailsController.userDelay(dayName), style: AppTextStyles.headLineStyle2),
+          Spacer(),
+          Text("الخرةج المبكر :", style: AppTextStyles.headLineStyle2),
+          Text(userDetailsController.userEarlier(dayName), style: AppTextStyles.headLineStyle2),
+          Spacer(),
         ],
       ),
     );

@@ -386,6 +386,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required BillModel currentBill,
     required BillSearchController billSearchController,
     required bool isSave,
+    required bool withPrint,
     required BuildContext context,
   }) async {
     // 1. Display the success message.
@@ -425,12 +426,13 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         'handleSaveOrUpdateSuccess isSave $isSave',
       );
     }
-
-    billDetailsController.printBill(
+if(withPrint) {
+  billDetailsController.printBill(
       context: context,
       billModel: currentBill,
       invRecords: plutoController.generateRecords,
     );
+}
 
     //  log('if Modified accounts count: ${modifiedBillTypeAccounts.length}');
     // 5. Create an entry bond if the bill is approved and its pattern requires a material account.

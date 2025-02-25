@@ -101,7 +101,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: material.id!,
             quantity: _calculateQuantity(materialStatementList),
-            currentMinPrice: _calculateMinPrice(materialStatementList));
+            currentMinPrice: _calculateMinPrice(materialStatementList),
+            lastEnterPrice: _calculateLastEnterPrice(materialStatementList));
       }
     }
   }
@@ -113,7 +114,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
           matId: material.id!,
           quantity: _calculateQuantity(materialStatementList),
-          currentMinPrice: _calculateMinPrice(materialStatementList));
+          currentMinPrice: _calculateMinPrice(materialStatementList),
+          lastEnterPrice: _calculateLastEnterPrice(materialStatementList));
     }
   }
 
@@ -131,7 +133,8 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: matStatementModel.matId!,
             quantity: _calculateQuantity(materialStatementList),
-            currentMinPrice: _calculateMinPrice(materialStatementList));
+            currentMinPrice: _calculateMinPrice(materialStatementList),
+            lastEnterPrice: _calculateLastEnterPrice(materialStatementList));
       } else {
         await _materialsController.setMaterialQuantity(
           matStatementModel.matId!,
@@ -257,6 +260,18 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     }
     log('final price is $currentPrice');
     return currentPrice;
+  }
+
+  double _calculateLastEnterPrice(List<MatStatementModel> items) {
+    if (items.isEmpty) return 0.0;
+    final sellItem = items
+      ..where(
+        (item) => item.matOrigin?.originTypeId == "eb10653a-a43f-44e5-889d-41ce68c43ec4",
+      )
+      ..sortBy((item) => item.date!);
+
+    log('last pay price is ${sellItem.lastOrNull?.price}');
+    return sellItem.lastOrNull?.price ?? 0.0;
   }
 
   String get screenTitle => 'حركات ${selectedMat?.matName}';

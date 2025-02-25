@@ -374,15 +374,15 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     }
   }
 
-  Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context}) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context);
+  Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context,required bool withPrint}) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context,withPrint: withPrint);
   }
 
-  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context}) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context);
+  Future<void> updateBill({required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context,required withPrint}) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context,withPrint: withPrint);
   }
 
-  Future<void> _saveOrUpdateBill({required BuildContext context, required BillTypeModel billTypeModel, BillModel? existingBill}) async {
+  Future<void> _saveOrUpdateBill({required BuildContext context, required BillTypeModel billTypeModel, BillModel? existingBill,required bool withPrint}) async {
     // Validate the form first
     if (!validateForm()) return;
 
@@ -395,7 +395,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     if (_isNoUpdate(existingBill, updatedBillModel)) return;
 
-    await _saveBillAndHandleResult(context, updatedBillModel, existingBill);
+    await _saveBillAndHandleResult(context, updatedBillModel, existingBill,withPrint);
   }
 
   /// Checks if there's actually no change from the existing bill.
@@ -407,7 +407,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
-  Future<void> _saveBillAndHandleResult(BuildContext context, BillModel updatedBill, BillModel? existingBill) async {
+  Future<void> _saveBillAndHandleResult(BuildContext context, BillModel updatedBill, BillModel? existingBill,bool withPrint) async {
     final result = await _billsFirebaseRepo.save(updatedBill);
 
     result.fold(
@@ -419,6 +419,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
           currentBill: savedBill,
           billSearchController: billSearchController,
           isSave: existingBill == null,
+          withPrint: withPrint
         );
       },
     );

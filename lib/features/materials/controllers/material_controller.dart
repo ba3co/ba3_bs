@@ -489,12 +489,14 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     required String matId,
     required int quantity,
     required double currentMinPrice,
+    required double lastEnterPrice,
   }) async {
     await updateAndSaveMaterial(
       matId,
       (material) => material.copyWith(
         matQuantity: quantity,
         calcMinPrice: currentMinPrice,
+        matLastPriceCurVal: lastEnterPrice,
       ),
     );
   }

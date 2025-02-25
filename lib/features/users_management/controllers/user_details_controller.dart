@@ -1,4 +1,6 @@
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/time_extensions.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:get/get.dart';
@@ -37,8 +39,8 @@ class UserDetailsController extends GetxController {
 
   // UserModel? get selectedUserModel => allUserController.selectedUserModel;
   UserModel? selectedUserModel;
-  UserModel getUserById(String userId) => selectedUserModel = allUserController.allUsers.firstWhere((user) => user.userId == userId);
 
+  UserModel getUserById(String userId) => selectedUserModel = allUserController.allUsers.firstWhere((user) => user.userId == userId);
 
   @override
   void onInit() {
@@ -150,4 +152,32 @@ class UserDetailsController extends GetxController {
   void initUserFormHandler(UserModel? user) {
     userFormHandler.init(user);
   }
+
+  String userDelay(String dayName) {
+    UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
+    if (userTimeModel == null) return "";
+    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalLogInDelay ?? 0);
+  }
+
+  String userEarlier(String dayName) {
+    UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
+    if (userTimeModel == null) return "";
+    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalOutEarlier ?? 0);
+  }
+
+  List<UserTimeModel>? get userTimeModelWithTotalDelayAndEarlier {
+    return selectedUserModel?.userTimeModel?.values
+        .map(
+          (e) => e.copyWith(dayName: e.dayName?.split('-')[1].split('-')[0]),
+        )
+        .toList()
+        .mergeBy(
+          (p0) => p0.dayName,
+          (accumulated, current) => current.copyWithAddTime(
+            totalLogInDelay: accumulated.totalLogInDelay,
+            totalOutEarlier: accumulated.totalOutEarlier,
+          ),
+        );
+  }
+  int get userTimeModelWithTotalDelayAndEarlierLength=>userTimeModelWithTotalDelayAndEarlier?.length??0;
 }

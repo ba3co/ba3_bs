@@ -1,6 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AllAttendanceScreen extends StatelessWidget {
@@ -18,7 +19,7 @@ class AllAttendanceScreen extends StatelessWidget {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            width: double.infinity,
+            width: 1.sw,
             child: Wrap(
               alignment: WrapAlignment.center,
               spacing: 10,
