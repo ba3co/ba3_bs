@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../profile/ui/widgets/user_time_details_widgets/user_daily_time_widget.dart';
 import '../../../users_management/controllers/user_details_controller.dart';
 import '../widgets/user_details_widgets/time_widget.dart';
+import '../widgets/user_details_widgets/total_delay_widget.dart';
 
 class UserDetails extends StatelessWidget {
   const UserDetails({super.key});
@@ -29,6 +30,9 @@ class UserDetails extends StatelessWidget {
             ),
             UserDailyTimeWidget(
               userModel:userModel,
+            ),
+            UserTotalDelay(
+              userDetailsController: userDetailsController,
             ),
           ],
         );

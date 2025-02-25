@@ -15,6 +15,7 @@ class UserTimeListScreen extends StatelessWidget {
       return PlutoGridWithAppBar(
         title: AppStrings.allUsers.tr,
         isLoading: userManagementController.isLoading,
+        rowHeight: 60,
         tableSourceModels: userManagementController.filteredAllUsersWithNunTime,
         onLoaded: (event) {},
         onSelected: (selectedRow) {

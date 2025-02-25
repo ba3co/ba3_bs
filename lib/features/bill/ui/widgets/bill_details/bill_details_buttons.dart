@@ -88,7 +88,7 @@ class BillDetailsButtons extends StatelessWidget {
         onPressed: isBillSaved
             ? () => billDetailsController.appendNewBill(
                 billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
-            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context),
+            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context,withPrint: false),
         iconData: FontAwesomeIcons.floppyDisk,
       );
     });
@@ -103,7 +103,7 @@ class BillDetailsButtons extends StatelessWidget {
         width: 90,
         fontSize: 14,
         color: Colors.blue.shade700,
-        onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context),
+        onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context,withPrint: true),
         iconData: FontAwesomeIcons.plusSquare,
       );
     });
@@ -131,6 +131,7 @@ class BillDetailsButtons extends StatelessWidget {
             context: context,
             billModel: billModel,
             billTypeModel: billModel.billTypeModel,
+            withPrint: false
           ),
         ),
       if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)

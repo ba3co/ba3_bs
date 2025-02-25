@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -282,5 +283,21 @@ class AppServiceUtils {
     }
 
     return '$originName: $originNumber';
+  }
+  static Map<String, int> convertMinutesToHoursAndMinutes(int totalMinutes) {
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    return {
+      'hours': hours,
+      'minutes': minutes,
+    };
+  }
+  static String convertMinutesAndFormat(int totalMinutes) {
+    final hours = totalMinutes ~/ 60;
+    final minutes = totalMinutes % 60;
+    return
+      '${AppStrings.hours} $hours  ${AppStrings.minutes} $minutes'
+
+    ;
   }
 }

@@ -283,4 +283,10 @@ class AppStrings {
   //////
   static const String invRecSubTotalWithVat='الافرادي شامل الضريبة';
 
+  static const String lastPayPrice='اخر شراء';
+
+  static const String earlyExit='الخروج المبكر';
+
+  static  const String  delayRecord="سجل التاخير";
+
 }

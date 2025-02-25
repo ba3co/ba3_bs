@@ -380,6 +380,15 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           width: 120,
           textAlign: PlutoColumnTextAlign.center): calcMinPrice,
       PlutoColumn(
+          title: AppStrings.lastPayPrice.tr,
+          field: 'اخر شراء',
+          type: PlutoColumnType.currency(
+            decimalDigits: 2,
+            symbol: '',
+          ),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matLastPriceCurVal,
+      PlutoColumn(
           title: AppStrings.retailPrice.tr,
           field: 'المفرق',
           type: PlutoColumnType.text(),
