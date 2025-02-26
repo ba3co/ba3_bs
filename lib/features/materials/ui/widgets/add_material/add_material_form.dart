@@ -26,6 +26,7 @@ class AddMaterialForm extends StatelessWidget {
                   spacing: 8,
                   children: [
                     FormFieldRow(
+
                       firstItem: TextAndExpandedChildField(
                           label: AppStrings.materialName.tr,
                           child: CustomTextFieldWithoutIcon(
