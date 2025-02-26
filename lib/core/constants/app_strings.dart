@@ -289,4 +289,6 @@ class AppStrings {
 
   static  const String  delayRecord="سجل التاخير";
 
+  static const String totalDelay='اجمالي التأخير هذا الشهر';
+
 }

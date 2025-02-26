@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/time_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -77,6 +78,7 @@ class UserDetailsController extends GetxController {
     workingHours.remove(key.toString());
     update();
   }
+
 
   void addHoliday() {
     Get.defaultDialog(
@@ -165,19 +167,5 @@ class UserDetailsController extends GetxController {
     return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalOutEarlier ?? 0);
   }
 
-  List<UserTimeModel>? get userTimeModelWithTotalDelayAndEarlier {
-    return selectedUserModel?.userTimeModel?.values
-        .map(
-          (e) => e.copyWith(dayName: e.dayName?.split('-')[1].split('-')[0]),
-        )
-        .toList()
-        .mergeBy(
-          (p0) => p0.dayName,
-          (accumulated, current) => current.copyWithAddTime(
-            totalLogInDelay: accumulated.totalLogInDelay,
-            totalOutEarlier: accumulated.totalOutEarlier,
-          ),
-        );
-  }
-  int get userTimeModelWithTotalDelayAndEarlierLength=>userTimeModelWithTotalDelayAndEarlier?.length??0;
+
 }
