@@ -1,6 +1,9 @@
 
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,28 +18,34 @@ class UserManagementLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserManagementController userManagementController = read<UserManagementController>();
+    userManagementController.getAllUsers();
+    log('UserManagementLayout build');
     return Scaffold(
 
-      body: Column(
-        children: [
-          AppMenuItem(
-              text: '${AppStrings.administration.tr} ${AppStrings.users.tr}',
-              onTap: () {
-                userManagementController. userNavigator.navigateToAllUsersScreen();
-              }),
-          if(RoleItemType.administrator.hasReadPermission)
-          ...[
-          AppMenuItem(
-              text: '${AppStrings.administration.tr} ${AppStrings.roles.tr}',
-              onTap: () {
-                userManagementController. userNavigator.navigateToLAllPermissionsScreen();
-              })],
-          AppMenuItem(
-              text: AppStrings.attendanceRecord.tr,
-              onTap: () {
-                userManagementController. userNavigator.navigateToUserTimeListScreen();
-              }),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () => userManagementController.getAllUsers(),
+        backgroundColor: AppColors.blueColor,
+        child: ListView(
+          children: [
+            AppMenuItem(
+                text: '${AppStrings.administration.tr} ${AppStrings.users.tr}',
+                onTap: () {
+                  userManagementController. userNavigator.navigateToAllUsersScreen();
+                }),
+            if(RoleItemType.administrator.hasReadPermission)
+            ...[
+            AppMenuItem(
+                text: '${AppStrings.administration.tr} ${AppStrings.roles.tr}',
+                onTap: () {
+                  userManagementController. userNavigator.navigateToLAllPermissionsScreen();
+                })],
+            AppMenuItem(
+                text: AppStrings.attendanceRecord.tr,
+                onTap: () {
+                  userManagementController. userNavigator.navigateToUserTimeListScreen();
+                }),
+          ],
+        ),
       ),
     );
   }

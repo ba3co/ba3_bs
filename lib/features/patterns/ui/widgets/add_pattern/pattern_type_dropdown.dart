@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
+import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
 import '../../../controllers/pattern_controller.dart';
 
 class PatternTypeDropdown extends StatelessWidget {
@@ -16,40 +17,33 @@ class PatternTypeDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: Get.width * 0.45,
-      child: Row(
-        children: [
-          SizedBox(width: 150, child: Text(AppStrings.billType.tr)),
-          Expanded(
-            child: Container(
-                height: AppConstants.constHeightTextField,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.white,
-                ),
-                child: DropdownButton(
-                  hint: Text(AppStrings.choosePatternType.tr),
-                  dropdownColor: Colors.white,
-                  focusColor: Colors.white,
-                  alignment: Alignment.center,
-                  underline: const SizedBox(),
-                  isExpanded: true,
-                  value: patternController.patternFormHandler.selectedBillPatternType,
-                  items: BillPatternType.values.map((BillPatternType type) {
-                    return DropdownMenuItem<BillPatternType>(
-                      value: type,
-                      child: Center(
-                        child: Text(type.label, textDirection: TextDirection.rtl),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: patternController.patternFormHandler.onSelectedTypeChanged,
-                )),
+    return TextAndExpandedChildField(
+      label: AppStrings.billType.tr,
+      child: Container(
+          height: AppConstants.constHeightDropDown,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.white,
           ),
-        ],
-      ),
+          child: DropdownButton(
+            hint: Text(AppStrings.choosePatternType.tr),
+            dropdownColor: Colors.white,
+            focusColor: Colors.white,
+            alignment: Alignment.center,
+            underline: const SizedBox(),
+            isExpanded: true,
+            value: patternController.patternFormHandler.selectedBillPatternType,
+            items: BillPatternType.values.map((BillPatternType type) {
+              return DropdownMenuItem<BillPatternType>(
+                value: type,
+                child: Center(
+                  child: Text(type.label, textDirection: TextDirection.rtl),
+                ),
+              );
+            }).toList(),
+            onChanged: patternController.patternFormHandler.onSelectedTypeChanged,
+          )),
     );
   }
 }

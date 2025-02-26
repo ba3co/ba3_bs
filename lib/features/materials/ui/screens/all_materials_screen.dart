@@ -18,15 +18,13 @@ class AllMaterialsScreen extends StatelessWidget {
       return PlutoGridWithAppBar(
         title: AppStrings.allMaterials.tr,
         isLoading: controller.isLoading,
-        tableSourceModels: controller.materials,
+        tableSourceModels: controller.materialsForShow,
         onLoaded: (event) {},
-onRowSecondaryTap: (selectedRow) {
+        onRowSecondaryTap: (selectedRow) {
+          MaterialModel materialModel = controller.getMaterialById(selectedRow.row.cells[AppConstants.materialIdFiled]?.value)!;
 
-          MaterialModel materialModel=controller.getMaterialById( selectedRow.row.cells[AppConstants.materialIdFiled]?.value)!;
-
-  read<MaterialsStatementController>().fetchMatStatements(materialModel, context: context);
-
-},
+          read<MaterialsStatementController>().fetchMatStatements(materialModel, context: context);
+        },
         onSelected: (selectedRow) {
           String? matId = selectedRow.row?.cells[AppConstants.materialIdFiled]?.value;
           read<MaterialController>().navigateToAddOrUpdateMaterialScreen(matId: matId, context: context);

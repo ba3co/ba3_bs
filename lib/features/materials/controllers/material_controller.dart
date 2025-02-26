@@ -39,6 +39,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository);
 
   List<MaterialModel> materials = [];
+  List<MaterialModel> materialsForShow = [];
+
+  // Map<String, List<MaterialModel>> get productsGrouped => materials.groupBy((product) => product.matGroupGuid!);
+  Map<String, List<MaterialModel>> productsGrouped = {};
+
   MaterialModel? selectedMaterial;
 
   late MaterialFromHandler materialFromHandler;
@@ -58,6 +63,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     _materialService = MaterialService();
 
     read<MaterialGroupController>();
+    reloadMaterials();
   }
 
   bool isLoading = false;
@@ -69,8 +75,19 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedMaterial) => materials.assignAll(fetchedMaterial),
+      (fetchedMaterial) {
+        materials.assignAll(fetchedMaterial);
+        productsGrouped = fetchedMaterial.groupBy((product) => product.matGroupGuid!);
+      },
     );
+  }
+
+  Future<void> fetchMaterialsGroup({String? groupGuid}) async {
+    if (groupGuid != null) {
+      materialsForShow.assignAll(productsGrouped[groupGuid]!);
+    } else {
+      materialsForShow.assignAll(materials);
+    }
   }
 
   Future<void> reloadMaterials() async {
@@ -164,9 +181,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen() {
-    reloadMaterials();
-
+  void navigateToAllMaterialScreen({String? groupGuid}) {
+    // reloadMaterials();
+    fetchMaterialsGroup(groupGuid: groupGuid);
     to(AppRoutes.showAllMaterialsScreen);
   }
 
@@ -187,13 +204,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
           (item.serialNumbers != null &&
-              item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
+              item.serialNumbers!.entries
+                  .any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
-    if (exactMatch .length==1) {
+    if (exactMatch.length == 1) {
       return [exactMatch.first];
-    }else if (exactMatch .length>1){
-
+    } else if (exactMatch.length > 1) {
       return exactMatch.toList();
     }
 
@@ -287,7 +304,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       return;
     }
 
-    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+    final hiveResult =
+        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -397,11 +415,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     // to(AppRoutes.addMaterialScreen);
   }
 
-  void openMaterialSelectionDialog({
+  void openMaterialGroupSelectionDialog({
     required String query,
     required BuildContext context,
   }) async {
-    MaterialGroupModel? searchedMaterial = await searchProductGroupTextDialog(query);
+    MaterialGroupModel? searchedMaterial = await searchProductGroupTextDialog(query, context);
 
     if (searchedMaterial != null) {
       materialFromHandler.parentModel = searchedMaterial;
