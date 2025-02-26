@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
-import '../../../../../core/utils/app_service_utils.dart';
 import '../../../../../core/widgets/organized_widget.dart';
 
 class AllHolidaysWidget extends StatelessWidget {

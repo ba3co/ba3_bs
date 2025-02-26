@@ -18,7 +18,7 @@ class AllAccountScreen extends StatelessWidget {
         onSelected: (p0) {
           final String accId = p0.row?.cells[AppConstants.accountIdFiled]?.value;
 
-          controller.navigateToAddOrUpdateAccountScreen(accountId: accId);
+          controller.navigateToAddOrUpdateAccountScreen(accountId: accId,context: context);
         },
         isLoading: controller.isLoading,
         tableSourceModels: controller.accounts,

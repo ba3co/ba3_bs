@@ -21,7 +21,7 @@ class AllMaterialsGroupScreen extends StatelessWidget {
         onLoaded: (event) {},
         onSelected: (selectedRow) {
           String? groupGuid = selectedRow.row?.cells[AppConstants.materialGroupIdFiled]?.value;
-          read<MaterialController>().navigateToAllMaterialScreen(groupGuid:groupGuid );
+          read<MaterialController>().navigateToAllMaterialScreen(groupGuid:groupGuid , context: context);
         },
       );
     });

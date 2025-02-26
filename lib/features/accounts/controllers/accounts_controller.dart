@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/features/accounts/service/account_from_handler.dart';
+import 'package:ba3_bs/features/accounts/ui/screens/add_account_screen.dart';
+import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,13 +17,15 @@ import 'package:get/get.dart';
 
 import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/helper/mixin/floating_launcher.dart';
+import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/account_model.dart';
 import '../service/account_service.dart';
 
-class AccountsController extends GetxController with AppNavigator {
+class AccountsController extends GetxController with AppNavigator,FloatingLauncher {
   final BulkSavableDatasourceRepository<AccountModel> _accountsFirebaseRepo;
 
   final ImportExportRepository<AccountModel> _jsonImportExportRepo;
@@ -126,11 +129,13 @@ class AccountsController extends GetxController with AppNavigator {
     update();
   }
 
-  void navigateToAllAccountsScreen() {
-    to(AppRoutes.showAllAccountsScreen);
+  void navigateToAllAccountsScreen({required BuildContext context}) {
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: AllAccountScreen());
+
+    // to(AppRoutes.showAllAccountsScreen);
   }
 
-  void navigateToAddOrUpdateAccountScreen({String? accountId}) {
+  void navigateToAddOrUpdateAccountScreen({String? accountId,required BuildContext context}) {
     if (accountId != null) {
       selectedAccount = getAccountModelById(accountId);
     } else {
@@ -140,7 +145,9 @@ class AccountsController extends GetxController with AppNavigator {
 
     accountFromHandler.init(accountModel: selectedAccount);
 
-    to(AppRoutes.addAccountScreen);
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen:AddAccountScreen());
+
+    // to(AppRoutes.addAccountScreen);
   }
 
   List<AccountModel> searchAccountsByNameOrCode(String text) {

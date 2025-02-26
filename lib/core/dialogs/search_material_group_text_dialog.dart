@@ -62,7 +62,7 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText
                   child: CustomTextFieldWithIcon(
                       textEditingController: productGroupTextController,
                       onSubmitted: (_) async {
-                        searchedMaterials = await materialController.searchGroupProductByText(productGroupTextController.text);
+                        searchedMaterials =  materialController.searchGroupProductByText(productGroupTextController.text);
                         materialController.update();
                       },
                       onIconPressed: () {}),

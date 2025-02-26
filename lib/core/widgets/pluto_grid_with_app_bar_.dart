@@ -76,11 +76,12 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
 
                 configuration: PlutoGridConfiguration(
                   style: PlutoGridStyleConfig(
-                    gridBackgroundColor: AppColors.backGroundColor,
+                    gridBackgroundColor: Colors.white.withAlpha(126),
                       rowHeight:rowHeight?? 30,
                       evenRowColor: Colors.blue.shade200,
                       borderColor: Colors.blue,
                       gridBorderColor:  AppColors.backGroundColor,
+                      // gridBorderRadius: BorderRadius.circular(50),
 
 
                       // cellTextStyle: TextStyle(fontFamily: 'Almarai'),

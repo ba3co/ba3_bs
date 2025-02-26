@@ -1,18 +1,20 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
+import 'package:ba3_bs/features/patterns/ui/screens/add_pattern_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
-import '../../../core/router/app_routes.dart';
+import '../../../core/helper/mixin/floating_launcher.dart';
+import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 import '../services/pattern_form_handler.dart';
 
-class PatternController extends GetxController with AppNavigator {
+class PatternController extends GetxController with AppNavigator,FloatingLauncher {
   final RemoteDataSourceRepository<BillTypeModel> _repository;
 
   PatternController(this._repository);
@@ -95,9 +97,12 @@ class PatternController extends GetxController with AppNavigator {
     update();
   }
 
-  void navigateToAddPatternScreen([BillTypeModel? billType]) {
+  void navigateToAddPatternScreen({BillTypeModel? billType,required BuildContext context}) {
     patternFormHandler.init(billType);
-    to(AppRoutes.addPatternsScreen);
+
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.patterns.tr, floatingScreen: AddPatternScreen());
+
+    // to(AppRoutes.addPatternsScreen);
   }
 
   Future<List<BillTypeModel>> getAllBillTypes() async {
