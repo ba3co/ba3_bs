@@ -107,7 +107,7 @@ class AccountModel implements PlutoAdaptable {
       'AccName': accName,
       'AccLatinName': accLatinName,
       'AccCode': accCode,
-      'AccCDate': accCDate?.toIso8601String() ?? DateTime.now(),
+      'AccCDate': (accCDate ?? DateTime.now()).toIso8601String(),
       'AccCheckDate': accCheckDate?.toIso8601String(),
       'AccParentGuid': accParentGuid,
       'AccFinalGuid': accFinalGuid,
