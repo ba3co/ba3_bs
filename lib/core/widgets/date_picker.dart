@@ -22,7 +22,7 @@ class DatePicker extends StatelessWidget {
       //     color: Colors.white,
       //     borderRadius: BorderRadius.circular(5),
       //     border: const Border.symmetric(vertical: BorderSide(width: 1))),
-      child: InkWell(
+      child: GestureDetector(
         onTap: () {
           OverlayService.showDialog(
             context: context,

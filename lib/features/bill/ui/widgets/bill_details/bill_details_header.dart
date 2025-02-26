@@ -53,7 +53,7 @@ class BillDetailsHeader extends StatelessWidget {
                       }
                     },
                     textStyle: const TextStyle(fontSize: 14),
-                    height: AppConstants.constHeightTextField,
+                    height: AppConstants.constHeightDropDown,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Colors.black38),
