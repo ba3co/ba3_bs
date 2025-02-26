@@ -1,4 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -98,13 +100,19 @@ class MaterialGroupModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialGroupIdFiled, type: PlutoColumnType.text(), hide: true): matGroupGuid,
+      PlutoColumn(
+          title: AppStrings.identificationNumber.tr,
+          field: AppConstants.materialGroupIdFiled,
+          type: PlutoColumnType.text(),
+          hide: true): matGroupGuid,
       createAutoIdColumn(): '#',
       PlutoColumn(title: AppStrings.materialName.tr, field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
-      PlutoColumn(title:AppStrings.groupCode.tr, field: 'رمز المجموعة', type: PlutoColumnType.text()): groupCode,
+      PlutoColumn(title: AppStrings.groupCode.tr, field: 'رمز المجموعة', type: PlutoColumnType.text()): groupCode,
       PlutoColumn(title: AppStrings.groupNumber.tr, field: 'رقم المجموعة', type: PlutoColumnType.text()): groupNumber,
-      PlutoColumn(title:AppStrings.latinName.tr, field:'الاسم اللاتيني', type: PlutoColumnType.text()): groupLatinName,
+      PlutoColumn(title: AppStrings.latinName.tr, field: 'الاسم اللاتيني', type: PlutoColumnType.text()): groupLatinName,
       PlutoColumn(title: AppStrings.notes.tr, field: 'المُلاحظات', type: PlutoColumnType.text()): groupNotes,
+      PlutoColumn(title: AppStrings.children.tr, field: AppStrings.children, type: PlutoColumnType.text()):
+          read<MaterialController>().productsGrouped[matGroupGuid]?.length ?? 0,
     };
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/interfaces/i_account_type_selection_handler.dart';
@@ -18,7 +17,7 @@ class AccountTypeDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
-label: AppStrings.accountType.tr,
+      label: AppStrings.accountType.tr,
       child: Container(
         width: (Get.width * 0.45) - 100,
         height: AppConstants.constHeightDropDown,
@@ -39,8 +38,7 @@ label: AppStrings.accountType.tr,
               border: Border.all(color: Colors.black38),
               borderRadius: BorderRadius.circular(5),
             ),
-            onCloseCallback: () {
-            },
+            onCloseCallback: () {},
           );
         }),
       ),

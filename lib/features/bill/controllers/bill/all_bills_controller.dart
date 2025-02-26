@@ -201,7 +201,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
     getBillsTypesRequestState.value = RequestState.loading;
 
     final List<BillTypeModel> fetchedBillTypes = await read<PatternController>().getAllBillTypes();
-
     _handleFetchBillTypesSuccess(fetchedBillTypes);
   }
 

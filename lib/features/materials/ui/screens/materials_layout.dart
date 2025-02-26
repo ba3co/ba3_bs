@@ -52,7 +52,7 @@ class MaterialLayout extends StatelessWidget {
                               width: 100,
                               title: AppStrings.downloadGroups.tr,
                               onPressed: () {
-                                read<MaterialGroupController>().fetchAllMaterialGroupGroupFromLocal();
+                                read<MaterialGroupController>().fetchAllMaterialGroupFromLocal();
                               }),
                         ),
                       ]
