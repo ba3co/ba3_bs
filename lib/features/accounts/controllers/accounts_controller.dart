@@ -168,7 +168,7 @@ class AccountsController extends GetxController with AppNavigator {
     );
     if (partialMatch.length == 1) {
       return [partialMatch.first]; // إرجاع أول تطابق جزئي متتابع
-    }else if(partialMatch.length > 1){
+    } else if (partialMatch.length > 1) {
       return partialMatch.toList();
     }
 
@@ -342,7 +342,7 @@ class AccountsController extends GetxController with AppNavigator {
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (_) {
-          AppUIUtils.onSuccess("تم حذف الحساب بنجاح");
+          AppUIUtils.onSuccess('تم حذف الحساب بنجاح');
         },
       );
     }
