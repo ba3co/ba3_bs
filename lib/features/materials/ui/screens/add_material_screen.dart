@@ -29,6 +29,7 @@ class AddMaterialScreen extends StatelessWidget {
                 controller: controller,
               ),
               FormFieldRow(
+
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
                   label: AppStrings.group.tr,

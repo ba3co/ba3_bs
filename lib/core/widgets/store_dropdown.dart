@@ -1,10 +1,12 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../features/bill/ui/widgets/bill_shared/bill_header_field.dart';
 import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 import '../interfaces/i_store_selection_handler.dart';
@@ -17,9 +19,33 @@ class StoreDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return TextAndExpandedChildField(
+      label:         AppStrings.store.tr,
+
+
+      child: Obx(() {
+        return OverlayService.showDropdown<StoreAccount>(
+          value: storeSelectionHandler.selectedStore.value,
+          items: StoreAccount.values,
+          onChanged: storeSelectionHandler.onSelectedStoreChanged,
+          itemLabelBuilder: (store) => store.value.tr,
+          textStyle: const TextStyle(fontSize: 14),
+          height: AppConstants.constHeightDropDown,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.black38),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          onCloseCallback: () {
+            log('StoreAccount Dropdown Overly Closed.');
+          },
+        );
+      }),
+    );
+    /*  return SizedBox(
       width: width ?? Get.width * 0.45,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           SizedBox(
               width: 150,
@@ -29,7 +55,7 @@ class StoreDropdown extends StatelessWidget {
           Expanded(
             child: Container(
               width: (Get.width * 0.45) - 100,
-              height: AppConstants.constHeightTextField,
+              height: AppConstants.constHeightDropDown,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
@@ -56,6 +82,6 @@ class StoreDropdown extends StatelessWidget {
           ),
         ],
       ),
-    );
+    );*/
   }
 }

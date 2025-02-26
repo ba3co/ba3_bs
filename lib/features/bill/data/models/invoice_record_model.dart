@@ -266,8 +266,7 @@ class InvoiceRecordModel {
           width: 110,
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
         ): invRecGift,
-      // Gifts Column (Only if Gifts Account is enabled)
-      if (billTypeModel.billPatternType!.hasGiftsAccount)
+      if (billTypeModel.billPatternType!.hasVat)
         buildPlutoColumn(
           title: AppStrings.invRecSubTotalWithVat.tr,
           field:AppConstants.invRecSubTotalWithVat,
