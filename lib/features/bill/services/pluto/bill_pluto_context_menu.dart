@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_details/add_serial_widget.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
+import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -27,6 +28,7 @@ class BillPlutoContextMenu {
     required BillPlutoUtils invoiceUtils,
     required BillPlutoGridService gridService,
     required int index,
+    required BillTypeModel billTypeModel,
   }) {
     OverlayService.showPopupMenu(
       context: context,
@@ -41,6 +43,7 @@ class BillPlutoContextMenu {
           selectedRow: selectedRow,
           subTotal: invoiceUtils.getPrice(type: type, materialModel: materialModel),
           quantity: quantity,
+          billTypeModel: billTypeModel,
         );
         controller.update();
       },

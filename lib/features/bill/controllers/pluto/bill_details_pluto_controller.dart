@@ -104,7 +104,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     return invoiceRecords;
   }
 
-  Map<Account, List<DiscountAdditionAccountModel>> get generateDiscountsAndAdditions => _gridService.collectDiscountsAndAdditions(_plutoUtils);
+  Map<Account, List<DiscountAdditionAccountModel>> get generateDiscountsAndAdditions =>
+      _gridService.collectDiscountsAndAdditions(_plutoUtils);
 
   @override
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) => _gridService.moveToNextRow(stateManager, cellField);
@@ -214,20 +215,23 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final subTotal = _getSubTotal();
     final total = _getTotal();
     final vat = _getVat();
+    final subTotalWithVat = _getSubTotalWithVat();
 
     // Handle updates based on the changed column
-    _handleColumnUpdate(field, quantity, subTotal, total, vat);
+    _handleColumnUpdate(field, quantity, subTotal, total, vat, subTotalWithVat);
 
     safeUpdateUI();
   }
 
-  void _handleColumnUpdate(String columnField, int quantity, double subTotal, double total, double vat) {
+  void _handleColumnUpdate(String columnField, int quantity, double subTotal, double total, double vat, double subTotalWithVat) {
     if (columnField == AppConstants.invRecSubTotal) {
       _gridService.updateInvoiceValues(subTotal, quantity, billTypeModel);
     } else if (columnField == AppConstants.invRecTotal) {
       _gridService.updateInvoiceValuesByTotal(total, quantity, billTypeModel);
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
       _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat, billTypeModel);
+    } else if (columnField == AppConstants.invRecSubTotalWithVat && quantity > 0) {
+      _gridService.updateInvoiceValuesBySubTotalWithVat(subTotalWithVat, quantity, billTypeModel);
     }
     if (billTypeModel.billPatternType?.hasDiscountsAccount ?? true) {
       updateAdditionDiscountCell(computeWithVatTotal);
@@ -252,6 +256,11 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   double _getVat() {
     final vatStr = _extractCellValueAsNumber(AppConstants.invRecVat);
     return vatStr.toDouble;
+  }
+
+  double _getSubTotalWithVat() {
+    final subTotalWithVat = _extractCellValueAsNumber(AppConstants.invRecSubTotalWithVat);
+    return subTotalWithVat.toDouble;
   }
 
   String _extractCellValueAsNumber(String field) {
@@ -284,13 +293,13 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context) {
     _contextMenu.showPriceTypeMenu(
-      context: context,
-      index: event.rowIdx,
-      materialModel: materialModel,
-      tapPosition: event.offset,
-      invoiceUtils: _plutoUtils,
-      gridService: _gridService,
-    );
+        context: context,
+        index: event.rowIdx,
+        materialModel: materialModel,
+        tapPosition: event.offset,
+        invoiceUtils: _plutoUtils,
+        gridService: _gridService,
+        billTypeModel: billTypeModel);
   }
 
   List<String> get materialMenu => [
@@ -377,7 +386,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   // Helper method to create an InvoiceRecordModel from a row
-  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId, double matVat) => InvoiceRecordModel.fromJsonPluto(matId, row.toJson(), matVat);
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId, double matVat) =>
+      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(), matVat);
 
   void prepareBillMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();
