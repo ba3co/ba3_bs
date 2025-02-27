@@ -345,6 +345,7 @@
 				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
 				"${BUILT_PRODUCTS_DIR}/file_picker/file_picker.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_blue_plus_darwin/flutter_blue_plus_darwin.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_local_notifications/flutter_local_notifications.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_platform_alert/flutter_platform_alert.framework",
 				"${BUILT_PRODUCTS_DIR}/flutter_thermal_printer/flutter_thermal_printer.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
@@ -354,6 +355,7 @@
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 				"${BUILT_PRODUCTS_DIR}/native_dialog_plus/native_dialog_plus.framework",
 				"${BUILT_PRODUCTS_DIR}/path_provider_foundation/path_provider_foundation.framework",
+				"${BUILT_PRODUCTS_DIR}/printing/printing.framework",
 				"${BUILT_PRODUCTS_DIR}/shared_preferences_foundation/shared_preferences_foundation.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -370,6 +372,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/file_picker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_blue_plus_darwin.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_local_notifications.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_platform_alert.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_thermal_printer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
@@ -379,6 +382,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/native_dialog_plus.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider_foundation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/printing.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences_foundation.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -624,7 +628,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 437879KWD8;
+				DEVELOPMENT_TEAM = A395AHRMWT;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -760,7 +764,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 437879KWD8;
+				DEVELOPMENT_TEAM = A395AHRMWT;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -784,7 +788,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 437879KWD8;
+				DEVELOPMENT_TEAM = A395AHRMWT;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				LD_RUNPATH_SEARCH_PATHS = (
