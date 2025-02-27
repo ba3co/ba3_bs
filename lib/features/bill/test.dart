@@ -14,6 +14,8 @@ class MyApp extends StatelessWidget {
   // تأكد من استبدال "اسم_الطابعة" بالاسم الفعلي للطابعة كما يظهر في إعدادات Windows
   final String printerName = 'E-PoS printer driver (1)';
 
+  const MyApp({super.key});
+
   // تحميل CapabilityProfile مرة واحدة فقط
 
   @override
