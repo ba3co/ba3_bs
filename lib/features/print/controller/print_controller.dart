@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:ffi';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
@@ -28,8 +30,6 @@ class PrintingController extends GetxController {
 
   PrintingController(this._translationRepository);
 
-  // إزالة المتغيرات والوظائف الخاصة بالبلوتوث،
-  // حيث أننا سنستخدم الآن طريقة USB كما في الملف الأول.
   RxString loadingDots = ''.obs;
   Timer? _loadingAnimationTimer;
 
@@ -82,7 +82,6 @@ class PrintingController extends GetxController {
 
   void _dismissLoadingDialog() => OverlayService.back();
 
-  /// تم تعديل هذه الدالة لتوليد بيانات الفاتورة وإرسالها عبر USB
   Future<void> _printBill({
     required int billNumber,
     required List<InvoiceRecordModel> invRecords,
@@ -93,25 +92,26 @@ class PrintingController extends GetxController {
     await _sendTicketUSB(ticket);
   }
 
-  /// دالة لإرسال بيانات التذكرة إلى الطابعة USB باستخدام Win32 API
+  /// إرسال بيانات التذكرة إلى الطابعة عبر USB باستخدام Win32 API
   Future<void> _sendTicketUSB(List<int> ticket) async {
     try {
       final Uint8List data = Uint8List.fromList(ticket);
-      const String printerName = 'E-PoS printer driver (1)'; // تأكد من صحة الاسم
+      // تأكد من أن اسم الطابعة مطابق لإعدادات Windows
+      const String printerName = 'E-PoS printer driver (1)';
 
-      // تحويل اسم الطابعة إلى مؤشر نصي (Native UTF-16)
+      // تحويل اسم الطابعة إلى مؤشر نصي (UTF-16)
       final printerNamePtr = printerName.toNativeUtf16();
 
       // تخصيص ذاكرة لمقبض الطابعة
       final pHandle = calloc<IntPtr>();
 
-      // إعداد هيكل PRINTER_DEFAULTS مع RAW لضمان إرسال البيانات دون معالجة
+      // إعداد هيكل PRINTER_DEFAULTS لإرسال بيانات RAW
       final pDefaults = calloc<PRINTER_DEFAULTS>();
       pDefaults.ref.pDatatype = TEXT('RAW');
       pDefaults.ref.pDevMode = nullptr;
       pDefaults.ref.DesiredAccess = 0x00000008;
 
-      // محاولة فتح الطابعة باستخدام اسم الطابعة
+      // محاولة فتح الطابعة
       final openResult = OpenPrinter(printerNamePtr, pHandle, pDefaults);
       if (openResult == 0) {
         log('فشل فتح الطابعة. رمز الخطأ: ${GetLastError()}');
@@ -153,7 +153,7 @@ class PrintingController extends GetxController {
         return;
       }
 
-      // تخصيص الذاكرة للبيانات التي سيتم إرسالها للطابعة
+      // تخصيص الذاكرة للبيانات التي سيتم إرسالها
       final dataPtr = calloc<Uint8>(data.length);
       final dataList = dataPtr.asTypedList(data.length);
       dataList.setAll(0, data);
@@ -161,11 +161,13 @@ class PrintingController extends GetxController {
       // تخصيص متغير لتخزين عدد البايتات المكتوبة
       final written = calloc<Uint32>();
 
-      // إرسال البيانات للطابعة باستخدام WritePrinter
+      // إرسال البيانات للطابعة
       final writeResult =
       WritePrinter(pHandle.value, dataPtr, data.length, written);
       if (writeResult == 0) {
         log('فشل إرسال البيانات للطابعة. رمز الخطأ: ${GetLastError()}');
+      } else {
+        log('تم إرسال ${written.value} بايت إلى الطابعة');
       }
 
       // إنهاء صفحة الطباعة والمستند
@@ -187,11 +189,11 @@ class PrintingController extends GetxController {
     }
   }
 
-  /// توليد بيانات الطباعة باستخدام esc_pos_utils_plus
+  /// توليد بيانات الطباعة باستخدام esc_pos_utils_plus (تم تغيير حجم الورق إلى mm80 وإضافة أمر القطع)
   Future<List<int>> _generateBillPrintData(
       List<InvoiceRecordModel> invoiceRecords, String invoiceDate, int billNumber) async {
     final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile);
+    final generator = Generator(PaperSize.mm80, profile);
     List<int> bytes = generator.reset();
 
     // الهيدر
@@ -200,16 +202,18 @@ class PrintingController extends GetxController {
     bytes += await _generateLogo(generator);
     bytes += _createHeaderSection(generator, invoiceDate, billNumber);
 
-    // معالجة البنود وتوليد تفاصيل العناصر والإجماليات
+    // البنود والتفاصيل
     final result = await _generateItemsDetailsAndTotals(generator, invoiceRecords);
     bytes += result.bytes;
 
     // ملخص الإجمالي
-    bytes += _generateTotalSummary(
-        generator, result.totals['netAmount']!, result.totals['vatAmount']!);
+    bytes += _generateTotalSummary(generator, result.totals['netAmount']!, result.totals['vatAmount']!);
 
     // الفوتر
     bytes += _createFooterSection(generator);
+
+    // إضافة أمر القطع لإنهاء التذكرة
+    bytes += generator.cut();
 
     return bytes;
   }
@@ -255,10 +259,10 @@ class PrintingController extends GetxController {
       Generator generator, MaterialModel material, InvoiceRecordModel record, Map<String, double> totals) async {
     final itemName = (material.matName?.decodeProblematic() ?? '')
         .substring(0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
-    log('itemName is s $itemName');
-    log('itemName is ${itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' ')}');
-    final translatedName = await _translationRepository.translateText(
-        itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' '));
+    log('itemName: $itemName');
+    final cleanedName =
+    itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' ');
+    final translatedName = await _translationRepository.translateText(cleanedName);
 
     return [
       ...generator.text(translatedName, styles: PrinterTextStyles.left),
@@ -278,13 +282,14 @@ class PrintingController extends GetxController {
       final img.Image? image = img.decodeImage(imageBytes);
 
       if (image != null) {
-        final img.Image resizedImage = img.copyResize(image, width: 200);
+        // تغيير حجم الصورة إذا لزم الأمر (تم تقليصها إلى 150 بكسل)
+        final img.Image resizedImage = img.copyResize(image, width: 150);
         return generator.imageRaster(resizedImage);
       } else {
-        debugPrint('Failed to decode the image');
+        debugPrint('فشل في فك تشفير الصورة');
       }
     } catch (e) {
-      debugPrint('Error generating logo: $e');
+      debugPrint('خطأ أثناء توليد اللوجو: $e');
     }
     return [];
   }
