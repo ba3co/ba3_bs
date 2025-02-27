@@ -209,7 +209,9 @@ class PrintingController extends GetxController {
     bytes += result.bytes;
 
     // ملخص الإجمالي
-    bytes += _generateTotalSummary(generator, result.totals['netAmount']!, result.totals['vatAmount']!);
+    bytes += generator.textEncoded(Uint8List.fromList(_generateTotalSummary(generator, result.totals['netAmount']!, result.totals['vatAmount']!)) );
+
+
 
     // الفوتر
     bytes += _createFooterSection(generator);
