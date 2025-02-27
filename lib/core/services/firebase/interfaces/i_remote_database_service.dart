@@ -6,7 +6,7 @@ abstract class IRemoteDatabaseService<T> {
   Future<List<T>> fetchAll({required String path});
 
   /// Fetches a list of items of type [T] from the specified [path] where the field [field]
-  /// matches the value [value] of type [V].
+  /// matches the value [_value] of type [V].
   Future<List<T>> fetchWhere({required String path, required List<QueryFilter> queryFilters, DateFilter? dateFilter});
 
   /// Fetches a single item of type [T] from the specified [path] by its [documentId].
