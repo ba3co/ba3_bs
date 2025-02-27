@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/widgets/searchable_account_field.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/patterns/ui/widgets/add_pattern/text_field_with_label.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,31 +26,36 @@ class AddPatternForm extends StatelessWidget {
       child: Wrap(
         spacing: 20,
         alignment: WrapAlignment.spaceBetween,
-        runSpacing: 10,
+        // runSpacing: 10,
         children: [
-          TextFieldWithLabel(
-            label: AppStrings.shortcuts.tr,
-            textEditingController: patternController.patternFormHandler.shortNameController,
-            validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
+          FormFieldRow(
+            firstItem: TextFieldWithLabel(
+              label: AppStrings.shortcuts.tr,
+              textEditingController: patternController.patternFormHandler.shortNameController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'الاختصار'),
+            ),
+            secondItem: TextFieldWithLabel(
+              label: AppStrings.al.tr + AppStrings.name.tr,
+              textEditingController: patternController.patternFormHandler.fullNameController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
+            ),
           ),
-          TextFieldWithLabel(
-            label: AppStrings.al.tr + AppStrings.name.tr,
-            textEditingController: patternController.patternFormHandler.fullNameController,
-            validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم'),
+          FormFieldRow(
+            firstItem: TextFieldWithLabel(
+              label: AppStrings.latinShortCut.tr,
+              textEditingController: patternController.patternFormHandler.latinShortNameController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'اختصار لاتيني'),
+            ),
+            secondItem: TextFieldWithLabel(
+              label: AppStrings.latinName.tr,
+              textEditingController: patternController.patternFormHandler.latinFullNameController,
+              validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
+            ),
           ),
-          TextFieldWithLabel(
-            label: AppStrings.latinShortCut.tr,
-            textEditingController: patternController.patternFormHandler.latinShortNameController,
-            validator: (value) => patternController.patternFormHandler.validator(value, 'اختصار لاتيني'),
-          ),
-          TextFieldWithLabel(
-            label: AppStrings.latinName.tr,
-            textEditingController: patternController.patternFormHandler.latinFullNameController,
-            validator: (value) => patternController.patternFormHandler.validator(value, 'الاسم لاتيني'),
-          ),
-          PatternTypeDropdown(patternController: patternController),
-          if (patternController.selectedBillPatternType?.hasMaterialAccount ?? false)
-            SearchableAccountField(
+          FormFieldRow(
+            firstItem: PatternTypeDropdown(patternController: patternController),
+            secondItem: SearchableAccountField(
+              readOnly: (patternController.selectedBillPatternType?.hasMaterialAccount ?? false),
               label: AppStrings.materials.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
@@ -64,43 +70,46 @@ class AddPatternForm extends StatelessWidget {
               textEditingController: patternController.patternFormHandler.materialsController,
               validator: (value) => patternController.patternFormHandler.validator(value, 'المواد'),
             ),
-          if (patternController.selectedBillPatternType?.hasDiscountsAccount ?? false)
-            SearchableAccountField(
-              label: AppStrings.discounts.tr,
-              onSubmitted: (text) async {
-                AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
-                  query: text,
-                  context: context,
-                );
-                if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.discounts, value: accountModel);
+          ),
+          FormFieldRow(
+              firstItem: SearchableAccountField(
+                label: AppStrings.discounts.tr,
+                readOnly: (patternController.selectedBillPatternType?.hasDiscountsAccount ?? false),
+                onSubmitted: (text) async {
+                  AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                    query: text,
+                    context: context,
+                  );
+                  if (accountModel != null) {
+                    patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.discounts, value: accountModel);
 
-                  patternController.patternFormHandler.discountsController.text = (accountModel.accName!);
-                }
-              },
-              textEditingController: patternController.patternFormHandler.discountsController,
-              validator: (value) => patternController.patternFormHandler.validator(value, 'الحسميات'),
-            ),
-          if (patternController.selectedBillPatternType?.hasAdditionsAccount ?? false)
-            SearchableAccountField(
-              label: AppStrings.additions.tr,
-              onSubmitted: (text) async {
-                AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
-                  query: text,
-                  context: context,
-                );
-                if (accountModel != null) {
-                  patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.additions, value: accountModel);
+                    patternController.patternFormHandler.discountsController.text = (accountModel.accName!);
+                  }
+                },
+                textEditingController: patternController.patternFormHandler.discountsController,
+                validator: (value) => patternController.patternFormHandler.validator(value, 'الحسميات'),
+              ),
+              secondItem: SearchableAccountField(
+                label: AppStrings.additions.tr,
+                readOnly: (patternController.selectedBillPatternType?.hasAdditionsAccount ?? false),
+                onSubmitted: (text) async {
+                  AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                    query: text,
+                    context: context,
+                  );
+                  if (accountModel != null) {
+                    patternController.patternFormHandler.addToSelectedAccounts(key: BillAccounts.additions, value: accountModel);
 
-                  patternController.patternFormHandler.additionsController.text = (accountModel.accName!);
-                }
-              },
-              textEditingController: patternController.patternFormHandler.additionsController,
-              validator: (value) => patternController.patternFormHandler.validator(value, 'الاضافات'),
-            ),
-          if (patternController.selectedBillPatternType?.hasCashesAccount ?? false)
-            SearchableAccountField(
+                    patternController.patternFormHandler.additionsController.text = (accountModel.accName!);
+                  }
+                },
+                textEditingController: patternController.patternFormHandler.additionsController,
+                validator: (value) => patternController.patternFormHandler.validator(value, 'الاضافات'),
+              )),
+          FormFieldRow(
+            firstItem: SearchableAccountField(
               label: AppStrings.cashes.tr,
+              readOnly: (patternController.selectedBillPatternType?.hasCashesAccount ?? false),
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -115,9 +124,9 @@ class AddPatternForm extends StatelessWidget {
               textEditingController: patternController.patternFormHandler.cachesController,
               validator: (value) => patternController.patternFormHandler.validator(value, 'النقديات'),
             ),
-          if (patternController.selectedBillPatternType?.hasGiftsAccount ?? false)
-            SearchableAccountField(
+            secondItem: SearchableAccountField(
               label: AppStrings.gifts.tr,
+              readOnly: (patternController.selectedBillPatternType?.hasGiftsAccount ?? false),
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -132,8 +141,10 @@ class AddPatternForm extends StatelessWidget {
               textEditingController: patternController.patternFormHandler.giftsController,
               validator: (value) => patternController.patternFormHandler.validator(value, 'الهدايا'),
             ),
-          if (patternController.selectedBillPatternType?.hasGiftsAccount ?? false)
-            SearchableAccountField(
+          ),
+          FormFieldRow(
+            firstItem: SearchableAccountField(
+              readOnly: (patternController.selectedBillPatternType?.hasGiftsAccount ?? false),
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -149,7 +160,8 @@ class AddPatternForm extends StatelessWidget {
               textEditingController: patternController.patternFormHandler.exchangeForGiftsController,
               validator: (value) => patternController.patternFormHandler.validator(value, 'مقابل الهدايا'),
             ),
-          StoreDropdown(storeSelectionHandler: patternController.patternFormHandler),
+            secondItem: StoreDropdown(storeSelectionHandler: patternController.patternFormHandler),
+          )
         ],
       ),
     );

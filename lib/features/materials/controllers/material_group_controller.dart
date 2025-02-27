@@ -4,17 +4,19 @@ import 'dart:io';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/interfaces/import/i_import_repository.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
+import 'package:ba3_bs/features/materials/ui/screens/all_materials_group_screen.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
+import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
-import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 
-class MaterialGroupController extends GetxController with AppNavigator {
+class MaterialGroupController extends GetxController with AppNavigator,FloatingLauncher {
   final IImportRepository<MaterialGroupModel> _importRepository;
 
   final RemoteDataSourceRepository<MaterialGroupModel> _dataSourceRepository;
@@ -51,8 +53,10 @@ class MaterialGroupController extends GetxController with AppNavigator {
     log('MaterialGroupController onInit');
   }
 
-  void navigateToAllMaterialScreen() {
-    to(AppRoutes.showAllMaterialsGroupScreen);
+  void navigateToAllMaterialScreen({required BuildContext context}) {
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsGroupScreen());
+
+    // to(AppRoutes.showAllMaterialsGroupScreen);
   }
 
   Future<void> fetchAllMaterialGroupFromLocal() async {

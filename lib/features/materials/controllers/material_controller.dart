@@ -7,7 +7,6 @@ import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
-import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/local_database/implementations/repos/local_datasource_repo.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
@@ -15,6 +14,7 @@ import 'package:ba3_bs/features/materials/controllers/material_group_controller.
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
+import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -181,10 +181,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen({String? groupGuid}) {
+  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context}) {
     // reloadMaterials();
     fetchMaterialsGroup(groupGuid: groupGuid);
-    to(AppRoutes.showAllMaterialsScreen);
+
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen());
+
+    // to(AppRoutes.showAllMaterialsScreen);
   }
 
   List<MaterialModel> searchOfProductByText(String query) {
@@ -283,11 +286,17 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     return null;
   }
 
-  MaterialModel? searchMaterialByName(name) {
-    // log('name $name');
-    // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
+  MaterialModel? searchMaterialByName(String? name) {
+
     if (name != null && name != " " && name != "") {
-      return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
+      // log('name $name');
+      // log(name.encodeProblematic().encodeProblematic());
+      // log(materials.where((element) {
+      //   // log(element.matName!);
+      //   return (element.matName==name.encodeProblematic().encodeProblematic());
+      // }).map((e) => e.matName!).toString());
+
+      return materials.where((element) => (element.matName! == name.encodeProblematic().encodeProblematic()||element.matName! == name||element.matName!.decodeProblematic().decodeProblematic() == name)).firstOrNull;
     }
     return null;
   }

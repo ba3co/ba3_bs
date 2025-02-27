@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/enums/enums.dart';
-import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/date_picker.dart';
 import '../../../../../core/widgets/searchable_account_field.dart';
@@ -66,7 +65,6 @@ class BillDetailsHeader extends StatelessWidget {
               ),
               secondItem: StoreDropdown(storeSelectionHandler: billDetailsController),
             ),
-            const VerticalSpace(8),
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
                 label: AppStrings.billDate.tr,
@@ -94,7 +92,6 @@ class BillDetailsHeader extends StatelessWidget {
                 },
               ),
             ),
-            const VerticalSpace(8),
             FormFieldRow(
               firstItem: SearchableAccountField(
                 label: AppStrings.seller.tr,

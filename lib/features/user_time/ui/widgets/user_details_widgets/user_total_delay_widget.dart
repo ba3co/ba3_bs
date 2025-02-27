@@ -1,6 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
-import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
