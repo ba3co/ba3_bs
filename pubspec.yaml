@@ -56,6 +56,13 @@ dependencies:
   pool: ^1.5.1
   dropdown_button2: ^2.3.9
   flutter_thermal_printer: ^1.1.0
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.10.0
+  printing: ^5.14.2
+  flutter_usb_printer: ^0.1.0+1
+  ffi: ^2.0.1
+  win32: ^5.10.1
+
 
 dev_dependencies:
   flutter_test:
