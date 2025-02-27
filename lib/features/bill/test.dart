@@ -12,7 +12,9 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // تأكد من استبدال "اسم_الطابعة" بالاسم الفعلي للطابعة كما يظهر في إعدادات Windows
-  final String printerName = 'اسم_الطابعة';
+  final String printerName = 'E-PoS printer driver (1)';
+
+  // تحميل CapabilityProfile مرة واحدة فقط
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +38,15 @@ class MyApp extends StatelessWidget {
 /// دالة لإنشاء تذكرة باستخدام esc_pos_utils وإرسالها إلى الطابعة عبر Win32 API.
 Future<void> printTicket(String printerName) async {
   try {
-    // تحميل ملف الخصائص الخاص بالطابعة (CapabilityProfile)
     final CapabilityProfile profile = await CapabilityProfile.load();
-    // تحديد حجم الورقة (مثلاً 80 مم)
+
+    // استخدام CapabilityProfile المحمل مسبقًا
     final Generator generator = Generator(PaperSize.mm80, profile);
     List<int> ticket = [];
 
     // إضافة عنوان رئيسي للتذكرة مع تنسيق النص
     ticket += generator.text(
-      'مرحبا بكم في الطباعة باستخدام E-POS على Windows',
+      'sWindows',
       styles: PosStyles(
         align: PosAlign.center,
         bold: true,
@@ -56,13 +58,13 @@ Future<void> printTicket(String printerName) async {
 
     // إضافة نص إضافي للتذكرة
     ticket += generator.text(
-      'شكراً لاستخدامكم خدماتنا.',
+      'dfssd'*200,
       styles: PosStyles(align: PosAlign.center),
-      linesAfter: 2,
+      linesAfter: 10,
     );
 
     // إضافة أمر قطع الورقة
-    ticket += generator.cut();
+    // ticket += generator.cut();
 
     // تحويل بيانات التذكرة إلى Uint8List
     final Uint8List data = Uint8List.fromList(ticket);
@@ -77,9 +79,7 @@ Future<void> printTicket(String printerName) async {
     final pDefaults = calloc<PRINTER_DEFAULTS>();
     pDefaults.ref.pDatatype = TEXT('RAW');
     pDefaults.ref.pDevMode = nullptr;
-    pDefaults.ref.DesiredAccess = 0x00000008
-
-    ;
+    pDefaults.ref.DesiredAccess = 0x00000008;
 
     // محاولة فتح الطابعة باستخدام اسم الطابعة
     final openResult = OpenPrinter(printerNamePtr, pHandle, pDefaults);
