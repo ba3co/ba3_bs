@@ -199,7 +199,7 @@ class PrintingController extends GetxController {
     // الهيدر
     bytes += generator.text(PrinterConstants.invoiceTitle,
         styles: PrinterTextStyles.centered, linesAfter: 1);
-    bytes += await _generateLogo(generator);
+    // bytes += await _generateLogo(generator);
     bytes += _createHeaderSection(generator, invoiceDate, billNumber);
 
     // البنود والتفاصيل
@@ -325,3 +325,6 @@ class PrintingController extends GetxController {
     ];
   }
 }
+
+//] تم إرسال 476 بايت إلى الطابعة
+// [log] تم إرسال التذكرة بنجاح
