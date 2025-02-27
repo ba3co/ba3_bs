@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:ffi';
-import 'dart:io';
-import 'dart:typed_data';
+
+
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
@@ -12,8 +12,9 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:ffi/ffi.dart';
+import 'package:flutter/services.dart';
 import 'package:win32/win32.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
@@ -111,6 +112,7 @@ class PrintingController extends GetxController {
       pDefaults.ref.pDevMode = nullptr;
       pDefaults.ref.DesiredAccess = 0x00000008;
 
+
       // محاولة فتح الطابعة
       final openResult = OpenPrinter(printerNamePtr, pHandle, pDefaults);
       if (openResult == 0) {
@@ -123,7 +125,7 @@ class PrintingController extends GetxController {
 
       // إعداد هيكل DOC_INFO_1 لبدء مستند الطباعة
       final docInfo = calloc<DOC_INFO_1>();
-      docInfo.ref.pDocName = TEXT('طباعة من Flutter');
+      docInfo.ref.pDocName = TEXT('طباعة من Flutter'*500);
       docInfo.ref.pOutputFile = nullptr;
       docInfo.ref.pDatatype = TEXT('RAW');
 
@@ -199,7 +201,7 @@ class PrintingController extends GetxController {
     // الهيدر
     bytes += generator.text(PrinterConstants.invoiceTitle,
         styles: PrinterTextStyles.centered, linesAfter: 1);
-    // bytes += await _generateLogo(generator);
+    bytes += await _generateLogo(generator);
     bytes += _createHeaderSection(generator, invoiceDate, billNumber);
 
     // البنود والتفاصيل
@@ -211,9 +213,10 @@ class PrintingController extends GetxController {
 
     // الفوتر
     bytes += _createFooterSection(generator);
+    bytes += generator.text("ali"*1000);
 
     // إضافة أمر القطع لإنهاء التذكرة
-    bytes += generator.cut();
+    // bytes += generator.cut();
 
     return bytes;
   }
@@ -325,6 +328,3 @@ class PrintingController extends GetxController {
     ];
   }
 }
-
-//] تم إرسال 476 بايت إلى الطابعة
-// [log] تم إرسال التذكرة بنجاح
