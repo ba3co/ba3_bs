@@ -288,6 +288,7 @@ class PrintingController extends GetxController {
   }
 }*/
  import 'dart:async';
+import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
@@ -488,8 +489,11 @@ class PrintingController extends GetxController {
 // Generates the item details for each invoice record
   Future<List<int>> _generateItemDetails(
       Generator generator, MaterialModel material, InvoiceRecordModel record, Map<String, double> totals) async {
+
     final itemName = (material.matName?.decodeProblematic() ?? '').substring(0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
-    final translatedName = await _translationRepository.translateText(itemName);
+ log('itemName is s $itemName');
+ log('itemName is ${itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' ')}');
+    final translatedName = await _translationRepository.translateText(itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' '));
 
     return [
       ...generator.text(translatedName, styles: PrinterTextStyles.left),

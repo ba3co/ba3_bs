@@ -286,11 +286,17 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     return null;
   }
 
-  MaterialModel? searchMaterialByName(name) {
-    // log('name $name');
-    // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
+  MaterialModel? searchMaterialByName(String? name) {
+
     if (name != null && name != " " && name != "") {
-      return materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull;
+      // log('name $name');
+      // log(name.encodeProblematic().encodeProblematic());
+      // log(materials.where((element) {
+      //   // log(element.matName!);
+      //   return (element.matName==name.encodeProblematic().encodeProblematic());
+      // }).map((e) => e.matName!).toString());
+
+      return materials.where((element) => (element.matName! == name.encodeProblematic().encodeProblematic()||element.matName! == name||element.matName!.decodeProblematic().decodeProblematic() == name)).firstOrNull;
     }
     return null;
   }
