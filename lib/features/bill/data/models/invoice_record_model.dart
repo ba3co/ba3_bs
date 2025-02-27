@@ -217,6 +217,7 @@ class InvoiceRecordModel {
         field: AppConstants.invRecProduct,
         type: PlutoColumnType.text(),
         width: 300,
+
       ): invRecProduct,
 
       // Quantity Column
@@ -273,9 +274,9 @@ class InvoiceRecordModel {
           type: PlutoColumnType.text(),
           width: 150,
           // isEditable: false,
-          isReadOnly: true,
+          // isReadOnly: true,
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
-        ): ((invRecSubTotal??0)+(invRecVat??0)).toStringAsFixed(2),
+        ): invRecSubTotal==0 ? '': ((invRecSubTotal??0)+(invRecVat??0)).toStringAsFixed(2),
 
       // Serial Numbers Column
       buildPlutoColumn(

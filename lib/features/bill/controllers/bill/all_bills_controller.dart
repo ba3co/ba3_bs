@@ -97,10 +97,10 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> fetchAllNestedBills(List<BillTypeModel> billsTypes) async {
+  Future<void> fetchAllNestedBills() async {
     getAllNestedBillsRequestState.value = RequestState.loading;
 
-    final result = await _billsFirebaseRepo.fetchAllNested(billsTypes);
+    final result = await _billsFirebaseRepo.fetchAllNested(read<PatternController>().billsTypes);
 
     result.fold(
           (failure) => AppUIUtils.onFailure(failure.message),

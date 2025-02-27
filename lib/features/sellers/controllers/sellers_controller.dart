@@ -47,6 +47,7 @@ class SellersController extends GetxController with AppNavigator {
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedSellers) {
         sellers.assignAll(fetchedSellers);
+
       },
     );
   }

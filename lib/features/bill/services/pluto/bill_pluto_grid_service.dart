@@ -25,6 +25,7 @@ class BillPlutoGridService {
   PlutoGridStateManager get additionsDiscountsStateManager => controller.additionsDiscountsStateManager;
 
   void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
+    log('hi');
     log(field);
     stateManager.changeCellValue(
       stateManager.currentRow!.cells[field]!,
@@ -167,7 +168,7 @@ class BillPlutoGridService {
     final total = isZeroSubtotal ? '' : ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2);
     if (billTypeModel.billPatternType!.hasVat) {
       updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecVat, vat);
-      updateCellValue(mainTableStateManager, AppConstants.invRecSubTotalWithVat, (subTotalStr.toDouble + vat.toDouble).toStringAsFixed(2));
+      updateSelectedRowCellValue(mainTableStateManager,selectedRow, AppConstants.invRecSubTotalWithVat, (subTotalStr.toDouble + vat.toDouble).toStringAsFixed(2));
     }
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecSubTotal, subTotalStr);
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecTotal, total);

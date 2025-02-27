@@ -129,7 +129,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> fetchAllMaterialFromLocal() async {
+    log('i am fuk here');
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+    log('i am fuk here');
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
@@ -140,6 +142,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         (fetchedMaterial) => _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
       );
     }
+    log('i am fuk here');
   }
 
   Future<void> deleteAllMaterialFromLocal() async {
@@ -319,9 +322,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) {
-/*
         _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add);
-*/
       },
     );
   }

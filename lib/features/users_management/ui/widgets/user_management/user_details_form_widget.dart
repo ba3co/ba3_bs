@@ -120,10 +120,12 @@ class UserDetailsForm extends StatelessWidget {
                           value: userDetailsController.userFormHandler.selectedSellerId.value,
                           items: sellerController.sellers
                               .map(
-                                (seller) => DropdownMenuItem(
-                                  value: seller.costGuid,
+                                (seller) {
+                                  return DropdownMenuItem(
+                                  value: seller.docId,
                                   child: Text(seller.costName ?? ''),
-                                ),
+                                );
+                                },
                               )
                               .toList(),
                           onChanged: (sellerId) {

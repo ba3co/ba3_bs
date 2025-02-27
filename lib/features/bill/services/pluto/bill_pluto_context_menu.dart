@@ -29,6 +29,7 @@ class BillPlutoContextMenu {
     required BillPlutoGridService gridService,
     required int index,
     required BillTypeModel billTypeModel,
+    required PlutoRow row,
   }) {
     OverlayService.showPopupMenu(
       context: context,
@@ -36,7 +37,7 @@ class BillPlutoContextMenu {
       items: PriceType.values,
       itemLabelBuilder: (type) => '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
       onSelected: (PriceType type) {
-        final PlutoRow selectedRow = controller.recordsTableStateManager.rows[index];
+        final PlutoRow selectedRow =row;
         final int quantity = AppServiceUtils.getItemQuantity(selectedRow);
 
         gridService.updateInvoiceValuesBySubTotal(

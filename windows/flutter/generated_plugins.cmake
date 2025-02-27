@@ -6,10 +6,8 @@ list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
   firebase_core
   flutter_platform_alert
-  flutter_thermal_printer
   geolocator_windows
   print_bluetooth_thermal
-  printing
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

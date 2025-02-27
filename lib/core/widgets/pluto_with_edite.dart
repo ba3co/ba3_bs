@@ -31,12 +31,12 @@ class PlutoWithEdite extends StatelessWidget {
       rows: rows,
       onRowSecondaryTap: onRowSecondaryTap,
       onChanged: onChanged,
-
+      columnMenuDelegate: PlutoColumnMenuDelegateDefault(),
       configuration: PlutoGridConfiguration(
-
         shortcut: shortCut ?? const PlutoGridShortcut(),
-        style: buildGridStyleConfig(evenRowColor: evenRowColor,),
-
+        style: buildGridStyleConfig(
+          evenRowColor: evenRowColor,
+        ),
         localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
       ),
       onLoaded: onLoaded,

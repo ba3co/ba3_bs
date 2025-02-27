@@ -4,7 +4,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 PlutoGridStyleConfig buildGridStyleConfig({evenRowColor}) {
   return PlutoGridStyleConfig(
     rowHeight: 30,
-
     columnHeight: 30,
     evenRowColor: _getEvenRowColor(evenRowColor: evenRowColor),
     // columnTextStyle: _getColumnTextStyle(),

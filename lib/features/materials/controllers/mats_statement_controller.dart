@@ -32,7 +32,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       log("i is  ${i++}");
     }
 
-/*    final result = await _matStatementsRepo.saveAllNested(
+    final result = await _matStatementsRepo.saveAllNested(
         items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
 
     /// 2. Flatten the map into a single list of MatStatementModel
@@ -41,12 +41,12 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedStatements) {
-        */ /*onSaveAllMatsStatementsModelsSuccess(
+         onSaveAllMatsStatementsModelsSuccess(
         mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
         onProgress: onProgress,
-      ),*/ /*
+      );
       },
-    );*/
+    );
   }
 
   Future<void> onSaveAllMatsStatementsModelsSuccess({

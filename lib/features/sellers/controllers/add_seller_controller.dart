@@ -45,6 +45,7 @@ class AddSellerController extends GetxController with AppNavigator {
       final newSeller = SellerModel(
         costName: name,
         costCode: code,
+
       );
       await addSeller(newSeller, isNew: true);
     } else {

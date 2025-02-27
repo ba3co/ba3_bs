@@ -269,7 +269,6 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {
-    log("message  ${event.rowIdx}");
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
@@ -281,18 +280,20 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   void _handleContextMenu(PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel, BuildContext context) {
     final field = event.cell.column.field;
+    final row = event.row;
 
     if (field == AppConstants.invRecId) {
       _showDeleteConfirmationDialog(event, context);
     } else if (field == AppConstants.invRecProduct) {
       _showMatMenu(event, materialModel, context);
     } else if (field == AppConstants.invRecSubTotal) {
-      _showPriceTypeMenu(event, materialModel, context);
+      _showPriceTypeMenu(event, materialModel, context,row);
     }
   }
 
-  void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context) {
+  void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context, PlutoRow row) {
     _contextMenu.showPriceTypeMenu(
+        row: row,
         context: context,
         index: event.rowIdx,
         materialModel: materialModel,

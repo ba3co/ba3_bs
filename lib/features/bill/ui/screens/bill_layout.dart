@@ -6,7 +6,6 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
-import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -141,10 +140,10 @@ class BillLayout extends StatelessWidget {
                 ? FloatingActionButton(
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      // allBillsController.fetchAllNestedBills();
+                      allBillsController.fetchAllNestedBills();
                       // read<MaterialsStatementController>().setupAllMaterials();
                       // read<MaterialsStatementController>().setupOneMaterials("bb270eea-4af2-421b-a06c-709c2fc46c4b");
-                      read<MaterialController>().updateAllMaterialWithDecodeProblematic();
+                      // read<MaterialController>().updateAllMaterialWithDecodeProblematic();
                     },
                     child: Icon(
                       Icons.ac_unit_rounded,
