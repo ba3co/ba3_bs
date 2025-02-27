@@ -168,11 +168,12 @@ class AccountsController extends GetxController with AppNavigator,FloatingLaunch
     }
 
     var partialMatch = accounts.where(
-      (item) {
-        String name = item.accName!.toLowerCase();
-        return searchParts.every((part) => name.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
+      (acc) {
+        String accName = acc.accName!.toLowerCase();
+        return searchParts.every((part) => accName.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
       },
     );
+
     if (partialMatch.length == 1) {
       return [partialMatch.first]; // إرجاع أول تطابق جزئي متتابع
     } else if (partialMatch.length > 1) {
@@ -374,7 +375,7 @@ class AccountsController extends GetxController with AppNavigator,FloatingLaunch
       newCustomerPhoneController.clear();
       showAddCustomerForm.value = false;
     } else {
-      Get.snackbar("خطأ", "يرجى تعبئة جميع الحقول");
+      AppUIUtils.onFailure('يرجى تعبئة جميع الحقول');
     }
   }
 

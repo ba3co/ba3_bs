@@ -24,7 +24,6 @@ import '../ui/widgets/target_pointer_widget.dart';
 class SellerSalesController extends GetxController with AppNavigator {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
 
-
   SellerSalesController(this._billsFirebaseRepo);
 
   // List of bills for the seller
@@ -50,8 +49,6 @@ class SellerSalesController extends GetxController with AppNavigator {
 
   double totalAccessoriesSales = 0.0;
   double totalMobilesSales = 0.0;
-
-
 
   set setSelectedSeller(SellerModel sellerModel) {
     selectedSeller = sellerModel;
@@ -111,7 +108,7 @@ class SellerSalesController extends GetxController with AppNavigator {
   }
 
   void onSelectionChanged(dateRangePickerSelectionChangedArgs) {
-    setDateRange = dateRangePickerSelectionChangedArgs.value;
+    setDateRange = dateRangePickerSelectionChangedArgs._value;
   }
 
   PickerDateRange get defaultDateRange {
