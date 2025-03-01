@@ -122,7 +122,7 @@ class UserDetailsForm extends StatelessWidget {
                               .map(
                                 (seller) {
                                   return DropdownMenuItem(
-                                  value: seller.docId,
+                                  value: seller.costGuid,
                                   child: Text(seller.costName ?? ''),
                                 );
                                 },
