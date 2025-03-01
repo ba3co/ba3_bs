@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +28,9 @@ class AllMaterialsScreen extends StatelessWidget {
           read<MaterialsStatementController>().fetchMatStatements(materialModel, context: context);
         },
         onSelected: (selectedRow) {
+
           String? matId = selectedRow.row?.cells[AppConstants.materialIdFiled]?.value;
+          log('mat id is $matId');
           read<MaterialController>().navigateToAddOrUpdateMaterialScreen(matId: matId, context: context);
         },
       );

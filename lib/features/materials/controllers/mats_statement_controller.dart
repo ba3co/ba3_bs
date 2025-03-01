@@ -41,10 +41,10 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedStatements) {
-         onSaveAllMatsStatementsModelsSuccess(
-        mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
-        onProgress: onProgress,
-      );
+        onSaveAllMatsStatementsModelsSuccess(
+          mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
+          onProgress: onProgress,
+        );
       },
     );
   }
@@ -265,11 +265,13 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   double _calculateLastEnterPrice(List<MatStatementModel> items) {
     if (items.isEmpty) return 0.0;
     final sellItem = items
-      ..where(
-        (item) => item.matOrigin?.originTypeId == "eb10653a-a43f-44e5-889d-41ce68c43ec4",
-      )
-      ..sortBy((item) => item.date!);
-
+        .where(
+          (item) => item.matOrigin!.originTypeId == "eb10653a-a43f-44e5-889d-41ce68c43ec4",
+        )
+        .toList();
+    sellItem.sortBy(
+      (item) => item.date!,
+    );
     log('last pay price is ${sellItem.lastOrNull?.price}');
     return sellItem.lastOrNull?.price ?? 0.0;
   }

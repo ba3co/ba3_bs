@@ -216,7 +216,8 @@ class InvoiceRecordModel {
         title: AppStrings.material.tr,
         field: AppConstants.invRecProduct,
         type: PlutoColumnType.text(),
-        width: 300,
+        width: 300,hasContextMenu: false,
+
 
       ): invRecProduct,
 
@@ -226,6 +227,8 @@ class InvoiceRecordModel {
         field: AppConstants.invRecQuantity,
         type: PlutoColumnType.text(),
         width: 110,
+        hasContextMenu: false,
+
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): invRecQuantity,
 
@@ -234,7 +237,7 @@ class InvoiceRecordModel {
         title: AppStrings.individual.tr,
         field: AppConstants.invRecSubTotal,
         type: PlutoColumnType.text(),
-
+hasContextMenu: false,
         width: 110,
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): subTotalStr,
@@ -245,6 +248,8 @@ class InvoiceRecordModel {
           field: AppConstants.invRecVat,
           type: PlutoColumnType.text(),
           width: 110,
+          hasContextMenu: false,
+
           isEditable: false,
         ): vat,
       // Total Column
@@ -253,6 +258,8 @@ class InvoiceRecordModel {
         field: AppConstants.invRecTotal,
         type: PlutoColumnType.text(),
         width: 150,
+        hasContextMenu: false,
+
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): invRecTotal,
 
@@ -265,6 +272,8 @@ class InvoiceRecordModel {
           field: AppConstants.invRecGift,
           type: PlutoColumnType.text(),
           width: 110,
+          hasContextMenu: false,
+
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
         ): invRecGift,
       if (billTypeModel.billPatternType!.hasVat)
@@ -273,6 +282,8 @@ class InvoiceRecordModel {
           field:AppConstants.invRecSubTotalWithVat,
           type: PlutoColumnType.text(),
           width: 150,
+          hasContextMenu: false,
+
           // isEditable: false,
           // isReadOnly: true,
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
@@ -285,6 +296,8 @@ class InvoiceRecordModel {
         type: PlutoColumnType.text(),
         width: 110,
         isEditable: false,
+        hasContextMenu: false,
+
         isFullyHidden: AppConstants.hideInvRecProductSerialNumbers,
       ): invRecProductSerialNumbers,
 
@@ -294,6 +307,8 @@ class InvoiceRecordModel {
         field: AppConstants.invRecProductSoldSerial,
         type: PlutoColumnType.text(),
         isUIHidden: true,
+        hasContextMenu: false,
+
         isFullyHidden: AppConstants.hideInvRecProductSoldSerial,
       ): invRecProductSoldSerial,
     };
