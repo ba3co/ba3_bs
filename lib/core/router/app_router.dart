@@ -17,6 +17,7 @@ import 'package:ba3_bs/features/users_management/ui/screens/user_management/all_
 import 'package:get/get.dart';
 
 import '../../features/accounts/ui/screens/add_account_screen.dart';
+import '../../features/accounts/ui/screens/final_accounts_screen.dart';
 import '../../features/bond/ui/screens/bond_details_screen.dart';
 import '../../features/cheques/ui/screens/all_cheques_view.dart';
 import '../../features/login/ui/screens/login_screen.dart';
@@ -35,6 +36,8 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.addPatternsScreen, page: () => const AddPatternScreen()),
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
+  GetPage(name: AppRoutes.finalAccountsScreen, page: () => const FinalAccountScreen()),
+  GetPage(name: AppRoutes.finalAccountDetailsScreen, page: () => const FinalAccountDetailsScreen()),
   GetPage(
     name: AppRoutes.showAllBillsScreen,
     page: () => const AllBillsScreen(),

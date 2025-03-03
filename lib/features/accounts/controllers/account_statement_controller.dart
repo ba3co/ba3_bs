@@ -37,12 +37,20 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   final List<EntryBondItemModel> entryBondItems = [];
   List<EntryBondItemModel> filteredEntryBondItems = [];
 
+  List<EntryBondItemModel> finalAccountsEntryBondItems = [];
+
   // State variables
   bool isLoading = false;
 
   double totalValue = 0.0;
   double debitValue = 0.0;
   double creditValue = 0.0;
+
+  double totalFinalAccountValue = 0.0;
+  double debitFinalAccountValue = 0.0;
+  double creditFinalAccountValue = 0.0;
+
+  RequestState fetchFinalAccountsStatementRequestState = RequestState.initial;
 
   @override
   void onInit() {
@@ -86,11 +94,68 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     endDateController.text = AppUIUtils.getDateFromString(text);
   }
 
+  List<AccountModel> filterAccountsBySelectedFinalAccount(FinalAccounts selectedFinalAccount) {
+    final accountsController = read<AccountsController>().accounts;
+
+    List<AccountModel> accounts = [];
+
+    // Mapping FinalAccounts to the corresponding account lists
+    final Map<FinalAccounts, List<AccountModel>> accountGroups = {
+      FinalAccounts.tradingAccount: accountsController.where((account) => account.accFinalGuid == FinalAccounts.tradingAccount.accPtr).toList(),
+      FinalAccounts.profitAndLoss: accountsController.where((account) => account.accFinalGuid == FinalAccounts.profitAndLoss.accPtr).toList(),
+      FinalAccounts.balanceSheet: accountsController.where((account) => account.accFinalGuid == FinalAccounts.balanceSheet.accPtr).toList(),
+    };
+
+    if (selectedFinalAccount == FinalAccounts.tradingAccount) {
+      accounts = accountGroups[FinalAccounts.tradingAccount] ?? [];
+    } else if (selectedFinalAccount == FinalAccounts.profitAndLoss) {
+      accounts = [...?accountGroups[FinalAccounts.tradingAccount], ...?accountGroups[FinalAccounts.profitAndLoss]];
+    } else {
+      accounts = [
+        ...?accountGroups[FinalAccounts.tradingAccount],
+        ...?accountGroups[FinalAccounts.profitAndLoss],
+        ...?accountGroups[FinalAccounts.balanceSheet]
+      ];
+    }
+
+    return accounts;
+  }
+
+  Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
+    //  fetchFinalAccountsStatementRequestState = RequestState.loading;
+    isLoading = true;
+    update();
+
+    final finalAccounts = filterAccountsBySelectedFinalAccount(selectedFinalAccount);
+
+    log('fetching AccountsStatement');
+
+    final Map<AccountEntity, List<EntryBondItems>> result =
+        await fetchAccountsStatement(finalAccounts.map((AccountModel acc) => AccountEntity.fromAccountModel(acc)).toList());
+
+    finalAccountsEntryBondItems.assignAll(
+      result.values
+          .expand(
+            (List<EntryBondItems> list) => list.expand((item) => item.itemList),
+          )
+          .toList(),
+    );
+
+    _calculateFinalAccountValues();
+
+    //  fetchFinalAccountsStatementRequestState = RequestState.success;
+    isLoading = false;
+    update();
+    log('fetchFinalAccountsStatementRequestState success');
+  }
+
+  void navigateToFinalAccountDetails() => to(AppRoutes.finalAccountDetailsScreen);
+
   // Fetch bond items for the selected account
   Future<void> fetchAccountEntryBondItems() async {
     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
     if (accountModel == null) {
-      AppUIUtils.onFailure( "يرجى إدخال اسم الحساب");
+      AppUIUtils.onFailure("يرجى إدخال اسم الحساب");
       return;
     }
 
@@ -107,12 +172,36 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
 
         filterByDate();
-        _calculateValues(filteredEntryBondItems);
+        _calculateValues();
       },
     );
 
     isLoading = false;
     update();
+  }
+
+  Future<List<EntryBondItemModel>> fetchAccountStatement(AccountEntity accountEntity) async {
+    final result = await _accountsStatementsRepo.getAll(accountEntity);
+
+    return result.fold(
+      (failure) {
+        AppUIUtils.onFailure(failure.message);
+        return []; // Return an empty list in case of failure
+      },
+      (List<EntryBondItems> fetchedItems) => fetchedItems.expand((item) => item.itemList).toList(), // Return fetched items on success
+    );
+  }
+
+  Future<Map<AccountEntity, List<EntryBondItems>>> fetchAccountsStatement(List<AccountEntity> accountEntities) async {
+    final result = await _accountsStatementsRepo.fetchAllNested(accountEntities);
+
+    return result.fold(
+      (failure) {
+        AppUIUtils.onFailure(failure.message);
+        return {};
+      },
+      (Map<AccountEntity, List<EntryBondItems>> fetchedItems) => fetchedItems,
+    );
   }
 
   void filterByDate() {
@@ -141,26 +230,40 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   /// Navigation handler
   void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
 
-  /// Calculates debit, credit, and total values
-  void _calculateValues(List<EntryBondItemModel> items) {
+  void _calculateAccountValues(List<EntryBondItemModel> items,
+      {required void Function(double) setTotal, required void Function(double) setDebit, required void Function(double) setCredit}) {
     if (items.isEmpty) {
-      _resetValues();
+      setTotal(0.0);
+      setDebit(0.0);
+      setCredit(0.0);
     } else {
-      _updateValues(items);
+      double debit = _calculateSum(items: items, type: BondItemType.debtor);
+      double credit = _calculateSum(items: items, type: BondItemType.creditor);
+      double total = debit - credit;
+
+      setTotal(total);
+      setDebit(debit);
+      setCredit(credit);
     }
   }
 
-  _resetValues() {
-    totalValue = 0.0;
-    debitValue = 0.0;
-    creditValue = 0.0;
+  void _calculateFinalAccountValues() {
+    _calculateAccountValues(
+      finalAccountsEntryBondItems,
+      setTotal: (value) => totalFinalAccountValue = value,
+      setDebit: (value) => debitFinalAccountValue = value,
+      setCredit: (value) => creditFinalAccountValue = value,
+    );
   }
 
-  _updateValues(List<EntryBondItemModel> items) {
-    debitValue = _calculateSum(items: items, type: BondItemType.debtor);
-    creditValue = _calculateSum(items: items, type: BondItemType.creditor);
-
-    totalValue = debitValue - creditValue;
+  /// Calculates debit, credit, and total values
+  void _calculateValues() {
+    _calculateAccountValues(
+      filteredEntryBondItems,
+      setTotal: (value) => totalValue = value,
+      setDebit: (value) => debitValue = value,
+      setCredit: (value) => creditValue = value,
+    );
   }
 
   double _calculateSum({required List<EntryBondItemModel> items, required BondItemType type}) => items.fold(
@@ -168,14 +271,12 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         (sum, item) => item.bondItemType == type ? sum + (item.amount ?? 0.0) : sum,
       );
 
-  String get screenTitle =>
-      'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
+  String get screenTitle => 'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
 
   // Helper Methods
   static String get _formattedToday => DateTime.now().dayMonthYear;
-  static String get _formattedFirstDay => DateTime.now().copyWith(month: 1,day: 1).dayMonthYear;
 
-
+  static String get _formattedFirstDay => DateTime.now().copyWith(month: 1, day: 1).dayMonthYear;
 
   void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
     EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(entryId: originId);

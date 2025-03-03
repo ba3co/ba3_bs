@@ -19,13 +19,14 @@ import '../../../core/dialogs/account_selection_dialog_content.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
+import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/account_model.dart';
 import '../service/account_service.dart';
 
-class AccountsController extends GetxController with AppNavigator,FloatingLauncher {
+class AccountsController extends GetxController with AppNavigator, FloatingLauncher {
   final BulkSavableDatasourceRepository<AccountModel> _accountsFirebaseRepo;
 
   final ImportExportRepository<AccountModel> _jsonImportExportRepo;
@@ -129,13 +130,14 @@ class AccountsController extends GetxController with AppNavigator,FloatingLaunch
     update();
   }
 
-  void navigateToAllAccountsScreen({required BuildContext context}) {
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: AllAccountScreen());
+  void navigateToAllAccountsScreen(BuildContext context) =>
+      launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: AllAccountScreen());
 
-    // to(AppRoutes.showAllAccountsScreen);
+  void navigateToFinalAccountsScreen(BuildContext context) {
+    to(AppRoutes.finalAccountsScreen);
   }
 
-  void navigateToAddOrUpdateAccountScreen({String? accountId,required BuildContext context}) {
+  void navigateToAddOrUpdateAccountScreen({String? accountId, required BuildContext context}) {
     if (accountId != null) {
       selectedAccount = getAccountModelById(accountId);
     } else {
@@ -145,7 +147,7 @@ class AccountsController extends GetxController with AppNavigator,FloatingLaunch
 
     accountFromHandler.init(accountModel: selectedAccount);
 
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen:AddAccountScreen());
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: AddAccountScreen());
 
     // to(AppRoutes.addAccountScreen);
   }

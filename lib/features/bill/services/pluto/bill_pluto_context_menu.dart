@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_details/add_serial_widget.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
@@ -17,9 +18,9 @@ import 'bill_pluto_grid_service.dart';
 import 'bill_pluto_utils.dart';
 
 class BillPlutoContextMenu {
-  final IPlutoController controller;
+  final IPlutoController plutoController;
 
-  BillPlutoContextMenu(this.controller);
+  BillPlutoContextMenu(this.plutoController);
 
   void showPriceTypeMenu({
     required BuildContext context,
@@ -37,7 +38,7 @@ class BillPlutoContextMenu {
       items: PriceType.values,
       itemLabelBuilder: (type) => '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
       onSelected: (PriceType type) {
-        final PlutoRow selectedRow =row;
+        final PlutoRow selectedRow = row;
         final int quantity = AppServiceUtils.getItemQuantity(selectedRow);
 
         gridService.updateInvoiceValuesBySubTotal(
@@ -46,7 +47,7 @@ class BillPlutoContextMenu {
           quantity: quantity,
           billTypeModel: billTypeModel,
         );
-        controller.update();
+        plutoController.update();
       },
       onCloseCallback: () {
         debugPrint('PriceType menu closed.');
@@ -61,6 +62,7 @@ class BillPlutoContextMenu {
     required MaterialModel materialModel,
     required BillPlutoUtils invoiceUtils,
     required BillPlutoGridService gridService,
+    required List<BillItem> billItems,
     required int index,
   }) {
     OverlayService.showPopupMenu(
@@ -75,19 +77,20 @@ class BillPlutoContextMenu {
         }
 
         if (selectedMenuItem == 'إضافة serial') {
-          final PlutoRow selectedRow = controller.recordsTableStateManager.rows[index];
+          final PlutoRow selectedRow = plutoController.recordsTableStateManager.rows[index];
           final String matQuantity = AppServiceUtils.getCellValue(selectedRow, AppConstants.invRecQuantity);
           debugPrint('matQuantity $matQuantity');
 
           OverlayService.showDialog(
             context: context,
             content: AddSerialWidget(
-              plutoController: controller,
+              plutoController: plutoController,
+              billItem: billItems[index],
               materialModel: materialModel,
               serialCount: int.tryParse(matQuantity) ?? 0,
             ),
             onCloseCallback: () {
-              final List<TextEditingController> serialsControllers = controller.buyMaterialsSerialsControllers[materialModel] ?? [];
+              final List<TextEditingController> serialsControllers = plutoController.buyMaterialsSerialsControllers[materialModel] ?? [];
 
               if (serialsControllers.isNotEmpty && !AppConstants.hideInvRecProductSerialNumbers) {
                 // Extract serial numbers from controllers
@@ -96,7 +99,7 @@ class BillPlutoContextMenu {
 
                 // Update the cell value with the extracted serial numbers
                 gridService.updateSelectedRowCellValue(
-                  controller.recordsTableStateManager,
+                  plutoController.recordsTableStateManager,
                   selectedRow,
                   AppConstants.invRecProductSerialNumbers,
                   serialNumbers,
@@ -152,9 +155,9 @@ class BillPlutoContextMenu {
   }
 
   void _deleteRow(int rowIdx) {
-    final rowToRemove = controller.recordsTableStateManager.rows[rowIdx];
-    controller.recordsTableStateManager.removeRows([rowToRemove]);
+    final rowToRemove = plutoController.recordsTableStateManager.rows[rowIdx];
+    plutoController.recordsTableStateManager.removeRows([rowToRemove]);
     OverlayService.back();
-    controller.update();
+    plutoController.update();
   }
 }

@@ -375,6 +375,7 @@ abstract class AppConstants {
   static const String userIdKey = 'userIdKey';
 
   static const String recipientEmail = 'burjalarab000@gmail.com';
+
   // static const String recipientEmail = 'ahmed.zein1896@gmail.com';
 
   // static const String recipientEmail = 'alidabol567@gmail.com';
@@ -415,9 +416,9 @@ abstract class AppConstants {
 
   static const String billIdFiled = 'billIdFiled';
   static const bool hideInvRecProductSoldSerial = false;
-  static const bool hideInvRecProductSerialNumbers = true;
+  static const bool hideInvRecProductSerialNumbers = false;
 
-  static const  Map<String, String> months = {
+  static const Map<String, String> months = {
     "يناير (1)": "01",
     "فبراير (2)": "02",
     "مارس (3)": "03",

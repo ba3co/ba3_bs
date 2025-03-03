@@ -205,7 +205,7 @@ class InvoiceRecordModel {
         customRenderer: (rendererContext) {
           if (rendererContext.row.cells[AppConstants.invRecProduct]?.value != '') {
             rendererContext.cell.value = rendererContext.rowIdx.toString();
-            return Text((rendererContext.rowIdx+1).toString());
+            return Text((rendererContext.rowIdx + 1).toString());
           }
           return const Text("");
         },
@@ -216,9 +216,8 @@ class InvoiceRecordModel {
         title: AppStrings.material.tr,
         field: AppConstants.invRecProduct,
         type: PlutoColumnType.text(),
-        width: 300,hasContextMenu: false,
-
-
+        width: 300,
+        hasContextMenu: false,
       ): invRecProduct,
 
       // Quantity Column
@@ -228,7 +227,6 @@ class InvoiceRecordModel {
         type: PlutoColumnType.text(),
         width: 110,
         hasContextMenu: false,
-
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): invRecQuantity,
 
@@ -237,7 +235,7 @@ class InvoiceRecordModel {
         title: AppStrings.individual.tr,
         field: AppConstants.invRecSubTotal,
         type: PlutoColumnType.text(),
-hasContextMenu: false,
+        hasContextMenu: false,
         width: 110,
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): subTotalStr,
@@ -249,7 +247,6 @@ hasContextMenu: false,
           type: PlutoColumnType.text(),
           width: 110,
           hasContextMenu: false,
-
           isEditable: false,
         ): vat,
       // Total Column
@@ -259,11 +256,8 @@ hasContextMenu: false,
         type: PlutoColumnType.text(),
         width: 150,
         hasContextMenu: false,
-
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
       ): invRecTotal,
-
-
 
       // Gifts Column (Only if Gifts Account is enabled)
       if (billTypeModel.billPatternType!.hasGiftsAccount)
@@ -273,13 +267,12 @@ hasContextMenu: false,
           type: PlutoColumnType.text(),
           width: 110,
           hasContextMenu: false,
-
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
         ): invRecGift,
       if (billTypeModel.billPatternType!.hasVat)
         buildPlutoColumn(
           title: AppStrings.invRecSubTotalWithVat.tr,
-          field:AppConstants.invRecSubTotalWithVat,
+          field: AppConstants.invRecSubTotalWithVat,
           type: PlutoColumnType.text(),
           width: 150,
           hasContextMenu: false,
@@ -287,7 +280,7 @@ hasContextMenu: false,
           // isEditable: false,
           // isReadOnly: true,
           readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
-        ): invRecSubTotal==0 ? '': ((invRecSubTotal??0)+(invRecVat??0)).toStringAsFixed(2),
+        ): invRecSubTotal == 0 ? '' : ((invRecSubTotal ?? 0) + (invRecVat ?? 0)).toStringAsFixed(2),
 
       // Serial Numbers Column
       buildPlutoColumn(
@@ -297,7 +290,7 @@ hasContextMenu: false,
         width: 110,
         isEditable: false,
         hasContextMenu: false,
-
+        isUIHidden: true,
         isFullyHidden: AppConstants.hideInvRecProductSerialNumbers,
       ): invRecProductSerialNumbers,
 
@@ -308,7 +301,6 @@ hasContextMenu: false,
         type: PlutoColumnType.text(),
         isUIHidden: true,
         hasContextMenu: false,
-
         isFullyHidden: AppConstants.hideInvRecProductSoldSerial,
       ): invRecProductSoldSerial,
     };

@@ -241,13 +241,11 @@ final Map<String, String> urPK = {
   AppStrings.paymentBond: 'ادائیگی کا بانڈ',
   AppStrings.deleteRefund: 'واپسی حذف کریں',
   AppStrings.paymentDelete: 'ادائیگی حذف کریں',
-
   AppStrings.addCheques: 'چیک شامل کریں',
   AppStrings.viewCheques: 'چیکس دیکھیں',
   AppStrings.viewMaterial: 'مواد دیکھیں',
   AppStrings.viewMaterialGroups: 'مواد کے گروپس دیکھیں',
   AppStrings.downloadBonds: 'بانڈز ڈاؤن لوڈ کریں',
-
   AppStrings.downloadCheques: 'چیکس ڈاؤن لوڈ کریں',
   AppStrings.downloadMaterials: 'مواد ڈاؤن لوڈ کریں',
   AppStrings.downloadGroups: 'گروپس ڈاؤن لوڈ کریں',
@@ -262,4 +260,8 @@ final Map<String, String> urPK = {
   AppStrings.achievementsPanel: 'کامیابیوں کا پینل',
   AppStrings.profile: 'پروفائل',
   AppStrings.totalSales: 'کل فروخت',
+  AppStrings.finalAccounts: 'حتمی حسابات',
+  AppStrings.tradingAccount: 'تجارتی حساب',
+  AppStrings.profitAndLoss: 'منافع اور نقصانات کا حساب',
+  AppStrings.balanceSheet: 'بیلنس شیٹ',
 };

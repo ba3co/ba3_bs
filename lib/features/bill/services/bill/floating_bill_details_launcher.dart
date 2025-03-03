@@ -26,7 +26,7 @@ class FloatingBillDetailsLauncher extends GetxController with FloatingLauncher, 
     final billSearchControllerWithTag = createController<BillSearchController>(tag, controller: BillSearchController());
 
     final billDetailsPlutoControllerWithTag =
-        createController<BillDetailsPlutoController>(tag, controller: BillDetailsPlutoController(billTypeModel));
+        createController<BillDetailsPlutoController>(tag, controller: BillDetailsPlutoController(billTypeModel, billSearchControllerWithTag));
 
     final billDetailsControllerWithTag = createController<BillDetailsController>(
       tag,

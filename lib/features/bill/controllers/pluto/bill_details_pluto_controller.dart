@@ -14,17 +14,20 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
+import '../../data/models/bill_items.dart';
 import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/pluto/bill_pluto_calculator.dart';
 import '../../services/pluto/bill_pluto_context_menu.dart';
 import '../../services/pluto/bill_pluto_grid_service.dart';
 import '../../services/pluto/bill_pluto_utils.dart';
+import '../bill/bill_search_controller.dart';
 
 class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   final BillTypeModel billTypeModel;
+  final BillSearchController billSearchController;
 
-  BillDetailsPlutoController(this.billTypeModel);
+  BillDetailsPlutoController(this.billTypeModel, this.billSearchController);
 
   // Services
   late final BillPlutoGridService _gridService;
@@ -104,23 +107,13 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     return invoiceRecords;
   }
 
-  Map<Account, List<DiscountAdditionAccountModel>> get generateDiscountsAndAdditions =>
-      _gridService.collectDiscountsAndAdditions(_plutoUtils);
+  Map<Account, List<DiscountAdditionAccountModel>> get generateDiscountsAndAdditions => _gridService.collectDiscountsAndAdditions(_plutoUtils);
 
   @override
   void moveToNextRow(PlutoGridStateManager stateManager, String cellField) => _gridService.moveToNextRow(stateManager, cellField);
 
   @override
   void restoreCurrentCell(PlutoGridStateManager stateManager) => _gridService.restoreCurrentCell(stateManager, billTypeModel);
-
-  @override
-  void initSerialControllers(MaterialModel materialModel, int serialCount) {
-    buyMaterialsSerialsControllers.update(
-      materialModel,
-      (existingList) => _matchControllerCount(existingList, serialCount),
-      ifAbsent: () => _createControllers(serialCount),
-    );
-  }
 
   void generateSellMaterialsSerialsControllers(List<InvoiceRecordModel> invRecords) {
     // Clear existing data to avoid duplicates
@@ -144,19 +137,28 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     log('📌 Generated sellMaterialsSerialsControllers: ${sellMaterialsSerialsControllers.map((key, value) => MapEntry(key.toString(), value.map((controller) => controller.text).toList()))}');
   }
 
+  @override
+  void initSerialControllers(MaterialModel materialModel, int serialCount, BillItem billItem) {
+    buyMaterialsSerialsControllers.update(
+      materialModel,
+      (existingList) => _matchControllerCount(existingList, serialCount, billItem),
+      ifAbsent: () => _createControllers(serialCount, billItem),
+    );
+  }
+
   /// Ensures the [controllers] list has exactly [requiredCount] items.
   /// Adds [TextEditingController] instances if there are fewer than required,
   /// or disposes and removes any excess controllers.
-  List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount) {
-    final currentCount = controllers.length;
+  List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount, BillItem billItem) {
+    final int currentCount = controllers.length;
 
     if (currentCount < requiredCount) {
-      // Add missing controllers
-      final needed = requiredCount - currentCount;
-      controllers.addAll(_createControllers(needed));
+      // Add missing controllers and maintain existing values
+      final int needed = requiredCount - currentCount;
+      controllers.addAll(_createControllers(needed, billItem, startIndex: currentCount));
     } else if (currentCount > requiredCount) {
       // Dispose of and remove extras
-      for (var i = requiredCount; i < currentCount; i++) {
+      for (int i = requiredCount; i < currentCount; i++) {
         controllers[i].dispose();
       }
       controllers.removeRange(requiredCount, currentCount);
@@ -165,8 +167,19 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     return controllers;
   }
 
-  /// Creates a list of [TextEditingController] with [count] items.
-  List<TextEditingController> _createControllers(int count) => List.generate(count, (_) => TextEditingController());
+  /// Creates a list of [TextEditingController] with [count] items,
+  /// optionally starting from a specific index to ensure sequential serials.
+  List<TextEditingController> _createControllers(int count, BillItem billItem, {int startIndex = 0}) {
+    return List.generate(
+      count,
+      (index) {
+        final actualIndex = startIndex + index;
+        final text =
+            (billItem.itemSerialNumbers != null && actualIndex < billItem.itemSerialNumbers!.length) ? billItem.itemSerialNumbers![actualIndex] : '';
+        return TextEditingController(text: text);
+      },
+    );
+  }
 
   @override
   void onInit() {
@@ -287,7 +300,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     } else if (field == AppConstants.invRecProduct) {
       _showMatMenu(event, materialModel, context);
     } else if (field == AppConstants.invRecSubTotal) {
-      _showPriceTypeMenu(event, materialModel, context,row);
+      _showPriceTypeMenu(event, materialModel, context, row);
     }
   }
 
@@ -312,6 +325,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     _contextMenu.showMaterialMenu(
       materialMenu: materialMenu,
       context: context,
+      billItems: billSearchController.currentBill.items.itemList,
       index: event.rowIdx,
       materialModel: materialModel,
       tapPosition: event.offset,
@@ -387,8 +401,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   // Helper method to create an InvoiceRecordModel from a row
-  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId, double matVat) =>
-      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(), matVat);
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId, double matVat) => InvoiceRecordModel.fromJsonPluto(matId, row.toJson(), matVat);
 
   void prepareBillMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();

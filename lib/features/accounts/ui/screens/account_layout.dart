@@ -43,7 +43,7 @@ class AccountLayout extends StatelessWidget {
               onTap: () {
                 read<AccountsController>()
                   ..fetchAccounts()
-                  ..navigateToAllAccountsScreen(context: context);
+                  ..navigateToAllAccountsScreen( context);
               },
             ),
             AppMenuItem(
@@ -56,6 +56,12 @@ class AccountLayout extends StatelessWidget {
               text: AppStrings.addAccount.tr,
               onTap: () {
                 read<AccountsController>().navigateToAddOrUpdateAccountScreen(context: context);
+              },
+            ),
+            AppMenuItem(
+              text: AppStrings.finalAccounts.tr,
+              onTap: () {
+                read<AccountsController>().navigateToFinalAccountsScreen(context);
               },
             ),
           ],

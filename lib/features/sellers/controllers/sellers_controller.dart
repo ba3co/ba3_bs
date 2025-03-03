@@ -44,28 +44,33 @@ class SellersController extends GetxController with AppNavigator {
     final result = await _sellersFirebaseRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedSellers) {
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedSellers) {
         sellers.assignAll(fetchedSellers);
-
       },
     );
   }
 
   Future<void> fetchAllSellersFromLocal() async {
-    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+    try {
+      log('fetchAllSellersFromLocal');
+      FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+      log('resultFile ${resultFile?.files.single.path!}');
+      if (resultFile != null) {
+        log('resultFile!= null');
+        File file = File(resultFile.files.single.path!);
+        final result = await _sellersImportRepo.importXmlFile(file);
 
-    if (resultFile != null) {
-      File file = File(resultFile.files.single.path!);
-      final result = await _sellersImportRepo.importXmlFile(file);
-
-      result.fold(
-        (failure) {
-          logger.e("Error log", error: failure.message);
-          AppUIUtils.onFailure(failure.message);
-        },
-        (fetchedSellers) => _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
-      );
+        result.fold(
+              (failure) {
+            logger.e("Error log", error: failure.message);
+            AppUIUtils.onFailure(failure.message);
+          },
+              (fetchedSellers) => _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
+        );
+      }
+    } catch (e) {
+      log('File picker error: $e');
     }
   }
 
@@ -80,8 +85,8 @@ class SellersController extends GetxController with AppNavigator {
       final result = await _sellersFirebaseRepo.saveAll(newSellers);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedSellers) {
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedSellers) {
           AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}');
 
           sellers.assignAll(newSellers);
@@ -94,8 +99,8 @@ class SellersController extends GetxController with AppNavigator {
     final result = await _sellersFirebaseRepo.saveAll(sellers);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (addedSellers) => AppUIUtils.onSuccess('Add ${addedSellers.length} sellers'),
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (addedSellers) => AppUIUtils.onSuccess('Add ${addedSellers.length} sellers'),
     );
   }
 
@@ -103,8 +108,8 @@ class SellersController extends GetxController with AppNavigator {
     final result = await _sellersFirebaseRepo.delete(sellerId);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}'),
-      (success) {
+          (failure) => AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}'),
+          (success) {
         AppUIUtils.onSuccess('تم الحذف البائع بنجاح!');
         sellers.removeWhere((seller) => seller.costGuid == sellerId);
       },
@@ -130,13 +135,17 @@ class SellersController extends GetxController with AppNavigator {
   // Get seller name by ID
   String getSellerNameById(String? id) {
     if (id == null || id.isEmpty) return '';
-    return sellers.firstWhere((seller) => seller.costGuid == id).costName ?? '';
+    return sellers
+        .firstWhere((seller) => seller.costGuid == id)
+        .costName ?? '';
   }
 
   // Get seller ID by name
   String getSellerIdByName(String? name) {
     if (name == null || name.isEmpty) return '';
-    return sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid ?? '';
+    return sellers
+        .firstWhereOrNull((seller) => seller.costName == name)
+        ?.costGuid ?? '';
   }
 
   // Get seller  by ID
@@ -161,8 +170,8 @@ class SellersController extends GetxController with AppNavigator {
     UserModel userModel = read<UserManagementController>().loggedInUserModel!;
     final result = await _sellersFirebaseRepo.getById(userModel.userSellerId!);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedSeller) => sellers.assignAll([fetchedSeller]),
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedSeller) => sellers.assignAll([fetchedSeller]),
     );
   }
 

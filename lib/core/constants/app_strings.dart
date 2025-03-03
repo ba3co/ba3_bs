@@ -279,16 +279,20 @@ class AppStrings {
   static const String productSerialNumbers = 'الأرقام التسلسلية للمنتج';
   static const String retailPrice = 'المفرق';
 
-
   //////
-  static const String invRecSubTotalWithVat='الافرادي شامل الضريبة';
+  static const String invRecSubTotalWithVat = 'الافرادي شامل الضريبة';
 
-  static const String lastPayPrice='اخر شراء';
+  static const String lastPayPrice = 'اخر شراء';
 
-  static const String earlyExit='الخروج المبكر';
+  static const String earlyExit = 'الخروج المبكر';
 
-  static  const String  delayRecord="سجل التاخير";
+  static const String delayRecord = "سجل التاخير";
 
-  static const String totalDelay='اجمالي التأخير هذا الشهر';
+  static const String totalDelay = 'اجمالي التأخير هذا الشهر';
 
+  static const String finalAccounts = 'الحسابات الختامية';
+
+  static const String tradingAccount = 'حساب المتاجرة';
+  static const String profitAndLoss = 'حساب الأرباح والخسائر';
+  static const String balanceSheet = 'الميزانية';
 }

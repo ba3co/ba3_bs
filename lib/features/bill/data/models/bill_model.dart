@@ -76,7 +76,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     required double billFirstPay,
     required double billWithoutVatTotal,
     required BillTypeModel billTypeModel,
-    required List<InvoiceRecordModel> billRecordsItems,
+    required List<InvoiceRecordModel> billRecords,
   }) {
     final billDetails = BillDetails.fromBillData(
       existingDetails: billModel?.billDetails,
@@ -94,7 +94,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
       billAdditionsTotal: billAdditionsTotal,
     );
 
-    final items = BillItems.fromBillRecords(billRecordsItems);
+    final items = BillItems.fromBillRecords(billRecords);
 
     return billModel == null
         ? BillModel(

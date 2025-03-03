@@ -33,7 +33,10 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     }
 
     final result = await _matStatementsRepo.saveAllNested(
-        items: matsStatements, itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId), onProgress: onProgress);
+      items: matsStatements,
+      itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId),
+      onProgress: onProgress,
+    );
 
     /// 2. Flatten the map into a single list of MatStatementModel
     ///    mapOfStatements.values is an Iterable<List<MatStatementModel>>
