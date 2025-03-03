@@ -141,9 +141,9 @@ class BillLayout extends StatelessWidget {
                 ? FloatingActionButton(
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      // allBillsController.fetchAllNestedBills();
+                      allBillsController.fetchAllNestedBills();
                       // read<MaterialsStatementController>().setupAllMaterials();
-                      read<MaterialsStatementController>().setupOneMaterials("df265478-450a-4d11-876c-76543be72ae1");
+                      // read<MaterialsStatementController>().setupOneMaterials("df265478-450a-4d11-876c-76543be72ae1");
                       // read<MaterialController>().updateAllMaterialWithDecodeProblematic();
                     },
                     child: Icon(

@@ -534,7 +534,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       billDate: billDate.value,
       billFirstPay: firstPayController.text.toDouble,
       billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
-      billSellerId: sellerController.selectedSellerAccount!.costGuid!,
+      billSellerId: sellerController.selectedSellerAccount!.costGuid??'',
       billPayType: selectedPayType.value.index,
     );
   }

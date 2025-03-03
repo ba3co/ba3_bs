@@ -523,7 +523,8 @@ enum PriceType {
   consumer('سعر المستهلك'),
   bulk('سعر الجملة'),
   retail('سعر المفرق'),
-  mainPrice('الوسطي');
+  mainPrice('الوسطي'),
+  lastEnterPrice('اخر شراء');
 
   final String label;
 
