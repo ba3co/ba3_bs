@@ -523,7 +523,8 @@ enum PriceType {
   consumer('سعر المستهلك'),
   bulk('سعر الجملة'),
   retail('سعر المفرق'),
-  mainPrice('الوسطي');
+  mainPrice('الوسطي'),
+  lastEnterPrice('اخر شراء');
 
   final String label;
 
@@ -667,63 +668,6 @@ enum VatEnums {
     return VatEnums.values.firstWhere(
       (type) => type.taxGuid == guid,
       orElse: () => throw ArgumentError('No matching Vat for guid: $guid'),
-    );
-  }
-}
-
-enum FinalAccounts {
-  tradingAccount(
-    accPtr: 'cb4075ed-3630-4c3c-83be-f45593245264',
-    accName: 'المتاجرة',
-    accLatinName: 'Trading Account',
-    accCode: '02',
-    accType: 2,
-    accNumber: 3,
-  ),
-  profitAndLoss(
-    accPtr: 'c376ed8d-bf03-4b06-9f69-ec85bbfbbcb2',
-    accName: 'الأرباح والخسائر',
-    accLatinName: 'Profit and Loss Account',
-    accCode: '01',
-    accType: 2,
-    accNumber: 2,
-  ),
-  balanceSheet(
-    accPtr: '25403a98-0cd8-46d1-b92b-dbe540969fe5',
-    accName: 'الميزانية',
-    accLatinName: 'Balance Sheet',
-    accCode: '00',
-    accType: 2,
-    accNumber: 1,
-  );
-
-  final String accPtr;
-  final String accName;
-  final String accLatinName;
-  final String accCode;
-  final int accType;
-  final int accNumber;
-
-  const FinalAccounts({
-    required this.accPtr,
-    required this.accName,
-    required this.accLatinName,
-    required this.accCode,
-    required this.accType,
-    required this.accNumber,
-  });
-
-  factory FinalAccounts.byPtr(String ptr) {
-    return FinalAccounts.values.firstWhere(
-      (account) => account.accPtr == ptr,
-      orElse: () => throw ArgumentError('No matching account for ptr: $ptr'),
-    );
-  }
-
-  factory FinalAccounts.byName(String name) {
-    return FinalAccounts.values.firstWhere(
-      (account) => account.accName == name,
-      orElse: () => throw ArgumentError('No matching account for name: $name'),
     );
   }
 }

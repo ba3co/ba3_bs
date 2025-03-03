@@ -45,7 +45,7 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
     if (model.billTypeModel.isSalesReturn) {
       return read<MaterialController>().getMaterialById(matItem.itemGuid)!.calcMinPrice ?? 0;
     } else {
-      return double.parse(matItem.itemTotalPrice) / matItem.itemQuantity;
+      return matItem.itemSubTotalPrice!;
     }
   }
 
