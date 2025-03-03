@@ -131,6 +131,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   Future<void> fetchAllMaterialFromLocal() async {
     log('i am fuk here');
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
+
     log('i am fuk here');
 
     if (resultFile != null) {
