@@ -58,10 +58,8 @@ class AllSellersScreen extends StatelessWidget {
                                           color: Colors.red,
                                           onPressed: () async {
                                             if (await AppUIUtils.confirm(context)) {
-                                              return print('pressedOK');
+                                              controller.deleteSeller(controller.sellers[index].costGuid!);
                                             }
-
-                                            // controller.deleteSeller(controller.sellers[index].costGuid!);
                                           },
                                         ),
                                         IconButton(

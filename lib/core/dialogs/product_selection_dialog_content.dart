@@ -40,6 +40,7 @@ class ProductSelectionDialogContent extends StatelessWidget {
                   title: 'اختيار مادة',
                   leadingIcon: Icons.close,
 
+
                   tableSourceModels: searchedMaterials,
                   onLoaded: (event) {
                     event.stateManager.setShowColumnFilter(true);

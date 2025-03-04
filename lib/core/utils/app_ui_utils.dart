@@ -1,4 +1,8 @@
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +11,7 @@ import 'package:get/get.dart';
 
 import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
+import '../widgets/app_button.dart';
 import '../widgets/app_spacer.dart';
 
 class AppUIUtils {
@@ -17,8 +22,7 @@ class AppUIUtils {
     } else if (isSuccess) {
       color = Colors.green;
     }
-    Fluttertoast.showToast(
-        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String convertArabicNumbers(String input) {
@@ -229,8 +233,7 @@ class AppUIUtils {
         child: SizedBox(width: width, height: height, child: CircularProgressIndicator(color: color)),
       );
 
-  static showErrorSnackBar(
-      {String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
+  static showErrorSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
     // Close any existing SnackBar
     Get.closeCurrentSnackbar();
     // Show the new SnackBar
@@ -249,8 +252,7 @@ class AppUIUtils {
     );
   }
 
-  static showSuccessSnackBar(
-      {String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
+  static showSuccessSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
     // Close any existing SnackBar
     Get.closeCurrentSnackbar();
     // Show the new SnackBar
@@ -284,8 +286,6 @@ class AppUIUtils {
 
   static onSuccess(String message) => showSuccessSnackBar(message: message);
 
-
-
   /// The `title` argument is used to title of alert dialog.
   /// The `content` argument is used to content of alert dialog.
   /// The `textOK` argument is used to text for 'OK' Button of alert dialog.
@@ -295,34 +295,43 @@ class AppUIUtils {
   ///
   /// Returns a [Future<bool>].
   static Future<bool> confirm(
-      BuildContext context, {
-        Widget? title,
-        Widget? content,
-        Widget? textOK,
-        Widget? textCancel,
-        bool canPop = false,
-        void Function(bool, dynamic)? onPopInvokedWithResult,
-      }) async {
+    BuildContext context, {
+    Widget? title,
+    Widget? content,
+    Widget? textOK,
+    Widget? textCancel,
+    bool canPop = false,
+    void Function(bool, dynamic)? onPopInvokedWithResult,
+  }) async {
     final bool? isConfirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) => PopScope(
-        canPop: canPop,
+        canPop: true,
         onPopInvokedWithResult: onPopInvokedWithResult,
         child: AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.red)),
+          alignment: Alignment.center,
+          backgroundColor: AppColors.backGroundColor,
           title: title,
-          content: SingleChildScrollView(
-            child: content ?? const Text('Are you sure continue?'),
+          content: Text(
+            AppStrings.areYouSureContinue.tr,
+            style: AppTextStyles.headLineStyle2,
+            textAlign: TextAlign.center,
           ),
           actions: <Widget>[
-            TextButton(
-              child: textCancel ??
-                  Text(MaterialLocalizations.of(context).cancelButtonLabel),
+            AppButton(
+              title: AppConstants.no,
               onPressed: () => Navigator.pop(context, false),
+              iconData: Icons.clear,
+              width: 80,
             ),
-            TextButton(
-              child:
-              textOK ?? Text(MaterialLocalizations.of(context).okButtonLabel),
+            const HorizontalSpace(20),
+            AppButton(
+              title: AppConstants.yes,
               onPressed: () => Navigator.pop(context, true),
+              color: Colors.red,
+              iconData: Icons.check,
+              width: 80,
             ),
           ],
         ),
@@ -330,5 +339,4 @@ class AppUIUtils {
     );
     return isConfirm ?? false;
   }
-
 }

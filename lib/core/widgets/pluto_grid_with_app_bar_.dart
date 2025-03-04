@@ -73,11 +73,13 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                         onLoaded(event);
                       },
                       onRowSecondaryTap: onRowSecondaryTap,
+
                       onSelected: onSelected,
                       onRowDoubleTap: onRowDoubleTap,
                       columns: controller.generateColumns<T>(tableSourceModels, type),
                       rows: controller.generateRows<T>(tableSourceModels, type),
-                      mode: PlutoGridMode.selectWithOneTap,
+                      mode: PlutoGridMode.multiSelect,
+
 
                       configuration: PlutoGridConfiguration(
                         style: PlutoGridStyleConfig(
