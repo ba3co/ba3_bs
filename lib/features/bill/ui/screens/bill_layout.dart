@@ -13,7 +13,6 @@ import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../materials/controllers/mats_statement_controller.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
 
 class BillLayout extends StatelessWidget {

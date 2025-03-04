@@ -17,6 +17,8 @@ import 'package:ba3_bs/features/materials/service/material_service.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_picker_pro/file_data.dart';
+import 'package:file_picker_pro/files.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -131,7 +133,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   Future<void> fetchAllMaterialFromLocal() async {
     log('i am fuk here');
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
-
     log('i am fuk here');
 
     if (resultFile != null) {
