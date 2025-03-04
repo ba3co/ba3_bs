@@ -176,7 +176,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         },
       );
       for (final materialModel in newMaterials) {
-        _onSaveSuccess(materialModel, changeType: ChangeType.add);
+        if (materialModel.id == newMaterials.last.id) {
+          _onSaveSuccess(materialModel, changeType: ChangeType.add, withReloadMaterial: true);
+        } else {
+          _onSaveSuccess(materialModel, changeType: ChangeType.add, withReloadMaterial: false);
+        }
       }
     }
 
@@ -387,13 +391,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType}) async {
-    reloadMaterials();
+  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType, bool withReloadMaterial = true}) async {
+    if (withReloadMaterial) reloadMaterials();
 
     // Prepare user change queue for saving
     final userChangeQueue = _prepareUserChangeQueue(materialModel, changeType);
 
-    // Save changes and handle results
+    // Save changes and handle  results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
