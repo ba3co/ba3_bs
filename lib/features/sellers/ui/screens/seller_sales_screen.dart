@@ -4,11 +4,13 @@ import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
+import '../../../../core/widgets/user_target.dart';
 import '../../../bill/controllers/bill/all_bills_controller.dart';
 import '../widgets/date_range_picker.dart';
 
@@ -21,6 +23,9 @@ class SellerSalesScreen extends StatelessWidget {
           title: '${AppStrings.bills.tr} ${controller.selectedSeller!.costName}',
           appBar: _buildAppBar(context, controller),
           onLoaded: (e) {},
+          rightChild:         SizedBox(
+              width: 0.33.sw,
+              child: UserTargets(salesController: controller)),
           onSelected: (event) {
             final billId = event.row?.cells['billId']?.value;
 
@@ -32,7 +37,7 @@ class SellerSalesScreen extends StatelessWidget {
           },
           isLoading: controller.isLoading,
           tableSourceModels: controller.sellerSales,
-          child: _buildSummary(controller),
+          bottomChild: _buildSummary(controller),
         ),
       );
 

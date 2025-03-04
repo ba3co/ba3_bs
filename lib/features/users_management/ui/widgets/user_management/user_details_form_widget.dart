@@ -117,7 +117,7 @@ class UserDetailsForm extends StatelessWidget {
                           hint: const Text('البائع'),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          value: userDetailsController.userFormHandler.selectedSellerId.value,
+                          value: sellerController.sellers.map((element) => element.costGuid,).contains(userDetailsController.userFormHandler.selectedSellerId.value)?userDetailsController.userFormHandler.selectedSellerId.value:null ,
                           items: sellerController.sellers
                               .map(
                                 (seller) {

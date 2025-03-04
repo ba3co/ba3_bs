@@ -23,31 +23,40 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        _buildWidgetPointerExample(context),
-        Container(
-            height: 75,
-            width: 200,
-            decoration: BoxDecoration(
-              color: const Color.fromRGBO(33, 33, 33, 1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(
-                _value.toStringAsFixed(2),
-                maxLines: 1,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
+    return Scaffold(
+      body: SizedBox.expand(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // SfRadialGauge يملأ كامل الشاشة
+
+            _buildWidgetPointerExample(context)
+            ,
+            // قيمة المؤشر تظهر في المنتصف
+            Container(
+              height: 75,
+              width: 200,
+              decoration: BoxDecoration(
+                color: const Color.fromRGBO(33, 33, 33, 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  _value.toStringAsFixed(2),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
                 ),
               ),
-            )),
-      ],
+            ),
+          ],
+        ),
+      ),
     );
   }
+
 
   @override
   void initState() {
@@ -112,11 +121,15 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
 
   SfRadialGauge _buildWidgetPointerExample(BuildContext context) {
     return SfRadialGauge(
+      enableLoadingAnimation: true,
       axes: <RadialAxis>[
         RadialAxis(
           interval: widget.maxValue/10,
           labelOffset: 0.12,
           tickOffset: 0.125,
+          radiusFactor: 1.1,
+          endAngle: 95,
+          isInversed: true,
           minorTicksPerInterval: 0,
           labelsPosition: ElementsPosition.outside,
           offsetUnit: GaugeSizeUnit.factor,

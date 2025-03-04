@@ -81,7 +81,7 @@ class ProfileScreen extends StatelessWidget {
                 child: Obx(() {
                   return salesController.profileScreenState.value == RequestState.loading
                       ? UserTargetShimmerWidget()
-                      : UserTargets(salesController: salesController);
+                      : UserTargets(salesController: salesController,height: 500,);
                 })),
           ],
         ),

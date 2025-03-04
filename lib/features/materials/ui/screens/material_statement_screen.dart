@@ -21,7 +21,7 @@ class MaterialStatementScreen extends StatelessWidget {
           },
           isLoading: controller.isLoadingPlutoGrid,
           tableSourceModels: controller.matStatements,
-          child: Padding(
+          bottomChild: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

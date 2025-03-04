@@ -295,4 +295,5 @@ class AppStrings {
   static const String tradingAccount = 'حساب المتاجرة';
   static const String profitAndLoss = 'حساب الأرباح والخسائر';
   static const String balanceSheet = 'الميزانية';
+  static const String areYouSureContinue = 'هل أنت متأكد';
 }

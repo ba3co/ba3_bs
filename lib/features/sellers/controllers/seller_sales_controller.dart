@@ -174,6 +174,7 @@ class SellerSalesController extends GetxController with AppNavigator {
     } else {
       sellerBills.assignAll(bills);
     }
+    calculateTotalAccessoriesMobiles();
   }
 
   // Method to calculate the total sales

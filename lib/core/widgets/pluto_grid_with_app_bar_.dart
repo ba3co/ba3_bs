@@ -21,10 +21,11 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     this.leadingIcon,
     this.onLeadingIconPressed,
     this.type,
-    this.child,
+    this.bottomChild,
     this.appBar,
     this.onRowSecondaryTap,
     this.rowHeight,
+    this.rightChild,
   });
 
   final Function(PlutoGridOnLoadedEvent) onLoaded;
@@ -39,7 +40,8 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   final IconData? leadingIcon;
   final VoidCallback? onLeadingIconPressed;
   final T? type;
-  final Widget? child;
+  final Widget? bottomChild;
+  final Widget? rightChild;
   final double? rowHeight;
   final AppBar? appBar;
   final Function(PlutoGridOnRowSecondaryTapEvent)? onRowSecondaryTap;
@@ -58,47 +60,57 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
         return Column(
           children: [
             Expanded(
-              child: PlutoGrid(
-                key: controller.plutoKey,
-                onLoaded: (event) {
-                  event.stateManager.activateColumnsAutoSize();
+              child: Row(
+                children: [
+                  Expanded(
+                    child: PlutoGrid(
+                      key: controller.plutoKey,
+                      onLoaded: (event) {
+                        event.stateManager.activateColumnsAutoSize();
 
-                  event.stateManager.setShowColumnFilter(true);
+                        event.stateManager.setShowColumnFilter(true);
 
-                  onLoaded(event);
-                },
-                onRowSecondaryTap: onRowSecondaryTap,
-                onSelected: onSelected,
-                onRowDoubleTap: onRowDoubleTap,
-                columns: controller.generateColumns<T>(tableSourceModels, type),
-                rows: controller.generateRows<T>(tableSourceModels, type),
-                mode: PlutoGridMode.selectWithOneTap,
+                        onLoaded(event);
+                      },
+                      onRowSecondaryTap: onRowSecondaryTap,
+                      onSelected: onSelected,
+                      onRowDoubleTap: onRowDoubleTap,
+                      columns: controller.generateColumns<T>(tableSourceModels, type),
+                      rows: controller.generateRows<T>(tableSourceModels, type),
+                      mode: PlutoGridMode.selectWithOneTap,
 
-                configuration: PlutoGridConfiguration(
-                  style: PlutoGridStyleConfig(
-                    gridBackgroundColor: Colors.white.withAlpha(126),
-                      rowHeight:rowHeight?? 30,
-                      evenRowColor: Colors.blue.shade200,
-                      borderColor: Colors.blue,
-                      gridBorderColor:  AppColors.backGroundColor,
-                      // gridBorderRadius: BorderRadius.circular(50),
+                      configuration: PlutoGridConfiguration(
+                        style: PlutoGridStyleConfig(
+                          gridBackgroundColor: Colors.white.withAlpha(126),
+                            rowHeight:rowHeight?? 30,
+                            evenRowColor: Colors.blue.shade200,
+                            borderColor: Colors.blue,
+                            gridBorderRadius: BorderRadius.all(Radius.circular(10)),
+                            gridBorderColor:  AppColors.backGroundColor,
+                            // gridBorderRadius: BorderRadius.circular(50),
 
 
-                      // cellTextStyle: TextStyle(fontFamily: 'Almarai'),
-                      // columnTextStyle: TextStyle(fontFamily: 'Almarai'),
-                      activatedBorderColor: Colors.teal),
-                  localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
-                ),
-                createFooter: (stateManager) {
-                  stateManager.setPageSize(100, notify: false);
-                  return Container(
-                    color: Colors.white, // حدد اللون المطلوب هنا
-                    child: PlutoPagination(stateManager),
-                  );
-                },
+                            // cellTextStyle: TextStyle(fontFamily: 'Almarai'),
+                            // columnTextStyle: TextStyle(fontFamily: 'Almarai'),
+                            activatedBorderColor: Colors.teal),
+                        localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
+                      ),
+                      createFooter: (stateManager) {
+                        stateManager.setPageSize(100, notify: false);
+                        return Container(
+                          color: Colors.white, // حدد اللون المطلوب هنا
+                          child: PlutoPagination(stateManager),
+                        );
+                      },
+                    ),
+                  ),
+                  if(rightChild!=null)
+                    rightChild!
+
+                ],
               ),
             ),
-            if (child != null) child!,
+            if (bottomChild != null) bottomChild!,
           ],
         );
       },

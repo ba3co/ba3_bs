@@ -17,8 +17,6 @@ import 'package:ba3_bs/features/materials/service/material_service.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:file_picker_pro/file_data.dart';
-import 'package:file_picker_pro/files.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -131,9 +129,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> fetchAllMaterialFromLocal() async {
-    log('i am fuk here');
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
-    log('i am fuk here');
 
     if (resultFile != null) {
       File file = File(resultFile.files.single.path!);
@@ -144,7 +140,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         (fetchedMaterial) => _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
       );
     }
-    log('i am fuk here');
   }
 
   Future<void> deleteAllMaterialFromLocal() async {
@@ -180,6 +175,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
         },
       );
+      for (final materialModel in newMaterials) {
+        _onSaveSuccess(materialModel, changeType: ChangeType.add);
+      }
     }
 
     saveAllMaterialsRequestState.value = RequestState.success;
@@ -292,7 +290,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   MaterialModel? searchMaterialByName(String? name) {
-
     if (name != null && name != " " && name != "") {
       // log('name $name');
       // log(name.encodeProblematic().encodeProblematic());
@@ -301,7 +298,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       //   return (element.matName==name.encodeProblematic().encodeProblematic());
       // }).map((e) => e.matName!).toString());
 
-      return materials.where((element) => (element.matName! == name.encodeProblematic().encodeProblematic()||element.matName! == name||element.matName!.decodeProblematic().decodeProblematic() == name)).firstOrNull;
+      return materials
+          .where((element) => (element.matName! == name.encodeProblematic().encodeProblematic() ||
+              element.matName! == name ||
+              element.matName!.decodeProblematic().decodeProblematic() == name))
+          .firstOrNull;
     }
     return null;
   }

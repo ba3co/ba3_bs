@@ -40,7 +40,7 @@ class AccountStatementScreen extends StatelessWidget {
                 ),
               )
               .toList(),
-          child: Padding(
+          bottomChild: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

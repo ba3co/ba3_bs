@@ -47,6 +47,9 @@ class LoginBodyWidget extends StatelessWidget {
             width: .25.sw,
             child: Obx(
               () => TextFormField(
+                onFieldSubmitted: (value) {
+                  userManagementController.validateUserInputs();
+                },
                 maxLength: 6,
                 obscureText: !userManagementController.isPasswordVisible.value,
                 decoration: InputDecoration(
