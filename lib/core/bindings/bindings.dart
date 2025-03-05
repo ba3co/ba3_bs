@@ -14,6 +14,9 @@ import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_so
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
+import 'package:ba3_bs/features/car_store/controllers/store_cart_controller.dart';
+import 'package:ba3_bs/features/car_store/data/datasource/store_cart_data_source.dart';
+import 'package:ba3_bs/features/car_store/data/model/store_cart.dart';
 import 'package:ba3_bs/features/changes/data/datasources/changes_datasource.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
@@ -239,6 +242,7 @@ class AppBindings extends Bindings {
       matStatementsRepo: CompoundDatasourceRepository(
         MaterialsStatementsDatasource(compoundDatabaseService: compoundFireStoreService),
       ),
+        storeCartRepo:RemoteDataSourceRepository(StoreCartDataSource(databaseService: fireStoreService))
     );
   }
 
@@ -291,6 +295,7 @@ class AppBindings extends Bindings {
     lazyPut(AddSellerController(repositories.sellersRepo));
 
     lazyPut(UserDetailsController(read<FilterableDataSourceRepository<UserModel>>()));
+    lazyPut(StoreCartController(repositories.storeCartRepo,repositories.billsRepo));
   }
 }
 
@@ -322,6 +327,7 @@ class _Repositories {
   final ImportRepository<CustomerModel> customerImportRepo;
   final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
   final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
+  final RemoteDataSourceRepository<StoreCartModel> storeCartRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -349,5 +355,6 @@ class _Repositories {
     required this.customerImportRepo,
     required this.customersRepo,
     required this.matStatementsRepo,
+    required this.storeCartRepo,
   });
 }

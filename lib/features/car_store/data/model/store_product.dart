@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+
 class StoreProduct {
   int? amount;
   String? barcode;
@@ -21,9 +23,9 @@ class StoreProduct {
   // fromJson factory constructor
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
     return StoreProduct(
-      amount: json['amount'] as int?,
+      amount: json['amount'] .toString().toInt,
       barcode: json['barcode'] as String?,
-      price: (json['price'] as num?)?.toDouble(),
+      price: json['price'] .toString().toDouble,
     );
   }
 
@@ -54,9 +56,9 @@ class StoreProducts {
   }
 
   // fromJson factory constructor
-  factory StoreProducts.fromJson(Map<String, dynamic> json) {
+  factory StoreProducts.fromJson(List? json) {
     return StoreProducts(
-      storeProduct: (json['storeProduct'] ?? []).map((e) => StoreProduct.fromJson(e as Map<String, dynamic>)).toList(),
+      storeProduct: (json ?? []).map((e) => StoreProduct.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 

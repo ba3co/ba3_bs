@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/features/car_store/data/model/store_product.dart';
 
 class StoreCartModel {
@@ -15,8 +17,8 @@ class StoreCartModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'sellerName': sellerName,
-      'storeProducts': storeProducts?.toJson(),
+      'seller': sellerName,
+      'products': storeProducts?.toJson(),
     };
   }
 
@@ -24,10 +26,8 @@ class StoreCartModel {
   factory StoreCartModel.fromJson(Map<String, dynamic> json) {
     return StoreCartModel(
       id: json['id'] as String?,
-      sellerName: json['sellerName'] as String?,
-      storeProducts: json['storeProducts'] != null
-          ? StoreProducts.fromJson(json['storeProducts'] as Map<String, dynamic>)
-          : null,
+      sellerName: json['seller'] as String?,
+      storeProducts: StoreProducts.fromJson(json['products']),
     );
   }
 
@@ -44,4 +44,3 @@ class StoreCartModel {
     );
   }
 }
-

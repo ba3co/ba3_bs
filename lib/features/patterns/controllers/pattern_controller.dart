@@ -28,7 +28,7 @@ class PatternController extends GetxController with AppNavigator,FloatingLaunche
 
   BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType;
 
-  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.id == BillType.sales.typeGuide);
+  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
 
   @override
   void onInit() {

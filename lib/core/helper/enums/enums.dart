@@ -163,7 +163,15 @@ enum BillType {
     );
   }
 
-  BillTypeModel get billTypeModel => BillTypeModel(billTypeId: typeGuide, billTypeLabel: label);
+  BillTypeModel get billTypeModel => BillTypeModel(
+      billTypeId: typeGuide,
+      billTypeLabel: label,
+      color: color,
+      accounts: accounts,
+      billPatternType: billPatternType,
+      discountAdditionAccounts: {},
+      shortName: value,
+      fullName: value);
 
   BillPatternType get billPatternType => BillPatternType.byValue(label);
 }
