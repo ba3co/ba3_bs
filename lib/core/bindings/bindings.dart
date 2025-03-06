@@ -25,6 +25,7 @@ import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/customer/data/datasources/remote/customers_data_source.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
+import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_serials_data_source.dart';
@@ -43,7 +44,6 @@ import 'package:ba3_bs/features/users_management/data/datasources/roles_data_sou
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -242,7 +242,7 @@ class AppBindings extends Bindings {
       matStatementsRepo: CompoundDatasourceRepository(
         MaterialsStatementsDatasource(compoundDatabaseService: compoundFireStoreService),
       ),
-        storeCartRepo:RemoteDataSourceRepository(StoreCartDataSource(databaseService: fireStoreService))
+        storeCartRepo:ListenDataSourceRepository(StoreCartDataSource(databaseService: fireStoreService))
     );
   }
 
@@ -256,6 +256,8 @@ class AppBindings extends Bindings {
 
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
+    lazyPut(DashboardLayoutController());
+
     lazyPut(PlutoController());
 
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
@@ -327,7 +329,7 @@ class _Repositories {
   final ImportRepository<CustomerModel> customerImportRepo;
   final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
   final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
-  final RemoteDataSourceRepository<StoreCartModel> storeCartRepo;
+  final ListenDataSourceRepository<StoreCartModel> storeCartRepo;
 
   _Repositories({
     required this.translationRepo,

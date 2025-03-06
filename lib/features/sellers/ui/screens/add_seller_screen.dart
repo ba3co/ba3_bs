@@ -1,5 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
+import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,50 +19,20 @@ class AddSellerScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(controller.selectedSellerModel?.costName ?? 'جديد'),
+          title: Text(controller.selectedSellerModel?.costName ?? AppStrings.newS.tr),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: Get.width * 0.44,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(AutofillHints.name),
-                        HorizontalSpace(20),
-                        Expanded(
-                          child: CustomTextFieldWithoutIcon(
-                            textEditingController: controller.nameController,
-                            suffixIcon: const SizedBox.shrink(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: Get.width * 0.44,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(AppStrings.code.tr),
-                        HorizontalSpace(20),
-                        Expanded(
-                          child: CustomTextFieldWithoutIcon(
-                            textEditingController: controller.codeController,
-                            suffixIcon: const SizedBox.shrink(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              FormFieldRow(firstItem: TextAndExpandedChildField(label: AppStrings.name.tr, child: CustomTextFieldWithoutIcon(
+                textEditingController: controller.nameController,
+                suffixIcon: const SizedBox.shrink(),
+              ),), secondItem: TextAndExpandedChildField(label: AppStrings.code.tr, child: CustomTextFieldWithoutIcon(
+                textEditingController: controller.codeController,
+                suffixIcon: const SizedBox.shrink(),
+              ),)),
               Spacer(),
               Center(
                 child: Padding(
@@ -74,7 +46,9 @@ class AddSellerScreen extends StatelessWidget {
                     color: controller.selectedSellerModel?.costGuid == null ? null : Colors.green,
                   ),
                 ),
-              )
+              ),
+
+
             ],
           ),
         ),

@@ -3,8 +3,9 @@ import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/router/app_routes.dart';
+import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/all_sellers_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:file_picker/file_picker.dart';
@@ -20,7 +21,7 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 
-class SellersController extends GetxController with AppNavigator {
+class SellersController extends GetxController with AppNavigator,FloatingLauncher {
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
   final ImportRepository<SellerModel> _sellersImportRepo;
@@ -117,8 +118,9 @@ class SellersController extends GetxController with AppNavigator {
   }
 
   // Navigation to the screen displaying all sellers
-  void navigateToAllSellersScreen() {
-    to(AppRoutes.showAllSellersScreen);
+  void navigateToAllSellersScreen(BuildContext context) {
+    launchFloatingWindow(context: context, floatingScreen: AllSellersScreen());
+    // to(AppRoutes.showAllSellersScreen);
   }
 
   // Search for sellers by text query

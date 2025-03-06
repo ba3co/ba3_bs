@@ -3,13 +3,17 @@ import 'dart:developer';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/pluto/controllers/pluto_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/add_seller_screen.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/all_sellers_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
@@ -21,7 +25,7 @@ import '../../bill/data/models/bill_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../ui/widgets/target_pointer_widget.dart';
 
-class SellerSalesController extends GetxController with AppNavigator {
+class SellerSalesController extends GetxController with AppNavigator,FloatingLauncher {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
 
   SellerSalesController(this._billsFirebaseRepo);
@@ -207,13 +211,17 @@ class SellerSalesController extends GetxController with AppNavigator {
     update();
   }
 
-  void navigateToAddSellerScreen([SellerModel? seller]) {
+  void navigateToAddSellerScreen({SellerModel? seller,required BuildContext context}) {
     read<AddSellerController>().init(seller);
-    to(AppRoutes.addSellerScreen);
+    launchFloatingWindow(context: context, floatingScreen: AddSellerScreen(),defaultHeight: 100.h,defaultWidth: 200.w);
+
+    // to(AppRoutes.addSellerScreen);
   }
 
-  void navigateToAllSellersScreen() async {
-    to(AppRoutes.allSellersScreen);
+  void navigateToAllSellersScreen(BuildContext context) async {
+    launchFloatingWindow(context: context, floatingScreen: AllSellersScreen());
+
+    // to(AppRoutes.allSellersScreen);
   }
 
   void navigateToSellerSalesScreen(SellerModel sellerModel) async {

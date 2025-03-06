@@ -11,6 +11,7 @@ import '../../accounts/ui/screens/account_layout.dart';
 import '../../bill/ui/screens/bill_layout.dart';
 import '../../bond/ui/screens/bond_layout.dart';
 import '../../cheques/ui/screens/cheque_layout.dart';
+import '../../dashboard/ui/dash_board_layout.dart';
 import '../../materials/ui/screens/materials_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
@@ -18,6 +19,13 @@ import '../data/model/app_layout_item_model.dart';
 
 class MainLayoutController extends GetxController {
   RxList<AppLayoutItemModel> appLayouts = [
+    if (RoleItemType.administrator.hasReadPermission)
+    AppLayoutItemModel(
+      name:'لوحة التحكم',
+      layout: const DashBoardLayout(),
+      icon: AppAssets.dashBoardIcon,
+      unSelectedIcon: AppAssets.dashBoardUnselectedIcon,
+    ),
     if (RoleItemType.viewBill.hasReadPermission)
       AppLayoutItemModel(
         name: 'الفواتير',
@@ -74,19 +82,14 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon,
       ),
-    if (RoleItemType.administrator.hasReadPermission)
-      AppLayoutItemModel(
-        name: 'لوحة التحكم',
-        layout: const AllAttendanceScreen(),
-        icon: AppAssets.billsIcon,
-        unSelectedIcon: AppAssets.billsUnselectedIcon,
-      ),
+
     AppLayoutItemModel(
         name: 'الملف الشخصي',
         layout: const ProfileScreen(),
         icon: AppAssets.profileIcon,
         unSelectedIcon: AppAssets.profileUnselectedIcon,
       ),
+
   ].obs;
   PageController pageController = PageController();
 
