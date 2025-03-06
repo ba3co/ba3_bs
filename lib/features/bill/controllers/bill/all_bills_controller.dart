@@ -10,6 +10,7 @@ import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
+import 'package:ba3_bs/features/car_store/controllers/store_cart_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/service/mat_statement_generator.dart';
 import 'package:ba3_bs/features/materials/ui/screens/serials_statement_screen.dart';
@@ -78,11 +79,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
     _billUtils = BillUtils();
   }
 
+  fetchStoreCard() async {
+  }
+
+
   @override
   void onInit() {
     super.onInit();
     _initializeServices();
-
     fetchBillsTypes();
 
     read<MaterialController>().reloadMaterials();
@@ -184,7 +188,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -209,6 +214,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     final List<BillTypeModel> fetchedBillTypes = await read<PatternController>().getAllBillTypes();
     _handleFetchBillTypesSuccess(fetchedBillTypes);
+    read<StoreCartController>().fetchAllStoreCart();
+
   }
 
   Future<void> _handleFetchBillTypesSuccess(List<BillTypeModel> fetchedBillTypes) async {
@@ -216,6 +223,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     await fetchAllBillsCountsByTypes(fetchedBillTypes);
 
     getBillsTypesRequestState.value = RequestState.success;
+
   }
 
   Future<void> fetchPendingBillsCountsByTypes(List<BillTypeModel> fetchedBillTypes) async {
@@ -328,7 +336,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   // Opens the 'Bill Details' floating window.
 
-  Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
+  Future<void> _openBillDetailsFloatingWindow(
+      {required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
     final String controllerTag = AppServiceUtils.generateUniqueTag('FloatingBillDetails');
 
     final Map<String, GetxController> controllers = setupControllers(

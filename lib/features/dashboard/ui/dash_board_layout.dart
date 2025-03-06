@@ -1,0 +1,223 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/core/widgets/organized_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
+
+import '../../user_time/ui/screens/all_attendance_screen.dart';
+import '../controller/dashboard_layout_controller.dart';
+
+class DashBoardLayout extends StatelessWidget {
+  const DashBoardLayout({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GetBuilder<DashboardLayoutController>(builder: (controller) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            spacing: 10,
+            children: [
+              Row(
+                spacing: 10,
+                children: [
+                  BoxOrganizeWidget(
+                    primaryColor: Color(0xFF9C27B0),
+                    secondaryColor: Color(0xFFE040FB),
+                    titleText: 'الموظفين داخل العمل',
+                    subTitleText: '${controller.onlineUsersLength}/${controller.allUsersLength}',
+                  ),
+                  BoxOrganizeWidget(
+                    primaryColor: Color(0xFF4196DB),
+                    secondaryColor: Color(0xFF1CECe5),
+                    titleText: 'Avg First Reply Time',
+                    subTitleText: '30 h 15 min',
+                  ),
+                  BoxOrganizeWidget(
+                    primaryColor: Color(0xFF2DD400),
+                    secondaryColor: Color(0xFF2DD480),
+                    titleText: 'Avg First Reply Time',
+                    subTitleText: '30 h 15 min',
+                  ),
+                  SizedBox(
+                    // color: Colors.green,
+                    height: 120.h,
+                    width: 110.w,
+                    child: SingleChildScrollView(
+                      child: Wrap(
+                        spacing: 2.w,
+                        runSpacing: 6.h,
+                        children: List.generate(
+                          10,
+                          (index) => Container(
+                            width: 35.w,
+                            height: 35.h,
+                            padding: EdgeInsets.symmetric(horizontal: 3.w),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+
+                              color: Colors.white,
+                              border: Border.all(color: AppColors.blueColor)
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              spacing: 3,
+                              children: [
+                                Expanded(child: Text("صنجوق رامي :",style: AppTextStyles.headLineStyle4,)),
+
+                              Text("15,54512 ",style: AppTextStyles.headLineStyle4,),
+
+
+
+                            ],),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      spacing: 10,
+                      children: [
+
+
+                        AppButton(title:      AppStrings.refresh.tr,iconData: FontAwesomeIcons.refresh, onPressed:() {}, ),
+                        AppButton(title:    AppStrings.add.tr,iconData: FontAwesomeIcons.add, onPressed:() {}, )
+
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              OrganizedWidget(
+                  titleWidget: Center(
+                      child: Text(
+                    'لوحة تحكم المستخدمين',
+                    style: AppTextStyles.headLineStyle1,
+                  )),
+                  bodyWidget: AllAttendanceScreen())
+            ],
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class BoxOrganizeWidget extends StatelessWidget {
+  const BoxOrganizeWidget(
+      {super.key, required this.titleText, required this.subTitleText, required this.primaryColor, required this.secondaryColor});
+
+/*  final String titleText = 'Avg First Reply Time';
+  final String subTitleText = '30 h 15 min';
+  final Color primaryColor = Color(0xFF9C27B0);
+  final Color secondaryColor = Color(0xFFE040FB);*/
+  final String titleText;
+  final String subTitleText;
+  final Color primaryColor;
+  final Color secondaryColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 55.w,
+      height: 120.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: LinearGradient(
+          colors: [
+            primaryColor,
+            secondaryColor,
+          ],
+          begin: Alignment.topRight,
+          end: Alignment.topLeft,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: -15.w,
+            child: Container(
+              width: 35.w,
+              height: 80.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    secondaryColor,
+                    primaryColor,
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.topLeft,
+                ),
+                // color: Color(0xFF9C27B0),
+              ),
+            ),
+          ),
+          Positioned(
+            top: -40.h,
+            left: -30.w,
+            child: Container(
+              width: 70.w,
+              height: 170.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withAlpha(30),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 30.h,
+            right: -12.w,
+            child: Container(
+              width: 25.w,
+              height: 45.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withAlpha(40),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -30.h,
+            right: -15.w,
+            child: Container(
+              width: 35.w,
+              height: 80.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withAlpha(40),
+              ),
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  titleText,
+                  style: AppTextStyles.headLineStyle1.copyWith(color: Colors.white),
+                ),
+                VerticalSpace(),
+                Text(
+                  subTitleText,
+                  style: AppTextStyles.headLineStyle2.copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

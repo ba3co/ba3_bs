@@ -33,12 +33,12 @@ class SellersLayout extends StatelessWidget {
           AppMenuItem(
               text: AppStrings.addSellers.tr,
               onTap: () {
-                sellerSalesController.navigateToAddSellerScreen();
+                sellerSalesController.navigateToAddSellerScreen(context: context);
               }),
           AppMenuItem(
               text: AppStrings.viewSellers.tr,
               onTap: () {
-                sellerSalesController.navigateToAllSellersScreen();
+                sellerSalesController.navigateToAllSellersScreen(context);
               }),
         ],
       ),

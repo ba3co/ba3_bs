@@ -401,6 +401,8 @@ abstract class AppConstants {
   static const String bankToAccountName = 'المصرف';
   static const String returnTaxAccountId = '81e6d822-e3ee-4f42-92bf-f96eed4a0045';
   static const String returnTaxAccountName = 'استرداد ضريبة القيمة المضافة رأس الخيمة';
+  static const String primaryCashAccountId = '5b36c82d-9105-4177-a5c3-0f90e5857e3c';
+  static const String primaryCashAccountName = 'الصندوق';
 
   static const double targetLatitude = 25.793679566610773; // Latitude المنطقة المستهدفة
   static const double targetLongitude = 55.948330278435; // Longitude المنطقة المستهدفة

@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
@@ -26,8 +27,9 @@ class AllSellersScreen extends StatelessWidget {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: double.infinity,
+                width:1.sw,
                 child: Wrap(
+                  alignment: WrapAlignment.center,
                   children: List.generate(
                       controller.sellers.length,
                       (index) => Padding(
@@ -37,18 +39,22 @@ class AllSellersScreen extends StatelessWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5), borderRadius: BorderRadius.circular(10)),
-                                height: 140,
-                                width: 140,
+                                height: 100.h,
+                                width: 40.w,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    Text(
-                                      controller.sellers[index].costCode?.toString() ?? '',
-                                      style: const TextStyle(fontSize: 24),
+                                    Expanded(
+                                      child: Text(
+                                        controller.sellers[index].costCode?.toString() ?? '',
+                                        style: const TextStyle(fontSize: 24),
+                                      ),
                                     ),
-                                    Text(
-                                      controller.sellers[index].costName ?? '',
-                                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                    Expanded(
+                                      child: Text(
+                                        controller.sellers[index].costName ?? '',
+                                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,7 +75,7 @@ class AllSellersScreen extends StatelessWidget {
                                           ),
                                           color: AppColors.lightBlueColor,
                                           onPressed: () {
-                                            read<SellerSalesController>().navigateToAddSellerScreen(controller.sellers[index]);
+                                            read<SellerSalesController>().navigateToAddSellerScreen(seller: controller.sellers[index],context: context);
                                           },
                                         ),
                                       ],

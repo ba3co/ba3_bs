@@ -1,9 +1,9 @@
 import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/listen_datasource.dart';
 import 'package:ba3_bs/features/car_store/data/model/store_cart.dart';
 
-import '../../../../core/services/firebase/interfaces/remote_datasource_base.dart';
 
-class StoreCartDataSource extends RemoteDatasourceBase<StoreCartModel> {
+class StoreCartDataSource extends ListenableDatasource<StoreCartModel> {
   StoreCartDataSource({required super.databaseService});
 
   @override
@@ -41,4 +41,16 @@ class StoreCartDataSource extends RemoteDatasourceBase<StoreCartModel> {
 
   Future<Map<String, dynamic>> _saveStoreCartData(String? bondId, Map<String, dynamic> data) async =>
       databaseService.add(path: path, documentId: bondId, data: data);
+
+  @override
+  Future<List<StoreCartModel>> saveAll(List<StoreCartModel> items) {
+    // TODO: implement saveAll
+    throw UnimplementedError();
+  }
+
+  @override
+  Stream<StoreCartModel> subscribeToDoc({required String documentId}) {
+    // TODO: implement subscribeToDoc
+    throw UnimplementedError();
+  }
 }
