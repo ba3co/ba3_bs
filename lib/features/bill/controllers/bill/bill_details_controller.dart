@@ -166,15 +166,22 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   void updateBillStatus(BillModel billModel, newStatus) async {
-    final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
+    if (billModel.items.itemList.map((e) => e.itemName).contains(
+          "الباركود خطأ",
+        )) {
+      AppUIUtils.onFailure("لا يمكن تغيير حالة الفاتورة بسبب وجود باركود خطأ");
+      return;
+    } else {
+      final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (updatedBillModel) => _billService.handleUpdateBillStatusSuccess(
-        updatedBillModel: updatedBillModel,
-        billSearchController: billSearchController,
-      ),
-    );
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (updatedBillModel) => _billService.handleUpdateBillStatusSuccess(
+          updatedBillModel: updatedBillModel,
+          billSearchController: billSearchController,
+        ),
+      );
+    }
   }
 
   Future<void> deleteBill(BillModel billModel) async {
