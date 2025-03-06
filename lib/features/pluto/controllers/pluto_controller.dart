@@ -6,18 +6,9 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoController extends GetxController {
   UniqueKey plutoKey = UniqueKey();
 
-
-
   /// Updates the `plutoKey` to a new unique value.
   void updatePlutoKey() {
     plutoKey = UniqueKey();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-
   }
 
   /// Generates a list of PlutoColumns based on the first model in the provided list.
@@ -25,7 +16,8 @@ class PlutoController extends GetxController {
     if (adaptableModels.isEmpty) return [];
 
     final firstModelData = adaptableModels.first.toPlutoGridFormat(type);
-    return firstModelData.keys.toList();
+
+    return firstModelData.keys.toList(); // Extracts PlutoColumn objects directly
   }
 
   /// Generates a list of PlutoRows by mapping each model to its respective cells.
@@ -33,15 +25,14 @@ class PlutoController extends GetxController {
     if (adaptableModels.isEmpty) return [];
 
     updatePlutoKey();
-    return adaptableModels.map((model) => _mapModelToRow(model, type)).toList();
+    return adaptableModels.map(_mapModelToRow).toList();
   }
 
   /// Converts a PlutoAdaptable model to a PlutoRow.
-  PlutoRow _mapModelToRow<T>(PlutoAdaptable model, [T? type]) {
-    final cells = model.toPlutoGridFormat(type).map<String, PlutoCell>((key, value) {
-      return MapEntry(key.field, PlutoCell(value: value?.toString() ?? ''));
-    });
+  static PlutoRow _mapModelToRow(PlutoAdaptable model) {
+    final cells = model.toPlutoGridFormat().map<String, PlutoCell>(
+          (key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')),
+        );
     return PlutoRow(cells: cells);
   }
-
 }

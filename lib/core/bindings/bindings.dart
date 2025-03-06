@@ -40,7 +40,6 @@ import 'package:ba3_bs/features/users_management/data/datasources/roles_data_sou
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -73,6 +72,7 @@ import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
+import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
 import '../../features/profile/controller/user_time_controller.dart';
 import '../../features/sellers/service/seller_import.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
@@ -100,7 +100,8 @@ class AppBindings extends Bindings {
     final dioClient = _initializeDioClient();
 
     final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
-    // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'test');
+
+    //  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'test');
 
     final fireStoreService = _initializeFireStoreService(firestoreInstance);
 
@@ -253,6 +254,7 @@ class AppBindings extends Bindings {
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
     lazyPut(PlutoController());
+    lazyPut(PlutoDualTableController());
 
     lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
 

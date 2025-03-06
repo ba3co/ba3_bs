@@ -52,25 +52,19 @@ class SellersController extends GetxController with AppNavigator {
   }
 
   Future<void> fetchAllSellersFromLocal() async {
-    try {
-      log('fetchAllSellersFromLocal');
-      FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
-      log('resultFile ${resultFile?.files.single.path!}');
-      if (resultFile != null) {
-        log('resultFile!= null');
-        File file = File(resultFile.files.single.path!);
-        final result = await _sellersImportRepo.importXmlFile(file);
+    FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
-        result.fold(
-          (failure) {
-            logger.e("Error log", error: failure.message);
-            AppUIUtils.onFailure(failure.message);
-          },
-          (fetchedSellers) => _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
-        );
-      }
-    } catch (e) {
-      log('File picker error: $e');
+    if (resultFile != null) {
+      File file = File(resultFile.files.single.path!);
+      final result = await _sellersImportRepo.importXmlFile(file);
+
+      result.fold(
+        (failure) {
+          logger.e("Error log", error: failure.message);
+          AppUIUtils.onFailure(failure.message);
+        },
+        (fetchedSellers) => _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
+      );
     }
   }
 
@@ -123,9 +117,8 @@ class SellersController extends GetxController with AppNavigator {
 
   // Search for sellers by text query
 
-  List<SellerModel> searchSellersByNameOrCode(text) => sellers
-      .where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
-      .toList();
+  List<SellerModel> searchSellersByNameOrCode(text) =>
+      sellers.where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text)).toList();
 
   List<String> getSellersNames(String query) {
     return searchSellersByNameOrCode(query).map((seller) => seller.costName!).toList();

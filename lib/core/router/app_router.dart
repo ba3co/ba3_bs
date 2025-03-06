@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
@@ -37,7 +38,12 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
   GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
   GetPage(name: AppRoutes.finalAccountsScreen, page: () => const FinalAccountScreen()),
-  GetPage(name: AppRoutes.finalAccountDetailsScreen, page: () => const FinalAccountDetailsScreen()),
+  GetPage(
+      name: AppRoutes.finalAccountDetailsScreen,
+      page: () {
+        final FinalAccounts finalAccount = Get.arguments as FinalAccounts;
+        return FinalAccountDetailsScreen(account: finalAccount);
+      }),
   GetPage(
     name: AppRoutes.showAllBillsScreen,
     page: () => const AllBillsScreen(),

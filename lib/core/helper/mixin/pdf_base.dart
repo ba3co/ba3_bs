@@ -66,18 +66,17 @@ mixin PdfBase {
   Future<void> generateAndSendPdf<T>({
     required T itemModel,
     required String fileName,
-    String recipientEmail = AppConstants.recipientEmail,
+    String? recipientEmail,
     String logoSrc = AppAssets.ba3Logo,
     String fontSrc = AppAssets.notoSansArabicRegular,
     String? url,
     String? subject,
     String? body,
   }) async {
-    final pdfFilePath =
-        await _generatePdf(itemModel: itemModel, fileName: fileName, logoSrc: logoSrc, fontSrc: fontSrc);
+    final pdfFilePath = await _generatePdf(itemModel: itemModel, fileName: fileName, logoSrc: logoSrc, fontSrc: fontSrc);
 
     await sendToEmail(
-      recipientEmail: recipientEmail,
+      recipientEmail: recipientEmail ?? AppConstants.recipientEmail,
       url: url,
       subject: subject,
       body: body,

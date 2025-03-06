@@ -83,9 +83,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     launchFloatingWindow(
       context: context,
-      minimizedTitle: 'سند خاص ب ${BillType
-          .byLabel(billModel.billTypeModel.billTypeLabel!)
-          .value}',
+      minimizedTitle: 'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
@@ -172,8 +170,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
 
     await previousBillResult.fold(
-          (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة السابقة: ${failure.message}'),
-          (previousBills) async {
+      (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة السابقة: ${failure.message}'),
+      (previousBills) async {
         if (previousBills.isEmpty) return;
 
         final oldPrevBill = previousBills.first;
@@ -204,8 +202,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
           final updateResult = await billDetailsController.updateOnly(updatedPrevBill);
           updateResult.fold(
-                (failure) => AppUIUtils.onFailure(failure.message),
-                (_) => _updateBillSearchController(billSearchController, updatedPrevBillLocal, '_updatePreviousBillLink'),
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (_) => _updateBillSearchController(billSearchController, updatedPrevBillLocal, '_updatePreviousBillLink'),
           );
           // await _updateAndNotifyBillSearch(updatedPrevBill, billSearchController, '_updateAndNotifyBillSearch _updatePreviousBillLink');
         }
@@ -236,8 +234,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
 
     await nextBillResult.fold(
-          (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة اللاحقة: ${failure.message}'),
-          (nextBills) async {
+      (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة اللاحقة: ${failure.message}'),
+      (nextBills) async {
         if (nextBills.isEmpty) return;
 
         final oldNextBill = nextBills.first;
@@ -256,8 +254,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
           final updateResult = await billDetailsController.updateOnly(updatedNextBill);
           updateResult.fold(
-                (failure) => AppUIUtils.onFailure(failure.message),
-                (_) => _updateBillSearchController(billSearchController, updatedNextBillLocal, '_updateNextBillLink'),
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (_) => _updateBillSearchController(billSearchController, updatedNextBillLocal, '_updateNextBillLink'),
           );
 
           //  await _updateAndNotifyBillSearch(updatedNextBill, billSearchController, '_updateAndNotifyBillSearch _updateNextBillLink');
@@ -270,8 +268,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   Future<void> _updateAndNotifyBillSearch(BillModel updatedBill, BillSearchController billSearchController, String from) async {
     final updateResult = await billDetailsController.updateOnly(updatedBill);
     updateResult.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (_) => _updateBillSearchController(billSearchController, updatedBill, from),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (_) => _updateBillSearchController(billSearchController, updatedBill, from),
     );
   }
 
@@ -313,19 +311,19 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // Identify accounts that are present in both bills but have changed
     final modifiedBillTypeAccounts = Map.fromEntries(
       previousAccounts.entries.where(
-            (MapEntry<Account, AccountModel> previousAccount) {
+        (MapEntry<Account, AccountModel> previousAccount) {
           final currentAccountModel = currentAccounts[previousAccount.key];
           return currentAccountModel != null && currentAccountModel != previousAccount.value;
         }, // Use the account key's label for the map
       ).map(
-            (entry) => MapEntry(entry.key.label, entry.value),
+        (entry) => MapEntry(entry.key.label, entry.value),
       ),
     );
 
     // Log modified accounts
     log('Modified accounts count: ${modifiedBillTypeAccounts.length}');
     modifiedBillTypeAccounts.forEach(
-          (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
+      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
     );
 
     return modifiedBillTypeAccounts;
@@ -356,9 +354,9 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // Identify updated items with adjusted quantities.
     final updatedItems = mergedCurrent.quantityDiff(
       mergedPrevious,
-          (item) => item.itemGuid, // Key selector
-          (item) => item.itemQuantity, // Quantity selector
-          (item, difference) => item.copyWith(itemQuantity: difference), // Update quantity
+      (item) => item.itemGuid, // Key selector
+      (item) => item.itemQuantity, // Quantity selector
+      (item, difference) => item.copyWith(itemQuantity: difference), // Update quantity
     );
 
     return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
@@ -473,7 +471,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     log('BillTypeUtils.isPurchaseRelated(savedBill) ${savedBill.isPurchaseRelated}');
 
     final Map<MaterialModel, List<TextEditingController>> serialControllers =
-    savedBill.isPurchaseRelated ? buySerialsControllers : sellSerialsControllers;
+        savedBill.isPurchaseRelated ? buySerialsControllers : sellSerialsControllers;
 
     if (serialControllers.isNotEmpty) {
       billDetailsController.saveSerialNumbers(savedBill, serialControllers);
@@ -503,9 +501,11 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   /// Determines whether a material statement should be generated.
   /// For new bills, a statement is generated if there is at least one item.
   /// For updates, the statement is generated only if there are new, deleted, or updated items.
-  bool _determineIfShouldGenerateMatStatement(bool isSave,
-      BillModel currentBill,
-      ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges,) {
+  bool _determineIfShouldGenerateMatStatement(
+    bool isSave,
+    BillModel currentBill,
+    ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges,
+  ) {
     if (isSave) {
       return currentBill.items.itemList.isNotEmpty;
     } else {
@@ -545,13 +545,12 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // 5. Handle the fetch result
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedBills) =>
-          _updatePreviousBill(
-            fetchedBills: fetchedBills,
-            billSearchController: billSearchController,
-            newBillNumber: savedBill.billDetails.billNumber,
-          ),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedBills) => _updatePreviousBill(
+        fetchedBills: fetchedBills,
+        billSearchController: billSearchController,
+        newBillNumber: savedBill.billDetails.billNumber,
+      ),
     );
   }
 
@@ -592,8 +591,9 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       context: context,
       title: 'Invoice QR Code',
       content: EInvoiceDialogContent(
-        billController: billDetailsController,
+        billDetailsController: billDetailsController,
         billId: billModel.billId!,
+        billModel: billModel,
       ),
       onCloseCallback: () {
         log('E-Invoice dialog closed.');
@@ -625,7 +625,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
   }
 
-///  this only in mobile app
+  ///  this only in mobile app
 /*   Future<void> showBarCodeScanner({
     required BuildContext context,
     required PlutoGridStateManager stateManager,

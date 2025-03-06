@@ -1,18 +1,21 @@
+import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../features/floating_window/services/overlay_service.dart';
-import '../i_controllers/i_bill_controller.dart';
 
 class EInvoiceDialogContent extends StatelessWidget {
   const EInvoiceDialogContent({
     super.key,
-    required this.billController,
+    required this.billDetailsController,
     required this.billId,
+    required this.billModel,
   });
 
-  final IBillController billController;
+  final BillDetailsController billDetailsController;
+  final BillModel billModel;
   final String billId;
 
   @override
@@ -43,10 +46,12 @@ class EInvoiceDialogContent extends StatelessWidget {
                   hintText: "Enter email",
                 ),
                 onSubmitted: (recipientEmail) {
-                  billController.sendToEmail(
-                    recipientEmail: recipientEmail,
-                    url: url,
-                  );
+                  // billController.sendToEmail(
+                  //   recipientEmail: recipientEmail,
+                  //   url: url,
+                  // );
+
+                  billDetailsController.generateAndSendBillPdf(billModel, recipientEmail: recipientEmail);
                 },
               ),
             ),
