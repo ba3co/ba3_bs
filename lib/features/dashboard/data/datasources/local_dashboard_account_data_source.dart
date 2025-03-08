@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/services/local_database/interfaces/local_datasource_base.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 
-
 class DashboardAccountDataSource extends LocalDatasourceBase<DashAccountModel> {
   DashboardAccountDataSource(super.database);
 
@@ -14,7 +13,7 @@ class DashboardAccountDataSource extends LocalDatasourceBase<DashAccountModel> {
   @override
   Future<void> saveAllData(List<DashAccountModel> items) {
     final Map<String, DashAccountModel> dataMap = items.toMap(
-      (material) => material.id!,
+      (item) => item.id!,
     );
     return database.insertAll(dataMap);
   }

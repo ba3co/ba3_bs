@@ -3,12 +3,11 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 
-
 class RemoteDashboardDataSource extends BulkSavableDatasource<DashAccountModel> {
   RemoteDashboardDataSource({required super.databaseService});
 
   @override
-  String get path => ApiConstants.customers; // Collection name in Firestore
+  String get path => ApiConstants.dashBoardAccounts; // Collection name in Firestore
 
   @override
   Future<List<DashAccountModel>> fetchAll() async {
