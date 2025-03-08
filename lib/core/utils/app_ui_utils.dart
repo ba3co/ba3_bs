@@ -295,7 +295,7 @@ class AppUIUtils {
   /// Returns a [Future<bool>].
   static Future<bool> confirm(
     BuildContext context, {
-    Widget? title,
+    String? title,
     Widget? content,
     Widget? textOK,
     Widget? textCancel,
@@ -311,8 +311,10 @@ class AppUIUtils {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.red)),
           alignment: Alignment.center,
           backgroundColor: AppColors.backGroundColor,
-          title: title,
-          content: Text(
+          title:title==null?null: Center(
+            child: Text(title,style: AppTextStyles.headLineStyle2,),
+          ),
+          content:title!=null?null: Text(
             AppStrings.areYouSureContinue.tr,
             style: AppTextStyles.headLineStyle2,
             textAlign: TextAlign.center,

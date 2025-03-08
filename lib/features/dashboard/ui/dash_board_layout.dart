@@ -1,5 +1,7 @@
-import 'package:ba3_bs/core/constants/app_constants.dart';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/dialogs/account_dashboard_dialog.dart';
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
@@ -9,8 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../../../core/utils/app_ui_utils.dart';
 import '../../user_time/ui/screens/all_attendance_screen.dart';
 import '../controller/dashboard_layout_controller.dart';
 
@@ -35,65 +38,76 @@ class DashBoardLayout extends StatelessWidget {
                     titleText: 'الموظفين داخل العمل',
                     subTitleText: '${controller.onlineUsersLength}/${controller.allUsersLength}',
                   ),
-                  BoxOrganizeWidget(
-                    primaryColor: Color(0xFF4196DB),
-                    secondaryColor: Color(0xFF1CECe5),
-                    titleText: 'Avg First Reply Time',
-                    subTitleText: '30 h 15 min',
-                  ),
+
                   BoxOrganizeWidget(
                     primaryColor: Color(0xFF2DD400),
                     secondaryColor: Color(0xFF2DD480),
-                    titleText: 'Avg First Reply Time',
-                    subTitleText: '30 h 15 min',
+                    titleText: 'الشيكات المستحقة',
+                    subTitleText: '35',
                   ),
-                  SizedBox(
-                    // color: Colors.green,
-                    height: 120.h,
-                    width: 110.w,
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 2.w,
-                        runSpacing: 6.h,
-                        children: List.generate(
-                          10,
-                          (index) => Container(
-                            width: 35.w,
-                            height: 35.h,
-                            padding: EdgeInsets.symmetric(horizontal: 3.w),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                  BoxOrganizeWidget(
+                    primaryColor: Color(0xFF4196DB),
+                    secondaryColor: Color(0xFF1CECe5),
+                    titleText: 'الفواتير المستحقة',
+                    subTitleText: '3',
+                  ),
+                  Obx(() {
+                    return SizedBox(
+                      // color: Colors.green,
+                      height: 120.h,
+                      width: 110.w,
+                      child: controller.fetchDashBoardAccountsRequest.value == RequestState.loading
+                          ? SingleChildScrollView(
+                              child: Wrap(
+                                spacing: 2.w,
+                                runSpacing: 6.h,
+                                children: List.generate(
+                                10,
+                                  (index) => DashBoardAccountShimmerWidget(),
 
-                              color: Colors.white,
-                              border: Border.all(color: AppColors.blueColor)
+                                ),
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              child: Wrap(
+                                spacing: 2.w,
+                                runSpacing: 6.h,
+                                children: List.generate(
+                                  controller.dashBoardAccounts.length,
+                                  (index)
+                                    => GestureDetector(
+                                      onSecondaryTap: () => controller.deleteDashboardAccount(index,context),
+                                      child: DashBoardAccountWidget(
+                                        name: controller.dashboardAccount(index).name.toString(),
+                                        balance: AppUIUtils.formatDecimalNumberWithCommas(
+                                            double.parse(controller.dashboardAccount(index).balance.toString())),
+                                      ),
+                                    )
+
+                                ),
+                              ),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              spacing: 3,
-                              children: [
-                                Expanded(child: Text("صنجوق رامي :",style: AppTextStyles.headLineStyle4,)),
-
-                              Text("15,54512 ",style: AppTextStyles.headLineStyle4,),
-
-
-
-                            ],),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                    );
+                  }),
                   Expanded(
                     child: Column(
                       spacing: 10,
                       children: [
-
-
-                        AppButton(title:      AppStrings.refresh.tr,iconData: FontAwesomeIcons.refresh, onPressed:() {}, ),
-                        AppButton(title:    AppStrings.add.tr,iconData: FontAwesomeIcons.add, onPressed:() {}, )
-
+                        AppButton(
+                          title: AppStrings.refresh.tr,
+                          iconData: FontAwesomeIcons.refresh,
+                          onPressed: () {
+                            controller.refreshDashBoardAccounts();
+                          },
+                        ),
+                        AppButton(
+                          title: AppStrings.add.tr,
+                          iconData: FontAwesomeIcons.add,
+                          onPressed: () {
+                            showDialog<String>(
+                                context: Get.context!, builder: (BuildContext context) => showDashboardAccountDialog(context));
+                          },
+                        )
                       ],
                     ),
                   )
@@ -118,10 +132,7 @@ class BoxOrganizeWidget extends StatelessWidget {
   const BoxOrganizeWidget(
       {super.key, required this.titleText, required this.subTitleText, required this.primaryColor, required this.secondaryColor});
 
-/*  final String titleText = 'Avg First Reply Time';
-  final String subTitleText = '30 h 15 min';
-  final Color primaryColor = Color(0xFF9C27B0);
-  final Color secondaryColor = Color(0xFFE040FB);*/
+
   final String titleText;
   final String subTitleText;
   final Color primaryColor;
@@ -217,6 +228,88 @@ class BoxOrganizeWidget extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class DashBoardAccountWidget extends StatelessWidget {
+  const DashBoardAccountWidget({super.key, required this.name, required this.balance});
+
+  final String name;
+  final String balance;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 35.w,
+      height: 35.h,
+      padding: EdgeInsets.symmetric(horizontal: 3.w),
+      alignment: Alignment.center,
+      decoration:
+          BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.white, border: Border.all(color: AppColors.blueColor)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        spacing: 3,
+        children: [
+          Expanded(
+              child: Text(
+            name,
+            style: AppTextStyles.headLineStyle4,
+          )),
+          Text(
+            balance,
+            style: AppTextStyles.headLineStyle4,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DashBoardAccountShimmerWidget extends StatelessWidget {
+  const DashBoardAccountShimmerWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: 35.w,
+        height: 35.h,
+        padding: EdgeInsets.symmetric(horizontal: 3.w),
+        alignment: Alignment.center,
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.circular(8),
+                color: Colors.green.withAlpha(150),
+                border: Border.all(color: AppColors.whiteColor)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          spacing: 3,
+          children: [
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Text(
+                            'name',
+                            style: AppTextStyles.headLineStyle4,
+                          ),
+            ),
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Text(
+                'balance',
+                style: AppTextStyles.headLineStyle4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

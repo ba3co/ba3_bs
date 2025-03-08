@@ -26,6 +26,9 @@ import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/customer/data/datasources/remote/customers_data_source.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
+import 'package:ba3_bs/features/dashboard/data/datasources/local_dashboard_account_data_source.dart';
+import 'package:ba3_bs/features/dashboard/data/datasources/remote_dashboard_data_source.dart';
+import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_serials_data_source.dart';
@@ -121,6 +124,7 @@ class AppBindings extends Bindings {
     lazyPut(usersRepo);
 
     final materialsHiveService = await _initializeHiveService<MaterialModel>(boxName: ApiConstants.materials);
+    final dashboardHiveService = await _initializeHiveService<DashAccountModel>(boxName: ApiConstants.dashBoardAccounts);
 
     // final ILocalDatabaseService<String> appLocalLangService = await _initializeHiveService<String>(boxName: AppConstants.appLocalLangBox);
     //
@@ -161,6 +165,7 @@ class AppBindings extends Bindings {
       materialsHiveService: materialsHiveService,
       importMaterialGroupService: materialGroupImport,
       customerImportService: customerImport,
+      dashboardHiveService: dashboardHiveService,
     );
 
     lazyPut(repositories.listenableDatasourceRepo);
@@ -210,6 +215,7 @@ class AppBindings extends Bindings {
     required ILocalDatabaseService<MaterialModel> materialsHiveService,
     required IImportService<MaterialGroupModel> importMaterialGroupService,
     required IImportService<CustomerModel> customerImportService,
+    required ILocalDatabaseService<DashAccountModel> dashboardHiveService,
   }) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
@@ -244,7 +250,11 @@ class AppBindings extends Bindings {
       matStatementsRepo: CompoundDatasourceRepository(
         MaterialsStatementsDatasource(compoundDatabaseService: compoundFireStoreService),
       ),
-        storeCartRepo:ListenDataSourceRepository(StoreCartDataSource(databaseService: fireStoreService))
+      storeCartRepo: ListenDataSourceRepository(StoreCartDataSource(databaseService: fireStoreService)),
+      dashboardAccountRepo: LocalDatasourceRepository(
+        localDatasource: DashboardAccountDataSource(dashboardHiveService),
+        remoteDatasource: RemoteDashboardDataSource(databaseService: fireStoreService),
+      ),
     );
   }
 
@@ -258,7 +268,7 @@ class AppBindings extends Bindings {
 
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
-    lazyPut(DashboardLayoutController());
+    lazyPut(DashboardLayoutController(repositories.dashboardAccountRepo));
 
     lazyPut(PlutoController());
     lazyPut(PlutoDualTableController());
@@ -300,7 +310,7 @@ class AppBindings extends Bindings {
     lazyPut(AddSellerController(repositories.sellersRepo));
 
     lazyPut(UserDetailsController(read<FilterableDataSourceRepository<UserModel>>()));
-    lazyPut(StoreCartController(repositories.storeCartRepo,repositories.billsRepo));
+    lazyPut(StoreCartController(repositories.storeCartRepo, repositories.billsRepo));
   }
 }
 
@@ -326,6 +336,7 @@ class _Repositories {
   final BulkSavableDatasourceRepository<AccountModel> accountsRep;
   final QueryableSavableRepository<MaterialModel> materialsRemoteDatasourceRepo;
   final LocalDatasourceRepository<MaterialModel> materialsLocalDatasourceRepo;
+  final LocalDatasourceRepository<DashAccountModel> dashboardAccountRepo;
   final ListenDataSourceRepository<ChangesModel> listenableDatasourceRepo;
   final IImportRepository<MaterialGroupModel> importMaterialRepository;
   final QueryableSavableRepository<MaterialGroupModel> materialGroupDataSource;
@@ -361,5 +372,6 @@ class _Repositories {
     required this.customersRepo,
     required this.matStatementsRepo,
     required this.storeCartRepo,
+    required this.dashboardAccountRepo,
   });
 }

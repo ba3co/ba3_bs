@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'dash_account_model.g.dart'; // اسم الملف الذي سيتم توليده
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 2)
 class DashAccountModel extends HiveObject {
   @HiveField(0)
   String? id;

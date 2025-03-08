@@ -17,7 +17,7 @@ import '../../bond/data/models/entry_bond_model.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../data/models/account_model.dart';
 import '../service/account_statement_service.dart';
-import '../use_cases/filter entry_bond_items_by_date_use_case.dart';
+import '../use_cases/filter_entry_bond_items_by_date_use_case.dart';
 import '../use_cases/merge_entry_bond_items_use_case.dart';
 import '../use_cases/process_entry_bond_items_in_isolate_use_case.dart';
 
@@ -260,13 +260,29 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       (fetchedItems) {
         entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
 
-        filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(startDateController.text, endDateController.text, entryBondItems);
+        filteredEntryBondItems =
+            _filterEntryBondItemsByDateUseCase.execute(startDateController.text, endDateController.text, entryBondItems);
         _calculateValues();
       },
     );
 
     isLoading = false;
     update();
+  }
+
+  Future<double> getAccountBalance(AccountEntity accountEntity) async {
+    double balance = 0.0;
+    final result = await _accountsStatementsRepo.getAll(accountEntity);
+
+    result.fold((failure) {}, (fetchedItems) {
+      entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
+
+      filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(startDateController.text, endDateController.text, entryBondItems);
+      _calculateValues();
+
+      balance = totalValue;
+    });
+    return balance;
   }
 
   Future<List<EntryBondItemModel>> fetchAccountStatement(AccountEntity accountEntity) async {
@@ -294,7 +310,9 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   /// Navigation handler
-  void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
+  void navigateToAccountStatementScreen() {
+    to(AppRoutes.accountStatementScreen);
+  }
 
   void navigateToFinalAccountDetails(FinalAccounts account) => to(AppRoutes.finalAccountDetailsScreen, arguments: account);
 

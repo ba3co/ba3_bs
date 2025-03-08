@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';

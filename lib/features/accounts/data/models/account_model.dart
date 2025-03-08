@@ -37,6 +37,7 @@ class AccountModel implements PlutoAdaptable {
   final int? accBranchMask;
   final List<String>? accCustomer;
 
+
   // final List<String>? billsId;
 
   const AccountModel({

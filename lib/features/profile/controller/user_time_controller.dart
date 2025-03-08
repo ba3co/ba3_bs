@@ -93,7 +93,7 @@ class UserTimeController extends GetxController {
     /// check if user want to login again before logout
     /// or
     /// check if user want to logout again before login
-    if (userModel!.userWorkStatus != logStatus) {
+    if (userModel!.userWorkStatus != logStatus || userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] == null) {
       final updatedUserModel = onChecked(userModel);
 
       /// check if user want to log in
