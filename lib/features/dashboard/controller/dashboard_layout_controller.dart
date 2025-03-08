@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
@@ -120,6 +118,4 @@ class DashboardLayoutController extends GetxController {
       update();
     }
   }
-
-
 }
