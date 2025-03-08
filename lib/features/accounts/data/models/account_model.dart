@@ -80,7 +80,7 @@ class AccountModel implements PlutoAdaptable {
       accCheckDate: json['AccCheckDate'] == null ? null : DateTime.tryParse(json['AccCheckDate']),
       accParentGuid: json['AccParentGuid'] ?? '',
       accFinalGuid: json['AccFinalGuid'] ?? '',
-      // accAccNSons: json['AccAccNSons']??0,
+      accAccNSons: json['AccAccNSons'] ?? 0,
       // accInitDebit: (json['AccInitDebit'] as num?)?.toDouble(),
       // accInitCredit: (json['AccInitCredit'] as num?)?.toDouble(),
       // maxDebit: (json['MaxDebit'] as num?)?.toDouble(),
@@ -214,7 +214,7 @@ class AccountModel implements PlutoAdaptable {
       PlutoColumn(title: AppStrings.accountType.tr, type: PlutoColumnType.text(), field: 'نوع الحساب'): AppServiceUtils.getAccountType(accType),
       PlutoColumn(title: AppStrings.fatherAccount.tr, type: PlutoColumnType.text(), field: 'حساب الاب'): accParentName,
       PlutoColumn(title: AppStrings.children.tr, type: PlutoColumnType.text(), field: 'الاولاد'):
-          read<AccountsController>().getAccountChildren(id).join(' , '),
+          read<AccountsController>().getAccountChildrenNames(id).join(' , '),
       PlutoColumn(title: AppStrings.customers.tr, type: PlutoColumnType.text(), field: 'الزبائن'): accCustomer?.toList().join(' , '),
     };
   }

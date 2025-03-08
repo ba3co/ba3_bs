@@ -243,10 +243,16 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
   List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);
 
-  List<String> getAccountChildren(String? accountId) {
+  List<String> getAccountChildrenNames(String? accountId) {
     if (accountId == null || accountId.isEmpty) return [];
 
     return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
+  }
+
+  List<AccountModel> getAccountChildren(String? accountId) {
+    if (accountId == null || accountId.isEmpty) return [];
+
+    return accounts.where((account) => account.accParentGuid == accountId).toList();
   }
 
   Future<AccountModel?> openAccountSelectionDialog({

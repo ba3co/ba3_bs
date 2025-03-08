@@ -248,26 +248,52 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       return;
     }
 
-    isLoading = true;
+    _setLoadingState(true);
+
+    // Clear previous items before fetching new ones
+    entryBondItems.clear();
+
+    final accountEntities = _getAccountEntities(accountModel);
+
+    for (var account in accountEntities) {
+      log(account.name, name: 'Account name');
+
+      final result = await _accountsStatementsRepo.getAll(account);
+      result.fold(
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedItems) {
+          entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
+        },
+      );
+    }
+
+    _filterAndCalculateValues();
+    _setLoadingState(false);
+  }
+
+  void _setLoadingState(bool state) {
+    isLoading = state;
     update();
+  }
 
-    final accountEntity = AccountEntity.fromAccountModel(accountModel);
+  List<AccountEntity> _getAccountEntities(AccountModel accountModel) {
+    if (accountModel.accAccNSons == 0) {
+      return [AccountEntity.fromAccountModel(accountModel)];
+    }
 
-    final result = await _accountsStatementsRepo.getAll(accountEntity);
+    final accountChildren = _accountsController.getAccountChildren(accountModel.id);
+    log('Number of children: ${accountModel.accAccNSons}', name: 'accAccNSons');
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedItems) {
-        entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
+    return accountChildren.map(AccountEntity.fromAccountModel).toList();
+  }
 
-        filteredEntryBondItems =
-            _filterEntryBondItemsByDateUseCase.execute(startDateController.text, endDateController.text, entryBondItems);
-        _calculateValues();
-      },
+  void _filterAndCalculateValues() {
+    filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(
+      startDateController.text,
+      endDateController.text,
+      entryBondItems,
     );
-
-    isLoading = false;
-    update();
+    _calculateValues();
   }
 
   Future<double> getAccountBalance(AccountEntity accountEntity) async {
@@ -310,9 +336,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   /// Navigation handler
-  void navigateToAccountStatementScreen() {
-    to(AppRoutes.accountStatementScreen);
-  }
+  void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
 
   void navigateToFinalAccountDetails(FinalAccounts account) => to(AppRoutes.finalAccountDetailsScreen, arguments: account);
 
