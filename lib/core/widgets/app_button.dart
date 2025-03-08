@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../utils/app_ui_utils.dart';
 
@@ -31,7 +34,10 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    log(1.sw.toString());
     return ElevatedButton(
+
         style: ButtonStyle(
           backgroundColor: WidgetStatePropertyAll(color ?? Colors.blue.shade700),
           padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
@@ -49,12 +55,14 @@ class AppButton extends StatelessWidget {
               children: [
                 isLoading
                     ? AppUIUtils.showLoadingIndicator(width: 16, height: 16)
-                    : Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: fontSize ?? 12),
-                      ),
+                    : Expanded(
+                      child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: fontSize ?? 12),
+                        ),
+                    ),
                 if (iconData != null) Icon(iconData, size: iconSize ?? 18, color: Colors.white),
               ],
             ),

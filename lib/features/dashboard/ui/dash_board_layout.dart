@@ -38,79 +38,50 @@ class DashBoardLayout extends StatelessWidget {
                     titleText: 'الموظفين داخل العمل',
                     subTitleText: '${controller.onlineUsersLength}/${controller.allUsersLength}',
                   ),
-
                   BoxOrganizeWidget(
                     primaryColor: Color(0xFF2DD400),
                     secondaryColor: Color(0xFF2DD480),
                     titleText: 'الشيكات المستحقة',
                     subTitleText: '35',
                   ),
-                  BoxOrganizeWidget(
-                    primaryColor: Color(0xFF4196DB),
-                    secondaryColor: Color(0xFF1CECe5),
-                    titleText: 'الفواتير المستحقة',
-                    subTitleText: '3',
+                  // BoxOrganizeWidget(
+                  //   primaryColor: Color(0xFF4196DB),
+                  //   secondaryColor: Color(0xFF1CECe5),
+                  //   titleText: 'الفواتير المستحقة',
+                  //   subTitleText: '3',
+                  // ),
+
+
+
+
+                  SizedBox(
+
+                  // color: Colors.green,
+                  height: 80.h,
+                  width: 110.w,
+        child: DashboardAccountsView(controller: controller),
+        ),
+                  Column(
+                    spacing: 10,
+                    children: [
+                      AppButton(
+                        title: AppStrings.refresh.tr,
+                        iconData: FontAwesomeIcons.refresh,
+                        onPressed: () {
+                          controller.refreshDashBoardAccounts();
+                        },
+                      ),
+                      AppButton(
+                        title: AppStrings.add.tr,
+                        iconData: FontAwesomeIcons.add,
+                        onPressed: () {
+                          showDialog<String>(
+                              context: Get.context!, builder: (BuildContext context) => showDashboardAccountDialog(context));
+                        },
+                      )
+                    ],
                   ),
-                  Obx(() {
-                    return SizedBox(
-                      // color: Colors.green,
-                      height: 120.h,
-                      width: 110.w,
-                      child: controller.fetchDashBoardAccountsRequest.value == RequestState.loading
-                          ? SingleChildScrollView(
-                              child: Wrap(
-                                spacing: 2.w,
-                                runSpacing: 6.h,
-                                children: List.generate(
-                                10,
-                                  (index) => DashBoardAccountShimmerWidget(),
 
-                                ),
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              child: Wrap(
-                                spacing: 2.w,
-                                runSpacing: 6.h,
-                                children: List.generate(
-                                  controller.dashBoardAccounts.length,
-                                  (index)
-                                    => GestureDetector(
-                                      onSecondaryTap: () => controller.deleteDashboardAccount(index,context),
-                                      child: DashBoardAccountWidget(
-                                        name: controller.dashboardAccount(index).name.toString(),
-                                        balance: AppUIUtils.formatDecimalNumberWithCommas(
-                                            double.parse(controller.dashboardAccount(index).balance.toString())),
-                                      ),
-                                    )
-
-                                ),
-                              ),
-                            ),
-                    );
-                  }),
-                  Expanded(
-                    child: Column(
-                      spacing: 10,
-                      children: [
-                        AppButton(
-                          title: AppStrings.refresh.tr,
-                          iconData: FontAwesomeIcons.refresh,
-                          onPressed: () {
-                            controller.refreshDashBoardAccounts();
-                          },
-                        ),
-                        AppButton(
-                          title: AppStrings.add.tr,
-                          iconData: FontAwesomeIcons.add,
-                          onPressed: () {
-                            showDialog<String>(
-                                context: Get.context!, builder: (BuildContext context) => showDashboardAccountDialog(context));
-                          },
-                        )
-                      ],
-                    ),
-                  )
                 ],
               ),
               OrganizedWidget(
@@ -127,6 +98,53 @@ class DashBoardLayout extends StatelessWidget {
     );
   }
 }
+class DashboardAccountsView extends StatelessWidget {
+  final DashboardLayoutController controller; // استبدل YourControllerType بنوع الكنترولر الفعلي
+
+  const DashboardAccountsView({
+    super.key,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (controller.fetchDashBoardAccountsRequest.value == RequestState.loading) {
+        return SingleChildScrollView(
+          child: Wrap(
+            spacing: 2.w,
+            runSpacing: 6.h,
+            children: List.generate(
+              10,
+                  (index) => const DashBoardAccountShimmerWidget(),
+            ),
+          ),
+        );
+      } else {
+        return SingleChildScrollView(
+          child: Wrap(
+            spacing: 2.w,
+            runSpacing: 6.h,
+            children: List.generate(
+              controller.dashBoardAccounts.length,
+                  (index) => GestureDetector(
+                onSecondaryTap: () => controller.deleteDashboardAccount(index, context),
+                child: DashBoardAccountWidget(
+                  name: controller.dashboardAccount(index).name.toString(),
+                  balance: AppUIUtils.formatDecimalNumberWithCommas(
+                    double.parse(controller.dashboardAccount(index).balance.toString()),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    });
+  }
+}
+
+
 
 class BoxOrganizeWidget extends StatelessWidget {
   const BoxOrganizeWidget(
@@ -141,8 +159,8 @@ class BoxOrganizeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 55.w,
-      height: 120.h,
+      width: 70.w,
+      height: 80.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         gradient: LinearGradient(
@@ -156,8 +174,8 @@ class BoxOrganizeWidget extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            left: -15.w,
+  /*        Positioned(
+            right: -15.w,
             child: Container(
               width: 35.w,
               height: 80.h,
@@ -174,7 +192,7 @@ class BoxOrganizeWidget extends StatelessWidget {
                 // color: Color(0xFF9C27B0),
               ),
             ),
-          ),
+          ),*/
           Positioned(
             top: -40.h,
             left: -30.w,
