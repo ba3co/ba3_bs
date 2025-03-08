@@ -296,18 +296,29 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     _calculateValues();
   }
 
-  Future<double> getAccountBalance(AccountEntity accountEntity) async {
+  Future<double> getAccountBalance(AccountModel accountModel) async {
     double balance = 0.0;
-    final result = await _accountsStatementsRepo.getAll(accountEntity);
+    // Clear previous items before fetching new ones
+    entryBondItems.clear();
 
-    result.fold((failure) {}, (fetchedItems) {
-      entryBondItems.assignAll(fetchedItems.expand((item) => item.itemList).toList());
+    final accountEntities = _getAccountEntities(accountModel);
 
-      filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(startDateController.text, endDateController.text, entryBondItems);
-      _calculateValues();
+    for (var account in accountEntities) {
+      log(account.name, name: 'Account name');
 
-      balance = totalValue;
-    });
+      final result = await _accountsStatementsRepo.getAll(account);
+      result.fold(
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedItems) {
+          entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
+
+
+        },
+      );
+    }
+
+    _filterAndCalculateValues();
+    balance=totalValue;
     return balance;
   }
 

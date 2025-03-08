@@ -52,7 +52,7 @@ class DashboardLayoutController extends GetxController {
     for (final account in dashBoardAccounts) {
       final AccountModel? accountModel = read<AccountsController>().getAccountModelById(account.id);
 
-      final balance = await read<AccountStatementController>().getAccountBalance(AccountEntity.fromAccountModel(accountModel!));
+      final balance = await read<AccountStatementController>().getAccountBalance(accountModel!);
       account.balance = balance.toString();
       await _datasourceRepository.update(account);
     }
@@ -70,9 +70,8 @@ class DashboardLayoutController extends GetxController {
       AppUIUtils.onFailure("يرجى إدخال اسم الحساب");
       return;
     }
-    final accountEntity = AccountEntity.fromAccountModel(accountModel);
 
-    final balance = await read<AccountStatementController>().getAccountBalance(accountEntity);
+    final balance = await read<AccountStatementController>().getAccountBalance(accountModel);
     final DashAccountModel dashAccountModel = DashAccountModel(
       id: accountModel.id,
       name: accountModel.accName,
