@@ -206,15 +206,10 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, dateFilter: dateFilter);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
-      (fetchedPendingBills) {
-        pendingBills.assignAll(fetchedPendingBills);
-        navigateToPendingBillsScreen();
-      },
+      (failure) =>
+          AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
+      (fetchedBills) {},
     );
-
-    isPendingBillsLoading = false;
-    update();
   }
 
   Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {
