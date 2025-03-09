@@ -66,7 +66,7 @@ class MaterialsSerialsDataSource extends QueryableSavableDatasource<SerialNumber
 
   @override
   Future<List<SerialNumberModel>> fetchWhere({required List<QueryFilter> queryFilters, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters);
+    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters, dateFilter: dateFilter);
 
     final serialNumbers = data.map((item) => SerialNumberModel.fromJson(item)).toList();
 

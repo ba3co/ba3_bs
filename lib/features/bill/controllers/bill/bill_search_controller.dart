@@ -51,7 +51,7 @@ class BillSearchController extends GetxController {
     // If the current bill is the last one, fetch the last bill from the database
     BillModel? lastBillOnDataBase;
 
-    if (currentBillNumber == lastBillNumber && lastBillNumber > 1) {
+    if (lastBillNumber > 1) {
       lastBillOnDataBase = await fetchLastBillOnDataBase(lastBillNumber - 1, currentBill);
     }
 
