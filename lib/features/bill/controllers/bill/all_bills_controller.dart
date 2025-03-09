@@ -24,6 +24,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/app_navigator.dart';
+import '../../../../core/models/date_filter.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
@@ -201,6 +202,21 @@ class AllBillsController extends FloatingBillDetailsLauncher
     update();
   }
 
+  Future<void> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, dateFilter: dateFilter);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
+      (fetchedPendingBills) {
+        pendingBills.assignAll(fetchedPendingBills);
+        navigateToPendingBillsScreen();
+      },
+    );
+
+    isPendingBillsLoading = false;
+    update();
+  }
+
   Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
 
@@ -332,11 +348,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
   List<BillModel> getBillsByType(String billTypeId) {
-
-    if(bills.isEmpty) return [];
-fetchAllNestedBills();
-    return
-    bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+    if (bills.isEmpty) return [];
+    fetchAllNestedBills();
+    return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
   }
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {

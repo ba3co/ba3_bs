@@ -32,8 +32,7 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<List<ChequesModel>> fetchWhere<V>(
-      {required ChequesType itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
+  Future<List<ChequesModel>> fetchWhere<V>({required ChequesType itemIdentifier, String? field, V? value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemIdentifier),

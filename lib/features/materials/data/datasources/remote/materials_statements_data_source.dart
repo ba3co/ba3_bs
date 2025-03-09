@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
@@ -32,8 +31,8 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
   @override
   Future<List<MatStatementModel>> fetchWhere<V>({
     required String itemIdentifier,
-    required String field,
-    required V value,
+    String? field,
+    V? value,
     DateFilter? dateFilter,
   }) async {
     final dataList = await compoundDatabaseService.fetchWhere(

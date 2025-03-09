@@ -32,7 +32,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   @override
-  Future<List<BondModel>> fetchWhere<V>({required BondType itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
+  Future<List<BondModel>> fetchWhere<V>({required BondType itemIdentifier, String? field, V? value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemIdentifier),

@@ -13,7 +13,7 @@ class CompoundDatasourceRepository<T, I> {
 
   CompoundDatasourceRepository(this._dataSource);
 
-  Future<Either<Failure, List<T>>> fetchWhere<V>({required I itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
+  Future<Either<Failure, List<T>>> fetchWhere<V>({required I itemIdentifier, String? field, V? value, DateFilter? dateFilter}) async {
     try {
       final savedItems = await _dataSource.fetchWhere(itemIdentifier: itemIdentifier, field: field, value: value, dateFilter: dateFilter);
       return Right(savedItems); // Return the list of saved items

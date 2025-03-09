@@ -26,26 +26,38 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
-    required String field,
-    required V value,
+    String? field,
+    V? value,
     DateFilter? dateFilter,
   }) async {
-    // Build the base query
-    Query<Map<String, dynamic>> query =
-        _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).where(field, isEqualTo: value);
+    // If both field and dateFilter are null, return an empty list
+    if ((field == null || value == null) && dateFilter == null) {
+      log("fetchWhere: No filtering applied, returning empty list.");
+      return [];
+    }
+
+    // Initialize the base query
+    Query<Map<String, dynamic>> query = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath);
+
+    // Apply field filter if field and value are provided
+    if (field != null && value != null) {
+      query = query.where(field, isEqualTo: value);
+    }
 
     // Apply date filter if provided
     if (dateFilter != null) {
       query = _applyDateFilter(query, dateFilter);
     }
 
-    // Execute the query and return results
+    // Execute the query
     final snapshot = await query.get();
 
-    log("snapshot: ${snapshot.docs.length}");
+    log("fetchWhere: Found ${snapshot.docs.length} documents.");
+
     if (snapshot.docs.isEmpty) {
-      throw Exception("No results were found for querying the field '$field' with the value '$value' in the sub-collection '$subCollectionPath'.");
+      throw Exception("No results found for query in '$subCollectionPath' with field '$field' and value '$value'.");
     }
+
     return snapshot.docs.map((doc) => doc.data()).toList();
   }
 

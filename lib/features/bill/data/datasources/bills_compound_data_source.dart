@@ -34,8 +34,7 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   @override
-  Future<List<BillModel>> fetchWhere<V>(
-      {required BillTypeModel itemIdentifier, required String field, required V value, DateFilter? dateFilter}) async {
+  Future<List<BillModel>> fetchWhere<V>({required BillTypeModel itemIdentifier, String? field, V? value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: getRootDocumentId(itemIdentifier),

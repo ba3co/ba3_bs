@@ -21,8 +21,8 @@ abstract class ICompoundDatabaseService<T> {
     required String rootCollectionPath,
     required String rootDocumentId,
     required String subCollectionPath,
-    required String field,
-    required V value,
+    required String? field,
+    required V? value,
     DateFilter? dateFilter,
   });
 

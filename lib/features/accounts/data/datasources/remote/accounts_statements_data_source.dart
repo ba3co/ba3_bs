@@ -33,8 +33,8 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
   @override
   Future<List<EntryBondItems>> fetchWhere<V>({
     required AccountEntity itemIdentifier,
-    required String field,
-    required V value,
+    String? field,
+    V? value,
     DateFilter? dateFilter,
   }) async {
     final dataList = await compoundDatabaseService.fetchWhere(
