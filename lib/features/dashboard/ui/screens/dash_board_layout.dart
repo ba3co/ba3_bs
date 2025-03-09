@@ -1,16 +1,13 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/dialogs/account_dashboard_dialog.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
-import 'package:ba3_bs/core/widgets/custom_icon_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_Widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../../core/widgets/language_switch_fa_icon.dart';
+import '../../../../core/widgets/tow_field_row.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
 import '../../controller/dashboard_layout_controller.dart';
 import '../widgets/box_organize_widget.dart';
-import '../widgets/dashboard_accounts_list.dart';
 
 class DashBoardLayout extends StatelessWidget {
   const DashBoardLayout({super.key});
@@ -27,29 +24,76 @@ class DashBoardLayout extends StatelessWidget {
               Row(
                 spacing: 10,
                 children: [
-                  DashBoardViewWidget(controller: controller,),
+                  DashBoardAccountViewWidget(
+                    controller: controller,
+                  ),
                   Spacer(),
                   BoxOrganizeWidget(
                     primaryColor: Color(0xFF9C27B0),
                     secondaryColor: Color(0xFFE040FB),
-                    titleText: 'الموظفين داخل العمل',
-                    subTitleText: '${controller.onlineUsersLength}/${controller.allUsersLength}',
+                    titleText: 'الموظفين',
+                    childWidget: ListView(
+                      children: [
+                        TowFieldRow(
+                          firstItem: AppStrings.all.tr,
+                          secondItem: '${controller.allUsersLength}',
+                        ),
+                        TowFieldRow(
+                          firstItem: AppStrings.allUsersMustOnline.tr,
+                          secondItem: '${controller.usersMustWorkingNowLength}',
+                        ),
+                        TowFieldRow(
+                          firstItem: AppStrings.available.tr,
+                          secondItem: '${controller.onlineUsersLength}',
+                        ),
+                      ],
+                    ),
                   ),
                   BoxOrganizeWidget(
                     primaryColor: Color(0xFF2DD400),
                     secondaryColor: Color(0xFF2DD480),
-                    titleText: 'الشيكات المستحقة',
-                    subTitleText: '35',
-                  ),
+                    titleText: AppStrings.chequesDues.tr,
+                    childWidget: ListView(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        TowFieldRow(
+                          firstItem: AppStrings.all.tr,
+                          secondItem: '${controller.allChequesLength}',
+                        ),
 
+                        TowFieldRow(
+                          firstItem: AppStrings.thisMonth.tr,
+                          secondItem: '${controller.allChequesDuesThisMonthLength}',
+                        ),
+                        TowFieldRow(
+                          firstItem: AppStrings.lastTenDays.tr,
+                          secondItem: '${controller.allChequesDuesLastTenLength}',
+                        ),
+                        TowFieldRow(
+                          firstItem: AppStrings.today.tr,
+                          secondItem: '${controller.allChequesDuesTodayLength}',
+                        ),
+
+                      ],
+                    ),
+                  ),
                   BoxOrganizeWidget(
                     primaryColor: Color(0xFF4196DB),
                     secondaryColor: Color(0xFF1CECe5),
-                    titleText: 'الفواتير المستحقة',
-                    subTitleText: '3',
+                    titleText: AppStrings.bills.tr,
+                    childWidget: ListView(
+                      children: [
+                        TowFieldRow(
+                          firstItem: AppStrings.allBills.tr,
+                          secondItem: '${controller.allChequesLength}',
+                        ),
+                        TowFieldRow(
+                          firstItem: AppStrings.allBillsDues.tr,
+                          secondItem: '${controller.allChequesDuesLength}',
+                        ),
+                      ],
+                    ),
                   ),
-
-
                 ],
               ),
               OrganizedWidget(
@@ -63,56 +107,6 @@ class DashBoardLayout extends StatelessWidget {
           ),
         );
       }),
-    );
-  }
-}
-
-class DashBoardViewWidget extends StatelessWidget {
-  const DashBoardViewWidget({
-    super.key,
-    required this.controller
-  });
- final DashboardLayoutController controller;
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 110.h,
-      width: 110.w,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Spacer(),
-              Text("الحسابات الرئيسية", style: AppTextStyles.headLineStyle3),
-              Spacer(),
-              CustomIconButton(
-                disabled:false,
-                onPressed: () {
-                  controller.refreshDashBoardAccounts();
-                },
-                icon: LanguageSwitchFaIcon(
-                  iconData: Icons.refresh,
-                ),
-              ),
-              CustomIconButton(
-                disabled:false,
-                onPressed: () {
-                  showDialog<String>(context: Get.context!, builder: (BuildContext context) => showDashboardAccountDialog(context));
-                },
-                icon: LanguageSwitchFaIcon(
-                  iconData: Icons.add,
-                ),
-              ),
-
-            ],
-          ),
-          Divider(),
-          Expanded(
-
-            child: DashboardAccountsList(controller: controller),
-          ),
-        ],
-      ),
     );
   }
 }

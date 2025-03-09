@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/styling/app_text_style.dart';
-import '../../../../core/widgets/app_spacer.dart';
 
 class BoxOrganizeWidget extends StatelessWidget {
   const BoxOrganizeWidget(
-      {super.key, required this.titleText, required this.subTitleText, required this.primaryColor, required this.secondaryColor});
+      {super.key, required this.titleText, required this.childWidget, required this.primaryColor, required this.secondaryColor});
 
   final String titleText;
-  final String subTitleText;
+  final Widget childWidget;
   final Color primaryColor;
   final Color secondaryColor;
 
@@ -31,25 +30,7 @@ class BoxOrganizeWidget extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          /*        Positioned(
-            right: -15.w,
-            child: Container(
-              width: 35.w,
-              height: 80.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    secondaryColor,
-                    primaryColor,
-                  ],
-                  begin: Alignment.topRight,
-                  end: Alignment.topLeft,
-                ),
-                // color: Color(0xFF9C27B0),
-              ),
-            ),
-          ),*/
+
           Positioned(
             top: -40.h,
             left: -30.w,
@@ -86,19 +67,22 @@ class BoxOrganizeWidget extends StatelessWidget {
               ),
             ),
           ),
-          Center(
+          Positioned(
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  titleText,
-                  style: AppTextStyles.headLineStyle1.copyWith(color: Colors.white),
+                Center(child: Text(titleText, style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white))),
+                Divider(color: Colors.grey.shade300,),
+                SizedBox(
+                  height:60.h ,
+                  child: childWidget,
                 ),
-                VerticalSpace(),
-                Text(
-                  subTitleText,
-                  style: AppTextStyles.headLineStyle2.copyWith(color: Colors.white),
-                ),
+
               ],
             ),
           ),

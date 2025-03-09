@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +15,7 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../accounts/controllers/account_statement_controller.dart';
 import '../../accounts/controllers/accounts_controller.dart';
 import '../../accounts/data/models/account_model.dart';
+import '../../users_management/data/models/user_model.dart';
 
 class DashboardLayoutController extends GetxController {
   final LocalDatasourceRepository<DashAccountModel> _datasourceRepository;
@@ -21,27 +27,79 @@ class DashboardLayoutController extends GetxController {
 
   DashboardLayoutController(this._datasourceRepository);
 
+  final now = DateTime.now();
+
   @override
   onInit() {
     getAllDashBoardAccounts();
     super.onInit();
   }
 
-  int get onlineUsersLength => read<UserManagementController>()
-      .allUsers
+  List<UserModel> get allUsers => read<UserManagementController>().allUsers;
+
+  int get allUsersLength => allUsers.length;
+
+  int get onlineUsersLength => allUsers
       .where(
         (user) => user.userWorkStatus == UserWorkStatus.online,
       )
       .length;
 
-  int get allUsersLength => read<UserManagementController>().allUsers.length;
+  int get usersMustWorkingNowLength => allUsers
+      .where((user) {
+        return user.userWorkingHours!.values.any((interval) {
+          return now.isAfter(interval.enterTime!.toWorkingTime()) && now.isBefore(interval.outTime!.toWorkingTime());
+        });
+      })
+      .toList()
+      .length;
+
+  List<ChequesModel> get allCheques => read<AllChequesController>().chequesList;
+
+  int get allChequesLength => allCheques.length;
+
+  int get allChequesDuesLength => allCheques
+      .where(
+        (user) => user.isPayed != true,
+      )
+      .length;
+
+  /// this for cheques in this month
+  List<ChequesModel> get allChequesDuesThisMonth => allCheques
+      .where(
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 30))),
+      )
+      .toList();
+
+  int get allChequesDuesThisMonthLength => allChequesDuesThisMonth.length;
+
+  /// this for cheques Last 10 days
+  List<ChequesModel> get allChequesDuesLastTen => allCheques
+      .where(
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 10))),
+      )
+      .toList();
+
+  int get allChequesDuesLastTenLength => allChequesDuesLastTen.length;
+
+  /// this for cheques today
+  List<ChequesModel> get allChequesDuesToday => allCheques
+      .where(
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!) .isBefore (now),
+      )
+      .toList();
+
+  int get allChequesDuesTodayLength => allChequesDuesToday.length;
 
   getAllDashBoardAccounts() async {
     final result = await _datasourceRepository.getAll();
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedDashBoardAccounts) => dashBoardAccounts.assignAll(fetchedDashBoardAccounts),
+      (fetchedDashBoardAccounts) {
+        dashBoardAccounts.assignAll(fetchedDashBoardAccounts);
+        update();
+      },
     );
   }
 

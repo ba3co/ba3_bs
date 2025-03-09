@@ -66,7 +66,7 @@ final Map<String, String> arAR = {
   AppStrings.download: 'تحميل',
   AppStrings.cheques: 'الشيكات',
   AppStrings.dues: 'المستحقة',
-  AppStrings.all: 'جميع',
+  AppStrings.all: 'الكل',
   AppStrings.cheque: 'شيك',
   AppStrings.editing: 'التحرير',
   AppStrings.amount: 'قيمة',

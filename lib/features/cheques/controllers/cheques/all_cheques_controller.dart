@@ -43,6 +43,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     super.onInit();
     _initializeServices();
 
+    fetchAllChequesByType(ChequesType.paidChecks);
     // getAllChequesTypes();
   }
 

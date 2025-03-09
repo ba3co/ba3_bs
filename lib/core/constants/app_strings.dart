@@ -64,7 +64,7 @@ class AppStrings {
   static const String download = 'تحميل';
   static const String cheques = 'الشيكات';
   static const String dues = 'المستحقة';
-  static const String all = 'جميع';
+  static const String all = 'الكل';
   static const String cheque = 'شيك';
   static const String editing = 'التحرير';
   static const String pay = 'دفع';
@@ -296,4 +296,19 @@ class AppStrings {
   static const String profitAndLoss = 'حساب الأرباح والخسائر';
   static const String balanceSheet = 'الميزانية';
   static const String areYouSureContinue = 'هل أنت متأكد';
+
+  static const String onlineUsers='المستخدمين الموجودين';
+
+  static const String  allBillsDues='الفواتير المستحقة';
+
+  static const String  allUsersMustOnline=' ضمن الدوام';
+
+  static const String available='المتاحين';
+  static const String thisMonth='هذا الشهر';
+
+  static const String lastTenDays='اخر 10 يوم';
+
+  static const String      today='اليوم';
+
+  static const String  mainUsers='الحسابات الرئيسية';
 }
