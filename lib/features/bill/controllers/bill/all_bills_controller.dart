@@ -202,14 +202,15 @@ class AllBillsController extends FloatingBillDetailsLauncher
     update();
   }
 
-  Future<void> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
+  Future<List<BillModel>> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, dateFilter: dateFilter);
-
+    List<BillModel> allBills = [];
     result.fold(
-      (failure) =>
-          AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
-      (fetchedBills) {},
+      (failure) => AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
+      (fetchedBills) => allBills =   fetchedBills,
     );
+
+    return allBills;
   }
 
   Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {

@@ -245,6 +245,7 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
     for (final bill in bills) {
       // الحصول على معرف البائع
       final sellerId = bill.billDetails.billSellerId ?? 'unknown';
+      if(getSellerNameById(sellerId)=='') continue;
       // الحصول على إجمالي المبيعات لهذه الفاتورة
       final billTotal = bill.billDetails.billTotal ?? 0.0;
       salesMap[sellerId] = (salesMap[sellerId] ?? 0.0) + billTotal;

@@ -1,10 +1,10 @@
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../bill/data/models/bill_model.dart';
-import '../../../sellers/data/models/seller_model.dart';
 
 class AllSellersSalesChart extends StatelessWidget {
   final List<BillModel> bills;
@@ -18,28 +18,65 @@ class AllSellersSalesChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = read<SellerSalesController>(). aggregateSalesBySeller(bills: bills, getSellerNameById: getSellerNameById);
+    final data =read<SellerSalesController>(). aggregateSalesBySeller(bills: bills, getSellerNameById: getSellerNameById);
+
+    List<BarChartGroupData> barGroups = [];
+    for (int i = 0; i < data.length; i++) {
+      barGroups.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: data[i].totalSales,
+              width: 20,
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(0),
+            ),
+          ],
+        ),
+      );
+    }
+
+    double maxY = data.isNotEmpty
+        ? data.map((d) => d.totalSales).reduce((a, b) => a > b ? a : b)
+        : 0;
+    maxY *= 1.1;
+
     return Container(
       padding: const EdgeInsets.all(16),
-      height: 300,
-      child: SfCartesianChart(
-        title: ChartTitle(text: 'مبيعات جميع البائعين'),
-        primaryXAxis: CategoryAxis(
-          title: AxisTitle(text: 'البائع'),
+      height: 600.h,
+      width: 2.sw,
+      child: BarChart(
+        BarChartData(
+          maxY: maxY,
+          barGroups: barGroups,
+          borderData: FlBorderData(show: false),
+          gridData: FlGridData(show: true),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (double value, TitleMeta meta) {
+                  int index = value.toInt();
+                  if (index < 0 || index >= data.length) {
+                    return Container();
+                  }
+                  return SideTitleWidget(
+                    meta: meta,
+                    space: 4,
+                    child: Text(
+                      data[index].sellerName,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
         ),
-        primaryYAxis: NumericAxis(
-          title: AxisTitle(text: 'إجمالي المبيعات'),
-        ),
-        tooltipBehavior: TooltipBehavior(enable: true),
-        series: <CartesianSeries<dynamic, dynamic>>[
-          ColumnSeries<SellerSalesData, String>(
-            dataSource: data,
-            xValueMapper: (SellerSalesData sales, _) => sales.sellerName,
-            yValueMapper: (SellerSalesData sales, _) => sales.totalSales,
-            dataLabelSettings: const DataLabelSettings(isVisible: true),
-            enableTooltip: true,
-          )
-        ],
       ),
     );
   }

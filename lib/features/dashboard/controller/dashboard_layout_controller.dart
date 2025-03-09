@@ -1,20 +1,23 @@
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../core/models/date_filter.dart';
 import '../../../core/services/local_database/implementations/repos/local_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../accounts/controllers/account_statement_controller.dart';
 import '../../accounts/controllers/accounts_controller.dart';
 import '../../accounts/data/models/account_model.dart';
+import '../../patterns/controllers/pattern_controller.dart';
 import '../../users_management/data/models/user_model.dart';
 
 class DashboardLayoutController extends GetxController {
@@ -32,6 +35,7 @@ class DashboardLayoutController extends GetxController {
   @override
   onInit() {
     getAllDashBoardAccounts();
+    // getAllBillsThisMonth();
     super.onInit();
   }
 
@@ -85,13 +89,22 @@ class DashboardLayoutController extends GetxController {
   /// this for cheques today
   List<ChequesModel> get allChequesDuesToday => allCheques
       .where(
-        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!) .isBefore (now),
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now),
       )
       .toList();
 
   int get allChequesDuesTodayLength => allChequesDuesToday.length;
+  List<BillModel> allBillsThisMonth = [];
 
-  get allBillsThisMonth => read<AllBillsController>().getBillsByType(BillType.sales.typeGuide);
+  getAllBillsThisMonth() async {
+    allBillsThisMonth = await read<AllBillsController>().fetchBillsByDate(
+      read<PatternController>().billsTypeSales,
+      DateFilter(
+        dateFieldName: ApiConstants.billDate,
+        range: DateTimeRange(start: now.subtract(Duration(days: 30)), end: now),
+      ),
+    );
+  }
 
   getAllDashBoardAccounts() async {
     final result = await _datasourceRepository.getAll();

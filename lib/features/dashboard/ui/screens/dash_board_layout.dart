@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +21,8 @@ class DashBoardLayout extends StatelessWidget {
       body: GetBuilder<DashboardLayoutController>(builder: (controller) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            spacing: 10,
+          child: ListView(
+            // spacing: 10,
             children: [
               Row(
                 spacing: 10,
@@ -96,6 +97,7 @@ class DashBoardLayout extends StatelessWidget {
                   ),
                 ],
               ),
+              VerticalSpace(),
               OrganizedWidget(
                   titleWidget: Center(
                       child: Text(
@@ -103,16 +105,20 @@ class DashBoardLayout extends StatelessWidget {
                     style: AppTextStyles.headLineStyle1,
                   )),
                   bodyWidget: AllAttendanceScreen()),
-              SingleChildScrollView(
-                child: Column(
+              VerticalSpace(),
+
+              OrganizedWidget(
+                titleWidget: Center(
+                    child: Text(
+                      AppStrings.sellers,
+                      style: AppTextStyles.headLineStyle1,
+                    )),
+                bodyWidget: Column(
                   children: [
                     const SizedBox(height: 16),
                     AllSellersSalesChart(
                       bills: controller.allBillsThisMonth,
-                      getSellerNameById: (String sellerId) {
-                        Get.find<SellersController>().getSellerNameById(sellerId) ;
-                        return sellerId;
-                      },
+                      getSellerNameById: (String sellerId) => Get.find<SellersController>().getSellerNameById(sellerId),
                     ),
                   ],
                 ),
