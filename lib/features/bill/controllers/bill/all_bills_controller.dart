@@ -301,7 +301,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) => bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  List<BillModel> getBillsByType(String billTypeId) {
+
+    if(bills.isEmpty) return [];
+fetchAllNestedBills();
+    return
+    bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  }
 
   void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
     final BillModel? billModel = await fetchBillById(billId, bilTypeModel);

@@ -1,12 +1,14 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_Widget.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/widgets/tow_field_row.dart';
+import '../../../sellers/controllers/sellers_controller.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
 import '../../controller/dashboard_layout_controller.dart';
+import '../widgets/all_sellers_sales_chart.dart';
 import '../widgets/box_organize_widget.dart';
 
 class DashBoardLayout extends StatelessWidget {
@@ -60,7 +62,6 @@ class DashBoardLayout extends StatelessWidget {
                           firstItem: AppStrings.all.tr,
                           secondItem: '${controller.allChequesLength}',
                         ),
-
                         TowFieldRow(
                           firstItem: AppStrings.thisMonth.tr,
                           secondItem: '${controller.allChequesDuesThisMonthLength}',
@@ -73,7 +74,6 @@ class DashBoardLayout extends StatelessWidget {
                           firstItem: AppStrings.today.tr,
                           secondItem: '${controller.allChequesDuesTodayLength}',
                         ),
-
                       ],
                     ),
                   ),
@@ -102,7 +102,21 @@ class DashBoardLayout extends StatelessWidget {
                     AppStrings.userAdministration,
                     style: AppTextStyles.headLineStyle1,
                   )),
-                  bodyWidget: AllAttendanceScreen())
+                  bodyWidget: AllAttendanceScreen()),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    AllSellersSalesChart(
+                      bills: controller.allBillsThisMonth,
+                      getSellerNameById: (String sellerId) {
+                        Get.find<SellersController>().getSellerNameById(sellerId) ;
+                        return sellerId;
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         );

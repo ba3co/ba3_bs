@@ -1,7 +1,7 @@
-import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
@@ -90,6 +90,8 @@ class DashboardLayoutController extends GetxController {
       .toList();
 
   int get allChequesDuesTodayLength => allChequesDuesToday.length;
+
+  get allBillsThisMonth => read<AllBillsController>().getBillsByType(BillType.sales.typeGuide);
 
   getAllDashBoardAccounts() async {
     final result = await _datasourceRepository.getAll();

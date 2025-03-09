@@ -235,4 +235,26 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
   }
 
   void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
+
+  List<SellerSalesData> aggregateSalesBySeller({
+    required List<BillModel> bills,
+    required String Function(String sellerId) getSellerNameById,
+  }) {
+    final Map<String, double> salesMap = {};
+
+    for (final bill in bills) {
+      // الحصول على معرف البائع
+      final sellerId = bill.billDetails.billSellerId ?? 'unknown';
+      // الحصول على إجمالي المبيعات لهذه الفاتورة
+      final billTotal = bill.billDetails.billTotal ?? 0.0;
+      salesMap[sellerId] = (salesMap[sellerId] ?? 0.0) + billTotal;
+    }
+
+    // تحويل البيانات إلى قائمة SellerSalesData باستخدام اسم البائع
+    return salesMap.entries.map((entry) {
+      final sellerName = getSellerNameById(entry.key);
+      return SellerSalesData(sellerName: sellerName, totalSales: entry.value);
+    }).toList();
+  }
+
 }

@@ -131,3 +131,10 @@ class SellerModel {
     };
   }
 }
+
+class SellerSalesData {
+  final String sellerName;
+  final double totalSales;
+
+  SellerSalesData({required this.sellerName, required this.totalSales});
+}
