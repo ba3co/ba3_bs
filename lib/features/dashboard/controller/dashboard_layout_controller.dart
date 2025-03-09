@@ -35,7 +35,7 @@ class DashboardLayoutController extends GetxController {
   @override
   onInit() {
     getAllDashBoardAccounts();
-    // getAllBillsThisMonth();
+    getAllBillsThisMonth();
     super.onInit();
   }
 
@@ -101,7 +101,7 @@ class DashboardLayoutController extends GetxController {
       read<PatternController>().billsTypeSales,
       DateFilter(
         dateFieldName: ApiConstants.billDate,
-        range: DateTimeRange(start: now.subtract(Duration(days: 30)), end: now),
+        range: DateTimeRange(start: now, end: now),
       ),
     );
   }
