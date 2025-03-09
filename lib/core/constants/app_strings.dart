@@ -297,18 +297,27 @@ class AppStrings {
   static const String balanceSheet = 'الميزانية';
   static const String areYouSureContinue = 'هل أنت متأكد';
 
-  static const String onlineUsers='المستخدمين الموجودين';
+  static const String onlineUsers = 'المستخدمين الموجودين';
 
-  static const String  allBillsDues='الفواتير المستحقة';
+  static const String allBillsDues = 'الفواتير المستحقة';
 
-  static const String  allUsersMustOnline=' ضمن الدوام';
+  static const String allUsersMustOnline = ' ضمن الدوام';
 
-  static const String available='المتاحين';
-  static const String thisMonth='هذا الشهر';
+  static const String available = 'المتاحين';
+  static const String thisMonth = 'هذا الشهر';
 
-  static const String lastTenDays='اخر 10 يوم';
+  static const String lastTenDays = 'اخر 10 يوم';
 
-  static const String      today='اليوم';
+  static const String today = 'اليوم';
 
-  static const String  mainUsers='الحسابات الرئيسية';
+  static const String mainUsers = 'الحسابات الرئيسية';
+
+  // New Strings for Search Bill Feature
+  static const String searchBill = 'بحث عن فاتورة';
+  static const String searchByPhone = 'البحث برقم الهاتف';
+  static const String searchByOrderNumber = 'البحث برقم الطلب';
+  static const String enterPhoneNumber = 'أدخل رقم الهاتف';
+  static const String enterOrderNumber = 'أدخل رقم الطلب';
+  static const String phoneNumber = 'رقم الهاتف';
+  static const String orderNumber = 'رقم الطلب';
 }
