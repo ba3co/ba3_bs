@@ -10,7 +10,7 @@ import '../../accounts/ui/screens/account_layout.dart';
 import '../../bill/ui/screens/bill_layout.dart';
 import '../../bond/ui/screens/bond_layout.dart';
 import '../../cheques/ui/screens/cheque_layout.dart';
-import '../../dashboard/ui/dash_board_layout.dart';
+import '../../dashboard/ui/screens/dash_board_layout.dart';
 import '../../materials/ui/screens/materials_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
