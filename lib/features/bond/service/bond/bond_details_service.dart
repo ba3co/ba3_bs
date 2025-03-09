@@ -59,8 +59,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         bondRecordsItems: plutoController.generateRecords,
       );
 
-  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController,
-      [fromBondById]) async {
+  Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController, [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
       await read<AllBondsController>().fetchAllBondsByType(BondType.byTypeGuide(bondModel.payTypeGuid!));
@@ -92,7 +91,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
       bondDetailsController.updateIsBondSaved(true);
 
       if (hasModelId(currentBond.payGuid) && hasModelItems(currentBond.payItems.itemList)) {
-        generateAndSendPdf(
+        generatePdfAndSendToEmail(
           fileName: AppStrings.newBond.tr,
           itemModel: currentBond,
         );
@@ -106,7 +105,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
           hasModelItems(currentBond.payItems.itemList) &&
           hasModelId(previousBond.payGuid) &&
           hasModelItems(previousBond.payItems.itemList)) {
-        generateAndSendPdf(
+        generatePdfAndSendToEmail(
           fileName: AppStrings.updatedBond.tr,
           itemModel: [previousBond, currentBond],
         );
@@ -151,12 +150,10 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
     };
     if (previousBond.payAccountGuid != null && currentBond.payAccountGuid != null) {
-      previousAccounts[previousBond.payAccountGuid!] = AccountModel(
-          id: previousBond.payAccountGuid!,
-          accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
-      currentAccounts[currentBond.payAccountGuid!] = AccountModel(
-          id: currentBond.payAccountGuid!,
-          accName: read<AccountsController>().getAccountNameById(currentBond.payAccountGuid!));
+      previousAccounts[previousBond.payAccountGuid!] =
+          AccountModel(id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
+      currentAccounts[currentBond.payAccountGuid!] =
+          AccountModel(id: currentBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(currentBond.payAccountGuid!));
     }
 
     final Map<String, AccountModel> modifiedAccounts = {};

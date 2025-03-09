@@ -53,6 +53,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required String billCustomerId,
     required String billSellerId,
     required String? billNote,
+    required String? orderNumber,
+    required String? customerPhone,
     required int billPayType,
     required DateTime billDate,
     required double billFirstPay,
@@ -62,6 +64,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         billTypeModel: billTypeModel,
         status: RoleItemType.viewBill.status,
         note: billNote,
+        orderNumber: orderNumber,
+        customerPhone: customerPhone,
         billCustomerId: billCustomerId,
         billSellerId: billSellerId,
         billPayType: billPayType,
@@ -372,7 +376,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         hasModelItems(currentBill.items.itemList) &&
         hasModelId(previousBill.billId) &&
         hasModelItems(previousBill.items.itemList)) {
-      generateAndSendPdf(
+      generatePdfAndSendToEmail(
         fileName: AppStrings.updatedBill.tr,
         itemModel: [previousBill, currentBill],
       );
@@ -525,7 +529,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     // 2. If the bill has an ID and items, we generate & send a PDF
     if (_isValidBillForPdf(savedBill)) {
-      generateAndSendPdf(
+      generatePdfAndSendToEmail(
         fileName: AppStrings.newBill.tr,
         itemModel: savedBill,
       );

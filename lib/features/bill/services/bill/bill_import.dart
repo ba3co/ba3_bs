@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
@@ -104,6 +105,28 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     return updatedGroups.flatten();
   }
 
+  /// Extracts order number from "رقم الطلب" or "TABBY-"
+  String? _extractOrderNumber(String noteText) {
+    // Remove unexpected characters
+    noteText = noteText.trim();
+
+    // Match "رقم الطلب" in different formats
+    final orderMatch = RegExp(r'رقم\s?الطلب[\s\-=:]*([\d]+)', unicode: true).firstMatch(noteText);
+    if (orderMatch != null) {
+      log('Matched Order Number: ${orderMatch.group(1)}', name: 'Regex');
+      return orderMatch.group(1);
+    }
+
+    // Match "TABBY-" or "tabby-" followed by numbers (case-insensitive)
+    final tabbyMatch = RegExp(r'tabby-(\d+)', caseSensitive: false).firstMatch(noteText);
+    if (tabbyMatch != null) {
+      log('Matched Tabby Order Number: ${tabbyMatch.group(1)}', name: 'Regex');
+      return tabbyMatch.group(1);
+    }
+
+    return null;
+  }
+
   @override
   Future<List<BillModel>> fromImportXml(XmlDocument document) async {
     await _fetchBillsTypesNumbers();
@@ -131,6 +154,26 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     List<BillModel> bills = [];
 
     for (var billElement in billsXml) {
+      String? customerPhone;
+      String? orderNumber;
+
+      final noteText = billElement.findElements('B').single.findElements('Note').single.text.trim();
+
+      log('Processing Note: $noteText', name: 'XML Processing');
+
+      // Phone number detection
+      if (RegExp(r'^05\d{8}$').hasMatch(noteText)) {
+        log('Detected Phone Number: $noteText', name: 'Phone');
+        customerPhone = noteText;
+      }
+
+      // Extract order number
+      String? extractedOrderNumber = _extractOrderNumber(noteText);
+      if (extractedOrderNumber != null) {
+        log('Extracted Order Number: $extractedOrderNumber', name: 'Order Number');
+        orderNumber = extractedOrderNumber;
+      }
+
       final itemsElement = billElement.findElements('Items').single;
       final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
         return {
@@ -173,6 +216,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
           'BillStoreGuid': billElement.findElements('B').single.findElements('BillStoreGuid').single.text,
           'Note': billElement.findElements('B').single.findElements('Note').single.text,
+          'CustomerPhone': customerPhone,
+          'OrderNumber': orderNumber,
           'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
           'BillCostGuid': read<SellersController>()
               .getSellerIdByName(sellerNameID[billElement.findElements('B').single.findElements('BillCostGuid').single.text]),

@@ -1366,10 +1366,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: d121da9ef7e2ff4cab7666e76c5a3e0915ae08c3
   BoringSSL-GRPC: ca6a8e5d04812fce8ffd6437810c2d46f925eaeb
-  cloud_firestore: 8dc5c3bd6bfeca1cf49bf62dce66b1379c7a3138
-  file_picker: e716a70a9fe5fd9e09ebc922d7541464289443af
+  cloud_firestore: 495676da0a4f843b8b16150116688bfbb7029cb0
+  file_picker: 7584aae6fa07a041af2b36a2655122d42f578c1a
   Firebase: 973c28133496aab0223e9ea99f0abafb9f91ad58
-  firebase_core: 1b573eac37729348cdc472516991dd7e269ae37e
+  firebase_core: 3dcdf8453dfb144a023ee70f49e0463b97177f71
   FirebaseAppCheckInterop: 7bf86d55a2b7e9bd91464120eba3e52e4b63b2e2
   FirebaseCore: 99fe0c4b44a39f37d99e6404e02009d2db5d718d
   FirebaseCoreExtension: 3d3f2017a00d06e09ab4ebe065391b0bb642565e
@@ -1377,17 +1377,17 @@ SPEC CHECKSUMS:
   FirebaseFirestore: 563a4ab1a65e2858f05e150bb4c31b0f8f79248b
   FirebaseFirestoreInternal: 8c5921c360a70e447bfeefb245f450e8b50e750b
   FirebaseSharedSwift: 672954eac7b141d6954fab9a32d45d6b1d922df8
-  flutter_platform_alert: 49f22b31593e29e7a5e65f1b80f8d3de02b95dd4
+  flutter_platform_alert: 8fa7a7c21f95b26d08b4a3891936ca27e375f284
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  geolocator_apple: 72a78ae3f3e4ec0db62117bd93e34523f5011d58
+  geolocator_apple: ccfb79d5250de3a295f5093cd03e76aa8836a416
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   "gRPC-C++": 2fa52b3141e7789a28a737f251e0c45b4cb20a87
   gRPC-Core: a27c294d6149e1c39a7d173527119cfbc3375ce4
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  native_dialog_plus: d341df475b989c662600eee0ec1037f0ed5797db
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  native_dialog_plus: a8a0dd50dd2dc5376ccb72345dc8776549910767
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
 
 PODFILE CHECKSUM: 8bb54cf13ebb9fecc3d69cc2c1e7e6c539585b6d
 

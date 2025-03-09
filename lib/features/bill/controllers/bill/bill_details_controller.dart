@@ -65,6 +65,10 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   final TextEditingController customerAccountController = TextEditingController();
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
+
+  final TextEditingController orderNumberController = TextEditingController();
+
+  final TextEditingController customerPhoneController = TextEditingController();
   final TextEditingController firstPayController = TextEditingController();
   final TextEditingController invReturnDateController = TextEditingController();
   final TextEditingController invReturnCodeController = TextEditingController();
@@ -538,6 +542,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     return _billService.createBillModel(
       billModel: billModel,
       billNote: noteController.text,
+      orderNumber: orderNumberController.text,
+      customerPhone: customerPhoneController.text,
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
       billFirstPay: firstPayController.text.toDouble,
@@ -585,6 +591,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     setBillDate = bill.billDetails.billDate!;
     isBillSaved.value = bill.billId != null;
     noteController.text = bill.billDetails.billNote ?? '';
+    orderNumberController.text = bill.billDetails.orderNumber ?? '';
+    customerPhoneController.text = bill.billDetails.customerPhone ?? '';
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
     initBillNumberController(bill.billDetails.billNumber);
@@ -604,7 +612,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
-    _billService.generateAndSendPdf(fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail);
+    _billService.generatePdfAndSendToEmail(fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail);
   }
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);

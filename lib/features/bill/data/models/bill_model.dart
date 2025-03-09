@@ -63,6 +63,8 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
   factory BillModel.fromBillData({
     BillModel? billModel,
     String? note,
+    String? orderNumber,
+    String? customerPhone,
     required String billCustomerId,
     required Status status,
     required String billSellerId,
@@ -82,6 +84,8 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
       existingDetails: billModel?.billDetails,
       billFirstPay: billFirstPay,
       billNote: note,
+      orderNumber: orderNumber,
+      customerPhone: customerPhone,
       billCustomerId: billCustomerId,
       billSellerId: billSellerId,
       billPayType: billPayType,
@@ -224,7 +228,9 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billDiscountsTotal: 0,
         billAdditionsTotal: 0,
         billBeforeVatTotal: billTotal - billVatTotal,
-        billNote: billData['B']['Note'].toString(),
+        billNote: billData['B']['Note'],
+        customerPhone: billData['B']['CustomerPhone'],
+        orderNumber: billData['B']['OrderNumber'],
       ),
       billTypeModel: BillTypeModel(
           billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,

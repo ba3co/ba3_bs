@@ -419,6 +419,9 @@ abstract class AppConstants {
   static const String billIdFiled = 'billIdFiled';
   static const bool hideInvRecProductSoldSerial = false;
   static const bool hideInvRecProductSerialNumbers = false;
+  static const String serialNumbersStatement = 'serialNumbersStatement';
+  static const String searchByPhone = 'searchByPhone';
+  static const String searchByOrderNumber = 'searchByOrderNumber';
 
   static const Map<String, String> months = {
     "يناير (1)": "01",

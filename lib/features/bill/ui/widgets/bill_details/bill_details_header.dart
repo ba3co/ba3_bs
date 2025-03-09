@@ -34,7 +34,7 @@ class BillDetailsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child:  Form(
+      child: Form(
         key: billDetailsController.formKey,
         child: Column(
           children: [
@@ -58,8 +58,7 @@ class BillDetailsHeader extends StatelessWidget {
                       border: Border.all(color: Colors.black38),
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    onCloseCallback: () {
-                    },
+                    onCloseCallback: () {},
                   );
                 }),
               ),
@@ -103,13 +102,28 @@ class BillDetailsHeader extends StatelessWidget {
                     textEditingController: billDetailsController.sellerAccountController,
                     context: context,
                   );
-
                 },
               ),
               secondItem: TextAndExpandedChildField(
                 label: AppStrings.illustration.tr,
                 child: CustomTextFieldWithoutIcon(
                   textEditingController: billDetailsController.noteController,
+                  suffixIcon: const SizedBox.shrink(),
+                ),
+              ),
+            ),
+            FormFieldRow(
+              firstItem: TextAndExpandedChildField(
+                label: AppStrings.phoneNumber.tr,
+                child: CustomTextFieldWithoutIcon(
+                  textEditingController: billDetailsController.customerPhoneController,
+                  suffixIcon: const SizedBox.shrink(),
+                ),
+              ),
+              secondItem: TextAndExpandedChildField(
+                label: AppStrings.orderNumber.tr,
+                child: CustomTextFieldWithoutIcon(
+                  textEditingController: billDetailsController.orderNumberController,
                   suffixIcon: const SizedBox.shrink(),
                 ),
               ),

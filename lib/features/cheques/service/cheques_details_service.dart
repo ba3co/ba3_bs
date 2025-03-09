@@ -69,8 +69,7 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     );
   }
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
-      [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
       await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
@@ -102,13 +101,13 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
 
     if (isSave) {
       chequesDetailsController.updateIsChequesSaved(true);
-      generateAndSendPdf(
+      generatePdfAndSendToEmail(
         fileName: AppStrings.newBond.tr,
         itemModel: currentChequesModel,
       );
     } else {
       chequesSearchController.updateCheques(currentChequesModel);
-      generateAndSendPdf(
+      generatePdfAndSendToEmail(
         fileName: AppStrings.newBond.tr,
         itemModel: [prevChequesModel!, currentChequesModel],
       );

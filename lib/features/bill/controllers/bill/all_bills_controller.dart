@@ -9,6 +9,7 @@ import 'package:ba3_bs/core/services/json_file_operations/implementations/import
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
+import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
 import 'package:ba3_bs/features/car_store/controllers/store_cart_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -79,9 +80,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     _billUtils = BillUtils();
   }
 
-  fetchStoreCard() async {
-  }
-
+  fetchStoreCard() async {}
 
   @override
   void onInit() {
@@ -188,8 +187,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result =
-        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -209,13 +207,46 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return result;
   }
 
+  Future<void> searchBill({
+    required String searchInput,
+    required String searchType,
+    required BuildContext context,
+  }) async {
+    List<BillModel> searchResults = [];
+
+    for (final billTypeModel in read<PatternController>().billsTypes) {
+      final result = await _billsFirebaseRepo.fetchWhere(
+        itemIdentifier: billTypeModel,
+        field: searchType == 'phone' ? ApiConstants.customerPhone : ApiConstants.orderNumber,
+        value: searchInput,
+      );
+
+      result.fold(
+        (failure) {},
+        (bills) => searchResults.addAll(bills),
+      );
+    }
+
+    if (searchResults.isEmpty) {
+      // Show a message if no results found
+      AppUIUtils.onFailure('لا يوجد نتائج للبحث');
+    } else {
+      if (!context.mounted) return;
+
+      launchFloatingWindow(
+          context: context,
+          floatingScreen: AllBillsScreen(
+            bills: searchResults,
+          ));
+    }
+  }
+
   Future<void> fetchBillsTypes() async {
     getBillsTypesRequestState.value = RequestState.loading;
 
     final List<BillTypeModel> fetchedBillTypes = await read<PatternController>().getAllBillTypes();
     _handleFetchBillTypesSuccess(fetchedBillTypes);
     read<StoreCartController>().fetchAllStoreCart();
-
   }
 
   Future<void> _handleFetchBillTypesSuccess(List<BillTypeModel> fetchedBillTypes) async {
@@ -223,7 +254,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
     await fetchAllBillsCountsByTypes(fetchedBillTypes);
 
     getBillsTypesRequestState.value = RequestState.success;
-
   }
 
   Future<void> fetchPendingBillsCountsByTypes(List<BillTypeModel> fetchedBillTypes) async {
@@ -342,8 +372,7 @@ fetchAllNestedBills();
 
   // Opens the 'Bill Details' floating window.
 
-  Future<void> _openBillDetailsFloatingWindow(
-      {required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
+  Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
     final String controllerTag = AppServiceUtils.generateUniqueTag('FloatingBillDetails');
 
     final Map<String, GetxController> controllers = setupControllers(

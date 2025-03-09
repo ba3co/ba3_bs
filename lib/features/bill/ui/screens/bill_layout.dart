@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
@@ -67,48 +68,61 @@ class BillLayout extends StatelessWidget {
                             PopupMenuButton<String>(
                               tooltip: AppStrings.options.tr,
                               onSelected: (value) {
-                                if (value == 'serialNumbersStatement') {
-                                  // Local variable to hold the serial number input
-                                  String serialNumberInput = '';
-                                  Get.dialog(
-                                    AlertDialog(
-                                      title: Text(AppStrings.enterSerialNumber.tr),
-                                      content: StatefulBuilder(
-                                        builder: (context, setState) {
-                                          return TextField(
-                                            decoration: InputDecoration(
-                                              labelText: AppStrings.serialNumber.tr,
-                                            ),
-                                            onChanged: (value) {
-                                              serialNumberInput = value;
-                                            },
-                                          );
-                                        },
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text(AppStrings.cancel.tr),
-                                          onPressed: () {
-                                            Get.back();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: Text(AppStrings.confirm.tr),
-                                          onPressed: () {
-                                            Get.back();
-                                            if (serialNumberInput.isEmpty) return;
-                                            allBillsController.getSerialNumberStatement(serialNumberInput, context: context);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                if (value == AppConstants.serialNumbersStatement) {
+                                  _showSerialNumberDialog(context, allBillsController);
+                                } else if (value == AppConstants.searchByPhone) {
+                                  _showSearchDialog(context, allBillsController, searchType: 'phone');
+                                } else if (value == AppConstants.searchByOrderNumber) {
+                                  _showSearchDialog(context, allBillsController, searchType: 'order');
                                 }
                               },
                               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                                 PopupMenuItem<String>(
-                                  value: 'serialNumbersStatement',
+                                  value: AppConstants.serialNumbersStatement,
                                   child: Text(AppStrings.serialNumbersStatement.tr),
+                                ),
+                                PopupMenuItem<String>(
+                                  child: PopupMenuButton<String>(
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.search, color: Colors.black54),
+                                        SizedBox(width: 8),
+                                        Text(AppStrings.searchBill.tr),
+                                        Icon(Icons.arrow_right, color: Colors.black54),
+                                      ],
+                                    ),
+                                    onSelected: (value) {
+                                      Navigator.pop(context); // يغلق القائمة الفرعية
+
+                                      if (value == AppConstants.searchByPhone) {
+                                        _showSearchDialog(context, allBillsController, searchType: 'phone');
+                                      } else if (value == AppConstants.searchByOrderNumber) {
+                                        _showSearchDialog(context, allBillsController, searchType: 'order');
+                                      }
+                                    },
+                                    itemBuilder: (context) => <PopupMenuEntry<String>>[
+                                      PopupMenuItem<String>(
+                                        value: AppConstants.searchByPhone,
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.phone, color: Colors.black54),
+                                            SizedBox(width: 8),
+                                            Text(AppStrings.searchByPhone.tr),
+                                          ],
+                                        ),
+                                      ),
+                                      PopupMenuItem<String>(
+                                        value: AppConstants.searchByOrderNumber,
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.confirmation_number, color: Colors.black54),
+                                            SizedBox(width: 8),
+                                            Text(AppStrings.searchByOrderNumber.tr),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                               icon: Icon(
@@ -116,8 +130,6 @@ class BillLayout extends StatelessWidget {
                                 color: AppColors.lightBlueColor,
                               ),
                             ),
-
-
                           ],
                         ),
                       ),
@@ -166,4 +178,81 @@ class BillLayout extends StatelessWidget {
       );
     });
   }
+}
+
+// Function to show serial number dialog
+void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsController) {
+  String serialNumberInput = '';
+  Get.dialog(
+    AlertDialog(
+      title: Text(AppStrings.enterSerialNumber.tr),
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return TextField(
+            decoration: InputDecoration(
+              labelText: AppStrings.serialNumber.tr,
+            ),
+            onChanged: (value) {
+              serialNumberInput = value;
+            },
+          );
+        },
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(AppStrings.cancel.tr),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        TextButton(
+          child: Text(AppStrings.confirm.tr),
+          onPressed: () {
+            Get.back();
+            if (serialNumberInput.isEmpty) return;
+            allBillsController.getSerialNumberStatement(serialNumberInput, context: context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+// Function to show search input dialog
+void _showSearchDialog(BuildContext context, AllBillsController allBillsController, {required String searchType}) {
+  String searchInput = '';
+  Get.dialog(
+    AlertDialog(
+      title: Text(searchType == 'phone' ? AppStrings.enterPhoneNumber.tr : AppStrings.enterOrderNumber.tr),
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return TextField(
+            keyboardType: searchType == 'phone' ? TextInputType.phone : TextInputType.number,
+            decoration: InputDecoration(
+              labelText: searchType == 'phone' ? AppStrings.phoneNumber.tr : AppStrings.orderNumber.tr,
+            ),
+            onChanged: (value) {
+              searchInput = value;
+            },
+          );
+        },
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(AppStrings.cancel.tr),
+          onPressed: () {
+            Get.back();
+          },
+        ),
+        TextButton(
+          child: Text(AppStrings.confirm.tr),
+          onPressed: () {
+            Get.back();
+            if (searchInput.isEmpty) return;
+            allBillsController.searchBill(searchInput: searchInput, searchType: searchType, context: context);
+          },
+        ),
+      ],
+    ),
+  );
 }

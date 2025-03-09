@@ -15,6 +15,10 @@ class BillDetails with EquatableMixin {
   final int? next;
   final DateTime? billDate;
   final String? billNote;
+
+  final String? orderNumber;
+
+  final String? customerPhone;
   final String? billSellerId;
   final String? billCustomerId;
   final double? billTotal;
@@ -33,6 +37,8 @@ class BillDetails with EquatableMixin {
     this.next,
     this.billDate,
     this.billNote,
+    this.orderNumber,
+    this.customerPhone,
     this.billCustomerId,
     this.billTotal,
     this.billVatTotal,
@@ -52,6 +58,8 @@ class BillDetails with EquatableMixin {
         next: json['next'],
         billDate: (json['billDate'] as Timestamp).toDate(),
         billNote: json['billNote'],
+        orderNumber: json.containsKey('orderNumber') ? json['orderNumber'] as String? : null,
+        customerPhone: json.containsKey('customerPhone') ? json['customerPhone'] as String? : null,
         billCustomerId: json['billCustomerId'],
         billSellerId: json['billSellerId'],
         billTotal: json['billTotal'],
@@ -66,6 +74,8 @@ class BillDetails with EquatableMixin {
   factory BillDetails.fromBillData({
     BillDetails? existingDetails,
     String? billNote,
+    String? orderNumber,
+    String? customerPhone,
     required String billCustomerId,
     required String billSellerId,
     required int billPayType,
@@ -84,6 +94,8 @@ class BillDetails with EquatableMixin {
         previous: existingDetails?.previous,
         next: existingDetails?.next,
         billNote: billNote,
+        orderNumber: orderNumber,
+        customerPhone: customerPhone,
         billFirstPay: billFirstPay,
         billCustomerId: billCustomerId,
         billSellerId: billSellerId,
@@ -105,6 +117,8 @@ class BillDetails with EquatableMixin {
         'next': next,
         'billDate': Timestamp.fromDate(billDate!),
         'billNote': billNote,
+        'orderNumber': orderNumber,
+        'customerPhone': customerPhone,
         'billCustomerId': billCustomerId,
         'billTotal': billTotal,
         'billWithoutVatTotal': billBeforeVatTotal,
@@ -126,6 +140,8 @@ class BillDetails with EquatableMixin {
     Object? next = _CopyWithSentinel,
     Object? billDate = _CopyWithSentinel,
     Object? billNote = _CopyWithSentinel,
+    Object? orderNumber = _CopyWithSentinel,
+    Object? customerPhone = _CopyWithSentinel,
     Object? billSellerId = _CopyWithSentinel,
     Object? billCustomerId = _CopyWithSentinel,
     Object? billTotal = _CopyWithSentinel,
@@ -145,6 +161,8 @@ class BillDetails with EquatableMixin {
       // Now if next is passed as null, it will become null
       billDate: billDate == _CopyWithSentinel ? this.billDate : billDate as DateTime?,
       billNote: billNote == _CopyWithSentinel ? this.billNote : billNote as String?,
+      orderNumber: orderNumber == _CopyWithSentinel ? this.orderNumber : orderNumber as String?,
+      customerPhone: customerPhone == _CopyWithSentinel ? this.customerPhone : customerPhone as String?,
       billSellerId: billSellerId == _CopyWithSentinel ? this.billSellerId : billSellerId as String?,
       billCustomerId: billCustomerId == _CopyWithSentinel ? this.billCustomerId : billCustomerId as String?,
       billTotal: billTotal == _CopyWithSentinel ? this.billTotal : billTotal as double?,
@@ -166,6 +184,8 @@ class BillDetails with EquatableMixin {
         next,
         billDate,
         billNote,
+        orderNumber,
+        customerPhone,
         billCustomerId,
         billSellerId,
         billTotal,
