@@ -23,7 +23,6 @@ import '../../accounts/controllers/account_statement_controller.dart';
 import '../../accounts/controllers/accounts_controller.dart';
 import '../../accounts/data/models/account_model.dart';
 import '../../sellers/controllers/seller_sales_controller.dart';
-import '../../sellers/controllers/sellers_controller.dart';
 import '../../sellers/data/models/seller_model.dart';
 import '../../users_management/data/models/user_model.dart';
 
@@ -254,6 +253,17 @@ class DashboardLayoutController extends GetxController {
   double totalSalesMobile = 0;
   double totalFees = 0;
 
+  CrossFadeState crossFadeState = CrossFadeState.showFirst;
+
+  swapCrossFadeState() {
+    if(crossFadeState == CrossFadeState.showFirst){
+      crossFadeState = CrossFadeState.showSecond;
+    }else if(crossFadeState == CrossFadeState.showSecond){
+      crossFadeState = CrossFadeState.showFirst;
+    }
+    update();
+  }
+
   getChartData() {
     sellerChartData = read<SellerSalesController>().aggregateSalesBySeller(bills: allBillsThisMonth);
     totalSales = sellerChartData.fold(
@@ -286,19 +296,20 @@ class DashboardLayoutController extends GetxController {
               toY: sellerChartData[i].totalMobileSales,
               width: 20,
               color: AppColors.mobileSaleColor,
-              borderRadius: BorderRadius.circular(0),
+              borderRadius: BorderRadius.circular(3),
             ),
             BarChartRodData(
               toY: sellerChartData[i].totalAccessorySales,
               width: 20,
               color: AppColors.accessorySaleColor,
-              borderRadius: BorderRadius.circular(0),
+              borderRadius: BorderRadius.circular(3),
             ),
             BarChartRodData(
               toY: sellerChartData[i].totalFess,
               width: 20,
+
               color: AppColors.feesSaleColor,
-              borderRadius: BorderRadius.circular(0),
+              borderRadius: BorderRadius.circular(3),
             ),
           ],
         ),

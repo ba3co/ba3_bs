@@ -328,4 +328,6 @@ class AppStrings {
   static const String totalFees='اجمالي المربح';
   static const totalMobileTarget = 'اجمالي تارغت الموبايلات';
   static const totalAccessoriesTarget = 'اجمالي تارغت الأكسسوارات';
+
+  static const swap='تبديل';
 }

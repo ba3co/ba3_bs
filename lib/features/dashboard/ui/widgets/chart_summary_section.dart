@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
-import '../screens/dash_board_layout.dart';
+import 'chart_box_widget.dart';
 
 class ChartSummarySection extends StatelessWidget {
   final DashboardLayoutController controller;

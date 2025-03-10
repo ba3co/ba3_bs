@@ -55,6 +55,7 @@ class AllSellersSalesBarChart extends StatelessWidget {
                         maxY: controller.maxY,
                         barGroups: controller.barGroups,
                         borderData: FlBorderData(show: false),
+                        alignment: BarChartAlignment.spaceAround,
                         barTouchData: BarTouchData(
                           touchTooltipData: BarTouchTooltipData(
                             getTooltipColor: (group) => Colors.black,

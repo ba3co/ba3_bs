@@ -1,5 +1,6 @@
 import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
@@ -35,9 +36,17 @@ class DateFilterHeader extends StatelessWidget {
             ),
             Spacer(),
             IconButton(
+              tooltip: AppStrings.swap.tr,
+              icon: Icon(
+                controller.crossFadeState == CrossFadeState.showFirst?   FontAwesomeIcons.chartPie: FontAwesomeIcons.chartSimple,
+                color: AppColors.lightBlueColor,
+              ),
+              onPressed: controller.swapCrossFadeState,
+            ),
+            IconButton(
               tooltip: AppStrings.refresh.tr,
               icon: Icon(
-                Icons.refresh,
+                FontAwesomeIcons.refresh,
                 color: AppColors.lightBlueColor,
               ),
               onPressed: controller.getSellersBillsByDate,

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/account_dashboard_dialog.dart';
 import '../../../../core/styling/app_text_style.dart';
+import '../../../../core/widgets/app_spacer.dart';
 import '../../../../core/widgets/custom_icon_button.dart';
 import '../../../../core/widgets/language_switch_fa_icon.dart';
 import '../../controller/dashboard_layout_controller.dart';
@@ -33,16 +35,17 @@ class DashBoardAccountViewWidget extends StatelessWidget {
                   controller.refreshDashBoardAccounts();
                 },
                 icon: LanguageSwitchFaIcon(
-                  iconData: Icons.refresh,
+                  iconData: FontAwesomeIcons.refresh,
                 ),
               ),
+              HorizontalSpace(),
               CustomIconButton(
                 disabled: false,
                 onPressed: () {
                   showDialog<String>(context: Get.context!, builder: (BuildContext context) => showDashboardAccountDialog(context));
                 },
                 icon: LanguageSwitchFaIcon(
-                  iconData: Icons.add,
+                  iconData:FontAwesomeIcons.add,
                 ),
               ),
             ],
