@@ -83,14 +83,9 @@ class AllSellersSalesPieChart extends StatelessWidget {
     });
   }
 
-
   Color _generateUniqueColor(int index) {
-    return Color.fromARGB(
-      210,
-      (index * 50) % 256,  // يتحكم في قيمة الأحمر
-      (index * 40) % 256,  // يتحكم في قيمة الأخضر
-      (index * 30) % 256, // يتحكم في قيمة الأزرق
-    );
+    double hue = (index * 200.5) % 360; // تغيير الزاوية اللونية لضمان توزيع متناسق
+    return HSVColor.fromAHSV(0.9, hue, 0.5, 0.9).toColor();
   }
 
 }
