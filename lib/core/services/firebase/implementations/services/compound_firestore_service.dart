@@ -75,6 +75,9 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
       return query.where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start).where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
     }
 
+    // Apply the date range filters to the query.
+    // - Greater than or equal to the start ensures we capture all entries from the start date onward.
+    // - Less than or equal to the adjusted end ensures we include all entries up to the end of the specified date.
     // Apply normal range filtering
     return query
         .where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: dateFilter.range.start)
