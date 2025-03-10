@@ -7,10 +7,12 @@ class OrganizedWidget extends StatelessWidget {
     super.key,
     required this.titleWidget,
     required this.bodyWidget,
+     this.titleHeight,
   });
 
   final Widget titleWidget;
   final Widget bodyWidget;
+  final double? titleHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class OrganizedWidget extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 35,
+            height:titleHeight?? 35,
             decoration: BoxDecoration(
               // boxShadow: [BoxShadow(color: AppColors.blueColor, blurRadius: 10, spreadRadius: 0.2)],
               color: AppColors.whiteColor,

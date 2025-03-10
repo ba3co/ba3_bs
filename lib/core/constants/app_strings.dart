@@ -268,7 +268,9 @@ class AppStrings {
   static const viewSellers = 'عرض البائعين';
   static const addPattern = 'اضافة نمط';
   static const mobileTarget = 'تارغت الموبايلات';
+
   static const accessoriesTarget = 'تارغت الأكسسوارات';
+
   static const achievementsPanel = 'لوحة الأنجازات';
   static const profile = 'الملف الشخصي';
   static const totalSales = 'اجمالي المبيعات';
@@ -320,4 +322,10 @@ class AppStrings {
   static const String enterOrderNumber = 'أدخل رقم الطلب';
   static const String phoneNumber = 'رقم الهاتف';
   static const String orderNumber = 'رقم الطلب';
+
+  static const String aed='درهم';
+
+  static const String totalFees='اجمالي المربح';
+  static const totalMobileTarget = 'اجمالي تارغت الموبايلات';
+  static const totalAccessoriesTarget = 'اجمالي تارغت الأكسسوارات';
 }

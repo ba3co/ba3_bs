@@ -262,7 +262,9 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       }
     }
     log('final price is $currentPrice');
-    return currentPrice;
+
+
+    return currentPrice.isNaN?0: currentPrice;
   }
 
   double _calculateLastEnterPrice(List<MatStatementModel> items) {
@@ -276,7 +278,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       (item) => item.date!,
     );
     log('last pay price is ${sellItem.lastOrNull?.price}');
-    return sellItem.lastOrNull?.price ?? 0.0;
+    return  ( sellItem.lastOrNull?.price ?? 0.0).isNaN?0:sellItem.lastOrNull?.price ?? 0.0;
   }
 
   String get screenTitle => 'حركات ${selectedMat?.matName}';

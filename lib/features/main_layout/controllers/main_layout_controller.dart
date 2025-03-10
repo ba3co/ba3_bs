@@ -19,7 +19,12 @@ import '../data/model/app_layout_item_model.dart';
 class MainLayoutController extends GetxController {
   RxList<AppLayoutItemModel> appLayouts = [
     if (RoleItemType.administrator.hasReadPermission)
-
+      AppLayoutItemModel(
+        name:'لوحة التحكم',
+        layout: const DashBoardLayout(),
+        icon: AppAssets.dashBoardIcon,
+        unSelectedIcon: AppAssets.dashBoardUnselectedIcon,
+      ),
     if (RoleItemType.viewBill.hasReadPermission)
       AppLayoutItemModel(
         name: 'الفواتير',
@@ -27,12 +32,7 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.billsIcon,
         unSelectedIcon: AppAssets.billsUnselectedIcon,
       ),
-    AppLayoutItemModel(
-      name:'لوحة التحكم',
-      layout: const DashBoardLayout(),
-      icon: AppAssets.dashBoardIcon,
-      unSelectedIcon: AppAssets.dashBoardUnselectedIcon,
-    ),
+
     if (RoleItemType.viewPattern.hasReadPermission)
       AppLayoutItemModel(
         name: 'الأنماط',

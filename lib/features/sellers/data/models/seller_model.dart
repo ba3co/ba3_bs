@@ -134,7 +134,9 @@ class SellerModel {
 
 class SellerSalesData {
   final String sellerName;
-  final double totalSales;
+  final double totalMobileSales;
+  final double totalAccessorySales;
+  final double totalFess;
 
-  SellerSalesData({required this.sellerName, required this.totalSales});
+  SellerSalesData({required this.sellerName, required this.totalMobileSales,required this.totalAccessorySales,required this.totalFess});
 }

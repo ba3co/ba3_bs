@@ -1,14 +1,19 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/models/date_filter.dart';
@@ -17,7 +22,9 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../accounts/controllers/account_statement_controller.dart';
 import '../../accounts/controllers/accounts_controller.dart';
 import '../../accounts/data/models/account_model.dart';
-import '../../patterns/controllers/pattern_controller.dart';
+import '../../sellers/controllers/seller_sales_controller.dart';
+import '../../sellers/controllers/sellers_controller.dart';
+import '../../sellers/data/models/seller_model.dart';
 import '../../users_management/data/models/user_model.dart';
 
 class DashboardLayoutController extends GetxController {
@@ -32,12 +39,16 @@ class DashboardLayoutController extends GetxController {
 
   final now = DateTime.now();
 
+  Rx<RequestState> sellerBillsRequest = RequestState.initial.obs;
+
   @override
   onInit() {
     getAllDashBoardAccounts();
-    getAllBillsThisMonth();
+    getSellersBillsByDate();
     super.onInit();
   }
+
+  PickerDateRange? dateRange = PickerDateRange(DateTime.now(), DateTime.now());
 
   List<UserModel> get allUsers => read<UserManagementController>().allUsers;
 
@@ -96,19 +107,23 @@ class DashboardLayoutController extends GetxController {
   int get allChequesDuesTodayLength => allChequesDuesToday.length;
   List<BillModel> allBillsThisMonth = [];
 
-  getAllBillsThisMonth() async {
+  getSellersBillsByDate() async {
+    sellerBillsRequest.value=RequestState.loading;
     allBillsThisMonth = await read<AllBillsController>().fetchBillsByDate(
-      read<PatternController>().billsTypeSales,
+      BillType.sales.billTypeModel,
       DateFilter(
         dateFieldName: ApiConstants.billDate,
-        range: DateTimeRange(start: now, end: now),
+        range: DateTimeRange(start: dateRange?.startDate ?? now, end: dateRange?.endDate ?? now),
       ),
     );
+    getChartData();
+    update();
+    sellerBillsRequest.value=RequestState.success;
+
   }
 
   getAllDashBoardAccounts() async {
     final result = await _datasourceRepository.getAll();
-
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (fetchedDashBoardAccounts) {
@@ -159,10 +174,6 @@ class DashboardLayoutController extends GetxController {
     update();
   }
 
-  // Fetch bond items for the selected account
-  Future<void> fetchAccountEntryBondItems() async {}
-
-  // Event Handlers
   void onAccountNameSubmitted(String text, BuildContext context) async {
     final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
 
@@ -190,5 +201,111 @@ class DashboardLayoutController extends GetxController {
       getAllDashBoardAccounts();
       update();
     }
+  }
+
+  Future<void> onSubmitDateRangePicker() async {
+    if (!isValidDateRange()) return;
+
+    log('onSubmitDateRangePicker ${dateRange!.startDate}, ${dateRange!.endDate}');
+    getSellersBillsByDate();
+  }
+
+  bool isValidDateRange() {
+    if (dateRange == null) {
+      return false;
+    }
+
+    final startDate = dateRange!.startDate;
+    final endDate = dateRange!.endDate;
+
+    if (endDate == null && startDate != null) {
+      log('dateRange!.endDate == null');
+
+      /// Last day of the month
+      ///
+      /// setting the day to 0 in the DateTime constructor rolls back to the last day of the previous month.
+      final lastDayOfMonth = DateTime(startDate.year, startDate.month + 1, 0);
+      setDateRange = PickerDateRange(startDate, lastDayOfMonth);
+      update();
+    } else if (startDate == null && endDate != null) {
+      log('dateRange!.startDate == null');
+      final startDay = DateTime(endDate.year, endDate.month, 1); // First day of the month
+      setDateRange = PickerDateRange(startDay, endDate);
+      update();
+    }
+
+    return true;
+  }
+
+  set setDateRange(PickerDateRange newValue) {
+    dateRange = newValue;
+  }
+
+  void onSelectionChanged(dateRangePickerSelectionChangedArgs) {
+    setDateRange = dateRangePickerSelectionChangedArgs.value;
+  }
+
+  List<SellerSalesData> sellerChartData = [];
+  List<BarChartGroupData> barGroups = [];
+  double maxY = 0;
+
+  double totalSales = 0;
+  double totalSalesAccessory = 0;
+  double totalSalesMobile = 0;
+  double totalFees = 0;
+
+  getChartData() {
+    sellerChartData = read<SellerSalesController>().aggregateSalesBySeller(bills: allBillsThisMonth);
+    totalSales = sellerChartData.fold(
+      0,
+      (previousValue, element) => previousValue + element.totalAccessorySales + element.totalAccessorySales,
+    );
+    totalSalesAccessory = sellerChartData.fold(
+      0,
+      (previousValue, element) => previousValue + element.totalAccessorySales,
+    );
+    totalSalesMobile = sellerChartData.fold(
+      0,
+      (previousValue, element) => previousValue + element.totalMobileSales,
+    );
+    totalFees = sellerChartData.fold(
+      0,
+      (previousValue, element) => previousValue + element.totalFess,
+    );
+    _getBarGroups();
+  }
+
+  _getBarGroups() {
+    barGroups.clear();
+    for (int i = 0; i < sellerChartData.length; i++) {
+      barGroups.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: sellerChartData[i].totalMobileSales,
+              width: 20,
+              color: AppColors.mobileSaleColor,
+              borderRadius: BorderRadius.circular(0),
+            ),
+            BarChartRodData(
+              toY: sellerChartData[i].totalAccessorySales,
+              width: 20,
+              color: AppColors.accessorySaleColor,
+              borderRadius: BorderRadius.circular(0),
+            ),
+            BarChartRodData(
+              toY: sellerChartData[i].totalFess,
+              width: 20,
+              color: AppColors.feesSaleColor,
+              borderRadius: BorderRadius.circular(0),
+            ),
+          ],
+        ),
+      );
+    }
+
+    maxY = sellerChartData.isNotEmpty ? sellerChartData.map((d) => d.totalMobileSales).reduce((a, b) => a > b ? a : b) : 0;
+    maxY *= 1.5;
   }
 }

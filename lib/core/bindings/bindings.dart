@@ -47,7 +47,6 @@ import 'package:ba3_bs/features/users_management/data/datasources/roles_data_sou
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 

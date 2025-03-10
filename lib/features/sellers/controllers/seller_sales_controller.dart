@@ -22,10 +22,11 @@ import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/data/models/bill_model.dart';
+import '../../materials/controllers/material_controller.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 import '../ui/widgets/target_pointer_widget.dart';
 
-class SellerSalesController extends GetxController with AppNavigator,FloatingLauncher {
+class SellerSalesController extends GetxController with AppNavigator, FloatingLauncher {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
 
   SellerSalesController(this._billsFirebaseRepo);
@@ -53,6 +54,7 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
 
   double totalAccessoriesSales = 0.0;
   double totalMobilesSales = 0.0;
+  double totalFees = 0.0;
 
   set setSelectedSeller(SellerModel sellerModel) {
     selectedSeller = sellerModel;
@@ -159,7 +161,7 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
     );
 
     result.fold(
-      (failure) {
+          (failure) {
         if (inFilterMode) {
           AppUIUtils.onFailure(' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
           totalAccessoriesSales = 0;
@@ -168,7 +170,7 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
         }
         sellerBills.clear();
       },
-      (bills) => _handleGetSellerBillsStatusSuccess(bills),
+          (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
   }
 
@@ -188,6 +190,7 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
     // Reset totals
     totalAccessoriesSales = 0;
     totalMobilesSales = 0;
+    totalFees = 0;
 
     final bills = inFilterMode ? filteredBills : sellerBills;
     log("calculateTotalAccessoriesMobiles ${bills.length}");
@@ -196,6 +199,8 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
     for (final bill in bills) {
       // Iterate through all items in each bill
       for (final item in bill.items.itemList) {
+        double itemCalcPrice = read<MaterialController>().getMaterialMinPriceById(item.itemGuid);
+
         if (item.itemSubTotalPrice != null) {
           double itemTotal = item.itemTotalPrice.toDouble;
 
@@ -205,15 +210,34 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
             totalMobilesSales += itemTotal;
           }
         }
+
+        totalFees += item.itemSubTotalPrice! - itemCalcPrice;
+        if ( totalFees.isNaN||totalFees.isInfinite) {
+          log(item.itemSubTotalPrice!.toString());
+          log(itemCalcPrice.toString());
+          log('item is ${read<MaterialController>().getMaterialNameById(item.itemGuid)}');
+        }
       }
     }
     profileScreenState.value = RequestState.success;
-    update();
+
+
+    safeUpdateUI();
   }
 
-  void navigateToAddSellerScreen({SellerModel? seller,required BuildContext context}) {
+  void safeUpdateUI() =>
+      WidgetsFlutterBinding
+          .ensureInitialized()
+          .waitUntilFirstFrameRasterized
+          .then(
+            (value) {
+          update();
+        },
+      );
+
+  void navigateToAddSellerScreen({SellerModel? seller, required BuildContext context}) {
     read<AddSellerController>().init(seller);
-    launchFloatingWindow(context: context, floatingScreen: AddSellerScreen(),defaultHeight: 100.h,defaultWidth: 200.w);
+    launchFloatingWindow(context: context, floatingScreen: AddSellerScreen(), defaultHeight: 100.h, defaultWidth: 200.w);
 
     // to(AppRoutes.addSellerScreen);
   }
@@ -236,26 +260,27 @@ class SellerSalesController extends GetxController with AppNavigator,FloatingLau
 
   void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
 
+
   List<SellerSalesData> aggregateSalesBySeller({
     required List<BillModel> bills,
-    required String Function(String sellerId) getSellerNameById,
-  }) {
-    final Map<String, double> salesMap = {};
 
+  }) {
+    final Map<String, List<BillModel>> salesMap = {};
     for (final bill in bills) {
-      // الحصول على معرف البائع
       final sellerId = bill.billDetails.billSellerId ?? 'unknown';
-      if(getSellerNameById(sellerId)=='') continue;
-      // الحصول على إجمالي المبيعات لهذه الفاتورة
-      final billTotal = bill.billDetails.billTotal ?? 0.0;
-      salesMap[sellerId] = (salesMap[sellerId] ?? 0.0) + billTotal;
+      if (read<SellersController>().getSellerNameById(sellerId) == '') continue;
+      if (salesMap[sellerId] != null) {
+        salesMap[sellerId]!.add(bill);
+      } else {
+        salesMap[sellerId] = [bill];
+      }
     }
 
-    // تحويل البيانات إلى قائمة SellerSalesData باستخدام اسم البائع
     return salesMap.entries.map((entry) {
-      final sellerName = getSellerNameById(entry.key);
-      return SellerSalesData(sellerName: sellerName, totalSales: entry.value);
+      final sellerName = read<SellersController>().getSellerNameById(entry.key);
+      _handleGetSellerBillsStatusSuccess(entry.value);
+      return SellerSalesData(
+          sellerName: sellerName, totalMobileSales: totalMobilesSales, totalAccessorySales: totalAccessoriesSales, totalFess:totalFees);
     }).toList();
   }
-
 }

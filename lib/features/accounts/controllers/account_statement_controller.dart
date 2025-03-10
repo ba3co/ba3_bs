@@ -282,7 +282,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     }
 
     final accountChildren = _accountsController.getAccountChildren(accountModel.id);
-    log('Number of children: ${accountModel.accAccNSons}', name: 'accAccNSons');
+    // log('Number of children: ${accountModel.accAccNSons}', name: 'accAccNSons');
 
     return accountChildren.map(AccountEntity.fromAccountModel).toList();
   }
@@ -304,7 +304,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     final accountEntities = _getAccountEntities(accountModel);
 
     for (var account in accountEntities) {
-      log(account.name, name: 'Account name');
+      // log(account.name, name: 'Account name');
 
       final result = await _accountsStatementsRepo.getAll(account);
       result.fold(

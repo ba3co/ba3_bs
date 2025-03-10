@@ -72,18 +72,20 @@ class BoxOrganizeWidget extends StatelessWidget {
             bottom: 10,
             left: 10,
             right: 10,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(child: Text(titleText, style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white))),
-                Divider(color: Colors.grey.shade300,),
-                SizedBox(
-                  height:60.h ,
-                  child: childWidget,
-                ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(child: Text(titleText, style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white))),
+                  Divider(color: Colors.grey.shade300,),
+                  SizedBox(
+                    height:60.h ,
+                    child: childWidget,
+                  ),
 
-              ],
+                ],
+              ),
             ),
           ),
         ],

@@ -63,3 +63,16 @@ extension TimeParsing on String {
     );
   }
 }
+
+extension NumberFormatting on String {
+  String formatNumber({int decimalPlaces = 2}) {
+    double? number = double.tryParse(this);
+
+    if (number == null || number.isNaN || number.isInfinite) {
+      return "0"; // ضمان عدم إرجاع NaN أو قيم غير صحيحة
+    }
+
+    final formatter = NumberFormat("#,##0.${'0' * decimalPlaces}", "en_US");
+    return formatter.format(number);
+  }
+}
