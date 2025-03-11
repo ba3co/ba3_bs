@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_pie_chart.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/bill_profit_chart.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,11 +35,14 @@ class DashBoardLayout extends StatelessWidget {
                   )),
                   bodyWidget: AllAttendanceScreen()),
               VerticalSpace(),
+
               AnimatedCrossFade(
                   firstChild: AllSellersSalesBarChart(controller: controller),
                   secondChild: AllSellersSalesPieChart(controller: controller),
-                  crossFadeState: controller.crossFadeState,
-                  duration: Durations.extralong4)
+                  crossFadeState: controller.crossSellerFadeState,
+                  duration: Durations.extralong4),
+              VerticalSpace(20),
+              BillProfitChart(bills: controller.allBillsThisMonth)
             ],
           ),
         );

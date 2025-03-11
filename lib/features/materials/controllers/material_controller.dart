@@ -469,12 +469,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   resetMaterialQuantityAndPrice() async {
-    log(materials
-        .where(
-          (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
-        )
-        .length
-        .toString());
+
     for (final material in materials.where(
       (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
     )) {

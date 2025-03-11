@@ -8,10 +8,10 @@ import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../sellers/ui/widgets/date_range_picker.dart';
 
-class DateFilterHeader extends StatelessWidget {
+class SellerDateFilterHeader extends StatelessWidget {
   final DashboardLayoutController controller;
 
-  const DateFilterHeader({super.key, required this.controller});
+  const SellerDateFilterHeader({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,10 @@ class DateFilterHeader extends StatelessWidget {
             IconButton(
               tooltip: AppStrings.swap.tr,
               icon: Icon(
-                controller.crossFadeState == CrossFadeState.showFirst?   FontAwesomeIcons.chartPie: FontAwesomeIcons.chartSimple,
+                controller.crossSellerFadeState == CrossFadeState.showFirst?   FontAwesomeIcons.chartPie: FontAwesomeIcons.chartSimple,
                 color: AppColors.lightBlueColor,
               ),
-              onPressed: controller.swapCrossFadeState,
+              onPressed: controller.swapSellerCrossFadeState,
             ),
             IconButton(
               tooltip: AppStrings.refresh.tr,

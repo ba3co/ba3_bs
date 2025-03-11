@@ -253,13 +253,13 @@ class DashboardLayoutController extends GetxController {
   double totalSalesMobile = 0;
   double totalFees = 0;
 
-  CrossFadeState crossFadeState = CrossFadeState.showFirst;
+  CrossFadeState crossSellerFadeState = CrossFadeState.showFirst;
 
-  swapCrossFadeState() {
-    if(crossFadeState == CrossFadeState.showFirst){
-      crossFadeState = CrossFadeState.showSecond;
-    }else if(crossFadeState == CrossFadeState.showSecond){
-      crossFadeState = CrossFadeState.showFirst;
+  swapSellerCrossFadeState() {
+    if(crossSellerFadeState == CrossFadeState.showFirst){
+      crossSellerFadeState = CrossFadeState.showSecond;
+    }else if(crossSellerFadeState == CrossFadeState.showSecond){
+      crossSellerFadeState = CrossFadeState.showFirst;
     }
     update();
   }

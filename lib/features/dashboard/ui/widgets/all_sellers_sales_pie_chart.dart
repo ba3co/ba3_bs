@@ -8,7 +8,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import 'chart_summary_section.dart';
-import 'date_filter_header.dart';
+import 'seller_date_filter_header.dart';
 
 class AllSellersSalesPieChart extends StatelessWidget {
   final DashboardLayoutController controller;
@@ -23,7 +23,7 @@ class AllSellersSalesPieChart extends StatelessWidget {
     return Obx(() {
       return Column(
         children: [
-          DateFilterHeader(controller: controller),
+          SellerDateFilterHeader(controller: controller),
           controller.sellerBillsRequest.value == RequestState.loading
               ? Shimmer.fromColors(
             baseColor: Colors.grey[300]!,

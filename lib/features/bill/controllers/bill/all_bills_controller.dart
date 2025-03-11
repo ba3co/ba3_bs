@@ -115,22 +115,24 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
 
-/*    log("allNestedBills is ${allNestedBills.length}");
+    log("allNestedBills is ${allNestedBills.length}");
+/*
     await createAndStoreMatsStatements(
       sourceModels: allNestedBills,
       onProgress: (progress) {
         uploadProgress.value = progress; // Update progress
         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
       },
-    );*/
+    );
+*/
 
-    await createAndStoreEntryBonds(
+/*    await createAndStoreEntryBonds(
       sourceModels: allNestedBills,
       onProgress: (progress) {
         uploadProgress.value = progress; // Update progress
         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
       },
-    );
+    );*/
     getAllNestedBillsRequestState.value = RequestState.success;
   }
 

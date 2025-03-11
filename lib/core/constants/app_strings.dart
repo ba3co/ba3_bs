@@ -330,4 +330,6 @@ class AppStrings {
   static const totalAccessoriesTarget = 'اجمالي تارغت الأكسسوارات';
 
   static const swap='تبديل';
+
+  static const  profit='المرابح';
 }
