@@ -1,4 +1,5 @@
 
+import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/app_ui_utils.dart';
@@ -55,8 +56,9 @@ class AppButton extends StatelessWidget {
                       child: Text(
                           title,
                           maxLines: 1,
+                          textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: fontSize ?? 12),
+                          style: AppTextStyles.headLineStyle3.copyWith(fontSize: fontSize ?? 12,color: Colors.white),
                         ),
                     ),
                 if (iconData != null) Icon(iconData, size: iconSize ?? 18, color: Colors.white),

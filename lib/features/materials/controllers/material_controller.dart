@@ -278,12 +278,12 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   MaterialModel? getMaterialById(String id) {
     return materials.firstWhereOrNull((material) => material.id == id);
   }
+
   double getMaterialMinPriceById(String id) {
     double price = materials.firstWhereOrNull((material) => material.id == id)?.calcMinPrice ?? 0.0;
 
-    return price.isNaN||price.isInfinite ? 0.0 : price;
+    return price.isNaN || price.isInfinite ? 0.0 : price;
   }
-
 
   bool doesMaterialExist(String? materialName) {
     if (materialName == null) return false;
@@ -311,7 +311,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       return materials
           .where((element) => (element.matName! == name.encodeProblematic().encodeProblematic() ||
               element.matName! == name ||
-              element.matName!.decodeProblematic().decodeProblematic() == name))
+              element.matName!.decodeProblematic().decodeProblematic() == name ||
+              element.matName!.removeAllWhitespace == name.removeAllWhitespace))
           .firstOrNull;
     }
     return null;

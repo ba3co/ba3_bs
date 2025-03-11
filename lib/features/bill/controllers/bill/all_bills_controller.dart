@@ -58,13 +58,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
   final List<BillModel> allNestedBills = [];
 
   final List<BillModel> pendingBills = [];
+  final List<BillModel> nunPendingBills = [];
 
   final pendingBillsCountsByType = <BillTypeModel, int>{};
   final allBillsCountsByType = <BillTypeModel, int>{};
 
   bool plutoGridIsLoading = true;
 
-  bool isPendingBillsLoading = true;
+  bool isBillsLoading = true;
 
   final Rx<RequestState> getBillsTypesRequestState = RequestState.initial.obs;
 
@@ -198,10 +199,26 @@ class AllBillsController extends FloatingBillDetailsLauncher
       },
     );
 
-    isPendingBillsLoading = false;
+    isBillsLoading = false;
     update();
   }
+  Future<void> fetchNunPendingBills(BillTypeModel billTypeModel) async {
+    isBillsLoading = true;
+    update();
+    navigateToPendingBillsScreen();
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
 
+    result.fold(
+          (failure) => AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}'),
+          (fetchedPendingBills) {
+            nunPendingBills.assignAll(fetchedPendingBills);
+
+      },
+    );
+
+    isBillsLoading = false;
+    update();
+  }
   Future<List<BillModel>> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, dateFilter: dateFilter);
     List<BillModel> allBills = [];

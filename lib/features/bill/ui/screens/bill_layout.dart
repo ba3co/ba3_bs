@@ -10,6 +10,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart'
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
@@ -60,7 +61,7 @@ class BillLayout extends StatelessWidget {
                             IconButton(
                               tooltip: AppStrings.refresh.tr,
                               icon: Icon(
-                                Icons.refresh,
+                                FontAwesomeIcons.refresh,
                                 color: AppColors.lightBlueColor,
                               ),
                               onPressed: allBillsController.refreshBillsTypes,
@@ -85,14 +86,14 @@ class BillLayout extends StatelessWidget {
                                   child: PopupMenuButton<String>(
                                     child: Row(
                                       children: [
-                                        Icon(Icons.search, color: Colors.black54),
+                                        Icon( FontAwesomeIcons.search, color: Colors.black54),
                                         SizedBox(width: 8),
                                         Text(AppStrings.searchBill.tr),
-                                        Icon(Icons.arrow_right, color: Colors.black54),
+                                        Icon(FontAwesomeIcons.arrowRight, color: Colors.black54),
                                       ],
                                     ),
                                     onSelected: (value) {
-                                      Navigator.pop(context); // يغلق القائمة الفرعية
+                                      Navigator.pop(context);
 
                                       if (value == AppConstants.searchByPhone) {
                                         _showSearchDialog(context, allBillsController, searchType: 'phone');
@@ -126,7 +127,7 @@ class BillLayout extends StatelessWidget {
                                 ),
                               ],
                               icon: Icon(
-                                Icons.more_vert,
+                                FontAwesomeIcons.ellipsisVertical,
                                 color: AppColors.lightBlueColor,
                               ),
                             ),

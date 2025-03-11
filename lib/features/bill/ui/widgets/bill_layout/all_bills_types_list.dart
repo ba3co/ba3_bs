@@ -34,15 +34,11 @@ class AllBillsTypesList extends StatelessWidget {
                         (billTypeModel) => BillTypeItemWidget(
                           text: read<TranslationController>().currentLocaleIsRtl ? billTypeModel.fullName! : billTypeModel.latinFullName!,
                           color: Color(billTypeModel.color!),
-                          onTap: () {
-                            allBillsController.openFloatingBillDetails(context, billTypeModel);
-                            // allBillsController.fetchAllBillsByType( billTypeModel);
-                          },
+                          onTap: () => allBillsController.openFloatingBillDetails(context, billTypeModel),
+                          onAllBillsPressed: ()=>allBillsController.fetchNunPendingBills(billTypeModel),
                           pendingBillsCounts: allBillsController.pendingBillsCounts(billTypeModel),
                           allBillsCounts: allBillsController.allBillsCounts(billTypeModel),
-                          onPendingBillsPressed: () {
-                            allBillsController.fetchPendingBills(billTypeModel);
-                          },
+                          onPendingBillsPressed: () => allBillsController.fetchPendingBills(billTypeModel),
                         ),
                       )
                       .toList()
@@ -52,15 +48,11 @@ class AllBillsTypesList extends StatelessWidget {
                             ? patternController.billsTypeSales.fullName!
                             : patternController.billsTypeSales.latinFullName!,
                         color: Color(patternController.billsTypeSales.color!),
-                        onTap: () {
-                          allBillsController.openFloatingBillDetails(context, patternController.billsTypeSales);
-                          // allBillsController.fetchAllBillsByType( billTypeModel);
-                        },
+                        onTap: () => allBillsController.openFloatingBillDetails(context, patternController.billsTypeSales),
+                        onAllBillsPressed: () => allBillsController.fetchNunPendingBills( patternController.billsTypeSales),
                         pendingBillsCounts: allBillsController.pendingBillsCounts(patternController.billsTypeSales),
                         allBillsCounts: allBillsController.allBillsCounts(patternController.billsTypeSales),
-                        onPendingBillsPressed: () {
-                          allBillsController.fetchPendingBills(patternController.billsTypeSales);
-                        },
+                        onPendingBillsPressed: () => allBillsController.fetchPendingBills(patternController.billsTypeSales),
                       )
                     ],
         );

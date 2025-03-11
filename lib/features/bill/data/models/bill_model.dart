@@ -312,8 +312,6 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         createAutoIdColumn(): '#',
         PlutoColumn(title: AppStrings.billStatus.tr, field: 'حالة الفاتورة', type: PlutoColumnType.text()): status.value,
         PlutoColumn(title: AppStrings.billNumber.tr, field: 'رقم الفاتورة', type: PlutoColumnType.number()): billDetails.billNumber ?? 0,
-        PlutoColumn(title: AppStrings.billType.tr, field: 'نوع الفاتورة', type: PlutoColumnType.text()):
-            BillType.byLabel(billTypeModel.billTypeLabel ?? '').value,
         PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()): billDetails.billDate?.dayMonthYear ?? '',
         PlutoColumn(title: AppStrings.taxTotal.tr, field: 'مجموع الضريبة', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billVatTotal),

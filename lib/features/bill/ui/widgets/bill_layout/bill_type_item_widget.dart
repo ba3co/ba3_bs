@@ -18,6 +18,7 @@ class BillTypeItemWidget extends StatelessWidget {
     this.isLoading = false,
     required this.pendingBillsCounts,
     required this.allBillsCounts,
+    required this.onAllBillsPressed,
   });
 
   final VoidCallback onTap;
@@ -28,6 +29,7 @@ class BillTypeItemWidget extends StatelessWidget {
   final int allBillsCounts;
 
   final VoidCallback onPendingBillsPressed;
+  final VoidCallback onAllBillsPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +58,20 @@ class BillTypeItemWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Row(
-                        spacing: 5,
-                        children: [
-                          Text(
-                            AppStrings.allBills.tr,
-                          ),
-                          Text(
-                            '$allBillsCounts',
-                            style: TextStyle(color: color),
-                          ),
-                        ],
+                      InkWell(
+                        onTap: onAllBillsPressed,
+                        child: Row(
+                          spacing: 5,
+                          children: [
+                            Text(
+                              AppStrings.allBills.tr,
+                            ),
+                            Text(
+                              '$allBillsCounts',
+                              style: TextStyle(color: color),
+                            ),
+                          ],
+                        ),
                       ),
                       InkWell(
                         onTap: onPendingBillsPressed,
