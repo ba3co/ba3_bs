@@ -302,7 +302,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
       }
 
       // Apply the updated serial numbers to the material model
-      materialController.updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+      materialController.updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
     }
   }
 
@@ -486,7 +486,7 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         };
 
         // Update the material model with new serial numbers
-        read<MaterialController>().updateMaterial(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+        read<MaterialController>().updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
       }
     });
   }

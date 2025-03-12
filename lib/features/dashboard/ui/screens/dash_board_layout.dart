@@ -2,15 +2,15 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_pie_chart.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/bill_profit_chart.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_bar_board.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_pie_board.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/widgets/tow_field_row.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
 import '../../controller/dashboard_layout_controller.dart';
-import '../widgets/all_sellers_sales_bar_chart.dart';
+import '../widgets/bill_profit_bord.dart';
 import '../widgets/box_organize_widget.dart';
 
 class DashBoardLayout extends StatelessWidget {
@@ -37,12 +37,12 @@ class DashBoardLayout extends StatelessWidget {
               VerticalSpace(),
 
               AnimatedCrossFade(
-                  firstChild: AllSellersSalesBarChart(controller: controller),
-                  secondChild: AllSellersSalesPieChart(controller: controller),
+                  firstChild: AllSellersSalesBarBoard(controller: controller),
+                  secondChild: AllSellersSalesPieBoard(controller: controller),
                   crossFadeState: controller.crossSellerFadeState,
                   duration: Durations.extralong4),
               VerticalSpace(20),
-              BillProfitChart(bills: controller.allBillsThisMonth)
+              BillProfitBord(dashboardLayoutController: controller)
             ],
           ),
         );

@@ -1,3 +1,5 @@
+
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
@@ -27,8 +29,7 @@ class SellerSalesScreen extends StatelessWidget {
               width: 0.33.sw,
               child: UserTargets(salesController: controller)),
           onSelected: (event) {
-            final billId = event.row?.cells['billId']?.value;
-
+            final billId = event.row?.cells[AppConstants.billIdFiled]?.value;
             // print( (billTypeName as Map<String,dynamic>));
 
             if (billId != null) {

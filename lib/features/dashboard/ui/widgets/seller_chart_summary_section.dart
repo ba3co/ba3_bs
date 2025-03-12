@@ -6,10 +6,10 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
 import 'chart_box_widget.dart';
 
-class ChartSummarySection extends StatelessWidget {
+class SellerChartSummarySection extends StatelessWidget {
   final DashboardLayoutController controller;
 
-  const ChartSummarySection({super.key, required this.controller});
+  const SellerChartSummarySection({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +27,31 @@ class ChartSummarySection extends StatelessWidget {
               ChartItem(
                 color: AppColors.totalSaleColor,
                 text: AppStrings.totalSales.tr,
-                total: controller.totalSales.toStringAsFixed(2),
+                total: controller.totalSellerSales.toStringAsFixed(2),
               ),
               ChartItem(
                 color: AppColors.mobileSaleColor,
+                onTap:controller.changeSellerTotalMobileTarget,
                 text: AppStrings.totalMobileTarget.tr,
-                total: controller.totalSalesMobile.toStringAsFixed(2),
+                total: controller.totalSellerSalesMobile.toStringAsFixed(2),
               ),
             ],
           ),
           ChartColumn(
             items: [
               ChartItem(
+                onTap:controller.changeSellerAccessoryTarget,
+
                 color: AppColors.accessorySaleColor,
                 text: AppStrings.totalAccessoriesTarget.tr,
-                total: controller.totalSalesAccessory.toStringAsFixed(2),
+                total: controller.totalSellerSalesAccessory.toStringAsFixed(2),
               ),
               ChartItem(
-                color: AppColors.totalSaleColor,
+                onTap:controller.changeSellerTotalFees,
+
+                color: AppColors.feesSaleColor,
                 text: AppStrings.totalFees.tr,
-                total: controller.totalFees.toStringAsFixed(2),
+                total: controller.totalSellerFees.toStringAsFixed(2),
               ),
             ],
           ),
@@ -54,30 +59,4 @@ class ChartSummarySection extends StatelessWidget {
       ),
     );
   }
-}
-
-class ChartColumn extends StatelessWidget {
-  final List<ChartItem> items;
-
-  const ChartColumn({super.key, required this.items});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: items.map((item) => ChartBoxWidget(
-        color: item.color,
-        text: item.text,
-        totals: item.total,
-      )).toList(),
-    );
-  }
-}
-
-class ChartItem {
-  final Color color;
-  final String text;
-  final String total;
-
-  ChartItem({required this.color, required this.text, required this.total});
 }

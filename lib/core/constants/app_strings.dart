@@ -325,9 +325,9 @@ class AppStrings {
 
   static const String aed='درهم';
 
-  static const String totalFees='اجمالي المربح';
-  static const totalMobileTarget = 'اجمالي تارغت الموبايلات';
-  static const totalAccessoriesTarget = 'اجمالي تارغت الأكسسوارات';
+  static const String totalFees='اجمالي الربح';
+  static const totalMobileTarget = 'اجمالي مبيع الموبايلات';
+  static const totalAccessoriesTarget = 'اجمالي مبيع الأكسسوارات';
 
   static const swap='تبديل';
 

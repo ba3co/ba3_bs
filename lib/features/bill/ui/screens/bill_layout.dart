@@ -15,6 +15,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../materials/controllers/mats_statement_controller.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
 
 class BillLayout extends StatelessWidget {
@@ -155,7 +156,7 @@ class BillLayout extends StatelessWidget {
                     onPressed: () {
                       allBillsController.fetchAllNestedBills();
                       // read<MaterialsStatementController>().setupAllMaterials();
-                      // read<MaterialsStatementController>().setupOneMaterials("df265478-450a-4d11-876c-76543be72ae1");
+                      read<MaterialsStatementController>().setupOneMaterials("9a2ff3f6-0d62-4f5e-b76c-83ce2eeb6183");
                       // read<MaterialController>().updateAllMaterialWithDecodeProblematic();
                     },
                     child: Icon(

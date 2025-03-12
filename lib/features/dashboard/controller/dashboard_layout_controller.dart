@@ -9,10 +9,12 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -39,11 +41,13 @@ class DashboardLayoutController extends GetxController {
   final now = DateTime.now();
 
   Rx<RequestState> sellerBillsRequest = RequestState.initial.obs;
+  Rx<RequestState> profitsBillsRequest = RequestState.initial.obs;
 
   @override
   onInit() {
     getAllDashBoardAccounts();
     getSellersBillsByDate();
+    initProfitChartData();
     super.onInit();
   }
 
@@ -107,7 +111,7 @@ class DashboardLayoutController extends GetxController {
   List<BillModel> allBillsThisMonth = [];
 
   getSellersBillsByDate() async {
-    sellerBillsRequest.value=RequestState.loading;
+    sellerBillsRequest.value = RequestState.loading;
     allBillsThisMonth = await read<AllBillsController>().fetchBillsByDate(
       BillType.sales.billTypeModel,
       DateFilter(
@@ -117,8 +121,7 @@ class DashboardLayoutController extends GetxController {
     );
     getChartData();
     update();
-    sellerBillsRequest.value=RequestState.success;
-
+    sellerBillsRequest.value = RequestState.success;
   }
 
   getAllDashBoardAccounts() async {
@@ -245,20 +248,123 @@ class DashboardLayoutController extends GetxController {
   }
 
   List<SellerSalesData> sellerChartData = [];
-  List<BarChartGroupData> barGroups = [];
-  double maxY = 0;
+  List<BillModel> profitChartData = [];
+  List<BarChartGroupData> sellerBarGroups = [];
+  double sellerMaxY = 0;
 
-  double totalSales = 0;
-  double totalSalesAccessory = 0;
-  double totalSalesMobile = 0;
-  double totalFees = 0;
+  double totalSellerSales = 0;
+  double totalSellerSalesAccessory = 0;
+  double totalSellerSalesMobile = 0;
+  double totalSellerFees = 0;
+  double totalMonthSales = 0;
+  double totalMonthFees = 0;
 
   CrossFadeState crossSellerFadeState = CrossFadeState.showFirst;
 
+  double minX = 0;
+  double maxX = 0;
+  double maxY = 0;
+  List<FlSpot> profitSpots = [];
+  List<FlSpot> totalSellsSpots = [];
+  Rx<DateTime> profitMonth = DateTime.now().obs;
+
+  Rx<bool> isTotalSalesVisible = true.obs;
+
+  Rx<bool> isProfitVisible = true.obs;
+
+  set setProfitMonth(DateTime setMonth) {
+    profitMonth.value = setMonth;
+  }
+
+  changeProfitVisibility() {
+    isProfitVisible.value = !isProfitVisible.value;
+    generateDailyProfitData();
+  }
+  changeTotalVisibility() {
+    isTotalSalesVisible.value = !isTotalSalesVisible.value;
+    generateDailyProfitData();
+  }
+
+  getProfitChartData() async {
+    profitsBillsRequest.value = RequestState.loading;
+    profitChartData = await read<AllBillsController>().fetchBillsByDate(
+      BillType.sales.billTypeModel,
+      DateFilter(
+        dateFieldName: ApiConstants.billDate,
+        range: DateTimeRange(start: profitMonth.value.copyWith(day: 0), end: profitMonth.value.copyWith(day: 31)),
+      ),
+    );
+    getChartData();
+    update();
+    totalMonthSales = profitChartData.fold(
+      0,
+      (previousValue, element) => previousValue + element.billDetails.billTotal!,
+    );
+    profitsBillsRequest.value = RequestState.success;
+  }
+
+  generateDailyProfitData() {
+    Map<String, double> dailyProfits = {};
+    Map<String, double> dailyTotal = {};
+    totalMonthFees = 0;
+    for (var bill in profitChartData) {
+      double totalProfit = 0.0;
+
+      for (final item in bill.items.itemList) {
+        double itemCalcPrice = read<MaterialController>().getMaterialMinPriceById(item.itemGuid);
+
+        if (item.itemSubTotalPrice != null) {
+          totalProfit += item.itemSubTotalPrice! - itemCalcPrice;
+          totalMonthFees += totalProfit;
+        }
+      }
+
+      DateTime billDate = DateTime.utc(
+        bill.billDetails.billDate!.year,
+        bill.billDetails.billDate!.month,
+        bill.billDetails.billDate!.day,
+      );
+
+      String dayKey = DateFormat('yyyy-MM-dd').format(billDate);
+
+      if (dailyProfits.containsKey(dayKey)) {
+        dailyProfits[dayKey] = dailyProfits[dayKey]! + totalProfit;
+      } else {
+        dailyProfits[dayKey] = totalProfit;
+      }
+
+      if (dailyTotal.containsKey(dayKey)) {
+        dailyTotal[dayKey] = dailyTotal[dayKey]! + bill.billDetails.billTotal!;
+      } else {
+        dailyTotal[dayKey] = bill.billDetails.billTotal!;
+      }
+    }
+
+    profitSpots = dailyProfits.entries.map((entry) {
+      DateTime date = DateFormat('yyyy-MM-dd').parseUtc(entry.key);
+      double timestamp = date.millisecondsSinceEpoch.toDouble(); // ضبط النقاط على بداية اليوم بالضبط
+
+      return FlSpot(timestamp, entry.value);
+    }).toList();
+    totalSellsSpots = dailyTotal.entries.map((entry) {
+      DateTime date = DateFormat('yyyy-MM-dd').parseUtc(entry.key);
+      double timestamp = date.millisecondsSinceEpoch.toDouble(); // ضبط النقاط على بداية اليوم بالضبط
+
+      return FlSpot(timestamp, entry.value);
+    }).toList();
+
+    profitSpots.sort((a, b) => a.x.compareTo(b.x));
+    minX = profitSpots.isNotEmpty ? profitSpots.first.x : 0;
+    maxX = profitSpots.isNotEmpty ? profitSpots.last.x : 1;
+    maxY = totalSellsSpots.map((e) => e.y).reduce((value, element) => value > element ? value : element) + 10000;
+
+    update();
+  }
+
   swapSellerCrossFadeState() {
-    if(crossSellerFadeState == CrossFadeState.showFirst){
+    if (crossSellerFadeState == CrossFadeState.showFirst) {
       crossSellerFadeState = CrossFadeState.showSecond;
-    }else if(crossSellerFadeState == CrossFadeState.showSecond){
+    } else if (crossSellerFadeState == CrossFadeState.showSecond) {
       crossSellerFadeState = CrossFadeState.showFirst;
     }
     update();
@@ -266,48 +372,56 @@ class DashboardLayoutController extends GetxController {
 
   getChartData() {
     sellerChartData = read<SellerSalesController>().aggregateSalesBySeller(bills: allBillsThisMonth);
-    totalSales = sellerChartData.fold(
+    totalSellerSales = sellerChartData.fold(
       0,
-      (previousValue, element) => previousValue + element.totalAccessorySales + element.totalAccessorySales,
+      (previousValue, element) => previousValue + element.totalAccessorySales + element.totalMobileSales,
     );
-    totalSalesAccessory = sellerChartData.fold(
+    totalSellerSalesAccessory = sellerChartData.fold(
       0,
       (previousValue, element) => previousValue + element.totalAccessorySales,
     );
-    totalSalesMobile = sellerChartData.fold(
+    totalSellerSalesMobile = sellerChartData.fold(
       0,
       (previousValue, element) => previousValue + element.totalMobileSales,
     );
-    totalFees = sellerChartData.fold(
+    totalSellerFees = sellerChartData.fold(
       0,
       (previousValue, element) => previousValue + element.totalFess,
     );
     _getBarGroups();
   }
+ bool sellerTotalFees=true;
 
+  changeSellerTotalFees() {
+    sellerTotalFees=!sellerTotalFees;
+    _getBarGroups();
+    update();
+  }
   _getBarGroups() {
-    barGroups.clear();
+    sellerBarGroups.clear();
     for (int i = 0; i < sellerChartData.length; i++) {
-      barGroups.add(
+      sellerBarGroups.add(
         BarChartGroupData(
           x: i,
           barRods: [
+            if(isSellerMobileTargetVisible)
             BarChartRodData(
               toY: sellerChartData[i].totalMobileSales,
               width: 20,
               color: AppColors.mobileSaleColor,
               borderRadius: BorderRadius.circular(3),
             ),
+            if(isSellerAccessoryTargetVisible)
             BarChartRodData(
               toY: sellerChartData[i].totalAccessorySales,
               width: 20,
               color: AppColors.accessorySaleColor,
               borderRadius: BorderRadius.circular(3),
             ),
+            if(sellerTotalFees)
             BarChartRodData(
               toY: sellerChartData[i].totalFess,
               width: 20,
-
               color: AppColors.feesSaleColor,
               borderRadius: BorderRadius.circular(3),
             ),
@@ -316,7 +430,31 @@ class DashboardLayoutController extends GetxController {
       );
     }
 
-    maxY = sellerChartData.isNotEmpty ? sellerChartData.map((d) => d.totalMobileSales).reduce((a, b) => a > b ? a : b) : 0;
-    maxY *= 1.5;
+    sellerMaxY = sellerChartData.isNotEmpty ? sellerChartData.map((d) => d.totalMobileSales).reduce((a, b) => a > b ? a : b) : 0;
+    sellerMaxY *= 1.5;
+  }
+
+  initProfitChartData() async {
+    await getProfitChartData();
+    generateDailyProfitData();
+  }
+
+  void onProfitMothChange(DateTime date) async {
+    setProfitMonth = date;
+    await initProfitChartData();
+    _getBarGroups();
+    update();
+  }
+bool isSellerMobileTargetVisible=true;
+  void changeSellerTotalMobileTarget() {
+    isSellerMobileTargetVisible=!isSellerMobileTargetVisible;
+    _getBarGroups();
+    update();
+  }
+  bool isSellerAccessoryTargetVisible=true;
+  void changeSellerAccessoryTarget() {
+    isSellerAccessoryTargetVisible=!isSellerAccessoryTargetVisible;
+    _getBarGroups();
+    update();
   }
 }

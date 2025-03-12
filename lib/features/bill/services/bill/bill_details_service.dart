@@ -154,7 +154,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         updatedSerialNumbers[soldSerialNumber] = false; // Mark as unsold
 
         // Apply the update to the material model
-        materialController.updateMaterial(
+        materialController.updateMaterialWithChanges(
           materialModel.copyWith(serialNumbers: updatedSerialNumbers),
         );
 

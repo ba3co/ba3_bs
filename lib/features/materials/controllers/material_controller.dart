@@ -389,12 +389,20 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       )
       .toList();
 
-  Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
+  Future<void> updateMaterialWithChanges(MaterialModel updatedMaterialModel) async {
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
+    );
+  }
+  Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
+    final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
+
+    hiveResult.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedMaterial) => {},
     );
   }
 
@@ -459,13 +467,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   /// and then saves the updated material.
   Future<void> updateAndSaveMaterial(String matId, MaterialModel Function(MaterialModel) updateFn) async {
     final materialModel = materials.firstWhere((material) => material.id == matId);
-    materialFromHandler.init(updateFn(materialModel));
-    await saveOrUpdateMaterial();
+    // materialFromHandler.init();
+    await updateMaterial(updateFn(materialModel));
+    // await saveOrUpdateMaterial();
   }
 
   Future<void> updateMaterialByModel(MaterialModel materialModel, MaterialModel Function(MaterialModel) updateFn) async {
-    materialFromHandler.init(updateFn(materialModel));
-    await saveOrUpdateMaterial();
+    await updateMaterial(updateFn(materialModel));
   }
 
   resetMaterialQuantityAndPrice() async {

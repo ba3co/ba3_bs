@@ -7,8 +7,6 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/helper/enums/enums.dart';
-import 'chart_summary_section.dart';
-import 'seller_date_filter_header.dart';
 
 class AllSellersSalesPieChart extends StatelessWidget {
   final DashboardLayoutController controller;
@@ -21,48 +19,42 @@ class AllSellersSalesPieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return Column(
-        children: [
-          SellerDateFilterHeader(controller: controller),
-          controller.sellerBillsRequest.value == RequestState.loading
-              ? Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            direction: ShimmerDirection.btt,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              height: 400.h,
-              width: 1.1.sw,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-          )
-              : Container(
+      return controller.sellerBillsRequest.value == RequestState.loading
+          ? Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
+        direction: ShimmerDirection.btt,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          height: 400.h,
+          width: 1.1.sw,
+          decoration: BoxDecoration(
             color: Colors.white,
-            padding: const EdgeInsets.all(16),
-            height: 600.h,
-            width: 1.1.sw,
-            child: PieChart(
-              PieChartData(
-                sections: _getPieChartSections(),
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+      )
+          : Container(
+        color: Colors.white,
+        padding: const EdgeInsets.all(16),
+        height: 600.h,
+        width: 1.1.sw,
+        child: PieChart(
+          PieChartData(
+            sections: _getPieChartSections(),
 
-                borderData: FlBorderData(show: false),
-                centerSpaceRadius:180,
-                sectionsSpace: 0,
-                pieTouchData: PieTouchData(
-                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                    if (!event.isInterestedForInteractions || pieTouchResponse == null) return;
-                    final touchedSection = pieTouchResponse.touchedSection;
-                    if (touchedSection == null) return; // ✅ تجنب الأخطاء عند لمس مناطق غير صالحة
-                  },
-                ),
-              ),
+            borderData: FlBorderData(show: false),
+            centerSpaceRadius:180,
+            sectionsSpace: 0,
+            pieTouchData: PieTouchData(
+              touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                if (!event.isInterestedForInteractions || pieTouchResponse == null) return;
+                final touchedSection = pieTouchResponse.touchedSection;
+                if (touchedSection == null) return; // ✅ تجنب الأخطاء عند لمس مناطق غير صالحة
+              },
             ),
           ),
-          ChartSummarySection(controller: controller),
-        ],
+        ),
       );
     });
   }

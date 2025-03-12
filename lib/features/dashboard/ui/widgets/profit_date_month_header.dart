@@ -1,13 +1,12 @@
+import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
-import '../../../../core/widgets/custom_drop_down.dart';
+import '../../../../core/widgets/month_picker.dart';
 
 class ProfitDateFilterHeader extends StatelessWidget {
   final DashboardLayoutController controller;
@@ -25,16 +24,18 @@ class ProfitDateFilterHeader extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         child: Row(
           children: [
-            CustomDropDown(
-              value:'',
-              listValue: (AppConstants.months.keys.toList()),
-              label: "اختر الشهر".tr,
-              onChange: (value) {
-                if (value != null) {
-                  // userDetailsController.userFormHandler.updateSelectedMonth(value);
-                }
-              },
-              isFullBorder: true,
+            SizedBox(
+              width: 200,
+              child: Obx(() {
+                return MonthYearPicker(
+                  initMonthYear: controller.profitMonth.value.dayMonthYear,
+                  color: AppColors.grayColor,
+                  textColor: Colors.white,
+                  onMonthYearSelected: (date) {
+                    controller.onProfitMothChange(date) ;
+                  },
+                );
+              }),
             ),
             Spacer(),
             Text(
@@ -42,22 +43,14 @@ class ProfitDateFilterHeader extends StatelessWidget {
               style: AppTextStyles.headLineStyle1,
             ),
             Spacer(),
-  /*          Spacer(),
-            IconButton(
-              tooltip: AppStrings.swap.tr,
-              icon: Icon(
-                controller.crossSellerFadeState == CrossFadeState.showFirst?   FontAwesomeIcons.chartPie: FontAwesomeIcons.chartSimple,
-                color: AppColors.lightBlueColor,
-              ),
-              onPressed: controller.swapSellerCrossFadeState,
-            ),*/
+
             IconButton(
               tooltip: AppStrings.refresh.tr,
               icon: Icon(
                 FontAwesomeIcons.refresh,
                 color: AppColors.lightBlueColor,
               ),
-              onPressed: controller.getSellersBillsByDate,
+              onPressed: controller.initProfitChartData,
             ),
           ],
         ),
