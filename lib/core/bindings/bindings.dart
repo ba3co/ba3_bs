@@ -68,6 +68,8 @@ import '../../features/bond/service/bond/bond_export.dart';
 import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/customer/service/customer_import.dart';
+import '../../features/dashboard/controller/bill_profit_dashboard_controller.dart';
+import '../../features/dashboard/controller/seller_dashboard_controller.dart';
 import '../../features/materials/controllers/material_controller.dart';
 import '../../features/materials/controllers/mats_statement_controller.dart';
 import '../../features/materials/data/datasources/local/material_local_data_source.dart';
@@ -269,6 +271,8 @@ class AppBindings extends Bindings {
   // Lazy Controllers Initialization
   void _initializeLazyControllers(_Repositories repositories) {
     lazyPut(DashboardLayoutController(repositories.dashboardAccountRepo));
+    lazyPut(SellerDashboardController());
+    lazyPut(BillProfitDashboardController());
 
     lazyPut(PlutoController());
     lazyPut(PlutoDualTableController());

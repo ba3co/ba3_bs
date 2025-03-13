@@ -1,22 +1,22 @@
 import 'package:ba3_bs/features/dashboard/ui/widgets/profit_date_month_header.dart';
 import 'package:flutter/material.dart';
-import '../../controller/dashboard_layout_controller.dart';
+import '../../controller/bill_profit_dashboard_controller.dart';
 import 'bill_profit_chart.dart';
 import 'monthly_chart_summary_section.dart';
 
 class BillProfitBord extends StatelessWidget {
-  final DashboardLayoutController dashboardLayoutController;
+  final BillProfitDashboardController billProfitDashboardController;
 
-  const BillProfitBord({super.key, required this.dashboardLayoutController});
+  const BillProfitBord({super.key, required this.billProfitDashboardController});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ProfitDateFilterHeader(controller: dashboardLayoutController),
-        BillProfitChart(dashboardLayoutController: dashboardLayoutController),
+        ProfitDateFilterHeader(controller: billProfitDashboardController),
+        BillProfitChart(billProfitDashboardController: billProfitDashboardController),
 
-        MonthlyChartSummarySection(controller: dashboardLayoutController),
+        MonthlyChartSummarySection(controller: billProfitDashboardController),
       ],
     );
   }

@@ -58,7 +58,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   final List<BillModel> allNestedBills = [];
 
   final List<BillModel> pendingBills = [];
-  final List<BillModel> nunPendingBills = [];
+
+  // final List<BillModel> nunPendingBills = [];
 
   final pendingBillsCountsByType = <BillTypeModel, int>{};
   final allBillsCountsByType = <BillTypeModel, int>{};
@@ -191,7 +192,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -204,29 +206,46 @@ class AllBillsController extends FloatingBillDetailsLauncher
     isBillsLoading = false;
     update();
   }
-  Future<void> fetchNunPendingBills(BillTypeModel billTypeModel) async {
+
+  Future<void> fetchNunPendingBills(BillTypeModel billTypeModel, BuildContext context) async {
     isBillsLoading = true;
     update();
+
+    // launchFloatingWindow(context: context, floatingScreen: AllBillsScreen());
     navigateToPendingBillsScreen();
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}'),
-          (fetchedPendingBills) {
-            nunPendingBills.assignAll(fetchedPendingBills);
-
+      (failure) => AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}'),
+      (fetchedPendingBills) {
+        bills.assignAll(fetchedPendingBills);
       },
     );
 
     isBillsLoading = false;
     update();
   }
+
+  lunchBillsScreen(List<BillModel> billsList, BuildContext context) {
+    bills.assignAll(billsList);
+    isBillsLoading=false;
+    launchFloatingWindow(
+        context: context,
+        floatingScreen: AllBillsScreen(
+          bills: bills,
+        ));
+
+
+  }
+
   Future<List<BillModel>> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, dateFilter: dateFilter);
     List<BillModel> allBills = [];
     result.fold(
-      (failure) => AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
-      (fetchedBills) => allBills =   fetchedBills,
+      (failure) => AppUIUtils.onFailure(
+          'لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
+      (fetchedBills) => allBills = fetchedBills,
     );
 
     return allBills;
@@ -401,7 +420,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   // Opens the 'Bill Details' floating window.
 
-  Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
+  Future<void> _openBillDetailsFloatingWindow(
+      {required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
     final String controllerTag = AppServiceUtils.generateUniqueTag('FloatingBillDetails');
 
     final Map<String, GetxController> controllers = setupControllers(
@@ -565,6 +585,11 @@ class AllBillsController extends FloatingBillDetailsLauncher
   final List<SerialTransactionModel> serialNumberStatements = [];
 
   String get serialNumbersStatementScreenTitle => AppStrings.serialNumbersStatement.tr;
+
+  double get totalBillsSum => bills.fold(
+        0.0,
+        (previousValue, element) => previousValue + (element.billDetails.billTotal ?? 1),
+      );
 }
 
 // 30 - 22 -> 52

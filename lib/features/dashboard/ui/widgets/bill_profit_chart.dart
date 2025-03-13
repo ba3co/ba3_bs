@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -8,17 +9,17 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../controller/dashboard_layout_controller.dart';
+import '../../controller/bill_profit_dashboard_controller.dart';
 
 class BillProfitChart extends StatelessWidget {
-  final DashboardLayoutController dashboardLayoutController;
+  final BillProfitDashboardController billProfitDashboardController;
 
-  const BillProfitChart({super.key, required this.dashboardLayoutController});
+  const BillProfitChart({super.key, required this.billProfitDashboardController});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return dashboardLayoutController.profitsBillsRequest.value == RequestState.loading
+      return billProfitDashboardController.profitsBillsRequest.value == RequestState.loading
           ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -40,23 +41,26 @@ class BillProfitChart extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: LineChart(
-
                     LineChartData(
-
-                      minX: dashboardLayoutController.minX,
-                      maxX: dashboardLayoutController.maxX,
-                      maxY: dashboardLayoutController.maxY,
+                      minX: billProfitDashboardController.minX,
+                      maxX: billProfitDashboardController.maxX,
+                      maxY: billProfitDashboardController.maxY,
                       gridData: FlGridData(show: true),
                       lineTouchData: LineTouchData(
+                        touchCallback: (p0, p1) {
+                          if (p0 is FlPanDownEvent) {
+                            if (p1?.lineBarSpots?.first.spotIndex != null) {
+                              billProfitDashboardController.lunchBillScreen(index:  p1?.lineBarSpots?.first.spotIndex.toInt(), context: context);
+                            }
+                          }
+                        },
                         touchTooltipData: LineTouchTooltipData(
                           getTooltipItems: (List<LineBarSpot> touchedSpots) {
                             return touchedSpots.map((spot) {
-
                               return LineTooltipItem(
-
                                 '${spot.y.toStringAsFixed(2)} ${AppStrings.aed.tr}',
                                 TextStyle(
-                                  color:spot.barIndex==0?spot.bar.color: Colors.white,
+                                  color: spot.barIndex == 0 ? spot.bar.color : Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),
@@ -65,7 +69,6 @@ class BillProfitChart extends StatelessWidget {
                           },
                         ),
                       ),
-
                       titlesData: FlTitlesData(
                         topTitles: AxisTitles(),
                         rightTitles: AxisTitles(),
@@ -90,26 +93,24 @@ class BillProfitChart extends StatelessWidget {
                           ),
                         ),
                       ),
-                      borderData: FlBorderData(show: true),
+                      borderData: FlBorderData(show: false),
                       lineBarsData: [
-                        if (dashboardLayoutController.isProfitVisible.value)
-
-                          LineChartBarData(
-                          spots: dashboardLayoutController.profitSpots,
+                        LineChartBarData(
+                          spots: billProfitDashboardController.profitSpots,
                           isCurved: true,
+                          show: billProfitDashboardController.isProfitVisible.value,
                           color: AppColors.feesSaleColor,
                           barWidth: 3,
-
-                          belowBarData: BarAreaData(show: true, color: AppColors.feesSaleColor.withOpacity(0.3)),
+                          belowBarData: BarAreaData(show: true, color: AppColors.feesSaleColor.withOpacity(0.9)),
                           dotData: FlDotData(show: true),
                         ),
-                        if (dashboardLayoutController.isTotalSalesVisible.value)
-
-                          LineChartBarData(
-                          spots: dashboardLayoutController.totalSellsSpots,
+                        // if (dashboardLayoutController.isTotalSalesVisible.value)
+                        LineChartBarData(
+                          spots: billProfitDashboardController.totalSellsSpots,
                           isCurved: true,
                           color: AppColors.totalSaleColor,
                           barWidth: 3,
+                          show: billProfitDashboardController.isTotalSalesVisible.value,
                           belowBarData: BarAreaData(show: true, color: AppColors.totalSaleColor.withOpacity(0.3)),
                           dotData: FlDotData(show: true),
                         ),

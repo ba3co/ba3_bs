@@ -1,4 +1,3 @@
-import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -7,9 +6,10 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../sellers/ui/widgets/date_range_picker.dart';
+import '../../controller/seller_dashboard_controller.dart';
 
 class SellerDateFilterHeader extends StatelessWidget {
-  final DashboardLayoutController controller;
+  final SellerDashboardController controller;
 
   const SellerDateFilterHeader({super.key, required this.controller});
 
@@ -30,9 +30,12 @@ class SellerDateFilterHeader extends StatelessWidget {
               onSelectionChanged: controller.onSelectionChanged,
             ),
             Spacer(),
-            Text(
-              AppStrings.sellers,
-              style: AppTextStyles.headLineStyle1,
+            GestureDetector(
+              onTap:()=>controller.openAllSellersSales(context) ,
+              child: Text(
+                AppStrings.sellers,
+                style: AppTextStyles.headLineStyle1,
+              ),
             ),
             Spacer(),
             IconButton(

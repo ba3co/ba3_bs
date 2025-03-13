@@ -2,7 +2,6 @@
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +21,11 @@ class SellerSalesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<SellerSalesController>(
         builder: (controller) => PlutoGridWithAppBar(
-          title: '${AppStrings.bills.tr} ${controller.selectedSeller!.costName}',
+          // title: '${AppStrings.bills.tr} ${controller.selectedSeller!.costName}',
           appBar: _buildAppBar(context, controller),
           onLoaded: (e) {},
           rightChild:         SizedBox(
-              width: 0.33.sw,
+              width: 0.23.sw,
               child: UserTargets(salesController: controller)),
           onSelected: (event) {
             final billId = event.row?.cells[AppConstants.billIdFiled]?.value;
@@ -47,9 +46,9 @@ class SellerSalesScreen extends StatelessWidget {
     return AppBar(
       leadingWidth: 400,
       leading: _buildLeadingSection(controller, context),
-      title: Text('${AppStrings.salesRecord.tr} ${controller.selectedSeller?.costName}'),
+      // title: Text('${AppStrings.salesRecord.tr} ${controller.selectedSeller?.costName}'),
       centerTitle: true,
-      actions: _buildActionButtons(controller),
+      // actions: _buildActionButtons(controller),
     );
   }
 
@@ -57,12 +56,7 @@ class SellerSalesScreen extends StatelessWidget {
   Widget _buildLeadingSection(SellerSalesController controller, BuildContext context) {
     return Row(
       children: [
-        BackButton(
-          onPressed: () {
-            controller.setInFilterMode = false;
-            Navigator.maybePop(context);
-          },
-        ),
+
         const HorizontalSpace(20),
         DateRangePicker(
           onSubmit: () {
@@ -85,7 +79,7 @@ class SellerSalesScreen extends StatelessWidget {
   }
 
   /// Generates action buttons in the app bar.
-  List<Widget> _buildActionButtons(SellerSalesController controller) {
+/*  List<Widget> _buildActionButtons(SellerSalesController controller) {
     return [
       const HorizontalSpace(10),
       AppButton(
@@ -100,7 +94,7 @@ class SellerSalesScreen extends StatelessWidget {
       ),
       const HorizontalSpace(20),
     ];
-  }
+  }*/
 
   /// Builds the sales summary section showing the total sales.
   Widget _buildSummary(SellerSalesController controller) {

@@ -1,13 +1,13 @@
-import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
+import '../../controller/seller_dashboard_controller.dart';
 import 'chart_box_widget.dart';
 
 class SellerChartSummarySection extends StatelessWidget {
-  final DashboardLayoutController controller;
+  final SellerDashboardController controller;
 
   const SellerChartSummarySection({super.key, required this.controller});
 

@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
-import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -7,9 +6,10 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/widgets/month_picker.dart';
+import '../../controller/bill_profit_dashboard_controller.dart';
 
 class ProfitDateFilterHeader extends StatelessWidget {
-  final DashboardLayoutController controller;
+  final BillProfitDashboardController controller;
 
   const ProfitDateFilterHeader({super.key, required this.controller});
 
@@ -32,18 +32,20 @@ class ProfitDateFilterHeader extends StatelessWidget {
                   color: AppColors.grayColor,
                   textColor: Colors.white,
                   onMonthYearSelected: (date) {
-                    controller.onProfitMothChange(date) ;
+                    controller.onProfitMothChange(date);
                   },
                 );
               }),
             ),
             Spacer(),
-            Text(
-              AppStrings.profit.tr,
-              style: AppTextStyles.headLineStyle1,
+            GestureDetector(
+              onTap: () => controller.lunchBillScreen(context: context),
+              child: Text(
+                AppStrings.selleAndProfitStatement.tr,
+                style: AppTextStyles.headLineStyle1,
+              ),
             ),
             Spacer(),
-
             IconButton(
               tooltip: AppStrings.refresh.tr,
               icon: Icon(

@@ -331,5 +331,5 @@ class AppStrings {
 
   static const swap='تبديل';
 
-  static const  profit='المرابح';
+  static const  selleAndProfitStatement='حركة المبيع و الربح';
 }

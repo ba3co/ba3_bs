@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
-import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,9 +9,10 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../controller/seller_dashboard_controller.dart';
 
 class AllSellersSalesBarChart extends StatelessWidget {
-  final DashboardLayoutController controller;
+  final SellerDashboardController controller;
 
   const AllSellersSalesBarChart({
     super.key,
@@ -52,6 +52,16 @@ class AllSellersSalesBarChart extends StatelessWidget {
                     borderData: FlBorderData(show: false),
                     alignment: BarChartAlignment.spaceEvenly,
                     barTouchData: BarTouchData(
+                      touchCallback: (p0, p1) {
+                        if (p0 is FlPanDownEvent) {
+                          if (p1?.spot?.spot.x != null) {
+
+                            controller.lunchSellerScree(context,(p1?.spot?.spot.x)!.toInt());
+
+                          }
+                        }
+                        // log(p1.toString());
+                      },
                       touchTooltipData: BarTouchTooltipData(
                         getTooltipColor: (group) => Colors.black,
                         tooltipBorder: BorderSide(color: AppColors.backGroundColor),
@@ -90,7 +100,8 @@ class AllSellersSalesBarChart extends StatelessWidget {
                                     style: AppTextStyles.headLineStyle3,
                                   ),
                                   Text(
-                                    (controller.sellerChartData[index].totalAccessorySales + controller.sellerChartData[index].totalMobileSales)
+                                    (controller.sellerChartData[index].totalAccessorySales +
+                                            controller.sellerChartData[index].totalMobileSales)
                                         .toString()
                                         .formatNumber(),
                                     style: AppTextStyles.headLineStyle3,
@@ -102,8 +113,7 @@ class AllSellersSalesBarChart extends StatelessWidget {
                         ),
                       ),
                     ),
-                      groupsSpace: 10,
-
+                    groupsSpace: 10,
                   ),
                 ),
               ),

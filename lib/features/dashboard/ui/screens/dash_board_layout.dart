@@ -2,13 +2,14 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_bar_board.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_pie_board.dart';
+import 'package:ba3_bs/features/dashboard/controller/seller_dashboard_controller.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_board.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/widgets/tow_field_row.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
+import '../../controller/bill_profit_dashboard_controller.dart';
 import '../../controller/dashboard_layout_controller.dart';
 import '../widgets/bill_profit_bord.dart';
 import '../widgets/box_organize_widget.dart';
@@ -25,24 +26,25 @@ class DashBoardLayout extends StatelessWidget {
           child: ListView(
             // spacing: 10,
             children: [
-              DashboardAppBar(controller: controller  ),
+              DashboardAppBar(controller: controller),
               VerticalSpace(),
               OrganizedWidget(
                   titleWidget: Center(
                       child: Text(
-                    AppStrings.userAdministration,
-                    style: AppTextStyles.headLineStyle1,
-                  )),
+                        AppStrings.userAdministration,
+                        style: AppTextStyles.headLineStyle1,
+                      )),
                   bodyWidget: AllAttendanceScreen()),
               VerticalSpace(),
 
-              AnimatedCrossFade(
-                  firstChild: AllSellersSalesBarBoard(controller: controller),
-                  secondChild: AllSellersSalesPieBoard(controller: controller),
-                  crossFadeState: controller.crossSellerFadeState,
-                  duration: Durations.extralong4),
+              GetBuilder<SellerDashboardController>(builder: (sellerController) {
+                return AllSellersSalesBoard(controller: sellerController);
+              }),
               VerticalSpace(20),
-              BillProfitBord(dashboardLayoutController: controller)
+              GetBuilder<BillProfitDashboardController>(builder: (billProfitDashboardController) {
+                return BillProfitBord(billProfitDashboardController: billProfitDashboardController);
+              }),
+              // BillProfitBord(billProfitDashboardController: controller)
             ],
           ),
         );
@@ -53,6 +55,7 @@ class DashBoardLayout extends StatelessWidget {
 
 class DashboardAppBar extends StatelessWidget {
   final DashboardLayoutController controller;
+
   const DashboardAppBar({
     super.key,
     required this.controller

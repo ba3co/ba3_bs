@@ -35,7 +35,7 @@ class AllSellersScreen extends StatelessWidget {
                       (index) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
-                              onTap: () => read<SellerSalesController>().navigateToSellerSalesScreen(controller.sellers[index]),
+                              onTap: () => read<SellerSalesController>().navigateToSellerSalesScreen(controller.sellers[index],context),
                               child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5), borderRadius: BorderRadius.circular(10)),

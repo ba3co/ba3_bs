@@ -1,3 +1,5 @@
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+
 class SellerModel {
   final String? costGuid;
   // final String? docId;
@@ -137,6 +139,7 @@ class SellerSalesData {
   final double totalMobileSales;
   final double totalAccessorySales;
   final double totalFess;
+  final List<BillModel> bills;
 
-  SellerSalesData({required this.sellerName, required this.totalMobileSales,required this.totalAccessorySales,required this.totalFess});
+  SellerSalesData( {required this.sellerName, required this.totalMobileSales,required this.totalAccessorySales,required this.totalFess,required this.bills});
 }

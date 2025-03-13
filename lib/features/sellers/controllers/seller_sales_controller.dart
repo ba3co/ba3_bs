@@ -12,6 +12,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/add_seller_screen.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/all_sellers_screen.dart';
+import 'package:ba3_bs/features/sellers/ui/screens/seller_sales_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -161,7 +162,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     );
 
     result.fold(
-          (failure) {
+      (failure) {
         if (inFilterMode) {
           AppUIUtils.onFailure(' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
           totalAccessoriesSales = 0;
@@ -170,7 +171,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
         }
         sellerBills.clear();
       },
-          (bills) => _handleGetSellerBillsStatusSuccess(bills),
+      (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
   }
 
@@ -194,7 +195,6 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
     final bills = inFilterMode ? filteredBills : sellerBills;
     log("calculateTotalAccessoriesMobiles ${bills.length}");
-
     // Iterate through all bills
     for (final bill in bills) {
       // Iterate through all items in each bill
@@ -202,6 +202,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
         double itemCalcPrice = read<MaterialController>().getMaterialMinPriceById(item.itemGuid);
 
         if (item.itemSubTotalPrice != null) {
+          totalFees += item.itemSubTotalPrice! - itemCalcPrice;
           double itemTotal = item.itemTotalPrice.toDouble;
 
           if (item.itemSubTotalPrice! < 1000) {
@@ -210,27 +211,15 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
             totalMobilesSales += itemTotal;
           }
         }
-
-        totalFees += item.itemSubTotalPrice! - itemCalcPrice;
-        if ( totalFees.isNaN||totalFees.isInfinite) {
-          log(item.itemSubTotalPrice!.toString());
-          log(itemCalcPrice.toString());
-          log('item is ${read<MaterialController>().getMaterialNameById(item.itemGuid)}');
-        }
       }
     }
     profileScreenState.value = RequestState.success;
 
-
     safeUpdateUI();
   }
 
-  void safeUpdateUI() =>
-      WidgetsFlutterBinding
-          .ensureInitialized()
-          .waitUntilFirstFrameRasterized
-          .then(
-            (value) {
+  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
+        (value) {
           update();
         },
       );
@@ -248,27 +237,41 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     // to(AppRoutes.allSellersScreen);
   }
 
-  void navigateToSellerSalesScreen(SellerModel sellerModel) async {
+  void navigateToSellerSalesScreen(SellerModel sellerModel, BuildContext context) async {
     sellerBills.clear();
     await onSelectSeller(sellerModel: sellerModel);
+    if (!context.mounted) return;
     if (sellerBills.isNotEmpty) {
-      to(AppRoutes.sellerSalesScreen);
+      launchFloatingWindow(context: context, floatingScreen: SellerSalesScreen());
     } else {
       AppUIUtils.onFailure(' لا توجد فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
     }
   }
 
-  void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
+  void launchToSellerSalesScreen(List<BillModel> bills, BuildContext context, PickerDateRange dashDateRange) async {
+    dateRange = dashDateRange;
+    _handleGetSellerBillsStatusSuccess(bills);
 
+    launchFloatingWindow(context: context, floatingScreen: SellerSalesScreen());
+    // await onSelectSeller(sellerModel: sellerModel);
+  }
+
+  void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
 
   List<SellerSalesData> aggregateSalesBySeller({
     required List<BillModel> bills,
-
   }) {
     final Map<String, List<BillModel>> salesMap = {};
     for (final bill in bills) {
       final sellerId = bill.billDetails.billSellerId ?? 'unknown';
-      if (read<SellersController>().getSellerNameById(sellerId) == '') continue;
+      if (read<SellersController>().getSellerNameById(sellerId) == '') {
+        if (salesMap['8c0uymE4qoesqsKWDlqx'] != null) {
+          salesMap['8c0uymE4qoesqsKWDlqx']!.add(bill);
+        } else {
+          salesMap['8c0uymE4qoesqsKWDlqx'] = [bill];
+        }
+        continue;
+      }
       if (salesMap[sellerId] != null) {
         salesMap[sellerId]!.add(bill);
       } else {
@@ -280,7 +283,11 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
       final sellerName = read<SellersController>().getSellerNameById(entry.key);
       _handleGetSellerBillsStatusSuccess(entry.value);
       return SellerSalesData(
-          sellerName: sellerName, totalMobileSales: totalMobilesSales, totalAccessorySales: totalAccessoriesSales, totalFess:totalFees);
+          sellerName: sellerName,
+          totalMobileSales: totalMobilesSales,
+          totalAccessorySales: totalAccessoriesSales,
+          totalFess: totalFees,
+          bills: entry.value);
     }).toList();
   }
 }
