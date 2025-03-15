@@ -241,7 +241,7 @@ class AppStrings {
   static const allMaterials = 'جميع المواد';
   static const allSellers = 'جميع البائعين';
   static const allUsers = 'جميع المستخدمين';
-  static const chequesDues = 'الشكات المستحقة';
+  static const chequesDues = 'الشيكات المستحقة';
   static const registrationAsAGust = 'تسجيل ك ضيف';
   static const materialInformation = 'معلومات المادة';
   static const userInformation = 'معلومات المستخدم';

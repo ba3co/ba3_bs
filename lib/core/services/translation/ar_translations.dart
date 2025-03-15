@@ -232,7 +232,7 @@ final Map<String, String> arAR = {
   AppStrings.allMaterials: 'جميع المواد',
   AppStrings.allSellers: 'جميع البائعين',
   AppStrings.allUsers: 'جميع المستخدمين',
-  AppStrings.chequesDues: 'الشكات المستحقة',
+  AppStrings.chequesDues: 'الشيكات المستحقة',
   AppStrings.registrationAsAGust: 'تسجيل ك ضيف',
   AppStrings.materialInformation: 'معلومات المادة',
   AppStrings.userInformation: 'معلومات المستخدم',

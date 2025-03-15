@@ -32,7 +32,7 @@ class AllAttendanceScreen extends StatelessWidget {
                     BoxShadow(color: Colors.grey.withOpacity(0.3), spreadRadius: 2, blurRadius: 5),
                   ],
                 ),
-                height: 70.h,
+                height: 90.h,
                 width: 40.w,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

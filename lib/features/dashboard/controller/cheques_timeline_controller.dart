@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +15,10 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
   @override
   void onInit() {
     super.onInit();
-    getAllCheques();
+    getAllDuesCheques();
   }
 
   Rx<RequestState> chequesChartRequestState = RequestState.initial.obs;
-
 
   final DateTime now = DateTime.now();
 
@@ -28,52 +28,48 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
 
   List<MapEntry<String, int>> sortedEntries = [];
   List<String> datesList = [];
-  final List<BarChartGroupData> barGroups = [];
-  List<ChequesModel>  allCheques =[];
+  List<BarChartGroupData> barGroups = [];
+  List<ChequesModel> allCheques = [];
 
   int get allChequesLength => allCheques.length;
 
-  int get allChequesDuesLength =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true,
+  int get allChequesDuesLength => allCheques
+      .where(
+        (user) => user.isPayed != true,
       )
-          .length;
+      .length;
 
   /// this for cheques in this month
-  List<ChequesModel> get allChequesDuesThisMonth =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 30))),
+  List<ChequesModel> get allChequesDuesThisMonth => allCheques
+      .where(
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 30))),
       )
-          .toList();
+      .toList();
 
   int get allChequesDuesThisMonthLength => allChequesDuesThisMonth.length;
 
   /// this for cheques Last 10 days
-  List<ChequesModel> get allChequesDuesLastTen =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 10))),
+  List<ChequesModel> get allChequesDuesLastTen => allCheques
+      .where(
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 10))),
       )
-          .toList();
+      .toList();
 
   int get allChequesDuesLastTenLength => allChequesDuesLastTen.length;
 
   /// this for cheques today
-  List<ChequesModel> get allChequesDuesToday =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now),
+  List<ChequesModel> get allChequesDuesToday => allCheques
+      .where(
+        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now),
       )
-          .toList();
+      .toList();
 
   int get allChequesDuesTodayLength => allChequesDuesToday.length;
 
-
-
-  getAllCheques() async {
-    chequesChartRequestState.value=RequestState.loading;
+  getAllDuesCheques() async {
+    chequesChartRequestState.value = RequestState.loading;
+    barGroups = [];
+    groupedData.clear();
     allCheques = await read<AllChequesController>().fetchChequesByType(ChequesType.paidChecks);
     List<DateTime> dueDates = allCheques
         .where((cheque) =>
@@ -90,7 +86,6 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
       groupedData.update(formattedDate, (value) => value + 1, ifAbsent: () => 1);
     }
 
-    // ** ترتيب التواريخ زمنيًا **
     sortedEntries = groupedData.entries.toList()..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
 
     // تحويل البيانات إلى BarChartGroupData
@@ -101,7 +96,7 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
     for (var entry in sortedEntries) {
       DateTime dueDate = DateTime.parse(entry.key);
 
-      Color barColor = dueDate.isAfter(lastWeek) ? Colors.red : Colors.blue;
+      Color barColor = dueDate.isAfter(lastWeek) ? Colors.red : AppColors.blueColor;
 
       barGroups.add(
         BarChartGroupData(
@@ -118,7 +113,22 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
       );
       index++;
     }
-    chequesChartRequestState.value=RequestState.success;
+    chequesChartRequestState.value = RequestState.success;
+  }
 
+  openChequesDuesScreen(BuildContext context) {
+    read<AllChequesController>().navigateToChequesScreen(onlyDues: true, context: context);
+  }
+
+  void lunchChequesScreen(BuildContext context, int index) {
+    log(sortedEntries.elementAt(index).key);
+
+    read<AllChequesController>().navigateToChequesScreenByList(
+        chequesListItems: allCheques
+            .where(
+              (element) => element.chequesDueDate == sortedEntries.elementAt(index).key && element.isPayed == false,
+            )
+            .toList(),
+        context: context);
   }
 }

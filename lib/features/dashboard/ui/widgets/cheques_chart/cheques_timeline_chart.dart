@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/styling/app_colors.dart';
 import '../../../controller/cheques_timeline_controller.dart';
 
 class ChequesBarChart extends StatelessWidget {
@@ -38,6 +39,32 @@ class ChequesBarChart extends StatelessWidget {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
+                  barTouchData: BarTouchData(
+                    touchCallback: (p0, p1) {
+                      if (p0 is FlPanDownEvent) {
+                        if (p1?.spot?.spot.x != null) {
+
+                          chequesTimelineController.lunchChequesScreen(context,(p1?.spot?.spot.x)!.toInt());
+
+                        }
+                      }
+                      // log(p1.toString());
+                    },
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (group) => Colors.black,
+                      tooltipBorder: BorderSide(color: AppColors.backGroundColor),
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        return BarTooltipItem(
+                          '${rod.toY.toString()} ',
+                          TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
                   maxY: chequesTimelineController.sortedEntries.map((e) => e.value).reduce((a, b) => a > b ? a : b).toDouble() + 1,
                   barGroups: chequesTimelineController.barGroups,
                   titlesData: FlTitlesData(

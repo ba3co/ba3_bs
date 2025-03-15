@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/dashboard/ui/widgets/cheques_chart/cheques_chart
 import 'package:ba3_bs/features/dashboard/ui/widgets/cheques_chart/cheques_timeline_chart.dart';
 import 'package:flutter/material.dart';
 import '../../../controller/cheques_timeline_controller.dart';
+import 'cheques_timeline_header.dart';
 
 class ChequesTimelineBoard extends StatelessWidget {
   final ChequesTimelineController chequesTimelineController;
@@ -15,6 +16,7 @@ class ChequesTimelineBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        ChequesTimelineHeader(controller: chequesTimelineController),
         ChequesBarChart(chequesTimelineController: chequesTimelineController),
         ChequesChartSummarySection(controller: chequesTimelineController),
       ],
