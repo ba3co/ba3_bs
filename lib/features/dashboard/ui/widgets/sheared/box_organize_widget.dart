@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/styling/app_text_style.dart';
+import '../../../../../core/styling/app_text_style.dart';
 
 class BoxOrganizeWidget extends StatelessWidget {
   const BoxOrganizeWidget(

@@ -2,8 +2,9 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
+import 'package:ba3_bs/features/dashboard/controller/cheques_timeline_controller.dart';
 import 'package:ba3_bs/features/dashboard/controller/seller_dashboard_controller.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/all_sellers_sales_board.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/seller_sale_chart/all_sellers_sales_board.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,8 +12,10 @@ import '../../../../core/widgets/tow_field_row.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
 import '../../controller/bill_profit_dashboard_controller.dart';
 import '../../controller/dashboard_layout_controller.dart';
-import '../widgets/bill_profit_bord.dart';
-import '../widgets/box_organize_widget.dart';
+import '../widgets/cheques_chart/cheques_timeline_board.dart';
+import '../widgets/cheques_chart/cheques_timeline_chart.dart';
+import '../widgets/profit_and_bill_chart/bill_profit_bord.dart';
+import '../widgets/sheared/box_organize_widget.dart';
 
 class DashBoardLayout extends StatelessWidget {
   const DashBoardLayout({super.key});
@@ -20,13 +23,13 @@ class DashBoardLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<DashboardLayoutController>(builder: (controller) {
+      body: GetBuilder<DashboardLayoutController>(builder: (dashboardLayoutController) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             // spacing: 10,
             children: [
-              DashboardAppBar(controller: controller),
+              DashboardAppBar(controller: dashboardLayoutController),
               VerticalSpace(),
               OrganizedWidget(
                   titleWidget: Center(
@@ -35,6 +38,12 @@ class DashBoardLayout extends StatelessWidget {
                         style: AppTextStyles.headLineStyle1,
                       )),
                   bodyWidget: AllAttendanceScreen()),
+              VerticalSpace(20),
+              GetBuilder<ChequesTimelineController>(builder: (chequesTimelineController) {
+                return ChequesTimelineBoard(
+                  chequesTimelineController:chequesTimelineController,
+                );
+              }),
               VerticalSpace(),
 
               GetBuilder<SellerDashboardController>(builder: (sellerController) {
@@ -56,10 +65,7 @@ class DashBoardLayout extends StatelessWidget {
 class DashboardAppBar extends StatelessWidget {
   final DashboardLayoutController controller;
 
-  const DashboardAppBar({
-    super.key,
-    required this.controller
-  });
+  const DashboardAppBar({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +97,7 @@ class DashboardAppBar extends StatelessWidget {
             ],
           ),
         ),
-        BoxOrganizeWidget(
+    /*    BoxOrganizeWidget(
           primaryColor: Color(0xFF2DD400),
           secondaryColor: Color(0xFF2DD480),
           titleText: AppStrings.chequesDues.tr,
@@ -116,7 +122,7 @@ class DashboardAppBar extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        ),*/
         BoxOrganizeWidget(
           primaryColor: Color(0xFF4196DB),
           secondaryColor: Color(0xFF1CECe5),
@@ -125,11 +131,11 @@ class DashboardAppBar extends StatelessWidget {
             children: [
               TowFieldRow(
                 firstItem: AppStrings.allBills.tr,
-                secondItem: '${controller.allChequesLength}',
+                secondItem: '${controller.allUsers.length}',
               ),
               TowFieldRow(
                 firstItem: AppStrings.allBillsDues.tr,
-                secondItem: '${controller.allChequesDuesLength}',
+                secondItem: '${controller.allUsers.length}',
               ),
             ],
           ),

@@ -7,9 +7,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/helper/enums/enums.dart';
-import '../../controller/bill_profit_dashboard_controller.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/helper/enums/enums.dart';
+import '../../../controller/bill_profit_dashboard_controller.dart';
+
 
 class BillProfitChart extends StatelessWidget {
   final BillProfitDashboardController billProfitDashboardController;

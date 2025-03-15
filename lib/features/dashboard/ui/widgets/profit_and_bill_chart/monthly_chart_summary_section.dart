@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/styling/app_colors.dart';
-import '../../controller/bill_profit_dashboard_controller.dart';
-import 'chart_box_widget.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/styling/app_colors.dart';
+import '../../../controller/bill_profit_dashboard_controller.dart';
+import '../sheared/chart_box_widget.dart';
 
 class MonthlyChartSummarySection extends StatelessWidget {
   final BillProfitDashboardController controller;

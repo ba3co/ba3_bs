@@ -92,6 +92,21 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     isLoading = false;
     update();
   }
+  Future<    List<ChequesModel>> fetchChequesByType(ChequesType itemTypeModel) async {
+    log('fetchCheques');
+
+    List<ChequesModel> fetchedChequesList = [];
+    final result = await _chequesFirebaseRepo.getAll(itemTypeModel);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedCheques) => fetchedChequesList = fetchedCheques,
+    );
+
+    isLoading = false;
+    update();
+    return fetchedChequesList;
+  }
 
   Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel}) async {
     await fetchAllChequesByType(chequesTypeModel);

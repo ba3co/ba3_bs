@@ -58,47 +58,6 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
           .toList()
           .length;
 
-  List<ChequesModel> get allCheques => read<AllChequesController>().chequesList;
-
-  int get allChequesLength => allCheques.length;
-
-  int get allChequesDuesLength =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true,
-      )
-          .length;
-
-  /// this for cheques in this month
-  List<ChequesModel> get allChequesDuesThisMonth =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 30))),
-      )
-          .toList();
-
-  int get allChequesDuesThisMonthLength => allChequesDuesThisMonth.length;
-
-  /// this for cheques Last 10 days
-  List<ChequesModel> get allChequesDuesLastTen =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 10))),
-      )
-          .toList();
-
-  int get allChequesDuesLastTenLength => allChequesDuesLastTen.length;
-
-  /// this for cheques today
-  List<ChequesModel> get allChequesDuesToday =>
-      allCheques
-          .where(
-            (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now),
-      )
-          .toList();
-
-  int get allChequesDuesTodayLength => allChequesDuesToday.length;
-
 
 
 

@@ -69,6 +69,7 @@ import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/customer/service/customer_import.dart';
 import '../../features/dashboard/controller/bill_profit_dashboard_controller.dart';
+import '../../features/dashboard/controller/cheques_timeline_controller.dart';
 import '../../features/dashboard/controller/seller_dashboard_controller.dart';
 import '../../features/materials/controllers/material_controller.dart';
 import '../../features/materials/controllers/mats_statement_controller.dart';
@@ -273,6 +274,7 @@ class AppBindings extends Bindings {
     lazyPut(DashboardLayoutController(repositories.dashboardAccountRepo));
     lazyPut(SellerDashboardController());
     lazyPut(BillProfitDashboardController());
+    lazyPut(ChequesTimelineController());
 
     lazyPut(PlutoController());
     lazyPut(PlutoDualTableController());

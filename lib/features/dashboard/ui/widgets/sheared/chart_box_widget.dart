@@ -2,8 +2,8 @@ import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/styling/app_text_style.dart';
-import '../../../../core/widgets/app_spacer.dart';
+import '../../../../../core/styling/app_text_style.dart';
+import '../../../../../core/widgets/app_spacer.dart';
 
 class ChartBoxWidget extends StatelessWidget {
   const ChartBoxWidget({

@@ -8,8 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../../core/helper/enums/enums.dart';
-import '../../controller/seller_dashboard_controller.dart';
+import '../../../../../core/helper/enums/enums.dart';
+import '../../../controller/seller_dashboard_controller.dart';
 
 class AllSellersSalesBarChart extends StatelessWidget {
   final SellerDashboardController controller;

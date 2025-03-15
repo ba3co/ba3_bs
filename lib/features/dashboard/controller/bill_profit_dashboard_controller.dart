@@ -26,8 +26,6 @@ class BillProfitDashboardController extends GetxController  with FloatingLaunche
 
   }
 
-
-
   List<BillModel> billsAndProfitChartData = [];
   double totalMonthSales = 0;
   double totalMonthFees = 0;
