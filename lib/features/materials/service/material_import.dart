@@ -1,4 +1,4 @@
-import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
+import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:xml/xml.dart';
 

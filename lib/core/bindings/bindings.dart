@@ -42,6 +42,8 @@ import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_source.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
+import 'package:ba3_bs/features/user_task/data/datasources/user_task_data_source.dart';
+import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
 import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
@@ -86,7 +88,7 @@ import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
 import '../../features/profile/controller/user_time_controller.dart';
 import '../../features/sellers/service/seller_import.dart';
-import '../../features/userTask/controller/add_task_controller.dart';
+import '../../features/user_task/controller/add_task_controller.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
 import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
@@ -260,6 +262,7 @@ class AppBindings extends Bindings {
         localDatasource: DashboardAccountDataSource(dashboardHiveService),
         remoteDatasource: RemoteDashboardDataSource(databaseService: fireStoreService),
       ),
+      tasksRepo: FilterableDataSourceRepository(UserTaskDataSource(databaseService: fireStoreService))
     );
   }
 
@@ -277,7 +280,7 @@ class AppBindings extends Bindings {
     lazyPut(SellerDashboardController());
     lazyPut(BillProfitDashboardController());
     lazyPut(ChequesTimelineController());
-    lazyPut(AddTaskController());
+    lazyPut(AddTaskController(repositories.tasksRepo));
 
     lazyPut(PlutoController());
     lazyPut(PlutoDualTableController());
@@ -334,7 +337,6 @@ class _Repositories {
   final QueryableSavableRepository<SerialNumberModel> serialNumbersRepo;
   final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
   final CompoundDatasourceRepository<ChequesModel, ChequesType> chequesRepo;
-
   final BulkSavableDatasourceRepository<EntryBondModel> entryBondsRepo;
   final CompoundDatasourceRepository<EntryBondItems, AccountEntity> accountsStatementsRepo;
   final ImportExportRepository<BillModel> billImportExportRepo;
@@ -356,6 +358,7 @@ class _Repositories {
   final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
   final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
   final ListenDataSourceRepository<StoreCartModel> storeCartRepo;
+  final FilterableDataSourceRepository<UserTaskModel> tasksRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -385,5 +388,6 @@ class _Repositories {
     required this.matStatementsRepo,
     required this.storeCartRepo,
     required this.dashboardAccountRepo,
+    required this.tasksRepo,
   });
 }

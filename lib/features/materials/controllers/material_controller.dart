@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:ba3_bs/core/dialogs/search_material_group_text_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
+import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';

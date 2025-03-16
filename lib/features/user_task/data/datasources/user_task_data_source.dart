@@ -1,13 +1,13 @@
 // BillsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/filterable_datasource.dart';
-import 'package:ba3_bs/features/userTask/data/model/user_task_model.dart';
 
 import '../../../../core/models/date_filter.dart';
 import '../../../../core/models/query_filter.dart';
+import '../model/user_task_model.dart';
 
-class UsersDatasource extends FilterableDatasource<UserTaskModel> {
-  UsersDatasource({required super.databaseService});
+class UserTaskDataSource extends FilterableDatasource<UserTaskModel> {
+  UserTaskDataSource({required super.databaseService});
 
   @override
   String get path => ApiConstants.userTask; // Collection name in Firestore

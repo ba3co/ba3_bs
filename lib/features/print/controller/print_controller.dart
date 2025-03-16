@@ -7,7 +7,7 @@
 //
 // import 'package:ba3_bs/core/constants/app_assets.dart';
 // import 'package:ba3_bs/core/constants/printer_constants.dart';
-// import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
+// import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 // import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 // import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 // import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -335,7 +335,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
-import 'package:ba3_bs/core/helper/extensions/encod_decod_text.dart';
+import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
