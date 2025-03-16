@@ -25,12 +25,12 @@ class ChequesChartSummarySection extends StatelessWidget {
           ChartColumn(
             items: [
               ChartItem(
-                color: AppColors.totalSaleColor,
+                color: Colors.red,
                 text: AppStrings.today.tr,
                 total: controller.allChequesDuesTodayLength.toString(),
               ),
               ChartItem(
-                color: AppColors.mobileSaleColor,
+                color: AppColors.blueColor,
                 // onTap:controller.changeSellerTotalMobileTarget,
                 text:AppStrings.lastTenDays.tr,
                 total: controller.allChequesDuesLastTenLength.toString(),

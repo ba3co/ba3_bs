@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
@@ -149,7 +150,6 @@ class UserModel implements PlutoAdaptable {
     bool hasHolidayToday() {
       return userHolidays?.contains(currentDate) ?? false;
     }
-
     return {
       PlutoColumn(
         title: AppStrings.identificationNumber.tr,
@@ -174,7 +174,7 @@ class UserModel implements PlutoAdaptable {
       ): hasHolidayToday()
           ? AppStrings.holiday.tr
           : AppServiceUtils.formatDateTimeFromString(
-              userTimeModel?.values.toList().lastOrNull?.logInDateList?.lastOrNull?.toIso8601String()),
+          AppServiceUtils.getLastLogin(userTimeModel) ?.toIso8601String()   ),
       PlutoColumn(
         title: AppStrings.lastCheckOutTime.tr,
         field: 'اخر خروج',
@@ -183,7 +183,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
           ? AppStrings.holiday.tr
-          : AppServiceUtils.formatDateTimeFromString(userTimeModel?.values.lastOrNull?.logOutDateList?.lastOrNull?.toIso8601String()),
+          :   AppServiceUtils.formatDateTimeFromString(
+          AppServiceUtils.getLastLogout(userTimeModel) ?.toIso8601String()   ),
       PlutoColumn(
         title: AppStrings.holidaysForThisMonth.tr,
         field: 'عطل هذا الشهر',
@@ -210,17 +211,15 @@ class UserModel implements PlutoAdaptable {
         field: 'تأخير الدخول',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
-        // renderer: (context) => buildStatusCell(context.cell.value.toString()),
         type: PlutoColumnType.text(),
-      ): AppServiceUtils.convertMinutesAndFormat(userTimeModel?[currentDate]?.totalLogInDelay ?? 0),
+      ): AppServiceUtils.convertMinutesAndFormat((userTimeModel?.values.fold(0, (previousValue, element) => previousValue!+(element.totalLogInDelay??0),) ?? 0)),
       PlutoColumn(
         title: AppStrings.earlyExit.tr,
         field: 'الخروج المبكر',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
-        // renderer: (context) => buildStatusCell(context.cell.value.toString()),
         type: PlutoColumnType.text(),
-      ): AppServiceUtils.convertMinutesAndFormat(userTimeModel?[currentDate]?.totalOutEarlier ?? 0),
+      ): AppServiceUtils.convertMinutesAndFormat((userTimeModel?.values.fold(0, (previousValue, element) => previousValue!+(element.totalOutEarlier??0),) ?? 0)),
     };
   }
 }
@@ -272,8 +271,8 @@ class UserTimeModel {
   final String? dayName;
   final List<DateTime>? logInDateList;
   final List<DateTime>? logOutDateList;
-  final int? totalLogInDelay;
-  final int? totalOutEarlier;
+   int? totalLogInDelay;
+   int? totalOutEarlier;
 
   UserTimeModel({
     this.dayName,

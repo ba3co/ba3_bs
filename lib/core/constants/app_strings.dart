@@ -332,4 +332,20 @@ class AppStrings {
   static const swap='تبديل';
 
   static const  selleAndProfitStatement='حركة المبيع و الربح';
+
+  static var clearDelay='مسح التاخير';
+
+  static var tasks='المهام';
+
+  static var taskTitle="عنوان المهمة";
+
+  static var taskDescription='وصف المهمة';
+
+  static var taskType='نوع المهمة';
+
+  static var lastDateTodo='اخر تاريخ للتنفيذ';
+
+  static var createdDate='تاريخ الانشاء';
+
+
 }

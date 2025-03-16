@@ -5,7 +5,7 @@ import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/dashboard/controller/cheques_timeline_controller.dart';
 import 'package:ba3_bs/features/dashboard/controller/seller_dashboard_controller.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/seller_sale_chart/all_sellers_sales_board.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_account_view_widget.dart';
+import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_accounts/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/widgets/tow_field_row.dart';
@@ -78,7 +78,7 @@ class DashboardAppBar extends StatelessWidget {
         BoxOrganizeWidget(
           primaryColor: Color(0xFF9C27B0),
           secondaryColor: Color(0xFFE040FB),
-          titleText: 'الموظفين',
+          titleText: AppStrings.employees.tr,
           childWidget: ListView(
             children: [
               TowFieldRow(

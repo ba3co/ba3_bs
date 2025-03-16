@@ -1,5 +1,8 @@
+import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
+import 'package:ba3_bs/features/userTask/ui/add_task_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/services/role_form_handler.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -10,7 +13,7 @@ import '../controllers/user_management_controller.dart';
 import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
 
-class UserNavigator with AppNavigator {
+class UserNavigator with AppNavigator ,FloatingLauncher{
   final RoleFormHandler _roleFormHandler;
   final SharedPreferencesService _sharedPreferencesService;
 
@@ -36,6 +39,7 @@ class UserNavigator with AppNavigator {
   void navigateToAllUsersScreen() => to(AppRoutes.showAllUsersScreen);
 
   void navigateToUserTimeListScreen() => to(AppRoutes.showUserTimeListScreen);
+  void lunchAddTaskScreen(BuildContext context) => launchFloatingWindow(context: context, floatingScreen: AddTaskScreen());
 
   void navigateToLAllPermissionsScreen() {
     to(AppRoutes.showAllPermissionsScreen);

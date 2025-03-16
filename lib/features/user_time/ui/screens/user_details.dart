@@ -2,9 +2,11 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/all_holidays_widget.dart';
 import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/user_total_delay_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/widgets/custom_drop_down.dart';
@@ -23,9 +25,11 @@ class UserDetails extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
+            Spacer(),
             Text('${AppStrings.userName.tr}: ',style: AppTextStyles.headLineStyle1,),
             Text(userModel.userName!,style: AppTextStyles.headLineStyle1,),
+            Spacer(),
+            AppButton(title: AppStrings.clearDelay,iconData: FontAwesomeIcons.refresh, onPressed: read<UserDetailsController>().resetDelay,)
           ],
         ),
         centerTitle: true,

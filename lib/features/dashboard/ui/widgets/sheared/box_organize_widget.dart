@@ -77,7 +77,7 @@ class BoxOrganizeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(child: Text(titleText, style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white))),
+                  Center(child: Text(titleText, style: AppTextStyles.headLineStyle2.copyWith(color: Colors.white))),
                   Divider(color: Colors.grey.shade300,),
                   SizedBox(
                     height:60.h ,

@@ -166,4 +166,23 @@ class UserDetailsController extends GetxController {
   }
 
 
+
+  void resetDelay() async{
+    if ( selectedUserModel?.userTimeModel == null) return;
+    selectedUserModel!.userTimeModel!.forEach((key, value) {
+      value.totalLogInDelay = 0;
+      value.totalOutEarlier = 0;
+    });
+    // log((selectedUserModel?.userTimeModel?.values.map((e) => e.totalOutEarlier,).toList().toString()).toString());
+if(selectedUserModel != null) {
+  final result = await _usersFirebaseRepo.save( selectedUserModel!);
+  result.fold(
+        (failure) => _handleFailure(failure),
+        (userModel) => _onUserSaved(userModel),
+  );
+}
+
+
+    update();
+  }
 }

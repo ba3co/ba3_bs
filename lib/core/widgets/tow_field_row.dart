@@ -23,8 +23,8 @@ class TowFieldRow extends StatelessWidget {
       spacing: spacing,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: Text(firstItem,style: AppTextStyles.headLineStyle4.copyWith(color: Colors.white),textAlign: TextAlign.center,)),
-        Expanded(child: Text(secondItem,style: AppTextStyles.headLineStyle4.copyWith(color: Colors.white),textAlign: TextAlign.center,)),
+        Expanded(child: Text(firstItem,style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),textAlign: TextAlign.center,)),
+        Expanded(child: Text(secondItem,style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),textAlign: TextAlign.center,)),
       ],
     )
         : SizedBox();

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../../../core/styling/app_colors.dart';
-import '../../../../core/styling/app_text_style.dart';
+import '../../../../../core/styling/app_colors.dart';
+import '../../../../../core/styling/app_text_style.dart';
 
 class DashBoardAccountShimmerWidget extends StatelessWidget {
   const DashBoardAccountShimmerWidget({

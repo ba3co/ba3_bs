@@ -24,7 +24,7 @@ class UserManagementLayout extends StatelessWidget {
 
       body: RefreshIndicator(
         onRefresh: () => userManagementController.getAllUsers(),
-        backgroundColor: AppColors.blueColor,
+        backgroundColor: AppColors.whiteColor,
         child: ListView(
           children: [
             AppMenuItem(
@@ -43,6 +43,11 @@ class UserManagementLayout extends StatelessWidget {
                 text: AppStrings.attendanceRecord.tr,
                 onTap: () {
                   userManagementController. userNavigator.navigateToUserTimeListScreen();
+                }),
+            AppMenuItem(
+                text: AppStrings.tasks.tr,
+                onTap: () {
+                  userManagementController. userNavigator.lunchAddTaskScreen(context);
                 }),
           ],
         ),

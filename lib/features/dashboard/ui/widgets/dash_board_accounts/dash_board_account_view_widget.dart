@@ -3,13 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/dialogs/account_dashboard_dialog.dart';
-import '../../../../core/styling/app_text_style.dart';
-import '../../../../core/widgets/app_spacer.dart';
-import '../../../../core/widgets/custom_icon_button.dart';
-import '../../../../core/widgets/language_switch_fa_icon.dart';
-import '../../controller/dashboard_layout_controller.dart';
+import '../../../../../core/constants/app_strings.dart';
+import '../../../../../core/dialogs/account_dashboard_dialog.dart';
+import '../../../../../core/styling/app_text_style.dart';
+import '../../../../../core/widgets/app_spacer.dart';
+import '../../../../../core/widgets/custom_icon_button.dart';
+import '../../../../../core/widgets/language_switch_fa_icon.dart';
+import '../../../controller/dashboard_layout_controller.dart';
 import 'dashboard_accounts_list.dart';
 
 class DashBoardAccountViewWidget extends StatelessWidget {

@@ -739,3 +739,42 @@ enum FinalAccounts {
     );
   }
 }
+
+
+enum TaskType {
+  generalTask('مهمة عادية'),
+  saleTask('مهمة بيع'),
+  inventoryTask('مهمة جرد');
+
+  final String label;
+
+  const TaskType(this.label);
+
+  // Factory constructor with error handling for unmatched labels
+  factory TaskType.byValue(String label) {
+    return TaskType.values.firstWhere(
+          (status) => status.label == label,
+      orElse: () => throw ArgumentError('No matching TaskType for byValue: $label'),
+    );
+  }
+}
+
+enum TaskStatus {
+  finished('انتهت'),
+  canceled('تم الالغاء'),
+  pending('قيد الانجاز'),
+  initial('جاهزة للبدأ'),
+  failure('فشلت');
+
+  final String value;
+
+  const TaskStatus(this.value);
+
+  // Factory constructor to handle conversion from string to StatusTask
+  factory TaskStatus.byValue(String value) {
+    return TaskStatus.values.firstWhere(
+          (status) => status.value == value,
+      orElse: () => throw ArgumentError('No matching StatusTask for value: $value'),
+    );
+  }
+}

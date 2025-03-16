@@ -25,6 +25,8 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
 
   DateTime get lastWeek => now.subtract(const Duration(days: 7));
 
+  DateTime get thisMonth => now.subtract(const Duration(days: 30));
+
   final Map<String, int> groupedData = {};
 
   List<MapEntry<String, int>> sortedEntries = [];
@@ -79,9 +81,6 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
             DateTime.parse(cheque.chequesDueDate!).isBefore(now.add(const Duration(days: 1))))
         .map((cheque) => DateTime.parse(cheque.chequesDueDate!))
         .toList();
-    log("إجمالي الشيكات: ${allCheques.length}");
-    log("الشيكات المستحقة حتى اليوم: ${dueDates.length}");
-
     for (var date in dueDates) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(date);
       groupedData.update(formattedDate, (value) => value + 1, ifAbsent: () => 1);
@@ -89,15 +88,17 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
 
     sortedEntries = groupedData.entries.toList()..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
 
-    // تحويل البيانات إلى BarChartGroupData
-
-    datesList = sortedEntries.map((e) => e.key).toList(); // قائمة التواريخ مرتبة
+    datesList = sortedEntries.map((e) => e.key).toList();
     int index = 0;
 
     for (var entry in sortedEntries) {
       DateTime dueDate = DateTime.parse(entry.key);
 
-      Color barColor = dueDate.isAfter(lastWeek) ? Colors.red : AppColors.blueColor;
+      Color barColor = dueDate.isAfter(lastWeek)
+          ? Colors.red
+          : dueDate.isAfter(thisMonth)
+              ? AppColors.accessorySaleColor
+              : AppColors.blueColor;
 
       barGroups.add(
         BarChartGroupData(

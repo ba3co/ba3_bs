@@ -39,46 +39,5 @@ class StoreDropdown extends StatelessWidget {
         );
       }),
     );
-    /*  return SizedBox(
-      width: width ?? Get.width * 0.45,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          SizedBox(
-              width: 150,
-              child: Text(
-                AppStrings.store.tr,
-              )),
-          Expanded(
-            child: Container(
-              width: (Get.width * 0.45) - 100,
-              height: AppConstants.constHeightDropDown,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: Colors.white,
-              ),
-              child: Obx(() {
-                return OverlayService.showDropdown<StoreAccount>(
-                  value: storeSelectionHandler.selectedStore.value,
-                  items: StoreAccount.values,
-                  onChanged: storeSelectionHandler.onSelectedStoreChanged,
-                  textStyle: const TextStyle(fontSize: 12),
-                  itemLabelBuilder: (store) => store.value.tr,
-                  height: AppConstants.constHeightTextField,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black38),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  onCloseCallback: () {
-                    log('StoreAccount Dropdown Overly Closed.');
-                  },
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
-    );*/
   }
 }

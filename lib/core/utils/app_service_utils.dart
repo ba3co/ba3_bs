@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/accounts/controllers/accounts_controller.dart';
 import '../../features/accounts/data/models/account_model.dart';
+import '../../features/users_management/data/models/user_model.dart';
 import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
@@ -299,5 +300,41 @@ class AppServiceUtils {
       '${AppStrings.hours} $hours  ${AppStrings.minutes} $minutes'
 
     ;
+  }
+
+ static DateTime? getLastLogin(Map<String, UserTimeModel>? userTimeModel) {
+    DateTime? latestLogin;
+
+    if (userTimeModel == null) return null;
+
+    userTimeModel.forEach((date, record) {
+      if (record.logInDateList != null) {
+        for (var login in record.logInDateList!) {
+          if (latestLogin == null || login.isAfter(latestLogin??DateTime.now())) {
+            latestLogin = login;
+          }
+        }
+      }
+    });
+
+    return latestLogin;
+  }
+
+ static DateTime? getLastLogout(Map<String, UserTimeModel>? userTimeModel) {
+    DateTime? latestLogout;
+
+    if (userTimeModel == null) return null;
+
+    userTimeModel.forEach((date, record) {
+      if (record.logOutDateList != null) {
+        for (var logout in record.logOutDateList!) {
+          if (latestLogout == null || logout.isAfter(latestLogout??DateTime.now())) {
+            latestLogout = logout;
+          }
+        }
+      }
+    });
+
+    return latestLogout;
   }
 }
