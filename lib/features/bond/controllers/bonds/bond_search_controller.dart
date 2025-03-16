@@ -42,7 +42,7 @@ class BondSearchController extends GetxController {
     // Create a growable list of placeholder bills
     final placeholders = List<BondModel>.generate(
       lastBondNumber - 1,
-          (index) => _createPlaceholderBond(currentBond),
+      (index) => _createPlaceholderBond(currentBond),
     );
 
     final currentBondNumber = currentBond.payNumber!;
@@ -59,10 +59,7 @@ class BondSearchController extends GetxController {
   /// Creates a placeholder Bond for missing entries.bond
   BondModel _createPlaceholderBond(BondModel referenceBond) {
     return BondModel(
-        payAccountGuid: '',
-        payItems: PayItems(itemList: []),
-        payTypeGuid: referenceBond.payTypeGuid,
-        payDate: DateTime.now().toIso8601String());
+        payAccountGuid: '', payItems: PayItems(itemList: []), payTypeGuid: referenceBond.payTypeGuid, payDate: DateTime.now().toIso8601String());
   }
 
   /// Validates the Bond number range.

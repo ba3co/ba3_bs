@@ -29,7 +29,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
   TextEditingController cachesController = TextEditingController();
   TextEditingController storeController = TextEditingController();
 
-  BillPatternType? selectedBillPatternType;
+  Rx<BillPatternType?> selectedBillPatternType = Rx<BillPatternType?>(null);
 
   BillTypeModel? selectedBillTypeModel;
 
@@ -55,7 +55,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
     selectedAccounts = accounts ?? {};
   }
 
-  addToSelectedAccounts({required Account key,required AccountModel value}) {
+  addToSelectedAccounts({required Account key, required AccountModel value}) {
     selectedAccounts[key] = value;
   }
 
@@ -90,7 +90,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
       populateBillTypeAccounts(billType);
 
       // Set the selected bill type
-      selectedBillPatternType = billPatternType;
+      selectedBillPatternType.value = billPatternType;
 
       selectedBillTypeModel = billType;
       selectedColorValue = billType.color!;
@@ -104,7 +104,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
       setSelectedAccounts({});
 
       // Reset the selected bill type
-      selectedBillPatternType = null;
+      selectedBillPatternType.value = null;
 
       selectedBillTypeModel = null;
       selectedColorValue = Colors.red.value;
@@ -153,7 +153,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
 
   void onSelectedTypeChanged(BillPatternType? newType) {
     if (newType != null) {
-      selectedBillPatternType = newType;
+      selectedBillPatternType.value = newType;
       patternController.autoFillControllers(newType);
       patternController.update();
     }

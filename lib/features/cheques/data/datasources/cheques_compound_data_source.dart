@@ -94,7 +94,7 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   Future<ChequesModel> _assignChequesNumber(ChequesModel cheques) async {
-    final newChequesNumber = await getNextNumber(rootCollectionPath, cheques.chequesTypeGuid!);
+    final newChequesNumber = await fetchAndIncrementEntityNumber(rootCollectionPath, cheques.chequesTypeGuid!);
     return cheques.copyWith(chequesNumber: newChequesNumber.nextNumber);
   }
 

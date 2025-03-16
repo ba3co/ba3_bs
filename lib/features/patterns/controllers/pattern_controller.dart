@@ -14,7 +14,7 @@ import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 import '../services/pattern_form_handler.dart';
 
-class PatternController extends GetxController with AppNavigator,FloatingLauncher {
+class PatternController extends GetxController with AppNavigator, FloatingLauncher {
   final RemoteDataSourceRepository<BillTypeModel> _repository;
 
   PatternController(this._repository);
@@ -26,7 +26,7 @@ class PatternController extends GetxController with AppNavigator,FloatingLaunche
   // Form Handlers
   late final PatternFormHandler patternFormHandler;
 
-  BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType;
+  BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType.value;
 
   BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
 
@@ -97,7 +97,7 @@ class PatternController extends GetxController with AppNavigator,FloatingLaunche
     update();
   }
 
-  void navigateToAddPatternScreen({BillTypeModel? billType,required BuildContext context}) {
+  void navigateToAddPatternScreen({BillTypeModel? billType, required BuildContext context}) {
     patternFormHandler.init(billType);
 
     launchFloatingWindow(context: context, minimizedTitle: ApiConstants.patterns.tr, floatingScreen: AddPatternScreen());
@@ -119,7 +119,7 @@ class PatternController extends GetxController with AppNavigator,FloatingLaunche
   Future<void> addNewPattern() async {
     if (!patternFormHandler.validate()) return;
 
-    if (patternFormHandler.selectedBillPatternType == null) {
+    if (patternFormHandler.selectedBillPatternType.value == null) {
       AppUIUtils.onFailure('من فضلك قم بادخال نوع النمط!');
       return;
     }
@@ -149,8 +149,8 @@ class PatternController extends GetxController with AppNavigator,FloatingLaunche
         latinShortName: patternFormHandler.latinShortNameController.text,
         fullName: patternFormHandler.fullNameController.text,
         latinFullName: patternFormHandler.latinFullNameController.text,
-        billTypeLabel: patternFormHandler.selectedBillPatternType!.value,
-        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType!.value).typeGuide,
+        billTypeLabel: patternFormHandler.selectedBillPatternType.value!.value,
+        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType.value!.value).typeGuide,
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );
@@ -160,8 +160,8 @@ class PatternController extends GetxController with AppNavigator,FloatingLaunche
         latinShortName: patternFormHandler.latinShortNameController.text,
         fullName: patternFormHandler.fullNameController.text,
         latinFullName: patternFormHandler.latinFullNameController.text,
-        billTypeLabel: patternFormHandler.selectedBillPatternType!.value,
-        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType!.value).typeGuide,
+        billTypeLabel: patternFormHandler.selectedBillPatternType.value!.value,
+        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType.value!.value).typeGuide,
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );

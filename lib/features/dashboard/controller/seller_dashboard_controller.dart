@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
@@ -20,15 +19,11 @@ import '../../sellers/controllers/seller_sales_controller.dart';
 import '../../sellers/data/models/seller_model.dart';
 import '../../sellers/ui/screens/all_sellers_screen.dart';
 
-class SellerDashboardController extends GetxController  with FloatingLauncher{
-
-
-
+class SellerDashboardController extends GetxController with FloatingLauncher {
   @override
   void onInit() {
     super.onInit();
     getSellersBillsByDate();
-
   }
 
   Rx<RequestState> sellerBillsRequest = RequestState.initial.obs;
@@ -48,7 +43,6 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
   List<BillModel> allSellerBillsThisMonth = [];
   PickerDateRange dateRange = PickerDateRange(DateTime.now(), DateTime.now());
   final now = DateTime.now();
-
 
   List<PieChartSectionData> getSellerPieChartSections() {
     return List.generate(sellerChartData.length, (index) {
@@ -72,10 +66,8 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
     return HSVColor.fromAHSV(0.9, hue, 0.8, 0.85).toColor();
   }
 
-
   lunchSellerScree(BuildContext context, int index) {
-    read<SellerSalesController>().launchToSellerSalesScreen(
-        sellerChartData[index].bills, context, dateRange);
+    read<SellerSalesController>().launchToSellerSalesScreen(sellerChartData[index].bills, context, dateRange);
   }
 
   getSellersBillsByDate() async {
@@ -84,8 +76,7 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
       BillType.sales.billTypeModel,
       DateFilter(
         dateFieldName: ApiConstants.billDate,
-        range: DateTimeRange(
-            start: dateRange.startDate ?? now, end: dateRange.endDate ?? now),
+        range: DateTimeRange(start: dateRange.startDate ?? now, end: dateRange.endDate ?? now),
       ),
     );
 
@@ -94,12 +85,14 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
     update();
     sellerBillsRequest.value = RequestState.success;
   }
+
   Future<void> onSubmitDateRangePicker() async {
     if (!isValidDateRange()) return;
 
     log('onSubmitDateRangePicker ${dateRange.startDate}, ${dateRange.endDate}');
     getSellersBillsByDate();
   }
+
   bool isValidDateRange() {
     final startDate = dateRange.startDate;
     final endDate = dateRange.endDate;
@@ -144,24 +137,22 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
     sellerChartData = read<SellerSalesController>().aggregateSalesBySeller(bills: allSellerBillsThisMonth);
     totalSellerSales = sellerChartData.fold(
       0,
-          (previousValue, element) => previousValue + element.totalAccessorySales + element.totalMobileSales,
+      (previousValue, element) => previousValue + element.totalAccessorySales + element.totalMobileSales,
     );
     totalSellerSalesAccessory = sellerChartData.fold(
       0,
-          (previousValue, element) => previousValue + element.totalAccessorySales,
+      (previousValue, element) => previousValue + element.totalAccessorySales,
     );
     totalSellerSalesMobile = sellerChartData.fold(
       0,
-          (previousValue, element) => previousValue + element.totalMobileSales,
+      (previousValue, element) => previousValue + element.totalMobileSales,
     );
     totalSellerFees = sellerChartData.fold(
       0,
-          (previousValue, element) => previousValue + element.totalFess,
+      (previousValue, element) => previousValue + element.totalFess,
     );
     _getBarGroups();
   }
-
-
 
   changeSellerTotalFees() {
     sellerTotalFees = !sellerTotalFees;
@@ -205,11 +196,13 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
     sellerMaxY = sellerChartData.isNotEmpty ? sellerChartData.map((d) => d.totalMobileSales).reduce((a, b) => a > b ? a : b) : 0;
     sellerMaxY *= 1.5;
   }
+
   void changeSellerTotalMobileTarget() {
     isSellerMobileTargetVisible = !isSellerMobileTargetVisible;
     _getBarGroups();
     update();
   }
+
   void changeSellerAccessoryTarget() {
     isSellerAccessoryTargetVisible = !isSellerAccessoryTargetVisible;
     _getBarGroups();
@@ -219,5 +212,4 @@ class SellerDashboardController extends GetxController  with FloatingLauncher{
   openAllSellersSales(BuildContext context) {
     launchFloatingWindow(context: context, floatingScreen: AllSellersScreen());
   }
-
 }

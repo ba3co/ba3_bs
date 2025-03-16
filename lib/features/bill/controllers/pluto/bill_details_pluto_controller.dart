@@ -388,11 +388,13 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   InvoiceRecordModel? _processBillRow(PlutoRow row, MaterialController materialController) {
     final materialModel = materialController.searchMaterialByName(row.cells[AppConstants.invRecProduct]!.value.toString());
-
+    log('_processBillRow materialModel == null: ${materialModel == null}');
     if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
       if (billTypeModel.billPatternType?.hasVat ?? false) {
+        log('_createInvoiceRecord .hasVat');
         return _createInvoiceRecord(row, materialModel.id!, VatEnums.byGuid(materialModel.matVatGuid ?? '2').taxRatio ?? 0);
       } else {
+        log('_createInvoiceRecord !hasVat');
         return _createInvoiceRecord(row, materialModel.id!, 0);
       }
     }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,12 +13,7 @@ import 'core/styling/app_themes.dart';
 import 'core/widgets/app_scroll_behavior.dart';
 
 void main() async {
-  FlutterError.onError = (FlutterErrorDetails details) {
-    log("FlutterError Error: ${details.exception}");
-    FlutterError.presentError(details);
-  };
-
-  await initializeApp();
+  await initializeAppServices();
 
   runApp(MyApp());
 }

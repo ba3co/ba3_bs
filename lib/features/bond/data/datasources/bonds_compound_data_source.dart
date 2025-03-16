@@ -10,7 +10,9 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   BondCompoundDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bonds", "bonds")
+
   @override
+  // String get rootCollectionPath => '${AppConfig.instance.year}${ApiConstants.bonds}'; // Collection name in Firestore
   String get rootCollectionPath => ApiConstants.bonds; // Collection name in Firestore
 
   @override
@@ -93,7 +95,7 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   }
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
-    final newBondNumber = await getNextNumber(rootCollectionPath, BondType.byTypeGuide(bond.payTypeGuid!).label);
+    final newBondNumber = await fetchAndIncrementEntityNumber(rootCollectionPath, BondType.byTypeGuide(bond.payTypeGuid!).label);
     return bond.copyWith(payNumber: newBondNumber.nextNumber);
   }
 

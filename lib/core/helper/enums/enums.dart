@@ -73,7 +73,7 @@ enum BillType {
   ),
   purchaseReturn(
     label: 'purchaseReturn',
-    value: 'قاتورة مرتجع شراء',
+    value: 'فاتورة مرتجع شراء',
     typeGuide: "507f9e7d-e44e-4c4e-9761-bb3cd4fc1e0d",
     color: 4278228616,
     accounts: {
@@ -89,7 +89,7 @@ enum BillType {
     color: 4286141768,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
+      BillAccounts.caches: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
       BillAccounts.materials: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
     },
   ),
@@ -100,7 +100,7 @@ enum BillType {
     color: 4294924066,
     accounts: {
       BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.materials: AccountModel(accName: "تسويات", id: "mTfITBGSrwFyie049qPC"),
+      BillAccounts.materials: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
       BillAccounts.caches: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
     },
   ),
@@ -172,7 +172,6 @@ enum BillType {
         discountAdditionAccounts: {},
         shortName: value,
         fullName: value,
-        id: 'Rgax7vnKx4wdSibvDj86',
         latinFullName: label,
         latinShortName: label,
       );

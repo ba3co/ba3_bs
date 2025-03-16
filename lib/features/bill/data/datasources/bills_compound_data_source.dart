@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
 
+import '../../../../core/constants/app_config.dart';
 import '../../../../core/models/query_filter.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../models/bill_model.dart';
@@ -13,7 +14,8 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
 
   // Parent Collection (e.g., "bills", "bonds")
   @override
-  String get rootCollectionPath => ApiConstants.bills; // Collection name in Firestore
+  String get rootCollectionPath => '${AppConfig.instance.year}${ApiConstants.bills}'; // Collection name in Firestore
+  // String get rootCollectionPath => ApiConstants.bills; // Collection name in Firestore
 
   @override
   Future<List<BillModel>> fetchAll({required BillTypeModel itemIdentifier}) async {
@@ -95,7 +97,7 @@ class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeM
   }
 
   Future<BillModel> _assignBillNumber(BillModel bill) async {
-    final billEntitySequence = await getNextNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
+    final billEntitySequence = await fetchAndIncrementEntityNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
     return bill.copyWith(
       billDetails: bill.billDetails.copyWith(
         billNumber: billEntitySequence.nextNumber,

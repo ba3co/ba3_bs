@@ -49,15 +49,18 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     required String payAccountGuid,
     required String payDate,
     String? note,
-  }) =>
-      BondModel.fromBondData(
-        bondModel: bondModel,
-        bondType: bondType,
-        note: note,
-        payAccountGuid: payAccountGuid,
-        payDate: payDate,
-        bondRecordsItems: plutoController.generateRecords,
-      );
+  }) {
+    log("generateRecords ${plutoController.generateRecords.length}", name: "createBondModel");
+
+    return BondModel.fromBondData(
+      bondModel: bondModel,
+      bondType: bondType,
+      note: note,
+      payAccountGuid: payAccountGuid,
+      payDate: payDate,
+      bondRecordsItems: plutoController.generateRecords,
+    );
+  }
 
   Future<void> handleDeleteSuccess(BondModel bondModel, BondSearchController bondSearchController, [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
@@ -145,10 +148,12 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
       for (var item in previousBond.payItems.itemList)
         item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
     };
+
     final currentAccounts = {
       for (var item in currentBond.payItems.itemList)
         item.entryAccountGuid!: AccountModel(id: item.entryAccountGuid!, accName: item.entryAccountName!)
     };
+
     if (previousBond.payAccountGuid != null && currentBond.payAccountGuid != null) {
       previousAccounts[previousBond.payAccountGuid!] =
           AccountModel(id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
@@ -158,15 +163,17 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
 
     final Map<String, AccountModel> modifiedAccounts = {};
 
-    previousAccounts.forEach((accountKey, previousAccountModel) {
-      // Find the corresponding account in the current bill
-      final currentAccountModel = currentAccounts[accountKey];
+    previousAccounts.forEach(
+      (accountKey, previousAccountModel) {
+        // Find the corresponding account in the current bill
+        final currentAccountModel = currentAccounts[accountKey];
 
-      // Check if the account exists in the current bill and has been modified
-      if (currentAccountModel?.id != previousAccountModel.id) {
-        modifiedAccounts[accountKey] = previousAccountModel;
-      }
-    });
+        // Check if the account exists in the current bill and has been modified
+        if (currentAccountModel?.id != previousAccountModel.id) {
+          modifiedAccounts[accountKey] = previousAccountModel;
+        }
+      },
+    );
 
     // log('modifiedAccounts length: ${modifiedAccounts.length}');
     //

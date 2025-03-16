@@ -32,7 +32,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   late final AccountStatementService _accountStatementService;
   late final MergeEntryBondItemsUseCase _mergeEntryBondItemsUseCase;
 
-  late final ProcessEntryBondItemsInIsolateUseCase _processEntryBondItemsInIsolateUseCase;
+  late final ProcessEntryBondItemsInIsolateUseCase processEntryBondItemsInIsolateUseCase;
   late final FilterEntryBondItemsByDateUseCase _filterEntryBondItemsByDateUseCase;
   late final GroupAccountsByFinalCategoryUseCase _filterAccountsUseCase;
 
@@ -73,7 +73,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   void _initializeServices() {
     _accountStatementService = AccountStatementService();
     _mergeEntryBondItemsUseCase = MergeEntryBondItemsUseCase(_accountStatementService);
-    _processEntryBondItemsInIsolateUseCase = ProcessEntryBondItemsInIsolateUseCase(_accountStatementService);
+    processEntryBondItemsInIsolateUseCase = ProcessEntryBondItemsInIsolateUseCase(_accountStatementService);
     _filterEntryBondItemsByDateUseCase = FilterEntryBondItemsByDateUseCase();
     _filterAccountsUseCase = GroupAccountsByFinalCategoryUseCase();
   }
@@ -138,7 +138,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     }
 
     // Process results in an isolate for better performance
-    final List<EntryBondItemModel> entryBondItems = await _processEntryBondItemsInIsolateUseCase.execute(result);
+    final List<EntryBondItemModel> entryBondItems =
+        await processEntryBondItemsInIsolateUseCase.execute(result.values.expand((list) => list).toList());
     finalAccountsEntryBondItems.assignAll(entryBondItems);
 
     _calculateFinalAccountValues();
@@ -308,17 +309,15 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
       final result = await _accountsStatementsRepo.getAll(account);
       result.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedItems) {
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedItems) {
           entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
-
-
         },
       );
     }
 
     _filterAndCalculateValues();
-    balance=totalValue;
+    balance = totalValue;
     return balance;
   }
 

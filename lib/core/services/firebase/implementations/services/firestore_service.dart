@@ -98,6 +98,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       await docRef.set(data);
     }
 
+    log('$data', name: 'Add FireStoreService');
     return data;
   }
 

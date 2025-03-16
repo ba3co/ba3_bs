@@ -33,7 +33,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     };
   }
 
-  List<List<dynamic>> _splitItemsIntoChunks(List<Map<String, dynamic>> items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
+  List<List<dynamic>> _splitItemsIntoChunks(List items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
 
   /// Splits a large bill into multiple smaller bills, each having at most `maxItemsPerBill` items.
   List<BillModel> _divideLargeBill(BillModel bill, {required int maxItemsPerBill}) {

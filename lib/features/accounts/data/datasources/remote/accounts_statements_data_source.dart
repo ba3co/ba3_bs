@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
+import '../../../../../core/constants/app_config.dart';
 import '../../../../../core/models/query_filter.dart';
 import '../../../../bond/data/models/entry_bond_model.dart';
 
@@ -11,7 +12,7 @@ class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems
 
   // Parent Collection (e.g., "bills", "bonds")
   @override
-  String get rootCollectionPath => ApiConstants.accountsStatements; // Collection name in Firestore
+  String get rootCollectionPath => '${AppConfig.instance.year}${ApiConstants.accountsStatements}'; // Collection name in Firestore
 
   @override
   Future<List<EntryBondItems>> fetchAll({required AccountEntity itemIdentifier}) async {

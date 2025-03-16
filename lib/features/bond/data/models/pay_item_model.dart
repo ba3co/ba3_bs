@@ -83,55 +83,50 @@ class PayItem extends PlutoAdaptable<BondType> {
       entryAccountGuid: json['EntryAccountGuid'],
       entryAccountName: json['EntryAccountName'],
       entryDate: json['EntryDate'],
-      entryDebit: json['EntryDebit'].toDouble(),
-      entryCredit: json['EntryCredit'].toDouble(),
+      entryDebit: json['EntryDebit'],
+      entryCredit: json['EntryCredit'],
       entryNote: json['EntryNote'],
       entryCurrencyGuid: json['EntryCurrencyGuid'],
-      entryCurrencyVal: json['EntryCurrencyVal'].toDouble(),
+      entryCurrencyVal: json['EntryCurrencyVal'],
       entryCostGuid: json['EntryCostGuid'],
       entryClass: json['EntryClass'],
       entryNumber: json['EntryNumber'],
       entryCustomerGuid: json['EntryCustomerGuid'],
       entryType: json['EntryType'],
-
-    );
-  }
-  factory PayItem.fromJsonFile(Map<String, dynamic> json) {
-    return PayItem(
-      entryAccountGuid: json['EntryAccountGuid'],
-      entryAccountName: read<AccountsController>().getAccountNameById(json['EntryAccountGuid']) ,
-      entryDate: json['EntryDate'],
-      entryDebit: json['EntryDebit'].toDouble(),
-      entryCredit: json['EntryCredit'].toDouble(),
-      entryNote: json['EntryNote'].toString(),
-      entryCurrencyGuid: json['EntryCurrencyGuid'],
-      entryCurrencyVal: json['EntryCurrencyVal'].toDouble(),
-      entryCostGuid: json['EntryCostGuid'],
-      entryClass: json['EntryClass'],
-      entryNumber: json['EntryNumber'],
-      entryCustomerGuid: json['EntryCustomerGuid'],
-      entryType: json['EntryType'],
-
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'EntryAccountGuid': entryAccountGuid,
-      'EntryAccountName': entryAccountName,
-      'EntryDate': entryDate,
-      'EntryDebit': entryDebit,
-      'EntryCredit': entryCredit,
-      'EntryNote': entryNote,
-      'EntryCurrencyGuid': entryCurrencyGuid,
-      'EntryCurrencyVal': entryCurrencyVal,
-      'EntryCostGuid': entryCostGuid,
-      'EntryClass': entryClass,
-      'EntryNumber': entryNumber,
-      'EntryCustomerGuid': entryCustomerGuid,
-      'EntryType': entryType,
-    };
-  }
+  factory PayItem.fromJsonFile(Map<String, dynamic> json) => PayItem(
+        entryAccountGuid: json['EntryAccountGuid'],
+        entryAccountName: read<AccountsController>().getAccountNameById(json['EntryAccountGuid']),
+        entryDate: json['EntryDate'],
+        entryDebit: json['EntryDebit'].toDouble(),
+        entryCredit: json['EntryCredit'].toDouble(),
+        entryNote: json['EntryNote'].toString(),
+        entryCurrencyGuid: json['EntryCurrencyGuid'],
+        entryCurrencyVal: json['EntryCurrencyVal'].toDouble(),
+        entryCostGuid: json['EntryCostGuid'],
+        entryClass: json['EntryClass'],
+        entryNumber: json['EntryNumber'],
+        entryCustomerGuid: json['EntryCustomerGuid'],
+        entryType: json['EntryType'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'EntryAccountGuid': entryAccountGuid,
+        'EntryAccountName': entryAccountName,
+        'EntryDate': entryDate,
+        'EntryDebit': entryDebit,
+        'EntryCredit': entryCredit,
+        'EntryNote': entryNote,
+        'EntryCurrencyGuid': entryCurrencyGuid,
+        'EntryCurrencyVal': entryCurrencyVal,
+        'EntryCostGuid': entryCostGuid,
+        'EntryClass': entryClass,
+        'EntryNumber': entryNumber,
+        'EntryCustomerGuid': entryCustomerGuid,
+        'EntryType': entryType,
+      };
 
   PayItem copyWith({
     String? entryAccountGuid,
@@ -168,7 +163,6 @@ class PayItem extends PlutoAdaptable<BondType> {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([BondType? type]) {
     return {
-
       PlutoColumn(
         title: "#",
         field: AppConstants.entryNumber,
@@ -188,13 +182,9 @@ class PayItem extends PlutoAdaptable<BondType> {
           field: AppConstants.entryCredit,
           type: PlutoColumnType.text(),
           hide: type == BondType.paymentVoucher): entryCredit,
-      PlutoColumn(
-          title: AppStrings.debtor.tr,
-          field: AppConstants.entryDebit,
-          type: PlutoColumnType.text(),
-          hide: type == BondType.receiptVoucher): entryDebit,
-      PlutoColumn(title: AppStrings.account.tr, field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()):
-          entryAccountName,
+      PlutoColumn(title: AppStrings.debtor.tr, field: AppConstants.entryDebit, type: PlutoColumnType.text(), hide: type == BondType.receiptVoucher):
+          entryDebit,
+      PlutoColumn(title: AppStrings.account.tr, field: AppConstants.entryAccountGuid, type: PlutoColumnType.text()): entryAccountName,
       PlutoColumn(title: AppStrings.illustration.tr, field: AppConstants.entryNote, type: PlutoColumnType.text()): entryNote,
     };
   }

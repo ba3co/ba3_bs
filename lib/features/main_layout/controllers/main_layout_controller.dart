@@ -12,6 +12,7 @@ import '../../bond/ui/screens/bond_layout.dart';
 import '../../cheques/ui/screens/cheque_layout.dart';
 import '../../dashboard/ui/screens/dash_board_layout.dart';
 import '../../materials/ui/screens/materials_layout.dart';
+import '../../migration/ui/screens/migration_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
 import '../../users_management/ui/screens/user_management_layout.dart';
 import '../data/model/app_layout_item_model.dart';
@@ -20,7 +21,7 @@ class MainLayoutController extends GetxController {
   RxList<AppLayoutItemModel> appLayouts = [
     if (RoleItemType.administrator.hasReadPermission)
       AppLayoutItemModel(
-        name:'لوحة التحكم',
+        name: 'لوحة التحكم',
         layout: const DashBoardLayout(),
         icon: AppAssets.dashBoardIcon,
         unSelectedIcon: AppAssets.dashBoardUnselectedIcon,
@@ -84,11 +85,16 @@ class MainLayoutController extends GetxController {
       ),
 
     AppLayoutItemModel(
-        name: 'الملف الشخصي',
-        layout: const ProfileScreen(),
-        icon: AppAssets.profileIcon,
-        unSelectedIcon: AppAssets.profileUnselectedIcon,
-      ),
+      name: 'الملف الشخصي',
+      layout: const ProfileScreen(),
+      icon: AppAssets.profileIcon,
+      unSelectedIcon: AppAssets.profileUnselectedIcon,
+    ), AppLayoutItemModel(
+      name: 'الترحيل',
+      layout: const MigrationLayout(),
+      icon: AppAssets.profileIcon,
+      unSelectedIcon: AppAssets.profileUnselectedIcon,
+    ),
 
   ].obs;
   PageController pageController = PageController();

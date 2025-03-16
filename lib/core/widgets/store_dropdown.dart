@@ -19,9 +19,7 @@ class StoreDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
-      label:         AppStrings.store.tr,
-
-
+      label: AppStrings.store.tr,
       child: Obx(() {
         return OverlayService.showDropdown<StoreAccount>(
           value: storeSelectionHandler.selectedStore.value,

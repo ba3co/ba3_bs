@@ -403,6 +403,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
     if (updatedBillModel == null) return;
 
+    log('updatedBillModel itemList length ${updatedBillModel.items.itemList.length}');
+
     // Ensure there are bill items
     if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
 
@@ -506,6 +508,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
   BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
+    log('existingBill itemList length ${existingBill?.items.itemList.length}');
+
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
     if (updatedBillModel == null) {

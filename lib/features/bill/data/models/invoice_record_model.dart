@@ -42,7 +42,8 @@ class InvoiceRecordModel {
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
-  factory InvoiceRecordModel.fromBillItem(BillItem billItem) => InvoiceRecordModel(
+  factory InvoiceRecordModel.fromBillItem(BillItem billItem) =>
+      InvoiceRecordModel(
         invRecId: billItem.itemGuid,
         invRecProduct: billItem.itemName,
         invRecQuantity: billItem.itemQuantity,
@@ -55,7 +56,8 @@ class InvoiceRecordModel {
         invRecProductSerialNumbers: billItem.itemSerialNumbers,
       );
 
-  factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) => InvoiceRecordModel(
+  factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) =>
+      InvoiceRecordModel(
         invRecId: map[AppConstants.invRecId],
         invRecProduct: map[AppConstants.invRecProduct],
         invRecQuantity: int.tryParse(map[AppConstants.invRecQuantity].toString()),
@@ -67,7 +69,8 @@ class InvoiceRecordModel {
         invRecGiftTotal: (map[AppConstants.invRecGiftTotal] ?? 0) * 1.0,
       );
 
-  toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         AppConstants.invRecId: invRecId,
         AppConstants.invRecProduct: invRecProduct,
         AppConstants.invRecQuantity: invRecQuantity,
@@ -87,10 +90,10 @@ class InvoiceRecordModel {
     final int? giftsNumber = _parseInteger(map[AppConstants.invRecGift]);
 
     final String? prodName = map[AppConstants.invRecProduct];
-    final String? productSoldSerial = map[AppConstants.invRecProductSoldSerial];
 
+    final String? productSoldSerial = map[AppConstants.invRecProductSoldSerial];
     final List<String>? productSerialNumbers =
-        (map[AppConstants.invRecProductSerialNumbers] is List) ? List<String>.from(map[AppConstants.invRecProductSerialNumbers] as List) : null;
+    (map[AppConstants.invRecProductSerialNumbers] is List) ? List<String>.from(map[AppConstants.invRecProductSerialNumbers] as List) : null;
 
     // final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
     // final double? vat = _parseDouble(map[AppConstants.invRecVat]);
@@ -198,7 +201,7 @@ class InvoiceRecordModel {
         title: '#',
         field: AppConstants.invRecId,
         type: PlutoColumnType.text(),
-        width: 35,
+        width: 50,
         isReadOnly: true,
         hasContextMenu: false,
         isResizable: false,
@@ -344,7 +347,8 @@ class AdditionsDiscountsRecordModel {
     );
   }
 
-  factory AdditionsDiscountsRecordModel.fromJson(Map<dynamic, dynamic> map) => AdditionsDiscountsRecordModel(
+  factory AdditionsDiscountsRecordModel.fromJson(Map<dynamic, dynamic> map) =>
+      AdditionsDiscountsRecordModel(
         account: map[AppConstants.id],
         discount: _parseDouble(map[AppConstants.discount]),
         discountRatio: _parseDouble(map[AppConstants.discountRatio]),
@@ -352,7 +356,8 @@ class AdditionsDiscountsRecordModel {
         additionRatio: _parseDouble(map[AppConstants.additionRatio]),
       );
 
-  toJson() => {
+  toJson() =>
+      {
         AppConstants.id: account,
         AppConstants.discount: discount,
         AppConstants.discountRatio: discountRatio,

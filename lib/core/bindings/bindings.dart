@@ -78,6 +78,7 @@ import '../../features/materials/data/datasources/remote/materials_groups_data_s
 import '../../features/materials/data/datasources/remote/materials_statements_data_source.dart';
 import '../../features/materials/data/models/mat_statement/mat_statement_model.dart';
 import '../../features/materials/service/material_import.dart';
+import '../../features/migration/controllers/migration_controller.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
@@ -109,7 +110,7 @@ class AppBindings extends Bindings {
     // Initialize services
     final dioClient = _initializeDioClient();
 
-     final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
+    final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
     // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'test');
 
@@ -316,7 +317,10 @@ class AppBindings extends Bindings {
     lazyPut(AddSellerController(repositories.sellersRepo));
 
     lazyPut(UserDetailsController(read<FilterableDataSourceRepository<UserModel>>()));
+
     lazyPut(StoreCartController(repositories.storeCartRepo, repositories.billsRepo));
+
+    lazyPut(MigrationController(repositories.bondsRepo, repositories.billsRepo));
   }
 }
 

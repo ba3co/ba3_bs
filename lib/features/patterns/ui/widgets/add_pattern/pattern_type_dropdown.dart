@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,10 +11,7 @@ import '../../../../bill/ui/widgets/bill_shared/bill_header_field.dart';
 import '../../../controllers/pattern_controller.dart';
 
 class PatternTypeDropdown extends StatelessWidget {
-  const PatternTypeDropdown({
-    super.key,
-    required this.patternController,
-  });
+  const PatternTypeDropdown({super.key, required this.patternController});
 
   final PatternController patternController;
 
@@ -19,31 +19,24 @@ class PatternTypeDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
       label: AppStrings.billType.tr,
-      child: Container(
+      child: Obx(() {
+        return OverlayService.showDropdown<BillPatternType>(
+          value: patternController.patternFormHandler.selectedBillPatternType.value ?? BillPatternType.values.first,
+          items: BillPatternType.values,
+          onChanged: patternController.patternFormHandler.onSelectedTypeChanged,
+          itemLabelBuilder: (type) => type.label.tr,
+          textStyle: const TextStyle(fontSize: 14),
           height: AppConstants.constHeightDropDown,
-          alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
             color: Colors.white,
+            border: Border.all(color: Colors.black38),
+            borderRadius: BorderRadius.circular(5),
           ),
-          child: DropdownButton(
-            hint: Text(AppStrings.choosePatternType.tr),
-            dropdownColor: Colors.white,
-            focusColor: Colors.white,
-            alignment: Alignment.center,
-            underline: const SizedBox(),
-            isExpanded: true,
-            value: patternController.patternFormHandler.selectedBillPatternType,
-            items: BillPatternType.values.map((BillPatternType type) {
-              return DropdownMenuItem<BillPatternType>(
-                value: type,
-                child: Center(
-                  child: Text(type.label, textDirection: TextDirection.rtl),
-                ),
-              );
-            }).toList(),
-            onChanged: patternController.patternFormHandler.onSelectedTypeChanged,
-          )),
+          onCloseCallback: () {
+            log('BillPatternType Dropdown Overlay Closed.');
+          },
+        );
+      }),
     );
   }
 }

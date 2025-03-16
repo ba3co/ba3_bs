@@ -308,6 +308,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
+    log('currentBill ${currentBill.billId}', name: 'findModifiedBillTypeAccounts');
+
     // Extract accounts from the bill type models or default to empty maps
     final previousAccounts = previousBill.billTypeModel.accounts ?? {};
     final currentAccounts = currentBill.billTypeModel.accounts ?? {};
@@ -366,10 +368,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
   }
 
-  Map<String, AccountModel> _handelModifiedAccountsUpdate({
-    required BillModel previousBill,
-    required BillModel currentBill,
-  }) {
+  Map<String, AccountModel> _handelModifiedAccountsUpdate({required BillModel previousBill, required BillModel currentBill}) {
     final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
     if (hasModelId(currentBill.billId) &&
@@ -441,6 +440,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     //  log('if Modified accounts count: ${modifiedBillTypeAccounts.length}');
     // 5. Create an entry bond if the bill is approved and its pattern requires a material account.
     if (_shouldCreateEntryBond(currentBill)) {
+      log('createAndStoreEntryBond', name: '_shouldCreateEntryBond');
       createAndStoreEntryBond(
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,

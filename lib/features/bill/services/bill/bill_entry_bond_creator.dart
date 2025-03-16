@@ -17,17 +17,24 @@ import '../../../patterns/data/models/bill_type_model.dart';
 class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   @override
   List<EntryBondItemModel> generateItems({required BillModel model, bool? isSimulatedVat}) {
+    if (!model.billTypeModel.billPatternType!.hasMaterialAccount) {
+      return [];
+    }
+
     final customerAccount = model.billTypeModel.accounts![BillAccounts.caches]!;
 
     final billType = BillType.byLabel(model.billTypeModel.billTypeLabel!);
     final isSales = billType == BillType.sales || billType == BillType.purchaseReturn;
 
     final date = model.billDetails.billDate!.dayMonthYear;
+
     final firstPayBond = [];
+
     if ((model.billDetails.billFirstPay ?? 0) > 0) {
       firstPayBond.addAll(_createFirstPayBond(
           billId: model.billId!, firstPay: model.billDetails.billFirstPay ?? 0, customerAccount: customerAccount, isSales: isSales, date: date));
     }
+
     final itemBonds = _generateBillItemBonds(
       billId: model.billId!,
       accounts: model.billTypeModel.accounts!,
@@ -38,6 +45,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       billTypeModel: model.billTypeModel,
       isSimulatedVat: isSimulatedVat,
     );
+
     if (model.billTypeModel.billPatternType!.hasDiscountsAccount) {
       final adjustmentBonds = _generateAdjustmentBonds(
         discountsAndAdditions: model.billTypeModel.discountAdditionAccounts!,

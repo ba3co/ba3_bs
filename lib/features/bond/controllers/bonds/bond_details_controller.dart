@@ -56,6 +56,7 @@ class BondDetailsController extends GetxController with AppValidator {
     selectedAccount = setAccount;
     bondDetailsPlutoController.setAccountGuid = setAccount.id;
     accountController.text = setAccount.accName!;
+    log(accountController.text, name: 'setAccount');
   }
 
   @override
@@ -127,23 +128,23 @@ class BondDetailsController extends GetxController with AppValidator {
       AppUIUtils.onFailure('من فضلك يرجى اضافة حقول للسند');
       return;
     }
-    log("save");
+
     // Save the bond to Firestore
     final result = await _bondsFirebaseRepo.save(updatedBondModel);
 
     // Handle the result (success or failure)
     result.fold(
       (failure) {
-        log("save failure");
         return AppUIUtils.onFailure(failure.message);
       },
       (bondModel) {
         _bondService.handleSaveOrUpdateSuccess(
-            previousBond: existingBondModel,
-            currentBond: bondModel,
-            bondSearchController: bondSearchController,
-            isSave: existingBondModel == null,
-            bondDetailsController: this);
+          previousBond: existingBondModel,
+          currentBond: bondModel,
+          bondSearchController: bondSearchController,
+          isSave: existingBondModel == null,
+          bondDetailsController: this,
+        );
       },
     );
   }
@@ -171,11 +172,12 @@ class BondDetailsController extends GetxController with AppValidator {
     // Create and return the bond model
 
     return _bondService.createBondModel(
-        bondModel: bondModel,
-        bondType: bondType,
-        payDate: bondDate.value,
-        payAccountGuid: selectedAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
-        note: noteController.text);
+      bondModel: bondModel,
+      bondType: bondType,
+      payDate: bondDate.value,
+      payAccountGuid: selectedAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      note: noteController.text,
+    );
   }
 
   prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>

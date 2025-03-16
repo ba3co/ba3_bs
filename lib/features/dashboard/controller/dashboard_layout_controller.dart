@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
@@ -27,43 +26,36 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
 
   final now = DateTime.now();
 
-
   @override
   onInit() {
     getAllDashBoardAccounts();
     super.onInit();
   }
 
-
   List<UserModel> get allUsers => read<UserManagementController>().allUsers;
 
   int get allUsersLength => allUsers.length;
 
-  int get onlineUsersLength =>
-      allUsers
-          .where(
-            (user) => user.userWorkStatus == UserWorkStatus.online,
+  int get onlineUsersLength => allUsers
+      .where(
+        (user) => user.userWorkStatus == UserWorkStatus.online,
       )
-          .length;
+      .length;
 
-  int get usersMustWorkingNowLength =>
-      allUsers
-          .where((user) {
+  int get usersMustWorkingNowLength => allUsers
+      .where((user) {
         return user.userWorkingHours!.values.any((interval) {
           return now.isAfter(interval.enterTime!.toWorkingTime()) && now.isBefore(interval.outTime!.toWorkingTime());
         });
       })
-          .toList()
-          .length;
-
-
-
+      .toList()
+      .length;
 
   getAllDashBoardAccounts() async {
     final result = await _datasourceRepository.getAll();
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedDashBoardAccounts) {
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedDashBoardAccounts) {
         dashBoardAccounts.assignAll(fetchedDashBoardAccounts);
         update();
       },
@@ -103,8 +95,8 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
     final result = await _datasourceRepository.save(dashAccountModel);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حفظ الحساب بنجاح'),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حفظ الحساب بنجاح'),
     );
     getAllDashBoardAccounts();
     accountNameController.clear();
@@ -132,12 +124,11 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
       final result = await _datasourceRepository.delete(dashAccountModel, dashAccountModel.id!);
 
       result.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حذف الحساب بنجاح'),
+        (failure) => AppUIUtils.onFailure(failure.message),
+        (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حذف الحساب بنجاح'),
       );
       getAllDashBoardAccounts();
       update();
     }
   }
-
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../features/accounts/data/models/account_model.dart';
 import '../../../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../../features/bond/data/models/entry_bond_model.dart';
@@ -29,6 +31,7 @@ mixin EntryBondsGenerator {
     final entryBondModels = _mapModelToEntryBonds(model);
 
     if (entryBondModels.length == 1) {
+      log('entryBondModels.length == 1', name: 'createAndStoreEntryBond');
       await entryBondController.saveEntryBondModel(
         entryBondModel: entryBondModels.first,
         modifiedAccounts: modifiedAccounts,
@@ -47,15 +50,16 @@ mixin EntryBondsGenerator {
 
   List<EntryBondModel> _mapModelToEntryBonds<T>(T model) {
     return EntryBondCreatorFactory.resolveEntryBondCreators(model)
-        .map((creator) => creator.createEntryBond(
-              originType: EntryBondCreatorFactory.resolveOriginType(model),
-              model: model,
-            ))
+        .map(
+          (creator) => creator.createEntryBond(
+            originType: EntryBondCreatorFactory.resolveOriginType(model),
+            model: model,
+          ),
+        )
         .toList();
   }
 
-  EntryBondModel createChequeEntryBondByStrategy(ChequesModel model,
-      {required ChequesStrategyType chequesStrategyType}) {
+  EntryBondModel createChequeEntryBondByStrategy(ChequesModel model, {required ChequesStrategyType chequesStrategyType}) {
     final creators = ChequesStrategyBondFactory.determineStrategy(model, type: chequesStrategyType);
     return creators.first.createEntryBond(
       model: model,
@@ -63,8 +67,7 @@ mixin EntryBondsGenerator {
     );
   }
 
-  Future<void> createAndStoreChequeEntryBondByStrategy(ChequesModel model,
-      {required ChequesStrategyType chequesStrategyType}) async {
+  Future<void> createAndStoreChequeEntryBondByStrategy(ChequesModel model, {required ChequesStrategyType chequesStrategyType}) async {
     final entryBondModel = createChequeEntryBondByStrategy(model, chequesStrategyType: chequesStrategyType);
     await entryBondController.saveEntryBondModel(entryBondModel: entryBondModel);
   }

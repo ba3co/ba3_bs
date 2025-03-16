@@ -145,8 +145,8 @@ class BillPlutoGridService {
 
     final isZeroTotal = subTotalStr == 0 || quantity == 0;
 
-    final vat = isZeroTotal ? '' : ((subTotalStr /  1.05) * 0.05).toStringAsFixed(2);
-    final subTotal = isZeroTotal ? '' : (subTotalStr -vat.toDouble).toStringAsFixed(2);
+    final vat = isZeroTotal ? '' : ((subTotalStr / 1.05) * 0.05).toStringAsFixed(2);
+    final subTotal = isZeroTotal ? '' : (subTotalStr - vat.toDouble).toStringAsFixed(2);
 
     final totalStr = isZeroTotal ? '' : (subTotalStr * quantity).toStringAsFixed(2);
 
@@ -155,7 +155,7 @@ class BillPlutoGridService {
     if (billTypeModel.billPatternType!.hasVat) {
       updateCellValue(mainTableStateManager, AppConstants.invRecVat, vat);
 
-      updateCellValue(mainTableStateManager, AppConstants.invRecSubTotalWithVat,subTotalStr);
+      updateCellValue(mainTableStateManager, AppConstants.invRecSubTotalWithVat, subTotalStr);
     }
   }
 
@@ -168,7 +168,8 @@ class BillPlutoGridService {
     final total = isZeroSubtotal ? '' : ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2);
     if (billTypeModel.billPatternType!.hasVat) {
       updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecVat, vat);
-      updateSelectedRowCellValue(mainTableStateManager,selectedRow, AppConstants.invRecSubTotalWithVat, (subTotalStr.toDouble + vat.toDouble).toStringAsFixed(2));
+      updateSelectedRowCellValue(
+          mainTableStateManager, selectedRow, AppConstants.invRecSubTotalWithVat, (subTotalStr.toDouble + vat.toDouble).toStringAsFixed(2));
     }
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecSubTotal, subTotalStr);
     updateSelectedRowCellValue(mainTableStateManager, selectedRow, AppConstants.invRecTotal, total);
