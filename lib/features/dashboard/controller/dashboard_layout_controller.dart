@@ -51,6 +51,10 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
       .toList()
       .length;
 
+  void refreshDashBoardUser () {
+
+  }
+
   getAllDashBoardAccounts() async {
     final result = await _datasourceRepository.getAll();
     result.fold(

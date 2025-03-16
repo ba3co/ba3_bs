@@ -7,7 +7,9 @@ import 'package:ba3_bs/features/dashboard/controller/seller_dashboard_controller
 import 'package:ba3_bs/features/dashboard/ui/widgets/seller_sale_chart/all_sellers_sales_board.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/dash_board_accounts/dash_board_account_view_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import '../../../../core/styling/app_colors.dart';
 import '../../../../core/widgets/tow_field_row.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
 import '../../controller/bill_profit_dashboard_controller.dart';
@@ -31,11 +33,27 @@ class DashBoardLayout extends StatelessWidget {
               DashboardAppBar(controller: dashboardLayoutController),
               VerticalSpace(),
               OrganizedWidget(
-                  titleWidget: Center(
-                      child: Text(
-                        AppStrings.userAdministration,
-                        style: AppTextStyles.headLineStyle1,
-                      )),
+                  titleWidget: Row(
+                    children: [
+                      Spacer(),
+                      Center(
+                          child: Text(
+                            AppStrings.userAdministration,
+                            style: AppTextStyles.headLineStyle1,
+                          )),
+                      Spacer(),
+                      IconButton(
+                        tooltip: AppStrings.refresh.tr,
+                        icon: Icon(
+                          FontAwesomeIcons.refresh,
+                          color: AppColors.lightBlueColor,
+                        ),
+                        onPressed:dashboardLayoutController.refreshDashBoardUser,
+                      ),
+                    HorizontalSpace(10),
+
+                    ],
+                  ),
                   bodyWidget: AllAttendanceScreen()),
               VerticalSpace(20),
               GetBuilder<ChequesTimelineController>(builder: (chequesTimelineController) {
