@@ -145,7 +145,7 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
     }
   }
 
-  getProfitChartData() async {
+  Future<void> getProfitChartData() async {
     profitsBillsRequest.value = RequestState.loading;
     billsAndProfitChartData = await read<AllBillsController>().fetchBillsByDate(
       BillType.sales.billTypeModel,
