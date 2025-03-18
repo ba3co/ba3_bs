@@ -760,9 +760,9 @@ enum TaskType {
 }
 
 enum TaskStatus {
-  finished('انتهت'),
+  done('انتهت'),
   canceled('تم الالغاء'),
-  pending('قيد الانجاز'),
+  inProgress('قيد الانجاز'),
   initial('جاهزة للبدأ'),
   failure('فشلت');
 

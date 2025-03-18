@@ -245,7 +245,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (task) {
-        read<UserManagementController>().addTaskToUser( task, differentUser);
+        read<UserManagementController>().addTaskToUser( task.docId!, differentUser);
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
         return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح');
@@ -296,11 +296,20 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
       userTaskList.removeWhere((userTask) => userTask.docId == selectedTask?.docId);
-      read<UserManagementController>().addTaskToUser( selectedTask!, selectedTask!.assignedTo!);
+      read<UserManagementController>().addTaskToUser( selectedTask!.docId!, selectedTask!.assignedTo!);
 
       setSelectedTask(null);
       update();
       AppUIUtils.onSuccess('تم حذف المهمة بنجاح');
+    });
+  }
+
+ Future<UserTaskModel> getTaskById(String id) async{
+    if(userTaskList.isEmpty){
+    await  fetchTasks();
+    }
+    return  userTaskList.firstWhere((element) {
+      return element.docId == id;
     });
   }
 }

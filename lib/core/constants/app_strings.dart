@@ -363,5 +363,7 @@ class AppStrings {
 
   static var allTask='جميع المهام';
 
+  static var start='بدأ';
+
 
 }

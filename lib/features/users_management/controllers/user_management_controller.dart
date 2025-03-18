@@ -2,8 +2,11 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
+import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
+import 'package:ba3_bs/features/user_task/controller/all_task_controller.dart';
 import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_navigator.dart';
@@ -77,7 +80,37 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     userNavigator = UserNavigator(roleFormHandler, _sharedPreferencesService);
   }
 
+  fetchAllUserTask() async {
+    read<SellerSalesController>().profileScreenState.value=RequestState.loading;
+    if (loggedInUserModel?.userTaskList == null) return [];
+
+    allTaskList
+        .assignAll(await Future.wait(loggedInUserModel!.userTaskList!.map((e) async => await read<AllTaskController>().getTaskById(e))));
+    read<SellerSalesController>().profileScreenState.value=RequestState.success;
+    update();
+
+  }
+
   List<UserModel> get nonLoggedInUsers => allUsers.where((user) => user.userId != loggedInUserModel?.userId).toList();
+  List<UserTaskModel> allTaskList = [];
+
+  List<UserTaskModel> get saleTask => allTaskList
+      .where(
+        (element) => element.taskType == TaskType.saleTask,
+      )
+      .toList();
+
+  List<UserTaskModel> get normalTask => allTaskList
+      .where(
+        (element) => element.taskType == TaskType.generalTask,
+      )
+      .toList();
+
+  List<UserTaskModel> get inventoryTask => allTaskList
+      .where(
+        (element) => element.taskType == TaskType.inventoryTask,
+      )
+      .toList();
 
   String get dateToDay => Timestamp.now().toDate().toString().split(' ')[0];
 
@@ -352,26 +385,27 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     return allUsers.firstWhereOrNull((user) => user.userId == id)?.userName ?? 'invalid id $id';
   }
 
-  addTaskToUser(UserTaskModel userTaskModel,List<String> userToEdit) {
+  addTaskToUser(String userTaskId, List<String> userToEdit) {
     List<UserModel> userToAddList = userToEdit.map((userId) => allUsers.firstWhere((user) => user.userId == userId)).toList();
     for (var user in userToAddList) {
+      final List<String> updatedTaskList = List.from(user.userTaskList ?? []);
 
-      final List<UserTaskModel> updatedTaskList = List.from(user.userTaskList ?? []);
-
-      int index = updatedTaskList.indexWhere((task) => task.docId == userTaskModel.docId);
+      int index = updatedTaskList.indexWhere((taskId) => taskId == userTaskId);
 
       if (index != -1) {
         updatedTaskList.removeAt(index);
-        log("🗑️ تم حذف المهمة ذات ID: ${userTaskModel.docId} للمستخدم ${user.userName}");
+        log("🗑️ تم حذف المهمة ذات ID: $userTaskId للمستخدم ${user.userName}");
       } else {
-        updatedTaskList.add(userTaskModel);
-        log("✅ تم إضافة مهمة جديدة ذات ID: ${userTaskModel.docId} للمستخدم ${user.userName}");
+        updatedTaskList.add(userTaskId);
+        log("✅ تم إضافة مهمة جديدة ذات ID: $userTaskId للمستخدم ${user.userName}");
       }
 
-
       final editedUser = user.copyWith(userTaskList: updatedTaskList);
+      int allUsersIndex = allUsers.indexWhere((element) => element.userId == user.userId);
 
-      // حفظ التعديلات في Firebase
+      if (allUsersIndex != -1) {
+        allUsers[allUsersIndex] = editedUser; // Update the user in the list
+      }
       _usersFirebaseRepo.save(editedUser);
     }
   }
