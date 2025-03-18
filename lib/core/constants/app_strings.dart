@@ -365,5 +365,8 @@ class AppStrings {
 
   static var start='بدأ';
 
+  static var tasksTodo='مهام يجب تنفيذها';
+  static var tasksEnded='مهام انتهت';
+
 
 }

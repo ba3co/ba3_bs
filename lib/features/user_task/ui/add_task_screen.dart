@@ -1,17 +1,12 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
-import 'package:ba3_bs/core/widgets/custom_text_field_without_icon.dart';
-import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
-import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
+import 'package:ba3_bs/features/user_task/ui/widgets/add_task_header.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import '../../../core/helper/enums/enums.dart';
-import '../../../core/widgets/date_picker.dart';
 import '../../bill/ui/widgets/bill_shared/form_field_row.dart';
 import '../controller/all_task_controller.dart';
 
@@ -34,7 +29,9 @@ class AddTaskScreen extends StatelessWidget {
             child: ListView(
               // spacing: 15,
               children: [
-                TextAndExpandedChildField(
+
+                AddTaskHeader(controller: controller)
+          /*      TextAndExpandedChildField(
                   label: AppStrings.taskTitle.tr,
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: controller.taskFormHandler.titleTextEditingController,
@@ -113,7 +110,7 @@ class AddTaskScreen extends StatelessWidget {
                       );
                     }),
                   ),
-                ),
+                )*/,
                 FormFieldRow(
                     firstItem: Column(
                       children: [

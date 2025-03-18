@@ -81,18 +81,23 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   }
 
   fetchAllUserTask() async {
-    read<SellerSalesController>().profileScreenState.value=RequestState.loading;
+    read<SellerSalesController>().profileScreenState.value = RequestState.loading;
     if (loggedInUserModel?.userTaskList == null) return [];
 
     allTaskList
         .assignAll(await Future.wait(loggedInUserModel!.userTaskList!.map((e) async => await read<AllTaskController>().getTaskById(e))));
-    read<SellerSalesController>().profileScreenState.value=RequestState.success;
-    update();
+    allTaskListDone.assignAll(allTaskList.where(
+      (element) => element.status == TaskStatus.canceled || element.status == TaskStatus.done || element.status == TaskStatus.failure,
+    ));
 
+    allTaskList.removeWhere((element) => element.status == TaskStatus.canceled || element.status == TaskStatus.done || element.status == TaskStatus.failure);
+    read<SellerSalesController>().profileScreenState.value = RequestState.success;
+    update();
   }
 
   List<UserModel> get nonLoggedInUsers => allUsers.where((user) => user.userId != loggedInUserModel?.userId).toList();
   List<UserTaskModel> allTaskList = [];
+  List<UserTaskModel> allTaskListDone = [];
 
   List<UserTaskModel> get saleTask => allTaskList
       .where(
