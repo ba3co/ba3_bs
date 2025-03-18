@@ -47,7 +47,7 @@ class UserManagementLayout extends StatelessWidget {
             AppMenuItem(
                 text: AppStrings.tasks.tr,
                 onTap: () {
-                  userManagementController. userNavigator.lunchAddTaskScreen(context);
+                  userManagementController. userNavigator.lunchAllTaskScreen(context);
                 }),
           ],
         ),

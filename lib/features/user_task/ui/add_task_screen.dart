@@ -7,90 +7,86 @@ import 'package:ba3_bs/core/widgets/custom_text_field_without_icon.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/bill_header_field.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/widgets/date_picker.dart';
 import '../../bill/ui/widgets/bill_shared/form_field_row.dart';
-import '../controller/add_task_controller.dart';
+import '../controller/all_task_controller.dart';
 
 class AddTaskScreen extends StatelessWidget {
   const AddTaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AddTaskController>(builder: (controller) {
+    return GetBuilder<AllTaskController>(builder: (controller) {
       return Scaffold(
-        appBar: AppBar(title: Text('إضافة مهمة جديدة')),
+        appBar: AppBar(
+            title: Text(
+          AppStrings.addNewTask.tr,
+          style: AppTextStyles.headLineStyle3,
+        )),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
-            key: controller.formKey,
+            key: controller.taskFormHandler.formKey,
             child: ListView(
               // spacing: 15,
               children: [
                 TextAndExpandedChildField(
                   label: AppStrings.taskTitle.tr,
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: controller.titleTextEditingController,
-                    // decoration: InputDecoration(labelText: 'عنوان المهمة'),
-                    validator: (value) => value == null || value.isEmpty ? 'يرجى إدخال العنوان' : null,
+                    textEditingController: controller.taskFormHandler.titleTextEditingController,
+                    validator: (value) => controller.taskFormHandler.validator(value, 'يرجى إدخال العنوان'),
                   ),
                 ),
                 TextAndExpandedChildField(
                   label: AppStrings.materials.tr,
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: controller.materialTextController,
+                    textEditingController: controller.taskFormHandler.materialTextController,
                     onSubmitted: (_) async {
                       controller.addMaterialToList(context);
                     },
-                    validator: (value) => value == null || value.isEmpty ? 'يرجى إدخال الوصف' : null,
                   ),
                 ),
-                /*      TextAndExpandedChildField(
-              label: AppStrings.status.tr,
-              child: OverlayService.showDropdown<TaskStatus>(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.black38),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                items: TaskStatus.values,
-                onChanged: (value) {},
-                value: controller.selectedStatus.value,
-                itemLabelBuilder: (TaskStatus item) => item.value,
-              ),
-            ),
-            VerticalSpace(15),*/
                 FormFieldRow(
-                  firstItem: TextAndExpandedChildField(
-                    label: AppStrings.status.tr,
-                    child: OverlayService.showDropdown<TaskStatus>(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black38),
-                        borderRadius: BorderRadius.circular(5),
+                  firstItem: Obx(() {
+                    return TextAndExpandedChildField(
+                      label: AppStrings.status.tr,
+                      child: OverlayService.showDropdown<TaskStatus>(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black38),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        items: TaskStatus.values,
+                        onChanged: (value) {
+                          controller.taskFormHandler.setTaskStatus(value);
+                        },
+                        value: controller.taskFormHandler.selectedStatus.value,
+                        itemLabelBuilder: (TaskStatus item) => item.value,
                       ),
-                      items: TaskStatus.values,
-                      onChanged: (value) {},
-                      value: controller.selectedStatus.value,
-                      itemLabelBuilder: (TaskStatus item) => item.value,
-                    ),
-                  ),
-                  secondItem: TextAndExpandedChildField(
-                    label: AppStrings.taskType.tr,
-                    child: OverlayService.showDropdown<TaskType>(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black38),
-                        borderRadius: BorderRadius.circular(5),
+                    );
+                  }),
+                  secondItem: Obx(() {
+                    return TextAndExpandedChildField(
+                      label: AppStrings.taskType.tr,
+                      child: OverlayService.showDropdown<TaskType>(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black38),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        items: TaskType.values,
+                        onChanged: (value) {
+                          controller.taskFormHandler.setTaskType(value);
+                        },
+                        value: controller.taskFormHandler.selectedTaskType.value,
+                        itemLabelBuilder: (TaskType item) => item.label,
                       ),
-                      items: TaskType.values,
-                      onChanged: (value) {},
-                      value: controller.selectedTaskType.value,
-                      itemLabelBuilder: (TaskType item) => item.label,
-                    ),
-                  ),
+                    );
+                  }),
                 ),
                 VerticalSpace(15),
                 FormFieldRow(
@@ -98,8 +94,9 @@ class AddTaskScreen extends StatelessWidget {
                     label: AppStrings.lastDateTodo.tr,
                     child: Obx(() {
                       return DatePicker(
-                        initDate: controller.dueDate.value.dayMonthYear,
+                        initDate: controller.taskFormHandler.dueDate.value.dayMonthYear,
                         onDateSelected: (date) {
+                          controller.taskFormHandler.setDueDate(date);
                           // billDetailsController.setBillDate = date;
                         },
                       );
@@ -109,9 +106,9 @@ class AddTaskScreen extends StatelessWidget {
                     label: AppStrings.createdDate.tr,
                     child: Obx(() {
                       return DatePicker(
-                        initDate: controller.createDate.value.dayMonthYear,
+                        initDate: controller.taskFormHandler.createDate.value.dayMonthYear,
                         onDateSelected: (date) {
-                          // billDetailsController.setBillDate = date;
+                          controller.taskFormHandler.setCreateDate(date);
                         },
                       );
                     }),
@@ -146,11 +143,11 @@ class AddTaskScreen extends StatelessWidget {
                         VerticalSpace(5),
                         Row(
                           children: [
-                            Text('تم تحديد ${controller.selectedUsers.length} من المستخدمين'),
+                            Text('تم تحديد ${controller.taskFormHandler.selectedUsers.length} من المستخدمين'),
                             Spacer(),
                             Row(
                               children: [
-                                Text(controller.selectedUsers.isEmpty ? 'تحديد الكل' : 'الغاء الكل'),
+                                Text(controller.taskFormHandler.selectedUsers.isEmpty ? 'تحديد الكل' : 'الغاء الكل'),
                                 HorizontalSpace(10),
                                 IconButton(
                                     padding: EdgeInsets.zero,
@@ -159,7 +156,9 @@ class AddTaskScreen extends StatelessWidget {
                                       controller.selectOrDeselectAllUsers();
                                     },
                                     icon: Icon(
-                                      controller.selectedUsers.isEmpty ? Icons.check_box_outline_blank_rounded : Icons.check_box_rounded,
+                                      controller.taskFormHandler.selectedUsers.isEmpty
+                                          ? Icons.check_box_outline_blank_rounded
+                                          : Icons.check_box_rounded,
                                       size: 18,
                                     )),
                               ],
@@ -176,14 +175,15 @@ class AddTaskScreen extends StatelessWidget {
                       alignment: Alignment.center,
                       child: ListView.separated(
                         separatorBuilder: (context, index) => Divider(),
-                        itemCount: controller.materialTaskList.length,
+                        itemCount: controller.taskFormHandler.materialTaskList.length,
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(
-                              controller.materialTaskList[index].materialName!,
+                              controller.taskFormHandler.materialTaskList[index].materialName!,
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text("${AppStrings.identificationNumber.tr}: ${controller.materialTaskList[index].docId}",
+                            subtitle: Text(
+                                "${AppStrings.identificationNumber.tr}: ${controller.taskFormHandler.materialTaskList[index].docId}",
                                 style: TextStyle(color: Colors.grey)),
                             leading: InkWell(
                                 onTap: () {
@@ -191,7 +191,7 @@ class AddTaskScreen extends StatelessWidget {
                                 },
                                 child: Icon(Icons.inventory)),
                             trailing: Text(
-                              " ${AppStrings.quantity.tr} \n ${controller.materialTaskList[index].quantity}",
+                              " ${AppStrings.quantity.tr} \n ${controller.taskFormHandler.materialTaskList[index].quantity}",
                               style: AppTextStyles.headLineStyle4,
                               textAlign: TextAlign.center,
                             ),
@@ -205,9 +205,25 @@ class AddTaskScreen extends StatelessWidget {
                   spacing: 15,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    AppButton(title: AppStrings.save.tr, onPressed: () {},iconData: Icons.save_alt_rounded,),
+                    if(!controller.isNewTask)
+                      AppButton(
+                        title: AppStrings.delete.tr,
+                        color: Colors.red,
+                        onPressed: () {
+                          controller.deleteTask();
+                        },
+                        iconData:FontAwesomeIcons.deleteLeft,
+                      ),
+                    AppButton(
+                      title: controller.isNewTask? AppStrings.save.tr: AppStrings.edit.tr,
+                      color: controller.isNewTask? null: Colors.green,
+                      onPressed: () {
+                        controller.saveOrUpdateTask();
+                      },
+                      iconData: controller.isNewTask? FontAwesomeIcons.plusSquare: FontAwesomeIcons.edit,
+                    ),
 
-                    AppButton(title: AppStrings.newS.tr, onPressed: () {},iconData:Icons.new_releases_rounded,color: Colors.green,),
+
                   ],
                 )
               ],

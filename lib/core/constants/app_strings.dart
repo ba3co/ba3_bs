@@ -347,5 +347,21 @@ class AppStrings {
 
   static var createdDate='تاريخ الانشاء';
 
+  static var addNewTask='اضافة مهمة جديدة';
+
+  static var pleaseAddUsers='يرجى اضافة المستخدمين';
+
+  static var assignedBy='اضيفت من قبل';
+
+  static var assignedTo='اضيفت الى';
+
+  static var materialInTask='المواد في الجرد';
+
+  static var updatedAt='تاريخ التعديل';
+
+  static var taskDeadline='تاريخ التسليم';
+
+  static var allTask='جميع المهام';
+
 
 }

@@ -88,7 +88,7 @@ import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
 import '../../features/profile/controller/user_time_controller.dart';
 import '../../features/sellers/service/seller_import.dart';
-import '../../features/user_task/controller/add_task_controller.dart';
+import '../../features/user_task/controller/all_task_controller.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
 import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
@@ -280,7 +280,7 @@ class AppBindings extends Bindings {
     lazyPut(SellerDashboardController());
     lazyPut(BillProfitDashboardController());
     lazyPut(ChequesTimelineController());
-    lazyPut(AddTaskController(repositories.tasksRepo));
+    lazyPut(AllTaskController(repositories.tasksRepo));
 
     lazyPut(PlutoController());
     lazyPut(PlutoDualTableController());

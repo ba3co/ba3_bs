@@ -1,17 +1,27 @@
-import '../../../../core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
-class UserTaskModel {
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
+
+class UserTaskModel implements PlutoAdaptable {
   String? docId;
   String? title;
   List<MaterialTaskModel>? materialTask;
-  String? dueDate;
- TaskStatus? status;
-  String? assignedTo;
+  DateTime? dueDate;
+  TaskStatus? status;
+  List<String>? assignedTo;
   String? assignedBy;
   TaskType? taskType;
   String? taskImage;
-  String? createdAt;
-  String? updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   UserTaskModel({
     this.docId,
@@ -27,54 +37,55 @@ class UserTaskModel {
     this.updatedAt,
   });
 
-  /// تحويل الكائن إلى JSON
+
   Map<String, dynamic> toJson() {
     return {
       'docId': docId,
       'title': title,
-      'materialTask': materialTask?.map((item) => item.toJson()) .toList(),
+      'materialTask': materialTask?.map((item) => item.toJson()).toList(),
       'dueDate': dueDate,
       'status': status?.value,
       'assignedTo': assignedTo,
       'assignedBy': assignedBy,
-      'taskType': taskType,
+      'taskType': taskType?.label,
       'taskImage': taskImage,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
   }
 
-  /// تحويل JSON إلى كائن `UserTaskModel`
+
   factory UserTaskModel.fromJson(Map<String, dynamic> json) {
     return UserTaskModel(
       docId: json['docId'] as String?,
       title: json['title'] as String?,
-      materialTask:json['materialTask']==null?[]: (json['materialTask'] as List<dynamic>)
-          .map((materialTaskJson) => MaterialTaskModel.fromJson(materialTaskJson))
-          .toList(),      dueDate: json['dueDate'] as String?,
-      status:  TaskStatus.byValue(json['status'] ??'') ,
-      assignedTo: json['assignedTo'] as String?,
+      materialTask: json['materialTask'] == null
+          ? []
+          : (json['materialTask'] as List<dynamic>).map((materialTaskJson) => MaterialTaskModel.fromJson(materialTaskJson)).toList(),
+      dueDate:AppServiceUtils.convertToDateTime (json['dueDate']) ,
+      status: TaskStatus.byValue(json['status'] ?? ''),
+      assignedTo: (json['assignedTo'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       assignedBy: json['assignedBy'] as String?,
-      taskType: TaskType.byValue(json['taskType'] ??''),// json['taskType'] as String?,
+      taskType: TaskType.byValue(json['taskType'] ?? ''),
+      // json['taskType'] as String?,
       taskImage: json['taskImage'] as String?,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      createdAt: AppServiceUtils.convertToDateTime(json['createdAt'] ),
+      updatedAt: AppServiceUtils.convertToDateTime(json['updatedAt'] ),
     );
   }
 
-  /// إنشاء نسخة جديدة من الكائن مع إمكانيّة تعديل القيم
   UserTaskModel copyWith({
     String? docId,
     String? title,
     List<MaterialTaskModel>? materialTask,
-    String? dueDate,
+    DateTime? dueDate,
     TaskStatus? status,
-    String? assignedTo,
+    List<String>? assignedTo,
     String? assignedBy,
     TaskType? taskType,
     String? taskImage,
-    String? createdAt,
-    String? updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return UserTaskModel(
       docId: docId ?? this.docId,
@@ -91,15 +102,94 @@ class UserTaskModel {
     );
   }
 
-  /// طباعة البيانات عند الحاجة
   @override
   String toString() {
-    return 'UserTaskModel(docId: $docId, title: $title, materialTask: ${materialTask?.map((e) =>e.toJson() ,).toList()}, '
+    return 'UserTaskModel(docId: $docId, title: $title, materialTask: ${materialTask?.map(
+              (e) => e.toJson(),
+            ).toList()}, '
         'dueDate: $dueDate, status: $status, assignedTo: $assignedTo, assignedBy: $assignedBy, '
         'taskType: $taskType, taskImage: $taskImage, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
-}
 
+  @override
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
+    return {
+      PlutoColumn(
+        title: AppStrings.identificationNumber.tr,
+        field: AppConstants.userTaskIdField,
+        type: PlutoColumnType.text(),
+        hide: true,
+      ): docId,
+      createAutoIdColumn(): '#',
+      PlutoColumn(
+        title: AppStrings.taskTitle.tr,
+        field: 'عنوان المهمة',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ):title,
+      PlutoColumn(
+        title: AppStrings.assignedBy.tr,
+        field: 'اضيفت من قبل',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+
+        type: PlutoColumnType.text(),
+      ):  read<UserManagementController>().getUserNameById(assignedBy!),
+      PlutoColumn(
+        title: AppStrings.assignedTo.tr,
+        field: 'اضيفت الى',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ):assignedTo?.map((e) => read<UserManagementController>().getUserNameById(e),).join(' -- ') ,
+      PlutoColumn(
+        title: AppStrings.materialInTask.tr,
+        field: 'مواد الجرد',
+        width: 400,
+
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ):materialTask?.map((e) => e.materialName!,).join(' \\_/ ',) ,
+
+      PlutoColumn(
+        title: AppStrings.createdDate.tr,
+        field:'تاريخ الانشاء',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.date(),
+      ):createdAt,
+      PlutoColumn(
+        title: AppStrings.taskDeadline.tr,
+        field: 'تاريخ التسليم',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.date(),
+      ):dueDate,
+      PlutoColumn(
+        title: AppStrings.status.tr,
+        field: 'الحالة',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): status?.value,
+      PlutoColumn(
+        title: AppStrings.taskType.tr,
+        field:  'نوع المهمة',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): taskType?.label,
+      PlutoColumn(
+        title: AppStrings.updatedAt,
+        field:'تاريخ التعديل',
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): updatedAt,
+    };
+  }
+}
 
 class MaterialTaskModel {
   String? docId;

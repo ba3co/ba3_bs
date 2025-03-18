@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
+import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
@@ -329,10 +330,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
 
   List<UserModel> get filteredUsersWithDetails => allUsers
       .map((user) {
-        final loginDelay =
-            _userService.calculateTotalDelay(workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: true);
-        final logoutDelay =
-            _userService.calculateTotalDelay(workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: false);
+        final loginDelay = _userService.calculateTotalDelay(
+            workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: true);
+        final logoutDelay = _userService.calculateTotalDelay(
+            workingHours: user.userWorkingHours!, timeModel: user.userTimeModel![dateToDay], isLogin: false);
         final haveHoliday = _userService.getIfHaveHoliday(dateToDay, user.userHolidays!);
 
         return user.copyWith(
@@ -341,8 +342,37 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
           haveHoliday: haveHoliday,
         );
       })
-      .where((user) => user.loginDelay != null && user.logoutDelay != null && !(user.haveHoliday ?? false) && user.userWorkingHours!.isNotEmpty)
+      .where((user) =>
+          user.loginDelay != null && user.logoutDelay != null && !(user.haveHoliday ?? false) && user.userWorkingHours!.isNotEmpty)
       .toList();
 
   List<UserModel> get filteredAllUsersWithNunTime => allUsers.where((user) => user.userWorkingHours!.isNotEmpty).toList();
+
+  String getUserNameById(String id) {
+    return allUsers.firstWhereOrNull((user) => user.userId == id)?.userName ?? 'invalid id $id';
+  }
+
+  addTaskToUser(UserTaskModel userTaskModel,List<String> userToEdit) {
+    List<UserModel> userToAddList = userToEdit.map((userId) => allUsers.firstWhere((user) => user.userId == userId)).toList();
+    for (var user in userToAddList) {
+
+      final List<UserTaskModel> updatedTaskList = List.from(user.userTaskList ?? []);
+
+      int index = updatedTaskList.indexWhere((task) => task.docId == userTaskModel.docId);
+
+      if (index != -1) {
+        updatedTaskList.removeAt(index);
+        log("🗑️ تم حذف المهمة ذات ID: ${userTaskModel.docId} للمستخدم ${user.userName}");
+      } else {
+        updatedTaskList.add(userTaskModel);
+        log("✅ تم إضافة مهمة جديدة ذات ID: ${userTaskModel.docId} للمستخدم ${user.userName}");
+      }
+
+
+      final editedUser = user.copyWith(userTaskList: updatedTaskList);
+
+      // حفظ التعديلات في Firebase
+      _usersFirebaseRepo.save(editedUser);
+    }
+  }
 }

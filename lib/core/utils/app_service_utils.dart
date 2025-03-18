@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -337,4 +338,15 @@ class AppServiceUtils {
 
     return latestLogout;
   }
+  /// Handles conversion of both Timestamp and DateTime dynamically
+  static DateTime? convertToDateTime(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate(); // Convert Firestore Timestamp to DateTime
+    } else if (value is DateTime) {
+      return value; // Already a DateTime, return as is
+    } else {
+      return null; // Handle unexpected cases
+    }
+  }
+
 }

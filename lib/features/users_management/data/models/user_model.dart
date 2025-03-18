@@ -2,6 +2,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -24,6 +25,7 @@ class UserModel implements PlutoAdaptable {
   final UserActiveStatus? userActiveStatus;
 
   final List<String>? userHolidays;
+  final List<UserTaskModel>? userTaskList;
   final Map<String, UserWorkingHours>? userWorkingHours;
 
   final Map<String, UserTimeModel>? userTimeModel;
@@ -42,6 +44,7 @@ class UserModel implements PlutoAdaptable {
     this.haveHoliday,
     this.loginDelay,
     this.logoutDelay,
+    this.userTaskList,
   });
 
   Map<String, dynamic> toJson() {
@@ -51,6 +54,7 @@ class UserModel implements PlutoAdaptable {
       'userName': userName,
       'userPassword': userPassword,
       'userRoleId': userRoleId,
+      'userTaskList': userTaskList?.map((e) => e.toJson(),).toList(),
       if (userActiveStatus != null) 'userActiveStatus': userActiveStatus?.label,
       if (userWorkStatus != null) 'userWorkStatus': userWorkStatus?.label,
       if (userHolidays != null) 'userHolidays': userHolidays?.toList(),
@@ -90,6 +94,9 @@ class UserModel implements PlutoAdaptable {
       userWorkStatus: UserWorkStatus.byLabel(json['userWorkStatus'] ?? UserWorkStatus.away.label),
       userActiveStatus: json['userActiveStatus'] != null ? UserActiveStatus.byLabel(json['userActiveStatus']) : UserActiveStatus.inactive,
       userTimeModel: userTimeModel,
+      userTaskList: json['userTaskList'] == null
+          ? []
+          : (json['userTaskList'] as List<dynamic>).map((userTaskListJson) => UserTaskModel.fromJson(userTaskListJson)).toList(),
     );
   }
 
@@ -103,6 +110,7 @@ class UserModel implements PlutoAdaptable {
     final UserWorkStatus? userWorkStatus,
     final UserActiveStatus? userActiveStatus,
     final List<String>? userHolidays,
+    final List<UserTaskModel>? userTaskList,
     final Map<String, UserTimeModel>? userTimeModel,
     final Map<String, UserWorkingHours>? userWorkingHours,
     final String? loginDelay,
@@ -123,6 +131,7 @@ class UserModel implements PlutoAdaptable {
         loginDelay: loginDelay ?? this.loginDelay,
         logoutDelay: logoutDelay ?? this.logoutDelay,
         haveHoliday: haveHoliday ?? this.haveHoliday,
+        userTaskList: userTaskList ?? this.userTaskList,
       );
 
   @override
