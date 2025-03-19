@@ -1,10 +1,12 @@
 // Firebase-Specific Implementation
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:pool/pool.dart';
 
 import '../../../../models/date_filter.dart';
@@ -12,8 +14,9 @@ import '../../../../models/date_filter.dart';
 // FirebaseFirestoreService Implementation
 class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   final FirebaseFirestore _firestoreInstance;
+  final FirebaseStorage _firebaseStorageInstance;
 
-  FireStoreService(FirebaseFirestore instance) : _firestoreInstance = instance;
+  FireStoreService(FirebaseFirestore instance,FirebaseStorage storageInstant) : _firestoreInstance = instance,_firebaseStorageInstance=storageInstant;
 
   @override
   Future<List<Map<String, dynamic>>> fetchAll({required String path}) async {
@@ -299,5 +302,18 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     // Commit the batch operation
     await batch.commit();
     return processedItems;
+  }
+
+  @override
+  Future<String> uploadImage({required String imagePath,required String path})async {
+    File imageFile = File(imagePath);
+    String fileName = "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
+
+    Reference storageRef = _firebaseStorageInstance.ref().child(fileName);
+    UploadTask uploadTask = storageRef.putFile(imageFile);
+    TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+
   }
 }

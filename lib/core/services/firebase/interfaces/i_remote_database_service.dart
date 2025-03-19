@@ -48,4 +48,7 @@ abstract class IRemoteDatabaseService<T> {
     required String docIdField,
     required String nestedFieldPath,
   });
+
+
+  Future<String> uploadImage({required String imagePath,required String path});
 }

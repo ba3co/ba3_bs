@@ -1,8 +1,9 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/uploader_able_datasource_repo.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -26,7 +27,7 @@ import '../ui/add_task_screen.dart';
 import '../ui/all_task_screen.dart';
 
 class AllTaskController extends GetxController with FloatingLauncher {
-  final FilterableDataSourceRepository<UserTaskModel> _dataSourceRepository;
+  final UploaderAbleDatasourceRepository<UserTaskModel> _dataSourceRepository;
 
   AllTaskController(this._dataSourceRepository);
 
@@ -245,7 +246,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (task) {
-        read<UserManagementController>().addTaskToUser( task.docId!, differentUser);
+        read<UserManagementController>().addTaskToUser(task.docId!, differentUser);
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
         return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح');
@@ -296,7 +297,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
       userTaskList.removeWhere((userTask) => userTask.docId == selectedTask?.docId);
-      read<UserManagementController>().addTaskToUser( selectedTask!.docId!, selectedTask!.assignedTo!);
+      read<UserManagementController>().addTaskToUser(selectedTask!.docId!, selectedTask!.assignedTo!);
 
       setSelectedTask(null);
       update();
@@ -304,12 +305,35 @@ class AllTaskController extends GetxController with FloatingLauncher {
     });
   }
 
- Future<UserTaskModel> getTaskById(String id) async{
-    if(userTaskList.isEmpty){
-    await  fetchTasks();
+  Future<UserTaskModel> getTaskById(String id) async {
+    if (userTaskList.isEmpty) {
+      await fetchTasks();
     }
-    return  userTaskList.firstWhere((element) {
+    return userTaskList.firstWhere((element) {
       return element.docId == id;
+    });
+  }
+
+   updateTask(UserTaskModel task) async {
+    final result = await _dataSourceRepository.save(task);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (task) {
+        setSelectedTask(task);
+        addOrUpdateTaskToList(task);
+        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح');
+      },
+    );
+  }
+
+  void uploadImageTask(UserTaskModel task, String imagePath) async {
+
+    final result = await _dataSourceRepository.uploadImage(imagePath: imagePath);
+
+    result.fold((failure) => AppUIUtils.onFailure(failure.message), (imageUrl) async{
+      final updatedTask = task.copyWith(taskImage: imageUrl,status: TaskStatus.done,updatedAt: DateTime.now());
+  await    updateTask(updatedTask);
     });
   }
 }

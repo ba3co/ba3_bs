@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/uploader_able_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/compound_firestore_service.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_service.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
@@ -49,6 +50,7 @@ import 'package:ba3_bs/features/users_management/data/datasources/roles_data_sou
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -114,10 +116,11 @@ class AppBindings extends Bindings {
     final dioClient = _initializeDioClient();
 
     final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
+    final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
     // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(app: Firebase.app(), databaseId: 'test');
 
-    final fireStoreService = _initializeFireStoreService(firestoreInstance);
+    final fireStoreService = _initializeFireStoreService(firestoreInstance,firebaseStorageInstance);
 
     final compoundFireStoreService = _initializeCompoundFireStoreService(firestoreInstance);
 
@@ -187,7 +190,7 @@ class AppBindings extends Bindings {
   // Initialize external services
   IAPiClient _initializeDioClient() => DioClient<Map<String, dynamic>>(Dio());
 
-  IRemoteDatabaseService<Map<String, dynamic>> _initializeFireStoreService(FirebaseFirestore instance) => FireStoreService(instance);
+  IRemoteDatabaseService<Map<String, dynamic>> _initializeFireStoreService(FirebaseFirestore instance,FirebaseStorage storageInstant) => FireStoreService(instance,storageInstant);
 
   ICompoundDatabaseService<Map<String, dynamic>> _initializeCompoundFireStoreService(FirebaseFirestore instance) =>
       CompoundFireStoreService(instance);
@@ -262,7 +265,7 @@ class AppBindings extends Bindings {
         localDatasource: DashboardAccountDataSource(dashboardHiveService),
         remoteDatasource: RemoteDashboardDataSource(databaseService: fireStoreService),
       ),
-      tasksRepo: FilterableDataSourceRepository(UserTaskDataSource(databaseService: fireStoreService))
+      tasksRepo: UploaderAbleDatasourceRepository(UserTaskDataSource(databaseService: fireStoreService))
     );
   }
 
@@ -358,7 +361,7 @@ class _Repositories {
   final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
   final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
   final ListenDataSourceRepository<StoreCartModel> storeCartRepo;
-  final FilterableDataSourceRepository<UserTaskModel> tasksRepo;
+  final UploaderAbleDatasourceRepository<UserTaskModel> tasksRepo;
 
   _Repositories({
     required this.translationRepo,

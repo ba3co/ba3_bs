@@ -71,7 +71,7 @@ class OverlayEntryWithPriorityManager {
                     width: width ?? 500,
                     height: height ?? 500,
                     padding: contentPadding ?? const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    decoration: BoxDecoration(color:color?? Colors.white, borderRadius: borderRadius ?? BorderRadius.circular(24)),
+                    decoration: BoxDecoration(color: color ?? Colors.white, borderRadius: borderRadius ?? BorderRadius.circular(24)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,

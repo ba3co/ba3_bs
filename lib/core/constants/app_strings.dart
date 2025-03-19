@@ -363,10 +363,14 @@ class AppStrings {
 
   static var allTask='جميع المهام';
 
-  static var start='بدأ';
+  static var start='ابدأ';
 
   static var tasksTodo='مهام يجب تنفيذها';
   static var tasksEnded='مهام انتهت';
+
+  static var uploadImage='تحميل صورة';
+
+  static var close='اغلاق';
 
 
 }

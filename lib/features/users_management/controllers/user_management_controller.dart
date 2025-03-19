@@ -14,6 +14,7 @@ import 'package:ba3_bs/features/users_management/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/error/failure.dart';
@@ -412,6 +413,17 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
         allUsers[allUsersIndex] = editedUser; // Update the user in the list
       }
       _usersFirebaseRepo.save(editedUser);
+    }
+  }
+  XFile? image;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+        image = pickedFile;
+        log('message');
+        update();
     }
   }
 }

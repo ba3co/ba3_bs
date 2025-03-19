@@ -61,6 +61,8 @@ dependencies:
   syncfusion_flutter_charts: ^28.2.9
   fl_chart: ^0.70.2
   flutter_datetime_picker_plus: ^2.2.0
+  image_picker: ^1.1.2
+  firebase_storage: ^12.4.4
 
 #  flutter_thermal_printer: ^1.1.0
 #  flutter_local_notifications: ^18.0.1

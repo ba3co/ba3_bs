@@ -24,8 +24,7 @@ class TaskListWidget extends StatelessWidget {
       spacing: 5,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Text(
             title,
             style: AppTextStyles.headLineStyle4,
@@ -38,7 +37,6 @@ class TaskListWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
           ),
           child: ListView.builder(
-
             itemCount: taskList.length,
             itemBuilder: (context, index) {
               final task = taskList[index];
@@ -52,7 +50,12 @@ class TaskListWidget extends StatelessWidget {
                   "اخر تاريخ للمهمة ${task.dueDate!.dayMonthYear}",
                   style: TextStyle(color: Colors.red),
                 ),
-                trailing: Text(task.status!.value),
+                trailing: Column(
+                  children: [
+                    Text(task.taskType!.label),
+                    Text(task.status!.value),
+                  ],
+                ),
               );
             },
           ),

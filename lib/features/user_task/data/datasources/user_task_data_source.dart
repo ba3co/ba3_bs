@@ -1,12 +1,12 @@
 // BillsDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/filterable_datasource.dart';
+import 'package:ba3_bs/core/services/firebase/interfaces/uploader_able_datasource.dart';
 
 import '../../../../core/models/date_filter.dart';
 import '../../../../core/models/query_filter.dart';
 import '../model/user_task_model.dart';
 
-class UserTaskDataSource extends FilterableDatasource<UserTaskModel> {
+class UserTaskDataSource extends UploaderAbleDatasource<UserTaskModel> {
   UserTaskDataSource({required super.databaseService});
 
   @override
@@ -46,5 +46,12 @@ class UserTaskDataSource extends FilterableDatasource<UserTaskModel> {
     final data = await databaseService.add(path: path, documentId: item.docId, data: item.toJson());
 
     return UserTaskModel.fromJson(data);
+  }
+
+  @override
+  Future<String> uploadImage({required String imagePath}) async {
+    final data = await databaseService.uploadImage(imagePath: imagePath,path: path);
+
+    return data;
   }
 }

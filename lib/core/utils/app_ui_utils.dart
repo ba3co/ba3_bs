@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../../features/floating_window/services/overlay_service.dart';
 import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 import '../widgets/app_button.dart';
@@ -340,4 +343,16 @@ class AppUIUtils {
     );
     return isConfirm ?? false;
   }
+
+  static  void showFullScreenNetworkImage(BuildContext context, String imagePath) {
+    OverlayService.showDialog(
+      context: context,
+      width: 1.sw,
+      height: 1.sh,
+      content:  InteractiveViewer(
+        child: Image.file(File(imagePath), fit: BoxFit.contain),
+      ),
+    );
+  }
+
 }
