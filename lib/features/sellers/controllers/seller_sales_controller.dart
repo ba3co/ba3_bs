@@ -150,6 +150,28 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     );
   }
 
+  Future<int> getSellerMaterialsSales({required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
+    int matQuantity = 0;
+
+    final result = await _billsFirebaseRepo.fetchWhere(
+      itemIdentifier: BillType.sales.billTypeModel,
+      field: ApiConstants.billSellerId,
+      value: sellerId,
+      dateFilter: DateFilter(
+        dateFieldName: ApiConstants.billDate,
+        range: dateTimeRange,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+      },
+      (bills) => matQuantity = _handleGetSellerMaterialsSalesSuccess(bills, materialId),
+    );
+
+    return matQuantity;
+  }
+
   Future<void> fetchSellerBillsByDate({required SellerModel sellerModel, required DateTimeRange dateTimeRange}) async {
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
@@ -182,6 +204,18 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
       sellerBills.assignAll(bills);
     }
     calculateTotalAccessoriesMobiles();
+  }
+
+  int _handleGetSellerMaterialsSalesSuccess(List<BillModel> bills, String materialId) {
+    int matQuantity = 0;
+    for (final bill in bills) {
+      for (final item in bill.items.itemList) {
+        if (item.itemGuid == materialId) {
+          matQuantity += item.itemQuantity;
+        }
+      }
+    }
+    return matQuantity;
   }
 
   // Method to calculate the total sales

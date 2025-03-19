@@ -88,6 +88,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/flags/
+    - assets/gif_images/
     - assets/translations/translations.json
 
 

@@ -323,54 +323,60 @@ class AppStrings {
   static const String phoneNumber = 'رقم الهاتف';
   static const String orderNumber = 'رقم الطلب';
 
-  static const String aed='درهم';
+  static const String aed = 'درهم';
 
-  static const String totalFees='اجمالي الربح';
+  static const String totalFees = 'اجمالي الربح';
   static const totalMobileTarget = 'اجمالي مبيع الموبايلات';
   static const totalAccessoriesTarget = 'اجمالي مبيع الأكسسوارات';
 
-  static const swap='تبديل';
+  static const swap = 'تبديل';
 
-  static const  selleAndProfitStatement='حركة المبيع و الربح';
+  static const selleAndProfitStatement = 'حركة المبيع و الربح';
 
-  static var clearDelay='مسح التاخير';
+  static var clearDelay = 'مسح التاخير';
 
-  static var tasks='المهام';
+  static var tasks = 'المهام';
 
-  static var taskTitle="عنوان المهمة";
+  static var taskTitle = "عنوان المهمة";
 
-  static var taskDescription='وصف المهمة';
+  static var taskDescription = 'وصف المهمة';
 
-  static var taskType='نوع المهمة';
+  static var taskType = 'نوع المهمة';
 
-  static var lastDateTodo='اخر تاريخ للتنفيذ';
+  static var lastDateTodo = 'اخر تاريخ للتنفيذ';
 
-  static var createdDate='تاريخ الانشاء';
+  static var createdDate = 'تاريخ الانشاء';
 
-  static var addNewTask='اضافة مهمة جديدة';
+  static var addNewTask = 'اضافة مهمة جديدة';
 
-  static var pleaseAddUsers='يرجى اضافة المستخدمين';
+  static var pleaseAddUsers = 'يرجى اضافة المستخدمين';
 
-  static var assignedBy='اضيفت من قبل';
+  static var assignedBy = 'اضيفت من قبل';
 
-  static var assignedTo='اضيفت الى';
+  static var assignedTo = 'اضيفت الى';
 
-  static var materialInTask='المواد في الجرد';
+  static var materialInTask = 'المواد في الجرد';
 
-  static var updatedAt='تاريخ التعديل';
+  static var updatedAt = 'تاريخ التعديل';
 
-  static var taskDeadline='تاريخ التسليم';
+  static var taskDeadline = 'تاريخ التسليم';
 
-  static var allTask='جميع المهام';
+  static var allTask = 'جميع المهام';
 
-  static var start='ابدأ';
+  static var start = 'ابدأ';
 
-  static var tasksTodo='مهام يجب تنفيذها';
-  static var tasksEnded='مهام انتهت';
+  static var tasksTodo = 'مهام يجب تنفيذها';
+  static var tasksEnded = 'مهام انتهت';
 
-  static var uploadImage='تحميل صورة';
+  static var uploadImage = 'تحميل صورة';
 
-  static var close='اغلاق';
+  static var close = 'اغلاق';
 
+  static var taskEndIn = 'تم تنفيذ المهمة في :';
 
+  static var done = 'تم';
+
+  static var quantityInTask='الكمية المجرودة';
+
+  static var endedDate='تاريخ الانتهاء';
 }

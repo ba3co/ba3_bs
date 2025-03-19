@@ -22,6 +22,7 @@ class UserTaskModel implements PlutoAdaptable {
   String? taskImage;
   DateTime? createdAt;
   DateTime? updatedAt;
+  DateTime? endedAt;
 
   UserTaskModel({
     this.docId,
@@ -35,6 +36,7 @@ class UserTaskModel implements PlutoAdaptable {
     this.taskImage,
     this.createdAt,
     this.updatedAt,
+    this.endedAt,
   });
 
 
@@ -51,6 +53,7 @@ class UserTaskModel implements PlutoAdaptable {
       'taskImage': taskImage,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'endedAt': endedAt,
     };
   }
 
@@ -71,6 +74,7 @@ class UserTaskModel implements PlutoAdaptable {
       taskImage: json['taskImage'] as String?,
       createdAt: AppServiceUtils.convertToDateTime(json['createdAt'] ),
       updatedAt: AppServiceUtils.convertToDateTime(json['updatedAt'] ),
+      endedAt: AppServiceUtils.convertToDateTime(json['endedAt'] ),
     );
   }
 
@@ -86,6 +90,7 @@ class UserTaskModel implements PlutoAdaptable {
     String? taskImage,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? endedAt,
   }) {
     return UserTaskModel(
       docId: docId ?? this.docId,
@@ -99,6 +104,7 @@ class UserTaskModel implements PlutoAdaptable {
       taskImage: taskImage ?? this.taskImage,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      endedAt: endedAt ?? this.endedAt,
     );
   }
 
@@ -147,10 +153,9 @@ class UserTaskModel implements PlutoAdaptable {
         title: AppStrings.materialInTask.tr,
         field: 'مواد الجرد',
         width: 400,
-
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ):materialTask?.map((e) => e.materialName!,).join(' \\_/ ',) ,
+      ):materialTask?.map((e) => "${e.materialName!} (${e.quantity}/${e.quantityInTask})",).join(' \\_/ ',) ,
 
       PlutoColumn(
         title: AppStrings.createdDate.tr,
@@ -187,6 +192,13 @@ class UserTaskModel implements PlutoAdaptable {
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
       ): updatedAt,
+      PlutoColumn(
+        title: AppStrings.endedDate.tr,
+        field:AppStrings.endedDate,
+        width: 200,
+        textAlign: PlutoColumnTextAlign.center,
+        type: PlutoColumnType.text(),
+      ): endedAt,
     };
   }
 }
@@ -195,47 +207,52 @@ class MaterialTaskModel {
   String? docId;
   String? materialName;
   int? quantity;
+  int? quantityInTask;
 
   MaterialTaskModel({
     this.docId,
     this.materialName,
     this.quantity,
+    this.quantityInTask,
+
   });
 
-  /// تحويل الكائن إلى JSON
+
   Map<String, dynamic> toJson() {
     return {
       'docId': docId,
       'materialName': materialName,
       'quantity': quantity,
+      'quantityInTask': quantityInTask,
     };
   }
 
-  /// تحويل JSON إلى كائن `MaterialTaskModel`
+
   factory MaterialTaskModel.fromJson(Map<String, dynamic> json) {
     return MaterialTaskModel(
       docId: json['docId'] as String?,
       materialName: json['materialName'] as String?,
       quantity: json['quantity'] as int?,
+      quantityInTask: json['quantityInTask'] as int?,
     );
   }
 
-  /// إنشاء نسخة جديدة مع إمكانية تعديل القيم
   MaterialTaskModel copyWith({
     String? docId,
     String? materialName,
     int? quantity,
+    int? quantityInTask,
   }) {
     return MaterialTaskModel(
       docId: docId ?? this.docId,
       materialName: materialName ?? this.materialName,
       quantity: quantity ?? this.quantity,
+      quantityInTask: quantityInTask ?? this.quantityInTask,
     );
   }
 
-  /// طباعة البيانات عند الحاجة
   @override
   String toString() {
-    return 'MaterialTaskModel(docId: $docId, materialName: $materialName, quantity: $quantity)';
+    return 'MaterialTaskModel(docId: $docId, materialName: $materialName, quantity: $quantity, quantityInTask: $quantityInTask)';
   }
 }

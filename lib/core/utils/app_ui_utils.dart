@@ -242,7 +242,7 @@ class AppUIUtils {
     Get.snackbar(
       title ?? _getTitle(status),
       message,
-      backgroundColor: const Color.fromARGB(50, 255, 0, 0),
+      backgroundColor: const Color.fromARGB(200, 255, 0, 0),
       icon: const Icon(
         Icons.error_outline_outlined,
         color: Colors.white,
@@ -261,7 +261,7 @@ class AppUIUtils {
     Get.snackbar(
       title ?? _getTitle(status),
       message,
-      backgroundColor: const Color.fromARGB(50, 0, 255, 0),
+      backgroundColor: const Color.fromARGB(200, 0, 255, 0),
       icon: const Icon(
         Icons.check,
         color: Colors.white,
@@ -344,13 +344,25 @@ class AppUIUtils {
     return isConfirm ?? false;
   }
 
-  static  void showFullScreenNetworkImage(BuildContext context, String imagePath) {
+  static  void showFullScreenFileImage(BuildContext context, String imagePath) {
     OverlayService.showDialog(
       context: context,
       width: 1.sw,
       height: 1.sh,
       content:  InteractiveViewer(
         child: Image.file(File(imagePath), fit: BoxFit.contain),
+      ),
+    );
+  }
+
+
+  static  void showFullScreenNetworkImage(BuildContext context, String imagePath) {
+    OverlayService.showDialog(
+      context: context,
+      width: 1.sw,
+      height: 1.sh,
+      content:  InteractiveViewer(
+        child: Image.network(imagePath, fit: BoxFit.contain),
       ),
     );
   }

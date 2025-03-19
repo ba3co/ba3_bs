@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/uploader_able_datasource_repo.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
@@ -314,7 +315,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     });
   }
 
-   updateTask(UserTaskModel task) async {
+  updateTask(UserTaskModel task) async {
     final result = await _dataSourceRepository.save(task);
 
     result.fold(
@@ -328,12 +329,16 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   void uploadImageTask(UserTaskModel task, String imagePath) async {
-
     final result = await _dataSourceRepository.uploadImage(imagePath: imagePath);
 
-    result.fold((failure) => AppUIUtils.onFailure(failure.message), (imageUrl) async{
-      final updatedTask = task.copyWith(taskImage: imageUrl,status: TaskStatus.done,updatedAt: DateTime.now());
-  await    updateTask(updatedTask);
+    result.fold((failure) => AppUIUtils.onFailure(failure.message), (imageUrl) async {
+      final updatedTask = task.copyWith(taskImage: imageUrl, status: TaskStatus.done, updatedAt: DateTime.now());
+      await updateTask(updatedTask);
     });
+  }
+
+  void uploadDateTask({required UserTaskModel task,required DateTime date,required TaskStatus status}) async {
+    final updatedTask =status.isFinished?task.copyWith(status: status, endedAt: date): task.copyWith(status: status, updatedAt: date);
+    await updateTask(updatedTask);
   }
 }

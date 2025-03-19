@@ -1,16 +1,18 @@
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../floating_window/services/overlay_service.dart';
 
 class SaleTaskDialog extends StatelessWidget {
   final UserTaskModel task;
-  const SaleTaskDialog({super.key,required this.task});
+
+  const SaleTaskDialog({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -29,31 +31,58 @@ class SaleTaskDialog extends StatelessWidget {
                   task.materialTask![materialIndex].materialName!,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text(
-                    "${AppStrings.identificationNumber.tr}: ${task.materialTask![materialIndex].docId}",
+                subtitle: Text("${AppStrings.identificationNumber.tr}: ${task.materialTask![materialIndex].docId}",
                     style: TextStyle(color: Colors.grey)),
                 leading: Icon(Icons.inventory),
-                trailing: Text(
-                  " ${AppStrings.quantity.tr} \n ${task.materialTask![materialIndex].quantity}",
-                  style: AppTextStyles.headLineStyle4,
-                  textAlign: TextAlign.center,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      " ${AppStrings.quantity.tr} \n ${task.materialTask![materialIndex].quantity}",
+                      style: AppTextStyles.headLineStyle4,
+                      textAlign: TextAlign.center,
+                    ),
+                    VerticalDivider(),
+                    FutureBuilder<int>(
+                      future: read<UserManagementController>().getCurrentUserMaterialsSales(
+                        materialId: task.materialTask![materialIndex].docId!,
+                        startDay: task.createdAt!,
+                        endDay: task.dueDate!,
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Text(
+                            "${AppStrings.sold.tr} \n ...",
+                            style: AppTextStyles.headLineStyle4,
+                            textAlign: TextAlign.center,
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(
+                            "${AppStrings.sold.tr} \n ❌",
+                            style: AppTextStyles.headLineStyle4,
+                            textAlign: TextAlign.center,
+                          );
+                        } else {
+                          return Text(
+                            "${AppStrings.sold.tr} \n ${snapshot.data}",
+                            style: AppTextStyles.headLineStyle4,
+                            textAlign: TextAlign.center,
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ),
               );
             },
           ),
         ),
-        if (task.taskType != TaskType.saleTask)
-          AppButton(
-            title: AppStrings.save.tr,
-            onPressed: () {
-              if (task.status == TaskStatus.initial) {
-                task.status = TaskStatus.inProgress;
-              } else {
-                task.status = TaskStatus.done;
-              }
-              OverlayService.back();
-            },
-          )
+        AppButton(
+          title: AppStrings.done.tr,
+          onPressed: () {
+            OverlayService.back();
+          },
+        )
       ],
     );
   }

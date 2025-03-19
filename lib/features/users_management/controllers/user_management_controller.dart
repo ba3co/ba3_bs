@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
@@ -24,6 +25,7 @@ import '../../../core/services/firebase/implementations/repos/remote_datasource_
 import '../../../core/services/firebase/implementations/services/firestore_guest_user.dart';
 import '../../../core/services/get_x/shared_preferences_service.dart';
 import '../../../core/utils/app_ui_utils.dart';
+import '../../floating_window/services/overlay_service.dart';
 import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
 import '../services/role_form_handler.dart';
@@ -41,6 +43,8 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
   late final RoleService _roleService;
   late final UserService _userService;
   late final UserNavigator userNavigator;
+
+  UserTaskModel? selectedTask;
 
   // Form Handlers
   late final RoleFormHandler roleFormHandler;
@@ -88,10 +92,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     allTaskList
         .assignAll(await Future.wait(loggedInUserModel!.userTaskList!.map((e) async => await read<AllTaskController>().getTaskById(e))));
     allTaskListDone.assignAll(allTaskList.where(
-      (element) => element.status == TaskStatus.canceled || element.status == TaskStatus.done || element.status == TaskStatus.failure,
+      (element) => element.status.isFinished,
     ));
 
-    allTaskList.removeWhere((element) => element.status == TaskStatus.canceled || element.status == TaskStatus.done || element.status == TaskStatus.failure);
+    allTaskList.removeWhere((element) => element.status.isFinished);
     read<SellerSalesController>().profileScreenState.value = RequestState.success;
     update();
   }
@@ -415,15 +419,36 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
       _usersFirebaseRepo.save(editedUser);
     }
   }
+
   XFile? image;
   final ImagePicker _picker = ImagePicker();
 
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-        image = pickedFile;
-        log('message');
-        update();
+      image = pickedFile;
+      update();
     }
+  }
+
+  Future<int> getCurrentUserMaterialsSales({required String materialId, required DateTime startDay, required DateTime endDay}) async {
+    return await read<SellerSalesController>().getSellerMaterialsSales(
+        sellerId: loggedInUserModel!.userSellerId!, dateTimeRange: DateTimeRange(start: startDay, end: endDay), materialId: materialId);
+  }
+
+  void updateInventoryTask({required UserTaskModel task}) async {
+
+    // log(task.toJson().toString());
+    // return;
+    if (task.status.isInProgress) {
+      OverlayService.back();
+      read<AllTaskController>().uploadDateTask(task: task, date: DateTime.now(), status: TaskStatus.done);
+
+    } else {
+      read<AllTaskController>().uploadDateTask(task: task, date: DateTime.now(), status: TaskStatus.inProgress);
+    }
+
+    await fetchAllUserTask();
+    update();
   }
 }
