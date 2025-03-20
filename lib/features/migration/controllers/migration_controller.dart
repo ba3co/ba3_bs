@@ -407,7 +407,8 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
     final fetchedCheques = await read<AllChequesController>().fetchChequesByType(ChequesType.paidChecks);
 
     final unpaidCheques = fetchedCheques
-        .where((cheque) => (cheque.isPayed == false || cheque.isPayed == null) && (cheque.isRefund == false || cheque.isRefund == null))
+        .where((cheque) =>
+            (cheque.isPayed == false || cheque.isPayed == null) && (cheque.isRefund == false || cheque.isRefund == null))
         .toList();
 
     log("fetchedCheques is ${fetchedCheques.length}", name: "MigrationController.copyUnpaidCheque");

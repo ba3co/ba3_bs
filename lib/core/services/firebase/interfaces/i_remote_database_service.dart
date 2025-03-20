@@ -24,7 +24,7 @@ abstract class IRemoteDatabaseService<T> {
   Future<void> update({required String path, String? documentId, required Map<String, dynamic> data});
 
   /// Adds multiple items to the specified [path] using a batch write and returns the added items.
-  Future<List<Map<String, dynamic>>> addAll({
+  Future<List<T>> addAll({
     required String path,
     required List<Map<String, dynamic>> data,
   });
@@ -35,17 +35,21 @@ abstract class IRemoteDatabaseService<T> {
   /// For each item in [items]:
   /// - If the document (identified by [docIdField]) does not exist, it creates it with [nestedFieldPath].
   /// - If the document exists, it updates [nestedFieldPath] using `FieldValue.arrayUnion`.
-  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnionOnMap({
+  Future<List<T>> batchUpdateWithArrayUnionOnMap({
     required String path,
     required List<Map<String, dynamic>> items,
     required String docIdField,
     required String nestedFieldPath,
   });
 
-  Future<List<Map<String, dynamic>>> batchUpdateWithArrayUnionOnList({
+  Future<List<T>> batchUpdateWithArrayUnionOnList({
     required String path,
     required List<Map<String, dynamic>> items,
     required String docIdField,
     required String nestedFieldPath,
   });
+
+  Future<String> uploadImage({required String imagePath, required String path});
+
+  Future<String?> fetchImage(String path, String docId);
 }

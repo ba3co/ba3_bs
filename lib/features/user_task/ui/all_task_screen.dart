@@ -19,7 +19,7 @@ class AllTaskScreen extends StatelessWidget {
     return GetBuilder<AllTaskController>(builder: (controller) {
       return PlutoGridWithAppBar(
         appBar: AppBar(
-          centerTitle: true,
+            centerTitle: true,
             title: Text(
               AppStrings.allTask.tr,
               style: AppTextStyles.headLineStyle2,

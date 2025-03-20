@@ -29,9 +29,8 @@ class AddTaskScreen extends StatelessWidget {
             child: ListView(
               // spacing: 15,
               children: [
-
                 AddTaskHeader(controller: controller)
-          /*      TextAndExpandedChildField(
+                /*      TextAndExpandedChildField(
                   label: AppStrings.taskTitle.tr,
                   child: CustomTextFieldWithoutIcon(
                     textEditingController: controller.taskFormHandler.titleTextEditingController,
@@ -110,7 +109,8 @@ class AddTaskScreen extends StatelessWidget {
                       );
                     }),
                   ),
-                )*/,
+                )*/
+                ,
                 FormFieldRow(
                     firstItem: Column(
                       children: [
@@ -202,25 +202,23 @@ class AddTaskScreen extends StatelessWidget {
                   spacing: 15,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if(!controller.isNewTask)
+                    if (!controller.isNewTask)
                       AppButton(
                         title: AppStrings.delete.tr,
                         color: Colors.red,
                         onPressed: () {
                           controller.deleteTask();
                         },
-                        iconData:FontAwesomeIcons.deleteLeft,
+                        iconData: FontAwesomeIcons.deleteLeft,
                       ),
                     AppButton(
-                      title: controller.isNewTask? AppStrings.save.tr: AppStrings.edit.tr,
-                      color: controller.isNewTask? null: Colors.green,
+                      title: controller.isNewTask ? AppStrings.save.tr : AppStrings.edit.tr,
+                      color: controller.isNewTask ? null : Colors.green,
                       onPressed: () {
                         controller.saveOrUpdateTask();
                       },
-                      iconData: controller.isNewTask? FontAwesomeIcons.plusSquare: FontAwesomeIcons.edit,
+                      iconData: controller.isNewTask ? FontAwesomeIcons.plusSquare : FontAwesomeIcons.edit,
                     ),
-
-
                   ],
                 )
               ],

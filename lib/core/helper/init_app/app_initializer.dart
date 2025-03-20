@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -22,11 +21,9 @@ import '../../constants/app_constants.dart';
 import '../../services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../services/firebase/implementations/services/compound_firestore_service.dart';
-import '../../services/firebase/implementations/services/firebase_storage_service.dart';
 import '../../services/firebase/implementations/services/firestore_service.dart';
 import '../../services/firebase/interfaces/i_compound_database_service.dart';
 import '../../services/firebase/interfaces/i_remote_database_service.dart';
-import '../../services/firebase/interfaces/i_remote_storage_service.dart';
 import '../../services/local_database/implementations/services/hive_database_service.dart';
 import '../../services/translation/translation_controller.dart';
 import '../enums/enums.dart';
@@ -64,7 +61,7 @@ Future<void> initializeAppLocalization({required String boxName}) async {
 void setupDatabaseServices() {
   final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
-  final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
+  // final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
   /// 🔹 To connect to a test Firebase project, use:
 
@@ -78,7 +75,7 @@ void setupDatabaseServices() {
 
   final compoundDatabaseService = createCompoundDatabaseService(firestoreInstance);
 
-  final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
+  //final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
 
   // Register dependencies using lazyPut
   lazyPut(firestoreInstance);
@@ -87,7 +84,7 @@ void setupDatabaseServices() {
 
   lazyPut(compoundDatabaseService);
 
-  lazyPut(remoteStorageService);
+  // lazyPut(remoteStorageService);
 }
 
 void setupMigrationDependencies() {
@@ -115,7 +112,7 @@ IRemoteDatabaseService<Map<String, dynamic>> createRemoteDatabaseService(Firebas
 ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(FirebaseFirestore instance) =>
     CompoundFireStoreService(instance);
 
-IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
+//IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
 
 CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>

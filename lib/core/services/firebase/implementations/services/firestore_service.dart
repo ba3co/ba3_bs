@@ -1,5 +1,8 @@
 // Firebase-Specific Implementation
+
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
@@ -40,10 +43,11 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   }
 
 // Applies filters to the query
-  Query<Map<String, dynamic>> _applyFilters(CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
+  Query<Map<String, dynamic>> _applyFilters(
+          CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
       queryFilters.fold<Query<Map<String, dynamic>>>(
         collection,
-            (query, filter) => query.where(filter.field, isEqualTo: filter.value),
+        (query, filter) => query.where(filter.field, isEqualTo: filter.value),
       );
 
 // Applies the date filter if provided
@@ -51,16 +55,11 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     if (dateFilter == null) return query;
 
     final start = dateFilter.range.start;
-    final end = DateTime(
-        dateFilter.range.end.year,
-        dateFilter.range.end.month,
-        dateFilter.range.end.day,
-        23,
-        59,
-        59,
-        999);
+    final end = DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
 
-    return query.where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start).where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
+    return query
+        .where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start)
+        .where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
   }
 
   @override
@@ -98,10 +97,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       return {};
     }
 
-    final newDoc = _firestoreInstance
-        .collection(path)
-        .doc()
-        .id;
+    final newDoc = _firestoreInstance.collection(path).doc().id;
 
     // Use the provided document ID or generate a new one if not provided
     final docId = documentId ?? (data['docId'] ?? newDoc);
@@ -151,16 +147,13 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     for (final chunk in chunks) {
       // Wrap each chunk commit in withResource()
       final future = pool.withResource(
-            () async {
+        () async {
           final batch = _firestoreInstance.batch();
 
           final chunkAdded = <Map<String, dynamic>>[];
 
           for (final item in chunk) {
-            final docId = item['docId'] ?? _firestoreInstance
-                .collection(path)
-                .doc()
-                .id;
+            final docId = item['docId'] ?? _firestoreInstance.collection(path).doc().id;
 
             item['docId'] = docId;
 
@@ -293,8 +286,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
 
       if (!docSnapshot.exists) {
         // Remove the `docIdField` key to avoid duplication in Firestore
-        final itemWithoutTransactions = Map<String, dynamic>.from(item)
-          ..remove(nestedFieldPath);
+        final itemWithoutTransactions = Map<String, dynamic>.from(item)..remove(nestedFieldPath);
 
         // Create the document with all fields + transactions
         batch.set(
@@ -329,5 +321,31 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     // Commit the batch operation
     await batch.commit();
     return processedItems;
+  }
+
+  @override
+  Future<String> uploadImage({required String imagePath, required String path}) async {
+    File imageFile = File(imagePath);
+    List<int> imageBytes = await imageFile.readAsBytes();
+    String base64String = base64Encode(imageBytes);
+
+    String docId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    await _firestoreInstance
+        .collection(path)
+        .doc(docId)
+        .set({"image_base64": base64String, "uploaded_at": DateTime.now().toIso8601String()});
+
+    return docId; // Return document ID as a reference
+  }
+
+  @override
+  Future<String?> fetchImage(String path, String docId) async {
+    DocumentSnapshot snapshot = await _firestoreInstance.collection(path).doc(docId).get();
+
+    if (snapshot.exists && snapshot.data() != null) {
+      return (snapshot.data() as Map<String, dynamic>)['image_base64'] as String?;
+    }
+    return null;
   }
 }

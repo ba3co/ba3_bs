@@ -42,8 +42,6 @@ import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_source.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
-import 'package:ba3_bs/features/user_task/data/datasources/user_task_data_source.dart';
-import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
 import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
@@ -87,6 +85,8 @@ import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
 import '../../features/profile/controller/user_time_controller.dart';
 import '../../features/sellers/service/seller_import.dart';
 import '../../features/user_task/controller/all_task_controller.dart';
+import '../../features/user_task/data/datasources/user_task_data_source.dart';
+import '../../features/user_task/data/model/user_task_model.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
 import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
@@ -96,7 +96,6 @@ import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../services/firebase/implementations/repos/uploader_storage_queryable_repo.dart';
 import '../services/firebase/interfaces/i_compound_database_service.dart';
-import '../services/firebase/interfaces/i_remote_storage_service.dart';
 import '../services/json_file_operations/interfaces/export/i_export_service.dart';
 import '../services/json_file_operations/interfaces/import/i_import_service.dart';
 import '../services/local_database/implementations/repos/local_datasource_repo.dart';
@@ -118,7 +117,7 @@ class AppBindings extends Bindings {
     final ICompoundDatabaseService<Map<String, dynamic>> compoundFireStoreService =
         read<ICompoundDatabaseService<Map<String, dynamic>>>();
 
-    final IRemoteStorageService<String> remoteStorageService = read<IRemoteStorageService<String>>();
+    // final IRemoteStorageService<String> remoteStorageService = read<IRemoteStorageService<String>>();
 
     final rolesRepo = RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService));
 
@@ -160,7 +159,7 @@ class AppBindings extends Bindings {
     final repositories = _initializeRepositories(
       remoteDatabaseService: fireStoreService,
       remoteCompoundDataBaseService: compoundFireStoreService,
-      remoteStorageService: remoteStorageService,
+      //  remoteStorageService: remoteStorageService,
       translationService: translationService,
       billImportService: billImport,
       billExportService: billExport,
@@ -205,7 +204,7 @@ class AppBindings extends Bindings {
   _Repositories _initializeRepositories({
     required IRemoteDatabaseService<Map<String, dynamic>> remoteDatabaseService,
     required ICompoundDatabaseService<Map<String, dynamic>> remoteCompoundDataBaseService,
-    required IRemoteStorageService<String> remoteStorageService,
+    // required IRemoteStorageService<String> remoteStorageService,
     required ITranslationService translationService,
     required IImportService<BillModel> billImportService,
     required IExportService<BillModel> billExportService,
@@ -264,8 +263,12 @@ class AppBindings extends Bindings {
         localDatasource: DashboardAccountDataSource(dashboardHiveService),
         remoteDatasource: RemoteDashboardDataSource(databaseService: remoteDatabaseService),
       ),
-      tasksRepo: UploaderStorageQueryableRepo(
-          UserTaskDataSource(databaseService: remoteDatabaseService, databaseStorageService: remoteStorageService)),
+
+      // tasksRepo: UploaderStorageQueryableRepo(
+      //   UserTaskDataSource(databaseService: remoteDatabaseService, databaseStorageService: remoteStorageService),
+      // ),
+
+      tasksRepo: UploaderStorageQueryableRepo(UserTaskDataSource(databaseService: remoteDatabaseService)),
     );
   }
 
