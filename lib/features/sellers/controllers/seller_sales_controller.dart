@@ -152,7 +152,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
   Future<int> getSellerMaterialsSales({required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
     int matQuantity = 0;
-
+log(sellerId);
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
@@ -164,8 +164,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     );
 
     result.fold(
-      (failure) {
-      },
+      (failure) {},
       (bills) => matQuantity = _handleGetSellerMaterialsSalesSuccess(bills, materialId),
     );
 
@@ -207,10 +206,16 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
   }
 
   int _handleGetSellerMaterialsSalesSuccess(List<BillModel> bills, String materialId) {
+    // log("all bills ${bills.length}");
+    // log("all bills ${bills.map((bill) => bill.billDetails.billDate)}");
     int matQuantity = 0;
+    log('material in task $materialId');
     for (final bill in bills) {
+
       for (final item in bill.items.itemList) {
+        log('material in bill ${read<MaterialController>().getMaterialNameById(item.itemGuid)}');
         if (item.itemGuid == materialId) {
+          log((item.itemGuid == materialId).toString());
           matQuantity += item.itemQuantity;
         }
       }

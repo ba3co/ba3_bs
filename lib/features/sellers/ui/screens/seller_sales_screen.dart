@@ -32,7 +32,7 @@ class SellerSalesScreen extends StatelessWidget {
             // print( (billTypeName as Map<String,dynamic>));
 
             if (billId != null) {
-              read<AllBillsController>().openFloatingBillDetailsById(billId, context, BillType.sales.billTypeModel);
+              read<AllBillsController>().openFloatingBillDetailsById(billId: billId, context: context,bilTypeModel:  BillType.sales.billTypeModel);
             }
           },
           isLoading: controller.isLoading,

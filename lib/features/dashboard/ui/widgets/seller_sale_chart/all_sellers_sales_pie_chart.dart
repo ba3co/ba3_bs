@@ -26,7 +26,7 @@ class AllSellersSalesPieChart extends StatelessWidget {
               direction: ShimmerDirection.btt,
               child: Container(
                 padding: const EdgeInsets.all(16),
-                height: 400.h,
+                height: 500.h,
                 width: 1.1.sw,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -37,13 +37,13 @@ class AllSellersSalesPieChart extends StatelessWidget {
           : Container(
               color: Colors.white,
               padding: const EdgeInsets.all(16),
-              height: 600.h,
+              height: 500.h,
               width: 1.1.sw,
               child: PieChart(
                 PieChartData(
                   sections: controller.getSellerPieChartSections(),
                   borderData: FlBorderData(show: false),
-                  centerSpaceRadius: 180,
+                  centerSpaceRadius: 110,
                   sectionsSpace: 0,
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {

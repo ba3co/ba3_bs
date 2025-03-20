@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
@@ -46,8 +48,8 @@ class SaleTaskDialog extends StatelessWidget {
                     FutureBuilder<int>(
                       future: read<UserManagementController>().getCurrentUserMaterialsSales(
                         materialId: task.materialTask![materialIndex].docId!,
-                        startDay: task.createdAt!,
-                        endDay: task.dueDate!,
+                        startDay:task.dueDate!,
+                        endDay: task.createdAt!
                       ),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -57,8 +59,9 @@ class SaleTaskDialog extends StatelessWidget {
                             textAlign: TextAlign.center,
                           );
                         } else if (snapshot.hasError) {
+                          log(snapshot.error.toString());
                           return Text(
-                            "${AppStrings.sold.tr} \n ❌",
+                            "${AppStrings.sold.tr} \n ❌ ",
                             style: AppTextStyles.headLineStyle4,
                             textAlign: TextAlign.center,
                           );

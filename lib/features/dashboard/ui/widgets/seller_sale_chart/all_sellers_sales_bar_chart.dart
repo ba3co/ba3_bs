@@ -29,7 +29,7 @@ class AllSellersSalesBarChart extends StatelessWidget {
               direction: ShimmerDirection.btt,
               child: Container(
                 padding: const EdgeInsets.all(16),
-                height: 600.h,
+                height: 500.h,
                 width: 1.1.sw,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -43,7 +43,7 @@ class AllSellersSalesBarChart extends StatelessWidget {
               child: Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(16),
-                height: 650.h,
+                height: 500.h,
                 width: 1.1.sw,
                 child: BarChart(
                   BarChartData(
@@ -83,7 +83,7 @@ class AllSellersSalesBarChart extends StatelessWidget {
                       ),
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
-                          reservedSize: 40.h,
+                          reservedSize: 60.h,
                           showTitles: true,
                           getTitlesWidget: (double value, TitleMeta meta) {
                             int index = value.toInt();
@@ -94,6 +94,8 @@ class AllSellersSalesBarChart extends StatelessWidget {
                               meta: meta,
                               space: 4,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     controller.sellerChartData[index].sellerName,

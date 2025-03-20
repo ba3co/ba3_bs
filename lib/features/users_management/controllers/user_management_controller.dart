@@ -435,7 +435,7 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     return await read<SellerSalesController>().getSellerMaterialsSales(
         sellerId: loggedInUserModel!.userSellerId!, dateTimeRange: DateTimeRange(start: startDay, end: endDay), materialId: materialId);
   }
-
+/*'5eae14a3-aaa5-4309-bc44-f541def66fe1'*/
   void updateInventoryTask({required UserTaskModel task}) async {
 
     // log(task.toJson().toString());

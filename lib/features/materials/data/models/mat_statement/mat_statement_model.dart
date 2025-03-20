@@ -95,12 +95,13 @@ class MatStatementModel implements PlutoAdaptable {
       PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): matOrigin?.originId ?? '',
       createAutoIdColumn(): '#',
       PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
-      PlutoColumn(title: 'فاتورة', field: 'فاتورة', type: PlutoColumnType.text()):
+      PlutoColumn(title: 'نوع الحركة', field: 'فاتورة', type: PlutoColumnType.text()):
           AppServiceUtils.billNameAndNumberFormat(matOrigin!.originTypeId!, matOrigin!.originNumber!),
       PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.number()): quantity,
       PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
       PlutoColumn(title: 'السعر', field: 'السعر', type: PlutoColumnType.currency(name: 'AED')): price,
       PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
+      PlutoColumn(title: 'billTypeId', field: 'billTypeId', type: PlutoColumnType.text(), hide: true): matOrigin!.originTypeId!,
     };
   }
 }

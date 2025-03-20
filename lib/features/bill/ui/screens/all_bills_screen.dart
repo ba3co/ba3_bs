@@ -25,7 +25,7 @@ class AllBillsScreen extends StatelessWidget {
         onSelected: (event) {
           String billId = event.row?.cells[AppConstants.billIdFiled]?.value;
           log('billId : $billId');
-          controller.openFloatingBillDetailsById(billId, context, BillType.sales.billTypeModel);
+          controller.openFloatingBillDetailsById(billId: billId, context: context,bilTypeModel:  BillType.sales.billTypeModel);
         },
         isLoading: controller.isBillsLoading,
         tableSourceModels: controller.pendingBills.isEmpty?controller.bills:controller.pendingBills,

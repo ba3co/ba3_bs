@@ -383,7 +383,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
   }
 
-  void openFloatingBillDetailsById(String billId, BuildContext context, BillTypeModel bilTypeModel) async {
+  void openFloatingBillDetailsById({required String billId,required BuildContext context,required BillTypeModel bilTypeModel}) async {
     final BillModel? billModel = await fetchBillById(billId, bilTypeModel);
 
     if (billModel == null) return;
@@ -571,7 +571,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     log('isSold: $isSold');
 
     if (billId != null && billTypeId != null) {
-      openFloatingBillDetailsById(billId, context, BillType.byTypeGuide(billTypeId).billTypeModel);
+      openFloatingBillDetailsById(billId: billId, context: context, bilTypeModel: BillType.byTypeGuide(billTypeId).billTypeModel);
     } else {
       AppUIUtils.onFailure('⚠️ Missing Bill ID or Bill Type ID');
     }

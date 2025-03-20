@@ -310,7 +310,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
       EntryBondType.bill: () {
         log(origin.toJson().toString());
         read<AllBillsController>()
-            .openFloatingBillDetailsById(origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel);
+            .openFloatingBillDetailsById(billId:  origin.originId!,context:  context,bilTypeModel:  BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel);
       },
       EntryBondType.cheque: () => read<AllChequesController>()
           .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
