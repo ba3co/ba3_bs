@@ -56,7 +56,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
   Future<void> fetchTasks() async {
     final result = await _userTaskRepo.getAll();
-log('fetchTasks');
+    log('fetchTasks');
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (tasks) {
@@ -244,13 +244,12 @@ log('fetchTasks');
         taskType: taskFormHandler.selectedTaskType.value,
       );
     }
-    log(differentUser.toString());
     final result = await _userTaskRepo.save(userTaskModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (task) {
-        read<UserManagementController>().addTaskToUser(task.docId!, differentUser);
+        read<UserManagementController>().addTaskToUser(task, differentUser);
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
         return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح');
@@ -302,7 +301,7 @@ log('fetchTasks');
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
       userTaskList.removeWhere((userTask) => userTask.docId == selectedTask?.docId);
-      read<UserManagementController>().addTaskToUser(selectedTask!.docId!, selectedTask!.assignedTo!);
+      read<UserManagementController>().addTaskToUser(selectedTask!, selectedTask!.assignedTo!);
 
       setSelectedTask(null);
       update();
@@ -314,6 +313,12 @@ log('fetchTasks');
     if (userTaskList.isEmpty) {
       await fetchTasks();
     }
+    return userTaskList.firstWhere((element) {
+      return element.docId == id;
+    });
+  }
+
+  UserTaskModel getTaskModelById(String id) {
     return userTaskList.firstWhere((element) {
       return element.docId == id;
     });
@@ -332,18 +337,18 @@ log('fetchTasks');
     );
   }
 
-  void uploadImageTask(UserTaskModel task, String imagePath) async {
+  Future<String> uploadImageTask( String imagePath) async {
+    String imgUrl = '';
     final result = await _userTaskRepo.uploadImage(imagePath);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (imageUrl) async {
-      final updatedTask = task.copyWith(taskImage: imageUrl, status: TaskStatus.done, updatedAt: DateTime.now());
-      await updateTask(updatedTask);
+      imgUrl = imageUrl;
     });
+    return imgUrl;
   }
 
   void uploadDateTask({required UserTaskModel task, required DateTime date, required TaskStatus status}) async {
-    final updatedTask =
-        status.isFinished ? task.copyWith(status: status, endedAt: date) : task.copyWith(status: status, updatedAt: date);
+    final updatedTask = status.isFinished ? task.copyWith(status: status, endedAt: date) : task.copyWith(status: status, updatedAt: date);
     await updateTask(updatedTask);
   }
 }

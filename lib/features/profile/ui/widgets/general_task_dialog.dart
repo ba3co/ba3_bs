@@ -43,16 +43,17 @@ class GeneralTaskDialog extends StatelessWidget {
                     },
                     child: task.status.isFinished
                         ? FadeInImage.assetNetwork(
-                      placeholder: AppAssets.loadingImage,
-                      image: task.taskImage!,
-                      fit: BoxFit.cover,
-                      placeholderScale: 5.0, // تصغير حجم الـ placeholder
+                            placeholder: AppAssets.loadingImage,
+                            image: task.taskImage!,
+                            fit: BoxFit.cover,
+                            placeholderScale: 5.0,
+                            // تصغير حجم الـ placeholder
 
-                      height: 370,
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Icon(Icons.broken_image, size: 50, color: Colors.grey); // أيقونة عند فشل التحميل
-                      },
-                    )
+                            height: 370,
+                            imageErrorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.broken_image, size: 50, color: Colors.grey); // أيقونة عند فشل التحميل
+                            },
+                          )
                         : Image.file(
                             File(
                               userManagementController.image!.path,
@@ -76,11 +77,7 @@ class GeneralTaskDialog extends StatelessWidget {
                   title: AppStrings.save.tr,
                   iconData: FontAwesomeIcons.add,
                   onPressed: () {
-                    if (userManagementController.image != null) {
-                      read<AllTaskController>().uploadImageTask(task, userManagementController.image!.path);
-                    }
-                    userManagementController.image = null;
-                    OverlayService.back();
+                    userManagementController.updateGeneralTask(task: task);
                   },
                 )
               ],
@@ -93,7 +90,7 @@ class GeneralTaskDialog extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                AppServiceUtils.formatDateTime(task.updatedAt),
+                AppServiceUtils.formatDateTime(task.endedAt),
                 style: AppTextStyles.headLineStyle3.copyWith(color: Colors.red),
                 textAlign: TextAlign.center,
               ),

@@ -85,24 +85,11 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     userNavigator = UserNavigator(roleFormHandler, _sharedPreferencesService);
   }
 
-  fetchAllUserTask() async {
-    read<SellerSalesController>().profileScreenState.value = RequestState.loading;
-    if (loggedInUserModel?.userTaskList == null) return [];
-
-    allTaskList
-        .assignAll(await Future.wait(loggedInUserModel!.userTaskList!.map((e) async => await read<AllTaskController>().getTaskById(e))));
-    allTaskListDone.assignAll(allTaskList.where(
-      (element) => element.status.isFinished,
-    ));
-
-    allTaskList.removeWhere((element) => element.status.isFinished);
-    read<SellerSalesController>().profileScreenState.value = RequestState.success;
-    update();
-  }
-
   List<UserModel> get nonLoggedInUsers => allUsers.where((user) => user.userId != loggedInUserModel?.userId).toList();
-  List<UserTaskModel> allTaskList = [];
-  List<UserTaskModel> allTaskListDone = [];
+
+  List<UserTaskModel> get allTaskList => loggedInUserModel?.userTaskList?.where((element) => !element.status.isFinished).toList() ?? [];
+
+  List<UserTaskModel> get allTaskListDone => loggedInUserModel?.userTaskList?.where((element) => element.status.isFinished).toList() ?? [];
 
   List<UserTaskModel> get saleTask => allTaskList
       .where(
@@ -395,19 +382,19 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     return allUsers.firstWhereOrNull((user) => user.userId == id)?.userName ?? 'invalid id $id';
   }
 
-  addTaskToUser(String userTaskId, List<String> userToEdit) {
+  addTaskToUser(UserTaskModel userTask, List<String> userToEdit) {
     List<UserModel> userToAddList = userToEdit.map((userId) => allUsers.firstWhere((user) => user.userId == userId)).toList();
     for (var user in userToAddList) {
-      final List<String> updatedTaskList = List.from(user.userTaskList ?? []);
+      final List<UserTaskModel> updatedTaskList = List.from(user.userTaskList ?? []);
 
-      int index = updatedTaskList.indexWhere((taskId) => taskId == userTaskId);
+      int index = updatedTaskList.indexWhere((taskId) => taskId.docId == userTask.docId);
 
       if (index != -1) {
         updatedTaskList.removeAt(index);
-        log("🗑️ تم حذف المهمة ذات ID: $userTaskId للمستخدم ${user.userName}");
+        log("🗑️ تم حذف المهمة ذات ID: $userTask للمستخدم ${user.userName}");
       } else {
-        updatedTaskList.add(userTaskId);
-        log("✅ تم إضافة مهمة جديدة ذات ID: $userTaskId للمستخدم ${user.userName}");
+        updatedTaskList.add(userTask);
+        log("✅ تم إضافة مهمة جديدة ذات ID: $userTask للمستخدم ${user.userName}");
       }
 
       final editedUser = user.copyWith(userTaskList: updatedTaskList);
@@ -435,20 +422,47 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
     return await read<SellerSalesController>().getSellerMaterialsSales(
         sellerId: loggedInUserModel!.userSellerId!, dateTimeRange: DateTimeRange(start: startDay, end: endDay), materialId: materialId);
   }
+
 /*'5eae14a3-aaa5-4309-bc44-f541def66fe1'*/
   void updateInventoryTask({required UserTaskModel task}) async {
-
-    // log(task.toJson().toString());
-    // return;
+    late UserTaskModel updatedTask;
     if (task.status.isInProgress) {
       OverlayService.back();
-      read<AllTaskController>().uploadDateTask(task: task, date: DateTime.now(), status: TaskStatus.done);
-
+      updatedTask = task.copyWith(
+        status: TaskStatus.done,
+        endedAt: DateTime.now(),
+      );
+      // read<AllTaskController>().uploadDateTask(task: task, date: DateTime.now(), status: TaskStatus.done);
     } else {
-      read<AllTaskController>().uploadDateTask(task: task, date: DateTime.now(), status: TaskStatus.inProgress);
-    }
+      updatedTask = task.copyWith(
+        status: TaskStatus.inProgress,
+        updatedAt: DateTime.now(),
+      );
 
-    await fetchAllUserTask();
+      // read<AllTaskController>().uploadDateTask(task: task, date: DateTime.now(), status: TaskStatus.inProgress);
+    }
+    final updatedTaskList = [...loggedInUserModel!.userTaskList!.where((element) => element.docId != updatedTask.docId), updatedTask];
+
+    _usersFirebaseRepo.save(
+      loggedInUserModel!.copyWith(userTaskList: updatedTaskList),
+    );
+    // await fetchAllUserTask();
     update();
+  }
+
+  void updateGeneralTask({required UserTaskModel task}) async {
+    if (image != null) {
+      final imageUrl = await read<AllTaskController>().uploadImageTask(image!.path);
+
+      final updatedTask = task.copyWith(status: TaskStatus.done, endedAt: DateTime.now(), taskImage: imageUrl);
+      final updatedTaskList = [...loggedInUserModel!.userTaskList!.where((element) => element.docId != updatedTask.docId), updatedTask];
+
+      _usersFirebaseRepo.save(
+        loggedInUserModel!.copyWith(userTaskList: updatedTaskList),
+      );
+      image = null;
+      OverlayService.back();
+      update();
+    }
   }
 }

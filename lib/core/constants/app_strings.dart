@@ -367,6 +367,7 @@ class AppStrings {
 
   static var tasksTodo = 'مهام يجب تنفيذها';
   static var tasksEnded = 'مهام انتهت';
+  static var tasksFailed = 'مهام فشلت';
 
   static var uploadImage = 'تحميل صورة';
 
