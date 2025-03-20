@@ -25,6 +25,7 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
+import '../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
@@ -34,9 +35,11 @@ import '../ui/screens/add_material_screen.dart';
 class MaterialController extends GetxController with AppNavigator, FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
+
+  final QueryableSavableRepository<MaterialModel> _materialRemoteRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository);
+  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo);
 
   List<MaterialModel> materials = [];
   List<MaterialModel> materialsForShow = [];
@@ -94,13 +97,15 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     await fetchMaterials();
   }
 
-  Future<void> saveAllMaterial(List<MaterialModel> materialsToSave) async {
+  Future<void> saveAllMaterialOnLocal(List<MaterialModel> materialsToSave) async {
     final result = await _materialsHiveRepo.saveAll(materialsToSave);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (savedMaterials) {
       log('materials length before add item: ${materials.length}');
+
       AppUIUtils.onSuccess('تم الحفظ بنجاح');
       reloadMaterials();
+
       log('materials length after add item: ${materials.length}');
     });
   }
@@ -214,8 +219,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
           (item.serialNumbers != null &&
-              item.serialNumbers!.entries
-                  .any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
+              item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
     if (exactMatch.length == 1) {
@@ -318,6 +322,15 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     return null;
   }
 
+  Future<void> saveMaterialsOnRemote(List<MaterialModel> materials) async {
+    final result = await _materialRemoteRepo.saveAll(materials);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (savedMaterial) {},
+    );
+  }
+
   Future<void> saveOrUpdateMaterial() async {
     // Validate the input before proceeding
 
@@ -330,8 +343,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       return;
     }
 
-    final hiveResult =
-        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -397,6 +409,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
     );
   }
+
   Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
@@ -477,7 +490,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   resetMaterialQuantityAndPrice() async {
-
     for (final material in materials.where(
       (element) => element.matQuantity != 0 || element.calcMinPrice != 0,
     )) {

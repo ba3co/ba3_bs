@@ -237,37 +237,71 @@ class AppUIUtils {
 
   static showErrorSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
     // Close any existing SnackBar
-    Get.closeCurrentSnackbar();
+    if (Get.isSnackbarOpen) {
+      Get.closeCurrentSnackbar();
+    }
+
     // Show the new SnackBar
     Get.snackbar(
       title ?? _getTitle(status),
       message,
-      backgroundColor: const Color.fromARGB(200, 255, 0, 0),
-      icon: const Icon(
-        Icons.error_outline_outlined,
+      backgroundColor: _getBackgroundColor(status),
+      icon: Icon(
+        _getIcon(status),
         color: Colors.white,
       ),
-      barBlur: 50,
+      barBlur: 10,
       colorText: Colors.white,
-      // overlayBlur: 2,
-      // overlayColor: const Color.fromARGB(10, 255, 0, 0),
+      duration: const Duration(seconds: 3),
+      snackPosition: SnackPosition.TOP,
+      margin: const EdgeInsets.all(10),
     );
   }
 
   static showSuccessSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
     // Close any existing SnackBar
-    Get.closeCurrentSnackbar();
+    if (Get.isSnackbarOpen) {
+      Get.closeCurrentSnackbar();
+    }
+
     // Show the new SnackBar
     Get.snackbar(
       title ?? _getTitle(status),
       message,
-      backgroundColor: const Color.fromARGB(200, 0, 255, 0),
-      icon: const Icon(
-        Icons.check,
+      backgroundColor: _getBackgroundColor(status),
+      icon: Icon(
+        _getIcon(status),
         color: Colors.white,
       ),
-      barBlur: 50,
+      barBlur: 10,
       colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+      snackPosition: SnackPosition.TOP,
+      margin: const EdgeInsets.all(10),
+    );
+  }
+
+  static void showInfoSnackBar({
+    String? title,
+    required String message,
+    NotificationStatus status = NotificationStatus.info,
+  }) {
+    Get.closeAllSnackbars();
+
+    // Show the new SnackBar
+    Get.snackbar(
+      title ?? _getTitle(status),
+      message,
+      backgroundColor: _getBackgroundColor(status),
+      icon: Icon(
+        _getIcon(status),
+        color: Colors.white,
+      ),
+      barBlur: 10,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+      snackPosition: SnackPosition.TOP,
+      margin: const EdgeInsets.all(10),
     );
   }
 
@@ -282,11 +316,37 @@ class AppUIUtils {
     }
   }
 
+  /// 🔹 Get Dynamic Background Color Based on Status
+  static Color _getBackgroundColor(NotificationStatus status) {
+    switch (status) {
+      case NotificationStatus.success:
+        return Colors.green.withOpacity(0.8);
+      case NotificationStatus.error:
+        return Colors.red.withOpacity(0.8);
+      case NotificationStatus.info:
+        return Colors.blue.withOpacity(0.8);
+    }
+  }
+
+  /// 🔹 Get Dynamic Icon Based on Status
+  static IconData _getIcon(NotificationStatus status) {
+    switch (status) {
+      case NotificationStatus.success:
+        return Icons.check_circle;
+      case NotificationStatus.error:
+        return Icons.error;
+      case NotificationStatus.info:
+        return Icons.info;
+    }
+  }
+
   static onFailure(String message) => showErrorSnackBar(
         message: message,
       );
 
   static onSuccess(String message) => showSuccessSnackBar(message: message);
+
+  static onInfo(String message) => showInfoSnackBar(message: message);
 
   /// The `title` argument is used to title of alert dialog.
   /// The `content` argument is used to content of alert dialog.
@@ -314,14 +374,21 @@ class AppUIUtils {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.red)),
           alignment: Alignment.center,
           backgroundColor: AppColors.backGroundColor,
-          title:title==null?null: Center(
-            child: Text(title,style: AppTextStyles.headLineStyle2,),
-          ),
-          content:title!=null?null: Text(
-            AppStrings.areYouSureContinue.tr,
-            style: AppTextStyles.headLineStyle2,
-            textAlign: TextAlign.center,
-          ),
+          title: title == null
+              ? null
+              : Center(
+                  child: Text(
+                    title,
+                    style: AppTextStyles.headLineStyle2,
+                  ),
+                ),
+          content: title != null
+              ? null
+              : Text(
+                  AppStrings.areYouSureContinue.tr,
+                  style: AppTextStyles.headLineStyle2,
+                  textAlign: TextAlign.center,
+                ),
           actions: <Widget>[
             AppButton(
               title: AppConstants.no,
@@ -344,27 +411,25 @@ class AppUIUtils {
     return isConfirm ?? false;
   }
 
-  static  void showFullScreenFileImage(BuildContext context, String imagePath) {
+  static void showFullScreenFileImage(BuildContext context, String imagePath) {
     OverlayService.showDialog(
       context: context,
       width: 1.sw,
       height: 1.sh,
-      content:  InteractiveViewer(
+      content: InteractiveViewer(
         child: Image.file(File(imagePath), fit: BoxFit.contain),
       ),
     );
   }
 
-
-  static  void showFullScreenNetworkImage(BuildContext context, String imagePath) {
+  static void showFullScreenNetworkImage(BuildContext context, String imagePath) {
     OverlayService.showDialog(
       context: context,
       width: 1.sw,
       height: 1.sh,
-      content:  InteractiveViewer(
+      content: InteractiveViewer(
         child: Image.network(imagePath, fit: BoxFit.contain),
       ),
     );
   }
-
 }

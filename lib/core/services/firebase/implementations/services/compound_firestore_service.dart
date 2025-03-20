@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pool/pool.dart';
 
+import '../../../../../features/migration/controllers/migration_controller.dart';
 import '../../../../models/date_filter.dart';
 import '../../../../models/query_filter.dart';
 import '../../../../network/api_constants.dart';
@@ -119,8 +120,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     double? metaValue,
   }) async {
     try {
-      if (rootCollectionPath == 'bills') {
-        log('rootCollectionPath == bills', name: 'Add CompoundFirestoreService');
+      if (dateBaseGuard(rootCollectionPath)) {
+        log('Migration guard triggered, skipping add operation for [$rootCollectionPath].', name: 'Add CompoundFirestoreService');
         return {};
       }
 
@@ -195,6 +196,11 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath, subDocumentId $subDocumentId',
         name: 'delete CompoundFirestoreService');
 
+    if (dateBaseGuard(rootCollectionPath)) {
+      log('Migration guard triggered, skipping delete operation for [$rootCollectionPath].', name: 'delete CompoundFirestoreService');
+      return;
+    }
+
     final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(subDocumentId);
     final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
     await docRef.set({
@@ -243,6 +249,12 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   }) async {
     log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
         name: 'AddAll CompoundFirestoreService');
+
+    if (dateBaseGuard(rootCollectionPath)) {
+      log('Migration guard triggered, skipping addAll operation for [$rootCollectionPath].', name: 'AddAll CompoundFirestoreService');
+      return [];
+    }
+
     // 1. Split items into sub-lists of size up to 500
     final chunks = items.chunkBy(500);
 

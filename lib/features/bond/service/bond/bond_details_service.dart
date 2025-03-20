@@ -17,6 +17,7 @@ import '../../../../core/i_controllers/i_recodes_pluto_controller.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../controllers/bonds/all_bond_controller.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
+import '../../controllers/entry_bond/entry_bond_controller.dart';
 import '../../data/models/bond_model.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
 
@@ -74,7 +75,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
 
     AppUIUtils.onSuccess('تم حذف السند بنجاح!');
 
-    entryBondController.deleteEntryBondModel(entryId: bondModel.payGuid!);
+    read<EntryBondController>().deleteEntryBondModel(entryId: bondModel.payGuid!);
   }
 
   Future<void> handleSaveOrUpdateSuccess({

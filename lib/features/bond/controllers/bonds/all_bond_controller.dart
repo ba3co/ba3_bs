@@ -108,6 +108,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
   Future<List<BondModel>> bondsCountByType(BondType bondType) async {
     int bondsCountByType = await getLastNumber(
+      //   category:'${read<MigrationController>().currentVersion}${ApiConstants.bonds}',
       category: ApiConstants.bonds,
       entityType: bondType.label,
     );

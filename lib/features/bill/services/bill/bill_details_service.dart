@@ -27,6 +27,7 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
 import '../../../materials/service/mat_statement_generator.dart';
@@ -281,7 +282,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   /// and the pattern type requires a material account.
   void _handleApprovedBillDeletions(BillModel billModel) {
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      entryBondController.deleteEntryBondModel(entryId: billModel.billId!);
+      read<EntryBondController>().deleteEntryBondModel(entryId: billModel.billId!);
     }
     deleteMatsStatementsModels(billModel);
   }

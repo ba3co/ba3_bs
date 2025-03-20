@@ -9,14 +9,19 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:get/get.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
-import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
+import '../../use_cases/convert_bills_to_linked_list_use_case.dart';
+import '../../use_cases/divide_large_bill_use_case.dart';
 
 class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNumbers {
+  final DivideLargeBillUseCase _divideLargeBillUseCase = DivideLargeBillUseCase();
+  final ConvertBillsToLinkedListUseCase _convertBillsToLinkedListUseCase = ConvertBillsToLinkedListUseCase();
+
   /// Converts the imported JSON structure to a list of BillModel
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
@@ -34,26 +39,6 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   }
 
   List<List<dynamic>> _splitItemsIntoChunks(List items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
-
-  /// Splits a large bill into multiple smaller bills, each having at most `maxItemsPerBill` items.
-  List<BillModel> _divideLargeBill(BillModel bill, {required int maxItemsPerBill}) {
-    final List<BillModel> splitBills = [];
-    final items = bill.items.itemList;
-    final chunks = items.chunkBy((maxItemsPerBill));
-
-    for (int i = 0; i < chunks.length; i++) {
-      final newBill = bill.copyWith(
-        // Assign new unique ID
-        billId: "${bill.billId}_part${i + 1}",
-        billDetails: bill.billDetails.copyWith(billNumber: bill.billDetails.billNumber! + i),
-        items: BillItems(itemList: chunks[i]),
-      );
-
-      splitBills.add(newBill);
-    }
-
-    return splitBills;
-  }
 
   int _getNextBillNumber({required String billTypeGuid, required List<Map<String, dynamic>> items}) {
     if (!billsNumbers.containsKey(billTypeGuid)) {
@@ -78,31 +63,6 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
         await setLastUsedNumber(ApiConstants.bills, BillType.byTypeGuide(billTypeGuid).label, number);
       },
     );
-  }
-
-  List<BillModel> convertToBillsLinkedList(List<BillModel> bills) {
-    // 1. Group bills by type
-    final groupedBills = bills.groupBy((bill) => bill.billTypeModel.billTypeId!);
-
-    // 2. For each group, sort by billNumber and assign previous/next
-    final updatedGroups = groupedBills.values.map(
-      (group) {
-        group.sortBy((bill) => bill.billDetails.billNumber!);
-        return group
-            .mapIndexed(
-              (index, bill) => bill.copyWith(
-                billDetails: bill.billDetails.copyWith(
-                  previous: index == 0 ? null : group[index - 1].billDetails.billNumber,
-                  next: index == group.length - 1 ? null : group[index + 1].billDetails.billNumber,
-                ),
-              ),
-            )
-            .toList();
-      },
-    ).toList(); // => List<List<BillModel>>
-
-    // 3. Flatten the updated groups back into a single list using the flatten extension.
-    return updatedGroups.flatten();
   }
 
   /// Extracts order number from "رقم الطلب" or "TABBY-"
@@ -246,17 +206,12 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       final BillModel bill = BillModel.fromImportedJsonFile(billJson);
 
-      final chunks = _splitItemsIntoChunks(itemsJson, AppConstants.maxItemsPerBill);
-
-      if (chunks.length > 1) {
-        final List<BillModel> splitBills = _divideLargeBill(bill, maxItemsPerBill: AppConstants.maxItemsPerBill);
-        bills.addAll(splitBills);
-      } else {
-        bills.add(bill);
-      }
+      final List<BillModel> splitBills = _divideLargeBillUseCase.execute(bill);
+      bills.assignAll(splitBills);
     }
 
-    final linkedBills = convertToBillsLinkedList(bills);
+    // 🔹 Use the Use Case for linking bills
+    final linkedBills = _convertBillsToLinkedListUseCase.execute(bills);
 
     await _saveBillsTypesNumbers();
 

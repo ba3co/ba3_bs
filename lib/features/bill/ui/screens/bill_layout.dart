@@ -81,16 +81,21 @@ class BillLayout extends StatelessWidget {
                               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                                 PopupMenuItem<String>(
                                   value: AppConstants.serialNumbersStatement,
-                                  child: Text(AppStrings.serialNumbersStatement.tr),
+                                  child: Row(
+                                    children: [
+                                      Icon(FontAwesomeIcons.file, color: Colors.black54),
+                                      SizedBox(width: 8),
+                                      Text(AppStrings.serialNumbersStatement.tr),
+                                    ],
+                                  ),
                                 ),
                                 PopupMenuItem<String>(
                                   child: PopupMenuButton<String>(
                                     child: Row(
                                       children: [
-                                        Icon( FontAwesomeIcons.search, color: Colors.black54),
+                                        Icon(FontAwesomeIcons.search, color: Colors.black54),
                                         SizedBox(width: 8),
                                         Text(AppStrings.searchBill.tr),
-                                        Icon(FontAwesomeIcons.arrowRight, color: Colors.black54),
                                       ],
                                     ),
                                     onSelected: (value) {

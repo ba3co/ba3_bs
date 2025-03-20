@@ -34,7 +34,10 @@ class SplashScreen extends StatelessWidget {
 
     put(
       UserManagementController(
-          read<RemoteDataSourceRepository<RoleModel>>(), read<FilterableDataSourceRepository<UserModel>>(), sharedPreferencesService),
+        read<RemoteDataSourceRepository<RoleModel>>(),
+        read<FilterableDataSourceRepository<UserModel>>(),
+        sharedPreferencesService,
+      ),
       permanent: true,
     );
   }

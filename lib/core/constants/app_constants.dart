@@ -422,7 +422,8 @@ abstract class AppConstants {
   static const String serialNumbersStatement = 'serialNumbersStatement';
   static const String searchByPhone = 'searchByPhone';
   static const String searchByOrderNumber = 'searchByOrderNumber';
-  static const String userTaskIdField='userTaskIdField';
+  static const String userTaskIdField = 'userTaskIdField';
+  static const String defaultVersion = 'الأساسي';
 
   static const Map<String, String> months = {
     "يناير (1)": "01",
@@ -438,6 +439,4 @@ abstract class AppConstants {
     "نوفمبر (11)": "11",
     "ديسمبر (12)": "12",
   };
-
-
 }

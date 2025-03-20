@@ -10,14 +10,12 @@ import '../../../helper/extensions/getx_controller_extensions.dart';
 import 'entry_bond_creator_factory.dart';
 
 mixin EntryBondsGenerator {
-  final EntryBondController entryBondController = read<EntryBondController>();
-
   Future<void> createAndStoreEntryBonds<T>({
     required List<T> sourceModels,
     void Function(double progress)? onProgress,
   }) async {
     final entryBondModels = _mapModelsToEntryBonds(sourceModels);
-    await entryBondController.saveAllEntryBondModels(
+    await read<EntryBondController>().saveAllEntryBondModels(
       entryBonds: entryBondModels,
       onProgress: onProgress,
     );
@@ -28,6 +26,8 @@ mixin EntryBondsGenerator {
     Map<String, AccountModel> modifiedAccounts = const {},
     void Function(double progress)? onProgress,
   }) async {
+    final entryBondController = read<EntryBondController>();
+
     final entryBondModels = _mapModelToEntryBonds(model);
 
     if (entryBondModels.length == 1) {
@@ -69,7 +69,7 @@ mixin EntryBondsGenerator {
 
   Future<void> createAndStoreChequeEntryBondByStrategy(ChequesModel model, {required ChequesStrategyType chequesStrategyType}) async {
     final entryBondModel = createChequeEntryBondByStrategy(model, chequesStrategyType: chequesStrategyType);
-    await entryBondController.saveEntryBondModel(entryBondModel: entryBondModel);
+    await read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
   }
 
   EntryBondModel createSimulatedVatEntryBond<T>(T model) => _createEntryBondInstance(model, isSimulatedVat: true);

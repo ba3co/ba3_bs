@@ -92,7 +92,7 @@ class ChangesController extends GetxController {
       // Iterate over the changeItems and classify each one
       change.changeItems.forEach((collection, changes) {
         for (final changeItem in changes) {
-          _handleChangeItem(changeItem, materialsToSave, materialsToDelete,materialsToUpdate); // Collect items for update or delete
+          _handleChangeItem(changeItem, materialsToSave, materialsToDelete, materialsToUpdate); // Collect items for update or delete
         }
       });
 
@@ -117,7 +117,8 @@ class ChangesController extends GetxController {
   }
 
   /// Determines how to process a specific change item based on its type and collection.
-  void _handleChangeItem(ChangeItem changeItem, List<MaterialModel> materialsToSave, List<MaterialModel> materialsToDelete, List<MaterialModel> materialsToUpdate) {
+  void _handleChangeItem(
+      ChangeItem changeItem, List<MaterialModel> materialsToSave, List<MaterialModel> materialsToDelete, List<MaterialModel> materialsToUpdate) {
     final targetCollection = changeItem.target.targetCollection;
     final changeType = changeItem.target.changeType;
 
@@ -154,7 +155,7 @@ class ChangesController extends GetxController {
   void saveMaterials(List<MaterialModel> materialsToSave) {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
-      materialController.saveAllMaterial(materialsToSave); // Save all materials at once
+      materialController.saveAllMaterialOnLocal(materialsToSave); // Save all materials at once
     }
   }
 

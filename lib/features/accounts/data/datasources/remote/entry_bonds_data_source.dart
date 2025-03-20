@@ -5,13 +5,13 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 
-import '../../../../../core/constants/app_config.dart';
-
 class EntryBondsDatasource extends BulkSavableDatasource<EntryBondModel> {
   EntryBondsDatasource({required super.databaseService});
 
   @override
-  String get path => '${AppConfig.instance.year}${ApiConstants.entryBonds}'; // Collection name in Firestore
+  // String get path => '${read<MigrationController>().currentVersion}${ApiConstants.entryBonds}'; // Collection name in Firestore
+
+  String get path => ApiConstants.entryBonds; // Collection name in Firestore
 
   @override
   Future<List<EntryBondModel>> fetchAll() async {

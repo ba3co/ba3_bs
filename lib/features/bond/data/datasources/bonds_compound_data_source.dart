@@ -12,7 +12,8 @@ class BondCompoundDatasource extends CompoundDatasourceBase<BondModel, BondType>
   // Parent Collection (e.g., "bonds", "bonds")
 
   @override
-  // String get rootCollectionPath => '${AppConfig.instance.year}${ApiConstants.bonds}'; // Collection name in Firestore
+  // String get rootCollectionPath => '${read<MigrationController>().currentVersion}${ApiConstants.bonds}'; // Collection name in Firestore
+
   String get rootCollectionPath => ApiConstants.bonds; // Collection name in Firestore
 
   @override

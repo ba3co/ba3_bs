@@ -81,8 +81,10 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedAccounts) {
-        AppUIUtils.onSuccess('تم رفع ${fetchedAccounts.length} حساب بنجاح');
+      (savedAccounts) {
+        if (savedAccounts.isNotEmpty) {
+          AppUIUtils.onSuccess('تم رفع ${savedAccounts.length} حساب بنجاح');
+        }
       },
     );
   }

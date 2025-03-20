@@ -1,22 +1,20 @@
 // Firebase-Specific Implementation
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:pool/pool.dart';
 
+import '../../../../../features/migration/controllers/migration_controller.dart';
 import '../../../../models/date_filter.dart';
 
 // FirebaseFirestoreService Implementation
 class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   final FirebaseFirestore _firestoreInstance;
-  final FirebaseStorage _firebaseStorageInstance;
 
-  FireStoreService(FirebaseFirestore instance,FirebaseStorage storageInstant) : _firestoreInstance = instance,_firebaseStorageInstance=storageInstant;
+  FireStoreService(FirebaseFirestore instance) : _firestoreInstance = instance;
 
   @override
   Future<List<Map<String, dynamic>>> fetchAll({required String path}) async {
@@ -70,6 +68,11 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
 
   @override
   Future<void> delete({required String path, String? documentId, String? mapFieldName}) async {
+    if (dateBaseGuard(path)) {
+      log('Migration guard triggered, skipping delete operation for path [$path].', name: 'delete CompoundFirestoreService');
+      return;
+    }
+
     if (mapFieldName != null) {
       // If mapFieldName is provided, delete the specific map field
       await _firestoreInstance.collection(path).doc(documentId).update({
@@ -83,6 +86,11 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
 
   @override
   Future<Map<String, dynamic>> add({required Map<String, dynamic> data, required String path, String? documentId}) async {
+    if (dateBaseGuard(path)) {
+      log('Migration guard triggered, skipping add operation for path [$path].', name: 'add CompoundFirestoreService');
+      return {};
+    }
+
     final newDoc = _firestoreInstance.collection(path).doc().id;
 
     // Use the provided document ID or generate a new one if not provided
@@ -116,6 +124,11 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     required String path,
     required List<Map<String, dynamic>> data,
   }) async {
+    if (dateBaseGuard(path)) {
+      log('Migration guard triggered, skipping addAll operation for path [$path].', name: 'addAll CompoundFirestoreService');
+      return [];
+    }
+
     // 1. Break the data into chunks of up to 500 items
     final chunks = data.chunkBy(500);
 
@@ -305,15 +318,15 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   }
 
   @override
-  Future<String> uploadImage({required String imagePath,required String path})async {
-    File imageFile = File(imagePath);
-    String fileName = "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
-
-    Reference storageRef = _firebaseStorageInstance.ref().child(fileName);
-    UploadTask uploadTask = storageRef.putFile(imageFile);
-    TaskSnapshot snapshot = await uploadTask;
-    String downloadUrl = await snapshot.ref.getDownloadURL();
-    return downloadUrl;
-
+  Future<String> uploadImage({required String imagePath, required String path}) async {
+    return '';
+    // File imageFile = File(imagePath);
+    // String fileName = "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
+    //
+    // Reference storageRef = _firebaseStorageInstance.ref().child(fileName);
+    // UploadTask uploadTask = storageRef.putFile(imageFile);
+    // TaskSnapshot snapshot = await uploadTask;
+    // String downloadUrl = await snapshot.ref.getDownloadURL();
+    // return downloadUrl;
   }
 }
