@@ -32,9 +32,9 @@ class ProfileScreen extends StatelessWidget {
     List<UserTaskModel> currentUserTasksEnded = read<UserManagementController>().allTaskListDone;
     read<UserManagementController>().fetchAllUserTask();
     final salesController = read<SellerSalesController>();
-/*    salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel?.userSellerId).then(
+    salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel?.userSellerId).then(
           (value) => salesController.calculateTotalAccessoriesMobiles(),
-        );*/
+        );
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
