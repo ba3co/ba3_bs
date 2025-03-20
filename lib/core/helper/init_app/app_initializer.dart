@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,9 +22,11 @@ import '../../constants/app_constants.dart';
 import '../../services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../services/firebase/implementations/services/compound_firestore_service.dart';
+import '../../services/firebase/implementations/services/firebase_storage_service.dart';
 import '../../services/firebase/implementations/services/firestore_service.dart';
 import '../../services/firebase/interfaces/i_compound_database_service.dart';
 import '../../services/firebase/interfaces/i_remote_database_service.dart';
+import '../../services/firebase/interfaces/i_remote_storage_service.dart';
 import '../../services/local_database/implementations/services/hive_database_service.dart';
 import '../../services/translation/translation_controller.dart';
 import '../enums/enums.dart';
@@ -45,7 +48,7 @@ Future<void> initializeAppServices() async {
 
   await initializeAppLocalization(boxName: AppConstants.appLocalLangBox);
 
-  setupFirestoreServices();
+  setupDatabaseServices();
 
   setupMigrationDependencies();
 }
@@ -58,27 +61,33 @@ Future<void> initializeAppLocalization({required String boxName}) async {
   put(TranslationController(hiveLocalLangService));
 }
 
-void setupFirestoreServices() {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+void setupDatabaseServices() {
+  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
+
+  final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
   /// 🔹 To connect to a test Firebase project, use:
 
-  // final FirebaseFirestore testFirestore = FirebaseFirestore.instanceFor(
+  // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
   //   app: Firebase.app(),
   //   databaseId: 'test'
   // );
 
   // Initialize Firestore services
-  final fireStoreService = createFirestoreService(firestore);
+  final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);
 
-  final compoundFireStoreService = createCompoundFirestoreService(firestore);
+  final compoundDatabaseService = createCompoundDatabaseService(firestoreInstance);
+
+  final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
 
   // Register dependencies using lazyPut
-  lazyPut(firestore);
+  lazyPut(firestoreInstance);
 
-  lazyPut(fireStoreService);
+  lazyPut(remoteDatabaseService);
 
-  lazyPut(compoundFireStoreService);
+  lazyPut(compoundDatabaseService);
+
+  lazyPut(remoteStorageService);
 }
 
 void setupMigrationDependencies() {
@@ -100,17 +109,23 @@ void setupMigrationDependencies() {
 }
 
 // 🔹 Helper Methods for Initialization
-IRemoteDatabaseService<Map<String, dynamic>> createFirestoreService(FirebaseFirestore instance) => FireStoreService(instance);
+IRemoteDatabaseService<Map<String, dynamic>> createRemoteDatabaseService(FirebaseFirestore instance) =>
+    FireStoreService(instance);
 
-ICompoundDatabaseService<Map<String, dynamic>> createCompoundFirestoreService(FirebaseFirestore instance) => CompoundFireStoreService(instance);
+ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(FirebaseFirestore instance) =>
+    CompoundFireStoreService(instance);
 
-CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(ICompoundDatabaseService<Map<String, dynamic>> service) =>
+IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
+
+CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
+        ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<BondModel, BondType> createBondsRepository(ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: service));
 
-CompoundDatasourceRepository<ChequesModel, ChequesType> createChequesRepository(ICompoundDatabaseService<Map<String, dynamic>> service) =>
+CompoundDatasourceRepository<ChequesModel, ChequesType> createChequesRepository(
+        ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: service));
 
 RemoteDataSourceRepository<MigrationModel> createMigrationRepository(IRemoteDatabaseService<Map<String, dynamic>> service) =>

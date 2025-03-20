@@ -4,7 +4,6 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
-import 'package:ba3_bs/core/services/firebase/implementations/repos/uploader_able_datasource_repo.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -21,6 +20,7 @@ import '../../../core/dialogs/material_task_count_dialog.dart';
 import '../../../core/dialogs/product_selection_dialog_content.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
+import '../../../core/services/firebase/implementations/repos/uploader_storage_queryable_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../users_management/data/models/user_model.dart';
 import '../data/model/user_task_model.dart';
@@ -28,9 +28,9 @@ import '../ui/add_task_screen.dart';
 import '../ui/all_task_screen.dart';
 
 class AllTaskController extends GetxController with FloatingLauncher {
-  final UploaderAbleDatasourceRepository<UserTaskModel> _dataSourceRepository;
+  final UploaderStorageQueryableRepo<UserTaskModel> _userTaskRepo;
 
-  AllTaskController(this._dataSourceRepository);
+  AllTaskController(this._userTaskRepo);
 
   late TaskFormHandler taskFormHandler;
 
@@ -55,7 +55,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   List<UserTaskModel> userTaskList = [];
 
   Future<void> fetchTasks() async {
-    final result = await _dataSourceRepository.getAll();
+    final result = await _userTaskRepo.getAll();
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -242,7 +242,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
       );
     }
     log(differentUser.toString());
-    final result = await _dataSourceRepository.save(userTaskModel);
+    final result = await _userTaskRepo.save(userTaskModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -294,7 +294,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   void deleteTask() async {
-    final result = await _dataSourceRepository.delete(selectedTask!.docId!);
+    final result = await _userTaskRepo.delete(selectedTask!.docId!);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
       userTaskList.removeWhere((userTask) => userTask.docId == selectedTask?.docId);
@@ -316,7 +316,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   updateTask(UserTaskModel task) async {
-    final result = await _dataSourceRepository.save(task);
+    final result = await _userTaskRepo.save(task);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -329,7 +329,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   void uploadImageTask(UserTaskModel task, String imagePath) async {
-    final result = await _dataSourceRepository.uploadImage(imagePath: imagePath);
+    final result = await _userTaskRepo.uploadImage(imagePath);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (imageUrl) async {
       final updatedTask = task.copyWith(taskImage: imageUrl, status: TaskStatus.done, updatedAt: DateTime.now());
@@ -337,8 +337,9 @@ class AllTaskController extends GetxController with FloatingLauncher {
     });
   }
 
-  void uploadDateTask({required UserTaskModel task,required DateTime date,required TaskStatus status}) async {
-    final updatedTask =status.isFinished?task.copyWith(status: status, endedAt: date): task.copyWith(status: status, updatedAt: date);
+  void uploadDateTask({required UserTaskModel task, required DateTime date, required TaskStatus status}) async {
+    final updatedTask =
+        status.isFinished ? task.copyWith(status: status, endedAt: date) : task.copyWith(status: status, updatedAt: date);
     await updateTask(updatedTask);
   }
 }

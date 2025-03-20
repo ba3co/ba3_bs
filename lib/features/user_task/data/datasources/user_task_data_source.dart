@@ -1,13 +1,13 @@
-// BillsDataSource Implementation
+// UserTaskDataSource Implementation
 import 'package:ba3_bs/core/network/api_constants.dart';
-import 'package:ba3_bs/core/services/firebase/interfaces/uploader_able_datasource.dart';
 
 import '../../../../core/models/date_filter.dart';
 import '../../../../core/models/query_filter.dart';
+import '../../../../core/services/firebase/interfaces/uploader_storage_queryable_datasource.dart';
 import '../model/user_task_model.dart';
 
-class UserTaskDataSource extends UploaderAbleDatasource<UserTaskModel> {
-  UserTaskDataSource({required super.databaseService});
+class UserTaskDataSource extends UploaderStorageQueryableDatasource<UserTaskModel> {
+  UserTaskDataSource({required super.databaseService, required super.databaseStorageService});
 
   @override
   String get path => ApiConstants.userTask; // Collection name in Firestore
@@ -49,8 +49,8 @@ class UserTaskDataSource extends UploaderAbleDatasource<UserTaskModel> {
   }
 
   @override
-  Future<String> uploadImage({required String imagePath}) async {
-    final data = await databaseService.uploadImage(imagePath: imagePath,path: path);
+  Future<String> uploadImage(String imagePath) async {
+    final data = await databaseStorageService.uploadImage(imagePath: imagePath, path: path);
 
     return data;
   }

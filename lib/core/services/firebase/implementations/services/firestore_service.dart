@@ -43,7 +43,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   Query<Map<String, dynamic>> _applyFilters(CollectionReference<Map<String, dynamic>> collection, List<QueryFilter> queryFilters) =>
       queryFilters.fold<Query<Map<String, dynamic>>>(
         collection,
-        (query, filter) => query.where(filter.field, isEqualTo: filter.value),
+            (query, filter) => query.where(filter.field, isEqualTo: filter.value),
       );
 
 // Applies the date filter if provided
@@ -51,7 +51,14 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     if (dateFilter == null) return query;
 
     final start = dateFilter.range.start;
-    final end = DateTime(dateFilter.range.end.year, dateFilter.range.end.month, dateFilter.range.end.day, 23, 59, 59, 999);
+    final end = DateTime(
+        dateFilter.range.end.year,
+        dateFilter.range.end.month,
+        dateFilter.range.end.day,
+        23,
+        59,
+        59,
+        999);
 
     return query.where(dateFilter.dateFieldName, isGreaterThanOrEqualTo: start).where(dateFilter.dateFieldName, isLessThanOrEqualTo: end);
   }
@@ -91,7 +98,10 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       return {};
     }
 
-    final newDoc = _firestoreInstance.collection(path).doc().id;
+    final newDoc = _firestoreInstance
+        .collection(path)
+        .doc()
+        .id;
 
     // Use the provided document ID or generate a new one if not provided
     final docId = documentId ?? (data['docId'] ?? newDoc);
@@ -141,13 +151,16 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     for (final chunk in chunks) {
       // Wrap each chunk commit in withResource()
       final future = pool.withResource(
-        () async {
+            () async {
           final batch = _firestoreInstance.batch();
 
           final chunkAdded = <Map<String, dynamic>>[];
 
           for (final item in chunk) {
-            final docId = item['docId'] ?? _firestoreInstance.collection(path).doc().id;
+            final docId = item['docId'] ?? _firestoreInstance
+                .collection(path)
+                .doc()
+                .id;
 
             item['docId'] = docId;
 
@@ -280,7 +293,8 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
 
       if (!docSnapshot.exists) {
         // Remove the `docIdField` key to avoid duplication in Firestore
-        final itemWithoutTransactions = Map<String, dynamic>.from(item)..remove(nestedFieldPath);
+        final itemWithoutTransactions = Map<String, dynamic>.from(item)
+          ..remove(nestedFieldPath);
 
         // Create the document with all fields + transactions
         batch.set(
@@ -315,18 +329,5 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
     // Commit the batch operation
     await batch.commit();
     return processedItems;
-  }
-
-  @override
-  Future<String> uploadImage({required String imagePath, required String path}) async {
-    return '';
-    // File imageFile = File(imagePath);
-    // String fileName = "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
-    //
-    // Reference storageRef = _firebaseStorageInstance.ref().child(fileName);
-    // UploadTask uploadTask = storageRef.putFile(imageFile);
-    // TaskSnapshot snapshot = await uploadTask;
-    // String downloadUrl = await snapshot.ref.getDownloadURL();
-    // return downloadUrl;
   }
 }
