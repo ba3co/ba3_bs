@@ -56,10 +56,13 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
   Future<void> fetchTasks() async {
     final result = await _userTaskRepo.getAll();
-
+log('fetchTasks');
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (tasks) => userTaskList.assignAll(tasks),
+      (tasks) {
+        log('tasks ${tasks.length}');
+        userTaskList.assignAll(tasks);
+      },
     );
   }
 
@@ -288,6 +291,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   void lunchAllTaskScreen({required BuildContext context, String? userTaskId}) {
+    fetchTasks();
     launchFloatingWindow(context: context, floatingScreen: AllTaskScreen());
 
     // taskFormHandler.init(userTaskModel: userTaskModel);
