@@ -9,12 +9,12 @@ class BodyBondLayoutWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
           child: Text(
             firstText,
-            style: AppTextStyles.headLineStyle4,
+            style: AppTextStyles.headLineStyle3,
           ),
         ),
         SizedBox(

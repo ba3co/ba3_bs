@@ -9,7 +9,6 @@ import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/router/app_routes.dart';
 import '../../../core/services/get_x/shared_preferences_service.dart';
-import '../../user_task/ui/add_task_screen.dart';
 import '../controllers/user_management_controller.dart';
 import '../data/models/role_model.dart';
 import '../data/models/user_model.dart';
@@ -44,7 +43,7 @@ class UserNavigator with AppNavigator, FloatingLauncher {
   void lunchAllTaskScreen(BuildContext context) {
     read<AllTaskController>().lunchAllTaskScreen(context: context);
 
-    launchFloatingWindow(context: context, floatingScreen: AddTaskScreen());
+    // launchFloatingWindow(context: context, floatingScreen: AddTaskScreen());
   }
 
   void navigateToLAllPermissionsScreen() {

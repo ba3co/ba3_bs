@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart'
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/bond_layout_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
@@ -30,11 +31,24 @@ class BondLayout extends StatelessWidget {
                 padding: EdgeInsets.all(8),
                 width: 1.sw,
                 child: OrganizedWidget(
-                  titleWidget: Align(
-                    child: Text(
-                      AppStrings.bonds.tr,
-                      style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
-                    ),
+                  titleWidget: Row(
+                    children: [
+                      Align(
+                        child: Text(
+                          AppStrings.bonds.tr,
+                          style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
+                        ),
+                      ),
+                      Spacer(),
+                      IconButton(
+                        tooltip: AppStrings.refresh.tr,
+                        icon: Icon(
+                          FontAwesomeIcons.refresh,
+                          color: AppColors.lightBlueColor,
+                        ),
+                        onPressed: controller.refreshBondsTypes,
+                      ),
+                    ],
                   ),
                   bodyWidget: Column(
                     // padding: const EdgeInsets.all(15.0),

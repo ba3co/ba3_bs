@@ -32,6 +32,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
   bool isLoading = true;
 
   Rx<RequestState> saveAllBondsRequestState = RequestState.initial.obs;
+  Rx<RequestState> allBondsRequestState = RequestState.initial.obs;
 
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
@@ -52,6 +53,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     super.onInit();
     _initializeServices();
   }
+  Future<void> refreshBondsTypes() async => await fetchAllBondsCountsByTypes(BondType.values);
 
   BondModel getBondById(String bondId) => bonds.firstWhere((bond) => bond.payGuid == bondId);
 
@@ -67,6 +69,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     isLoading = false;
     update();
   }
+
 
   Future<void> fetchAllBondsLocal() async {
     log('fetchAllBondsLocal');
@@ -117,19 +120,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
   }
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondType, {BondModel? currentBondModel}) async {
-    // await fetchAllBondsLocal();
-    // await fetchAllBondsByType(bondTypeModel);
-    //
-    // if (!context.mounted) return;
-    //
-    // final BondModel lastBondModel = bondModel ?? _bondUtils.appendEmptyBondModel(bonds, bondTypeModel);
-    //
-    // _openBondDetailsFloatingWindow(
-    //   context: context,
-    //   modifiedBonds: bonds,
-    //   lastBondModel: lastBondModel,
-    //   bondType: bondTypeModel,
-    // );
+
 
     final bonds = await bondsCountByType(bondType);
 
@@ -238,6 +229,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
   }
 
   Future<void> fetchAllBondsCountsByTypes(List<BondType> fetchedBondTypes) async {
+    allBondsRequestState.value=RequestState.loading;
     final List<Future<void>> fetchTasks = [];
     final errors = <String>[]; // Collect error messages.
 
@@ -256,6 +248,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
     // Wait for all tasks to complete.
     await Future.wait(fetchTasks);
+    allBondsRequestState.value=RequestState.success;
     update();
     // Handle errors if any.
     if (errors.isNotEmpty) {

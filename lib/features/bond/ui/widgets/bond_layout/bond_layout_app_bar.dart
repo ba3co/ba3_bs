@@ -17,5 +17,6 @@ AppBar bondLayoutAppBar(AllBondsController controller) {
           onPressed: () => controller.fetchAllBondsLocal(),
         ),
       ),
+
   ]);
 }

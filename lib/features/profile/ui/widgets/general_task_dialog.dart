@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
-import 'package:ba3_bs/features/user_task/controller/all_task_controller.dart';
 import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +13,6 @@ import 'package:get/get.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/widgets/app_button.dart';
-import '../../../floating_window/services/overlay_service.dart';
 
 class GeneralTaskDialog extends StatelessWidget {
   final UserTaskModel task;

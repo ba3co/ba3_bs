@@ -380,4 +380,6 @@ class AppStrings {
   static var quantityInTask='الكمية المجرودة';
 
   static var endedDate='تاريخ الانتهاء';
+
+  static var employeeCommitment='التزام الموظف';
 }
