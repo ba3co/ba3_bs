@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
@@ -13,9 +14,12 @@ import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/add_seller_screen.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/all_sellers_screen.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/seller_sales_screen.dart';
+import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
@@ -152,7 +156,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
   Future<int> getSellerMaterialsSales({required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
     int matQuantity = 0;
-log(sellerId);
+    log(sellerId);
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
@@ -211,7 +215,6 @@ log(sellerId);
     int matQuantity = 0;
     log('material in task $materialId');
     for (final bill in bills) {
-
       for (final item in bill.items.itemList) {
         log('material in bill ${read<MaterialController>().getMaterialNameById(item.itemGuid)}');
         if (item.itemGuid == materialId) {
@@ -297,6 +300,95 @@ log(sellerId);
 
   void navigateToSellerTargetScreen() => to(AppRoutes.sellerTargetScreen);
 
+  List<SellerSalesData> getSellerCommitment({
+    required List<BillModel> bills,
+  }) {
+    final Map<String, List<BillModel>> salesMap = {};
+    DateTime startDay = bills.first.billDetails.billDate!;
+    DateTime endDay = bills.first.billDetails.billDate!;
+    for (final bill in bills) {
+      if (bill.billDetails.billDate!.isAfter(endDay)) {
+        endDay = bill.billDetails.billDate!;
+      }
+      if (bill.billDetails.billDate!.isBefore(startDay)) {
+        startDay = bill.billDetails.billDate!;
+      }
+      final sellerId = bill.billDetails.billSellerId ?? 'unknown';
+      if (read<SellersController>().getSellerNameById(sellerId) == '') {
+        if (salesMap['8c0uymE4qoesqsKWDlqx'] != null) {
+          salesMap['8c0uymE4qoesqsKWDlqx']!.add(bill);
+        } else {
+          salesMap['8c0uymE4qoesqsKWDlqx'] = [bill];
+        }
+        continue;
+      }
+      if (salesMap[sellerId] != null) {
+        salesMap[sellerId]!.add(bill);
+      } else {
+        salesMap[sellerId] = [bill];
+      }
+    }
+
+    return salesMap.entries.map((entry) {
+      final sellerName = read<SellersController>().getSellerNameById(entry.key);
+      final userModel = read<UserManagementController>().getUserBySellerId(entry.key);
+      _handleGetSellerBillsStatusSuccess(entry.value);
+      return SellerSalesData(
+          sellerName: sellerName,
+          totalMobileSales: totalMobilesSales,
+          totalAccessorySales: totalAccessoriesSales,
+          totalFess: totalFees,
+          totalFiledTasks: userModel == null
+              ? 0
+              : userModel.userTaskList
+                      ?.where(
+                        (task) => task.status.isFailed,
+                      )
+                      .length ??
+                  0,
+          totalDayAttendance: userModel == null
+              ? 0
+              : getUserAttendanceStats(
+                      userTime: userModel.userTimeModel!, userHolidays: userModel.userHolidays!, startDate: startDay, endDate: endDay)
+                  .totalAbsents,
+          totalDayLate: userModel == null
+              ? 0
+              : getUserAttendanceStats(
+                      userTime: userModel.userTimeModel!, userHolidays: userModel.userHolidays!, startDate: startDay, endDate: endDay)
+                  .totalAbsents,
+          bills: entry.value);
+    }).toList();
+  }
+
+  AttendanceStats getUserAttendanceStats({
+    required Map<String, UserTimeModel> userTime,
+    required List<String> userHolidays,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    int absentDays = 0;
+    int totalDelays = 0;
+
+    final dateFormat = DateFormat('yyyy-MM-dd');
+
+    for (DateTime date = startDate; !date.isAfter(endDate); date = date.add(Duration(days: 1))) {
+      final dateStr = dateFormat.format(date);
+      if (userHolidays.contains(dateStr)) continue;
+      if (userTime.containsKey(dateStr)) {
+        final dayData = userTime[dateStr];
+        final delay = dayData?.totalLogInDelay ?? 0;
+        totalDelays += delay;
+      } else {
+        absentDays++;
+      }
+    }
+
+    return AttendanceStats(
+      totalAbsents: absentDays,
+      totalDelays: totalDelays,
+    );
+  }
+
   List<SellerSalesData> aggregateSalesBySeller({
     required List<BillModel> bills,
   }) {
@@ -329,4 +421,14 @@ log(sellerId);
           bills: entry.value);
     }).toList();
   }
+}
+
+class AttendanceStats {
+  final int totalAbsents;
+  final int totalDelays;
+
+  AttendanceStats({
+    required this.totalAbsents,
+    required this.totalDelays,
+  });
 }

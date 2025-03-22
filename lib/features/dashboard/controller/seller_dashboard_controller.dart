@@ -24,12 +24,16 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   void onInit() {
     super.onInit();
     getSellersBillsByDate();
+
+
   }
 
   Rx<RequestState> sellerBillsRequest = RequestState.initial.obs;
 
   List<SellerSalesData> sellerChartData = [];
   List<BarChartGroupData> sellerBarGroups = [];
+
+
   double sellerMaxY = 0;
 
   double totalSellerSales = 0;
@@ -69,6 +73,9 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   lunchSellerScree(BuildContext context, int index) {
     read<SellerSalesController>().launchToSellerSalesScreen(sellerChartData[index].bills, context, dateRange);
   }
+
+
+
 
   getSellersBillsByDate() async {
     sellerBillsRequest.value = RequestState.loading;
@@ -212,4 +219,6 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   openAllSellersSales(BuildContext context) {
     launchFloatingWindow(context: context, floatingScreen: AllSellersScreen());
   }
+
+
 }

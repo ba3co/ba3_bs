@@ -12,6 +12,9 @@ import '../../../core/network/api_constants.dart';
 import '../../bill/controllers/bill/all_bills_controller.dart';
 import '../../bill/data/models/bill_model.dart';
 import '../../materials/controllers/material_controller.dart';
+import '../../sellers/controllers/seller_sales_controller.dart';
+import '../../sellers/data/models/seller_model.dart';
+import '../ui/widgets/employee_commitment_chart.dart';
 
 class BillProfitDashboardController extends GetxController with FloatingLauncher {
   Rx<RequestState> profitsBillsRequest = RequestState.initial.obs;
@@ -121,7 +124,9 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
   void setChartBoundaries() {
     minX = profitSpots.isNotEmpty ? profitSpots.first.x : 0;
     maxX = profitSpots.isNotEmpty ? profitSpots.last.x : 1;
-    maxY = totalSellsSpots.isNotEmpty ? totalSellsSpots.map((e) => e.y).reduce((value, element) => value > element ? value : element) + 10000 : 1;
+    maxY = totalSellsSpots.isNotEmpty
+        ? totalSellsSpots.map((e) => e.y).reduce((value, element) => value > element ? value : element) + 10000
+        : 1;
   }
 
   initProfitChartData() async {
@@ -163,5 +168,36 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
     );
     profitsBillsRequest.value = RequestState.success;
     update();
+  }
+
+  List<SellerSalesData> usersDetails = [];
+
+  getAllEmployeeCommitment() async {
+    usersDetails = read<SellerSalesController>().getSellerCommitment(
+        bills: await read<AllBillsController>().fetchBillsByDate(
+      BillType.sales.billTypeModel,
+      DateFilter(
+        dateFieldName: ApiConstants.billDate,
+        range: DateTimeRange(
+          start: DateTime(profitMonth.value.year, profitMonth.value.month, 1, 0, 0, 0),
+          end: DateTime(profitMonth.value.year, profitMonth.value.month + 1, 0, 23, 59, 59),
+        ),
+      ),
+    ));
+
+    update();
+  }
+
+  List<Employee> convertedUsersToEmployees() {
+    return usersDetails.map((user) {
+      return Employee(
+        name: user.sellerName,
+        accessoriesTarget: user.totalAccessorySales,
+        mobilesTarget: user.totalMobileSales,
+        absentDays: user.totalDayAttendance!,
+        lateDays: user.totalDayLate!,
+        taskCompletion: 0,
+      );
+    }).toList();
   }
 }

@@ -4,18 +4,17 @@ import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/dashboard/controller/cheques_timeline_controller.dart';
 import 'package:ba3_bs/features/dashboard/controller/seller_dashboard_controller.dart';
-import 'package:ba3_bs/features/dashboard/ui/widgets/employee_commitment_chart.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/seller_sale_chart/all_sellers_sales_board.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import '../../../../core/styling/app_colors.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
-import '../../../users_management/controllers/user_management_controller.dart';
 import '../../controller/bill_profit_dashboard_controller.dart';
 import '../../controller/dashboard_layout_controller.dart';
 import '../widgets/cheques_chart/cheques_timeline_board.dart';
 import '../widgets/dashboard_appbar_widget.dart';
+import '../widgets/employee_commitment_chart.dart';
 import '../widgets/profit_and_bill_chart/bill_profit_bord.dart';
 
 class DashBoardLayout extends StatelessWidget {
@@ -38,9 +37,9 @@ class DashBoardLayout extends StatelessWidget {
                       Spacer(),
                       Center(
                           child: Text(
-                            AppStrings.userAdministration,
-                            style: AppTextStyles.headLineStyle1,
-                          )),
+                        AppStrings.userAdministration,
+                        style: AppTextStyles.headLineStyle1,
+                      )),
                       Spacer(),
                       IconButton(
                         tooltip: AppStrings.refresh.tr,
@@ -69,10 +68,10 @@ class DashBoardLayout extends StatelessWidget {
                 return BillProfitBord(billProfitDashboardController: billProfitDashboardController);
               }),
               VerticalSpace(20),
-              GetBuilder<UserManagementController>(builder: (userManagementController) {
-                return EmployeeCommitmentChart(employees: userManagementController.allUsers);
+              GetBuilder<BillProfitDashboardController>(builder: (userManagementController) {
+                return EmployeeCommitmentChart(employees: userManagementController.convertedUsersToEmployees());
               }),
-       /*       GetBuilder<UserManagementController>(builder: (userManagementController) {
+              /*   GetBuilder<UserManagementController>(builder: (userManagementController) {
                 return SizedBox(
                   height: 800,
                   child: PlutoGridWithAppBar(

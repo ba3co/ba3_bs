@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 
 class SellerModel {
   final String? costGuid;
+
   // final String? docId;
   final int? costCode;
   final String? costName;
@@ -95,7 +96,6 @@ class SellerModel {
   factory SellerModel.fromJson(Map<String, dynamic> json) {
     return SellerModel(
       costGuid: json['docId'],
-
       costCode: json['CostCode'],
       costName: json['CostName'],
       costLatinName: json['CostLatinName'],
@@ -115,7 +115,6 @@ class SellerModel {
   // Method to convert a CostModel instance to JSON
   Map<String, dynamic> toJson() {
     return {
-
       'costGuid': costGuid,
       'CostCode': costCode,
       'CostName': costName,
@@ -140,6 +139,18 @@ class SellerSalesData {
   final double totalAccessorySales;
   final double totalFess;
   final List<BillModel> bills;
+  final int? totalDayAttendance;
+  final int? totalDayLate;
+  final int? totalFiledTasks;
 
-  SellerSalesData( {required this.sellerName, required this.totalMobileSales,required this.totalAccessorySales,required this.totalFess,required this.bills});
+  SellerSalesData({
+    required this.sellerName,
+    required this.totalMobileSales,
+    required this.totalAccessorySales,
+    required this.totalFess,
+    required this.bills,
+    this.totalDayAttendance,
+    this.totalDayLate,
+    this.totalFiledTasks,
+  });
 }

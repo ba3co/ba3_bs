@@ -465,4 +465,10 @@ class UserManagementController extends GetxController with AppNavigator, Firesto
       update();
     }
   }
+
+
+  UserModel? getUserBySellerId(String sellerId) {
+    return allUsers.firstWhereOrNull((user) => user.userSellerId == sellerId);
+  }
+
 }

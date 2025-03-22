@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/styling/app_text_style.dart';
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../controller/bill_profit_dashboard_controller.dart';
 
 class EmployeeDateMonthHeader extends StatelessWidget {
 
@@ -36,7 +38,10 @@ class EmployeeDateMonthHeader extends StatelessWidget {
                 FontAwesomeIcons.refresh,
                 color: AppColors.lightBlueColor,
               ),
-              onPressed: (){},
+              onPressed: (){
+                read<BillProfitDashboardController>().getAllEmployeeCommitment();
+
+              },
             ),
           ],
         ),

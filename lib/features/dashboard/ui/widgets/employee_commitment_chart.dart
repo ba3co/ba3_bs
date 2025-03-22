@@ -1,11 +1,8 @@
-import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/employee_date_month_header.dart';
-import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class EmployeeCommitmentChart extends StatelessWidget {
-  final List<UserModel> employees;
+  final List<Employee> employees;
 
   const EmployeeCommitmentChart({super.key, required this.employees});
 
@@ -15,78 +12,66 @@ class EmployeeCommitmentChart extends StatelessWidget {
       children: [
         EmployeeDateMonthHeader(),
         Container(
-          color: Colors.white,
-          child: AspectRatio(
-            aspectRatio: 1.5,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: BarChart(
-                BarChartData(
-                  barGroups: _generateBarGroups(),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (double value, TitleMeta meta) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Text(
-                              employees[value.toInt()].userName!,
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  gridData: FlGridData(show: true, checkToShowHorizontalLine: (value) => value % 10 == 0),
-                ),
-              ),
-            ),
-          ),
-        ),
+            color: Colors.white,
+            height: 800,
+            child: ListView.builder(itemBuilder: (context, index) => buildEmployeeCard(employees[index]), itemCount: employees.length))
       ],
     );
   }
+}
 
-  List<BarChartGroupData> _generateBarGroups() {
-    return employees.asMap().entries.map((entry) {
-      final int index = entry.key;
-      final UserModel employee = entry.value;
-      final double commitmentScore = _calculateCommitment(employee);
+class Employee {
+  final String name;
+  final double accessoriesTarget; // out of 100%
+  final double mobilesTarget; // out of 100%
+  final int absentDays;
+  final int lateDays;
+  final double taskCompletion; // out of 100%
 
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            toY: commitmentScore,
-            color: Colors.green,
-            width: 20,
-            borderRadius: BorderRadius.circular(6),
-          ),
+  Employee({
+    required this.name,
+    required this.accessoriesTarget,
+    required this.mobilesTarget,
+    required this.absentDays,
+    required this.lateDays,
+    required this.taskCompletion,
+  });
+
+  // double get attendanceScore {
+  //   double score = 25;
+  //   score -= absentDays * 5;
+  //   score -= lateDays * 2;
+  //   return score.clamp(0, 25);
+  // }
+
+  double get accessoriesScore => ((accessoriesTarget / 75000 )* 25).clamp(0, 25);
+
+  double get mobilesScore => ((mobilesTarget / 150000 )* 25).clamp(0, 25);
+
+  double get taskScore => (taskCompletion / 100 * 25).clamp(0, 25);
+  double get attendanceScore => ((absentDays / 30) * 25).clamp(0, 25);
+
+  double get totalCommitment => accessoriesScore + mobilesScore + attendanceScore + taskScore;
+}
+
+Widget buildEmployeeCard(Employee employee) {
+  return Card(
+    margin: const EdgeInsets.all(12),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(employee.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          SizedBox(height: 10),
+          Text("Accessories: ${employee.accessoriesScore.toStringAsFixed(1)} / 25"),
+          Text("Mobiles: ${employee.mobilesScore.toStringAsFixed(1)} / 25"),
+          Text("Attendance: ${employee.attendanceScore.toStringAsFixed(1)} / 25"),
+          Text("Tasks: ${employee.taskScore.toStringAsFixed(1)} / 25"),
+          Divider(),
+          Text("Total Commitment: ${employee.totalCommitment.toStringAsFixed(1)} / 100", style: TextStyle(fontWeight: FontWeight.bold)),
         ],
-      );
-    }).toList();
-  }
-
-  double _calculateCommitment(UserModel employee) {
-    return ((employee.userTaskList?.where((element) => element.status.isDone).length ?? 0) -
-            (employee.userTaskList?.where((element) => element.status.isFailed).length ?? 0)+1) /
-        ((employee.userTimeModel?.values.fold(
-                  0,
-                  (previousValue, element) => previousValue + (element.totalLogInDelay ?? 0),
-                ) ??
-                0) +
-            (employee.userTimeModel?.values.fold(
-              0,
-                  (previousValue, element) => previousValue!  + (element.totalOutEarlier ?? 0),
-            ) ??
-                0) +
-            2) *
-        100;
-  }
+      ),
+    ),
+  );
 }
