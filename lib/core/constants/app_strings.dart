@@ -382,4 +382,8 @@ class AppStrings {
   static var endedDate='تاريخ الانتهاء';
 
   static var employeeCommitment='التزام الموظف';
+
+  static var allBonds='جميع السندات';
+
+  static String success='نجاح';
 }

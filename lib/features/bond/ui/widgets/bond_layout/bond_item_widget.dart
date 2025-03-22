@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
@@ -58,9 +59,14 @@ class BondItemWidget extends StatelessWidget {
             Obx(() {
               return bondsController.allBondsRequestState.value == RequestState.loading
                   ? BodyBondLayoutShimmerWidget()
-                  : BodyBondLayoutWidget(
-                      firstText: "${AppStrings.from.tr}  ${bondType.from}",
-                      secondText: "${AppStrings.to.tr}  ${bondsController.allBondsCounts(bondType)}");
+                  : GestureDetector(
+                onTap: (){
+                  read<AllBondsController>().fetchAllBondByType(bondType, context);
+                },
+                    child: BodyBondLayoutWidget(
+                        firstText: "${AppStrings.from.tr}  ${bondType.from}",
+                        secondText: "${AppStrings.to.tr}  ${bondsController.allBondsCounts(bondType)}"),
+                  );
             }),
 
             // BodyBondLayoutWidget(firstText: "العدد الكلي :", secondText: ((bondType.to-bondType.from)+1).toString()),

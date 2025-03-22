@@ -29,9 +29,9 @@ class ProfileScreen extends StatelessWidget {
     // List<UserTaskModel> currentUserTasksEnded = read<UserManagementController>().allTaskListDone;
     // read<UserManagementController>()
     final salesController = read<SellerSalesController>();
-/*    salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel?.userSellerId).then(
+    salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel?.userSellerId).then(
           (value) => salesController.calculateTotalAccessoriesMobiles(),
-        );*/
+        );
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,80 +40,78 @@ class ProfileScreen extends StatelessWidget {
             Expanded(child: Obx(() {
               return salesController.profileScreenState.value == RequestState.loading
                   ? ListView(
-                children: List.generate(
-                  10,
-                      (index) =>
-                      Column(
-                        children: [
-                          ProfileInfoRowShimmerWidget(),
-                          VerticalSpace(),
-                        ],
+                      children: List.generate(
+                        10,
+                        (index) => Column(
+                          children: [
+                            ProfileInfoRowShimmerWidget(),
+                            VerticalSpace(),
+                          ],
+                        ),
                       ),
-                ),
-              )
+                    )
                   : SingleChildScrollView(
-                child: GetBuilder<UserManagementController>(builder: (controller) {
-
-                  return Column(
-                    spacing: 10,
-                    children: [
-                      ProfileInfoRowWidget(
-                        label: AppStrings.userName.tr,
-                        value: controller.loggedInUserModel!.userName.toString(),
-                      ),
-                      ProfileInfoRowWidget(
-                        label: AppStrings.password.tr,
-                        value: controller.loggedInUserModel!.userPassword.toString(),
-                      ),
-                      ProfileInfoRowWidget(
-                        label: AppStrings.totalSales.tr,
-                        value: (salesController.totalAccessoriesSales + salesController.totalMobilesSales).toString(),
-                      ),
-                      AddTimeWidget(
-                        userTimeController: read<UserTimeController>(),
-                      ),
-                      HolidaysWidget(
-                        userTimeController: read<UserTimeController>(),
-                      ),
-                      UserDailyTimeWidget(
-                        userModel: read<UserTimeController>().getUserById()!,
-                      ),
-                      Row(
-                        spacing: 10,
-                        children: [
-                          Expanded(
-                            child: TaskListWidget(
-                              taskList:controller. allTaskList,
-                              onTap: (task) {
-                                OverlayService.showDialog(
-                                  height: 460,
-                                  context: context,
-                                  content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
-                                );
-                              },
-                              title: AppStrings.tasksTodo.tr,
+                      child: GetBuilder<UserManagementController>(builder: (controller) {
+                        return Column(
+                          spacing: 10,
+                          children: [
+                            ProfileInfoRowWidget(
+                              label: AppStrings.userName.tr,
+                              value: controller.loggedInUserModel!.userName.toString(),
                             ),
-                          ),
-                          Expanded(
-                            child: TaskListWidget(
-                              taskList:controller.allTaskListDone ,
-                              onTap: (task) {
-                                OverlayService.showDialog(
-                                  height: 460,
-                                  context: context,
-                                  content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
-                                );
-                              },
-                              title: AppStrings.tasksEnded.tr,
+                            ProfileInfoRowWidget(
+                              label: AppStrings.password.tr,
+                              value: controller.loggedInUserModel!.userPassword.toString(),
                             ),
-                          ),
-                        ],
-                      ),
-                      const ProfileFooter(),
-                    ],
-                  );
-                }),
-              );
+                            ProfileInfoRowWidget(
+                              label: AppStrings.totalSales.tr,
+                              value: (salesController.totalAccessoriesSales + salesController.totalMobilesSales).toString(),
+                            ),
+                            AddTimeWidget(
+                              userTimeController: read<UserTimeController>(),
+                            ),
+                            HolidaysWidget(
+                              userTimeController: read<UserTimeController>(),
+                            ),
+                            UserDailyTimeWidget(
+                              userModel: read<UserTimeController>().getUserById()!,
+                            ),
+                            Row(
+                              spacing: 10,
+                              children: [
+                                Expanded(
+                                  child: TaskListWidget(
+                                    taskList: controller.allTaskList,
+                                    onTap: (task) {
+                                      OverlayService.showDialog(
+                                        height: 460,
+                                        context: context,
+                                        content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
+                                      );
+                                    },
+                                    title: AppStrings.tasksTodo.tr,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: TaskListWidget(
+                                    taskList: controller.allTaskListDone,
+                                    onTap: (task) {
+                                      OverlayService.showDialog(
+                                        height: 460,
+                                        context: context,
+                                        content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
+                                      );
+                                    },
+                                    title: AppStrings.tasksEnded.tr,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const ProfileFooter(),
+                          ],
+                        );
+                      }),
+                    );
             })),
             SizedBox(
                 width: 700,
@@ -121,9 +119,9 @@ class ProfileScreen extends StatelessWidget {
                   return salesController.profileScreenState.value == RequestState.loading
                       ? UserTargetShimmerWidget()
                       : UserTargets(
-                    salesController: salesController,
-                    height: 500,
-                  );
+                          salesController: salesController,
+                          height: 500,
+                        );
                 })),
           ],
         ),

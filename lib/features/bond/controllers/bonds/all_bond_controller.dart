@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
 import 'package:dartz/dartz.dart';
@@ -9,8 +10,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/network/api_constants.dart';
 import '../../../../core/network/error/failure.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
@@ -23,7 +26,8 @@ import '../pluto/bond_details_pluto_controller.dart';
 import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
-class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGenerator, FirestoreSequentialNumbers {
+class AllBondsController extends FloatingBondDetailsLauncher
+    with EntryBondsGenerator, FirestoreSequentialNumbers, FloatingLauncher, AppNavigator {
   final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
   final ImportExportRepository<BondModel> _jsonImportExportRepo;
 
@@ -53,6 +57,7 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     super.onInit();
     _initializeServices();
   }
+
   Future<void> refreshBondsTypes() async => await fetchAllBondsCountsByTypes(BondType.values);
 
   BondModel getBondById(String bondId) => bonds.firstWhere((bond) => bond.payGuid == bondId);
@@ -69,7 +74,6 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
     isLoading = false;
     update();
   }
-
 
   Future<void> fetchAllBondsLocal() async {
     log('fetchAllBondsLocal');
@@ -120,8 +124,6 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
   }
 
   Future<void> openFloatingBondDetails(BuildContext context, BondType bondType, {BondModel? currentBondModel}) async {
-
-
     final bonds = await bondsCountByType(bondType);
 
     if (!context.mounted) return;
@@ -224,12 +226,14 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
   final allBondsCountsByType = <BondType, int>{};
 
+  bool isBondsLoading = true;
+
   int allBondsCounts(BondType bondTypeModel) {
     return allBondsCountsByType[bondTypeModel] ?? 0;
   }
 
   Future<void> fetchAllBondsCountsByTypes(List<BondType> fetchedBondTypes) async {
-    allBondsRequestState.value=RequestState.loading;
+    allBondsRequestState.value = RequestState.loading;
     final List<Future<void>> fetchTasks = [];
     final errors = <String>[]; // Collect error messages.
 
@@ -248,11 +252,31 @@ class AllBondsController extends FloatingBondDetailsLauncher with EntryBondsGene
 
     // Wait for all tasks to complete.
     await Future.wait(fetchTasks);
-    allBondsRequestState.value=RequestState.success;
+    allBondsRequestState.value = RequestState.success;
     update();
     // Handle errors if any.
     if (errors.isNotEmpty) {
       AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
     }
+  }
+
+  void navigateToAllBondScreen() => to(AppRoutes.allBondsScreen);
+
+  Future<void> fetchAllBondByType(BondType bondType, BuildContext context) async {
+    isBondsLoading = true;
+    update();
+
+    navigateToAllBondScreen();
+    final result = await _bondsFirebaseRepo.getAll(bondType);
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure('لا يوجد سندات  في ${bondType.value}'),
+      (fetchedPendingBills) {
+        bonds.assignAll(fetchedPendingBills);
+      },
+    );
+
+    isBondsLoading = false;
+    update();
   }
 }

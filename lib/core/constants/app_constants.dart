@@ -106,36 +106,10 @@ abstract class AppConstants {
   static const stripSales = "م Strip";
   static const cardSales = "م Card";
 
-  ////////////--------------------------------------------------
-  static const stCode = "stCode";
-  static const stId = "stId";
-  static const stName = "stName";
 
-  ////////////--------------------------------------------------
-  static const rowViewCheqId = 'rowViewCheqId';
-  static const rowViewChequeStatus = 'rowViewChequeStatus';
-  static const rowViewChequePrimeryAccount = 'rowViewChequePrimeryAccount';
-  static const rowViewChequeSecoundryAccount = 'rowViewChequeSecoundryAccount';
-  static const rowViewChequeAllAmount = 'rowViewChequeAllAmount';
-  static const chequeStatusPaid = 'chequeStatusPaid';
-  static const chequeStatusNotPaid = 'chequeStatusNotPaid';
-  static const chequeStatusNotAllPaid = 'chequeStatusNotAllPaid';
-  static const chequeTypePay = 'chequeTypePay';
-  static const chequeTypeCatch = 'chequeTypeCatch';
-  static const chequeTypeList = [chequeTypePay, chequeTypeCatch];
-  static const chequeRecTypeInit = 'chequeRecTypeInit';
-  static const chequeRecTypeAllPayment = 'chequeRecTypeAllPayment';
-  static const chequeRecTypePartPayment = 'chequeRecTypePartPayment';
 
-  ////////////--------------------------------------------------
-  static const accountTypeDefault = "accountTypeDefault";
-  static const accountTypeFinalAccount = "accountTypeFinalAccount";
-  static const accountTypeAggregateAccount = "accountTypeAggregateAccount";
 
-  ////////////--------------------------------------------------
-  static const rowSellerAllInvoiceInvId = "rowSellerAllInvoiceInvId";
-  static const rowSellerAllInvoiceAmount = "rowSellerAllInvoiceAmount";
-  static const rowSellerAllInvoiceDate = "rowSellerAllInvoiceDate";
+
 
   ////////////--------------------------------------------------
   static const rowImportName = "rowImportName";
@@ -262,11 +236,8 @@ abstract class AppConstants {
     AppConstants.roleViewCard,
     AppConstants.roleViewHome
   ];
-  static const accountTypeList = [AppConstants.accountTypeDefault, AppConstants.accountTypeFinalAccount, AppConstants.accountTypeAggregateAccount];
 
-  static const userName = "ali";
 
-  static const prodViewTypeSearch = "prodViewTypeSearch"; // REMOTE API ERROR CONSTANTS
   static const String success = 'success';
   static const String badRequestError = 'bad_request_error';
   static const String noContent = 'no_content';
@@ -410,13 +381,17 @@ abstract class AppConstants {
   static const double secondTargetLatitude = 25.765046214850365; // Latitude المنطقة المستهدفة
   static const double secondTargetLongitude = 55.970645196084746; // Longitude المنطقة المستهدفة
   static const double secondRadiusInMeters = 50;
+  ////// pluto Filed Names
   static const String materialIdFiled = 'materialIdFiled';
   static const String materialGroupIdFiled = 'materialGroupIdFiled';
   static const String userIdFiled = 'userIdFiled';
   static const String accountIdFiled = 'accountIdFiled';
   static const String entryBonIdFiled = 'entryBonIdFiled';
-
   static const String billIdFiled = 'billIdFiled';
+  static var bondIdFiled='bondIdFiled';
+
+
+  /////
   static const bool hideInvRecProductSoldSerial = false;
   static const bool hideInvRecProductSerialNumbers = false;
   static const String serialNumbersStatement = 'serialNumbersStatement';
@@ -439,4 +414,6 @@ abstract class AppConstants {
     "نوفمبر (11)": "11",
     "ديسمبر (12)": "12",
   };
+
+
 }

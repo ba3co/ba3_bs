@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/pending_bills_screen.dart';
+import 'package:ba3_bs/features/bond/ui/screens/all_bond_screen.dart';
 import 'package:ba3_bs/features/login/ui/screens/splash_screen.dart';
 import 'package:ba3_bs/features/main_layout/ui/screens/main_layout.dart';
 import 'package:ba3_bs/features/materials/ui/screens/add_material_screen.dart';
@@ -131,5 +132,9 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.showUserDetails,
     page: () => const UserDetails(),
+  ),
+  GetPage(
+    name: AppRoutes.allBondsScreen,
+    page: () => const AllBondScreen(),
   ),
 ];

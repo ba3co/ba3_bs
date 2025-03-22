@@ -1,12 +1,17 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
+import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
+import '../../../../core/widgets/pluto_auto_id_column.dart';
 
-class BondModel {
+class BondModel extends PlutoAdaptable {
   final String? payTypeGuid;
   final int? payNumber;
   final String? payGuid;
@@ -200,5 +205,23 @@ class BondModel {
       payItems: payItems,
       e: payJson["E"],
     );
+  }
+
+  @override
+  Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
+    return {
+      PlutoColumn(
+        title: AppConstants.bondIdFiled,
+        field: AppConstants.bondIdFiled,
+        type: PlutoColumnType.text(),
+        hide: true,
+      ): payGuid,
+      createAutoIdColumn(): '#',
+      PlutoColumn(title: 'رقم السند', field: 'رقم السند', type: PlutoColumnType.text()): payNumber,
+      PlutoColumn(title: 'تاريخ السند', field: 'تاريخ السند', type: PlutoColumnType.date()): payDate,
+      PlutoColumn(title: 'المبلغ', field: 'المبلغ', type: PlutoColumnType.number()): payItems.itemList.fold(0.0, (previousValue, element) => previousValue+element.entryDebit!,),
+      PlutoColumn(title: 'الحسابات المتأثرة', field: 'الحسابات', type: PlutoColumnType.text(),width: 0.6.sw): payItems.itemList.map((item) =>item.entryAccountName ,).toList().join(', '),
+      PlutoColumn(title: 'type', field: 'type', type: PlutoColumnType.text(),       hide: true,): payTypeGuid,
+    };
   }
 }

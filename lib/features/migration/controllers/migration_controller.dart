@@ -46,9 +46,9 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
   late final DivideLargeBillUseCase _divideLargeBillUseCase;
   late final ConvertBillsToLinkedListUseCase _convertBillsToLinkedListUseCase;
 
-  late final CopyEndPeriodUseCase _copyEndPeriodUseCase;
+  late final CopyEndPeriodUseCase copyEndPeriodUseCase;
 
-  late final RotateBalancesUseCase _rotateBalancesUseCase;
+  late final RotateBalancesUseCase rotateBalancesUseCase;
 
   final Rx<RequestState> getMigrationVersionsRequestState = RequestState.initial.obs;
   final Rx<RequestState> addMigrationVersionsRequestState = RequestState.initial.obs;
@@ -67,12 +67,12 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
     _divideLargeBillUseCase = DivideLargeBillUseCase();
     _convertBillsToLinkedListUseCase = ConvertBillsToLinkedListUseCase();
 
-    _rotateBalancesUseCase = RotateBalancesUseCase(
+    rotateBalancesUseCase = RotateBalancesUseCase(
       saveBond: saveBond,
       migrationGuard: migrationGuard,
     );
 
-    _copyEndPeriodUseCase = CopyEndPeriodUseCase(
+    copyEndPeriodUseCase = CopyEndPeriodUseCase(
       generateBillRecordsUseCase: _generateBillRecordsUseCase,
       divideLargeBillUseCase: _divideLargeBillUseCase,
       convertBillsToLinkedListUseCase: _convertBillsToLinkedListUseCase,
