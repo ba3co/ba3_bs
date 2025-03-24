@@ -150,7 +150,7 @@ class AppBindings extends Bindings {
     final accountImport = AccountImport();
     final accountExport = AccountExport();
     final chequesImport = ChequesImport();
-    final chequesExport = ChequesExport();
+    final chequesExport = ChequesJsonExport();
     final sellersImport = SellerImport();
     final materialGroupImport = MaterialGroupImport();
     final customerImport = CustomerImport();

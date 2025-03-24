@@ -33,6 +33,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
   late bool isDebitOrCredit;
   List<BondModel> bonds = [];
+Map< BondType, List<BondModel>> nestedBonds = {};
+  List<BondModel> allNestedBonds = [];
   bool isLoading = true;
 
   Rx<RequestState> saveAllBondsRequestState = RequestState.initial.obs;
@@ -51,6 +53,26 @@ class AllBondsController extends FloatingBondDetailsLauncher
     _bondUtils = BondUtils();
     await fetchAllBondsCountsByTypes(BondType.values);
   }
+
+  Future<void> fetchAllNestedBonds() async {
+    // getAllNestedBondsRequestState.value = RequestState.loading;
+
+    final result = await _bondsFirebaseRepo.fetchAllNested(BondType.values);
+
+    result.fold(
+          (failure) => AppUIUtils.onFailure(failure.message),
+          (fetchedNestedBonds) => nestedBonds.assignAll(fetchedNestedBonds),
+    );
+
+    nestedBonds.forEach((k, v) => log('bond Type: ${k.label} has ${v.length} bonds'));
+
+    allNestedBonds.assignAll(nestedBonds.values.expand((bonds) => bonds).toList());
+
+    log("allNestedBonds is ${allNestedBonds.length}");
+
+    // getAllNestedBondsRequestState.value = RequestState.success;
+  }
+
 
   @override
   void onInit() {
@@ -271,8 +293,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد سندات  في ${bondType.value}'),
-      (fetchedPendingBills) {
-        bonds.assignAll(fetchedPendingBills);
+      (fetchedPendingBonds) {
+        bonds.assignAll(fetchedPendingBonds);
       },
     );
 

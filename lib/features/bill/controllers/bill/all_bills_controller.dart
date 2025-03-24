@@ -7,18 +7,25 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/car_store/controllers/store_cart_controller.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/service/mat_statement_generator.dart';
 import 'package:ba3_bs/features/materials/ui/screens/serials_statement_screen.dart';
+import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_strings.dart';
@@ -28,6 +35,7 @@ import '../../../../core/models/date_filter.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
+import '../../../../core/services/export_xml/export_xml_service.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
@@ -101,6 +109,28 @@ class AllBillsController extends FloatingBillDetailsLauncher
   int allBillsCounts(BillTypeModel billTypeModel) => allBillsCountsByType[billTypeModel] ?? 0;
 
   BillModel getBillById(String billId) => bills.firstWhere((bill) => bill.billId == billId);
+
+  Future<void> saveXmlToFile() async {
+    final xmlService = ExportXmlService();
+
+    await fetchAllNestedBills();
+    await  read<AllBondsController>().fetchAllNestedBonds();
+    final xmlString = xmlService.generateFullXml(
+      bills: nestedBills,
+      bonds: read<AllBondsController>().nestedBonds,
+      materials: read<MaterialController>().materials,
+      cheques: read<AllChequesController>().chequesList,
+      customers: read<CustomersController>().customers,
+      accounts: read<AccountsController>().accounts,
+      groups: read<MaterialGroupController>().materialGroups,
+      allStore: StoreAccount.values.toList(),
+      sellers: read<SellersController>().sellers,
+    );
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/exported_file.xml');
+    await file.writeAsString(xmlString);
+    log('✅ تم حفظ الملف: ${file.path}');
+  }
 
   Future<void> fetchAllNestedBills() async {
     getAllNestedBillsRequestState.value = RequestState.loading;
@@ -192,7 +222,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -212,7 +243,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     // launchFloatingWindow(context: context, floatingScreen: AllBillsScreen());
     navigateToPendingBillsScreen();
-    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}'),
@@ -239,8 +271,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, dateFilter: dateFilter);
     List<BillModel> allBills = [];
     result.fold(
-      (failure) =>
-          AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
+      (failure) => AppUIUtils.onFailure(
+          'لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
       (fetchedBills) => allBills = fetchedBills,
     );
 
@@ -383,7 +415,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
   }
 
-  void openFloatingBillDetailsById({required String billId,required BuildContext context,required BillTypeModel bilTypeModel}) async {
+  void openFloatingBillDetailsById({required String billId, required BuildContext context, required BillTypeModel bilTypeModel}) async {
     final BillModel? billModel = await fetchBillById(billId, bilTypeModel);
 
     if (billModel == null) return;
@@ -417,7 +449,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   // Opens the 'Bill Details' floating window.
 
-  Future<void> _openBillDetailsFloatingWindow({required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
+  Future<void> _openBillDetailsFloatingWindow(
+      {required BuildContext context, required int lastBillNumber, required BillModel currentBill}) async {
     final String controllerTag = AppServiceUtils.generateUniqueTag('FloatingBillDetails');
 
     final Map<String, GetxController> controllers = setupControllers(
