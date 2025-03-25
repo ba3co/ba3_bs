@@ -12,9 +12,7 @@ import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.da
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bill/ui/screens/all_bills_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/bill_details_screen.dart';
-import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/car_store/controllers/store_cart_controller.dart';
-import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
@@ -63,6 +61,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   final List<BillModel> bills = [];
   final Map<BillTypeModel, List<BillModel>> nestedBills = {};
+  final Map<String, List<BillModel>> billsByTypeGuid = {};
   final List<BillModel> allNestedBills = [];
 
   final List<BillModel> pendingBills = [];
@@ -113,18 +112,50 @@ class AllBillsController extends FloatingBillDetailsLauncher
   Future<void> saveXmlToFile() async {
     final xmlService = ExportXmlService();
 
-    await fetchAllNestedBills();
-    await  read<AllBondsController>().fetchAllNestedBonds();
+    // await fetchAllNestedBills();
+    await fetchBills(read<PatternController>().billsTypeSales);
+    log(bills.length.toString());
+    final allBills = [bills.last];
+    // await read<AllBondsController>().fetchAllNestedBonds();
+
+    // billsByTypeGuid
+    final usedMaterialIds = allBills.expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();
+
+    final usedMaterials = read<MaterialController>().materials.where((mat) => usedMaterialIds.contains(mat.id)).toList();
+
+    final usedAccountIds = allBills
+        .map((bill) => bill.billTypeModel.accounts?.values.map((acc) => acc.id))
+        .where((ids) => ids != null)
+        .expand((ids) => ids!)
+        .toSet();
+
+    final usedAccounts = read<AccountsController>().accounts.where((acc) => usedAccountIds.contains(acc.id)).toList();
+    final usedCustomerAccounts = usedAccounts.map((acc) => acc.id).whereType<String>().toSet();
+
+    final usedCustomers =
+        read<CustomersController>().customers.where((customer) => usedCustomerAccounts.contains(customer.accountGuid)).toList();
+
+// 🔹 3. مجموعات المواد المستخدمة
+    final usedGroupIds = usedMaterials.map((mat) => mat.matGroupGuid).whereType<String>().toSet();
+
+    final usedGroups = read<MaterialGroupController>().materialGroups.where((group) => usedGroupIds.contains(group.matGroupGuid)).toList();
+
+// 🔹 4. البائعون المستخدمون في الفواتير
+    final usedSellerIds = allBills.map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
+
+    final usedSellers = read<SellersController>().sellers.where((seller) => usedSellerIds.contains(seller.costGuid)).toList();
+    nestedBills.clear();
+    nestedBills[bills.first.billTypeModel] = [bills.last];
     final xmlString = xmlService.generateFullXml(
       bills: nestedBills,
-      bonds: read<AllBondsController>().nestedBonds,
-      materials: read<MaterialController>().materials,
-      cheques: read<AllChequesController>().chequesList,
-      customers: read<CustomersController>().customers,
-      accounts: read<AccountsController>().accounts,
-      groups: read<MaterialGroupController>().materialGroups,
+      bonds: {} /*read<AllBondsController>().bondsByTypeGuid*/,
+      materials: usedMaterials,
+      cheques: [] /* read<AllChequesController>().chequesList*/,
+      customers: usedCustomers /*read<CustomersController>().customers*/,
+      accounts: usedAccounts,
+      groups: usedGroups,
       allStore: StoreAccount.values.toList(),
-      sellers: read<SellersController>().sellers,
+      sellers: usedSellers,
     );
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/exported_file.xml');
@@ -139,9 +170,12 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedNestedBills) => nestedBills.assignAll(fetchedNestedBills),
+      (fetchedNestedBills) {
+        nestedBills.assignAll(fetchedNestedBills);
+      },
     );
 
+    billsByTypeGuid.assignAll(nestedBills.map((billType, bills) => MapEntry(billType.billTypeId!, bills)));
     nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills'));
 
     allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
@@ -274,6 +308,20 @@ class AllBillsController extends FloatingBillDetailsLauncher
       (failure) => AppUIUtils.onFailure(
           'لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
       (fetchedBills) => allBills = fetchedBills,
+    );
+
+    return allBills;
+  }
+
+  Future<List<BillModel>> fetchBills(BillTypeModel billTypeModel) async {
+    final result = await _billsFirebaseRepo.getAll(billTypeModel);
+    List<BillModel> allBills = [];
+    result.fold(
+      (failure) => AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} '),
+      (fetchedBills) {
+        bills.assignAll(fetchedBills);
+        allBills = fetchedBills;
+      },
     );
 
     return allBills;

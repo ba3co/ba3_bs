@@ -1,9 +1,25 @@
 import 'package:xml/xml.dart' as xml;
 
+/// A class for exporting address-related data into an XML structure using an XmlBuilder.
 class AddressesExport {
+  /// Builds the XML structure for various address sections.
+  ///
+  /// This method uses the provided [xml.XmlBuilder] to construct XML elements for:
+  /// - AddressCountries: including a count element and a default country element.
+  /// - AddressCities: including a count element and a default city element.
+  /// - AddressAreas: including a count element and a default area element.
+  /// - CustomerAddresses: including a count element and a list of customer address elements.
+  ///
+  /// Each section is built using nested XML elements to represent the hierarchical structure.
+  ///
+  /// Parameters:
+  /// - [builder]: An instance of [xml.XmlBuilder] used to create the XML elements.
   void buildAddresses(xml.XmlBuilder builder) {
+    // Build the AddressCountries section.
     builder.element('AddressCountries', nest: () {
+      // Add the count of address countries.
       builder.element('AddressCountriesCount', nest: '1.00');
+      // Add a default country element.
       builder.element('Country', nest: () {
         builder.element('CountryNumber', nest: '1');
         builder.element('CountryGUID', nest: '86018e26-0115-4155-ba4e-e15c89cc8a85');
@@ -13,8 +29,11 @@ class AddressesExport {
       });
     });
 
+    // Build the AddressCities section.
     builder.element('AddressCities', nest: () {
+      // Add the count of address cities.
       builder.element('AddressCitiesCount', nest: '1.00');
+      // Add a default city element.
       builder.element('City', nest: () {
         builder.element('CityNumber', nest: '1');
         builder.element('CityGUID', nest: 'e30ecd86-6601-4631-a22e-61440b464da2');
@@ -25,8 +44,11 @@ class AddressesExport {
       });
     });
 
+    // Build the AddressAreas section.
     builder.element('AddressAreas', nest: () {
+      // Add the count of address areas.
       builder.element('AddressAreasCount', nest: '1.00');
+      // Add a default area element.
       builder.element('Area', nest: () {
         builder.element('AreaNumber', nest: '1');
         builder.element('AreaGUID', nest: '65c1994c-f1f7-426b-b5a7-544920ba4636');
@@ -37,9 +59,13 @@ class AddressesExport {
       });
     });
 
+    // Build the CustomerAddresses section.
     builder.element('CustomerAddresses', nest: () {
+      // Add the count of customer addresses.
       builder.element('CustomerAddressesCount', nest: '19.00');
 
+      // List of addresses data, each containing:
+      // [AddressNumber, AddressGUID, AddressCustomerGUID, AddressZipCode]
       final addresses = [
         ['1', 'f4541b3d-fa00-4401-be82-0a4909038f4e', '0413653a-d684-4a6c-953a-8492bc117d9f', '100352445900003'],
         ['1', '9622842f-ef14-4ed6-aca3-280650b8e4e5', 'fb22fc10-7675-4d2f-b9ea-a2b56f3a5e06', '100066830900003'],
@@ -62,20 +88,25 @@ class AddressesExport {
         ['1', 'b5701a02-d7a6-444b-bfb8-f9344ad6e66c', '8e57f3a7-d876-4a80-afcd-0ab4c584c6d1', '100073621300003'],
       ];
 
+      // Iterate over the list of addresses and build an XML element for each address.
       for (var adder in addresses) {
         builder.element('Address', nest: () {
           builder.element('AddressNumber', nest: adder[0]);
           builder.element('AddressGUID', nest: adder[1]);
+          // Set the default name for the address.
           builder.element('AddressName', nest: 'الرئيسي');
           builder.element('AddressLatinName', nest: 'Head Address');
           builder.element('AddressCustomerGUID', nest: adder[2]);
+          // Use a default area GUID for all addresses.
           builder.element('AddressAreaGUID', nest: '65c1994c-f1f7-426b-b5a7-544920ba4636');
+          // The following fields are set to null, indicating no data is provided.
           builder.element('AddressStreet', nest: null);
           builder.element('AddressBuildingNumber', nest: null);
           builder.element('AddressFloorNumber', nest: null);
           builder.element('AddressMoreDetails', nest: null);
           builder.element('AddressPOBox', nest: null);
           builder.element('AddressZipCode', nest: adder[3]);
+          // Set default GPS coordinates.
           builder.element('AddressGPSX', nest: '0.00');
           builder.element('AddressGPSY', nest: '0.00');
           builder.element('AddressGPSZ', nest: '0.00');
