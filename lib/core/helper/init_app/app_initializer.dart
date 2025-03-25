@@ -59,15 +59,15 @@ Future<void> initializeAppLocalization({required String boxName}) async {
 }
 
 void setupDatabaseServices() {
-  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
-
   // final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
+
+  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
   /// 🔹 To connect to a test Firebase project, use:
 
   // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
   //   app: Firebase.app(),
-  //   databaseId: 'test'
+  //   databaseId: 'test',
   // );
 
   // Initialize Firestore services

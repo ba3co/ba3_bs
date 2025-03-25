@@ -199,7 +199,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
           }
 
           final updatedPrevBillLocal = oldPrevBill.copyWith(
-            billDetails: oldPrevBill.billDetails.copyWith(next: billToDelete.billDetails.next ?? billToDelete.billDetails.billNumber! + 1),
+            billDetails:
+                oldPrevBill.billDetails.copyWith(next: billToDelete.billDetails.next ?? billToDelete.billDetails.billNumber! + 1),
           );
 
           log('updatedPrevBill: ${updatedPrevBill.billDetails.next}');
@@ -370,7 +371,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   Map<String, AccountModel> _handelModifiedAccountsUpdate({required BillModel previousBill, required BillModel currentBill}) {
-    final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
+    final Map<String, AccountModel> modifiedAccounts =
+        findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
     if (hasModelId(currentBill.billId) &&
         hasModelItems(currentBill.items.itemList) &&
@@ -471,7 +473,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
   Future<void> saveMaterialsSerials(BillModel savedBill) async {
     final Map<MaterialModel, List<TextEditingController>> buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
-    final Map<MaterialModel, List<TextEditingController>> sellSerialsControllers = plutoController.sellMaterialsSerialsControllers;
+    final Map<MaterialModel, List<TextEditingController>> sellSerialsControllers =
+        plutoController.sellMaterialsSerialsControllers;
 
     log('BillTypeUtils.isPurchaseRelated(savedBill) ${savedBill.isPurchaseRelated}');
 
@@ -565,6 +568,14 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     return hasModelId(bill.billId) && hasModelItems(bill.items.itemList);
   }
 
+  bool hasClientPhoneNumber() {
+    if (billDetailsController.customerPhoneController.text.isEmpty) {
+      AppUIUtils.onFailure('يرجى إضافة رقم هاتف العميل!');
+      return false;
+    }
+    return true;
+  }
+
   /// Updates the 'next' field of the previously fetched bill if necessary.
   Future<void> _updatePreviousBill({
     required List<BillModel> fetchedBills,
@@ -587,7 +598,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   /// Returns `true` if the bill is approved and its pattern requires a material account.
-  bool _shouldCreateEntryBond(BillModel bill) => bill.status == Status.approved && bill.billTypeModel.billPatternType!.hasMaterialAccount;
+  bool _shouldCreateEntryBond(BillModel bill) =>
+      bill.status == Status.approved && bill.billTypeModel.billPatternType!.hasMaterialAccount;
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
     if (!hasModelId(billModel.billId)) return;

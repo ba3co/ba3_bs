@@ -51,7 +51,7 @@ class EInvoiceDialogContent extends StatelessWidget {
                   //   url: url,
                   // );
 
-                  billDetailsController.generateAndSendBillPdf(billModel, recipientEmail: recipientEmail);
+                  billDetailsController.generateAndSendBillPdfToEmail(billModel, recipientEmail: recipientEmail);
                 },
               ),
             ),

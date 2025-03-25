@@ -6,12 +6,28 @@ class ApiConstants {
   static const String translationApiKey = 'AIzaSyAil4Csq27_oCC_BzF7ZMetUEyNM665VqQ';
   static const String translationBaseUrl = 'https://translation.googleapis.com/language/translate/v2';
 
+  // static const String whatsappAccessToken =
+  //     'EAAQZAhCa4eMwBO3wieEe4Y8ZBomjmKZBLei98M8XdRUZBzdzgcFRZAQ7OvhqlRz2pqiFnmSZCZACsLsduRZCzvZCHGVOejWXs9cJLMZC1lbL7DO6Ipxh3jnXtiiwG0HZC1IQsxBzySMbpSvuIZA5VsuQjYsm6NFbmHzn1pLLLTT1cxlyJa00tGXgF5kJuIAWw1jcYndvyAXAXxCalWOSkqhQuzcbuI6MRRyF1ZALXbF4ZD';
+
+  // static const String whatsappPhoneNumberID = '578828715319909';
+
+  // static const String whatsappBusinessAccountId = '636525489008457';
+
+  // Test number: +1 555 175 7120
+  static const String whatsappPhoneNumberID = '586121637924133';
+
+  static const String whatsappBusinessAccountId = '626521303518096';
+  static const String whatsappAccessToken =
+      'EAAQZAhCa4eMwBO3qO1zzTmYPLhsD6brtSktOzeqZBwNLwYJ8QszSuJxhd0kOAd8ZAyY3vIxHIINM5nsgIoUnN3oW1PIkni9WdEB9ifQkekI2xrZAcdPYFQKOMrjvyL9VcWP1bzKX7rUo9vNFtcvJqnRicAh0JmtiegGSxlX2i4tgvoo0jQqNwTKAE5sdCdyTx4gNv3ekVPufhHKz9mhE3erZANb875p6JEBUZD';
+
   static String get year {
     final MigrationController migrationController = read<MigrationController>();
 
     final currentVersion = migrationController.currentVersion;
 
-    return currentVersion == AppConstants.defaultVersion || currentVersion.isEmpty ? '' : '${migrationController.currentVersion}_';
+    return currentVersion == AppConstants.defaultVersion || currentVersion.isEmpty
+        ? ''
+        : '${migrationController.currentVersion}_';
   }
 
   /// COLLECTIONS
