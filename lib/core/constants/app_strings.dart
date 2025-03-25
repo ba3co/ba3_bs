@@ -377,13 +377,16 @@ class AppStrings {
 
   static var done = 'تم';
 
-  static var quantityInTask='الكمية المجرودة';
+  static var quantityInTask = 'الكمية المجرودة';
 
-  static var endedDate='تاريخ الانتهاء';
+  static var endedDate = 'تاريخ الانتهاء';
 
-  static var employeeCommitment='التزام الموظف';
+  static var employeeCommitment = 'التزام الموظف';
 
-  static var allBonds='جميع السندات';
+  static var allBonds = 'جميع السندات';
 
-  static String success='نجاح';
+  static String success = 'نجاح';
+
+
+  static const String whatsApp = 'WhatsApp';
 }

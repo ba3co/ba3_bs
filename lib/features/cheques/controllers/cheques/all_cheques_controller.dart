@@ -92,7 +92,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     isLoading = false;
     update();
   }
-  Future<    List<ChequesModel>> fetchChequesByType(ChequesType itemTypeModel) async {
+
+  Future<List<ChequesModel>> fetchChequesByType(ChequesType itemTypeModel) async {
     log('fetchCheques');
 
     List<ChequesModel> fetchedChequesList = [];
@@ -108,8 +109,9 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     return fetchedChequesList;
   }
 
-  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel, {ChequesModel? chequesModel,required bool withFetched}) async {
-    if(withFetched) await fetchAllChequesByType(chequesTypeModel);
+  Future<void> openFloatingChequesDetails(BuildContext context, ChequesType chequesTypeModel,
+      {ChequesModel? chequesModel, required bool withFetched}) async {
+    if (withFetched) await fetchAllChequesByType(chequesTypeModel);
 
     if (!context.mounted) return;
 
@@ -179,8 +181,10 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     );
   }
 
-  void navigateToChequesScreen({required bool onlyDues,required BuildContext context}) => launchFloatingWindow(context: context, floatingScreen: AllCheques(onlyDues: onlyDues));
-  void navigateToChequesScreenByList({required List<ChequesModel> chequesListItems,required BuildContext context}) {
+  void navigateToChequesScreen({required bool onlyDues, required BuildContext context}) =>
+      launchFloatingWindow(context: context, floatingScreen: AllCheques(onlyDues: onlyDues));
+
+  void navigateToChequesScreenByList({required List<ChequesModel> chequesListItems, required BuildContext context}) {
     chequesList.assignAll(chequesListItems);
     launchFloatingWindow(context: context, floatingScreen: AllCheques(onlyDues: true));
   }
@@ -189,7 +193,8 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
     final ChequesModel chequesModel = await fetchChequesById(chequesId, itemTypeModel);
     if (!context.mounted) return;
 
-    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!), chequesModel: chequesModel, withFetched: false);
+    openFloatingChequesDetails(context, ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
+        chequesModel: chequesModel, withFetched: false);
   }
 
   Future<ChequesModel> fetchChequesById(String chequesId, ChequesType itemTypeModel) async {

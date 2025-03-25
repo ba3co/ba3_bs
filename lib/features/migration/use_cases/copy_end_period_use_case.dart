@@ -35,9 +35,7 @@ class CopyEndPeriodUseCase {
         _convertBillsToLinkedListUseCase = convertBillsToLinkedListUseCase;
 
   Future<void> execute(String currentVersion) async {
-    if (migrationGuard(currentVersion)) {
-      return;
-    }
+    if (migrationGuard(currentVersion)) return;
 
     final billTypeModel = BillType.firstPeriodInventory.billTypeModel;
     final materials = read<MaterialController>().materials;

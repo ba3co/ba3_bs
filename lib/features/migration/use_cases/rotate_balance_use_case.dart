@@ -8,6 +8,7 @@ import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../accounts/data/models/account_model.dart';
 
@@ -15,15 +16,19 @@ class RotateBalancesUseCase {
   final Future<void> Function(BondModel) saveBond;
   final bool Function(String) migrationGuard;
 
+  final void Function(String version) setCurrentVersion;
+
   RotateBalancesUseCase({
     required this.saveBond,
     required this.migrationGuard,
+    required this.setCurrentVersion,
   });
 
   Future<void> execute(String currentYear) async {
-    if (migrationGuard(currentYear)) {
-      return;
-    }
+    if (migrationGuard(currentYear)) return;
+
+    // Temporarily switch to default version to fetch accountStatements
+    setCurrentVersion(AppConstants.defaultVersion);
 
     final accountEntities = read<AccountsController>().accounts.map(AccountEntity.fromAccountModel).toList();
     final accountStatementController = read<AccountStatementController>();
@@ -32,8 +37,8 @@ class RotateBalancesUseCase {
 
     final allAccountsStatement = await accountStatementController.fetchAccountsStatement(accountEntities);
 
-    final entryBondItems =
-        await accountStatementController.processEntryBondItemsInIsolateUseCase.execute(allAccountsStatement.values.expand((list) => list).toList());
+    final entryBondItems = await accountStatementController.processEntryBondItemsInIsolateUseCase
+        .execute(allAccountsStatement.values.expand((list) => list).toList());
 
     final totalDebit = entryBondItems.fold(
       0.0,
@@ -54,6 +59,11 @@ class RotateBalancesUseCase {
       log("❌ الحسابات ليست متساوية", name: "RotateBalancesUseCase");
       return;
     }
+
+    // Restore current version
+    setCurrentVersion(currentYear);
+
+    if (migrationGuard(currentYear)) return;
 
     await saveBond(
       BondModel.fromBondData(

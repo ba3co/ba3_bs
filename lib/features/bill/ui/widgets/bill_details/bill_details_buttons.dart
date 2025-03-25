@@ -88,7 +88,7 @@ class BillDetailsButtons extends StatelessWidget {
         onPressed: isBillSaved
             ? () => billDetailsController.appendNewBill(
                 billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
-            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context,withPrint: false),
+            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: false),
         iconData: FontAwesomeIcons.floppyDisk,
       );
     });
@@ -103,7 +103,7 @@ class BillDetailsButtons extends StatelessWidget {
         width: 90,
         fontSize: 14,
         color: Colors.blue.shade700,
-        onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context,withPrint: true),
+        onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: true),
         iconData: FontAwesomeIcons.plusSquare,
       );
     });
@@ -128,17 +128,19 @@ class BillDetailsButtons extends StatelessWidget {
           title: AppStrings.edit.tr,
           icon: FontAwesomeIcons.solidPenToSquare,
           onPressed: () => billDetailsController.updateBill(
-            context: context,
-            billModel: billModel,
-            billTypeModel: billModel.billTypeModel,
-            withPrint: false
-          ),
+              context: context, billModel: billModel, billTypeModel: billModel.billTypeModel, withPrint: false),
         ),
       if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,
           icon: FontAwesomeIcons.solidEnvelope,
-          onPressed: () => billDetailsController.generateAndSendBillPdf(billModel),
+          onPressed: () => billDetailsController.generateAndSendBillPdfToEmail(billModel),
+        ),
+      if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
+        _buildActionButton(
+          title: AppStrings.whatsApp.tr,
+          icon: FontAwesomeIcons.whatsapp,
+          onPressed: () => billDetailsController.generateAndSendBillPdfToWhatsapp(billModel),
         ),
       if (RoleItemType.viewBill.hasAdminPermission)
         _buildActionButton(
