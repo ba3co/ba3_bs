@@ -37,7 +37,9 @@ import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
-class BillDetailsController extends IBillController with AppValidator, AppNavigator, FirestoreSequentialNumbers implements IStoreSelectionHandler {
+class BillDetailsController extends IBillController
+    with AppValidator, AppNavigator, FirestoreSequentialNumbers
+    implements IStoreSelectionHandler {
   // Repositories
 
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -106,7 +108,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   @override
-  Future<void> sendToEmail({required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
+  Future<void> sendToEmail(
+      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments}) async {
     _billService.sendToEmail(recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments);
   }
 
@@ -149,7 +152,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     }
   }
 
-  Future<void> printBill({required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
+  Future<void> printBill(
+      {required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     await read<PrintingController>().startPrinting(
@@ -262,7 +266,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         },
         (SerialNumberModel serialsModel) async {
           // Filter out transactions related to the deleted bill
-          final updatedTransactions = serialsModel.transactions.where((transaction) => transaction.sellBillId != billToDelete.billId).toList();
+          final updatedTransactions =
+              serialsModel.transactions.where((transaction) => transaction.sellBillId != billToDelete.billId).toList();
 
           if (updatedTransactions.length == serialsModel.transactions.length) {
             log('🔍 No transactions to delete for serial [$soldSerialNumber].');
@@ -277,7 +282,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
           updateResult.fold(
             (failure) => log('❌ Failed to update transactions for serial [$soldSerialNumber]: ${failure.message}'),
-            (success) => log('✅ Successfully removed transactions linked to bill [${billToDelete.billId}] for serial [$soldSerialNumber].'),
+            (success) => log(
+                '✅ Successfully removed transactions linked to bill [${billToDelete.billId}] for serial [$soldSerialNumber].'),
           );
         },
       );
@@ -321,7 +327,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         log('❌ Failed to retrieve serial number [$serialNumber]: ${failure.message}');
       },
       (SerialNumberModel serialsModel) async {
-        final updatedTransactions = serialsModel.transactions.where((transaction) => transaction.buyBillId != billToDelete.billId).toList();
+        final updatedTransactions =
+            serialsModel.transactions.where((transaction) => transaction.buyBillId != billToDelete.billId).toList();
 
         if (updatedTransactions.length == serialsModel.transactions.length) {
           log('🔍 No purchase transactions to delete for serial [$serialNumber].');
@@ -390,12 +397,18 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   Future<void> updateBill(
-      {required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context, required withPrint}) async {
+      {required BillTypeModel billTypeModel,
+      required BillModel billModel,
+      required BuildContext context,
+      required withPrint}) async {
     await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
   }
 
   Future<void> _saveOrUpdateBill(
-      {required BuildContext context, required BillTypeModel billTypeModel, BillModel? existingBill, required bool withPrint}) async {
+      {required BuildContext context,
+      required BillTypeModel billTypeModel,
+      BillModel? existingBill,
+      required bool withPrint}) async {
     // Validate the form first
     if (!validateForm()) return;
 
@@ -422,7 +435,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
-  Future<void> _saveBillAndHandleResult(BuildContext context, BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
+  Future<void> _saveBillAndHandleResult(
+      BuildContext context, BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
     final result = await _billsFirebaseRepo.save(updatedBill);
 
     result.fold(
@@ -454,7 +468,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
 
           // If the text is not empty, create a SerialNumberModel.
           if (serialText.isNotEmpty) {
-            final SerialNumberModel serialNumberModel = SerialNumberModelFactory.getModel(serialText, billModel: billModel, material: material);
+            final SerialNumberModel serialNumberModel =
+                SerialNumberModelFactory.getModel(serialText, billModel: billModel, material: material);
             items.add(serialNumberModel);
           }
         }
@@ -471,7 +486,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     );
   }
 
-  void onSaveSerialsSuccess(Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels) {
+  void onSaveSerialsSuccess(
+      Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels) {
     serialControllers.forEach((MaterialModel material, List<TextEditingController> serials) {
       final materialModel = read<MaterialController>().getMaterialById(material.id!);
 
@@ -484,7 +500,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
         final Map<String, bool> updatedSerialNumbers = {
           ...?materialModel.serialNumbers, // Preserve existing serials
           for (final serial in savedSerialsModels.where((s) => s.matId == material.id))
-            if (serial.serialNumber != null && serial.transactions.last.sold != null) serial.serialNumber!: serial.transactions.last.sold!,
+            if (serial.serialNumber != null && serial.transactions.last.sold != null)
+              serial.serialNumber!: serial.transactions.last.sold!,
         };
 
         // Update the material model with new serial numbers
@@ -500,7 +517,8 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
   }
 
   appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber, int? previousBillNumber}) {
-    BillModel newBill = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber, previousBillNumber: previousBillNumber);
+    BillModel newBill =
+        BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber, previousBillNumber: previousBillNumber);
 
     billSearchController.insertLastAndUpdate(newBill);
   }
@@ -611,12 +629,23 @@ class BillDetailsController extends IBillController with AppValidator, AppNaviga
     billPlutoController.update();
   }
 
-  generateAndSendBillPdf(BillModel billModel, {String? recipientEmail}) {
+  void generateAndSendBillPdfToEmail(BillModel billModel, {String? recipientEmail}) {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
-    _billService.generatePdfAndSendToEmail(fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail);
+    _billService.generatePdfAndSendToEmail(
+        fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail);
+  }
+
+  void generateAndSendBillPdfToWhatsapp(BillModel billModel) {
+    if (!_billService.hasClientPhoneNumber()) return;
+
+    if (!_billService.hasModelId(billModel.billId)) return;
+
+    if (!_billService.hasModelItems(billModel.items.itemList)) return;
+
+    _billService.sendBillToWhatsApp(itemModel: billModel, recipientPhoneNumber: customerPhoneController.text);
   }
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);

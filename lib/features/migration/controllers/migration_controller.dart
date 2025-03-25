@@ -4,12 +4,8 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
-import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
-import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
-import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
-import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/migration/data/models/migration_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,7 +21,9 @@ import '../../bond/data/models/pay_item_model.dart';
 import '../../bond/service/bond/floating_bond_details_launcher.dart';
 import '../../cheques/data/models/cheques_model.dart';
 import '../../patterns/data/models/bill_type_model.dart';
+import '../use_cases/close_accounts_and_items_use_case.dart';
 import '../use_cases/copy_end_period_use_case.dart';
+import '../use_cases/copy_unpaid_cheque_use_case.dart';
 import '../use_cases/generate_bill_records_use_case.dart';
 import '../use_cases/rotate_balance_use_case.dart';
 
@@ -46,9 +44,13 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
   late final DivideLargeBillUseCase _divideLargeBillUseCase;
   late final ConvertBillsToLinkedListUseCase _convertBillsToLinkedListUseCase;
 
-  late final CopyEndPeriodUseCase copyEndPeriodUseCase;
+  late final CopyEndPeriodUseCase _copyEndPeriodUseCase;
 
-  late final RotateBalancesUseCase rotateBalancesUseCase;
+  late final RotateBalancesUseCase _rotateBalancesUseCase;
+
+  late final CopyUnpaidChequesUseCase _copyUnpaidChequesUseCase;
+
+  late final CloseAccountsAndItemsUseCase _closeAccountsAndItemsUseCase;
 
   final Rx<RequestState> getMigrationVersionsRequestState = RequestState.initial.obs;
   final Rx<RequestState> addMigrationVersionsRequestState = RequestState.initial.obs;
@@ -67,12 +69,13 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
     _divideLargeBillUseCase = DivideLargeBillUseCase();
     _convertBillsToLinkedListUseCase = ConvertBillsToLinkedListUseCase();
 
-    rotateBalancesUseCase = RotateBalancesUseCase(
+    _rotateBalancesUseCase = RotateBalancesUseCase(
       saveBond: saveBond,
       migrationGuard: migrationGuard,
+      setCurrentVersion: (v) => currentVersion = v,
     );
 
-    copyEndPeriodUseCase = CopyEndPeriodUseCase(
+    _copyEndPeriodUseCase = CopyEndPeriodUseCase(
       generateBillRecordsUseCase: _generateBillRecordsUseCase,
       divideLargeBillUseCase: _divideLargeBillUseCase,
       convertBillsToLinkedListUseCase: _convertBillsToLinkedListUseCase,
@@ -81,6 +84,15 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
       setLastUsedNumber: setLastUsedNumber,
       migrationGuard: migrationGuard,
     );
+
+    _copyUnpaidChequesUseCase = CopyUnpaidChequesUseCase(
+      fetchChequesByType: fetchCheques,
+      saveAllCheques: saveAllCheques,
+      migrationGuard: migrationGuard,
+      setCurrentVersion: (v) => currentVersion = v,
+    );
+
+    _closeAccountsAndItemsUseCase = CloseAccountsAndItemsUseCase(migrationGuard: migrationGuard);
   }
 
   // 🔹 Available migration versions
@@ -209,16 +221,16 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
       log(currentYear, name: 'AppConfig.year');
 
       // // تدوير الأرصدة: كل حساب يتم نقل أرصدته للسنة الجديدة كمفتتح
-      // await _rotateBalancesUseCase.execute(currentYear);
-      //
+      await _rotateBalancesUseCase.execute(currentYear);
+
       // // نسخ نهاية المدة: كل المواد يتم نقل كميتها الختامية للسنة الجديدة
-      // await _copyEndPeriodUseCase.execute(currentYear);
+      await _copyEndPeriodUseCase.execute(currentYear);
 
       // التحقق من الإدخالات غير المصروفة
-      // await copyUnpaidCheque(currentYear);
+      await _copyUnpaidChequesUseCase.execute(currentYear);
 
       // إغلاق الحساب والمواد
-      await closeAccountsAndItems(currentYear);
+      await _closeAccountsAndItemsUseCase.execute(currentYear);
 
       migrationStatus.value = "✅ تم الترحيل بنجاح!";
     } catch (e, stackTrace) {
@@ -285,56 +297,6 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
   // 1:32
   // 5436
 
-  // Future<void> rotateBalances(String currentYear) async {
-  //   if (migrationGuard(currentYear)) {
-  //     return;
-  //   }
-  //
-  //   //final accounts = read<AccountsController>().accounts.where((acc) => acc.accType == 1).toList();
-  //
-  //   final accountEntities = read<AccountsController>().accounts.map(AccountEntity.fromAccountModel).toList();
-  //
-  //   final accountStatementController = read<AccountStatementController>();
-  //
-  //   log("${accountEntities.length} عدد الحسابات", name: "MigrationController.rotateBalances");
-  //
-  //   final allAccountsStatement = await accountStatementController.fetchAccountsStatement(accountEntities);
-  //
-  //   final entryBondItems =
-  //       await accountStatementController.processEntryBondItemsInIsolateUseCase.execute(allAccountsStatement.values.expand((list) => list).toList());
-  //
-  //   final totalDebit = entryBondItems.fold(
-  //     0.0,
-  //     (previousValue, element) => previousValue + (element.bondItemType == BondItemType.debtor ? element.amount! : 0),
-  //   );
-  //
-  //   final totalCredit = entryBondItems.fold(
-  //     0.0,
-  //     (previousValue, element) => previousValue + (element.bondItemType == BondItemType.creditor ? element.amount! : 0),
-  //   );
-  //
-  //   log('totalDebit: $totalDebit - totalCredit: $totalCredit', name: 'Debit & Credit');
-  //
-  //   final isDebitCreditEquals = checkDebitCreditEquals(totalDebit, totalCredit);
-  //
-  //   if (!isDebitCreditEquals) {
-  //     AppUIUtils.onFailure('الحسابات ليست متساوية');
-  //     log("الحسابات ليست متساوية", name: "MigrationController.rotateBalances");
-  //     return;
-  //   }
-  //
-  //   await saveBond(
-  //     bondModel: BondModel.fromBondData(
-  //       bondType: BondType.openingEntry,
-  //       note: 'قيد إفتتاحي خاص بترحيل الأرصدة للسنة الجديدة',
-  //       payDate: DateTime.now().toIso8601String(),
-  //       bondRecordsItems: generatePayItems(entryBondItems),
-  //     ),
-  //   );
-  //
-  //   log("📌 تم تدوير الأرصدة بنجاح.");
-  // }
-
   Future<void> saveBond(BondModel bondModel) async {
     final result = await _bondsFirebaseRepo.save(bondModel);
 
@@ -397,62 +359,29 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
 
   Future<void> handleSaveBillSuccess(BillModel bill) async {}
 
-  Future<void> copyUnpaidCheque(String currentYear) async {
-    if (migrationGuard(currentYear)) {
-      return;
-    }
+  Future<List<ChequesModel>> fetchCheques() async {
+    final result = await _chequesFirebaseRepo.getAll(ChequesType.paidChecks);
 
-    currentVersion = AppConstants.defaultVersion;
+    // Handle the result (success or failure)
 
-    final fetchedCheques = await read<AllChequesController>().fetchChequesByType(ChequesType.paidChecks);
+    return result.fold(
+      (failure) {
+        AppUIUtils.onFailure(failure.message);
+        return [];
+      },
+      (fetchedCheques) => fetchedCheques,
+    );
+  }
 
-    final unpaidCheques = fetchedCheques
-        .where((cheque) =>
-            (cheque.isPayed == false || cheque.isPayed == null) && (cheque.isRefund == false || cheque.isRefund == null))
-        .toList();
-
-    log("fetchedCheques is ${fetchedCheques.length}", name: "MigrationController.copyUnpaidCheque");
-    log("unpaidCheques is ${unpaidCheques.length}", name: "MigrationController.copyUnpaidCheque");
-
-    currentVersion = currentYear;
-
-    if (migrationGuard(currentVersion)) {
-      return;
-    }
-
+  Future<void> saveAllCheques(List<ChequesModel> cheques, ChequesType type) async {
     // Save the cheques to Firestore
-    final result = await _chequesFirebaseRepo.saveAll(unpaidCheques, ChequesType.paidChecks);
+    final result = await _chequesFirebaseRepo.saveAll(cheques, type);
 
     // Handle the result (success or failure)
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (currentChequesModel) {},
     );
-
-    log("📌 تم نقل الشيكات الغير المقبوضة والغير المدفوعة.");
-  }
-
-  Future<void> closeAccountsAndItems(String currentYear) async {
-    if (migrationGuard(currentYear)) {
-      return;
-    }
-
-    final accountsController = read<AccountsController>();
-    final fetchedAccounts = accountsController.accounts;
-
-    await accountsController.addAccounts(fetchedAccounts);
-
-    final customersController = read<CustomersController>();
-    final fetchedCustomers = customersController.customers;
-
-    await customersController.addCustomers(fetchedCustomers);
-
-    final materialAccentColor = read<MaterialController>();
-    final materials = materialAccentColor.materials;
-
-    await materialAccentColor.saveMaterialsOnRemote(materials);
-
-    log("📌 تم إغلاق الحسابات والمواد.");
   }
 
   bool checkDebitCreditEquals(double a, double b) => (a - b).abs() <= 1;

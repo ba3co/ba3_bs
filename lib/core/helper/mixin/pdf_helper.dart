@@ -41,20 +41,23 @@ mixin PdfHelperMixin {
     );
   }
 
+  String cleanText(String input) => input.replaceAll(RegExp(r'[\u200B-\u200D\u2060-\u206F]'), '');
+
   Widget buildTextCell(String? value, Font? font) {
-    final textValue = value ?? 'Unknown';
+    final textValue = value?.trim() ?? 'Unknown';
+    final cleanTextValue = cleanText(textValue);
 
-    // Detect Arabic and English characters
     final arabicRegex = RegExp(r'[\u0600-\u06FF]');
+    final containsArabic = arabicRegex.hasMatch(cleanTextValue);
 
-    // Split the text into words
-    final words = textValue.split(RegExp(r'\s+'));
+    // Split into words
+    final words = cleanTextValue.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
 
     final spans = <InlineSpan>[];
 
     for (final word in words) {
-      final containsArabic = arabicRegex.hasMatch(word);
-      final textDirection = containsArabic ? TextDirection.rtl : TextDirection.ltr;
+      final isArabicWord = arabicRegex.hasMatch(word);
+      final textDirection = isArabicWord ? TextDirection.rtl : TextDirection.ltr;
 
       spans.add(
         WidgetSpan(
@@ -71,17 +74,15 @@ mixin PdfHelperMixin {
         ),
       );
 
-      // Add a space after each word (except the last)
       if (word != words.last) {
         spans.add(const TextSpan(text: ' '));
       }
     }
 
-    // Overall direction is set to LTR for consistent layout
     return RichText(
       textAlign: TextAlign.right,
       text: TextSpan(children: spans),
-      textDirection: TextDirection.rtl,
+      textDirection: containsArabic ? TextDirection.rtl : TextDirection.ltr,
     );
   }
 
