@@ -140,7 +140,7 @@ class BillDetailsButtons extends StatelessWidget {
         _buildActionButton(
           title: AppStrings.whatsApp.tr,
           icon: FontAwesomeIcons.whatsapp,
-          onPressed: () => billDetailsController.generateAndSendBillPdfToWhatsapp(billModel),
+          onPressed: () => billDetailsController.sendBillToWhatsapp(billModel),
         ),
       if (RoleItemType.viewBill.hasAdminPermission)
         _buildActionButton(

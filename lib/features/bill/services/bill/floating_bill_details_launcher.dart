@@ -19,14 +19,15 @@ class FloatingBillDetailsLauncher extends GetxController with FloatingLauncher, 
 
     final billTypeModel = requireParam<BillTypeModel>(params, key: 'billTypeModel');
 
-    final billsFirebaseRepo = requireParam<CompoundDatasourceRepository<BillModel, BillTypeModel>>(params, key: 'billsFirebaseRepo');
+    final billsFirebaseRepo =
+        requireParam<CompoundDatasourceRepository<BillModel, BillTypeModel>>(params, key: 'billsFirebaseRepo');
 
     final serialNumbersRepo = requireParam<QueryableSavableRepository<SerialNumberModel>>(params, key: 'serialNumbersRepo');
 
     final billSearchControllerWithTag = createController<BillSearchController>(tag, controller: BillSearchController());
 
     final billDetailsPlutoControllerWithTag =
-        createController<BillDetailsPlutoController>(tag, controller: BillDetailsPlutoController(billTypeModel, billSearchControllerWithTag));
+        createController<BillDetailsPlutoController>(tag, controller: BillDetailsPlutoController(billTypeModel));
 
     final billDetailsControllerWithTag = createController<BillDetailsController>(
       tag,

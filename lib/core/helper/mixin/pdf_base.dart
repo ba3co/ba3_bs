@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
-import '../../../features/migration/controllers/migration_controller.dart';
 import '../../constants/app_assets.dart';
 import '../../constants/app_constants.dart';
 import '../../services/mailer_messaging/implementations/gmail_messaging_service.dart';
@@ -15,8 +11,8 @@ import '../../services/mailer_messaging/implementations/mailer_messaging_repo.da
 import '../../services/pdf_generator/implementations/pdf_generator_factory.dart';
 import '../../services/pdf_generator/implementations/pdf_generator_repo.dart';
 import '../../services/pdf_generator/interfaces/i_pdf_generator.dart';
+import '../../services/whatsapp/whatsapp_service.dart';
 import '../../utils/app_ui_utils.dart';
-import '../extensions/getx_controller_extensions.dart';
 
 mixin PdfBase {
   /// Sends the bill email with optional attachments
@@ -86,7 +82,8 @@ mixin PdfBase {
     String? invoiceUrl = url;
 
     if (itemModel is BillModel && invoiceUrl == null) {
-      invoiceUrl = generateInvoiceUrl(documentId: itemModel.billId!, type: itemModel.billTypeModel.billTypeLabel!);
+      invoiceUrl = WhatsappService.instance
+          .generateInvoiceUrl(documentId: itemModel.billId!, type: itemModel.billTypeModel.billTypeLabel!);
     }
 
     await sendToEmail(
@@ -96,77 +93,6 @@ mixin PdfBase {
       body: body,
       attachments: [pdfFilePath],
     );
-  }
-
-  /// Generates a PDF and sends it via WhatsAppI
-  Future<void> sendBillToWhatsApp({required BillModel itemModel, required String recipientPhoneNumber}) async {
-    final invoiceUrl = generateInvoiceUrl(documentId: itemModel.billId!, type: itemModel.billTypeModel.billTypeLabel!);
-
-    await sendWhatsAppInvoiceLink(clientPhoneNumber: recipientPhoneNumber, invoiceUrl: invoiceUrl);
-  }
-
-  //ba3business@gmail.com
-  //Ba3Alarab220011
-  //+971568666411
-  String get year {
-    final MigrationController migrationController = read<MigrationController>();
-
-    final currentVersion = migrationController.currentVersion;
-
-    return currentVersion == AppConstants.defaultVersion || currentVersion.isEmpty ? '' : currentVersion;
-  }
-
-  String generateInvoiceUrl({required String documentId, required String type}) {
-    final baseUrl = 'https://ba3-bs.web.app';
-    final params = {
-      'id': documentId,
-      'type': type,
-      if (year != '') 'year': year,
-    };
-
-    final uri = Uri.parse(baseUrl).replace(queryParameters: params);
-    return uri.toString();
-  }
-
-  Future<void> sendWhatsAppInvoiceLink({
-    required String clientPhoneNumber,
-    required String invoiceUrl,
-  }) async {
-    var url = Uri.parse('https://graph.facebook.com/v22.0/${ApiConstants.whatsappPhoneNumberID}/messages');
-
-    var headers = {
-      'Authorization': 'Bearer ${ApiConstants.whatsappAccessToken}',
-      'Content-Type': 'application/json',
-    };
-
-    var body = jsonEncode(
-      {
-        "messaging_product": "whatsapp",
-        "to": clientPhoneNumber,
-        "type": "template",
-        "template": {
-          "name": "e_invoice",
-          "language": {"code": "en_US"},
-          "components": [
-            {
-              "type": "body",
-              "parameters": [
-                {"type": "text", "text": invoiceUrl}
-              ]
-            }
-          ]
-        }
-      },
-    );
-
-    final response = await http.post(url, headers: headers, body: body);
-
-    if (response.statusCode == 200) {
-      log('✅ تم إرسال رابط الفاتورة بنجاح!', name: 'SendWhatsAppInvoiceLink');
-      AppUIUtils.onSuccess('✅ تم إرسال رابط الفاتورة بنجاح!');
-    } else {
-      log('⚠️ فشل في إرسال الرابط: ${response.body}', name: 'SendWhatsAppInvoiceLink');
-    }
   }
 
   /// Generates the bill PDF and returns the file path

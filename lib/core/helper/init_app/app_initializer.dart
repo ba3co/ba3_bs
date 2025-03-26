@@ -22,6 +22,7 @@ import '../../services/firebase/implementations/repos/compound_datasource_repo.d
 import '../../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../services/firebase/implementations/services/compound_firestore_service.dart';
 import '../../services/firebase/implementations/services/firestore_service.dart';
+import '../../services/firebase/implementations/services/remote_config_service.dart';
 import '../../services/firebase/interfaces/i_compound_database_service.dart';
 import '../../services/firebase/interfaces/i_remote_database_service.dart';
 import '../../services/local_database/implementations/services/hive_database_service.dart';
@@ -40,6 +41,8 @@ Future<void> initializeAppServices() async {
   //   await initializeWindowSettings();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await RemoteConfigService.init();
 
   await Hive.initializeApp();
 
@@ -115,14 +118,14 @@ ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(Fir
 //IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
 
 CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
-        ICompoundDatabaseService<Map<String, dynamic>> service) =>
+    ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<BondModel, BondType> createBondsRepository(ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<ChequesModel, ChequesType> createChequesRepository(
-        ICompoundDatabaseService<Map<String, dynamic>> service) =>
+    ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: service));
 
 RemoteDataSourceRepository<MigrationModel> createMigrationRepository(IRemoteDatabaseService<Map<String, dynamic>> service) =>

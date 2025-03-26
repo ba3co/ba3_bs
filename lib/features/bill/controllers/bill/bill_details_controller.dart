@@ -24,6 +24,7 @@ import '../../../../core/network/api_constants.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
+import '../../../../core/services/whatsapp/whatsapp_service.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../materials/controllers/material_controller.dart';
@@ -638,14 +639,14 @@ class BillDetailsController extends IBillController
         fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail);
   }
 
-  void generateAndSendBillPdfToWhatsapp(BillModel billModel) {
+  void sendBillToWhatsapp(BillModel billModel) {
     if (!_billService.hasClientPhoneNumber()) return;
 
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
-    _billService.sendBillToWhatsApp(itemModel: billModel, recipientPhoneNumber: customerPhoneController.text);
+    WhatsappService.instance.sendBillToWhatsApp(itemModel: billModel, recipientPhoneNumber: customerPhoneController.text);
   }
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);

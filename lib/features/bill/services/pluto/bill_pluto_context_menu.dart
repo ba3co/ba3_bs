@@ -36,7 +36,8 @@ class BillPlutoContextMenu {
       context: context,
       tapPosition: tapPosition,
       items: PriceType.values,
-      itemLabelBuilder: (type) => '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
+      itemLabelBuilder: (type) =>
+          '${type.label}: ${invoiceUtils.getPrice(type: type, materialModel: materialModel).toStringAsFixed(2)}',
       onSelected: (PriceType type) {
         final PlutoRow selectedRow = row;
         final int quantity = AppServiceUtils.getItemQuantity(selectedRow);
@@ -62,7 +63,7 @@ class BillPlutoContextMenu {
     required MaterialModel materialModel,
     required BillPlutoUtils invoiceUtils,
     required BillPlutoGridService gridService,
-    required List<BillItem> billItems,
+    required BillItem billItem,
     required int index,
   }) {
     OverlayService.showPopupMenu(
@@ -85,12 +86,13 @@ class BillPlutoContextMenu {
             context: context,
             content: AddSerialWidget(
               plutoController: plutoController,
-              billItem: billItems[index],
+              billItem: billItem,
               materialModel: materialModel,
               serialCount: int.tryParse(matQuantity) ?? 0,
             ),
             onCloseCallback: () {
-              final List<TextEditingController> serialsControllers = plutoController.buyMaterialsSerialsControllers[materialModel] ?? [];
+              final List<TextEditingController> serialsControllers =
+                  plutoController.buyMaterialsSerialsControllers[materialModel] ?? [];
 
               if (serialsControllers.isNotEmpty && !AppConstants.hideInvRecProductSerialNumbers) {
                 // Extract serial numbers from controllers

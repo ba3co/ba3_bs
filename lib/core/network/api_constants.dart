@@ -18,7 +18,7 @@ class ApiConstants {
 
   static const String whatsappBusinessAccountId = '626521303518096';
   static const String whatsappAccessToken =
-      'EAAQZAhCa4eMwBO3qO1zzTmYPLhsD6brtSktOzeqZBwNLwYJ8QszSuJxhd0kOAd8ZAyY3vIxHIINM5nsgIoUnN3oW1PIkni9WdEB9ifQkekI2xrZAcdPYFQKOMrjvyL9VcWP1bzKX7rUo9vNFtcvJqnRicAh0JmtiegGSxlX2i4tgvoo0jQqNwTKAE5sdCdyTx4gNv3ekVPufhHKz9mhE3erZANb875p6JEBUZD';
+      'EAAQZAhCa4eMwBOZCm35A04uQhrNwsjJAEF6If5nKBaGTr7RTV6mWtrUZARjmi1ZAx1KfS9xVGVF88V1rhIt2lFiGMpuPOEbvZCPpTMhAyxrNDslB29y0d4rHTeeC9m1ZBjLtZCb8x5ujKSkWCAfx7WxUXoxuRUX8xFYypIYNBAJ21mKM6x59nHMW8u6ytCC9qyENAZDZD';
 
   static String get year {
     final MigrationController migrationController = read<MigrationController>();

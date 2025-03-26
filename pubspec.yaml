@@ -63,6 +63,7 @@ dependencies:
   flutter_datetime_picker_plus: ^2.2.0
   image_picker: ^1.1.2
   uuid: ^4.5.1
+  firebase_remote_config: ^5.4.2
 #  firebase_storage: ^12.4.4
 
 #  flutter_thermal_printer: ^1.1.0
