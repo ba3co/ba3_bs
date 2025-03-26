@@ -12,6 +12,6 @@ void main() async {
   await initializeAppServices();
 
   final isAppEnabled = RemoteConfigService.isAppEnabled;
-  log('isAppEnabled: $isAppEnabled');
+  log('isAppEnabled: $isAppEnabled', name: 'RemoteConfigService');
   runApp(isAppEnabled ? const MyApp() : const BlockedApp());
 }

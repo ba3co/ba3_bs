@@ -42,8 +42,6 @@ Future<void> initializeAppServices() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await RemoteConfigService.init();
-
   await Hive.initializeApp();
 
   await initializeAppLocalization(boxName: AppConstants.appLocalLangBox);
@@ -51,6 +49,8 @@ Future<void> initializeAppServices() async {
   setupDatabaseServices();
 
   setupMigrationDependencies();
+
+  await RemoteConfigService.init();
 }
 
 Future<void> initializeAppLocalization({required String boxName}) async {
