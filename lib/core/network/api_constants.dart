@@ -6,9 +6,6 @@ class ApiConstants {
   static const String translationApiKey = 'AIzaSyAil4Csq27_oCC_BzF7ZMetUEyNM665VqQ';
   static const String translationBaseUrl = 'https://translation.googleapis.com/language/translate/v2';
 
-  // static const String whatsappAccessToken =
-  //     'EAAQZAhCa4eMwBO3wieEe4Y8ZBomjmKZBLei98M8XdRUZBzdzgcFRZAQ7OvhqlRz2pqiFnmSZCZACsLsduRZCzvZCHGVOejWXs9cJLMZC1lbL7DO6Ipxh3jnXtiiwG0HZC1IQsxBzySMbpSvuIZA5VsuQjYsm6NFbmHzn1pLLLTT1cxlyJa00tGXgF5kJuIAWw1jcYndvyAXAXxCalWOSkqhQuzcbuI6MRRyF1ZALXbF4ZD';
-
   // static const String whatsappPhoneNumberID = '578828715319909';
 
   // static const String whatsappBusinessAccountId = '636525489008457';
