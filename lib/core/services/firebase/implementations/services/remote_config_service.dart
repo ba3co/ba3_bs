@@ -7,7 +7,7 @@ class RemoteConfigService {
     await _remoteConfig.setConfigSettings(
       RemoteConfigSettings(
         fetchTimeout: const Duration(seconds: 10),
-        minimumFetchInterval: const Duration(hours: 1), // Check every 1 hour
+        minimumFetchInterval: const Duration(seconds: 0),
       ),
     );
 
@@ -15,4 +15,6 @@ class RemoteConfigService {
   }
 
   static String get whatsappAccessToken => _remoteConfig.getString('whatsapp_access_token');
+
+  static bool get isAppEnabled => _remoteConfig.getBool('app_enabled');
 }

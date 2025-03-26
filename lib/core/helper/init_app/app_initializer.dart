@@ -118,14 +118,14 @@ ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(Fir
 //IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
 
 CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
-    ICompoundDatabaseService<Map<String, dynamic>> service) =>
+        ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<BondModel, BondType> createBondsRepository(ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<ChequesModel, ChequesType> createChequesRepository(
-    ICompoundDatabaseService<Map<String, dynamic>> service) =>
+        ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: service));
 
 RemoteDataSourceRepository<MigrationModel> createMigrationRepository(IRemoteDatabaseService<Map<String, dynamic>> service) =>
