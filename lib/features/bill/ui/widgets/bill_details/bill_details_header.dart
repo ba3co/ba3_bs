@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dar
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,6 +39,20 @@ class BillDetailsHeader extends StatelessWidget {
         key: billDetailsController.formKey,
         child: Column(
           children: [
+            SearchableAccountField(
+              label: AppStrings.account.tr,
+              textEditingController: billDetailsController.billAccountController,
+              validator: (value) => billDetailsController.validator(value, AppStrings.account.tr),
+              onSubmitted: (text) async {
+                AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                  query: text,
+                  context: context,
+                );
+                if (accountModel != null) {
+                  billDetailsController.updateBillAccount(accountModel);
+                }
+              },
+            ),
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
                 label: AppStrings.billType.tr,
@@ -79,9 +94,10 @@ class BillDetailsHeader extends StatelessWidget {
               secondItem: SearchableAccountField(
                 label: AppStrings.customerAccount.tr,
                 textEditingController: billDetailsController.customerAccountController,
-                validator: (value) => billDetailsController.validator(value, AppStrings.customerAccount.tr),
+                // validator: (value) => billDetailsController.validator(value, AppStrings.customerAccount.tr),
                 onSubmitted: (text) async {
-                  AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                  CustomerModel? accountModel = await read<AccountsController>().openCustomerSelectionDialog(
+                    accountId:billDetailsController.selectedBillAccount?.id! ,
                     query: text,
                     context: context,
                   );

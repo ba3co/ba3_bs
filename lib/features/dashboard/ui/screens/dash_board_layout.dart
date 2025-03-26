@@ -14,7 +14,6 @@ import '../../controller/bill_profit_dashboard_controller.dart';
 import '../../controller/dashboard_layout_controller.dart';
 import '../widgets/cheques_chart/cheques_timeline_board.dart';
 import '../widgets/dashboard_appbar_widget.dart';
-import '../widgets/employee_commitment_chart.dart';
 import '../widgets/profit_and_bill_chart/bill_profit_bord.dart';
 
 class DashBoardLayout extends StatelessWidget {

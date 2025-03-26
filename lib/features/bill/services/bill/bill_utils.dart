@@ -1,3 +1,5 @@
+import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
+
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
@@ -25,7 +27,14 @@ class BillUtils {
     return bills;
   }
 
-  bool validateCustomerAccount(AccountModel? customerAccount) {
+  bool validateCustomerAccount(CustomerModel? customerAccount) {
+    if (customerAccount == null) {
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');
+      return false;
+    }
+    return true;
+  }
+  bool validateBillAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');
       return false;
