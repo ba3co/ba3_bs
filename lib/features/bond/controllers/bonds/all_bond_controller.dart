@@ -34,6 +34,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
   late bool isDebitOrCredit;
   List<BondModel> bonds = [];
 Map< BondType, List<BondModel>> nestedBonds = {};
+Map< String, List<BondModel>> bondsByTypeGuid = {};
   List<BondModel> allNestedBonds = [];
   bool isLoading = true;
 
@@ -63,7 +64,7 @@ Map< BondType, List<BondModel>> nestedBonds = {};
           (failure) => AppUIUtils.onFailure(failure.message),
           (fetchedNestedBonds) => nestedBonds.assignAll(fetchedNestedBonds),
     );
-
+    bondsByTypeGuid.assignAll(nestedBonds.map((bondType, bonds) =>MapEntry(bondType.typeGuide, bonds) ,));
     nestedBonds.forEach((k, v) => log('bond Type: ${k.label} has ${v.length} bonds'));
 
     allNestedBonds.assignAll(nestedBonds.values.expand((bonds) => bonds).toList());

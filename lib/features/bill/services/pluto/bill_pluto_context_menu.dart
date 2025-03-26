@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -81,7 +83,6 @@ class BillPlutoContextMenu {
           final PlutoRow selectedRow = plutoController.recordsTableStateManager.rows[index];
           final String matQuantity = AppServiceUtils.getCellValue(selectedRow, AppConstants.invRecQuantity);
           debugPrint('matQuantity $matQuantity');
-
           OverlayService.showDialog(
             context: context,
             content: AddSerialWidget(
