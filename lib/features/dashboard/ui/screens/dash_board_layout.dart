@@ -31,15 +31,31 @@ class DashBoardLayout extends StatelessWidget {
             children: [
               DashboardAppBar(controller: dashboardLayoutController),
               VerticalSpace(),
+
+              VerticalSpace(),
+              GetBuilder<SellerDashboardController>(builder: (sellerController) {
+                return AllSellersSalesBoard(controller: sellerController);
+              }),
+              VerticalSpace(20),
+              GetBuilder<BillProfitDashboardController>(builder: (billProfitDashboardController) {
+                return BillProfitBord(billProfitDashboardController: billProfitDashboardController);
+              }),
+              VerticalSpace(20),
+              GetBuilder<ChequesTimelineController>(builder: (chequesTimelineController) {
+                return ChequesTimelineBoard(
+                  chequesTimelineController: chequesTimelineController,
+                );
+              }),
+              VerticalSpace(20),
               OrganizedWidget(
                   titleWidget: Row(
                     children: [
                       Spacer(),
                       Center(
                           child: Text(
-                        AppStrings.userAdministration,
-                        style: AppTextStyles.headLineStyle1,
-                      )),
+                            AppStrings.userAdministration,
+                            style: AppTextStyles.headLineStyle1,
+                          )),
                       Spacer(),
                       IconButton(
                         tooltip: AppStrings.refresh.tr,
@@ -53,25 +69,12 @@ class DashBoardLayout extends StatelessWidget {
                     ],
                   ),
                   bodyWidget: AllAttendanceScreen()),
-              VerticalSpace(20),
-              GetBuilder<ChequesTimelineController>(builder: (chequesTimelineController) {
-                return ChequesTimelineBoard(
-                  chequesTimelineController: chequesTimelineController,
-                );
-              }),
-              VerticalSpace(),
-              GetBuilder<SellerDashboardController>(builder: (sellerController) {
-                return AllSellersSalesBoard(controller: sellerController);
-              }),
-              VerticalSpace(20),
-              GetBuilder<BillProfitDashboardController>(builder: (billProfitDashboardController) {
-                return BillProfitBord(billProfitDashboardController: billProfitDashboardController);
-              }),
-              VerticalSpace(20),
-              GetBuilder<BillProfitDashboardController>(builder: (userManagementController) {
+
+              /* VerticalSpace(20),
+                 GetBuilder<BillProfitDashboardController>(builder: (userManagementController) {
                 return EmployeeCommitmentChart(employees: userManagementController.convertedUsersToEmployees());
               }),
-              /*   GetBuilder<UserManagementController>(builder: (userManagementController) {
+                GetBuilder<UserManagementController>(builder: (userManagementController) {
                 return SizedBox(
                   height: 800,
                   child: PlutoGridWithAppBar(
