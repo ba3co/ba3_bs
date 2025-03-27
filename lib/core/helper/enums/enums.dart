@@ -653,7 +653,8 @@ enum VatEnums {
       taxName: 'ضريبة القيمة المضافة رأس الخيمة',
       taxRatio: 0.05,
       taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16'),
-  withOutVat(taxGuid: 'kCfkUHwNyRbxTlD71uXV', taxName: 'معفى', taxRatio: 0, taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
+  withOutVat(
+      taxGuid: 'kCfkUHwNyRbxTlD71uXV', taxName: 'معفى', taxRatio: 0, taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
 
   final String? taxGuid;
   final String? taxName;
@@ -740,6 +741,22 @@ enum FinalAccounts {
   }
 }
 
+enum LogEventType {
+  add('إضافة'),
+  update('تعديل'),
+  delete('حذف');
+
+  final String label;
+
+  const LogEventType(this.label);
+
+  factory LogEventType.byLabel(String label) {
+    return LogEventType.values.firstWhere(
+      (type) => type.label == label,
+      orElse: () => throw ArgumentError('No matching LogEventType for label: $label'),
+    );
+  }
+}
 
 enum TaskType {
   generalTask('مهمة عادية'),
@@ -753,7 +770,7 @@ enum TaskType {
   // Factory constructor with error handling for unmatched labels
   factory TaskType.byValue(String label) {
     return TaskType.values.firstWhere(
-          (status) => status.label == label,
+      (status) => status.label == label,
       orElse: () => throw ArgumentError('No matching TaskType for byValue: $label'),
     );
   }
@@ -773,7 +790,7 @@ enum TaskStatus {
   // Factory constructor to handle conversion from string to StatusTask
   factory TaskStatus.byValue(String value) {
     return TaskStatus.values.firstWhere(
-          (status) => status.value == value,
+      (status) => status.value == value,
       orElse: () => throw ArgumentError('No matching StatusTask for value: $value'),
     );
   }

@@ -70,7 +70,8 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     );
   }
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, [fromChequesById]) async {
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,
+      [fromChequesById]) async {
     final entryBondController = read<EntryBondController>();
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
@@ -79,12 +80,13 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     } else {
       chequesSearchController.removeCheques(chequesModel);
     }
-    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!);
+    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, sourceNumber: chequesModel.chequesNumber!);
     if (chequesModel.chequesPayGuid != null) {
-      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!);
+      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!);
     }
     if (chequesModel.chequesRefundPayGuid != null) {
-      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!);
+      entryBondController.deleteEntryBondModel(
+          entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!);
     }
 
     AppUIUtils.onSuccess('تم حذف الشيك بنجاح!');
@@ -115,7 +117,11 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
       );
     }
 
-    await createAndStoreEntryBond(model: currentChequesModel);
+    await createAndStoreEntryBond(
+      model: currentChequesModel,
+      sourceNumbers: [currentChequesModel.chequesNumber!],
+      isSave: isSave,
+    );
 
     // final creators = EntryBondCreatorFactory.resolveEntryBondCreators(currentChequesModel);
     //

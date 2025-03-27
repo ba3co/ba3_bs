@@ -175,10 +175,8 @@ class BillDetailsController extends IBillController
   }
 
   void updateBillStatus(BillModel billModel, newStatus) async {
-    if (billModel.items.itemList.map((e) => e.itemName).contains(
-          "الباركود خطأ",
-        )) {
-      AppUIUtils.onFailure("لا يمكن تغيير حالة الفاتورة بسبب وجود باركود خطأ");
+    if (billModel.items.itemList.map((e) => e.itemName).contains('الباركود خطأ')) {
+      AppUIUtils.onFailure('لا يمكن تغيير حالة الفاتورة بسبب وجود باركود خطأ');
       return;
     } else {
       final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));

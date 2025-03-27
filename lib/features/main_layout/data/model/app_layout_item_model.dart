@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-
-  class   AppLayoutItemModel {
+class AppLayoutItemModel {
   final String name;
   final Widget layout;
   final String icon;

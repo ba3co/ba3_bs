@@ -283,7 +283,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   /// and the pattern type requires a material account.
   void _handleApprovedBillDeletions(BillModel billModel) {
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      read<EntryBondController>().deleteEntryBondModel(entryId: billModel.billId!);
+      read<EntryBondController>()
+          .deleteEntryBondModel(entryId: billModel.billId!, sourceNumber: billModel.billDetails.billNumber!);
     }
     deleteMatsStatementsModels(billModel);
   }
@@ -296,7 +297,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     billSearchController.updateBill(updatedBillModel, 'handleUpdateBillStatusSuccess');
 
     if (updatedBillModel.status == Status.approved && updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      createAndStoreEntryBond(model: updatedBillModel);
+      createAndStoreEntryBond(model: updatedBillModel, sourceNumbers: [updatedBillModel.billDetails.billNumber!], isSave: false);
     }
 
     if (updatedBillModel.status == Status.approved) {
@@ -447,6 +448,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       createAndStoreEntryBond(
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
+        isSave: isSave,
+        sourceNumbers: [currentBill.billDetails.billNumber!],
       );
     }
 

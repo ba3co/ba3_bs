@@ -140,11 +140,12 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
       (failure) => AppUIUtils.onFailure(failure.message),
       (currentChequesModel) {
         _chequesService.handleSaveOrUpdateSuccess(
-            prevChequesModel: existingChequesModel,
-            currentChequesModel: currentChequesModel,
-            chequesSearchController: chequesSearchController,
-            isSave: existingChequesModel == null,
-            chequesDetailsController: this);
+          prevChequesModel: existingChequesModel,
+          currentChequesModel: currentChequesModel,
+          chequesSearchController: chequesSearchController,
+          isSave: existingChequesModel == null,
+          chequesDetailsController: this,
+        );
       },
     );
   }
@@ -159,7 +160,8 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
   void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
-    _chequesService.launchChequesEntryBondScreen(chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.payStrategy);
+    _chequesService.launchChequesEntryBondScreen(
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.payStrategy);
   }
 
   void launchRefundPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
@@ -243,6 +245,8 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     createAndStoreChequeEntryBondByStrategy(
       updatedModel,
       chequesStrategyType: ChequesStrategyType.payStrategy,
+      sourceNumber: updatedModel.chequesNumber!,
+      isSave: false,
     );
   }
 
@@ -250,7 +254,8 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     setIsPayed(false);
     final updatedModel = chequesModel.copyWithNullPayGuid();
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
-    read<EntryBondController>().deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!);
+    read<EntryBondController>()
+        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!);
   }
 
   void refundPayCheques(ChequesModel chequesModel) async {
@@ -272,6 +277,8 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     createAndStoreChequeEntryBondByStrategy(
       updatedModel,
       chequesStrategyType: ChequesStrategyType.refundStrategy,
+      sourceNumber: updatedModel.chequesNumber!,
+      isSave: false,
     );
   }
 
@@ -279,6 +286,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     setIsRefundPay(false);
     final updatedModel = chequesModel.copyWithNullRefundPayGuid();
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel);
-    read<EntryBondController>().deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!);
+    read<EntryBondController>()
+        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!);
   }
 }

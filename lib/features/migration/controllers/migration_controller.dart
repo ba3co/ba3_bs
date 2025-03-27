@@ -307,7 +307,11 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
   }
 
   Future<void> handleSaveBondSuccess(BondModel bond) async {
-    await createAndStoreEntryBond(model: bond);
+    await createAndStoreEntryBond(
+      model: bond,
+      sourceNumbers: [bond.payNumber!],
+      isSave: true,
+    );
   }
 
   List<PayItem> generatePayItems(List<EntryBondItemModel> entryBondItems) {

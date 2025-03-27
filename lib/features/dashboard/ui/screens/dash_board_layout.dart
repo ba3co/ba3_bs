@@ -8,13 +8,13 @@ import 'package:ba3_bs/features/dashboard/ui/widgets/seller_sale_chart/all_selle
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+
 import '../../../../core/styling/app_colors.dart';
 import '../../../user_time/ui/screens/all_attendance_screen.dart';
 import '../../controller/bill_profit_dashboard_controller.dart';
 import '../../controller/dashboard_layout_controller.dart';
 import '../widgets/cheques_chart/cheques_timeline_board.dart';
 import '../widgets/dashboard_appbar_widget.dart';
-import '../widgets/employee_commitment_chart.dart';
 import '../widgets/profit_and_bill_chart/bill_profit_bord.dart';
 
 class DashBoardLayout extends StatelessWidget {
@@ -53,9 +53,9 @@ class DashBoardLayout extends StatelessWidget {
                       Spacer(),
                       Center(
                           child: Text(
-                            AppStrings.userAdministration,
-                            style: AppTextStyles.headLineStyle1,
-                          )),
+                        AppStrings.userAdministration,
+                        style: AppTextStyles.headLineStyle1,
+                      )),
                       Spacer(),
                       IconButton(
                         tooltip: AppStrings.refresh.tr,

@@ -39,13 +39,19 @@ class AppAssets {
   static const paymentVoucherIcon = '$_baseIconsPath/Payment_Voucher_icon.png';
   static const journalVoucherIcon = '$_baseIconsPath/Journal_Voucher_icon.png';
 
+  static const logIcon = '$_baseIconsPath/log_icon.png';
+
+  static const logUnselectedIcon = '$_baseIconsPath/log_unselected_icon.png';
+
+  static const migrationIcon = '$_baseIconsPath/migration_icon.png';
+
+  static const migrationUnselectedIcon = '$_baseIconsPath/migration_icon_unselected.png';
+
   ///App Images
   static const loginLogo = '$_baseImagesPath/login_logo.jpg';
 
-
   ///App gif_Images
   static const loadingImage = '$_baseGifImagesPath/loading.gif';
-
 
   ///App Flags
   static const enFlag = '$_baseFlagsPath/en.png';
@@ -54,7 +60,4 @@ class AppAssets {
   static const deFlag = '$_baseFlagsPath/de.png';
   static const frFlag = '$_baseFlagsPath/fr.png';
   static const zhFlag = '$_baseFlagsPath/zh.png';
-
-
-
 }

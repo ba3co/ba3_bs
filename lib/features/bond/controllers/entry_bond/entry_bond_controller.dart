@@ -8,6 +8,7 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:ba3_bs/features/logs/controllers/log_controller.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -41,6 +42,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Method to save an Entry Bond and update related account statements
   Future<void> saveEntryBondModel({
     required EntryBondModel entryBondModel,
+    required int sourceNumber,
+    required bool isSave,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
     log('saveEntryBondModel', name: 'saveEntryBondModel');
@@ -50,6 +53,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedEntryBondModel) => _onEntryBondSaved(
         entryBondModel: savedEntryBondModel,
+        sourceNumber: sourceNumber,
+        isSave: isSave,
         modifiedAccounts: modifiedAccounts,
       ),
     );
@@ -58,6 +63,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
   /// Saves a list of EntryBondModels in a single batch (if the repo supports `saveAll`).
   Future<void> saveAllEntryBondModels({
     required List<EntryBondModel> entryBonds,
+    required List<int> sourceNumbers,
+    required bool isSave,
     void Function(double progress)? onProgress,
   }) async {
     log('Start SaveAllEntryBondModels');
@@ -74,7 +81,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
         // 3. For each successfully saved bond, run post-save logic
         int counter = 0;
         for (final savedBond in savedBonds) {
-          await _onEntryBondSaved(entryBondModel: savedBond);
+          await _onEntryBondSaved(entryBondModel: savedBond, sourceNumber: sourceNumbers[counter], isSave: isSave);
 
           // Update progress
           onProgress?.call(++counter / savedBonds.length);
@@ -85,25 +92,12 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
   // 11:34
   // 5430
-  Future<void> saveAllAccountsStatements({
-    required List<EntryBondModel> entryBonds,
-    void Function(double progress)? onProgress,
-  }) async {
-    log('Start saveAllAccountsStatements');
-    // 3. For each successfully saved bond, run post-save logic
-    int counter = 0;
-    for (final savedBond in entryBonds) {
-      await _onEntryBondSaved(entryBondModel: savedBond);
-
-      // Update progress
-      onProgress?.call(++counter / entryBonds.length);
-    }
-    log('Finish saveAllAccountsStatements');
-  }
 
   /// Handles logic after an Entry Bond is successfully saved
   Future<void> _onEntryBondSaved({
     required EntryBondModel entryBondModel,
+    required int sourceNumber,
+    required bool isSave,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
     log('Start _onEntryBondSaved');
@@ -119,6 +113,16 @@ class EntryBondController extends GetxController with FloatingLauncher {
         modifiedAccounts: modifiedAccounts,
       ),
     ]);
+
+    final logController = read<LogController>();
+
+    read<LogController>().addLog(
+      logController.getLogModel(
+        entryBondModel: entryBondModel,
+        eventType: isSave ? LogEventType.add : LogEventType.update,
+        sourceNumber: sourceNumber,
+      ),
+    );
 
     log('Finish _onEntryBondSaved');
   }
@@ -219,29 +223,25 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   // Method to create a bond based on bill type
-  Future<void> deleteEntryBondModel({required String entryId}) async {
+  Future<void> deleteEntryBondModel({required String entryId, required int sourceNumber}) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (entryBondModel) async => await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId),
+      (entryBondModel) async =>
+          await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId, sourceNumber: sourceNumber),
     );
   }
 
-  Future<void> onEntryBondDeleted({required EntryBondModel entryBondModel, required String entryId}) async {
-    log('itemList ${entryBondModel.items?.itemList.length}, originId ${entryBondModel.origin?.originId}, originTypeId ${entryBondModel.origin?.originTypeId}, entryId $entryId');
+  Future<void> onEntryBondDeleted(
+      {required EntryBondModel entryBondModel, required String entryId, required int sourceNumber}) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[]; // Collect error messages.
 
     final entryBondItems = entryBondModel.items!.itemList;
 
     for (final entryBondItem in entryBondItems) {
-      log('entryBondItem ${entryBondItem.toJson()}');
       final itemsGroupedByAccount = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
-
-      log('itemsGroupedByAccount ${itemsGroupedByAccount.length}');
-
-      log('docId ${entryBondItem.docId} originId ${entryBondItem.originId!}');
 
       deletedTasks.add(
         _accountsStatementsFirebaseRepo
@@ -253,9 +253,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
                 log('error ${failure.message}');
                 errors.add(failure.message); // Collect errors.
               },
-              (_) {
-                log('_accountsStatementsFirebaseRepo delete Success');
-              },
+              (_) {},
             );
           },
         ),
@@ -264,21 +262,25 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     await Future.wait(deletedTasks);
 
-    log('finished deletedTasks');
-
     if (errors.isNotEmpty) {
-      log('errors.isNotEmpty');
       AppUIUtils.onFailure('Some deletions failed: ${errors.join(', ')}');
       return;
     }
-
-    log('deleteBondResult');
 
     final deleteBondResult = await _entryBondsFirebaseRepo.delete(entryId);
     deleteBondResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
         log('deleteBond Success');
+        final logController = read<LogController>();
+
+        read<LogController>().addLog(
+          logController.getLogModel(
+            entryBondModel: entryBondModel,
+            eventType: LogEventType.delete,
+            sourceNumber: sourceNumber,
+          ),
+        );
       },
     );
   }
@@ -305,12 +307,14 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }
 
     final actions = {
-      EntryBondType.bond: () =>
-          read<AllBondsController>().openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bond: () => read<AllBondsController>()
+          .openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
       EntryBondType.bill: () {
         log(origin.toJson().toString());
-        read<AllBillsController>()
-            .openFloatingBillDetailsById(billId:  origin.originId!,context:  context,bilTypeModel:  BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel);
+        read<AllBillsController>().openFloatingBillDetailsById(
+            billId: origin.originId!,
+            context: context,
+            bilTypeModel: BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel);
       },
       EntryBondType.cheque: () => read<AllChequesController>()
           .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),

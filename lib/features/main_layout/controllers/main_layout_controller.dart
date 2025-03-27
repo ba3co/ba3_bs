@@ -11,6 +11,7 @@ import '../../bill/ui/screens/bill_layout.dart';
 import '../../bond/ui/screens/bond_layout.dart';
 import '../../cheques/ui/screens/cheque_layout.dart';
 import '../../dashboard/ui/screens/dash_board_layout.dart';
+import '../../logs/ui/screens/log_layout.dart';
 import '../../materials/ui/screens/materials_layout.dart';
 import '../../migration/ui/screens/migration_layout.dart';
 import '../../patterns/ui/screens/pattern_layout.dart';
@@ -33,7 +34,6 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.billsIcon,
         unSelectedIcon: AppAssets.billsUnselectedIcon,
       ),
-
     if (RoleItemType.viewPattern.hasReadPermission)
       AppLayoutItemModel(
         name: 'الأنماط',
@@ -76,6 +76,12 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.accountsIcon,
         unSelectedIcon: AppAssets.accountsUnselectedIcon,
       ),
+    AppLayoutItemModel(
+      name: 'السجلات',
+      layout: const LogLayout(),
+      icon: AppAssets.logIcon,
+      unSelectedIcon: AppAssets.logUnselectedIcon,
+    ),
     if (RoleItemType.viewUserManagement.hasAdminPermission)
       AppLayoutItemModel(
         name: 'إدارة المستخدمين',
@@ -83,19 +89,18 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.usersIcon,
         unSelectedIcon: AppAssets.usersUnselectedIcon,
       ),
-
     AppLayoutItemModel(
       name: 'الملف الشخصي',
       layout: const ProfileScreen(),
       icon: AppAssets.profileIcon,
       unSelectedIcon: AppAssets.profileUnselectedIcon,
-    ), AppLayoutItemModel(
+    ),
+    AppLayoutItemModel(
       name: 'الترحيل',
       layout: const MigrationLayout(),
-      icon: AppAssets.profileIcon,
-      unSelectedIcon: AppAssets.profileUnselectedIcon,
+      icon: AppAssets.migrationIcon,
+      unSelectedIcon: AppAssets.migrationUnselectedIcon,
     ),
-
   ].obs;
   PageController pageController = PageController();
 

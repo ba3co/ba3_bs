@@ -75,7 +75,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
 
     AppUIUtils.onSuccess('تم حذف السند بنجاح!');
 
-    read<EntryBondController>().deleteEntryBondModel(entryId: bondModel.payGuid!);
+    read<EntryBondController>().deleteEntryBondModel(entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!);
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -119,7 +119,9 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
 
     createAndStoreEntryBond(
       model: currentBond,
+      sourceNumbers: [currentBond.payNumber!],
       modifiedAccounts: modifiedBondTypeAccounts,
+      isSave: isSave,
     );
 
     // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBond);
@@ -156,10 +158,10 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     };
 
     if (previousBond.payAccountGuid != null && currentBond.payAccountGuid != null) {
-      previousAccounts[previousBond.payAccountGuid!] =
-          AccountModel(id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
-      currentAccounts[currentBond.payAccountGuid!] =
-          AccountModel(id: currentBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(currentBond.payAccountGuid!));
+      previousAccounts[previousBond.payAccountGuid!] = AccountModel(
+          id: previousBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(previousBond.payAccountGuid!));
+      currentAccounts[currentBond.payAccountGuid!] = AccountModel(
+          id: currentBond.payAccountGuid!, accName: read<AccountsController>().getAccountNameById(currentBond.payAccountGuid!));
     }
 
     final Map<String, AccountModel> modifiedAccounts = {};

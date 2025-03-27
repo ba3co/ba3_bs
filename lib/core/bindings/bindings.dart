@@ -27,6 +27,7 @@ import 'package:ba3_bs/features/dashboard/controller/dashboard_layout_controller
 import 'package:ba3_bs/features/dashboard/data/datasources/local_dashboard_account_data_source.dart';
 import 'package:ba3_bs/features/dashboard/data/datasources/remote_dashboard_data_source.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
+import 'package:ba3_bs/features/logs/controllers/log_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_data_source.dart';
 import 'package:ba3_bs/features/materials/data/datasources/remote/materials_serials_data_source.dart';
@@ -70,6 +71,8 @@ import '../../features/customer/service/customer_import.dart';
 import '../../features/dashboard/controller/bill_profit_dashboard_controller.dart';
 import '../../features/dashboard/controller/cheques_timeline_controller.dart';
 import '../../features/dashboard/controller/seller_dashboard_controller.dart';
+import '../../features/logs/data/datasources/log_data_source.dart';
+import '../../features/logs/data/models/log_model.dart';
 import '../../features/materials/controllers/material_controller.dart';
 import '../../features/materials/controllers/mats_statement_controller.dart';
 import '../../features/materials/data/datasources/local/material_local_data_source.dart';
@@ -269,6 +272,8 @@ class AppBindings extends Bindings {
       // ),
 
       tasksRepo: UploaderStorageQueryableRepo(UserTaskDataSource(databaseService: remoteDatabaseService)),
+
+      logsRepo: RemoteDataSourceRepository(LogDataSource(databaseService: remoteDatabaseService)),
     );
   }
 
@@ -336,6 +341,8 @@ class AppBindings extends Bindings {
     lazyPut(UserDetailsController(read<FilterableDataSourceRepository<UserModel>>()));
 
     lazyPut(StoreCartController(repositories.storeCartRepo, repositories.billsRepo));
+
+    lazyPut(LogController(repositories.logsRepo));
   }
 }
 
@@ -371,6 +378,7 @@ class _Repositories {
   final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
   final ListenDataSourceRepository<StoreCartModel> storeCartRepo;
   final UploaderStorageQueryableRepo<UserTaskModel> tasksRepo;
+  final RemoteDataSourceRepository<LogModel> logsRepo;
 
   _Repositories({
     required this.translationRepo,
@@ -402,5 +410,6 @@ class _Repositories {
     required this.storeCartRepo,
     required this.dashboardAccountRepo,
     required this.tasksRepo,
+    required this.logsRepo,
   });
 }

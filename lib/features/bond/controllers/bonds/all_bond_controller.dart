@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
@@ -33,8 +34,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
   late bool isDebitOrCredit;
   List<BondModel> bonds = [];
-Map< BondType, List<BondModel>> nestedBonds = {};
-Map< String, List<BondModel>> bondsByTypeGuid = {};
+  Map<BondType, List<BondModel>> nestedBonds = {};
+  Map<String, List<BondModel>> bondsByTypeGuid = {};
   List<BondModel> allNestedBonds = [];
   bool isLoading = true;
 
@@ -61,10 +62,12 @@ Map< String, List<BondModel>> bondsByTypeGuid = {};
     final result = await _bondsFirebaseRepo.fetchAllNested(BondType.values);
 
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message),
-          (fetchedNestedBonds) => nestedBonds.assignAll(fetchedNestedBonds),
+      (failure) => AppUIUtils.onFailure(failure.message),
+      (fetchedNestedBonds) => nestedBonds.assignAll(fetchedNestedBonds),
     );
-    bondsByTypeGuid.assignAll(nestedBonds.map((bondType, bonds) =>MapEntry(bondType.typeGuide, bonds) ,));
+    bondsByTypeGuid.assignAll(nestedBonds.map(
+      (bondType, bonds) => MapEntry(bondType.typeGuide, bonds),
+    ));
     nestedBonds.forEach((k, v) => log('bond Type: ${k.label} has ${v.length} bonds'));
 
     allNestedBonds.assignAll(nestedBonds.values.expand((bonds) => bonds).toList());
@@ -73,7 +76,6 @@ Map< String, List<BondModel>> bondsByTypeGuid = {};
 
     // getAllNestedBondsRequestState.value = RequestState.success;
   }
-
 
   @override
   void onInit() {
@@ -120,6 +122,7 @@ Map< String, List<BondModel>> bondsByTypeGuid = {};
             await _bondsFirebaseRepo.saveAllNested(items: bonds, itemIdentifiers: BondType.values);
             await createAndStoreEntryBonds(
               sourceModels: bonds,
+              sourceNumbers: bonds.select((bond) => bond.payNumber).toList(),
               onProgress: (progress) {
                 uploadProgress.value = progress; // Update progress
                 log('Progress: ${(progress * 100).toStringAsFixed(2)}%');

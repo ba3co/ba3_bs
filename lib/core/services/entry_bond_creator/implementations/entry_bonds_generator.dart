@@ -12,17 +12,22 @@ import 'entry_bond_creator_factory.dart';
 mixin EntryBondsGenerator {
   Future<void> createAndStoreEntryBonds<T>({
     required List<T> sourceModels,
+    required List<int> sourceNumbers,
     void Function(double progress)? onProgress,
   }) async {
     final entryBondModels = _mapModelsToEntryBonds(sourceModels);
     await read<EntryBondController>().saveAllEntryBondModels(
       entryBonds: entryBondModels,
+      sourceNumbers: sourceNumbers,
       onProgress: onProgress,
+      isSave: true,
     );
   }
 
   Future<void> createAndStoreEntryBond<T>({
     required T model,
+    required List<int> sourceNumbers,
+    required bool isSave,
     Map<String, AccountModel> modifiedAccounts = const {},
     void Function(double progress)? onProgress,
   }) async {
@@ -34,11 +39,15 @@ mixin EntryBondsGenerator {
       log('entryBondModels.length == 1', name: 'createAndStoreEntryBond');
       await entryBondController.saveEntryBondModel(
         entryBondModel: entryBondModels.first,
+        sourceNumber: sourceNumbers.first,
+        isSave: isSave,
         modifiedAccounts: modifiedAccounts,
       );
     } else {
       await entryBondController.saveAllEntryBondModels(
         entryBonds: entryBondModels,
+        sourceNumbers: sourceNumbers,
+        isSave: isSave,
         onProgress: onProgress,
       );
     }
@@ -67,9 +76,18 @@ mixin EntryBondsGenerator {
     );
   }
 
-  Future<void> createAndStoreChequeEntryBondByStrategy(ChequesModel model, {required ChequesStrategyType chequesStrategyType}) async {
+  Future<void> createAndStoreChequeEntryBondByStrategy(
+    ChequesModel model, {
+    required ChequesStrategyType chequesStrategyType,
+    required int sourceNumber,
+    required bool isSave,
+  }) async {
     final entryBondModel = createChequeEntryBondByStrategy(model, chequesStrategyType: chequesStrategyType);
-    await read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
+    await read<EntryBondController>().saveEntryBondModel(
+      entryBondModel: entryBondModel,
+      sourceNumber: sourceNumber,
+      isSave: isSave,
+    );
   }
 
   EntryBondModel createSimulatedVatEntryBond<T>(T model) => _createEntryBondInstance(model, isSimulatedVat: true);

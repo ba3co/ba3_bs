@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import 'package:ba3_bs/features/cheques/ui/screens/all_cheques_view.dart';
 import 'package:file_picker/file_picker.dart';
@@ -70,7 +71,10 @@ class AllChequesController extends FloatingChequesDetailsLauncher with EntryBond
           if (chequesList.isNotEmpty) {
             await _chequesFirebaseRepo.saveAllNested(items: chequesList, itemIdentifiers: ChequesType.values);
 
-            await createAndStoreEntryBonds(sourceModels: chequesList);
+            await createAndStoreEntryBonds(
+              sourceModels: chequesList,
+              sourceNumbers: chequesList.select((cheque) => cheque.chequesNumber).toList(),
+            );
           }
         },
       );
