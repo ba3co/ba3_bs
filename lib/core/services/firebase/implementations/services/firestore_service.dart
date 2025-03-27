@@ -9,6 +9,7 @@ import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/i_remote_database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pool/pool.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../../features/migration/controllers/migration_controller.dart';
 import '../../../../models/date_filter.dart';
@@ -96,8 +97,10 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       log('Migration guard triggered, skipping add operation for path [$path].', name: 'add CompoundFirestoreService');
       return {};
     }
+    Uuid uuid = Uuid();
 
-    final newDoc = _firestoreInstance.collection(path).doc().id;
+    final newDoc = uuid.v4();
+    // final newDoc = _firestoreInstance.collection(path).doc().id;
 
     // Use the provided document ID or generate a new one if not provided
     final docId = documentId ?? (data['docId'] ?? newDoc);

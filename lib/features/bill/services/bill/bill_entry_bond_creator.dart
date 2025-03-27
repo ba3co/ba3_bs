@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
@@ -23,16 +24,17 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
 
     final customerAccount = model.billTypeModel.accounts![BillAccounts.caches]!;
 
-    final billType = BillType.byLabel(model.billTypeModel.billTypeLabel!);
-    final isSales = billType == BillType.sales || billType == BillType.purchaseReturn;
-
     final date = model.billDetails.billDate!.dayMonthYear;
 
     final firstPayBond = [];
 
     if ((model.billDetails.billFirstPay ?? 0) > 0) {
       firstPayBond.addAll(_createFirstPayBond(
-          billId: model.billId!, firstPay: model.billDetails.billFirstPay ?? 0, customerAccount: customerAccount, isSales: isSales, date: date));
+          billId: model.billId!,
+          firstPay: model.billDetails.billFirstPay ?? 0,
+          customerAccount: customerAccount,
+          isSalesRelated: model.billTypeModel.isSellRelated,
+          date: date));
     }
 
     final itemBonds = _generateBillItemBonds(
@@ -41,9 +43,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       customerAccount: customerAccount,
       billItems: model.items.itemList,
       date: date,
-      isSales: isSales,
       billTypeModel: model.billTypeModel,
-      isSimulatedVat: isSimulatedVat,
     );
 
     if (model.billTypeModel.billPatternType!.hasDiscountsAccount) {
@@ -53,7 +53,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         customerAccount: customerAccount,
         date: date,
         billTypeModel: model.billTypeModel,
-        isSales: isSales,
       );
 
       return [...itemBonds, ...adjustmentBonds, ...firstPayBond];
@@ -69,8 +68,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required List<BillItem> billItems,
     required String date,
     required BillTypeModel billTypeModel,
-    required bool isSales,
-    bool? isSimulatedVat,
   }) =>
       billItems
           .expand((item) => [
@@ -83,7 +80,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
                     name: item.itemName!,
                     date: date,
                     billTypeModel: billTypeModel,
-                    isSales: isSales,
                   ),
                 if (item.itemQuantity > 0)
                   ..._generateCustomerBonds(
@@ -91,18 +87,14 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
                     customerAccount: customerAccount,
                     item: item,
                     date: date,
-                    isSales: isSales,
                     billTypeModel: billTypeModel,
-                    isSimulatedVat: isSimulatedVat,
                   ),
                 ..._createOptionalBonds(
                   billId: billId,
                   accounts: accounts,
                   item: item,
                   date: date,
-                  isSales: isSales,
                   billTypeModel: billTypeModel,
-                  isSimulatedVat: isSimulatedVat,
                 ),
               ])
           .toList();
@@ -112,16 +104,14 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required Map<Account, AccountModel> accounts,
     required BillItem item,
     required String date,
-    required bool isSales,
     required BillTypeModel billTypeModel,
-    bool? isSimulatedVat,
   }) {
     final giftCount = item.itemGiftsNumber;
     final giftPrice = item.itemGiftsPrice;
 
     /// When isSimulatedVat is true, VAT is calculated as 5% of the total price for preview purposes only.
     /// Otherwise, the actual VAT value is used.
-    final vat = isSimulatedVat ?? false ? _calculateSimulatedVat(item) : _calculateActualVat(item);
+    final vat = _calculateActualVat(item);
     return [
       if (vat > 0 && billTypeModel.billPatternType!.hasVat)
         _createVatBond(
@@ -130,7 +120,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
             item: read<MaterialController>().getMaterialById(item.itemGuid)!,
             quantity: item.itemQuantity,
             date: date,
-            isSales: isSales,
             billTypeModel: billTypeModel),
       if (_shouldHandleGifts(accounts, giftCount, giftPrice))
         ..._createGiftBonds(
@@ -140,7 +129,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
             giftPrice: giftPrice!,
             name: item.itemName!,
             date: date,
-            isSales: isSales,
             billTypeModel: billTypeModel),
     ];
   }
@@ -158,13 +146,12 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required int quantity,
     required String name,
     required String date,
-    required bool isSales,
     required BillTypeModel billTypeModel,
   }) {
     return _createBondItem(
       amount: total,
       billId: billId,
-      bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
+      bondType: billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor,
       accountName: materialAccount.accName,
       accountId: materialAccount.id,
       note: '${billTypeModel.shortName} عدد $quantity من $name',
@@ -177,19 +164,16 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required AccountModel customerAccount,
     required BillItem item,
     required String date,
-    required bool isSales,
     required BillTypeModel billTypeModel,
-    bool? isSimulatedVat,
   }) {
-    /// هذه العملية لحساب الضريبة من المجموع الكلي ودائما تكون الضريبة نسبة 5% عند الاستعراض فقط
-    final vat = isSimulatedVat ?? false ? ((double.parse(item.itemTotalPrice) / 1.05) * 0.05) : item.itemVatPrice! * item.itemQuantity;
+    final vat = item.itemVatPrice! * item.itemQuantity;
     final total = item.itemSubTotalPrice! * item.itemQuantity;
 
     return [
       _createBondItem(
         amount: total,
         billId: billId,
-        bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
+        bondType: billTypeModel.isSellRelated ? BondItemType.debtor : BondItemType.creditor,
         accountName: customerAccount.accName,
         accountId: customerAccount.id,
         note: '${billTypeModel.shortName} عدد ${item.itemQuantity} من ${item.itemName}',
@@ -199,7 +183,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         _createBondItem(
           amount: vat,
           billId: billId,
-          bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
+          bondType: billTypeModel.isSellRelated ? BondItemType.debtor : BondItemType.creditor,
           accountName: customerAccount.accName,
           accountId: customerAccount.id,
           note: billTypeModel.billPatternType == BillPatternType.salesReturn || billTypeModel.billPatternType == BillPatternType.purchase
@@ -217,19 +201,18 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required int quantity,
     required String date,
     required BillTypeModel billTypeModel,
-    required bool isSales,
   }) {
-    final bondType = isSales ? BondItemType.creditor : BondItemType.debtor;
+    final bondType = billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor;
+
+    MaterialModel materialModel = read<MaterialController>().getMaterialById(item.id!)!;
     final accountId = item.matVatGuid == null
         ? VatEnums.withVat.taxAccountGuid
-        : billTypeModel.billPatternType == BillPatternType.purchase || billTypeModel.billPatternType == BillPatternType.salesReturn
-            ? AppConstants.returnTaxAccountId
-            : VatEnums.byGuid(item.matVatGuid!).taxAccountGuid;
+        : billTypeModel.isPurchaseRelated
+            ? _getRefundVatAccountId(materialModel)
+            : _getVatAccountId(materialModel);
     final note = 'ضريبة ${billTypeModel.shortName} عدد $quantity من ${item.matName}';
     final String accountName =
-        billTypeModel.billPatternType == BillPatternType.purchase || billTypeModel.billPatternType == BillPatternType.salesReturn
-            ? AppConstants.returnTaxAccountName
-            : 'ضريبة القيمة المضافة';
+        billTypeModel.isPurchaseRelated ? _getRefundVatAccountName(materialModel) : _getVatAccountName(materialModel);
     return _createBondItem(
       amount: vat,
       billId: billId,
@@ -258,7 +241,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required String name,
     required String date,
     required BillTypeModel billTypeModel,
-    required bool isSales,
   }) {
     final totalGifts = giftPrice * giftCount;
     final giftAccount = accounts[BillAccounts.gifts]!;
@@ -268,7 +250,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       _createBondItem(
         amount: totalGifts,
         billId: billId,
-        bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
+        bondType: billTypeModel.isSellRelated ? BondItemType.debtor : BondItemType.creditor,
         accountName: giftAccount.accName,
         accountId: giftAccount.id,
         note: 'هدايا ${billTypeModel.shortName} عدد $giftCount من $name',
@@ -277,7 +259,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       _createBondItem(
         amount: totalGifts,
         billId: billId,
-        bondType: isSales ? BondItemType.creditor : BondItemType.debtor,
+        bondType: billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor,
         accountName: settlementAccount.accName,
         accountId: settlementAccount.id,
         note: 'مقابل هدايا ${billTypeModel.shortName} عدد $giftCount من $name',
@@ -292,7 +274,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required AccountModel customerAccount,
     required String date,
     required BillTypeModel billTypeModel,
-    required bool isSales,
   }) {
     return [
       if (discountsAndAdditions.containsKey(BillAccounts.discounts))
@@ -302,8 +283,8 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
           date: date,
           customerAccount: customerAccount,
           notePrefix: 'حسم ${billTypeModel.shortName}',
-          positiveBondType: isSales ? BondItemType.debtor : BondItemType.creditor,
-          oppositeBondType: isSales ? BondItemType.creditor : BondItemType.debtor,
+          positiveBondType: billTypeModel.isSellRelated ? BondItemType.debtor : BondItemType.creditor,
+          oppositeBondType: billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor,
         ),
       if (discountsAndAdditions.containsKey(BillAccounts.additions))
         ..._createDiscountOrAdditionBonds(
@@ -312,8 +293,8 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
           date: date,
           customerAccount: customerAccount,
           notePrefix: 'اضافة ${billTypeModel.shortName}',
-          positiveBondType: isSales ? BondItemType.creditor : BondItemType.debtor,
-          oppositeBondType: isSales ? BondItemType.debtor : BondItemType.creditor,
+          positiveBondType: billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor,
+          oppositeBondType: billTypeModel.isSellRelated ? BondItemType.debtor : BondItemType.creditor,
         ),
     ];
   }
@@ -377,14 +358,14 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required String billId,
     required double firstPay,
     required AccountModel customerAccount,
-    required bool isSales,
+    required bool isSalesRelated,
     required String date,
   }) {
     return [
       _createBondItem(
         amount: firstPay,
         billId: billId,
-        bondType: isSales ? BondItemType.debtor : BondItemType.creditor,
+        bondType: isSalesRelated ? BondItemType.debtor : BondItemType.creditor,
         accountName: BillType.sales.accounts[BillAccounts.caches]!.accName,
         accountId: BillType.sales.accounts[BillAccounts.caches]!.id,
         note: 'الدفع الاولى من ${customerAccount.accName}',
@@ -393,7 +374,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       _createBondItem(
         amount: firstPay,
         billId: billId,
-        bondType: isSales ? BondItemType.creditor : BondItemType.creditor,
+        bondType: isSalesRelated ? BondItemType.creditor : BondItemType.creditor,
         accountName: customerAccount.accName,
         accountId: customerAccount.id,
         note: 'الدفع الاولى الى ${BillType.sales.accounts[BillAccounts.caches]!.accName}',
@@ -411,4 +392,36 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
 
   @override
   String getModelId(BillModel model) => model.billId!;
+
+  String _getVatAccountId(MaterialModel materialModel) {
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
+      return AppConstants.taxLocalAccountId;
+    } else {
+      return AppConstants.taxFreeAccountId;
+    }
+  }
+
+  String _getRefundVatAccountId(MaterialModel materialModel) {
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
+      return AppConstants.returnTaxAccountId;
+    } else {
+      return AppConstants.returnFreeTaxAccountId;
+    }
+  }
+
+  String _getVatAccountName(MaterialModel materialModel) {
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
+      return AppConstants.taxLocalAccountName;
+    } else {
+      return AppConstants.taxFreeAccountName;
+    }
+  }
+
+  String _getRefundVatAccountName(MaterialModel materialModel) {
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
+      return AppConstants.returnTaxAccountName;
+    } else {
+      return AppConstants.returnFreeTaxAccountName;
+    }
+  }
 }

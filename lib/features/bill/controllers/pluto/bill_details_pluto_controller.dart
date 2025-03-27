@@ -60,12 +60,10 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
       PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
 
   @override
-  String calculateAmountFromRatio(double ratio, double total) =>
-      _calculator.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
+  String calculateAmountFromRatio(double ratio, double total) => _calculator.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
 
   @override
-  String calculateRatioFromAmount(double amount, double total) =>
-      _calculator.calculateRatioFromAmount(amount, total).toStringAsFixed(2);
+  String calculateRatioFromAmount(double amount, double total) => _calculator.calculateRatioFromAmount(amount, total).toStringAsFixed(2);
 
   @override
   double get computeWithVatTotal => _calculator.computeWithVatTotal;
@@ -97,10 +95,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
     final materialController = read<MaterialController>();
 
-    final List<InvoiceRecordModel> invoiceRecords = recordsTableStateManager.rows
-        .map((row) => _processBillRow(row, materialController))
-        .whereType<InvoiceRecordModel>()
-        .toList();
+    final List<InvoiceRecordModel> invoiceRecords =
+        recordsTableStateManager.rows.map((row) => _processBillRow(row, materialController)).whereType<InvoiceRecordModel>().toList();
 
     generateSellMaterialsSerialsControllers(invoiceRecords);
 
@@ -152,8 +148,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   /// Ensures the [controllers] list has exactly [requiredCount] items.
   /// Adds [TextEditingController] instances if there are fewer than required,
   /// or disposes and removes any excess controllers.
-  List<TextEditingController> _matchControllerCount(
-      List<TextEditingController> controllers, int requiredCount, BillItem billItem) {
+  List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount, BillItem billItem) {
     final int currentCount = controllers.length;
 
     if (currentCount < requiredCount) {
@@ -347,8 +342,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     );
   }
 
-  void _showDeleteConfirmationDialog(event, BuildContext context) =>
-      _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
+  void _showDeleteConfirmationDialog(event, BuildContext context) => _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
     log("onAdditionsDiscountsChanged");
@@ -461,6 +455,22 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
       }
     }
   }
+
+  /// this for mobile
+/*  @override
+  void updateWithSelectedMaterial({
+    required MaterialModel? materialModel,
+    required PlutoGridStateManager stateManager,
+    required IPlutoController plutoController,
+    required BillTypeModel billTypeModel,
+  }) =>
+      _gridService.updateWithSelectedMaterial(materialModel, stateManager, plutoController, billTypeModel);
+ late BuildContext context;
+
+  setContext(BuildContext context) {
+    this.context = context;
+  }
+ */
 }
 
 // 530 - 236

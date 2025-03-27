@@ -14,11 +14,11 @@ class DashBoardAccountWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 35.w,
-      height: 35.h,
+      height: 28.h,
       padding: EdgeInsets.symmetric(horizontal: 3.w),
       alignment: Alignment.center,
       decoration:
-      BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.white, border: Border.all(color: AppColors.blueColor)),
+      BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.white, border: Border.all(color: AppColors.blueColor)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.end,

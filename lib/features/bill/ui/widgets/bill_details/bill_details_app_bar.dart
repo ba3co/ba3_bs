@@ -119,6 +119,17 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
         ),
+     ///this for mobile
+     /*   CustomIconButton(
+          disabled: false,
+          onPressed: () {
+            billDetailsController.showBarCodeScanner(context, billTypeModel);
+          },
+          icon: LanguageSwitchFaIcon(
+
+            iconData: FontAwesomeIcons.barcode,
+          ),
+        ),*/
       ],
     );
 

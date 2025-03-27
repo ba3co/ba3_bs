@@ -178,9 +178,14 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
 
   @HiveField(54)
   final Map<String, bool>? serialNumbers;
-
+  @HiveField(55)
+  final int? matLocalQuantity;
+  @HiveField(56)
+  final int? matFreeQuantity;
   MaterialModel({
     this.id,
+    this.matLocalQuantity,
+    this.matFreeQuantity,
     this.matCode,
     this.matName,
     this.matBarCode,
@@ -253,6 +258,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matCurrencyVal: json['MatCurrencyVal']?.toDouble(),
       matPictureGuid: json['MatPictureGuid']?.toString(),
       matType: json['MatType'],
+      matFreeQuantity: json['matFreeQuantity'],
+       matLocalQuantity: json['matLocalQuantity'],
       matSecurity: json['MatSecurity'],
       matFlag: json['MatFlag'],
       matExpireFlag: json['MatExpireFlag'],
@@ -318,6 +325,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'matExtraBarcode': matExtraBarcode,
         'MatQuantity': matQuantity,
         'calcMinPrice': calcMinPrice,
+        'matLocalQuantity': matLocalQuantity,
         'serialNumbers': serialNumbers,
         // 'MatUnity': matUnity,
         // 'MatPriceType': matPriceType,
@@ -477,6 +485,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     final String? endUserPrice,
     final String? matVatGuid,
     final int? matQuantity,
+    final int? matLocalQuantity,
+    final int? matFreeQuantity,
     final double? calcMinPrice,
     final Map<String, bool>? serialNumbers,
   }) {
@@ -535,6 +545,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matQuantity: matQuantity ?? this.matQuantity,
       calcMinPrice: calcMinPrice ?? this.calcMinPrice,
       serialNumbers: serialNumbers ?? this.serialNumbers,
+      matLocalQuantity: matLocalQuantity ?? this.matLocalQuantity,
+      matFreeQuantity: matFreeQuantity ?? this.matFreeQuantity,
     );
   }
 

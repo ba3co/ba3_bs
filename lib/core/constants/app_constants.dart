@@ -370,8 +370,26 @@ abstract class AppConstants {
   static const String chequeToAccountName = 'اوراق الدفع';
   static const String bankAccountId = 'a3fe9771-c9cf-4790-b782-c1c3977bcd99';
   static const String bankToAccountName = 'المصرف';
+
+  ///------------------------------------------
+  static const String taxLocalAccountId = '3044a58b-8a76-461b-9385-cb87df3e0afd';
+  static const String taxLocalAccountName = 'ضريبة القيمة المضافة رأس الخيمة';
   static const String returnTaxAccountId = '81e6d822-e3ee-4f42-92bf-f96eed4a0045';
   static const String returnTaxAccountName = 'استرداد ضريبة القيمة المضافة رأس الخيمة';
+
+
+
+
+  ///------------------------------------------
+  static const String taxFreeAccountId = '19dccbca-b32e-4604-b37c-980cbbd2f15a';
+  static const String taxFreeAccountName = 'ضريبة القيمة المضافة فري زون';
+  static const String returnFreeTaxAccountId = '2181459c-3293-42f5-b80e-7232e824786f';
+  static const String returnFreeTaxAccountName = 'استرداد ضريبة القيمة المضافة فري زون';
+
+
+
+
+  ///------------------------------------------
   static const String primaryCashAccountId = '5b36c82d-9105-4177-a5c3-0f90e5857e3c';
   static const String primaryCashAccountName = 'الصندوق';
 
