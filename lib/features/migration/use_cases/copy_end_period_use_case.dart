@@ -52,6 +52,7 @@ class CopyEndPeriodUseCase {
       billPayType: InvPayType.cash.index,
       billDate: DateTime.now(),
       billCustomerId: '',
+      billAccountId: '',
       billSellerId: '',
       billGiftsTotal: 0,
       billDiscountsTotal: 0,

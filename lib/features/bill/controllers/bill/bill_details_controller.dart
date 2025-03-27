@@ -12,6 +12,7 @@ import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_sa
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
+import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ import '../../../../core/services/firebase/implementations/services/firestore_se
 import '../../../../core/services/whatsapp/whatsapp_service.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../../customer/data/models/customer_model.dart';
 import '../../../materials/controllers/material_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import '../../../materials/service/serial_number_model_factory.dart';
@@ -66,6 +68,7 @@ class BillDetailsController extends IBillController
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
   final TextEditingController customerAccountController = TextEditingController();
+  final TextEditingController billAccountController = TextEditingController();
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
 
@@ -77,7 +80,8 @@ class BillDetailsController extends IBillController
   final TextEditingController invReturnCodeController = TextEditingController();
   final TextEditingController invFirstPayController = TextEditingController();
 
-  AccountModel? selectedCustomerAccount;
+  CustomerModel? selectedCustomerAccount;
+  AccountModel? selectedBillAccount;
 
   Rx<DateTime> billDate = DateTime.now().obs;
 
@@ -100,11 +104,17 @@ class BillDetailsController extends IBillController
     }
   }
 
-  @override
-  void updateCustomerAccount(AccountModel? newAccount) {
+  // @override
+  void updateCustomerAccount(CustomerModel? newAccount) {
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
-      customerAccountController.text = newAccount.accName!;
+      customerAccountController.text = newAccount.name!;
+    }
+  }
+  void updateBillAccount(AccountModel? newAccount) {
+    if (newAccount != null) {
+      selectedBillAccount = newAccount;
+      billAccountController.text = newAccount.accName!;
     }
   }
 
@@ -542,7 +552,7 @@ class BillDetailsController extends IBillController
 
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
-      if (!_billUtils.validateCustomerAccount(selectedCustomerAccount)) {
+      if (/*!_billUtils.validateCustomerAccount(selectedCustomerAccount)&&*/!_billUtils.validateBillAccount(selectedBillAccount)) {
         return null;
       }
     }
@@ -554,7 +564,7 @@ class BillDetailsController extends IBillController
     final updatedBillTypeModel = _accountHandler.updateBillTypeAccounts(
           billTypeModel,
           billDetailsPlutoController.generateDiscountsAndAdditions,
-          selectedCustomerAccount,
+          selectedBillAccount,
           selectedStore.value,
         ) ??
         billTypeModel;
@@ -569,6 +579,7 @@ class BillDetailsController extends IBillController
       billDate: billDate.value,
       billFirstPay: firstPayController.text.toDouble,
       billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      billAccountId: selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billSellerId: sellerController.selectedSellerAccount!.costGuid ?? '',
       billPayType: selectedPayType.value.index,
     );
@@ -591,10 +602,16 @@ class BillDetailsController extends IBillController
   prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);
 
-  initCustomerAccount(AccountModel? account) {
+  initCustomerAccount(CustomerModel? account) {
     if (account != null) {
       selectedCustomerAccount = account;
-      customerAccountController.text = account.accName!;
+      customerAccountController.text = account.name!;
+    }
+  }
+  initBillAccount(AccountModel? account) {
+    if (account != null) {
+      selectedBillAccount = account;
+      billAccountController.text = account.accName!;
     }
   }
 
@@ -617,8 +634,8 @@ class BillDetailsController extends IBillController
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
     initBillNumberController(bill.billDetails.billNumber);
-
-    initCustomerAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
+    initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
+    initBillAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
 
     read<SellersController>().initSellerAccount(sellerId: bill.billDetails.billSellerId, billDetailsController: this);
 
