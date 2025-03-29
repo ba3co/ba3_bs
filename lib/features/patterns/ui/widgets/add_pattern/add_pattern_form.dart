@@ -55,7 +55,7 @@ class AddPatternForm extends StatelessWidget {
           FormFieldRow(
             firstItem: PatternTypeDropdown(patternController: patternController),
             secondItem: SearchableAccountField(
-              readOnly: (patternController.selectedBillPatternType?.hasMaterialAccount ?? false),
+              readOnly: !(patternController.selectedBillPatternType?.hasMaterialAccount ?? false),
               label: AppStrings.materials.tr,
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
@@ -74,7 +74,7 @@ class AddPatternForm extends StatelessWidget {
           FormFieldRow(
               firstItem: SearchableAccountField(
                 label: AppStrings.discounts.tr,
-                readOnly: (patternController.selectedBillPatternType?.hasDiscountsAccount ?? false),
+                readOnly: !(patternController.selectedBillPatternType?.hasDiscountsAccount ?? false),
                 onSubmitted: (text) async {
                   AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                     query: text,
@@ -91,7 +91,7 @@ class AddPatternForm extends StatelessWidget {
               ),
               secondItem: SearchableAccountField(
                 label: AppStrings.additions.tr,
-                readOnly: (patternController.selectedBillPatternType?.hasAdditionsAccount ?? false),
+                readOnly: !(patternController.selectedBillPatternType?.hasAdditionsAccount ?? false),
                 onSubmitted: (text) async {
                   AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                     query: text,
@@ -109,7 +109,7 @@ class AddPatternForm extends StatelessWidget {
           FormFieldRow(
             firstItem: SearchableAccountField(
               label: AppStrings.cashes.tr,
-              readOnly: (patternController.selectedBillPatternType?.hasCashesAccount ?? false),
+              readOnly: !(patternController.selectedBillPatternType?.hasCashesAccount ?? false),
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -126,7 +126,7 @@ class AddPatternForm extends StatelessWidget {
             ),
             secondItem: SearchableAccountField(
               label: AppStrings.gifts.tr,
-              readOnly: (patternController.selectedBillPatternType?.hasGiftsAccount ?? false),
+              readOnly: !(patternController.selectedBillPatternType?.hasGiftsAccount ?? false),
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
@@ -144,7 +144,7 @@ class AddPatternForm extends StatelessWidget {
           ),
           FormFieldRow(
             firstItem: SearchableAccountField(
-              readOnly: (patternController.selectedBillPatternType?.hasGiftsAccount ?? false),
+              readOnly: !(patternController.selectedBillPatternType?.hasGiftsAccount ?? false),
               onSubmitted: (text) async {
                 AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
