@@ -10,6 +10,7 @@ class MatStatementModel implements PlutoAdaptable {
   final int? quantity;
   final int? defQuantity;
 
+
   final double? price;
   final DateTime? date;
   final String? note;
@@ -69,6 +70,7 @@ class MatStatementModel implements PlutoAdaptable {
     final String? docId,
     final String? matId,
     final String? matName,
+    final bool? fromBill,
   }) {
     return MatStatementModel(
       matOrigin: matOrigin ?? this.matOrigin,
@@ -120,11 +122,15 @@ class MatOrigin {
   /// Refers to the number of origin of mat (billNumber).
   final int? originNumber;
 
+
+  final bool? fromBill;
+
   MatOrigin({
     this.originId,
     this.originTypeId,
     this.originType,
     this.originNumber,
+    this.fromBill,
   });
 
   factory MatOrigin.fromJson(Map<String, dynamic> json) {
@@ -132,6 +138,7 @@ class MatOrigin {
       originId: json['originId'] as String?,
       originNumber: json['originNumber'] as int?,
       originTypeId: json['originTypeId'] as String?,
+      fromBill: json['fromBill'] as bool?,
       originType: MatOriginType.byLabel(json['originType']),
     );
   }
@@ -141,6 +148,7 @@ class MatOrigin {
       'originId': originId,
       'originNumber': originNumber,
       'originTypeId': originTypeId,
+      'fromBill': fromBill,
       'originType': originType?.label,
     };
   }
@@ -150,12 +158,14 @@ class MatOrigin {
     int? originNumber,
     String? originTypeId,
     MatOriginType? originType,
+    bool? fromBill,
   }) {
     return MatOrigin(
       originId: originId ?? this.originId,
       originNumber: originNumber ?? this.originNumber,
       originTypeId: originTypeId ?? this.originTypeId,
       originType: originType ?? this.originType,
+      fromBill: fromBill ?? this.fromBill,
     );
   }
 }

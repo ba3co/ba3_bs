@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_type_model.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -22,20 +23,21 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
 
     final mergedItems = model.items.itemList.merge();
 
-    return mergedItems.map(
-      (matItem) {
-        return MatStatementModel(
-            matOrigin: MatStatementCreatorFactory.resolveOriginType(model),
-            matId: matItem.itemGuid,
-            matName: matItem.itemName,
-            originId: model.billId,
-            quantity: quantityStrategy.calculateQuantity(matItem.itemQuantity),
-            date: model.billDetails.billDate!,
-            price: _getStatementPrice(model, matItem),
-            note: '${model.billTypeModel.fullName}',
-            defQuantity: _getStatementDefQuantity(matItem, updatedMaterials, quantityStrategy));
-      },
-    ).toList();
+    // Mapping over mergedItems to create a list of MatStatementModel instances
+    return mergedItems.map((matItem) {
+      final updatedModel = _getUpdatedModel(model, matItem);
+      return MatStatementModel(
+        matOrigin: MatStatementCreatorFactory.resolveOriginType(updatedModel),
+        matId: matItem.itemGuid,
+        matName: matItem.itemName,
+        originId: model.billId,
+        quantity: quantityStrategy.calculateQuantity(matItem.itemQuantity),
+        date: model.billDetails.billDate!,
+        price: _getStatementPrice(model, matItem),
+        note: model.billTypeModel.fullName,
+        defQuantity: _getStatementDefQuantity(matItem, updatedMaterials, quantityStrategy),
+      );
+    }).toList();
   }
 
   /// we need to min price instead of endUserPrice  to calculate in min price
@@ -47,6 +49,17 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
     } else {
       return matItem.itemSubTotalPrice!;
     }
+  }
+// Helper function to update the bill model based on the material item
+  BillModel _getUpdatedModel(BillModel model, BillItem matItem) {
+    if (model.billTypeModel.isSellRelated) {
+      final currentMaterial =
+      read<MaterialController>().getMaterialById(matItem.itemGuid)!;
+      if ((currentMaterial.matLocalQuantity ?? 0) >= 0) {
+        return model.copyWith(freeBill: true);
+      }
+    }
+    return model;
   }
 
   /// The specified quantity is different when we update invoices

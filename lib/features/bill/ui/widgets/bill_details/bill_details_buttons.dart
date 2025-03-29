@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.d
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -70,6 +71,8 @@ class BillDetailsButtons extends StatelessWidget {
                       billDetailsController.openFirstPayDialog(context);
                     })
                 : SizedBox()),
+            freeLocalSwitcher(billDetailsController: billDetailsController),
+
           ],
         ),
       ),
@@ -167,6 +170,27 @@ class BillDetailsButtons extends StatelessWidget {
       fontSize: 14,
       color: color ?? Colors.blue.shade700,
       onPressed: onPressed,
+    );
+  }
+
+  Widget freeLocalSwitcher({required BillDetailsController billDetailsController,}){
+    return AdvancedSwitch(
+      controller: billDetailsController.advancedSwitchController,
+      activeColor: Colors.green,
+      inactiveColor: Colors.grey,
+        inactiveChild : Text('فري'),
+      activeChild : Text('لوكال'),
+      // activeImage: AssetImage('assets/images/on.png'),
+      // inactiveImage: AssetImage('assets/images/off.png'),
+      borderRadius: BorderRadius.all(Radius.circular(15)),
+      width: 100.0,
+      height: 30.0,
+      enabled: true,
+      disabledOpacity: 0.5,
+      onChanged: (value) {
+        // Update the switch state in the GetX controller.
+        billDetailsController.updateSwitch(value);
+      },
     );
   }
 }

@@ -86,6 +86,7 @@ class BillDetailsController extends IBillController
   Rx<DateTime> billDate = DateTime.now().obs;
 
   Rx<InvPayType> selectedPayType = InvPayType.cash.obs;
+  Rx<bool> freeBill = false.obs;
 
   BillType billType = BillType.sales;
   bool isLoading = true;
@@ -568,6 +569,7 @@ class BillDetailsController extends IBillController
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
+      freeBill:  freeBill.value,
       billNote: noteController.text,
       orderNumber: orderNumberController.text,
       customerPhone: customerPhoneController.text,
@@ -663,6 +665,16 @@ class BillDetailsController extends IBillController
   showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);
 
   void openFirstPayDialog(BuildContext context) => _billService.showFirstPayDialog(context, firstPayController);
+
+  // Initialize the AdvancedSwitchController with a default value.
+  final advancedSwitchController = ValueNotifier( false);
+
+  // Optional: helper method to update the switch value.
+  void updateSwitch(bool newValue) {
+    advancedSwitchController.value = newValue;
+    // You can call update() if you are using GetBuilder or other reactive methods.
+    update();
+  }
 
   /// this for mobile
 /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(

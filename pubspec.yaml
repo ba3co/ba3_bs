@@ -63,6 +63,7 @@ dependencies:
   flutter_datetime_picker_plus: ^2.2.0
   image_picker: ^1.1.2
   uuid: ^4.5.1
+  flutter_advanced_switch: ^3.1.0
 #  firebase_remote_config: ^5.4.2
 #  firebase_storage: ^12.4.4
 

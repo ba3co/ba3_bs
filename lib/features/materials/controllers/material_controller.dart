@@ -219,7 +219,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
           item.matCode!.toString().toLowerCase() == lowerQuery ||
           (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
           (item.serialNumbers != null &&
-              item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
+              item.serialNumbers!.entries
+                  .any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
     );
 
     if (exactMatch.length == 1) {
@@ -345,7 +346,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       return;
     }
 
-    final hiveResult = materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+    final hiveResult =
+        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -505,19 +507,36 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   /// Increases the quantity of a material by a given amount.
   /// Uses `updateMaterial` to modify `matQuantity`.
-  Future<void> updateMaterialQuantity(String matId, int quantity) async {
+  Future<void> updateMaterialQuantity(String matId, int quantity, bool? freeBill) async {
+    int? matFreeQuantity;
+    int? matLocalQuantity;
     await updateAndSaveMaterial(
       matId,
-      (material) => material.copyWith(
-        matQuantity: (material.matQuantity ?? 0) + quantity,
-      ),
+      (material) {
+        if (freeBill == true) {
+          matFreeQuantity = (material.matQuantity ?? 0) + quantity;
+        } else {
+          matLocalQuantity = (material.matQuantity ?? 0) + quantity;
+        }
+        return material.copyWith(
+          matFreeQuantity: matFreeQuantity,
+          matLocalQuantity: matLocalQuantity,
+          matQuantity: (material.matQuantity ?? 0) + quantity,
+        );
+      },
     );
   }
 
   /// Sets the quantity of a material to a specific value.
   /// Unlike `updateMaterialQuantity`, this function replaces the quantity instead of adding to it.
-  Future<void> setMaterialQuantity(String matId, int quantity) async {
-    await updateAndSaveMaterial(matId, (material) => material.copyWith(matQuantity: quantity));
+  Future<void> setMaterialQuantity(String matId, int quantity, int matFreeQuantity, int matLocalQuantity) async {
+    await updateAndSaveMaterial(
+        matId,
+        (material) => material.copyWith(
+              matQuantity: quantity,
+              matFreeQuantity: matFreeQuantity,
+              matLocalQuantity: matLocalQuantity,
+            ));
   }
 
   /// Updates both the quantity and minimum price of a material.
@@ -527,18 +546,31 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     required int quantity,
     required double priceInStatement,
     required int quantityInStatement,
+    bool? freeBill,
   }) async {
+    int? matFreeQuantity;
+    int? matLocalQuantity;
+
     await updateAndSaveMaterial(
       matId,
-      (material) => material.copyWith(
-        matQuantity: (material.matQuantity ?? 0) + quantity,
-        calcMinPrice: _calcMinPrice(
-          oldMinPrice: material.calcMinPrice ?? 0,
-          oldQuantity: material.matQuantity ?? 0,
-          priceInStatement: priceInStatement,
-          quantityInStatement: quantityInStatement,
-        ),
-      ),
+      (material) {
+        if (freeBill == true) {
+          matFreeQuantity = (material.matQuantity ?? 0) + quantity;
+        } else {
+          matLocalQuantity = (material.matQuantity ?? 0) + quantity;
+        }
+        return material.copyWith(
+          matFreeQuantity: matFreeQuantity,
+          matLocalQuantity: matLocalQuantity,
+          matQuantity: (material.matQuantity ?? 0) + quantity,
+          calcMinPrice: _calcMinPrice(
+            oldMinPrice: material.calcMinPrice ?? 0,
+            oldQuantity: material.matQuantity ?? 0,
+            priceInStatement: priceInStatement,
+            quantityInStatement: quantityInStatement,
+          ),
+        );
+      },
     );
   }
 
@@ -547,6 +579,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   Future<void> updateMaterialQuantityAndPriceWhenDeleteBill({
     required String matId,
     required int quantity,
+    int? matFreeQuantity,
+    int? matLocalQuantity,
     required double currentMinPrice,
     required double lastEnterPrice,
   }) async {
@@ -554,6 +588,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       matId,
       (material) => material.copyWith(
         matQuantity: quantity,
+        matFreeQuantity: matFreeQuantity,
+        matLocalQuantity: matLocalQuantity,
         calcMinPrice: currentMinPrice,
         matLastPriceCurVal: lastEnterPrice,
       ),

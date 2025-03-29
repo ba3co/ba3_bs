@@ -29,6 +29,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
 
   final BillItems items;
   final BillDetails billDetails;
+  final bool? freeBill;
 
   final Status status;
 
@@ -38,10 +39,12 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     required this.items,
     required this.billDetails,
     required this.status,
+    required this.freeBill,
   });
 
   factory BillModel.fromJson(Map<String, dynamic> json) => BillModel(
         billId: json['docId'],
+    freeBill: json['freeBill'],
         billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
         billDetails: BillDetails.fromJson(json['billDetails']),
         items: BillItems.fromJson(json['items']),
@@ -51,6 +54,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
   factory BillModel.empty({required BillTypeModel billTypeModel, int lastBillNumber = 0, int? previousBillNumber}) => BillModel(
         billTypeModel: billTypeModel,
         status: Status.pending,
+      freeBill:false,
         items: const BillItems(itemList: []),
         billDetails: BillDetails(
           billPayType: InvPayType.cash.index,
@@ -79,6 +83,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     required double billFirstPay,
     required double billWithoutVatTotal,
     required BillTypeModel billTypeModel,
+    required bool freeBill,
     required List<InvoiceRecordModel> billRecords,
   }) {
     final billDetails = BillDetails.fromBillData(
@@ -108,22 +113,25 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
             billDetails: billDetails,
             items: items,
             status: status,
+      freeBill: freeBill,
           )
         : billModel.copyWith(
             billTypeModel: billTypeModel,
             billDetails: billDetails,
             items: items,
             status: status,
+      freeBill: freeBill,
           );
   }
 
-  factory BillModel.fromImportedJsonFile(Map<String, dynamic> billData) {
+  factory BillModel.fromImportedJsonFile(Map<String, dynamic> billData,bool freeBill) {
     DateFormat dateFormat = DateFormat('yyyy-M-d');
     double billTotal = 0;
     double billVatTotal = 0;
     double billGiftsTotal = 0;
     return BillModel(
       status: Status.approved,
+      freeBill: freeBill,
       billId: billData['B']['BillGuid'],
       items: BillItems(
         itemList: (billData['Items']['I'] is List<dynamic>)
@@ -292,6 +300,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         'billDetails': billDetails.toJson(),
         'items': items.toJson(),
         'status': status.value,
+        'freeBill': freeBill,
       };
 
   BillModel copyWith({
@@ -300,6 +309,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
     final BillItems? items,
     final BillDetails? billDetails,
     final Status? status,
+    final bool? freeBill,
   }) =>
       BillModel(
         billId: billId ?? this.billId,
@@ -307,6 +317,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         items: items ?? this.items,
         billDetails: billDetails ?? this.billDetails,
         status: status ?? this.status,
+        freeBill: freeBill ?? this.freeBill,
       );
 
   @override

@@ -26,8 +26,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Bill'] ?? [];
-
-    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>)).toList();
+bool freeBill=false;
+    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>,freeBill)).toList();
   }
 
   late Map<String, int> billsNumbers;
@@ -203,8 +203,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       };
 
       billJson['Items'] = {"I": itemsJson};
-
-      final BillModel bill = BillModel.fromImportedJsonFile(billJson);
+bool freeBill=false;
+      final BillModel bill = BillModel.fromImportedJsonFile(billJson,freeBill);
 
       final List<BillModel> splitBills = _divideLargeBillUseCase.execute(bill);
       bills.assignAll(splitBills);

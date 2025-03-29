@@ -20,6 +20,7 @@ class MatStatementCreatorFactory {
         originNumber: model.billDetails.billNumber,
         originTypeId: model.billTypeModel.billTypeId,
         originType: MatOriginType.bill,
+        fromBill: model.freeBill
       );
     }
     throw UnimplementedError("No EntryBondType defined for model of type ${model.runtimeType}");
