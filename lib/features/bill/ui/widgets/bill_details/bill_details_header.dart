@@ -96,13 +96,13 @@ class BillDetailsHeader extends StatelessWidget {
                 textEditingController: billDetailsController.customerAccountController,
                 // validator: (value) => billDetailsController.validator(value, AppStrings.customerAccount.tr),
                 onSubmitted: (text) async {
-                  CustomerModel? accountModel = await read<AccountsController>().openCustomerSelectionDialog(
-                    accountId:billDetailsController.selectedBillAccount?.id! ,
+                  CustomerModel? customerModel = await read<AccountsController>().openCustomerSelectionDialog(
+                    accountId: billDetailsController.selectedBillAccount?.id!,
                     query: text,
                     context: context,
                   );
-                  if (accountModel != null) {
-                    billDetailsController.updateCustomerAccount(accountModel);
+                  if (customerModel != null) {
+                    billDetailsController.updateCustomerAccount(customerModel, billModel.billTypeModel);
                   }
                 },
               ),

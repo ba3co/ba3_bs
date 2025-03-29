@@ -32,6 +32,7 @@ class BillPlutoContextMenu {
     required int index,
     required BillTypeModel billTypeModel,
     required PlutoRow row,
+    required bool isPurchaseWithOutVat,
   }) {
     OverlayService.showPopupMenu(
       context: context,
@@ -48,6 +49,7 @@ class BillPlutoContextMenu {
           subTotal: invoiceUtils.getPrice(type: type, materialModel: materialModel),
           quantity: quantity,
           billTypeModel: billTypeModel,
+            isPurchaseWithOutVat:isPurchaseWithOutVat
         );
         plutoController.update();
       },

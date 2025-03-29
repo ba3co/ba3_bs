@@ -24,10 +24,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // UserModel currentUser = read<UserManagementController>().loggedInUserModel!;
-    // List<UserTaskModel> currentUserTasks = read<UserManagementController>().allTaskList;
-    // List<UserTaskModel> currentUserTasksEnded = read<UserManagementController>().allTaskListDone;
-    // read<UserManagementController>()
+
     final salesController = read<SellerSalesController>();
     salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel?.userSellerId).then(
           (value) => salesController.calculateTotalAccessoriesMobiles(),

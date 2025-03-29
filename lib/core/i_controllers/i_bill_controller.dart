@@ -1,6 +1,5 @@
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-import '../../features/accounts/data/models/account_model.dart';
 
 abstract class IBillController extends GetxController {
   // void updateCustomerAccount(AccountModel? newAccount);

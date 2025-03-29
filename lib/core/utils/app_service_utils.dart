@@ -132,6 +132,7 @@ class AppServiceUtils {
       return numbers.isNotEmpty ? numbers.first.toString() : "0.0";
     }
   }
+
   static String extractNumbersAndCalculateToInt(String input) {
     // استبدال الفاصلة العربية بالنقطة
 
@@ -218,7 +219,8 @@ class AppServiceUtils {
     }
   }
 
-  static double toFixedDouble(double? value, [int fractionDigits = 2]) => double.tryParse(value?.toStringAsFixed(fractionDigits) ?? '0') ?? 0.0;
+  static double toFixedDouble(double? value, [int fractionDigits = 2]) =>
+      double.tryParse(value?.toStringAsFixed(fractionDigits) ?? '0') ?? 0.0;
 
   static double calcSub(int vatRatio, double subTotal) {
     double sub = subTotal * (1 + (vatRatio / 100));
@@ -347,6 +349,7 @@ class AppServiceUtils {
 
     return '$originName: $originNumber';
   }
+
   static Map<String, int> convertMinutesToHoursAndMinutes(int totalMinutes) {
     final hours = totalMinutes ~/ 60;
     final minutes = totalMinutes % 60;
@@ -355,16 +358,14 @@ class AppServiceUtils {
       'minutes': minutes,
     };
   }
+
   static String convertMinutesAndFormat(int totalMinutes) {
     final hours = totalMinutes ~/ 60;
     final minutes = totalMinutes % 60;
-    return
-      '${AppStrings.hours} $hours  ${AppStrings.minutes} $minutes'
-
-    ;
+    return '${AppStrings.hours} $hours  ${AppStrings.minutes} $minutes';
   }
 
- static DateTime? getLastLogin(Map<String, UserTimeModel>? userTimeModel) {
+  static DateTime? getLastLogin(Map<String, UserTimeModel>? userTimeModel) {
     DateTime? latestLogin;
 
     if (userTimeModel == null) return null;
@@ -372,7 +373,7 @@ class AppServiceUtils {
     userTimeModel.forEach((date, record) {
       if (record.logInDateList != null) {
         for (var login in record.logInDateList!) {
-          if (latestLogin == null || login.isAfter(latestLogin??DateTime.now())) {
+          if (latestLogin == null || login.isAfter(latestLogin ?? DateTime.now())) {
             latestLogin = login;
           }
         }
@@ -382,7 +383,7 @@ class AppServiceUtils {
     return latestLogin;
   }
 
- static DateTime? getLastLogout(Map<String, UserTimeModel>? userTimeModel) {
+  static DateTime? getLastLogout(Map<String, UserTimeModel>? userTimeModel) {
     DateTime? latestLogout;
 
     if (userTimeModel == null) return null;
@@ -390,7 +391,7 @@ class AppServiceUtils {
     userTimeModel.forEach((date, record) {
       if (record.logOutDateList != null) {
         for (var logout in record.logOutDateList!) {
-          if (latestLogout == null || logout.isAfter(latestLogout??DateTime.now())) {
+          if (latestLogout == null || logout.isAfter(latestLogout ?? DateTime.now())) {
             latestLogout = logout;
           }
         }
@@ -399,6 +400,7 @@ class AppServiceUtils {
 
     return latestLogout;
   }
+
   /// Handles conversion of both Timestamp and DateTime dynamically
   static DateTime? convertToDateTime(dynamic value) {
     if (value is Timestamp) {
@@ -410,4 +412,13 @@ class AppServiceUtils {
     }
   }
 
+  static double parseDouble(dynamic value) {
+    if (value == null) return 0.0;
+    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString())) ?? 0;
+  }
+
+  static int parseInt(dynamic value) {
+    if (value == null) return 0;
+    return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString())) ?? 0;
+  }
 }

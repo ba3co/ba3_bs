@@ -55,16 +55,16 @@ class GenerateBillRecordsUseCase {
 
     List<String> soldSerials = materialModel.serialNumbers?.entries.where((entry) => entry.value).map((entry) => entry.key).toList() ?? [];
 
-    double vatRatio = 0;
+
 
     if (soldSerials.isNotEmpty) {
       for (String serial in soldSerials) {
         Map<String, dynamic> row = _rowToJson(materialModel, serial);
-        invoiceRecords.add(InvoiceRecordModel.fromJsonPluto(materialModel.id!, row, vatRatio));
+        invoiceRecords.add(InvoiceRecordModel.fromJsonPluto(materialModel.id!, row));
       }
     } else {
       Map<String, dynamic> row = _rowToJson(materialModel, null);
-      invoiceRecords.add(InvoiceRecordModel.fromJsonPluto(materialModel.id!, row, vatRatio));
+      invoiceRecords.add(InvoiceRecordModel.fromJsonPluto(materialModel.id!, row));
     }
 
     return invoiceRecords;

@@ -290,7 +290,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   bool doesMaterialExist(String? materialName) {
+    log('materialName $materialName');
     if (materialName == null) return false;
+
     return materials.any((material) => material.matName?.trim() == materialName.trim());
   }
 

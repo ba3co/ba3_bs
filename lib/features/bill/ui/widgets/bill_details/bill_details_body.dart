@@ -45,9 +45,9 @@ class BillDetailsBody extends StatelessWidget {
                         columns: billDetailsPlutoController.recordsTableColumns,
                         rows: billDetailsPlutoController.recordsTableRows,
                         onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
-                          billDetailsPlutoController.onMainTableRowSecondaryTap(event, context);
+                          billDetailsPlutoController.onMainTableRowSecondaryTap(event, context,(billDetailsController.selectedCustomerAccount));
                         },
-                        onChanged: billDetailsPlutoController.onMainTableStateManagerChanged,
+                        onChanged: (event)=>billDetailsPlutoController.onMainTableStateManagerChanged(event, billDetailsController.selectedCustomerAccount),
                         onLoaded: billDetailsPlutoController.onMainTableLoaded,
                         shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),
                         evenRowColor: Color(billTypeModel.color!),

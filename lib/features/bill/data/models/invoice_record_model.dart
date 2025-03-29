@@ -82,11 +82,11 @@ class InvoiceRecordModel {
         AppConstants.invRecGiftTotal: invRecGiftTotal,
       };
 
-  factory InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map, double vatRatio) {
-    final int quantity = _parseInteger(map[AppConstants.invRecQuantity]) ?? 1;
+  factory InvoiceRecordModel.fromJsonPluto(String matId, Map<dynamic, dynamic> map) {
+    final int quantity = _parseInteger(map[AppConstants.invRecQuantity]) ?? 0;
     final double total = _parseDouble(map[AppConstants.invRecTotal]) ?? 0;
-    final subTotal = (total / (quantity * (1 + vatRatio)));
-    final vat = subTotal * vatRatio;
+    final subTotal = _parseDouble(map[AppConstants.invRecSubTotal]) ?? 0;
+    final vat = _parseDouble(map[AppConstants.invRecVat]) ?? 0;
     final int? giftsNumber = _parseInteger(map[AppConstants.invRecGift]);
 
     final String? prodName = map[AppConstants.invRecProduct];
@@ -95,8 +95,7 @@ class InvoiceRecordModel {
     final List<String>? productSerialNumbers =
     (map[AppConstants.invRecProductSerialNumbers] is List) ? List<String>.from(map[AppConstants.invRecProductSerialNumbers] as List) : null;
 
-    // final double? subTotal = _parseDouble(map[AppConstants.invRecSubTotal]);
-    // final double? vat = _parseDouble(map[AppConstants.invRecVat]);
+
 
     // Calculate gift total
     final double effectiveVat = vat;
@@ -187,13 +186,7 @@ class InvoiceRecordModel {
   }
 
   Map<PlutoColumn, dynamic> toEditedMap(BillTypeModel billTypeModel) {
-    final double total = invRecTotal ?? 0;
-    final int quantity = invRecQuantity ?? 1;
-    final bool hasVat = billTypeModel.billPatternType?.hasVat ?? false;
 
-    final double subTotalStr = (quantity > 0) ? (hasVat ? AppServiceUtils.toFixedDouble(total / (quantity * 1.05)) : total / quantity) : total;
-
-    final double vat = (quantity > 0 && hasVat) ? AppServiceUtils.toFixedDouble(subTotalStr * 0.05) : 0;
 
     return {
       // Row Index Column
@@ -241,7 +234,7 @@ class InvoiceRecordModel {
         hasContextMenu: false,
         width: 110,
         readOnlyCondition: (row, cell) => cell.row.cells[AppConstants.invRecProduct]?.value == '',
-      ): subTotalStr,
+      ): invRecSubTotal,
       // Tax Column (Only if VAT is enabled)
       if (billTypeModel.billPatternType!.hasVat)
         buildPlutoColumn(
@@ -251,7 +244,7 @@ class InvoiceRecordModel {
           width: 110,
           hasContextMenu: false,
           isEditable: false,
-        ): vat,
+        ): invRecVat,
       // Total Column
       buildPlutoColumn(
         title: AppStrings.total.tr,

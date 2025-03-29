@@ -14,6 +14,7 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/utils/app_service_utils.dart';
+import '../../../customer/data/models/customer_model.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/discount_addition_account_model.dart';
 import '../../data/models/invoice_record_model.dart';
@@ -218,33 +219,41 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     additionsDiscountsStateManager.appendRows(newRows);
   }
 
-  void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event) {
+  void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event, CustomerModel? customer) {
     log('onMainTableStateManagerChanged');
+
     if (recordsTableStateManager.currentRow == null) return;
     final String field = event.column.field;
 
+    bool isPurchaseWithOutVat = billTypeModel.isPurchaseRelated && customer != null && customer.customerHasVat != true;
     // Extract and calculate values
     final quantity = _getQuantity();
     final subTotal = _getSubTotal();
     final total = _getTotal();
-    final vat = _getVat();
+    final vat = isPurchaseWithOutVat ? 0.0 : _getVat();
     final subTotalWithVat = _getSubTotalWithVat();
 
     // Handle updates based on the changed column
-    _handleColumnUpdate(field, quantity, subTotal, total, vat, subTotalWithVat);
+    _handleColumnUpdate(field, quantity, subTotal, total, vat, subTotalWithVat, isPurchaseWithOutVat);
 
     safeUpdateUI();
   }
 
-  void _handleColumnUpdate(String columnField, int quantity, double subTotal, double total, double vat, double subTotalWithVat) {
+  void _handleColumnUpdate(
+      String columnField, int quantity, double subTotal, double total, double vat, double subTotalWithVat, bool isPurchaseWithOutVat) {
     if (columnField == AppConstants.invRecSubTotal) {
-      _gridService.updateInvoiceValues(subTotal, quantity, billTypeModel);
+      _gridService.updateInvoiceValues(subTotal, quantity, billTypeModel, isPurchaseWithOutVat);
     } else if (columnField == AppConstants.invRecTotal) {
-      _gridService.updateInvoiceValuesByTotal(total, quantity, billTypeModel);
+      _gridService.updateInvoiceValuesByTotal(total, quantity, billTypeModel, isPurchaseWithOutVat);
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
-      _gridService.updateInvoiceValuesByQuantity(quantity, subTotal, vat, billTypeModel);
+      _gridService.updateInvoiceValuesByQuantity(
+        quantity,
+        subTotal,
+        vat,
+        billTypeModel,
+      );
     } else if (columnField == AppConstants.invRecSubTotalWithVat && quantity > 0) {
-      _gridService.updateInvoiceValuesBySubTotalWithVat(subTotalWithVat, quantity, billTypeModel);
+      _gridService.updateInvoiceValuesBySubTotalWithVat(subTotalWithVat, quantity, billTypeModel, isPurchaseWithOutVat);
     }
     if (billTypeModel.billPatternType?.hasDiscountsAccount ?? true) {
       updateAdditionDiscountCell(computeWithVatTotal);
@@ -281,17 +290,20 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     return AppServiceUtils.extractNumbersAndCalculate(cellValue);
   }
 
-  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {
+  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context, CustomerModel? customer) {
+    bool isPurchaseWithOutVat = billTypeModel.isPurchaseRelated && customer != null && customer.customerHasVat != true;
+
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
     final MaterialModel? materialModel = read<MaterialController>().getMaterialByName(materialName);
     if (materialModel == null) return;
 
-    _handleContextMenu(event, materialModel, context);
+    _handleContextMenu(event, materialModel, context, isPurchaseWithOutVat);
   }
 
-  void _handleContextMenu(PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel, BuildContext context) {
+  void _handleContextMenu(
+      PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel, BuildContext context, bool isPurchaseWithOutVat) {
     final field = event.cell.column.field;
     final row = event.row;
 
@@ -300,11 +312,11 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     } else if (field == AppConstants.invRecProduct) {
       _showMatMenu(event, materialModel, context, row);
     } else if (field == AppConstants.invRecSubTotal) {
-      _showPriceTypeMenu(event, materialModel, context, row);
+      _showPriceTypeMenu(event, materialModel, context, row, isPurchaseWithOutVat);
     }
   }
 
-  void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context, PlutoRow row) {
+  void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context, PlutoRow row, bool isPurchaseWithOutVat) {
     _contextMenu.showPriceTypeMenu(
         row: row,
         context: context,
@@ -313,7 +325,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         tapPosition: event.offset,
         invoiceUtils: _plutoUtils,
         gridService: _gridService,
-        billTypeModel: billTypeModel);
+        billTypeModel: billTypeModel,
+        isPurchaseWithOutVat: isPurchaseWithOutVat);
   }
 
   List<String> get materialMenu => [
@@ -399,9 +412,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
     if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
       if (billTypeModel.billPatternType?.hasVat ?? false) {
-        return _createInvoiceRecord(row, materialModel.id!, VatEnums.byGuid(materialModel.matVatGuid ?? '2').taxRatio ?? 0);
+        return _createInvoiceRecord(row, materialModel.id!);
       } else {
-        return _createInvoiceRecord(row, materialModel.id!, 0);
+        return _createInvoiceRecord(row, materialModel.id!);
       }
     }
 
@@ -409,8 +422,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   // Helper method to create an InvoiceRecordModel from a row
-  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId, double matVat) =>
-      InvoiceRecordModel.fromJsonPluto(matId, row.toJson(), matVat);
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) => InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
 
   void prepareBillMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();
@@ -454,6 +466,16 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         controller.dispose();
       }
     }
+  }
+
+  clearVat() {
+    _gridService.clearAllVatAndAddedToSubTotal(recordsTableStateManager, billTypeModel);
+    safeUpdateUI();
+  }
+
+  returnVat() {
+    _gridService.returnVatAndAddedToSubTotal(recordsTableStateManager, billTypeModel);
+    safeUpdateUI();
   }
 
   /// this for mobile
