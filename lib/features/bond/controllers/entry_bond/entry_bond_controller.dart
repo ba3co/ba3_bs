@@ -114,15 +114,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
       ),
     ]);
 
-    final logController = read<LogController>();
-
-    read<LogController>().addLog(
-      logController.getLogModel(
-        entryBondModel: entryBondModel,
-        eventType: isSave ? LogEventType.add : LogEventType.update,
-        sourceNumber: sourceNumber,
-      ),
-    );
+    read<LogController>()
+        .addLog(item: entryBondModel, eventType: isSave ? LogEventType.add : LogEventType.update, sourceNumber: sourceNumber);
 
     log('Finish _onEntryBondSaved');
   }
@@ -272,15 +265,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
         log('deleteBond Success');
-        final logController = read<LogController>();
 
-        read<LogController>().addLog(
-          logController.getLogModel(
-            entryBondModel: entryBondModel,
-            eventType: LogEventType.delete,
-            sourceNumber: sourceNumber,
-          ),
-        );
+        read<LogController>().addLog(item: entryBondModel, eventType: LogEventType.delete, sourceNumber: sourceNumber);
       },
     );
   }

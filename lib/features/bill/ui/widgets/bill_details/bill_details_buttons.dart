@@ -72,7 +72,6 @@ class BillDetailsButtons extends StatelessWidget {
                     })
                 : SizedBox()),
             freeLocalSwitcher(billDetailsController: billDetailsController),
-
           ],
         ),
       ),
@@ -173,13 +172,13 @@ class BillDetailsButtons extends StatelessWidget {
     );
   }
 
-  Widget freeLocalSwitcher({required BillDetailsController billDetailsController,}){
+  Widget freeLocalSwitcher({required BillDetailsController billDetailsController}) {
     return AdvancedSwitch(
       controller: billDetailsController.advancedSwitchController,
       activeColor: Colors.green,
       inactiveColor: Colors.grey,
-        inactiveChild : Text('فري'),
-      activeChild : Text('لوكال'),
+      inactiveChild: Text('فري'),
+      activeChild: Text('لوكال'),
       // activeImage: AssetImage('assets/images/on.png'),
       // inactiveImage: AssetImage('assets/images/off.png'),
       borderRadius: BorderRadius.all(Radius.circular(15)),

@@ -163,6 +163,13 @@ enum BillType {
     );
   }
 
+  factory BillType.byValue(String value) {
+    return BillType.values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => throw ArgumentError('No matching BillType for guide: $value'),
+    );
+  }
+
   BillTypeModel get billTypeModel => BillTypeModel(
         billTypeId: typeGuide,
         billTypeLabel: label,
@@ -344,6 +351,13 @@ enum BondType {
       orElse: () => throw ArgumentError('No matching BondType for guide: $typeGuide'),
     );
   }
+
+  factory BondType.byValue(String value) {
+    return BondType.values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => throw ArgumentError('No matching BondType for guide: $value'),
+    );
+  }
 }
 
 enum ChequesType {
@@ -390,6 +404,13 @@ enum ChequesType {
     return ChequesType.values.firstWhere(
       (type) => type.typeGuide == typeGuide,
       orElse: () => throw ArgumentError('No matching ChequesType for guide: $typeGuide'),
+    );
+  }
+
+  factory ChequesType.byValue(String value) {
+    return ChequesType.values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => throw ArgumentError('No matching ChequesType for guide: $value'),
     );
   }
 }

@@ -30,6 +30,7 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
+import '../../../logs/controllers/log_controller.dart';
 import '../../../materials/service/mat_statement_generator.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
@@ -289,7 +290,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       read<EntryBondController>()
           .deleteEntryBondModel(entryId: billModel.billId!, sourceNumber: billModel.billDetails.billNumber!);
+    } else {
+      read<LogController>().addLog(item: billModel, eventType: LogEventType.delete);
     }
+
     deleteMatsStatementsModels(billModel);
   }
 
@@ -455,6 +459,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         isSave: isSave,
         sourceNumbers: [currentBill.billDetails.billNumber!],
       );
+    } else {
+      read<LogController>().addLog(item: currentBill, eventType: isSave ? LogEventType.add : LogEventType.update);
     }
 
     // 6. Determine whether to generate a material statement.
