@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_type_model.dart';
@@ -55,8 +56,10 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
     if (model.billTypeModel.isSellRelated) {
       final currentMaterial =
       read<MaterialController>().getMaterialById(matItem.itemGuid)!;
-      if ((currentMaterial.matLocalQuantity ?? 0) >= 0) {
+      if ((currentMaterial.matLocalQuantity!) <= 0) {
         return model.copyWith(freeBill: true);
+      }else{
+        return model.copyWith(freeBill: false);
       }
     }
     return model;

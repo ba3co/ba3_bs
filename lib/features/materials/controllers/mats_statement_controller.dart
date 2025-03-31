@@ -136,7 +136,9 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     );
 
     final materialStatementList = await fetchMatStatementById(matStatementModel.matId!);
+
     if (materialStatementList != null) {
+      log(materialStatementList.map((matStatementModel) => matStatementModel.toJson()).toString());
       if (matStatementModel.quantity! < 0) {
 
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
@@ -247,7 +249,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
         0,
         (sum, item) => sum + (item.quantity ?? 0),
       );
-  int _calculateLocalQuantity(List<MatStatementModel> items) => items.where((element) => element.matOrigin?.fromBill == false,).fold(
+  int _calculateLocalQuantity(List<MatStatementModel> items) => items.where((element) => element.matOrigin?.fromBill != true,).fold(
         0,
         (sum, item) => sum + (item.quantity ?? 0),
       );
