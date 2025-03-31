@@ -16,79 +16,110 @@ class AllSellersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = read<SellersController>();
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: Text(AppStrings.allSellers.tr)),
+        backgroundColor: const Color(0xFFF4F6FA),
+        appBar: AppBar(
+          title: Text(AppStrings.allSellers.tr),
+        ),
         body: Obx(() {
           if (controller.sellers.isEmpty) {
-            return Center(child: Text(AppStrings.thereAreNoSellersYet.tr));
-          } else {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width:1.sw,
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  children: List.generate(
-                      controller.sellers.length,
-                      (index) => Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: InkWell(
-                              onTap: () => read<SellerSalesController>().navigateToSellerSalesScreen(controller.sellers[index],context),
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5), borderRadius: BorderRadius.circular(10)),
-                                height: 100.h,
-                                width: 40.w,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        controller.sellers[index].costCode?.toString() ?? '',
-                                        style: const TextStyle(fontSize: 24),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        controller.sellers[index].costName ?? '',
-                                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(Icons.delete),
-                                          color: Colors.red,
-                                          onPressed: () async {
-                                            if (await AppUIUtils.confirm(context)) {
-                                              controller.deleteSeller(controller.sellers[index].costGuid!);
-                                            }
-                                          },
-                                        ),
-                                        IconButton(
-                                          icon: Icon(
-                                            FontAwesomeIcons.solidPenToSquare,
-                                            size: 18,
-                                          ),
-                                          color: AppColors.lightBlueColor,
-                                          onPressed: () {
-                                            read<SellerSalesController>().navigateToAddSellerScreen(seller: controller.sellers[index],context: context);
-                                          },
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )),
-                ),
+            return Center(
+              child: Text(
+                AppStrings.thereAreNoSellersYet.tr,
+                style: TextStyle(fontSize: 18.sp),
               ),
             );
           }
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: controller.sellers.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: Get.width > 600 ? 3 : 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 1.1,
+            ),
+            itemBuilder: (context, index) {
+              final seller = controller.sellers[index];
+              final initials = (seller.costName ?? '؟').isNotEmpty ? seller.costName![0].toUpperCase() : '?';
+
+              return InkWell(
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                onTap: () => read<SellerSalesController>().navigateToSellerSalesScreen(seller, context),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  color: const Color(0xFFFDFDFD),
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Colors.blue.shade50,
+                          child: Text(
+                            initials,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.blue.shade700,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          seller.costName ?? '',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          'كود: ${seller.costCode ?? '---'}',
+                          style: TextStyle(fontSize: 13.sp, color: Colors.grey),
+                        ),
+                        const Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red.shade400),
+                              onPressed: () async {
+                                if (await AppUIUtils.confirm(context)) {
+                                  controller.deleteSeller(seller.costGuid!);
+                                }
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.solidPenToSquare,
+                                size: 16,
+                                color: AppColors.lightBlueColor,
+                              ),
+                              onPressed: () {
+                                read<SellerSalesController>().navigateToAddSellerScreen(
+                                  seller: seller,
+                                  context: context,
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
         }),
       ),
     );

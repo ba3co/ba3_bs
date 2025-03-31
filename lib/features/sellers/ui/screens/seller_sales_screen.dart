@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
@@ -24,15 +23,14 @@ class SellerSalesScreen extends StatelessWidget {
           // title: '${AppStrings.bills.tr} ${controller.selectedSeller!.costName}',
           appBar: _buildAppBar(context, controller),
           onLoaded: (e) {},
-          rightChild:         SizedBox(
-              width: 0.23.sw,
-              child: UserTargets(salesController: controller)),
+          rightChild: SizedBox(width: 0.23.sw, child: UserTargets(salesController: controller)),
           onSelected: (event) {
             final billId = event.row?.cells[AppConstants.billIdFiled]?.value;
             // print( (billTypeName as Map<String,dynamic>));
 
             if (billId != null) {
-              read<AllBillsController>().openFloatingBillDetailsById(billId: billId, context: context,bilTypeModel:  BillType.sales.billTypeModel);
+              read<AllBillsController>()
+                  .openFloatingBillDetailsById(billId: billId, context: context, bilTypeModel: BillType.sales.billTypeModel);
             }
           },
           isLoading: controller.isLoading,
@@ -56,7 +54,6 @@ class SellerSalesScreen extends StatelessWidget {
   Widget _buildLeadingSection(SellerSalesController controller, BuildContext context) {
     return Row(
       children: [
-
         const HorizontalSpace(20),
         DateRangePicker(
           onSubmit: () {

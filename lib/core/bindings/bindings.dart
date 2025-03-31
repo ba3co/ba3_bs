@@ -273,7 +273,7 @@ class AppBindings extends Bindings {
 
       tasksRepo: UploaderStorageQueryableRepo(UserTaskDataSource(databaseService: remoteDatabaseService)),
 
-      logsRepo: RemoteDataSourceRepository(LogDataSource(databaseService: remoteDatabaseService)),
+      logsRepo: FilterableDataSourceRepository(LogDataSource(databaseService: remoteDatabaseService)),
     );
   }
 
@@ -378,7 +378,7 @@ class _Repositories {
   final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
   final ListenDataSourceRepository<StoreCartModel> storeCartRepo;
   final UploaderStorageQueryableRepo<UserTaskModel> tasksRepo;
-  final RemoteDataSourceRepository<LogModel> logsRepo;
+  final FilterableDataSourceRepository<LogModel> logsRepo;
 
   _Repositories({
     required this.translationRepo,

@@ -40,7 +40,7 @@ class BillDetailsButtons extends StatelessWidget {
           spacing: 20,
           runSpacing: 20,
           children: [
-            if (!billDetailsController.isBillSaved.value) _buildAddAndPrintButton(context),
+            //  if (!billDetailsController.isBillSaved.value) _buildAddAndPrintButton(context),
             _buildAddButton(context),
             if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
                 (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
@@ -72,7 +72,6 @@ class BillDetailsButtons extends StatelessWidget {
                     })
                 : SizedBox()),
             freeLocalSwitcher(billDetailsController: billDetailsController),
-
           ],
         ),
       ),
@@ -87,30 +86,37 @@ class BillDetailsButtons extends StatelessWidget {
         height: 20,
         fontSize: 14,
         width: 90,
-        color: isBillSaved ? Colors.green : Colors.blue.shade700,
-        onPressed: isBillSaved
-            ? () => billDetailsController.appendNewBill(
-                billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
-            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: false),
+        color: billDetailsController.saveBillRequestState.value == RequestState.loading
+            ? Colors.grey
+            : isBillSaved
+                ? Colors.green
+                : Colors.blue.shade700,
+        onPressed: billDetailsController.saveBillRequestState.value == RequestState.loading
+            ? () {}
+            : isBillSaved
+                ? () => billDetailsController.appendNewBill(
+                    billTypeModel: billModel.billTypeModel,
+                    lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
+                : () => billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: false),
         iconData: FontAwesomeIcons.floppyDisk,
       );
     });
   }
 
-  Widget _buildAddAndPrintButton(BuildContext context) {
-    return Obx(() {
-      final isBillSaved = billDetailsController.isBillSaved.value;
-      return AppButton(
-        title: isBillSaved ? AppStrings.newS.tr : AppStrings.add.tr,
-        height: 20,
-        width: 90,
-        fontSize: 14,
-        color: Colors.blue.shade700,
-        onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: true),
-        iconData: FontAwesomeIcons.plusSquare,
-      );
-    });
-  }
+  // Widget _buildAddAndPrintButton(BuildContext context) {
+  //   return Obx(() {
+  //     final isBillSaved = billDetailsController.isBillSaved.value;
+  //     return AppButton(
+  //       title: isBillSaved ? AppStrings.newS.tr : AppStrings.add.tr,
+  //       height: 20,
+  //       width: 90,
+  //       fontSize: 14,
+  //       color: Colors.blue.shade700,
+  //       onPressed: () async => await billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: true),
+  //       iconData: FontAwesomeIcons.plusSquare,
+  //     );
+  //   });
+  // }
 
   Widget _buildApprovalOrBondButton(BuildContext context) {
     final isPending = billSearchController.isPending;
@@ -173,13 +179,13 @@ class BillDetailsButtons extends StatelessWidget {
     );
   }
 
-  Widget freeLocalSwitcher({required BillDetailsController billDetailsController,}){
+  Widget freeLocalSwitcher({required BillDetailsController billDetailsController}) {
     return AdvancedSwitch(
       controller: billDetailsController.advancedSwitchController,
       activeColor: Colors.green,
       inactiveColor: Colors.grey,
-        inactiveChild : Text('فري'),
-      activeChild : Text('لوكال'),
+      inactiveChild: Text('فري'),
+      activeChild: Text('لوكال'),
       // activeImage: AssetImage('assets/images/on.png'),
       // inactiveImage: AssetImage('assets/images/off.png'),
       borderRadius: BorderRadius.all(Radius.circular(15)),
