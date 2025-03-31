@@ -16,16 +16,18 @@ class AddAccountButtonsWidget extends StatelessWidget {
       spacing: 20,
       children: [
         AppButton(
-            title: controller.isEditAccount ? AppStrings.edit.tr : AppStrings.add.tr,
-            onPressed: () {
-              controller.saveOrUpdateAccount();
-            }),
+          title: controller.isEditAccount ? AppStrings.edit.tr : AppStrings.add.tr,
+          onPressed: () {
+            controller.saveOrUpdateAccount();
+          },
+        ),
         if (controller.isEditAccount)
           AppButton(
-              title: AppStrings.delete.tr,
-              onPressed: () {
-                controller.deleteAccount();
-              }),
+            title: AppStrings.delete.tr,
+            onPressed: () {
+              controller.deleteAccount();
+            },
+          ),
       ],
     );
   }

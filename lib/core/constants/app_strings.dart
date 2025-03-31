@@ -387,6 +387,8 @@ class AppStrings {
 
   static String success = 'نجاح';
 
+  static String usersManagement = 'ادارة المستخدمين';
+
 
   static const String whatsApp = 'WhatsApp';
 }

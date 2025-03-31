@@ -24,6 +24,7 @@ import '../../../core/router/app_routes.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
+import '../../logs/controllers/log_controller.dart';
 import '../data/models/account_model.dart';
 import '../service/account_service.dart';
 
@@ -68,8 +69,8 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     initializer();
   }
 
-  Future<void> addAccount(AccountModel seller) async {
-    final result = await _accountsFirebaseRepo.save(seller);
+  Future<void> addAccount(AccountModel account) async {
+    final result = await _accountsFirebaseRepo.save(account);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
@@ -156,7 +157,6 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   List<AccountModel> searchAccountsByNameOrCode(String text) {
-
     if (accounts.isEmpty) {
       log('Accounts isEmpty');
     }
@@ -186,10 +186,14 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
       return partialMatch.toList();
     }
 
-    return accounts.where((item) => item.accName!.toLowerCase().startsWith(text.toLowerCase()) || item.accCode!.startsWith(text)).toList();
+    return accounts
+        .where((item) => item.accName!.toLowerCase().startsWith(text.toLowerCase()) || item.accCode!.startsWith(text))
+        .toList();
   }
-  List<CustomerModel> searchAccountsCustomerByName(String text,List<String>? customerIds) {
-    List<CustomerModel> customerAccounts = read<CustomersController>().customers.where((cu) => customerIds?.contains(cu.id)??false).toList();
+
+  List<CustomerModel> searchAccountsCustomerByName(String text, List<String>? customerIds) {
+    List<CustomerModel> customerAccounts =
+        read<CustomersController>().customers.where((cu) => customerIds?.contains(cu.id) ?? false).toList();
     if (customerAccounts.isEmpty) {
       log('customerAccounts isEmpty');
     }
@@ -199,7 +203,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
     // البحث عن تطابق كامل أولاً
     var exactMatch = customerAccounts.firstWhereOrNull(
-      (item) => item.name?.toLowerCase() == text.toLowerCase() ,
+      (item) => item.name?.toLowerCase() == text.toLowerCase(),
     );
 
     if (exactMatch != null) {
@@ -219,7 +223,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
       return partialMatch.toList();
     }
 
-    return customerAccounts.where((item) => item.name!.toLowerCase().startsWith(text.toLowerCase()) ).toList();
+    return customerAccounts.where((item) => item.name!.toLowerCase().startsWith(text.toLowerCase())).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
@@ -279,7 +283,9 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);
-  List<CustomerModel> getCustomersAccounts(String query,List<String>? customerIds) => searchAccountsCustomerByName(query,customerIds);
+
+  List<CustomerModel> getCustomersAccounts(String query, List<String>? customerIds) =>
+      searchAccountsCustomerByName(query, customerIds);
 
   List<String> getAccountChildrenNames(String? accountId) {
     if (accountId == null || accountId.isEmpty) return [];
@@ -324,15 +330,15 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
     return selectedAccountModel;
   }
+
   Future<CustomerModel?> openCustomerSelectionDialog({
     required String query,
     required BuildContext context,
     required String? accountId,
   }) async {
-
-    if(accountId==null) return null;
+    if (accountId == null) return null;
     AccountModel? accountModel = getAccountModelById(accountId);
-    List<CustomerModel> searchedCustomers = getCustomersAccounts(query,accountModel?.accCustomer);
+    List<CustomerModel> searchedCustomers = getCustomersAccounts(query, accountModel?.accCustomer);
     CustomerModel? selectedCustomerModel;
 
     if (searchedCustomers.length == 1) {
@@ -411,7 +417,12 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess('تم اضافة الحساب بنجاح'),
+      (_) {
+        AppUIUtils.onSuccess('تم اضافة الحساب بنجاح');
+
+        read<LogController>()
+            .addLog(item: updatedAccountModel, eventType: isEditAccount ? LogEventType.update : LogEventType.add);
+      },
     );
   }
 
@@ -432,6 +443,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
         (failure) => AppUIUtils.onFailure(failure.message),
         (_) {
           AppUIUtils.onSuccess('تم حذف الحساب بنجاح');
+          read<LogController>().addLog(item: selectedAccount, eventType: LogEventType.delete);
         },
       );
     }

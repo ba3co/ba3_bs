@@ -27,67 +27,66 @@ class MaterialLayout extends StatelessWidget {
         return Stack(
           children: [
             Scaffold(
+              backgroundColor: const Color(0xFFF4F6FA),
               appBar: AppBar(
                 title: Text(AppStrings.materials.tr),
                 actions: RoleItemType.administrator.hasAdminPermission
                     ? [
-                        Padding(
-                          padding: EdgeInsets.all(6),
-                          child: AppButton(
-                              title: AppStrings.downloadMaterials.tr,
-                              onPressed: () {
-                                read<MaterialController>().fetchAllMaterialFromLocal();
-                              }),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(6),
-                          child: AppButton(
-                              title: AppStrings.deletedMaterials.tr,
-                              onPressed: () {
-                                read<MaterialController>().deleteAllMaterialFromLocal();
-                              }),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(6),
-                          child: AppButton(
-                              width: 100,
-                              title: AppStrings.downloadGroups.tr,
-                              onPressed: () {
-                                read<MaterialGroupController>().fetchAllMaterialGroupFromLocal();
-                              }),
-                        ),
+                        _buildAdminButton(AppStrings.downloadMaterials.tr, () {
+                          read<MaterialController>().fetchAllMaterialFromLocal();
+                        }),
+                        _buildAdminButton(AppStrings.deletedMaterials.tr, () {
+                          read<MaterialController>().deleteAllMaterialFromLocal();
+                        }),
+                        _buildAdminButton(AppStrings.downloadGroups.tr, () {
+                          read<MaterialGroupController>().fetchAllMaterialGroupFromLocal();
+                        }, width: 120),
                       ]
                     : [],
               ),
-              body: Column(
-                children: [
-                  AppMenuItem(
-                      text: AppStrings.viewMaterial.tr,
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
+                child: Column(
+                  children: [
+                    buildAppMenuItem(
+                      icon: Icons.list_alt,
+                      title: AppStrings.viewMaterial.tr,
                       onTap: () {
                         read<MaterialController>()
                           ..reloadMaterials()
                           ..navigateToAllMaterialScreen(context: context);
-                      }),
-                  AppMenuItem(
-                      text: AppStrings.viewMaterialGroups.tr,
+                      },
+                    ),
+                    buildAppMenuItem(
+                      icon: Icons.category,
+                      title: AppStrings.viewMaterialGroups.tr,
                       onTap: () {
                         read<MaterialGroupController>().navigateToAllMaterialScreen(context: context);
-                      }),
-                  if (RoleItemType.viewProduct.hasAdminPermission)
-                    AppMenuItem(
-                        text: AppStrings.addMaterials.tr,
+                      },
+                    ),
+                    if (RoleItemType.viewProduct.hasAdminPermission)
+                      buildAppMenuItem(
+                        icon: Icons.add,
+                        title: AppStrings.addMaterials.tr,
                         onTap: () {
                           read<MaterialController>().navigateToAddOrUpdateMaterialScreen(context: context);
-                        }),
-                ],
+                        },
+                      ),
+                  ],
+                ),
               ),
-              floatingActionButton: (RoleItemType.administrator.hasAdminPermission)
-                  ? FloatingActionButton(onPressed:() {
-                // read<MaterialController>().resetMaterialQuantityAndPrice();
-                read<MaterialsStatementController>().setupAllMaterials();
-
-                  } , child: Icon(Icons.lock_reset))
-                  : SizedBox(),
+              floatingActionButton: RoleItemType.administrator.hasAdminPermission
+                  ? FloatingActionButton(
+                      onPressed: () {
+                        read<MaterialsStatementController>().setupAllMaterials();
+                      },
+                      backgroundColor: Colors.blue.shade700,
+                      child: const Icon(
+                        Icons.lock_reset,
+                        color: Colors.white,
+                      ),
+                    )
+                  : null,
             ),
             LoadingDialog(
               isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,
@@ -97,6 +96,17 @@ class MaterialLayout extends StatelessWidget {
           ],
         );
       }),
+    );
+  }
+
+  Widget _buildAdminButton(String title, VoidCallback onPressed, {double? width}) {
+    return Padding(
+      padding: const EdgeInsets.all(6),
+      child: AppButton(
+        title: title,
+        width: width ?? 140,
+        onPressed: onPressed,
+      ),
     );
   }
 }
