@@ -26,7 +26,8 @@ class MaterialLayout extends StatelessWidget {
         return Stack(
           children: [
             Scaffold(
-              backgroundColor: const Color(0xFFF4F6FA),
+              // backgroundColor: const Color(0xFFF4F6FA),
+              backgroundColor: const Color(0xFFEDF3F8),
               appBar: AppBar(
                 title: Text(AppStrings.materials.tr),
                 actions: RoleItemType.administrator.hasAdminPermission

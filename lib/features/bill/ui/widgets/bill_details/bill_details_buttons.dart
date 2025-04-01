@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -72,7 +73,7 @@ class BillDetailsButtons extends StatelessWidget {
                     })
                 : SizedBox()),
             Visibility(
-                 visible: billModel.freeBill??false,
+                 visible: billModel.billTypeModel.isPurchaseRelated,
                 child: freeLocalSwitcher(billDetailsController: billDetailsController)),
           ],
         ),
