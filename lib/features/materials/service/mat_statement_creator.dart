@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_type_model.dart';
@@ -7,6 +6,7 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
 import 'package:get/get.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../bill/data/models/bill_items.dart';
 import '../../bill/data/models/bill_model.dart';
 import '../../bill/services/bill/quantity_strategy.dart';
@@ -51,14 +51,19 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
       return matItem.itemSubTotalPrice!;
     }
   }
+
 // Helper function to update the bill model based on the material item
   BillModel _getUpdatedModel(BillModel model, BillItem matItem) {
     if (model.billTypeModel.isSellRelated) {
-      final currentMaterial =
-      read<MaterialController>().getMaterialById(matItem.itemGuid)!;
-      if ((currentMaterial.matLocalQuantity!) <= 0) {
+      if (AppConstants.forceFree != null) {
+        return model.copyWith(freeBill: AppConstants.forceFree);
+      }
+
+      final currentMaterial = read<MaterialController>().getMaterialById(matItem.itemGuid)!;
+
+      if ((currentMaterial.matLocalQuantity ?? 0) <= 0) {
         return model.copyWith(freeBill: true);
-      }else{
+      } else {
         return model.copyWith(freeBill: false);
       }
     }

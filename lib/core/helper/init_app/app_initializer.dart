@@ -35,10 +35,10 @@ Future<void> initializeAppServices() async {
     log('${details.exception}', name: 'FlutterError Error');
     FlutterError.presentError(details);
   };
-
+  //   await initializeWindowSettings();
   WidgetsFlutterBinding.ensureInitialized();
 
-  //   await initializeWindowSettings();
+
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -68,10 +68,10 @@ void setupDatabaseServices() {
 
   /// 🔹 To connect to a test Firebase project, use:
 
-  // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
-  //   app: Firebase.app(),
-  //   databaseId: 'test',
-  // );
+/*  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
+    app: Firebase.app(),
+    databaseId: 'test',
+  );*/
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);

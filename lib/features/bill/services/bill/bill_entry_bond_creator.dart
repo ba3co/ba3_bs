@@ -38,14 +38,14 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
           isSalesRelated: model.billTypeModel.isSellRelated,
           date: date));
     }
-log((model.freeBill).toString());
+    log((model.freeBill).toString());
     final itemBonds = _generateBillItemBonds(
       billId: model.billId!,
       accounts: model.billTypeModel.accounts!,
       customerAccount: customerAccount,
       billItems: model.items.itemList,
       date: date,
-      isFree: model.freeBill??false,
+      isFree: model.freeBill ?? false,
       billTypeModel: model.billTypeModel,
     );
 
@@ -94,13 +94,7 @@ log((model.freeBill).toString());
                     billTypeModel: billTypeModel,
                   ),
                 ..._createOptionalBonds(
-                  billId: billId,
-                  accounts: accounts,
-                  item: item,
-                  date: date,
-                  billTypeModel: billTypeModel,
-                    isFree:isFree
-                ),
+                    billId: billId, accounts: accounts, item: item, date: date, billTypeModel: billTypeModel, isFree: isFree),
               ])
           .toList();
 
@@ -115,7 +109,6 @@ log((model.freeBill).toString());
     final giftCount = item.itemGiftsNumber;
     final giftPrice = item.itemGiftsPrice;
 
-
     final vat = _calculateActualVat(item);
     return [
       if (vat > 0 && billTypeModel.billPatternType!.hasVat)
@@ -126,7 +119,7 @@ log((model.freeBill).toString());
             quantity: item.itemQuantity,
             date: date,
             billTypeModel: billTypeModel,
-        isFree: isFree),
+            isFree: isFree),
       if (_shouldHandleGifts(accounts, giftCount, giftPrice))
         ..._createGiftBonds(
             billId: billId,
@@ -212,11 +205,11 @@ log((model.freeBill).toString());
     final accountId = item.matVatGuid == null
         ? VatEnums.withVat.taxAccountGuid
         : billTypeModel.isPurchaseRelated
-            ? _getRefundVatAccountId(materialModel,isFree)
+            ? _getRefundVatAccountId(materialModel, isFree)
             : _getVatAccountId(materialModel);
     final note = 'ضريبة ${billTypeModel.shortName} عدد $quantity من ${item.matName}';
     final String accountName =
-        billTypeModel.isPurchaseRelated ? _getRefundVatAccountName(materialModel,isFree) : _getVatAccountName(materialModel);
+        billTypeModel.isPurchaseRelated ? _getRefundVatAccountName(materialModel, isFree) : _getVatAccountName(materialModel,);
     return _createBondItem(
       amount: vat,
       billId: billId,
@@ -397,35 +390,71 @@ log((model.freeBill).toString());
   @override
   String getModelId(BillModel model) => model.billId!;
 
-
-
-  String _getRefundVatAccountId(MaterialModel materialModel,bool isFree) {
-    if ((materialModel.matLocalQuantity ?? 0) > 0&&!isFree) {
-      return AppConstants.returnTaxAccountId;
-    } else {
-      return AppConstants.returnFreeTaxAccountId;
+  String _getVatAccountId(MaterialModel materialModel,) {
+    if (AppConstants.forceFree == true) {
+      return AppConstants.taxFreeAccountId;
     }
-  }
-  String _getVatAccountId(MaterialModel materialModel) {
-    if ((materialModel.matLocalQuantity??0) > 0) {
+
+    if (AppConstants.forceFree == false) {
+      return AppConstants.taxLocalAccountId;
+    }
+
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
       return AppConstants.taxLocalAccountId;
     } else {
       return AppConstants.taxFreeAccountId;
     }
   }
-  String _getVatAccountName(MaterialModel materialModel) {
-    if ((materialModel.matLocalQuantity??0) > 0) {
+
+  String _getVatAccountName(MaterialModel materialModel,) {
+    if (AppConstants.forceFree == true) {
+      return AppConstants.taxFreeAccountName;
+    }
+
+    if (AppConstants.forceFree == false) {
+      return AppConstants.taxLocalAccountName;
+    }
+
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
       return AppConstants.taxLocalAccountName;
     } else {
       return AppConstants.taxFreeAccountName;
     }
   }
 
-  String _getRefundVatAccountName(MaterialModel materialModel,bool isFree) {
-    if ((materialModel.matLocalQuantity ?? 0) > 0&&!isFree) {
+  String _getRefundVatAccountId(MaterialModel materialModel, bool isFree,) {
+    if (AppConstants.forceFree == true || isFree) {
+      return AppConstants.returnFreeTaxAccountId;
+    }
+
+    if (AppConstants.forceFree == false) {
+      return AppConstants.returnTaxAccountId;
+    }
+
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
+      return AppConstants.returnTaxAccountId;
+    } else {
+      return AppConstants.returnFreeTaxAccountId;
+    }
+  }
+
+  String _getRefundVatAccountName(MaterialModel materialModel, bool isFree, ) {
+    if (AppConstants.forceFree == true || isFree) {
+      return AppConstants.returnFreeTaxAccountName;
+    }
+
+    if (AppConstants.forceFree == false) {
+      return AppConstants.returnTaxAccountName;
+    }
+
+    if ((materialModel.matLocalQuantity ?? 0) > 0) {
       return AppConstants.returnTaxAccountName;
     } else {
       return AppConstants.returnFreeTaxAccountName;
     }
+
+
+
+
   }
 }
