@@ -28,9 +28,9 @@ init()async{
 
         .get();
 
-    print('✅ وصلنا استجابة من Firestore: ${snapshot.docs.length}');
+    log('✅ وصلنا استجابة من Firestore: ${snapshot.docs.length}');
   } catch (e) {
-    print('❌ خطأ في الاتصال بـ Firestore: $e');
+    log('❌ خطأ في الاتصال بـ Firestore: $e');
   }
 }
 

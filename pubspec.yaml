@@ -64,6 +64,7 @@ dependencies:
   image_picker: ^1.1.2
   uuid: ^4.5.1
   flutter_advanced_switch: ^3.1.0
+  vector_math: ^2.1.4
 #  firebase_remote_config: ^5.4.2
 #  firebase_storage: ^12.4.4
 
@@ -92,6 +93,7 @@ flutter:
     - assets/icons/
     - assets/flags/
     - assets/gif_images/
+    - assets/alert_gif/
     - assets/translations/translations.json
 
 

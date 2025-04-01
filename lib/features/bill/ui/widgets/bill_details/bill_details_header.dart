@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/widgets/store_dropdown.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
+import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -112,12 +113,15 @@ class BillDetailsHeader extends StatelessWidget {
                 label: AppStrings.seller.tr,
                 readOnly: false,
                 textEditingController: billDetailsController.sellerAccountController,
-                onSubmitted: (text) {
-                  read<SellersController>().openSellerSelectionDialog(
+                onSubmitted: (text)async {
+                  SellerModel? sellerModel = await read<SellersController>().openSellerSelectionDialog(
                     query: text,
-                    textEditingController: billDetailsController.sellerAccountController,
                     context: context,
+
                   );
+                  if (sellerModel != null) {
+                    billDetailsController.updateSellerAccount(sellerModel);
+                  }
                 },
               ),
               secondItem: TextAndExpandedChildField(

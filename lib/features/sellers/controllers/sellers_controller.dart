@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
-import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/all_sellers_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
@@ -21,7 +20,7 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 
-class SellersController extends GetxController with AppNavigator,FloatingLauncher {
+class SellersController extends GetxController with AppNavigator, FloatingLauncher {
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
   final ImportRepository<SellerModel> _sellersImportRepo;
@@ -119,8 +118,9 @@ class SellersController extends GetxController with AppNavigator,FloatingLaunche
 
   // Search for sellers by text query
 
-  List<SellerModel> searchSellersByNameOrCode(text) =>
-      sellers.where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text)).toList();
+  List<SellerModel> searchSellersByNameOrCode(text) => sellers
+      .where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
+      .toList();
 
   List<String> getSellersNames(String query) {
     return searchSellersByNameOrCode(query).map((seller) => seller.costName!).toList();
@@ -152,12 +152,6 @@ class SellersController extends GetxController with AppNavigator,FloatingLaunche
     });
   }
 
-  updateSellerAccount(SellerModel? newAccount) {
-    if (newAccount != null) {
-      selectedSellerAccount = newAccount;
-    }
-  }
-
   fetchLoginSellers() async {
     UserModel userModel = read<UserManagementController>().loggedInUserModel!;
     final result = await _sellersFirebaseRepo.getById(userModel.userSellerId!);
@@ -167,38 +161,17 @@ class SellersController extends GetxController with AppNavigator,FloatingLaunche
     );
   }
 
-  void initSellerAccount({
-    required String? sellerId,
-    required BillDetailsController billDetailsController,
-  }) {
-    final String? billSellerId = sellerId ?? read<UserManagementController>().loggedInUserModel?.userSellerId;
-
-    if (billSellerId == null) {
-      selectedSellerAccount = null;
-
-      billDetailsController.sellerAccountController.text = '';
-    } else {
-      final SellerModel sellerAccount = getSellerById(billSellerId);
-
-      updateSellerAccount(sellerAccount);
-
-      billDetailsController.sellerAccountController.text = sellerAccount.costName!;
-    }
-  }
-
-  void openSellerSelectionDialog({
+  Future<SellerModel?> openSellerSelectionDialog({
     required String query,
-    required TextEditingController textEditingController,
     required BuildContext context,
-  }) {
+  }) async {
+    selectedSellerAccount = null;
     List<SellerModel> searchedSellersAccounts = getSellersAccounts(query);
     if (searchedSellersAccounts.length == 1) {
       // Single match
       selectedSellerAccount = searchedSellersAccounts.first;
-
-      textEditingController.text = selectedSellerAccount!.costName!;
     } else if (searchedSellersAccounts.isNotEmpty) {
-      OverlayService.showDialog(
+      await OverlayService.showDialog(
         context: context,
         title: 'أختر البائع',
         content: SellerSelectionDialogContent(
@@ -207,7 +180,6 @@ class SellersController extends GetxController with AppNavigator,FloatingLaunche
             OverlayService.back();
 
             selectedSellerAccount = selectedSeller;
-            textEditingController.text = selectedSeller.costName!;
           },
         ),
         onCloseCallback: () {
@@ -217,5 +189,6 @@ class SellersController extends GetxController with AppNavigator,FloatingLaunche
     } else {
       AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }
+    return selectedSellerAccount;
   }
 }

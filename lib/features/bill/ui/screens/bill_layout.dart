@@ -38,7 +38,14 @@ class BillLayout extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     child: AppButton(
                       title: AppStrings.downloadBills.tr,
-                      onPressed: () => allBillsController.fetchAllBillsFromLocal(),
+                      onPressed: () {
+                     /*   HelperAlert.showConfirm(context: context, text: AppStrings.areYouSureContinueWithoutSeller.tr,onConfirm: (){
+
+                          // validate=true;
+                        });
+                        return;*/
+                        allBillsController.fetchAllBillsFromLocal();
+                      },
                     ),
                   ),
               ],
