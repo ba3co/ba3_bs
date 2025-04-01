@@ -152,7 +152,11 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       final itemsElement = billElement.findElements('Items').single;
       final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
+        if( read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])==null){
+          log('name ${matNameWithId[iElement.findElements('MatPtr').single.text]}');
+        }
         return {
+
           'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
           /// to get the same material name in our database
           'MatName': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.matName,
