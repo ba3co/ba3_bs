@@ -14,49 +14,76 @@ class AllUserScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           appBar: AppBar(
-            title:  Text('${AppStrings.administration.tr} ${AppStrings.users.tr}'),
+            title: Text(
+              '${AppStrings.administration.tr} ${AppStrings.users.tr}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             actions: [
               AppButton(
-                  title: AppStrings.add.tr,
-                  onPressed: () {
-                    controller. userNavigator.navigateToAddUserScreen();
-                  },
-                  iconData: Icons.add),
-              const SizedBox(
-                width: 10,
-              )
+                title: AppStrings.add.tr,
+                onPressed: () {
+                  controller.userNavigator.navigateToAddUserScreen();
+                },
+                iconData: Icons.add,
+              ),
+              const SizedBox(width: 8),
             ],
           ),
-          body: SingleChildScrollView(
+          body: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                children: List.generate(
-                  controller.allUsers.length,
-                  (index) => Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: InkWell(
-                      onTap: () {
-                        controller. userNavigator.navigateToAddUserScreen(controller.allUsers[index]);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                        height: 140,
-                        width: 140,
-                        child: Text(
-                          controller.allUsers[index].userName ?? '',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
+            child: controller.allUsers.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No users found.',
+                      style: TextStyle(fontSize: 16),
                     ),
+                  )
+                : GridView.builder(
+                    itemCount: controller.allUsers.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 1,
+                    ),
+                    itemBuilder: (context, index) {
+                      final user = controller.allUsers[index];
+                      return GestureDetector(
+                        onTap: () {
+                          controller.userNavigator.navigateToAddUserScreen(user);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: Colors.blue.shade100,
+                                  child: Text(
+                                    user.userName?.substring(0, 1).toUpperCase() ?? '',
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  user.userName ?? '',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ),
-            ),
           ),
         );
       },
