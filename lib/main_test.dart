@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +8,30 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+
+  await Firebase.initializeApp(
+    name: "test",
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
 
   runApp(const MaterialApp(home: TestFirestore()));
+}
+
+init()async{
+  FirebaseFirestore firestore = FirebaseFirestore.instanceFor(app: Firebase.app("test"));
+
+  try {
+    log('message');
+    final snapshot = await firestore
+        .collection('materials')
+
+        .get();
+
+    print('✅ وصلنا استجابة من Firestore: ${snapshot.docs.length}');
+  } catch (e) {
+    print('❌ خطأ في الاتصال بـ Firestore: $e');
+  }
 }
 
 class TestFirestore extends StatelessWidget {
@@ -17,9 +39,10 @@ class TestFirestore extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    init();
     return Scaffold(
       appBar: AppBar(title: const Text("Firestore Test")),
-      body: FutureBuilder(
+/*      body: FutureBuilder(
         future: FirebaseFirestore.instance.collection('test').get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -36,7 +59,7 @@ class TestFirestore extends StatelessWidget {
             );
           }
         },
-      ),
+      ),*/
     );
   }
 }

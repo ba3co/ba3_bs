@@ -426,4 +426,13 @@ abstract class AppConstants {
   /// and we import bills from free we must to make this true
   /// In normal work we should make this null.
   static bool? forceFree = false;
+
+
+
+  /// 🔹 To connect to a test Firebase project, use:
+  static const String testDataBaseAppName = 'test';
+  static const String defaultFirebaseAppName = '[DEFAULT]';
+
+  static  String get getDatabaseAppName=>defaultFirebaseAppName;
+
 }
