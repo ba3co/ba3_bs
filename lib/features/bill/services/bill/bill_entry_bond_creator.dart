@@ -407,14 +407,14 @@ log((model.freeBill).toString());
     }
   }
   String _getVatAccountId(MaterialModel materialModel) {
-    if ((materialModel.matLocalQuantity!) > 0) {
+    if ((materialModel.matLocalQuantity??0) > 0) {
       return AppConstants.taxLocalAccountId;
     } else {
       return AppConstants.taxFreeAccountId;
     }
   }
   String _getVatAccountName(MaterialModel materialModel) {
-    if ((materialModel.matLocalQuantity!) > 0) {
+    if ((materialModel.matLocalQuantity??0) > 0) {
       return AppConstants.taxLocalAccountName;
     } else {
       return AppConstants.taxFreeAccountName;
