@@ -65,7 +65,7 @@ class ChequesBarChart extends StatelessWidget {
                     ),
                   ),
 
-                  maxY: chequesTimelineController.sortedEntries.map((e) => e.value).reduce((a, b) => a > b ? a : b).toDouble() + 1,
+                  maxY: chequesTimelineController.sortedEntries.map((e) => e.value).fold(0,(a, b) => a > b ? a : b).toDouble() + 1,
                   barGroups: chequesTimelineController.barGroups,
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(

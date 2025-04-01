@@ -194,11 +194,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context})async {
+  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context}) async {
     // reloadMaterials();
     fetchMaterialsGroup(groupGuid: groupGuid);
-   await reloadMaterials();
-   if(!context.mounted)return;
+    await reloadMaterials();
+    if (!context.mounted) return;
     launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen());
 
     // to(AppRoutes.showAllMaterialsScreen);
@@ -516,7 +516,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     )) {
       await updateMaterialByModel(
         material,
-        (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, calcMinPrice: 0),
+        (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, matLocalQuantity: 0, matFreeQuantity: 0),
       );
     }
     log("Finished");
