@@ -154,7 +154,8 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     );
   }
 
-  Future<int> getSellerMaterialsSales({required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
+  Future<int> getSellerMaterialsSales(
+      {required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
     int matQuantity = 0;
     log(sellerId);
     final result = await _billsFirebaseRepo.fetchWhere(
@@ -274,7 +275,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
   }
 
   void navigateToAllSellersScreen(BuildContext context) async {
-    launchFloatingWindow(context: context, floatingScreen: AllSellersScreen());
+    launchFloatingWindow(context: context, enableResizing: false, floatingScreen: AllSellersScreen());
 
     // to(AppRoutes.allSellersScreen);
   }
@@ -349,12 +350,18 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
           totalDayAttendance: userModel == null
               ? 0
               : getUserAttendanceStats(
-                      userTime: userModel.userTimeModel!, userHolidays: userModel.userHolidays!, startDate: startDay, endDate: endDay)
+                      userTime: userModel.userTimeModel!,
+                      userHolidays: userModel.userHolidays!,
+                      startDate: startDay,
+                      endDate: endDay)
                   .totalAbsents,
           totalDayLate: userModel == null
               ? 0
               : getUserAttendanceStats(
-                      userTime: userModel.userTimeModel!, userHolidays: userModel.userHolidays!, startDate: startDay, endDate: endDay)
+                      userTime: userModel.userTimeModel!,
+                      userHolidays: userModel.userHolidays!,
+                      startDate: startDay,
+                      endDate: endDay)
                   .totalAbsents,
           bills: entry.value);
     }).toList();

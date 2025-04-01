@@ -38,7 +38,7 @@ class AllSellersScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             itemCount: controller.sellers.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: Get.width > 2000 ? 5 : 3,
+              crossAxisCount: 5,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 1.1,

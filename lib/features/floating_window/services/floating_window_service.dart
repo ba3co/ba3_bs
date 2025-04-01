@@ -15,11 +15,11 @@ class FloatingWindowService {
     VoidCallback? onCloseCallback,
     double? defaultWidth,
     double? defaultHeight,
-    bool? isResizing = true,
+    bool? enableResizing = true,
   }) {
     // Initialize the floating window controller
-    FloatingWindowController floatingWindowController =
-        _initializeFloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight, tag: tag, isResizing: isResizing);
+    FloatingWindowController floatingWindowController = _initializeFloatingWindowController(
+        defaultWidth: defaultWidth, defaultHeight: defaultHeight, tag: tag, enableResizing: enableResizing);
 
     // Get the initial target position for the floating window
     Offset targetPositionRatio = floatingWindowController.initWindowPositionManager();
@@ -36,6 +36,8 @@ class FloatingWindowService {
   }
 
   /// Initializes and returns a new instance of [FloatingWindowController].
-  static FloatingWindowController _initializeFloatingWindowController({double? defaultWidth, double? defaultHeight, String? tag, bool? isResizing}) =>
-      put(FloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight, isResizing: isResizing), tag: tag);
+  static FloatingWindowController _initializeFloatingWindowController(
+          {double? defaultWidth, double? defaultHeight, String? tag, bool? enableResizing}) =>
+      put(FloatingWindowController(defaultWidth: defaultWidth, defaultHeight: defaultHeight, enableResizing: enableResizing),
+          tag: tag);
 }
