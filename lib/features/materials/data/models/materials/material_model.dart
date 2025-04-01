@@ -326,6 +326,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'MatQuantity': matQuantity,
         'calcMinPrice': calcMinPrice,
         'matLocalQuantity': matLocalQuantity,
+        'matFreeQuantity': matFreeQuantity,
         'serialNumbers': serialNumbers,
         // 'MatUnity': matUnity,
         // 'MatPriceType': matPriceType,
@@ -426,6 +427,18 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           type: PlutoColumnType.text(),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): matBarCode,
+      PlutoColumn(
+          title: 'free quantity',
+          field: 'free quantity',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matFreeQuantity,
+      PlutoColumn(
+          title: 'local quantity',
+          field: 'local quantity',
+          type: PlutoColumnType.text(),
+          width: 120,
+          textAlign: PlutoColumnTextAlign.center): matLocalQuantity,
       PlutoColumn(title: AppStrings.group.tr, field: 'المجموعة', type: PlutoColumnType.text()):
           read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName ?? '',
     };

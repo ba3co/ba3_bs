@@ -7,6 +7,7 @@ import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:get/get.dart';
@@ -26,15 +27,16 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Bill'] ?? [];
-bool freeBill=false;
-    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>,freeBill)).toList();
+    bool freeBill = false;
+    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>, freeBill)).toList();
   }
 
   late Map<String, int> billsNumbers;
 
   Future<void> _fetchBillsTypesNumbers() async {
     billsNumbers = {
-      for (var billType in BillType.values) billType.typeGuide: await getLastNumber(category: ApiConstants.bills, entityType: billType.label)
+      for (var billType in BillType.values)
+        billType.typeGuide: await getLastNumber(category: ApiConstants.bills, entityType: billType.label)
     };
   }
 
@@ -94,13 +96,27 @@ bool freeBill=false;
     final billsXml = document.findAllElements('Bill');
     final materialXml = document.findAllElements('M');
     final sellersXml = document.findAllElements('Q');
+    final accountXml = document.findAllElements('A');
+    final customerXml = document.findAllElements('Cu');
 
     Map<String, String> matNameWithId = {};
+    Map<String, String> accountWithId = {};
+    Map<String, String> customerWithId = {};
 
     for (var mat in materialXml) {
       String matGuid = mat.findElements('mptr').first.text;
       String matName = mat.findElements('MatName').first.text;
       matNameWithId[matGuid] = matName.encodeProblematic();
+    }
+    for (var acc in accountXml) {
+      String accId = acc.findElements('AccPtr').first.text;
+      String accName = acc.findElements('AccName').first.text;
+      accountWithId[accId] = accName;
+    }
+    for (var cu in customerXml) {
+      String cuGuid = cu.findElements('cptr').first.text;
+      String cuName = cu.findElements('CustName').first.text;
+      customerWithId[cuGuid] = cuName;
     }
 
     Map<String, String> sellerNameID = {};
@@ -138,7 +154,8 @@ bool freeBill=false;
       final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
         return {
           'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
-          'MatName': matNameWithId[iElement.findElements('MatPtr').single.text],
+          /// to get the same material name in our database
+          'MatName': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.matName,
           'QtyBonus': iElement.findElements('QtyBonus').single.text,
           'Unit': iElement.findElements('Unit').single.text,
           'PriceDescExtra': iElement.findElements('PriceDescExtra').single.text,
@@ -169,8 +186,13 @@ bool freeBill=false;
             billTypeGuid: billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
             items: itemsJson,
           ),
-          'BillCustPtr': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
-          'BillCustName': read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
+          'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
+          'BillCustPtr': read<CustomersController>()
+                  .getCustomerById(customerWithId[billElement.findElements('B').single.findElements('BillCustName').single.text])
+                  ?.id ??
+              '',
+          'BillCustName':
+              read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
@@ -178,7 +200,6 @@ bool freeBill=false;
           'Note': billElement.findElements('B').single.findElements('Note').single.text,
           'CustomerPhone': customerPhone,
           'OrderNumber': orderNumber,
-          'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
           'BillCostGuid': read<SellersController>()
               .getSellerIdByName(sellerNameID[billElement.findElements('B').single.findElements('BillCostGuid').single.text]),
           'BillVendorSalesMan': billElement.findElements('B').single.findElements('BillVendorSalesMan').single.text,
@@ -203,8 +224,8 @@ bool freeBill=false;
       };
 
       billJson['Items'] = {"I": itemsJson};
-bool freeBill=false;
-      final BillModel bill = BillModel.fromImportedJsonFile(billJson,freeBill);
+      bool freeBill = false;
+      final BillModel bill = BillModel.fromImportedJsonFile(billJson, freeBill);
 
       final List<BillModel> splitBills = _divideLargeBillUseCase.execute(bill);
       bills.assignAll(splitBills);

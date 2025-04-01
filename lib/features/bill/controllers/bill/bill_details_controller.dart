@@ -86,7 +86,6 @@ class BillDetailsController extends IBillController
   Rx<DateTime> billDate = DateTime.now().obs;
 
   Rx<InvPayType> selectedPayType = InvPayType.cash.obs;
-  Rx<bool> freeBill = false.obs;
 
   BillType billType = BillType.sales;
   bool isLoading = true;
@@ -589,7 +588,7 @@ class BillDetailsController extends IBillController
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
-      freeBill: freeBill.value,
+      freeBill: advancedSwitchController.value,
       billNote: noteController.text,
       orderNumber: orderNumberController.text,
       customerPhone: customerPhoneController.text,
@@ -655,6 +654,7 @@ class BillDetailsController extends IBillController
     initBillNumberController(bill.billDetails.billNumber);
     initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
     initBillAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
+    initFreeLocalSwitcher(bill.freeBill);
 
     read<SellersController>().initSellerAccount(sellerId: bill.billDetails.billSellerId, billDetailsController: this);
 
@@ -695,6 +695,10 @@ class BillDetailsController extends IBillController
     advancedSwitchController.value = newValue;
     // You can call update() if you are using GetBuilder or other reactive methods.
     update();
+  }
+
+  void initFreeLocalSwitcher(bool? freeBill) {
+    advancedSwitchController.value = freeBill ?? false;
   }
 
   /// this for mobile

@@ -71,7 +71,9 @@ class BillDetailsButtons extends StatelessWidget {
                       billDetailsController.openFirstPayDialog(context);
                     })
                 : SizedBox()),
-            freeLocalSwitcher(billDetailsController: billDetailsController),
+            Visibility(
+                 visible: billModel.freeBill??false,
+                child: freeLocalSwitcher(billDetailsController: billDetailsController)),
           ],
         ),
       ),
@@ -186,8 +188,6 @@ class BillDetailsButtons extends StatelessWidget {
       inactiveColor: Colors.grey,
       inactiveChild: Text('فري'),
       activeChild: Text('لوكال'),
-      // activeImage: AssetImage('assets/images/on.png'),
-      // inactiveImage: AssetImage('assets/images/off.png'),
       borderRadius: BorderRadius.all(Radius.circular(15)),
       width: 100.0,
       height: 30.0,

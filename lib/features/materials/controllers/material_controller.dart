@@ -40,8 +40,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   final QueryableSavableRepository<MaterialModel> _materialRemoteRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
 
-  MaterialController(
-      this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo);
+  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo);
 
   List<MaterialModel> materials = [];
   List<MaterialModel> materialsForShow = [];
@@ -195,10 +194,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context}) {
+  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context}) async {
     // reloadMaterials();
     fetchMaterialsGroup(groupGuid: groupGuid);
-
+    await reloadMaterials();
+    if (!context.mounted) return;
     launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen());
 
     // to(AppRoutes.showAllMaterialsScreen);
@@ -261,8 +261,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
               (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))) ||
               (item.serialNumbers != null &&
                   searchParts.every(
-                    (part) => item.serialNumbers!.entries
-                        .any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
+                    (part) => item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
                   )), // Only allow unsold serials
         )
         .toList();
@@ -278,13 +277,18 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
     reloadMaterials();
 
-    final String matBarCode =
-        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
 
   MaterialModel? getMaterialById(String id) {
+    reloadMaterials();
+    return materials.firstWhereOrNull((material) => material.id == id);
+  }
+
+  Future<MaterialModel?> getMaterialByIdXX(String id) async {
+    await reloadMaterials();
     return materials.firstWhereOrNull((material) => material.id == id);
   }
 
@@ -389,26 +393,25 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
-      read<UserManagementController>()
-          .nonLoggedInUsers
-          .map(
-            (user) => ChangesModel(
-              targetUserId: user.userId!,
-              changeItems: {
-                ChangeCollection.materials: [
-                  ChangeItem(
-                    target: ChangeTarget(
-                      targetCollection: ChangeCollection.materials,
-                      changeType: changeType,
-                    ),
-                    change: materialModel.toJson(),
-                  )
-                ]
-              },
-            ),
-          )
-          .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
+      .nonLoggedInUsers
+      .map(
+        (user) => ChangesModel(
+          targetUserId: user.userId!,
+          changeItems: {
+            ChangeCollection.materials: [
+              ChangeItem(
+                target: ChangeTarget(
+                  targetCollection: ChangeCollection.materials,
+                  changeType: changeType,
+                ),
+                change: materialModel.toJson(),
+              )
+            ]
+          },
+        ),
+      )
+      .toList();
 
   Future<void> updateMaterialWithChanges(MaterialModel updatedMaterialModel) async {
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
@@ -420,6 +423,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
+    log('mat model is ${updatedMaterialModel.toJson().toString()}');
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
@@ -441,8 +445,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
         AppUIUtils.onSuccess(selectedMaterial?.id == null ? 'تم الحفظ بنجاح' : 'تم التعديل بنجاح');
-        read<LogController>()
-            .addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
   }
@@ -513,7 +516,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     )) {
       await updateMaterialByModel(
         material,
-        (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, calcMinPrice: 0),
+        (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, matLocalQuantity: 0, matFreeQuantity: 0),
       );
     }
     log("Finished");
@@ -528,9 +531,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       matId,
       (material) {
         if (freeBill == true) {
-          matFreeQuantity = (material.matQuantity ?? 0) + quantity;
+          matFreeQuantity = (material.matFreeQuantity ?? 0) + quantity;
         } else {
-          matLocalQuantity = (material.matQuantity ?? 0) + quantity;
+          matLocalQuantity = (material.matLocalQuantity ?? 0) + quantity;
         }
         return material.copyWith(
           matFreeQuantity: matFreeQuantity,
@@ -569,9 +572,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       matId,
       (material) {
         if (freeBill == true) {
-          matFreeQuantity = (material.matQuantity ?? 0) + quantity;
+          matFreeQuantity = (material.matFreeQuantity ?? 0) + quantity;
         } else {
-          matLocalQuantity = (material.matQuantity ?? 0) + quantity;
+          matLocalQuantity = (material.matLocalQuantity ?? 0) + quantity;
         }
         return material.copyWith(
           matFreeQuantity: matFreeQuantity,
