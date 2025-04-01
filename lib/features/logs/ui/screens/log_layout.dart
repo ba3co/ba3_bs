@@ -1,3 +1,4 @@
+import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -24,26 +25,38 @@ class _LogLayoutState extends State<LogLayout> {
 
   void _showDateRangeDialog(BuildContext context, LogController controller) {
     showDialog(
+
       context: context,
+
       builder: (context) => AlertDialog(
+        backgroundColor: AppColors.backGroundColor,
+        buttonPadding: EdgeInsets.zero,
+        actionsPadding: EdgeInsets.zero,
+        titlePadding:   EdgeInsets.zero,
+        contentPadding: EdgeInsets.zero,
         content: SizedBox(
-          height: 400,
-          width: 350,
-          child: SfDateRangePicker(
-            showActionButtons: true,
-            initialSelectedRange: controller.logDateRange.value,
-            onSelectionChanged: controller.onDateRangeSelectionChanged,
-            onSubmit: (value) {
-              controller.onDateRangeSubmit();
-              Navigator.pop(context);
-            },
-            onCancel: () {
-              controller.logDateRange.value = controller.defaultDateRange;
-              controller.applyFilters();
-              Navigator.pop(context);
-            },
-            selectionMode: DateRangePickerSelectionMode.range,
+          height: 500,
+          width: 450,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: SfDateRangePicker(
+              showActionButtons: true,
+              backgroundColor: AppColors.backGroundColor,
+              initialSelectedRange: controller.logDateRange.value,
+              onSelectionChanged: controller.onDateRangeSelectionChanged,
+              onSubmit: (value) {
+                controller.onDateRangeSubmit();
+                Navigator.pop(context);
+              },
+              onCancel: () {
+                controller.logDateRange.value = controller.defaultDateRange;
+                controller.applyFilters();
+                Navigator.pop(context);
+              },
+              selectionMode: DateRangePickerSelectionMode.range,
+            ),
           ),
+
         ),
       ),
     );

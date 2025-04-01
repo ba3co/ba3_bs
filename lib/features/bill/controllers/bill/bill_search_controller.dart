@@ -107,10 +107,10 @@ class BillSearchController extends GetxController {
 
   /// Updates a bill if it exists.
   void updateBill(BillModel updatedBill, String from) {
-    log(' updatedBill.from $from');
+/*    log(' updatedBill.from $from');
     log(' updatedBill.billNumber ${updatedBill.billDetails.billNumber}');
     log(' updatedBill.previous ${updatedBill.billDetails.previous}');
-    log(' updatedBill.next ${updatedBill.billDetails.next}');
+    log(' updatedBill.next ${updatedBill.billDetails.next}');*/
 
     final billIndex = _getBillIndexByNumber(updatedBill.billDetails.billNumber);
     if (billIndex != -1) {

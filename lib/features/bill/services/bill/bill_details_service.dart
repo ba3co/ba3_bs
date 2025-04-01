@@ -102,10 +102,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   /// lastBillNumber = 3
   /// decrementedBillNumber = 2
   Future<void> handleDeleteSuccess({required BillModel billToDelete, required BillSearchController billSearchController}) async {
-    log('billSearchController.isTail: ${billSearchController.isTail}');
+    /*log('billSearchController.isTail: ${billSearchController.isTail}');
     log('currentBillIndex: ${billSearchController.currentBillIndex}');
     log('billSearchController.bills.length: ${billSearchController.bills.length}');
-    log('isLastValidBill(billToDelete): ${billSearchController.isLastValidBill(billToDelete)}');
+    log('isLastValidBill(billToDelete): ${billSearchController.isLastValidBill(billToDelete)}');*/
 
     if (billToDelete.isSellRelated) {
       await _updateSoldSerialNumbers(billToDelete);
@@ -116,7 +116,9 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
 
     if (billSearchController.isLastValidBill(billToDelete)) {
       final decrementedBillNumber = (billToDelete.billDetails.previous ?? 0) - billToDelete.billDetails.billNumber!;
+/*
       log('decrementedBillNumber: $decrementedBillNumber');
+*/
 
       await billDetailsController.decrementLastNumber(
         ApiConstants.bills,
@@ -190,13 +192,13 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
           final BillModel updatedPrevBill;
 
           if (billSearchController.isLastValidBill(billToDelete)) {
-            log('_updatePreviousBillLink isLastValidBill(billToDelete): true');
+            // log('_updatePreviousBillLink isLastValidBill(billToDelete): true');
 
             updatedPrevBill = oldPrevBill.copyWith(
               billDetails: oldPrevBill.billDetails.copyWith(next: null),
             );
           } else {
-            log('_updatePreviousBillLink isLastValidBill(billToDelete): false');
+            // log('_updatePreviousBillLink isLastValidBill(billToDelete): false');
 
             updatedPrevBill = oldPrevBill.copyWith(
               billDetails: oldPrevBill.billDetails.copyWith(next: billToDelete.billDetails.next),
@@ -208,8 +210,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
                 oldPrevBill.billDetails.copyWith(next: billToDelete.billDetails.next ?? billToDelete.billDetails.billNumber! + 1),
           );
 
-          log('updatedPrevBill: ${updatedPrevBill.billDetails.next}');
-          log('updatedPrevBillLocal: ${updatedPrevBillLocal.billDetails.next}');
+          // log('updatedPrevBill: ${updatedPrevBill.billDetails.next}');
+          // log('updatedPrevBillLocal: ${updatedPrevBillLocal.billDetails.next}');
 
           final updateResult = await billDetailsController.updateOnly(updatedPrevBill);
           updateResult.fold(

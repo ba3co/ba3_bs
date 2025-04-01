@@ -393,8 +393,8 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
 
 bool dateBaseGuard(String rootCollectionPath) {
   if (!read<MigrationController>().isMigrating.value) {
-    log('Migration is allowed.', name: 'MigrationGuard');
-    return false; // ✅ السماح بالترحيل
+    // log('Migration is allowed.', name: 'MigrationGuard');
+    return false;
   }
 
   // ✅ يجب أن يبدأ `rootCollectionPath` إما بـ `_` أو رقم، وإلا فهو غير مسموح به

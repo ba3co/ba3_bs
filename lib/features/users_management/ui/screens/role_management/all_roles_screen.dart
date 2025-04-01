@@ -76,10 +76,10 @@ class AllRolesScreen extends StatelessWidget {
                 : GridView.builder(
                     itemCount: controller.allRoles.length,
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
+                      crossAxisCount: 6,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
-                      childAspectRatio: 1,
+                      childAspectRatio: 1.2,
                     ),
                     itemBuilder: (context, index) {
                       final role = controller.allRoles[index];

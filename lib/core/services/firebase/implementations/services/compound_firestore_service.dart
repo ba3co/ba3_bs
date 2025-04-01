@@ -20,8 +20,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
       {required String rootCollectionPath, required String rootDocumentId, required String subCollectionPath}) async {
     final querySnapshot = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).get();
 
-    log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
-        name: 'fetchAll CompoundFirestoreService');
+    // log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
+    //     name: 'fetchAll CompoundFirestoreService');
     return (await querySnapshot).docs.map((doc) => doc.data()).toList();
   }
 
@@ -125,7 +125,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
         return {};
       }
 
-      log('$data', name: 'data CompoundFirestoreService');
+      // log('$data', name: 'data CompoundFirestoreService');
 
       // Generate or use existing document ID
       final newDoc = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id;
@@ -136,8 +136,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
       // Ensure the docId is set in the data map if it is null
       if (data['docId'] == null) data['docId'] = docId;
 
-      log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath, subDocumentId $docId',
-          name: 'Add CompoundFirestoreService');
+     /* log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath, subDocumentId $docId',
+          name: 'Add CompoundFirestoreService');*/
 
       final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
       final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
@@ -161,7 +161,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
           data: data,
         );
       } else {
-        log('set subDocRef.path ${subDocRef.path}', name: 'Add CompoundFirestoreService');
+        // log('set subDocRef.path ${subDocRef.path}', name: 'Add CompoundFirestoreService');
         await subDocRef.set(data);
       }
 
@@ -197,7 +197,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
         name: 'delete CompoundFirestoreService');
 
     if (dateBaseGuard(rootCollectionPath)) {
-      log('Migration guard triggered, skipping delete operation for [$rootCollectionPath].', name: 'delete CompoundFirestoreService');
+      // log('Migration guard triggered, skipping delete operation for [$rootCollectionPath].', name: 'delete CompoundFirestoreService');
       return;
     }
 
@@ -216,8 +216,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String subCollectionPath,
     QueryFilter? countQueryFilter,
   }) async {
-    log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
-        name: 'Add CompoundFirestoreService');
+ /*   log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
+        name: 'Add CompoundFirestoreService');*/
     // Start with the base query as a Query<Map<String, dynamic>>
     Query<Map<String, dynamic>> query = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath);
 
@@ -247,8 +247,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String subCollectionPath,
     double? metaValue,
   }) async {
-    log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
-        name: 'AddAll CompoundFirestoreService');
+    // log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
+    //     name: 'AddAll CompoundFirestoreService');
 
     if (dateBaseGuard(rootCollectionPath)) {
       log('Migration guard triggered, skipping addAll operation for [$rootCollectionPath].', name: 'AddAll CompoundFirestoreService');

@@ -85,7 +85,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
   @override
   Future<void> delete({required String path, String? documentId, String? mapFieldName}) async {
     if (dateBaseGuard(path)) {
-      log('Migration guard triggered, skipping delete operation for path [$path].', name: 'delete CompoundFirestoreService');
+      // log('Migration guard triggered, skipping delete operation for path [$path].', name: 'delete CompoundFirestoreService');
       return;
     }
 
@@ -128,7 +128,7 @@ class FireStoreService extends IRemoteDatabaseService<Map<String, dynamic>> {
       await docRef.set(data);
     }
 
-    log('$data', name: 'Add FireStoreService');
+    // log('$data', name: 'Add FireStoreService');
     return data;
   }
 

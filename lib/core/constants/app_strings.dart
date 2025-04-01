@@ -391,4 +391,6 @@ class AppStrings {
 
 
   static const String whatsApp = 'WhatsApp';
+
+  static var choseDay='اختر اليوم';
 }
