@@ -293,7 +293,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       read<EntryBondController>()
           .deleteEntryBondModel(entryId: billModel.billId!, sourceNumber: billModel.billDetails.billNumber!);
     } else {
-      read<LogController>().addLog(item: billModel, eventType: LogEventType.delete);
+      //TODO:LOGS
+      // read<LogController>().addLog(item: billModel, eventType: LogEventType.delete);
     }
 
     deleteMatsStatementsModels(billModel);
@@ -462,7 +463,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         sourceNumbers: [currentBill.billDetails.billNumber!],
       );
     } else {
-      read<LogController>().addLog(item: currentBill, eventType: isSave ? LogEventType.add : LogEventType.update);
+      //TODO:LOGS
+      // read<LogController>().addLog(item: currentBill, eventType: isSave ? LogEventType.add : LogEventType.update);
     }
 
     // 6. Determine whether to generate a material statement.

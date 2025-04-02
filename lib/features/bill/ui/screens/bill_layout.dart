@@ -13,6 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/dialogs/custom_alert_dialog/helper_alert.dart';
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../materials/controllers/mats_statement_controller.dart';
@@ -39,11 +40,7 @@ class BillLayout extends StatelessWidget {
                     child: AppButton(
                       title: AppStrings.downloadBills.tr,
                       onPressed: () {
-                     /*   HelperAlert.showConfirm(context: context, text: AppStrings.areYouSureContinueWithoutSeller.tr,onConfirm: (){
 
-                          // validate=true;
-                        });
-                        return;*/
                         allBillsController.fetchAllBillsFromLocal();
                       },
                     ),

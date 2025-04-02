@@ -75,14 +75,14 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     // Match "رقم الطلب" in different formats
     final orderMatch = RegExp(r'رقم\s?الطلب[\s\-=:]*([\d]+)', unicode: true).firstMatch(noteText);
     if (orderMatch != null) {
-      log('Matched Order Number: ${orderMatch.group(1)}', name: 'Regex');
+      // log('Matched Order Number: ${orderMatch.group(1)}', name: 'Regex');
       return orderMatch.group(1);
     }
 
     // Match "TABBY-" or "tabby-" followed by numbers (case-insensitive)
     final tabbyMatch = RegExp(r'tabby-(\d+)', caseSensitive: false).firstMatch(noteText);
     if (tabbyMatch != null) {
-      log('Matched Tabby Order Number: ${tabbyMatch.group(1)}', name: 'Regex');
+      // log('Matched Tabby Order Number: ${tabbyMatch.group(1)}', name: 'Regex');
       return tabbyMatch.group(1);
     }
 
@@ -135,7 +135,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       final noteText = billElement.findElements('B').single.findElements('Note').single.text.trim();
 
-      log('Processing Note: $noteText', name: 'XML Processing');
+      // log('Processing Note: $noteText', name: 'XML Processing');
 
       // Phone number detection
       if (RegExp(r'^05\d{8}$').hasMatch(noteText)) {
@@ -146,7 +146,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       // Extract order number
       String? extractedOrderNumber = _extractOrderNumber(noteText);
       if (extractedOrderNumber != null) {
-        log('Extracted Order Number: $extractedOrderNumber', name: 'Order Number');
+        // log('Extracted Order Number: $extractedOrderNumber', name: 'Order Number');
         orderNumber = extractedOrderNumber;
       }
 

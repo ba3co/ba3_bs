@@ -170,7 +170,15 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     log('newMaterials length is ${newMaterials.length}');
 
     if (newMaterials.isNotEmpty) {
-      // Show progress in the UI
+
+
+      for (var mat in newMaterials) {
+        materialFromHandler.init(mat);
+        await saveOrUpdateMaterial();
+
+      }
+
+      /*   // Show progress in the UI
       FirestoreUploader firestoreUploader = FirestoreUploader();
 
       await firestoreUploader.sequentially(
@@ -187,7 +195,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         } else {
           _onSaveSuccess(materialModel, changeType: ChangeType.add, withReloadMaterial: false);
         }
-      }
+      }*/
     }
 
     saveAllMaterialsRequestState.value = RequestState.success;
@@ -306,7 +314,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   MaterialModel? getMaterialByName(name) {
-
     // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
     if (name != null && name != " " && name != "") {
       return materials.where((element) => (element.matName == name)).firstOrNull;
@@ -445,7 +452,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
         AppUIUtils.onSuccess(selectedMaterial?.id == null ? 'تم الحفظ بنجاح' : 'تم التعديل بنجاح');
-        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        //TODO:LOGS
+        // read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
   }
@@ -459,6 +467,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
+
         read<LogController>().addLog(item: materialModel, eventType: LogEventType.delete);
 
         log('materials length before add item: ${materials.length}');

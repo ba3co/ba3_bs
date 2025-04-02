@@ -114,8 +114,9 @@ class EntryBondController extends GetxController with FloatingLauncher {
       ),
     ]);
 
-    read<LogController>()
-        .addLog(item: entryBondModel, eventType: isSave ? LogEventType.add : LogEventType.update, sourceNumber: sourceNumber);
+    //TODO:LOGS
+    // read<LogController>()
+    //     .addLog(item: entryBondModel, eventType: isSave ? LogEventType.add : LogEventType.update, sourceNumber: sourceNumber);
 
     log('Finish _onEntryBondSaved');
   }

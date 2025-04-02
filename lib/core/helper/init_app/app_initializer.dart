@@ -62,8 +62,6 @@ Future<void> initializeAppLocalization({required String boxName}) async {
 void setupDatabaseServices() {
   // final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
-
-
   FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
       app: Firebase.app(AppConstants.getDatabaseAppName),
       databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName ? null : AppConstants.getDatabaseAppName);

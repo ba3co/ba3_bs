@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
@@ -138,8 +139,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 // 🔹 3. مجموعات المواد المستخدمة
     final usedGroupIds = usedMaterials.map((mat) => mat.matGroupGuid).whereType<String>().toSet();
 
-    final usedGroups =
-        read<MaterialGroupController>().materialGroups.where((group) => usedGroupIds.contains(group.matGroupGuid)).toList();
+    final usedGroups = read<MaterialGroupController>().materialGroups.where((group) => usedGroupIds.contains(group.matGroupGuid)).toList();
 
 // 🔹 4. البائعون المستخدمون في الفواتير
     final usedSellerIds = allBills.map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
@@ -243,13 +243,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
       //   },
       // );
       //
-      // await createAndStoreEntryBonds(
-      //   sourceModels: fetchedBills,
-      //   onProgress: (progress) {
-      //     uploadProgress.value = progress; // Update progress
-      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      //   },
-      // );
+      await createAndStoreEntryBonds(
+        sourceModels: fetchedBills,
+        onProgress: (progress) {
+          uploadProgress.value = progress; // Update progress
+          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        },
+        sourceNumbers: fetchedBills.select((bill) => bill.billDetails.billNumber),
+      );
     }
     saveAllBillsRequestState.value = RequestState.success;
 
@@ -257,8 +258,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.pending.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
@@ -278,8 +279,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     // launchFloatingWindow(context: context, floatingScreen: AllBillsScreen());
     navigateToPendingBillsScreen();
-    final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
+    final result =
+        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.status, value: Status.approved.value);
 
     result.fold(
       (failure) => AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}'),
@@ -324,10 +325,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return allBills;
   }
 
-  Future<Either<Failure, List<BillModel>>> fetchBillByNumber(
-      {required BillTypeModel billTypeModel, required int billNumber}) async {
-    final result =
-        await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
+  Future<Either<Failure, List<BillModel>>> fetchBillByNumber({required BillTypeModel billTypeModel, required int billNumber}) async {
+    final result = await _billsFirebaseRepo.fetchWhere(itemIdentifier: billTypeModel, field: ApiConstants.billNumber, value: billNumber);
 
     return result;
   }
@@ -462,8 +461,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
   }
 
-  void openFloatingBillDetailsById(
-      {required String billId, required BuildContext context, required BillTypeModel bilTypeModel}) async {
+  void openFloatingBillDetailsById({required String billId, required BuildContext context, required BillTypeModel bilTypeModel}) async {
     final BillModel? billModel = await fetchBillById(billId, bilTypeModel);
 
     if (billModel == null) return;
@@ -580,9 +578,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchXXXXXX() async {
-    _billsFirebaseRepo
-        .getMetaData(id: BillType.transferOut.typeGuide, itemIdentifier: BillType.transferOut.billTypeModel)
-        .then((result) {
+    _billsFirebaseRepo.getMetaData(id: BillType.transferOut.typeGuide, itemIdentifier: BillType.transferOut.billTypeModel).then((result) {
       result.fold(
         (failure) => AppUIUtils.onFailure('Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
         (double? count) {
