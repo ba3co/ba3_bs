@@ -13,10 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/dialogs/custom_alert_dialog/helper_alert.dart';
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../materials/controllers/mats_statement_controller.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
 
 class BillLayout extends StatelessWidget {
@@ -166,7 +164,7 @@ class BillLayout extends StatelessWidget {
                       // allBillsController.fetchAllNestedBills();
                       // allBillsController.saveXmlToFile();
                       // read<MaterialsStatementController>().setupAllMaterials();
-                      read<MaterialsStatementController>().setupOneMaterials("e7103aec-14c5-4123-893d-9a4851d0d478");
+                      // read<MaterialsStatementController>().setupOneMaterials("e7103aec-14c5-4123-893d-9a4851d0d478");
                       // read<MaterialController>().updateAllMaterialWithDecodeProblematic();
                     },
                     child: Icon(

@@ -30,7 +30,6 @@ import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
-import '../../../logs/controllers/log_controller.dart';
 import '../../../materials/service/mat_statement_generator.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../controllers/bill/all_bills_controller.dart';
@@ -152,11 +151,11 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       final materialModel = materialController.getMaterialById(billItem.itemGuid);
       final soldSerialNumber = billItem.soldSerialNumber;
 
-      if (materialModel?.serialNumbers == null) {
+      if (materialModel.serialNumbers == null) {
         continue; // Skip if the material is not found or has no serial numbers
       }
 
-      final updatedSerialNumbers = Map<String, bool>.from(materialModel!.serialNumbers!);
+      final updatedSerialNumbers = Map<String, bool>.from(materialModel.serialNumbers!);
 
       if (soldSerialNumber != null && updatedSerialNumbers.containsKey(soldSerialNumber)) {
         updatedSerialNumbers[soldSerialNumber] = false; // Mark as unsold

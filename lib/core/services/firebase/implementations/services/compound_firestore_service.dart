@@ -124,8 +124,10 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
         log('Migration guard triggered, skipping add operation for [$rootCollectionPath].', name: 'Add CompoundFirestoreService');
         return {};
       }
-
-      // log('$data', name: 'data CompoundFirestoreService');
+      if (rootDocumentId == '' || subCollectionPath == '') {
+        log(data.toString(), name: 'rootDocumentId==' '');
+      }
+      log('rootDocumentId $rootDocumentId  subCollectionPath $subCollectionPath', name: 'data CompoundFirestoreService');
 
       // Generate or use existing document ID
       final newDoc = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc().id;
@@ -136,7 +138,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
       // Ensure the docId is set in the data map if it is null
       if (data['docId'] == null) data['docId'] = docId;
 
-     /* log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath, subDocumentId $docId',
+      /* log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath, subDocumentId $docId',
           name: 'Add CompoundFirestoreService');*/
 
       final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
@@ -201,7 +203,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
       return;
     }
 
-    final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(subDocumentId);
+    final subDocRef =
+        _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(subDocumentId);
     final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
     await docRef.set({
       ApiConstants.metaValue: FieldValue.increment(metaValue ?? 0),
@@ -216,7 +219,7 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
     required String subCollectionPath,
     QueryFilter? countQueryFilter,
   }) async {
- /*   log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
+    /*   log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
         name: 'Add CompoundFirestoreService');*/
     // Start with the base query as a Query<Map<String, dynamic>>
     Query<Map<String, dynamic>> query = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath);
@@ -276,7 +279,8 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
             );
 
             // Create references for the sub-document and the main document
-            final subDocRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
+            final subDocRef =
+                _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).doc(docId);
 
             final docRef = _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId);
 
@@ -306,7 +310,10 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
 
   @override
   Future<double?> fetchMetaData(
-      {required String rootCollectionPath, required String rootDocumentId, required String subCollectionPath, String? subDocumentId}) async {
+      {required String rootCollectionPath,
+      required String rootDocumentId,
+      required String subCollectionPath,
+      String? subDocumentId}) async {
     final docSnapshot = await _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).get();
     if (docSnapshot.exists) {
       return docSnapshot.data()![ApiConstants.metaValue];

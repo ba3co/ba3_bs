@@ -10,7 +10,6 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
-import 'package:get/get.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
@@ -113,6 +112,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       String accName = acc.findElements('AccName').first.text;
       accountWithId[accId] = accName;
     }
+    // accountWithId['00000000-0000-0000-0000-000000000000']='';
     for (var cu in customerXml) {
       String cuGuid = cu.findElements('cptr').first.text;
       String cuName = cu.findElements('CustName').first.text;
@@ -129,6 +129,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
     List<BillModel> bills = [];
 
+    log(billsXml.length.toString(), name: 'billsXml');
+
     for (var billElement in billsXml) {
       String? customerPhone;
       String? orderNumber;
@@ -139,7 +141,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       // Phone number detection
       if (RegExp(r'^05\d{8}$').hasMatch(noteText)) {
-        log('Detected Phone Number: $noteText', name: 'Phone');
+        // log('Detected Phone Number: $noteText', name: 'Phone');
         customerPhone = noteText;
       }
 
@@ -152,12 +154,12 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       final itemsElement = billElement.findElements('Items').single;
       final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
-        if( read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])==null){
-          log('name ${matNameWithId[iElement.findElements('MatPtr').single.text]}');
+        if (read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text]) == null) {
+          log('name ${matNameWithId[iElement.findElements('MatPtr').single.text]}', name: 'XML Processing name');
         }
         return {
-
           'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
+
           /// to get the same material name in our database
           'MatName': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.matName,
           'QtyBonus': iElement.findElements('QtyBonus').single.text,
@@ -192,11 +194,11 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           ),
           'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
           'BillCustPtr': read<CustomersController>()
-                  .getCustomerById(customerWithId[billElement.findElements('B').single.findElements('BillCustName').single.text])
+                  .getCustomerById(customerWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text])
                   ?.id ??
               '',
-          'BillCustName':
-              read<AccountsController>().getAccountNameById(billElement.findElements('B').single.findElements('BillCustAcc').single.text),
+          'BillCustAccId': read<AccountsController>().getAccountIdByName(accountWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text]),
+          'BillCustAccName':accountWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text],
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
           'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
@@ -228,16 +230,18 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       };
 
       billJson['Items'] = {"I": itemsJson};
-      bool freeBill = false;
+      bool freeBill = true;
+
       final BillModel bill = BillModel.fromImportedJsonFile(billJson, freeBill);
 
       final List<BillModel> splitBills = _divideLargeBillUseCase.execute(bill);
-      bills.assignAll(splitBills);
+      bills.addAll(splitBills);
     }
-
+    log(bills.length.toString(), name: 'bills');
     // 🔹 Use the Use Case for linking bills
     final linkedBills = _convertBillsToLinkedListUseCase.execute(bills);
 
+    // return [];
     await _saveBillsTypesNumbers();
 
     return linkedBills;

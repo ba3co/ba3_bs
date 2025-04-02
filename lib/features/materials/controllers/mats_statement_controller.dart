@@ -113,7 +113,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   }
 
   setupOneMaterials(String matId) async {
-    MaterialModel material = _materialsController.getMaterialById(matId)!;
+    MaterialModel material = _materialsController.getMaterialById(matId);
     final materialStatementList = await fetchMatStatementById(material.id!);
     if (materialStatementList != null) {
 

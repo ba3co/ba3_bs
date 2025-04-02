@@ -204,6 +204,8 @@ class BillDetailsController extends IBillController
 
     if (!validateForm(context)) return;
 
+
+
     _billService.launchFloatingEntryBondDetailsScreen(
       context: context,
       billModel: billModel,
@@ -252,8 +254,8 @@ class BillDetailsController extends IBillController
       final mat = materialController.getMaterialById(item.itemGuid);
       final serialNumbers = item.itemSerialNumbers ?? [];
 
-      if (mat?.serialNumbers != null) {
-        for (final entry in mat!.serialNumbers!.entries) {
+      if (mat.serialNumbers != null) {
+        for (final entry in mat.serialNumbers!.entries) {
           if (serialNumbers.contains(entry.key) && entry.value) {
             int? sellBillNumber = await _getSellBillNumber(entry.key);
 
@@ -331,11 +333,11 @@ class BillDetailsController extends IBillController
       final materialModel = materialController.getMaterialById(billItem.itemGuid);
       final purchaseSerialNumbers = billItem.itemSerialNumbers ?? [];
 
-      if (materialModel?.serialNumbers == null) {
+      if (materialModel.serialNumbers == null) {
         continue; // Skip if material or serial numbers are missing
       }
 
-      final updatedSerialNumbers = Map<String, bool>.from(materialModel!.serialNumbers!);
+      final updatedSerialNumbers = Map<String, bool>.from(materialModel.serialNumbers!);
 
       for (final serialNumber in purchaseSerialNumbers) {
         await _processSerialTransaction(billToDelete, materialModel, serialNumber, updatedSerialNumbers);
@@ -529,18 +531,16 @@ class BillDetailsController extends IBillController
         log('onSaveSerialsSuccess serial: ${serial.toJson()}');
       }
 
-      if (materialModel != null) {
-        // Ensure non-null keys and values
-        final Map<String, bool> updatedSerialNumbers = {
-          ...?materialModel.serialNumbers, // Preserve existing serials
-          for (final serial in savedSerialsModels.where((s) => s.matId == material.id))
-            if (serial.serialNumber != null && serial.transactions.last.sold != null) serial.serialNumber!: serial.transactions.last.sold!,
-        };
+      // Ensure non-null keys and values
+      final Map<String, bool> updatedSerialNumbers = {
+        ...?materialModel.serialNumbers, // Preserve existing serials
+        for (final serial in savedSerialsModels.where((s) => s.matId == material.id))
+          if (serial.serialNumber != null && serial.transactions.last.sold != null) serial.serialNumber!: serial.transactions.last.sold!,
+      };
 
-        // Update the material model with new serial numbers
-        read<MaterialController>().updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
-      }
-    });
+      // Update the material model with new serial numbers
+      read<MaterialController>().updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+        });
   }
 
   Future<Either<Failure, BillModel>> updateOnly(BillModel bill) async {
@@ -572,7 +572,6 @@ class BillDetailsController extends IBillController
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
-    final sellerController = read<SellersController>();
 
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
@@ -581,7 +580,7 @@ class BillDetailsController extends IBillController
       }
     }
 
-    if (!_billUtils.validateSellerAccount(sellerController.selectedSellerAccount)) {
+    if (!_billUtils.validateSellerAccount(selectedSellerAccount)) {
       return null;
     }
 
@@ -605,7 +604,7 @@ class BillDetailsController extends IBillController
       billFirstPay: firstPayController.text.toDouble,
       billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billAccountId: selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
-      billSellerId: sellerController.selectedSellerAccount!.costGuid ?? '',
+      billSellerId: selectedSellerAccount?.costGuid ?? '',
       billPayType: selectedPayType.value.index,
     );
   }

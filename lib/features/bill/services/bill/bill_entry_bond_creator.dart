@@ -20,7 +20,8 @@ import '../../../patterns/data/models/bill_type_model.dart';
 class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   @override
   List<EntryBondItemModel> generateItems({required BillModel model, bool? isSimulatedVat}) {
-    if (!model.billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (!model.billTypeModel.billPatternType!.hasMaterialAccount||!model.billTypeModel.billPatternType!.hasCashesAccount) {
+      log("message",name: "BillEntryBondCreator");
       return [];
     }
 
@@ -115,7 +116,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         _createVatBond(
             billId: billId,
             vat: vat,
-            item: read<MaterialController>().getMaterialById(item.itemGuid)!,
+            item: read<MaterialController>().getMaterialById(item.itemGuid),
             quantity: item.itemQuantity,
             date: date,
             billTypeModel: billTypeModel,
@@ -201,7 +202,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   }) {
     final bondType = billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor;
 
-    MaterialModel materialModel = read<MaterialController>().getMaterialById(item.id!)!;
+    MaterialModel materialModel = read<MaterialController>().getMaterialById(item.id!);
     final accountId = item.matVatGuid == null
         ? VatEnums.withVat.taxAccountGuid
         : billTypeModel.isPurchaseRelated

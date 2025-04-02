@@ -154,10 +154,7 @@ class BillPlutoGridService {
     final subTotal = isZeroTotal ? '' : (subTotalStr - vat.toDouble).toStringAsFixed(2);
 
     final totalStr = isZeroTotal ? '' : (subTotalStr * quantity).toStringAsFixed(2);
-    log('vat $vat');
-    log('subTotal $subTotal');
-    log('totalStr $totalStr');
-    log('quantity $quantity');
+
     updateCellValue(mainTableStateManager, AppConstants.invRecSubTotal, subTotal);
     updateCellValue(mainTableStateManager, AppConstants.invRecTotal, totalStr);
     if (billTypeModel.billPatternType!.hasVat) {

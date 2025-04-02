@@ -192,13 +192,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
     );
 */
 
-/*    await createAndStoreEntryBonds(
+    await createAndStoreEntryBonds(
       sourceModels: allNestedBills,
       onProgress: (progress) {
         uploadProgress.value = progress; // Update progress
         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-      },
-    );*/
+      },        sourceNumbers: allNestedBills.select((bill) => bill.billDetails.billNumber),
+
+    );
     getAllNestedBillsRequestState.value = RequestState.success;
   }
 

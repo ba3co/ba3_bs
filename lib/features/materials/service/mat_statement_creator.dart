@@ -46,7 +46,7 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
   /// we must to add it at main price to return without edit in main price
   double _getStatementPrice(BillModel model, BillItem matItem) {
     if (model.billTypeModel.isSalesReturn) {
-      return read<MaterialController>().getMaterialById(matItem.itemGuid)!.calcMinPrice ?? 0;
+      return read<MaterialController>().getMaterialById(matItem.itemGuid).calcMinPrice ?? 0;
     } else {
       return matItem.itemSubTotalPrice!;
     }
@@ -59,7 +59,7 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
         return model.copyWith(freeBill: AppConstants.forceFree);
       }
 
-      final currentMaterial = read<MaterialController>().getMaterialById(matItem.itemGuid)!;
+      final currentMaterial = read<MaterialController>().getMaterialById(matItem.itemGuid);
 
       if ((currentMaterial.matLocalQuantity ?? 0) <= 0) {
         return model.copyWith(freeBill: true);

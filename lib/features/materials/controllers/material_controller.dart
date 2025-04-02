@@ -26,7 +26,6 @@ import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
-import '../../../core/services/firebase/implementations/services/firestore_uploader.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../logs/controllers/log_controller.dart';
@@ -290,9 +289,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     return matBarCode;
   }
 
-  MaterialModel? getMaterialById(String id) {
-    reloadMaterials();
-    return materials.firstWhereOrNull((material) => material.id == id);
+  MaterialModel getMaterialById(String id) {
+    //ToDo:
+    // reloadMaterials();
+    return materials.firstWhere((material) => material.id == id);
   }
 
   Future<MaterialModel?> getMaterialByIdXX(String id) async {

@@ -3,7 +3,6 @@ import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
-import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/data/models/discount_addition_account_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -267,8 +266,8 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
           },
           accounts: {
             BillAccounts.caches: AccountModel(
-              id: billData['B']['BillCustPtr'],
-              accName: billData['B']['BillCustName'],
+              id: billData['B']['BillCustAccId'],
+              accName: billData['B']['BillCustAccName'],
             ),
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasMaterialAccount)
               BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials]!,
@@ -280,8 +279,10 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
               BillAccounts.discounts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!,
             if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
               BillAccounts.additions: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!,
-            BillAccounts.store: AccountModel(
-                id: billData['B']['BillStoreGuid'], accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),
+            BillAccounts.store:
+            AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57')
+            /*AccountModel(
+                id: billData['B']['BillStoreGuid'], accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),*/
           },
           id: billData['B']['BillTypeGuid'],
           fullName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
