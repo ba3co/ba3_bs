@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/dialogs/custom_alert_dialog/helper_alert.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/network/api_constants.dart';
@@ -115,10 +116,8 @@ class BillDetailsController extends IBillController
       selectedCustomerAccount = newAccount;
       customerAccountController.text = newAccount.name!;
       if (billTypeModel.isPurchaseRelated && newAccount.customerHasVat != true) {
-        log('customer has no vat');
         billDetailsPlutoController.clearVat();
       } else {
-        log('customer has  vat');
         billDetailsPlutoController.returnVat();
       }
     }
@@ -157,17 +156,14 @@ class BillDetailsController extends IBillController
     _accountHandler = AccountHandler();
   }
 
-  bool validateForm(BuildContext context) {
-    bool validate=true;
-/*    if(selectedSellerAccount==null){
-      HelperAlert.showConfirm(context: context, text: AppStrings.areYouSureContinueWithoutSeller.tr,onConfirm: (){
-
-         validate=true;
-      });
-
-
-    }*/
-
+  Future<bool> validateForm(BuildContext context) async {
+    bool validate = true;
+    if (selectedSellerAccount == null) {
+      return await HelperAlert.showConfirm(
+        context: context,
+        text: AppStrings.areYouSureContinueWithoutSeller.tr,
+      );
+    }
     return validate;
   }
 
@@ -199,13 +195,9 @@ class BillDetailsController extends IBillController
     );
   }
 
-  void createEntryBond(BillModel billModel, BuildContext context) {
-
-
-    if (!validateForm(context)) return;
-
-
-
+  void createEntryBond(BillModel billModel, BuildContext context) async {
+    if (!await validateForm(context)) return;
+    if (!context.mounted) return;
     _billService.launchFloatingEntryBondDetailsScreen(
       context: context,
       billModel: billModel,
@@ -440,10 +432,7 @@ class BillDetailsController extends IBillController
       {required BuildContext context, required BillTypeModel billTypeModel, BillModel? existingBill, required bool withPrint}) async {
     // Validate the form first
 
-
-
-
-    if (!validateForm(context)) return;
+    if (!await validateForm(context)) return;
 
     // 2. Create the bill model or handle failure and exit
     final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
@@ -455,7 +444,7 @@ class BillDetailsController extends IBillController
     if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
 
     if (_isNoUpdate(existingBill, updatedBillModel)) return;
-
+    if (!context.mounted) return;
     await _saveBillAndHandleResult(context, updatedBillModel, existingBill, withPrint);
   }
 
@@ -540,7 +529,7 @@ class BillDetailsController extends IBillController
 
       // Update the material model with new serial numbers
       read<MaterialController>().updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers));
-        });
+    });
   }
 
   Future<Either<Failure, BillModel>> updateOnly(BillModel bill) async {
@@ -572,7 +561,6 @@ class BillDetailsController extends IBillController
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
-
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
       if (/*!_billUtils.validateCustomerAccount(selectedCustomerAccount)&&*/ !_billUtils.validateBillAccount(selectedBillAccount)) {

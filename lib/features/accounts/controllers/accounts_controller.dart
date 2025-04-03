@@ -235,9 +235,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   String getAccountNameById(String? accountId) {
-    //TODO
-    // if (accountId == null || accountId.isEmpty) return '';
-    if(accounts.where((account) => account.id == accountId).firstOrNull == null)log(accountId.toString());
+    if (accountId == null || accountId.isEmpty) return '';
     if(accountId=='00000000-0000-0000-0000-000000000000')return'';
     return accounts.where((account) => account.id == accountId).firstOrNull?.accName??'00000000-0000-0000-0000-000000000000';
   }
@@ -248,7 +246,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     String? accountID;
     if (accountName == null || accountName.isEmpty||accountName=='') return  '';
     if( accounts.where((account) => account.accName == accountName).firstOrNull?.id==null ){
-      log(accountName.toString());
+      log(accountName.toString(),name: 'getAccountIdByName');
     }
     accountID = accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
     // if (accountID == '') log('getAccountIdByName with $accountName is null');

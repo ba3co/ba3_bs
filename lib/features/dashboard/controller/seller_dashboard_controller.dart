@@ -42,7 +42,11 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   bool isSellerMobileTargetVisible = true;
   bool isSellerAccessoryTargetVisible = true;
   List<BillModel> allSellerBillsThisMonth = [];
-  PickerDateRange dateRange = PickerDateRange(DateTime.now(), DateTime.now());
+  PickerDateRange dateRange = PickerDateRange( DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  ).subtract(Duration(days: 1)),DateTime.now());
   final now = DateTime.now();
 
   List<PieChartSectionData> getSellerPieChartSections() {

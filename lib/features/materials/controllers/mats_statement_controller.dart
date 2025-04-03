@@ -29,7 +29,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     int i = 0;
     for (var element in matsStatements) {
       await _matStatementsRepo.save(element);
-      log("i is  ${i++}");
+      log("i is  ${++i} from ${matsStatements.length}", name: 'saveAllMatsStatementsModels');
     }
 
     final result = await _matStatementsRepo.saveAllNested(
@@ -44,10 +44,10 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedStatements) {
-        onSaveAllMatsStatementsModelsSuccess(
+        /*  onSaveAllMatsStatementsModelsSuccess(
           mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
           onProgress: onProgress,
-        );
+        );*/
       },
     );
   }
@@ -85,7 +85,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
             await _materialsController.updateMaterialQuantity(
               statement.matId!,
               statement.defQuantity!,
-               statement.matOrigin?.fromBill,
+              statement.matOrigin?.fromBill,
             );
           }
 
@@ -102,7 +102,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     for (final material in _materialsController.materials) {
       final materialStatementList = await fetchMatStatementById(material.id!);
       if (materialStatementList != null) {
-        log("mat num  ${++i}");
+        log("mat num  ${++i} of ${_materialsController.materials.length}", name: "setupAllMaterials");
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: material.id!,
             quantity: _calculateQuantity(materialStatementList),
@@ -116,7 +116,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     MaterialModel material = _materialsController.getMaterialById(matId);
     final materialStatementList = await fetchMatStatementById(material.id!);
     if (materialStatementList != null) {
-
       await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
           matId: material.id!,
           matFreeQuantity: _calculateFreeQuantity(materialStatementList),
@@ -138,13 +137,11 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     final materialStatementList = await fetchMatStatementById(matStatementModel.matId!);
 
     if (materialStatementList != null) {
-      log(materialStatementList.map((matStatementModel) => matStatementModel.toJson()).toString());
       if (matStatementModel.quantity! < 0) {
-
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: matStatementModel.matId!,
-            matFreeQuantity:_calculateFreeQuantity(materialStatementList),
-            matLocalQuantity:_calculateLocalQuantity(materialStatementList),
+            matFreeQuantity: _calculateFreeQuantity(materialStatementList),
+            matLocalQuantity: _calculateLocalQuantity(materialStatementList),
             quantity: _calculateQuantity(materialStatementList),
             currentMinPrice: _calculateMinPrice(materialStatementList),
             lastEnterPrice: _calculateLastEnterPrice(materialStatementList));
@@ -249,11 +246,21 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
         0,
         (sum, item) => sum + (item.quantity ?? 0),
       );
-  int _calculateLocalQuantity(List<MatStatementModel> items) => items.where((element) => element.matOrigin?.fromBill != true,).fold(
+
+  int _calculateLocalQuantity(List<MatStatementModel> items) => items
+      .where(
+        (element) => element.matOrigin?.fromBill != true,
+      )
+      .fold(
         0,
         (sum, item) => sum + (item.quantity ?? 0),
       );
-  int _calculateFreeQuantity(List<MatStatementModel> items) => items.where((element) => element.matOrigin?.fromBill == true,).fold(
+
+  int _calculateFreeQuantity(List<MatStatementModel> items) => items
+      .where(
+        (element) => element.matOrigin?.fromBill == true,
+      )
+      .fold(
         0,
         (sum, item) => sum + (item.quantity ?? 0),
       );
@@ -283,8 +290,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     }
     log('final price is $currentPrice');
 
-
-    return currentPrice.isNaN?0: currentPrice;
+    return currentPrice.isNaN ? 0 : currentPrice;
   }
 
   double _calculateLastEnterPrice(List<MatStatementModel> items) {
@@ -298,7 +304,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       (item) => item.date!,
     );
     log('last pay price is ${sellItem.lastOrNull?.price}');
-    return  ( sellItem.lastOrNull?.price ?? 0.0).isNaN?0:sellItem.lastOrNull?.price ?? 0.0;
+    return (sellItem.lastOrNull?.price ?? 0.0).isNaN ? 0 : sellItem.lastOrNull?.price ?? 0.0;
   }
 
   String get screenTitle => 'حركات ${selectedMat?.matName}';

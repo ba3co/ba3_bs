@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ba3_bs/core/dialogs/custom_alert_dialog/widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -71,27 +73,39 @@ class HelperAlert {
     );
   }
 
-  static void showConfirm({
+  static Future<bool> showConfirm({
     required BuildContext context,
     required String text,
     String? title,
-    String? confirmText ,
+    String? confirmText,
     String? cancelText,
     Color confirmColor = Colors.green,
     VoidCallback? onConfirm,
-  }) {
+  }) async {
+    final Completer<void> completer = Completer<void>();
+    bool result = false;
     CustomAlertDialog.show(
       context: context,
       type: CustomAlertType.confirm,
       title: title ?? AppStrings.confirm.tr,
       text: text,
-      confirmBtnText: confirmText??AppStrings.yes.tr,
-      cancelBtnText: cancelText??AppStrings.no.tr,
+      confirmBtnText: confirmText ?? AppStrings.yes.tr,
+      cancelBtnText: cancelText ?? AppStrings.no.tr,
       confirmBtnColor: confirmColor,
       onConfirmBtnTap: () {
         onConfirm?.call();
+        result = true;
+        completer.complete();
       },
+      onCancelBtnTap: () {
+        result = false;
+        completer.complete();
+      },
+      barrierDismissible: false,
     );
+    await completer.future;
+
+    return result;
   }
 
   static void showCustomPhoneInput({
@@ -129,7 +143,7 @@ class HelperAlert {
         }
         // Navigator.pop(context);
         await Future.delayed(const Duration(milliseconds: 300));
-        if(!context.mounted) return;
+        if (!context.mounted) return;
         await CustomAlertDialog.show(
           context: context,
           type: CustomAlertType.success,

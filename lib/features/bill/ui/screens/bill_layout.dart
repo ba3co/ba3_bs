@@ -161,7 +161,7 @@ class BillLayout extends StatelessWidget {
                 ? FloatingActionButton(
                     backgroundColor: Colors.blue,
                     onPressed: () {
-                      // allBillsController.fetchAllNestedBills();
+                      allBillsController.fetchAllNestedBills();
                       // allBillsController.saveXmlToFile();
                       // read<MaterialsStatementController>().setupAllMaterials();
                       // read<MaterialsStatementController>().setupOneMaterials("e7103aec-14c5-4123-893d-9a4851d0d478");

@@ -141,7 +141,7 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
 
     final selectedBillTypeModel = patternFormHandler.selectedBillTypeModel;
 
-    log(accounts.toString());
+    log(accounts.toString(),name: 'accounts');
 
     if (selectedBillTypeModel != null) {
       return selectedBillTypeModel.copyWith(

@@ -157,7 +157,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
   Future<int> getSellerMaterialsSales(
       {required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
     int matQuantity = 0;
-    log(sellerId);
+    log("sellerId $sellerId",name: "getSellerMaterialsSales");
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
