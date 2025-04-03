@@ -27,8 +27,8 @@ class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandl
       nameController.text =accountModel.accName!;
       latinNameController.text = accountModel.accLatinName!;
       codeController.text = accountModel.accCode!;
-      accountParentModel = accountController.getAccountModelById(accountModel.id!)!;
-      accParentName.text = accountParentModel!.accName!;
+      accountParentModel = accountController.getAccountModelById(accountModel.accParentGuid!);
+      accParentName.text = accountParentModel?.accName??'';
       accountType = AccountType.byIndex(accountModel.accType!);
     } else {
       log("accountModel =null");

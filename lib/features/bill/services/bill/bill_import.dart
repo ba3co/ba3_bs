@@ -230,7 +230,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       };
 
       billJson['Items'] = {"I": itemsJson};
-      bool freeBill = true;
+      bool freeBill = false;
 
       final BillModel bill = BillModel.fromImportedJsonFile(billJson, freeBill);
 

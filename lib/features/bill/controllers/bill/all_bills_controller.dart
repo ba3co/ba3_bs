@@ -243,7 +243,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
       //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
       //   },
       // );
-      //
+
+
       await createAndStoreEntryBonds(
         sourceModels: fetchedBills,
         onProgress: (progress) {

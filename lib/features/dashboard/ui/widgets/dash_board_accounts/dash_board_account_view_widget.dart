@@ -21,7 +21,7 @@ class DashBoardAccountViewWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 110.h,
-      width: 110.w,
+      width: 150.w,
       child: Column(
         children: [
           Row(

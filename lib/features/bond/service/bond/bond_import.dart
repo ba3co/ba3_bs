@@ -47,12 +47,13 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
     );
   }
 
+  bool entryBond = false;
+
   @override
   Future<List<BondModel>> fromImportXml(XmlDocument document) async {
     await _initializeNumbers();
 
-    // final bondNodes = document.findAllElements('W');
-    final bondNodes = document.findAllElements('P');
+    final bondNodes = entryBond ? document.findAllElements('W') : document.findAllElements('P');
 
     final accountWithName = document.findAllElements('A');
 
@@ -90,33 +91,26 @@ class BondImport extends ImportServiceBase<BondModel> with FirestoreSequentialNu
 
       // إنشاء كائن BondModel
       return BondModel(
-        // payTypeGuid: '2a550cb5-4e91-4e68-bacc-a0e7dcbbf1de',
-        payTypeGuid: node.getElement('PayTypeGuid')?.text,
-        // payNumber: getLastBondNumber('2a550cb5-4e91-4e68-bacc-a0e7dcbbf1de'),
-        payNumber: getLastBondNumber(node.getElement('PayTypeGuid')!.text),
-        // payGuid: node.getElement('CEntryGuid')?.text,
-        payGuid: node.getElement('PayGuid')?.text,
-        // payBranchGuid: node.getElement('CEntryBranch')?.text,
-        payBranchGuid: node.getElement('PayBranchGuid')?.text,
-        // payDate: node.getElement('CEntryDate')?.text.toYearMonthDayFormat(),
-        payDate: node.getElement('PayDate')?.text.toYearMonthDayFormat(),
-        // entryPostDate: node.getElement('CEntryPostDate')?.text,
-        entryPostDate: node.getElement('EntryPostDate')?.text,
-        // payNote: node.getElement('CEntryNote')?.text,
-        payNote: node.getElement('PayNote')?.text,
-        // payCurrencyGuid: node.getElement('CEntryCurrencyGuid')?.text,
-        payCurrencyGuid: node.getElement('PayCurrencyGuid')?.text,
-        // payCurVal: double.tryParse((node.getElement('CEntryDebit')?.text)!.replaceAll(',', '')),
-        payCurVal: double.tryParse(node.getElement('PayCurVal')?.text ?? '0'),
-        payAccountGuid: node.getElement('PayAccountGuid')?.text,
-        // payAccountGuid: '00000000-0000-0000-0000-000000000000',
-        // paySecurity: int.tryParse(node.getElement('CEntrySecurity')?.text ?? '0'),
-        paySecurity: int.tryParse(node.getElement('PaySecurity')?.text ?? '0'),
-        // paySkip: 0,
-        paySkip: int.tryParse(node.getElement('PaySkip')?.text ?? '0'),
-        //
-        // erParentType: 0,
-        erParentType: int.tryParse(node.getElement('ErParentType')?.text ?? '0'),
+        payTypeGuid: entryBond ? '2a550cb5-4e91-4e68-bacc-a0e7dcbbf1de' : node.getElement('PayTypeGuid')?.text,
+        payNumber:
+            entryBond ? getLastBondNumber('2a550cb5-4e91-4e68-bacc-a0e7dcbbf1de') : getLastBondNumber(node.getElement('PayTypeGuid')!.text),
+        payGuid: entryBond ? node.getElement('CEntryGuid')?.text : node.getElement('PayGuid')?.text,
+        payBranchGuid: entryBond ? node.getElement('CEntryBranch')?.text : node.getElement('PayBranchGuid')?.text,
+        payDate: entryBond
+            ? node.getElement('CEntryDate')?.text.toYearMonthDayFormat()
+            : node.getElement('PayDate')?.text.toYearMonthDayFormat(),
+        entryPostDate: entryBond ? node.getElement('CEntryPostDate')?.text : node.getElement('EntryPostDate')?.text,
+        payNote: entryBond ? node.getElement('CEntryNote')?.text : node.getElement('PayNote')?.text,
+        payCurrencyGuid: entryBond ? node.getElement('CEntryCurrencyGuid')?.text : node.getElement('PayCurrencyGuid')?.text,
+        payCurVal: entryBond
+            ? double.tryParse((node.getElement('CEntryDebit')?.text)!.replaceAll(',', ''))
+            : double.tryParse(node.getElement('PayCurVal')?.text ?? '0'),
+        payAccountGuid: entryBond ? '00000000-0000-0000-0000-000000000000' : node.getElement('PayAccountGuid')?.text,
+        paySecurity: entryBond
+            ? int.tryParse(node.getElement('CEntrySecurity')?.text ?? '0')
+            : int.tryParse(node.getElement('PaySecurity')?.text ?? '0'),
+        paySkip: entryBond ? 0 : int.tryParse(node.getElement('PaySkip')?.text ?? '0'),
+        erParentType: entryBond ? 0 : int.tryParse(node.getElement('ErParentType')?.text ?? '0'),
         payItems: PayItems(itemList: payItemList),
         e: node.getElement('E')?.text,
       );
