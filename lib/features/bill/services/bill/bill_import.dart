@@ -159,9 +159,11 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
         }
         return {
           'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
+          // 'MatPtr': iElement.findElements('MatPtr').single.text,
 
           /// to get the same material name in our database
           'MatName': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.matName,
+          // 'MatName': matNameWithId[iElement.findElements('MatPtr').single.text],
           'QtyBonus': iElement.findElements('QtyBonus').single.text,
           'Unit': iElement.findElements('Unit').single.text,
           'PriceDescExtra': iElement.findElements('PriceDescExtra').single.text,
@@ -198,6 +200,7 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
                   ?.id ??
               '',
           'BillCustAccId': read<AccountsController>().getAccountIdByName(accountWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text]),
+          // 'BillCustAccId': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
           'BillCustAccName':accountWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text],
           'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
           'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,

@@ -290,8 +290,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   MaterialModel getMaterialById(String id) {
-    //ToDo:
-    // reloadMaterials();
+    reloadMaterials();
     return materials.firstWhere((material) => material.id == id);
   }
 
@@ -452,8 +451,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
         AppUIUtils.onSuccess(selectedMaterial?.id == null ? 'تم الحفظ بنجاح' : 'تم التعديل بنجاح');
-        //TODO:LOGS
-        // read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
   }

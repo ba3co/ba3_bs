@@ -44,13 +44,11 @@ class StoreCartDataSource extends ListenableDatasource<StoreCartModel> {
 
   @override
   Future<List<StoreCartModel>> saveAll(List<StoreCartModel> items) {
-    // TODO: implement saveAll
     throw UnimplementedError();
   }
 
   @override
   Stream<StoreCartModel> subscribeToDoc({required String documentId}) {
-    // TODO: implement subscribeToDoc
     throw UnimplementedError();
   }
 }

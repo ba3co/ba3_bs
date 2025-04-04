@@ -38,6 +38,7 @@ import '../../../../core/services/export_xml/export_xml_service.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../bond/controllers/bonds/all_bond_controller.dart';
 import '../../../floating_window/controllers/floating_window_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/controllers/pattern_controller.dart';
@@ -113,11 +114,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
   Future<void> saveXmlToFile() async {
     final xmlService = ExportXmlService();
 
-    // await fetchAllNestedBills();
-    await fetchBills(read<PatternController>().billsTypeSales);
-    log(bills.length.toString());
-    final allBills = [bills.last];
-    // await read<AllBondsController>().fetchAllNestedBonds();
+    await fetchAllNestedBills();
+    final allBills = nestedBills.values.expand((bills) => bills).toList();
+    await read<AllBondsController>().fetchAllNestedBonds();
 
     // billsByTypeGuid
     final usedMaterialIds = allBills.expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();
@@ -129,6 +128,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         .where((ids) => ids != null)
         .expand((ids) => ids!)
         .toSet();
+
 
     final usedAccounts = read<AccountsController>().accounts.where((acc) => usedAccountIds.contains(acc.id)).toList();
     final usedCustomerAccounts = usedAccounts.map((acc) => acc.id).whereType<String>().toSet();
@@ -145,11 +145,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final usedSellerIds = allBills.map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
 
     final usedSellers = read<SellersController>().sellers.where((seller) => usedSellerIds.contains(seller.costGuid)).toList();
-    nestedBills.clear();
-    nestedBills[bills.first.billTypeModel] = [bills.last];
     final xmlString = xmlService.generateFullXml(
       bills: nestedBills,
-      bonds: {} /*read<AllBondsController>().bondsByTypeGuid*/,
+      bonds:  read<AllBondsController>().nestedBonds,
       materials: usedMaterials,
       cheques: [] /* read<AllChequesController>().chequesList*/,
       customers: usedCustomers /*read<CustomersController>().customers*/,
@@ -182,13 +180,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
     allNestedBills.assignAll(nestedBills.values.expand((bills) => bills).toList());
 
     log("allNestedBills is ${allNestedBills.length}");
-    await createAndStoreMatsStatements(
+ /*   await createAndStoreMatsStatements(
       sourceModels: allNestedBills,
       onProgress: (progress) {
         uploadProgress.value = progress; // Update progress
         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
       },
-    );
+    );*/
 
 /*    await createAndStoreEntryBonds(
       sourceModels: allNestedBills,
