@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
+import '../../../../core/helper/enums/enums.dart';
 import '../widgets/add_material/add_material_form.dart';
 
 class AddMaterialScreen extends StatelessWidget {
@@ -29,7 +30,6 @@ class AddMaterialScreen extends StatelessWidget {
                 controller: controller,
               ),
               FormFieldRow(
-
                 firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
                   label: AppStrings.group.tr,
@@ -42,22 +42,28 @@ class AddMaterialScreen extends StatelessWidget {
                   },
                 ),
               ),
-              AppButton(
-                title: controller.selectedMaterial?.id == null ? AppStrings.add.tr : AppStrings.edit.tr,
-                onPressed: () {
-                  controller.saveOrUpdateMaterial();
-                },
-                iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
-                color: controller.selectedMaterial?.id == null ? null : Colors.green,
-              ),
-              AppButton(
-                title: AppStrings.delete.tr,
-                onPressed: () {
-                  controller.deleteMaterial();
-                },
-                iconData: Icons.delete,
-                color: Colors.red,
-              ),
+              Obx(() {
+                return AppButton(
+                  isLoading: controller.saveMaterialRequestState.value == RequestState.loading,
+                  title: controller.selectedMaterial?.id == null ? AppStrings.add.tr : AppStrings.edit.tr,
+                  onPressed: () {
+                    controller.saveOrUpdateMaterial();
+                  },
+                  iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
+                  color: controller.selectedMaterial?.id == null ? null : Colors.green,
+                );
+              }),
+              Obx(() {
+                return AppButton(
+                  isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
+                  title: AppStrings.delete.tr,
+                  onPressed: () {
+                    controller.deleteMaterial();
+                  },
+                  iconData: Icons.delete,
+                  color: Colors.red,
+                );
+              }),
             ],
           ),
         ),

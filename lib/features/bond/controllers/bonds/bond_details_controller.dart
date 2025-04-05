@@ -52,6 +52,10 @@ class BondDetailsController extends GetxController with AppValidator {
 
   late bool isDebitOrCredit;
 
+  Rx<RequestState> saveBondRequestState = RequestState.initial.obs;
+
+  Rx<RequestState> deleteBondRequestState = RequestState.initial.obs;
+
   void setAccount(AccountModel setAccount) {
     selectedAccount = setAccount;
     bondDetailsPlutoController.setAccountGuid = setAccount.id;
@@ -90,11 +94,19 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> deleteBond(BondModel bondModel, {bool fromBondById = false}) async {
+    deleteBondRequestState.value = RequestState.loading;
+
     final result = await _bondsFirebaseRepo.delete(bondModel);
 
-    result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _bondService.handleDeleteSuccess(bondModel, bondSearchController, fromBondById),
+    await result.fold(
+      (failure) {
+        deleteBondRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
+      (success) async {
+        await _bondService.handleDeleteSuccess(bondModel, bondSearchController, fromBondById);
+        deleteBondRequestState.value = RequestState.success;
+      },
     );
   }
 
@@ -129,22 +141,27 @@ class BondDetailsController extends GetxController with AppValidator {
       return;
     }
 
+    saveBondRequestState.value = RequestState.loading;
+
     // Save the bond to Firestore
     final result = await _bondsFirebaseRepo.save(updatedBondModel);
 
     // Handle the result (success or failure)
-    result.fold(
+    await result.fold(
       (failure) {
+        saveBondRequestState.value = RequestState.error;
         return AppUIUtils.onFailure(failure.message);
       },
-      (bondModel) {
-        _bondService.handleSaveOrUpdateSuccess(
+      (bondModel) async {
+        await _bondService.handleSaveOrUpdateSuccess(
           previousBond: existingBondModel,
           currentBond: bondModel,
           bondSearchController: bondSearchController,
           isSave: existingBondModel == null,
           bondDetailsController: this,
         );
+
+        saveBondRequestState.value = RequestState.success;
       },
     );
   }

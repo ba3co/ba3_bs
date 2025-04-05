@@ -48,6 +48,10 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   final newCustomerPhoneController = TextEditingController();
   final addedCustomers = <CustomerModel>[].obs;
 
+  Rx<RequestState> saveAccountRequestState = RequestState.initial.obs;
+
+  Rx<RequestState> deleteAccountRequestState = RequestState.initial.obs;
+
   void setAccountParent(AccountModel accountModel) {
     accountFromHandler.accountParentModel = accountModel;
     accountFromHandler.accParentName.text = accountModel.accName!;
@@ -236,17 +240,15 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
   String getAccountNameById(String? accountId) {
     if (accountId == null || accountId.isEmpty) return '';
-    if(accountId=='00000000-0000-0000-0000-000000000000')return'';
-    return accounts.where((account) => account.id == accountId).firstOrNull?.accName??'00000000-0000-0000-0000-000000000000';
+    if (accountId == '00000000-0000-0000-0000-000000000000') return '';
+    return accounts.where((account) => account.id == accountId).firstOrNull?.accName ?? '00000000-0000-0000-0000-000000000000';
   }
-
-
 
   String getAccountIdByName(String? accountName) {
     String? accountID;
-    if (accountName == null || accountName.isEmpty||accountName=='') return  '';
-    if( accounts.where((account) => account.accName == accountName).firstOrNull?.id==null ){
-      log(accountName.toString(),name: 'getAccountIdByName');
+    if (accountName == null || accountName.isEmpty || accountName == '') return '';
+    if (accounts.where((account) => account.accName == accountName).firstOrNull?.id == null) {
+      log(accountName.toString(), name: 'getAccountIdByName');
     }
     accountID = accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
     // if (accountID == '') log('getAccountIdByName with $accountName is null');
@@ -380,6 +382,8 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
       AppUIUtils.onFailure('من فضلك أدخل ');
       return;
     }
+
+    saveAccountRequestState.value = RequestState.loading;
     await _saveAccountWithCustomers(updatedAccountModel);
   }
 
@@ -421,8 +425,12 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     final result = await _accountsFirebaseRepo.save(accountWithCustomers);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) {
+        saveAccountRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
       (_) {
+        saveAccountRequestState.value = RequestState.success;
         AppUIUtils.onSuccess('تم اضافة الحساب بنجاح');
 
         read<LogController>()
@@ -442,11 +450,17 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   void deleteAccount() async {
+    deleteAccountRequestState.value = RequestState.loading;
+
     if (isEditAccount) {
       final result = await _accountsFirebaseRepo.delete(selectedAccount!.id!);
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) {
+          deleteAccountRequestState.value = RequestState.error;
+          AppUIUtils.onFailure(failure.message);
+        },
         (_) {
+          deleteAccountRequestState.value = RequestState.success;
           AppUIUtils.onSuccess('تم حذف الحساب بنجاح');
           read<LogController>().addLog(item: selectedAccount, eventType: LogEventType.delete);
         },

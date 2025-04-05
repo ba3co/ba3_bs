@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../controllers/sellers_controller.dart';
 
 class AllSellersScreen extends StatelessWidget {
@@ -38,10 +39,10 @@ class AllSellersScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             itemCount: controller.sellers.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
+              crossAxisCount: calculateResponsiveCrossAxisCount(1.sw),
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.1,
+              childAspectRatio: 0.85,
             ),
             itemBuilder: (context, index) {
               final seller = controller.sellers[index];
@@ -58,62 +59,76 @@ class AllSellersScreen extends StatelessWidget {
                   elevation: 3,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.blue.shade50,
-                          child: Text(
-                            initials,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.blue.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          seller.costName ?? '',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          'كود: ${seller.costCode ?? '---'}',
-                          style: TextStyle(fontSize: 13.sp, color: Colors.grey),
-                        ),
-                        const Spacer(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red.shade400),
-                              onPressed: () async {
-                                if (await AppUIUtils.confirm(context)) {
-                                  controller.deleteSeller(seller.costGuid!);
-                                }
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                FontAwesomeIcons.solidPenToSquare,
-                                size: 16,
-                                color: AppColors.lightBlueColor,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundColor: Colors.blue.shade50,
+                            child: Text(
+                              initials,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.blue.shade700,
+                                fontWeight: FontWeight.bold,
                               ),
-                              onPressed: () {
-                                read<SellerSalesController>().navigateToAddSellerScreen(
-                                  seller: seller,
-                                  context: context,
-                                );
-                              },
                             ),
-                          ],
-                        )
-                      ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            seller.costName ?? '',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            'كود: ${seller.costCode ?? '---'}',
+                            style: TextStyle(fontSize: 13.sp, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 12),
+                          FittedBox(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Obx(() {
+                                  return IconButton(
+                                    icon: Icon(Icons.delete,
+                                        color: controller.deleteSellerRequestState.value == RequestState.loading
+                                            ? Colors.grey
+                                            : Colors.red.shade400),
+                                    onPressed: controller.deleteSellerRequestState.value == RequestState.loading
+                                        ? () {}
+                                        : () async {
+                                            if (await AppUIUtils.confirmOverlay(context)) {
+                                              controller.deleteSeller(seller.costGuid!);
+                                            }
+                                          },
+                                  );
+                                }),
+                                IconButton(
+                                  icon: Icon(
+                                    FontAwesomeIcons.solidPenToSquare,
+                                    size: 16,
+                                    color: AppColors.lightBlueColor,
+                                  ),
+                                  onPressed: () {
+                                    read<SellerSalesController>().navigateToAddSellerScreen(
+                                      seller: seller,
+                                      context: context,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -124,4 +139,6 @@ class AllSellersScreen extends StatelessWidget {
       ),
     );
   }
+
+  int calculateResponsiveCrossAxisCount(double screenWidth, {double minItemWidth = 280}) => screenWidth ~/ minItemWidth;
 }

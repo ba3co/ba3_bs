@@ -30,36 +30,44 @@ class AddChequeButtons extends StatelessWidget {
         if (chequesSearchController.isNew)
           Obx(() {
             return AppButton(
-                title: AppStrings.add.tr,
-                height: 20,
-                color: chequesDetailsController.isChequesSaved.value ? Colors.green : Colors.blue.shade700,
-                onPressed: chequesDetailsController.isChequesSaved.value
-                    ? () {}
-                    : () async {
-                        await chequesDetailsController.saveCheques(chequesType);
-                      },
-                iconData: Icons.add_chart_outlined);
+              title: AppStrings.add.tr,
+              height: 20,
+              isLoading: chequesDetailsController.saveChequesRequestState.value == RequestState.loading,
+              color: chequesDetailsController.isChequesSaved.value ? Colors.green : Colors.blue.shade700,
+              onPressed: chequesDetailsController.isChequesSaved.value
+                  ? () {}
+                  : () async {
+                      await chequesDetailsController.saveCheques(chequesType);
+                    },
+              iconData: Icons.add_chart_outlined,
+            );
           }),
         if (!chequesSearchController.isNew) ...[
-          AppButton(
-            title: AppStrings.edit.tr,
-            height: 20,
-            onPressed: () async {
-              chequesDetailsController.updateCheques(
-                chequesModel: chequesModel,
-                chequesType: chequesType,
-              );
-            },
-            iconData: Icons.edit_outlined,
-          ),
-          AppButton(
-            onPressed: () {
-              chequesDetailsController.deleteCheques(chequesModel);
-            },
-            title: AppStrings.delete.tr,
-            iconData: Icons.delete_outline,
-            color: Colors.red,
-          ),
+          Obx(() {
+            return AppButton(
+              isLoading: chequesDetailsController.saveChequesRequestState.value == RequestState.loading,
+              title: AppStrings.edit.tr,
+              height: 20,
+              onPressed: () async {
+                chequesDetailsController.updateCheques(
+                  chequesModel: chequesModel,
+                  chequesType: chequesType,
+                );
+              },
+              iconData: Icons.edit_outlined,
+            );
+          }),
+          Obx(() {
+            return AppButton(
+              isLoading: chequesDetailsController.deleteChequesRequestState.value == RequestState.loading,
+              onPressed: () {
+                chequesDetailsController.deleteCheques(chequesModel);
+              },
+              title: AppStrings.delete.tr,
+              iconData: Icons.delete_outline,
+              color: Colors.red,
+            );
+          }),
           AppButton(
             onPressed: () {
               chequesDetailsController.launchEntryBondWindow(chequesModel, context);
@@ -83,7 +91,7 @@ class AddChequeButtons extends StatelessWidget {
               onPressed: () {
                 chequesDetailsController.launchPayEntryBondWindow(chequesModel, context);
               },
-              title: AppStrings.paymentBond .tr,
+              title: AppStrings.paymentBond.tr,
               iconData: Icons.view_list_outlined,
             ),
           if (!chequesDetailsController.isPayed!)
@@ -102,7 +110,7 @@ class AddChequeButtons extends StatelessWidget {
               onPressed: () {
                 chequesDetailsController.launchRefundPayEntryBondWindow(chequesModel, context);
               },
-              title:AppStrings.refundedBond.tr,
+              title: AppStrings.refundedBond.tr,
               iconData: Icons.lock_reset_rounded,
             ),
         ]

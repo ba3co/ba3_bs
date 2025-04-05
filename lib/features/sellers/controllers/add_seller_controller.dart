@@ -2,6 +2,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
@@ -15,6 +16,8 @@ class AddSellerController extends GetxController with AppNavigator {
   final nameController = TextEditingController();
   final codeController = TextEditingController();
   SellerModel? selectedSellerModel;
+
+  Rx<RequestState> saveSellerRequestState = RequestState.initial.obs;
 
   init(SellerModel? sellerModel) {
     if (sellerModel != null) {
@@ -45,7 +48,6 @@ class AddSellerController extends GetxController with AppNavigator {
       final newSeller = SellerModel(
         costName: name,
         costCode: code,
-
       );
       await addSeller(newSeller, isNew: true);
     } else {
@@ -59,11 +61,19 @@ class AddSellerController extends GetxController with AppNavigator {
   }
 
   Future<void> addSeller(SellerModel seller, {required bool isNew}) async {
+    saveSellerRequestState.value = RequestState.loading;
+
     final result = await _sellersFirebaseRepo.save(seller);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (savedSeller) => onSuccess(savedSeller, isNew: isNew),
+      (failure) {
+        saveSellerRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
+      (savedSeller) {
+        saveSellerRequestState.value = RequestState.success;
+        onSuccess(savedSeller, isNew: isNew);
+      },
     );
   }
 

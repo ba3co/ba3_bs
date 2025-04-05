@@ -73,7 +73,7 @@ class BillDetailsButtons extends StatelessWidget {
                     })
                 : SizedBox()),
             Visibility(
-                 visible: billModel.billTypeModel.isPurchaseRelated,
+                visible: billModel.billTypeModel.isPurchaseRelated,
                 child: freeLocalSwitcher(billDetailsController: billDetailsController)),
           ],
         ),
@@ -89,18 +89,12 @@ class BillDetailsButtons extends StatelessWidget {
         height: 20,
         fontSize: 14,
         width: 90,
-        color: billDetailsController.saveBillRequestState.value == RequestState.loading
-            ? Colors.grey
-            : isBillSaved
-                ? Colors.green
-                : Colors.blue.shade700,
-        onPressed: billDetailsController.saveBillRequestState.value == RequestState.loading
-            ? () {}
-            : isBillSaved
-                ? () => billDetailsController.appendNewBill(
-                    billTypeModel: billModel.billTypeModel,
-                    lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
-                : () => billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: false),
+        isLoading: billDetailsController.saveBillRequestState.value == RequestState.loading,
+        color: isBillSaved ? Colors.green : Colors.blue.shade700,
+        onPressed: isBillSaved
+            ? () => billDetailsController.appendNewBill(
+                billTypeModel: billModel.billTypeModel, lastBillNumber: billSearchController.bills.last.billDetails.billNumber!)
+            : () => billDetailsController.saveBill(billModel.billTypeModel, context: context, withPrint: false),
         iconData: FontAwesomeIcons.floppyDisk,
       );
     });
@@ -136,12 +130,15 @@ class BillDetailsButtons extends StatelessWidget {
   List<Widget> _buildEditDeletePdfButtons(BuildContext context) {
     return [
       if (!billSearchController.isPending)
-        _buildActionButton(
-          title: AppStrings.edit.tr,
-          icon: FontAwesomeIcons.solidPenToSquare,
-          onPressed: () => billDetailsController.updateBill(
-              context: context, billModel: billModel, billTypeModel: billModel.billTypeModel, withPrint: false),
-        ),
+        Obx(() {
+          return _buildActionButton(
+            isLoading: billDetailsController.saveBillRequestState.value == RequestState.loading,
+            title: AppStrings.edit.tr,
+            icon: FontAwesomeIcons.solidPenToSquare,
+            onPressed: () => billDetailsController.updateBill(
+                context: context, billModel: billModel, billTypeModel: billModel.billTypeModel, withPrint: false),
+          );
+        }),
       if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,
@@ -155,12 +152,15 @@ class BillDetailsButtons extends StatelessWidget {
           onPressed: () => billDetailsController.sendBillToWhatsapp(billModel),
         ),
       if (RoleItemType.viewBill.hasAdminPermission)
-        _buildActionButton(
-          title: AppStrings.delete.tr,
-          icon: FontAwesomeIcons.eraser,
-          color: Colors.red,
-          onPressed: () => billDetailsController.deleteBill(billModel),
-        ),
+        Obx(() {
+          return _buildActionButton(
+            isLoading: billDetailsController.deleteBillRequestState.value == RequestState.loading,
+            title: AppStrings.delete.tr,
+            icon: FontAwesomeIcons.eraser,
+            color: Colors.red,
+            onPressed: () => billDetailsController.deleteBill(billModel),
+          );
+        }),
     ];
   }
 
@@ -168,10 +168,12 @@ class BillDetailsButtons extends StatelessWidget {
     required String title,
     required IconData icon,
     required VoidCallback onPressed,
+    bool isLoading = false,
     Color? color,
     double? width,
   }) {
     return AppButton(
+      isLoading: isLoading,
       title: title,
       iconData: icon,
       height: 20,

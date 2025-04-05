@@ -39,7 +39,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   final QueryableSavableRepository<MaterialModel> _materialRemoteRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo);
+  MaterialController(
+      this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo);
 
   List<MaterialModel> materials = [];
   List<MaterialModel> materialsForShow = [];
@@ -54,6 +55,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   bool get isFromHandler => selectedMaterial == null ? false : true;
   final logger = Logger();
+
+  Rx<RequestState> saveMaterialRequestState = RequestState.initial.obs;
+
+  Rx<RequestState> deleteMaterialRequestState = RequestState.initial.obs;
 
   @override
   onInit() {
@@ -169,12 +174,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     log('newMaterials length is ${newMaterials.length}');
 
     if (newMaterials.isNotEmpty) {
-
-
       for (var mat in newMaterials) {
         materialFromHandler.init(mat);
         await saveOrUpdateMaterial();
-
       }
 
       /*   // Show progress in the UI
@@ -268,7 +270,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
               (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))) ||
               (item.serialNumbers != null &&
                   searchParts.every(
-                    (part) => item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
+                    (part) => item.serialNumbers!.entries
+                        .any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
                   )), // Only allow unsold serials
         )
         .toList();
@@ -284,7 +287,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
     reloadMaterials();
 
-    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode =
+        materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
 
     return matBarCode;
   }
@@ -359,13 +363,18 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       AppUIUtils.onFailure('من فضلك قم!');
       return;
     }
+    saveMaterialRequestState.value = RequestState.loading;
 
     final hiveResult =
         materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) {
+        saveMaterialRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
       (savedMaterial) {
+        saveMaterialRequestState.value = RequestState.success;
         _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add);
       },
     );
@@ -377,13 +386,20 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     // Prepare user change queue for delete
     final userChangeQueue = _prepareUserChangeQueue(selectedMaterial!, ChangeType.remove);
 
+    deleteMaterialRequestState.value = RequestState.loading;
     log('userChangeQueue length on deleteMaterial: ${userChangeQueue.length}');
     // Save changes and handle results
     final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => _onDeleteSuccess(),
+      (failure) {
+        deleteMaterialRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
+      (_) {
+        deleteMaterialRequestState.value = RequestState.success;
+        _onDeleteSuccess();
+      },
     );
   }
 
@@ -399,25 +415,26 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         materialModel: selectedMaterial,
       );
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
-      .nonLoggedInUsers
-      .map(
-        (user) => ChangesModel(
-          targetUserId: user.userId!,
-          changeItems: {
-            ChangeCollection.materials: [
-              ChangeItem(
-                target: ChangeTarget(
-                  targetCollection: ChangeCollection.materials,
-                  changeType: changeType,
-                ),
-                change: materialModel.toJson(),
-              )
-            ]
-          },
-        ),
-      )
-      .toList();
+  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) =>
+      read<UserManagementController>()
+          .nonLoggedInUsers
+          .map(
+            (user) => ChangesModel(
+              targetUserId: user.userId!,
+              changeItems: {
+                ChangeCollection.materials: [
+                  ChangeItem(
+                    target: ChangeTarget(
+                      targetCollection: ChangeCollection.materials,
+                      changeType: changeType,
+                    ),
+                    change: materialModel.toJson(),
+                  )
+                ]
+              },
+            ),
+          )
+          .toList();
 
   Future<void> updateMaterialWithChanges(MaterialModel updatedMaterialModel) async {
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
@@ -451,7 +468,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
         AppUIUtils.onSuccess(selectedMaterial?.id == null ? 'تم الحفظ بنجاح' : 'تم التعديل بنجاح');
-        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        read<LogController>()
+            .addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
   }
@@ -465,7 +483,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (_) {
-
         read<LogController>().addLog(item: materialModel, eventType: LogEventType.delete);
 
         log('materials length before add item: ${materials.length}');

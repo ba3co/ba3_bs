@@ -51,6 +51,10 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
   bool? isPayed;
   bool? isRefundPay;
 
+  Rx<RequestState> saveChequesRequestState = RequestState.initial.obs;
+
+  Rx<RequestState> deleteChequesRequestState = RequestState.initial.obs;
+
   EntryBondController get bondController => read<EntryBondController>();
 
   RxString chequesDate = DateTime.now().dayMonthYear.obs, chequesDueDate = DateTime.now().dayMonthYear.obs;
@@ -103,11 +107,19 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
   }
 
   Future<void> deleteCheques(ChequesModel chequesModel, {bool fromChequesById = false}) async {
+    deleteChequesRequestState.value = RequestState.loading;
+
     final result = await _chequesFirebaseRepo.delete(chequesModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => _chequesService.handleDeleteSuccess(chequesModel, chequesSearchController, fromChequesById),
+      (failure) {
+        deleteChequesRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
+      (success) {
+        deleteChequesRequestState.value = RequestState.success;
+        _chequesService.handleDeleteSuccess(chequesModel, chequesSearchController, fromChequesById);
+      },
     );
   }
 
@@ -132,13 +144,19 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
       return;
     }
 
+    saveChequesRequestState.value = RequestState.loading;
+
     // Save the cheques to Firestore
     final result = await _chequesFirebaseRepo.save(updatedChequesModel);
 
     // Handle the result (success or failure)
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) {
+        saveChequesRequestState.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
       (currentChequesModel) {
+        saveChequesRequestState.value = RequestState.success;
         _chequesService.handleSaveOrUpdateSuccess(
           prevChequesModel: existingChequesModel,
           currentChequesModel: currentChequesModel,

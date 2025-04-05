@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 
@@ -25,29 +26,38 @@ class AddSellerScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FormFieldRow(firstItem: TextAndExpandedChildField(label: AppStrings.name.tr, child: CustomTextFieldWithoutIcon(
-                textEditingController: controller.nameController,
-                suffixIcon: const SizedBox.shrink(),
-              ),), secondItem: TextAndExpandedChildField(label: AppStrings.code.tr, child: CustomTextFieldWithoutIcon(
-                textEditingController: controller.codeController,
-                suffixIcon: const SizedBox.shrink(),
-              ),)),
+              FormFieldRow(
+                  firstItem: TextAndExpandedChildField(
+                    label: AppStrings.name.tr,
+                    child: CustomTextFieldWithoutIcon(
+                      textEditingController: controller.nameController,
+                      suffixIcon: const SizedBox.shrink(),
+                    ),
+                  ),
+                  secondItem: TextAndExpandedChildField(
+                    label: AppStrings.code.tr,
+                    child: CustomTextFieldWithoutIcon(
+                      textEditingController: controller.codeController,
+                      suffixIcon: const SizedBox.shrink(),
+                    ),
+                  )),
               Spacer(),
               Center(
                 child: Padding(
                   padding: EdgeInsets.only(bottom: .15.sh),
-                  child: AppButton(
-                    title: controller.selectedSellerModel?.costGuid == null ? AppStrings.add.tr : AppStrings.edit.tr,
-                    onPressed: () {
-                      controller.saveOrUpdateSeller();
-                    },
-                    iconData: controller.selectedSellerModel?.costGuid == null ? Icons.add : Icons.edit,
-                    color: controller.selectedSellerModel?.costGuid == null ? null : Colors.green,
-                  ),
+                  child: Obx(() {
+                    return AppButton(
+                      isLoading: controller.saveSellerRequestState.value == RequestState.loading,
+                      title: controller.selectedSellerModel?.costGuid == null ? AppStrings.add.tr : AppStrings.edit.tr,
+                      onPressed: () {
+                        controller.saveOrUpdateSeller();
+                      },
+                      iconData: controller.selectedSellerModel?.costGuid == null ? Icons.add : Icons.edit,
+                      color: controller.selectedSellerModel?.costGuid == null ? null : Colors.green,
+                    );
+                  }),
                 ),
               ),
-
-
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
@@ -24,7 +25,8 @@ class AppUIUtils {
     } else if (isSuccess) {
       color = Colors.green;
     }
-    Fluttertoast.showToast(msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(
+        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String convertArabicNumbers(String input) {
@@ -409,6 +411,86 @@ class AppUIUtils {
       ),
     );
     return isConfirm ?? false;
+  }
+
+  static Future<bool> confirmOverlay(
+    BuildContext context, {
+    String? title,
+    Widget? content,
+    Widget? textOK,
+    Widget? textCancel,
+    bool canPop = false,
+    void Function(bool, dynamic)? onPopInvokedWithResult,
+  }) async {
+    final completer = Completer<bool>();
+
+    await OverlayService.showDialog(
+      context: context,
+      height: 200,
+      width: 350,
+      title: title ?? AppStrings.confirm.tr,
+      content: Builder(
+        builder: (_) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (content != null)
+              content
+            else
+              Text(
+                AppStrings.areYouSureContinue.tr,
+                style: AppTextStyles.headLineStyle2,
+                textAlign: TextAlign.center,
+              ),
+            const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppButton(
+                  title: AppConstants.no,
+                  onPressed: () {
+                    if (!completer.isCompleted) {
+                      Future.microtask(() {
+                        OverlayService.back();
+                      });
+                      completer.complete(false);
+                    }
+                  },
+                  iconData: Icons.clear,
+                  width: 80,
+                ),
+                const HorizontalSpace(20),
+                AppButton(
+                  title: AppConstants.yes,
+                  onPressed: () {
+                    if (!completer.isCompleted) {
+                      Future.microtask(() {
+                        OverlayService.back();
+                      });
+                      completer.complete(true);
+                    }
+                  },
+                  color: Colors.red,
+                  iconData: Icons.check,
+                  width: 80,
+                ),
+              ],
+            ),
+            const VerticalSpace(15),
+          ],
+        ),
+      ),
+      borderRadius: BorderRadius.circular(15),
+      color: AppColors.backGroundColor,
+      dialogAlignment: Alignment.center,
+      onCloseCallback: () {
+        if (!completer.isCompleted) {
+          completer.complete(false);
+        }
+        onPopInvokedWithResult?.call(false, null);
+      },
+    );
+
+    return completer.future;
   }
 
   static void showFullScreenFileImage(BuildContext context, String imagePath) {

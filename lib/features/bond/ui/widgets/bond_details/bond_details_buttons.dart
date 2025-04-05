@@ -36,12 +36,14 @@ class BondDetailsButtons extends StatelessWidget {
         children: [
           Obx(() {
             return AppButton(
+                isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
                 title: bondDetailsController.isBondSaved.value ? AppStrings.newS.tr : AppStrings.add.tr,
                 height: 20,
                 color: bondDetailsController.isBondSaved.value ? Colors.green : Colors.blue.shade700,
                 onPressed: bondDetailsController.isBondSaved.value
                     ? () => bondDetailsController.appendNewBill(
-                        bondType: BondType.byTypeGuide(bondModel.payTypeGuid!), lastBondNumber: bondSearchController.bonds.last.payNumber!)
+                        bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
+                        lastBondNumber: bondSearchController.bonds.last.payNumber!)
                     : () async {
                         await bondDetailsController.saveBond(BondType.byTypeGuide(bondModel.payTypeGuid!));
                       },
@@ -56,17 +58,20 @@ class BondDetailsButtons extends StatelessWidget {
               },
               iconData: Icons.file_open_outlined,
             ),
-            AppButton(
-              title: AppStrings.edit.tr,
-              height: 20,
-              onPressed: () async {
-                bondDetailsController.updateBond(
-                  bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
-                  bondModel: bondModel,
-                );
-              },
-              iconData: Icons.edit_outlined,
-            ),
+            Obx(() {
+              return AppButton(
+                isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
+                title: AppStrings.edit.tr,
+                height: 20,
+                onPressed: () async {
+                  bondDetailsController.updateBond(
+                    bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
+                    bondModel: bondModel,
+                  );
+                },
+                iconData: Icons.edit_outlined,
+              );
+            }),
             if (!bondSearchController.isNew)
               AppButton(
                 title: AppStrings.pdfEmail.tr,
@@ -76,15 +81,18 @@ class BondDetailsButtons extends StatelessWidget {
                 },
                 iconData: Icons.link,
               ),
-            AppButton(
-              iconData: Icons.delete_outline,
-              height: 20,
-              color: Colors.red,
-              title: AppStrings.delete.tr,
-              onPressed: () async {
-                bondDetailsController.deleteBond(bondModel, fromBondById: fromBondById);
-              },
-            ),
+            Obx(() {
+              return AppButton(
+                isLoading: bondDetailsController.deleteBondRequestState.value == RequestState.loading,
+                iconData: Icons.delete_outline,
+                height: 20,
+                color: Colors.red,
+                title: AppStrings.delete.tr,
+                onPressed: () async {
+                  bondDetailsController.deleteBond(bondModel, fromBondById: fromBondById);
+                },
+              );
+            }),
           ]
         ],
       ),

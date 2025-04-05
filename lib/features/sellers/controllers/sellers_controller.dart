@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../../core/dialogs/seller_selection_dialog_content.dart';
+import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import '../../../core/services/json_file_operations/implementations/import/import_repo.dart';
@@ -28,6 +29,8 @@ class SellersController extends GetxController with AppNavigator, FloatingLaunch
   SellersController(this._sellersFirebaseRepo, this._sellersImportRepo);
 
   RxList<SellerModel> sellers = <SellerModel>[].obs;
+
+  Rx<RequestState> deleteSellerRequestState = RequestState.initial.obs;
 
   SellerModel? selectedSellerAccount;
   final logger = Logger();
@@ -93,17 +96,27 @@ class SellersController extends GetxController with AppNavigator, FloatingLaunch
     final result = await _sellersFirebaseRepo.saveAll(sellers);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (addedSellers) => AppUIUtils.onSuccess('Add ${addedSellers.length} sellers'),
+      (failure) {
+        AppUIUtils.onFailure(failure.message);
+      },
+      (addedSellers) {
+        AppUIUtils.onSuccess('Add ${addedSellers.length} sellers');
+      },
     );
   }
 
   Future<void> deleteSeller(String sellerId) async {
+    deleteSellerRequestState.value = RequestState.loading;
+
     final result = await _sellersFirebaseRepo.delete(sellerId);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}'),
+      (failure) {
+        deleteSellerRequestState.value = RequestState.error;
+        AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}');
+      },
       (success) {
+        deleteSellerRequestState.value = RequestState.success;
         AppUIUtils.onSuccess('تم الحذف البائع بنجاح!');
         sellers.removeWhere((seller) => seller.costGuid == sellerId);
       },
