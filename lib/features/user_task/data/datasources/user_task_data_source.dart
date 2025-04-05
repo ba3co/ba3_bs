@@ -6,7 +6,8 @@ import '../../../../core/models/query_filter.dart';
 import '../../../../core/services/firebase/interfaces/uploader_storage_queryable_datasource.dart';
 import '../model/user_task_model.dart';
 
-class UserTaskDataSource extends UploaderStorageQueryableDatasource<UserTaskModel> {
+class UserTaskDataSource
+    extends UploaderStorageQueryableDatasource<UserTaskModel> {
   // UserTaskDataSource({required super.databaseService, required super.databaseStorageService});
 
   UserTaskDataSource({required super.databaseService});
@@ -24,8 +25,11 @@ class UserTaskDataSource extends UploaderStorageQueryableDatasource<UserTaskMode
   }
 
   @override
-  Future<List<UserTaskModel>> fetchWhere({required List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters, dateFilter: dateFilter);
+  Future<List<UserTaskModel>> fetchWhere(
+      {required List<QueryFilter>? queryFilters,
+      DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(
+        path: path, queryFilters: queryFilters, dateFilter: dateFilter);
 
     final userTask = data.map((item) => UserTaskModel.fromJson(item)).toList();
 
@@ -45,7 +49,8 @@ class UserTaskDataSource extends UploaderStorageQueryableDatasource<UserTaskMode
 
   @override
   Future<UserTaskModel> save(UserTaskModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.docId, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.docId, data: item.toJson());
 
     return UserTaskModel.fromJson(data);
   }

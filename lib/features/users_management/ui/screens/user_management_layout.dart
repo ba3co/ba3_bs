@@ -15,7 +15,8 @@ class UserManagementLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserManagementController userManagementController = read<UserManagementController>();
+    final UserManagementController userManagementController =
+        read<UserManagementController>();
     userManagementController.getAllUsers();
 
     log('UserManagementLayout build');
@@ -35,29 +36,34 @@ class UserManagementLayout extends StatelessWidget {
                 icon: Icons.supervised_user_circle,
                 title: '${AppStrings.administration.tr} ${AppStrings.users.tr}',
                 onTap: () {
-                  userManagementController.userNavigator.navigateToAllUsersScreen();
+                  userManagementController.userNavigator
+                      .navigateToAllUsersScreen();
                 },
               ),
               if (RoleItemType.administrator.hasReadPermission)
                 buildAppMenuItem(
                   icon: Icons.security,
-                  title: '${AppStrings.administration.tr} ${AppStrings.roles.tr}',
+                  title:
+                      '${AppStrings.administration.tr} ${AppStrings.roles.tr}',
                   onTap: () {
-                    userManagementController.userNavigator.navigateToLAllPermissionsScreen();
+                    userManagementController.userNavigator
+                        .navigateToLAllPermissionsScreen();
                   },
                 ),
               buildAppMenuItem(
                 icon: Icons.access_time_filled,
                 title: AppStrings.attendanceRecord.tr,
                 onTap: () {
-                  userManagementController.userNavigator.navigateToUserTimeListScreen();
+                  userManagementController.userNavigator
+                      .navigateToUserTimeListScreen();
                 },
               ),
               buildAppMenuItem(
                 icon: Icons.task_alt,
                 title: AppStrings.tasks.tr,
                 onTap: () {
-                  userManagementController.userNavigator.lunchAllTaskScreen(context);
+                  userManagementController.userNavigator
+                      .lunchAllTaskScreen(context);
                 },
               ),
             ],

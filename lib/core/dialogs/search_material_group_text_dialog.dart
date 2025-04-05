@@ -12,12 +12,15 @@ import '../helper/extensions/getx_controller_extensions.dart';
 import '../widgets/custom_text_field_with_icon.dart';
 import '../widgets/pluto_grid_with_app_bar_.dart';
 
-Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText,BuildContext context) async {
-  TextEditingController productGroupTextController = TextEditingController()..text = productGroupText;
+Future<MaterialGroupModel?> searchProductGroupTextDialog(
+    String productGroupText, BuildContext context) async {
+  TextEditingController productGroupTextController = TextEditingController()
+    ..text = productGroupText;
 
   List<MaterialGroupModel> searchedMaterials;
 
-  searchedMaterials =  read<MaterialGroupController>().searchGroupProductByText(productGroupTextController.text);
+  searchedMaterials = read<MaterialGroupController>()
+      .searchGroupProductByText(productGroupTextController.text);
 
   MaterialGroupModel? selectedMaterial;
 
@@ -26,12 +29,13 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText
   } else if (searchedMaterials.isEmpty) {
     return null;
   } else {
-    if(!context.mounted) return null;
+    if (!context.mounted) return null;
     await OverlayService.showDialog(
         context: context,
         height: .8.sh,
-         width: .8.sw,
-        content: GetBuilder<MaterialGroupController>(builder: (materialController) {
+        width: .8.sw,
+        content:
+            GetBuilder<MaterialGroupController>(builder: (materialController) {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Column(
@@ -49,9 +53,11 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText
                         tableSourceModels: searchedMaterials,
                         onLoaded: (PlutoGridOnLoadedEvent onLoadedEvent) {},
                         onSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
-                          final materialId = onSelectedEvent.row?.cells[AppConstants.materialGroupIdFiled]?.value;
+                          final materialId = onSelectedEvent.row
+                              ?.cells[AppConstants.materialGroupIdFiled]?.value;
                           if (materialId != null) {
-                            selectedMaterial = materialController.getMaterialGroupById(materialId);
+                            selectedMaterial = materialController
+                                .getMaterialGroupById(materialId);
                             OverlayService.back();
                           }
                         },
@@ -62,7 +68,9 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(String productGroupText
                   child: CustomTextFieldWithIcon(
                       textEditingController: productGroupTextController,
                       onSubmitted: (_) async {
-                        searchedMaterials =  materialController.searchGroupProductByText(productGroupTextController.text);
+                        searchedMaterials =
+                            materialController.searchGroupProductByText(
+                                productGroupTextController.text);
                         materialController.update();
                       },
                       onIconPressed: () {}),

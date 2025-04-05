@@ -18,16 +18,23 @@ import '../../data/models/bill_model.dart';
 import '../../use_cases/convert_bills_to_linked_list_use_case.dart';
 import '../../use_cases/divide_large_bill_use_case.dart';
 
-class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNumbers {
-  final DivideLargeBillUseCase _divideLargeBillUseCase = DivideLargeBillUseCase();
-  final ConvertBillsToLinkedListUseCase _convertBillsToLinkedListUseCase = ConvertBillsToLinkedListUseCase();
+class BillImport extends ImportServiceBase<BillModel>
+    with FirestoreSequentialNumbers {
+  final DivideLargeBillUseCase _divideLargeBillUseCase =
+      DivideLargeBillUseCase();
+  final ConvertBillsToLinkedListUseCase _convertBillsToLinkedListUseCase =
+      ConvertBillsToLinkedListUseCase();
 
   /// Converts the imported JSON structure to a list of BillModel
   @override
   List<BillModel> fromImportJson(Map<String, dynamic> jsonContent) {
-    final List<dynamic> billsJson = jsonContent['MainExp']['Export']['Bill'] ?? [];
+    final List<dynamic> billsJson =
+        jsonContent['MainExp']['Export']['Bill'] ?? [];
     bool freeBill = false;
-    return billsJson.map((billJson) => BillModel.fromImportedJsonFile(billJson as Map<String, dynamic>, freeBill)).toList();
+    return billsJson
+        .map((billJson) => BillModel.fromImportedJsonFile(
+            billJson as Map<String, dynamic>, freeBill))
+        .toList();
   }
 
   late Map<String, int> billsNumbers;
@@ -35,13 +42,17 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   Future<void> _fetchBillsTypesNumbers() async {
     billsNumbers = {
       for (var billType in BillType.values)
-        billType.typeGuide: await getLastNumber(category: ApiConstants.bills, entityType: billType.label)
+        billType.typeGuide: await getLastNumber(
+            category: ApiConstants.bills, entityType: billType.label)
     };
   }
 
-  List<List<dynamic>> _splitItemsIntoChunks(List items, int maxItemsPerBill) => items.chunkBy((maxItemsPerBill));
+  List<List<dynamic>> _splitItemsIntoChunks(List items, int maxItemsPerBill) =>
+      items.chunkBy((maxItemsPerBill));
 
-  int _getNextBillNumber({required String billTypeGuid, required List<Map<String, dynamic>> items}) {
+  int _getNextBillNumber(
+      {required String billTypeGuid,
+      required List<Map<String, dynamic>> items}) {
     if (!billsNumbers.containsKey(billTypeGuid)) {
       throw Exception('Bill type not found');
     }
@@ -61,7 +72,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
   _saveBillsTypesNumbers() async {
     billsNumbers.forEach(
       (billTypeGuid, number) async {
-        await setLastUsedNumber(ApiConstants.bills, BillType.byTypeGuide(billTypeGuid).label, number);
+        await setLastUsedNumber(ApiConstants.bills,
+            BillType.byTypeGuide(billTypeGuid).label, number);
       },
     );
   }
@@ -72,14 +84,16 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
     noteText = noteText.trim();
 
     // Match "رقم الطلب" in different formats
-    final orderMatch = RegExp(r'رقم\s?الطلب[\s\-=:]*([\d]+)', unicode: true).firstMatch(noteText);
+    final orderMatch = RegExp(r'رقم\s?الطلب[\s\-=:]*([\d]+)', unicode: true)
+        .firstMatch(noteText);
     if (orderMatch != null) {
       // log('Matched Order Number: ${orderMatch.group(1)}', name: 'Regex');
       return orderMatch.group(1);
     }
 
     // Match "TABBY-" or "tabby-" followed by numbers (case-insensitive)
-    final tabbyMatch = RegExp(r'tabby-(\d+)', caseSensitive: false).firstMatch(noteText);
+    final tabbyMatch =
+        RegExp(r'tabby-(\d+)', caseSensitive: false).firstMatch(noteText);
     if (tabbyMatch != null) {
       // log('Matched Tabby Order Number: ${tabbyMatch.group(1)}', name: 'Regex');
       return tabbyMatch.group(1);
@@ -135,7 +149,13 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       String? customerPhone;
       String? orderNumber;
 
-      final noteText = billElement.findElements('B').single.findElements('Note').single.text.trim();
+      final noteText = billElement
+          .findElements('B')
+          .single
+          .findElements('Note')
+          .single
+          .text
+          .trim();
 
       // log('Processing Note: $noteText', name: 'XML Processing');
 
@@ -153,16 +173,26 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
       }
 
       final itemsElement = billElement.findElements('Items').single;
-      final List<Map<String, dynamic>> itemsJson = itemsElement.findElements('I').map((iElement) {
-        if (read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text]) == null) {
-          log('name ${matNameWithId[iElement.findElements('MatPtr').single.text]}', name: 'XML Processing name');
+      final List<Map<String, dynamic>> itemsJson =
+          itemsElement.findElements('I').map((iElement) {
+        if (read<MaterialController>().getMaterialByName(
+                matNameWithId[iElement.findElements('MatPtr').single.text]) ==
+            null) {
+          log('name ${matNameWithId[iElement.findElements('MatPtr').single.text]}',
+              name: 'XML Processing name');
         }
         return {
-          'MatPtr': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.id,
+          'MatPtr': read<MaterialController>()
+              .getMaterialByName(
+                  matNameWithId[iElement.findElements('MatPtr').single.text])!
+              .id,
           // 'MatPtr': iElement.findElements('MatPtr').single.text,
 
           /// to get the same material name in our database
-          'MatName': read<MaterialController>().getMaterialByName(matNameWithId[iElement.findElements('MatPtr').single.text])!.matName,
+          'MatName': read<MaterialController>()
+              .getMaterialByName(
+                  matNameWithId[iElement.findElements('MatPtr').single.text])!
+              .matName,
           // 'MatName': matNameWithId[iElement.findElements('MatPtr').single.text],
           'QtyBonus': iElement.findElements('QtyBonus').single.text,
           'Unit': iElement.findElements('Unit').single.text,
@@ -175,7 +205,8 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
           'ClassPtr': iElement.findElements('ClassPtr').single.text,
           'ClassPrice': iElement.findElements('ClassPrice').single.text,
           'ExpireProdDate': iElement.findElements('ExpireProdDate').single.text,
-          'LengthWidthHeight': iElement.findElements('LengthWidthHeight').single.text,
+          'LengthWidthHeight':
+              iElement.findElements('LengthWidthHeight').single.text,
           'Guid': iElement.findElements('Guid').single.text,
           'VatRatio': iElement.findElements('VatRatio').single.text,
           'SoGuid': iElement.findElements('SoGuid').single.text,
@@ -185,50 +216,221 @@ class BillImport extends ImportServiceBase<BillModel> with FirestoreSequentialNu
 
       Map<String, dynamic> billJson = {
         'B': {
-          'BillTypeGuid': billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
-          'BillGuid': billElement.findElements('B').single.findElements('BillGuid').single.text,
-          'BillBranch': billElement.findElements('B').single.findElements('BillBranch').single.text,
-          'BillPayType': billElement.findElements('B').single.findElements('BillPayType').single.text,
-          'BillCheckTypeGuid': billElement.findElements('B').single.findElements('BillCheckTypeGuid').single.text,
+          'BillTypeGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillTypeGuid')
+              .single
+              .text,
+          'BillGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillGuid')
+              .single
+              .text,
+          'BillBranch': billElement
+              .findElements('B')
+              .single
+              .findElements('BillBranch')
+              .single
+              .text,
+          'BillPayType': billElement
+              .findElements('B')
+              .single
+              .findElements('BillPayType')
+              .single
+              .text,
+          'BillCheckTypeGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillCheckTypeGuid')
+              .single
+              .text,
           'BillNumber': _getNextBillNumber(
-            billTypeGuid: billElement.findElements('B').single.findElements('BillTypeGuid').single.text,
+            billTypeGuid: billElement
+                .findElements('B')
+                .single
+                .findElements('BillTypeGuid')
+                .single
+                .text,
             items: itemsJson,
           ),
-          'BillMatAccGuid': billElement.findElements('B').single.findElements('BillMatAccGuid').single.text,
+          'BillMatAccGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillMatAccGuid')
+              .single
+              .text,
           'BillCustPtr': read<CustomersController>()
-                  .getCustomerById(customerWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text])
+                  .getCustomerById(customerWithId[billElement
+                      .findElements('B')
+                      .single
+                      .findElements('BillCustAcc')
+                      .single
+                      .text])
                   ?.id ??
               '',
-          'BillCustAccId': read<AccountsController>().getAccountIdByName(accountWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text]),
+          'BillCustAccId': read<AccountsController>().getAccountIdByName(
+              accountWithId[billElement
+                  .findElements('B')
+                  .single
+                  .findElements('BillCustAcc')
+                  .single
+                  .text]),
           // 'BillCustAccId': billElement.findElements('B').single.findElements('BillCustAcc').single.text,
-          'BillCustAccName':accountWithId[billElement.findElements('B').single.findElements('BillCustAcc').single.text],
-          'BillCurrencyGuid': billElement.findElements('B').single.findElements('BillCurrencyGuid').single.text,
-          'BillCurrencyVal': billElement.findElements('B').single.findElements('BillCurrencyVal').single.text,
-          'BillDate': billElement.findElements('B').single.findElements('BillDate').single.text,
-          'BillStoreGuid': billElement.findElements('B').single.findElements('BillStoreGuid').single.text,
-          'Note': billElement.findElements('B').single.findElements('Note').single.text,
+          'BillCustAccName': accountWithId[billElement
+              .findElements('B')
+              .single
+              .findElements('BillCustAcc')
+              .single
+              .text],
+          'BillCurrencyGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillCurrencyGuid')
+              .single
+              .text,
+          'BillCurrencyVal': billElement
+              .findElements('B')
+              .single
+              .findElements('BillCurrencyVal')
+              .single
+              .text,
+          'BillDate': billElement
+              .findElements('B')
+              .single
+              .findElements('BillDate')
+              .single
+              .text,
+          'BillStoreGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillStoreGuid')
+              .single
+              .text,
+          'Note': billElement
+              .findElements('B')
+              .single
+              .findElements('Note')
+              .single
+              .text,
           'CustomerPhone': customerPhone,
           'OrderNumber': orderNumber,
-          'BillCostGuid': read<SellersController>()
-              .getSellerIdByName(sellerNameID[billElement.findElements('B').single.findElements('BillCostGuid').single.text]),
-          'BillVendorSalesMan': billElement.findElements('B').single.findElements('BillVendorSalesMan').single.text,
-          'BillFirstPay': billElement.findElements('B').single.findElements('BillFirstPay').single.text,
-          'BillFPayAccGuid': billElement.findElements('B').single.findElements('BillFPayAccGuid').single.text,
-          'BillSecurity': billElement.findElements('B').single.findElements('BillSecurity').single.text,
-          'BillTransferGuid': billElement.findElements('B').single.findElements('BillTransferGuid').single.text,
-          'BillFld1': billElement.findElements('B').single.findElements('BillFld1').single.text,
-          'BillFld2': billElement.findElements('B').single.findElements('BillFld2').single.text,
-          'BillFld3': billElement.findElements('B').single.findElements('BillFld3').single.text,
-          'BillFld4': billElement.findElements('B').single.findElements('BillFld4').single.text,
-          'ItemsDiscAcc': billElement.findElements('B').single.findElements('ItemsDiscAcc').single.text,
-          'ItemsExtraAccGUID': billElement.findElements('B').single.findElements('ItemsExtraAccGUID').single.text,
-          'CostAccGUID': billElement.findElements('B').single.findElements('CostAccGUID').single.text,
-          'StockAccGUID': billElement.findElements('B').single.findElements('StockAccGUID').single.text,
-          'BonusAccGUID': billElement.findElements('B').single.findElements('BonusAccGUID').single.text,
-          'BonusContraAccGUID': billElement.findElements('B').single.findElements('BonusContraAccGUID').single.text,
-          'VATAccGUID': billElement.findElements('B').single.findElements('VATAccGUID').single.text,
-          'DIscCard': billElement.findElements('B').single.findElements('DIscCard').single.text,
-          'BillAddressGUID': billElement.findElements('B').single.findElements('BillAddressGUID').single.text,
+          'BillCostGuid': read<SellersController>().getSellerIdByName(
+              sellerNameID[billElement
+                  .findElements('B')
+                  .single
+                  .findElements('BillCostGuid')
+                  .single
+                  .text]),
+          'BillVendorSalesMan': billElement
+              .findElements('B')
+              .single
+              .findElements('BillVendorSalesMan')
+              .single
+              .text,
+          'BillFirstPay': billElement
+              .findElements('B')
+              .single
+              .findElements('BillFirstPay')
+              .single
+              .text,
+          'BillFPayAccGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillFPayAccGuid')
+              .single
+              .text,
+          'BillSecurity': billElement
+              .findElements('B')
+              .single
+              .findElements('BillSecurity')
+              .single
+              .text,
+          'BillTransferGuid': billElement
+              .findElements('B')
+              .single
+              .findElements('BillTransferGuid')
+              .single
+              .text,
+          'BillFld1': billElement
+              .findElements('B')
+              .single
+              .findElements('BillFld1')
+              .single
+              .text,
+          'BillFld2': billElement
+              .findElements('B')
+              .single
+              .findElements('BillFld2')
+              .single
+              .text,
+          'BillFld3': billElement
+              .findElements('B')
+              .single
+              .findElements('BillFld3')
+              .single
+              .text,
+          'BillFld4': billElement
+              .findElements('B')
+              .single
+              .findElements('BillFld4')
+              .single
+              .text,
+          'ItemsDiscAcc': billElement
+              .findElements('B')
+              .single
+              .findElements('ItemsDiscAcc')
+              .single
+              .text,
+          'ItemsExtraAccGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('ItemsExtraAccGUID')
+              .single
+              .text,
+          'CostAccGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('CostAccGUID')
+              .single
+              .text,
+          'StockAccGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('StockAccGUID')
+              .single
+              .text,
+          'BonusAccGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('BonusAccGUID')
+              .single
+              .text,
+          'BonusContraAccGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('BonusContraAccGUID')
+              .single
+              .text,
+          'VATAccGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('VATAccGUID')
+              .single
+              .text,
+          'DIscCard': billElement
+              .findElements('B')
+              .single
+              .findElements('DIscCard')
+              .single
+              .text,
+          'BillAddressGUID': billElement
+              .findElements('B')
+              .single
+              .findElements('BillAddressGUID')
+              .single
+              .text,
         }
       };
 

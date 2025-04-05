@@ -5,15 +5,18 @@ import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_bas
 import '../../../../../core/models/query_filter.dart';
 import '../../models/mat_statement/mat_statement_model.dart';
 
-class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementModel, String> {
+class MaterialsStatementsDatasource
+    extends CompoundDatasourceBase<MatStatementModel, String> {
   MaterialsStatementsDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bills", "bonds")
   @override
-  String get rootCollectionPath => ApiConstants.materialsStatements; // Collection name in Firestore
+  String get rootCollectionPath =>
+      ApiConstants.materialsStatements; // Collection name in Firestore
 
   @override
-  Future<List<MatStatementModel>> fetchAll({required String itemIdentifier}) async {
+  Future<List<MatStatementModel>> fetchAll(
+      {required String itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -23,7 +26,8 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
       subCollectionPath: subcollectionPath,
     );
 
-    final matStatements = dataList.map((item) => MatStatementModel.fromJson(item)).toList();
+    final matStatements =
+        dataList.map((item) => MatStatementModel.fromJson(item)).toList();
 
     return matStatements;
   }
@@ -44,13 +48,15 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
       dateFilter: dateFilter,
     );
 
-    final matStatements = dataList.map((item) => MatStatementModel.fromJson(item)).toList();
+    final matStatements =
+        dataList.map((item) => MatStatementModel.fromJson(item)).toList();
 
     return matStatements;
   }
 
   @override
-  Future<MatStatementModel> fetchById({required String id, required String itemIdentifier}) async {
+  Future<MatStatementModel> fetchById(
+      {required String id, required String itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -98,7 +104,8 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
   }
 
   @override
-  Future<int> countDocuments({required String itemIdentifier, QueryFilter? countQueryFilter}) async {
+  Future<int> countDocuments(
+      {required String itemIdentifier, QueryFilter? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -113,7 +120,8 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
   }
 
   @override
-  Future<Map<String, List<MatStatementModel>>> fetchAllNested({required List<String> itemIdentifiers}) async {
+  Future<Map<String, List<MatStatementModel>>> fetchAllNested(
+      {required List<String> itemIdentifiers}) async {
     final matStatementById = <String, List<MatStatementModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -161,7 +169,9 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
   }
 
   @override
-  Future<List<MatStatementModel>> saveAll({required List<MatStatementModel> items, required String itemIdentifier}) async {
+  Future<List<MatStatementModel>> saveAll(
+      {required List<MatStatementModel> items,
+      required String itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -176,7 +186,8 @@ class MaterialsStatementsDatasource extends CompoundDatasourceBase<MatStatementM
   }
 
   @override
-  Future<double?> fetchMetaData({required String id, required String itemIdentifier}) async {
+  Future<double?> fetchMetaData(
+      {required String id, required String itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 

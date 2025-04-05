@@ -16,7 +16,11 @@ class AddPatternBottomButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         AppButton(
-          title: patternController.patternFormHandler.selectedBillPatternType.value == null ? AppStrings.add.tr : AppStrings.edit.tr,
+          title: patternController
+                      .patternFormHandler.selectedBillPatternType.value ==
+                  null
+              ? AppStrings.add.tr
+              : AppStrings.edit.tr,
           onPressed: () {
             patternController.addNewPattern();
           },

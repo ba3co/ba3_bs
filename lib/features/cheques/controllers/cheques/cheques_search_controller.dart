@@ -20,7 +20,8 @@ class ChequesSearchController extends GetxController {
   }) {
     chequesList = chequesByCategory;
     currentChequesIndex = chequesList.indexWhere(
-      (current) => current.chequesGuid == cheques.chequesGuid || current == cheques,
+      (current) =>
+          current.chequesGuid == cheques.chequesGuid || current == cheques,
     );
     currentCheques = chequesList[currentChequesIndex];
     this.chequesDetailsController = chequesDetailsController;
@@ -34,8 +35,8 @@ class ChequesSearchController extends GetxController {
   ChequesModel get getCurrentCheques => chequesList[currentChequesIndex];
 
   /// Finds the index of the cheques with the given number
-  int _getChequesIndexByNumber(int? chequesNumber) =>
-      chequesList.indexWhere((cheques) => cheques.chequesNumber == chequesNumber);
+  int _getChequesIndexByNumber(int? chequesNumber) => chequesList
+      .indexWhere((cheques) => cheques.chequesNumber == chequesNumber);
 
   /// Updates the cheques in the search results if it exists
   void updateCheques(ChequesModel updatedCheques) {
@@ -49,7 +50,8 @@ class ChequesSearchController extends GetxController {
 
   /// Deletes the cheques in the search results if it exists
   void removeCheques(ChequesModel chequesToDelete) {
-    final chequesIndex = _getChequesIndexByNumber(chequesToDelete.chequesNumber);
+    final chequesIndex =
+        _getChequesIndexByNumber(chequesToDelete.chequesNumber);
 
     if (chequesIndex != -1) {
       chequesList.removeAt(chequesIndex);

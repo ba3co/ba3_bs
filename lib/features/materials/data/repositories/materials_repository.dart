@@ -22,8 +22,9 @@ class MaterialRepository {
     // String sanitizedJson = sanitizeJsonString(jsonString);
     Map<String, dynamic> jsonMap = jsonDecode('');
 
-    List<MaterialModel> materials =
-        (jsonMap['Materials']['M'] as List).map((materialJson) => MaterialModel.fromJson(materialJson)).toList();
+    List<MaterialModel> materials = (jsonMap['Materials']['M'] as List)
+        .map((materialJson) => MaterialModel.fromJson(materialJson))
+        .toList();
 
     return materials;
   }

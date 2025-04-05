@@ -42,7 +42,8 @@ class BondDetailsScreen extends StatelessWidget {
                   appBar: BondDetailsAppBar(
                       bondDetailsController: bondDetailsController,
                       bondSearchController: bondSearchController,
-                      bondTypeModel: BondType.byTypeGuide(currentBond.payTypeGuid!)),
+                      bondTypeModel:
+                          BondType.byTypeGuide(currentBond.payTypeGuid!)),
                   body: Directionality(
                     textDirection: TextDirection.rtl,
                     child: Padding(
@@ -54,18 +55,22 @@ class BondDetailsScreen extends StatelessWidget {
                             bondDetailsController: bondDetailsController,
                           ),
                           BondDetailsBody(
-                            bondTypeModel: BondType.byTypeGuide(currentBond.payTypeGuid!),
+                            bondTypeModel:
+                                BondType.byTypeGuide(currentBond.payTypeGuid!),
                             bondDetailsController: bondDetailsController,
-                            bondDetailsPlutoController: bondDetailsPlutoController,
+                            bondDetailsPlutoController:
+                                bondDetailsPlutoController,
                             tag: tag,
                           ),
                           BondDetailsCalculations(
                             tag: tag,
-                            bondDetailsPlutoController: bondDetailsPlutoController,
+                            bondDetailsPlutoController:
+                                bondDetailsPlutoController,
                           ),
                           BondDetailsButtons(
                             bondDetailsController: bondDetailsController,
-                            bondDetailsPlutoController: bondDetailsPlutoController,
+                            bondDetailsPlutoController:
+                                bondDetailsPlutoController,
                             bondModel: currentBond,
                             fromBondById: fromBondById,
                             bondSearchController: bondSearchController,

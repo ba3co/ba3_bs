@@ -23,14 +23,17 @@ class SellerSalesScreen extends StatelessWidget {
           // title: '${AppStrings.bills.tr} ${controller.selectedSeller!.costName}',
           appBar: _buildAppBar(context, controller),
           onLoaded: (e) {},
-          rightChild: SizedBox(width: 0.23.sw, child: UserTargets(salesController: controller)),
+          rightChild: SizedBox(
+              width: 0.23.sw, child: UserTargets(salesController: controller)),
           onSelected: (event) {
             final billId = event.row?.cells[AppConstants.billIdFiled]?.value;
             // print( (billTypeName as Map<String,dynamic>));
 
             if (billId != null) {
-              read<AllBillsController>()
-                  .openFloatingBillDetailsById(billId: billId, context: context, bilTypeModel: BillType.sales.billTypeModel);
+              read<AllBillsController>().openFloatingBillDetailsById(
+                  billId: billId,
+                  context: context,
+                  bilTypeModel: BillType.sales.billTypeModel);
             }
           },
           isLoading: controller.isLoading,
@@ -51,7 +54,8 @@ class SellerSalesScreen extends StatelessWidget {
   }
 
   /// Creates the leading section containing back button and date range picker.
-  Widget _buildLeadingSection(SellerSalesController controller, BuildContext context) {
+  Widget _buildLeadingSection(
+      SellerSalesController controller, BuildContext context) {
     return Row(
       children: [
         const HorizontalSpace(20),
@@ -66,7 +70,9 @@ class SellerSalesScreen extends StatelessWidget {
         IconButton(
           onPressed: controller.inFilterMode ? controller.clearFilter : null,
           icon: Icon(
-            controller.inFilterMode ? Icons.filter_alt : Icons.filter_alt_off_outlined,
+            controller.inFilterMode
+                ? Icons.filter_alt
+                : Icons.filter_alt_off_outlined,
             color: Colors.blue.shade700,
           ),
           tooltip: '${AppStrings.empty.tr} ${AppStrings.filter.tr}',
@@ -107,12 +113,18 @@ class SellerSalesScreen extends StatelessWidget {
             children: [
               Text(
                 '${AppStrings.total.tr} :',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 24),
               ),
               const HorizontalSpace(10),
               Text(
                 AppUIUtils.formatDecimalNumberWithCommas(controller.totalSales),
-                style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+                style: TextStyle(
+                    color: Colors.blue.shade700,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 32),
               ),
             ],
           ),

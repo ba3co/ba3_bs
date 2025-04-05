@@ -49,7 +49,8 @@ class WorkingHoursItem extends StatelessWidget {
                 height: 30,
                 width: 100,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey, width: 2)),
                 child: Center(
                   child: Text(
                     userWorkingHours.enterTime ?? '',
@@ -85,7 +86,8 @@ class WorkingHoursItem extends StatelessWidget {
                 height: 30,
                 width: 100,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.grey, width: 2)),
                 child: Center(
                   child: Text(
                     userWorkingHours.outTime ?? '',

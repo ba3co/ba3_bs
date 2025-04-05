@@ -9,16 +9,24 @@ extension EntryBondModelExtension on EntryBondModel {
   List<DataGridRow> get bondDataGridRows =>
       items?.itemList.map<DataGridRow>((bondItem) {
         return DataGridRow(cells: [
-          DataGridCell<String>(columnName: AppConstants.rowBondAccount, value: bondItem.account.name),
+          DataGridCell<String>(
+              columnName: AppConstants.rowBondAccount,
+              value: bondItem.account.name),
           DataGridCell<double>(
             columnName: AppConstants.rowBondDebitAmount,
-            value: bondItem.bondItemType == BondItemType.debtor ? bondItem.amount : 0.0,
+            value: bondItem.bondItemType == BondItemType.debtor
+                ? bondItem.amount
+                : 0.0,
           ),
           DataGridCell<double>(
             columnName: AppConstants.rowBondCreditAmount,
-            value: bondItem.bondItemType == BondItemType.creditor ? bondItem.amount : 0.0,
+            value: bondItem.bondItemType == BondItemType.creditor
+                ? bondItem.amount
+                : 0.0,
           ),
-          DataGridCell<String>(columnName: AppConstants.rowBondDescription, value: '${bondItem.note}'),
+          DataGridCell<String>(
+              columnName: AppConstants.rowBondDescription,
+              value: '${bondItem.note}'),
         ]);
       }).toList() ??
       [];

@@ -12,7 +12,8 @@ class ChequesStrategyBondFactory {
   static final PayBondStrategy _payStrategy = PayBondStrategy();
   static final RefundBondStrategy _refundStrategy = RefundBondStrategy();
 
-  static List<BaseEntryBondCreator<ChequesModel>> _getStrategy(ChequesStrategyType type) {
+  static List<BaseEntryBondCreator<ChequesModel>> _getStrategy(
+      ChequesStrategyType type) {
     switch (type) {
       case ChequesStrategyType.chequesStrategy:
         return [_chequesStrategy];
@@ -28,7 +29,9 @@ class ChequesStrategyBondFactory {
   }
 
   /// Determines the appropriate strategies based on the ChequesModel.
-  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(ChequesModel chequesModel, {ChequesStrategyType? type}) {
+  static List<BaseEntryBondCreator<ChequesModel>> determineStrategy(
+      ChequesModel chequesModel,
+      {ChequesStrategyType? type}) {
     if (type != null) {
       return _getStrategy(type);
     }
@@ -43,7 +46,8 @@ class ChequesStrategyBondFactory {
   }
 }
 
-abstract class BaseChequesBondStrategy extends BaseEntryBondCreator<ChequesModel> {
+abstract class BaseChequesBondStrategy
+    extends BaseEntryBondCreator<ChequesModel> {
   /// Helper method to create bond items with common logic.
   List<EntryBondItemModel> createBondItems({
     required String note,
@@ -79,12 +83,14 @@ abstract class BaseChequesBondStrategy extends BaseEntryBondCreator<ChequesModel
 
 class ChequesBondStrategy extends BaseChequesBondStrategy {
   @override
-  List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
+  List<EntryBondItemModel> generateItems(
+      {required ChequesModel model, bool? isSimulatedVat}) {
     if (DateTime.parse(model.chequesDate!).year != DateTime.now().year) {
       return [];
     } else {
       final date = model.chequesDate ?? DateTime.now().dayMonthYear;
-      final note = "سند قيد ل${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
+      final note =
+          "سند قيد ل${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
       final amount = model.chequesVal!;
       final originId = model.chequesGuid!;
       return createBondItems(
@@ -93,14 +99,17 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
         amount: amount,
         date: date,
         docId: model.chequesGuid,
-        creditAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
+        creditAccount: AccountEntity(
+            id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
         debitAccount: AccountEntity(id: model.accPtr!, name: model.accPtrName!),
       );
     }
   }
 
   @override
-  EntryBondOrigin createOrigin({required ChequesModel model, required EntryBondType originType}) => EntryBondOrigin(
+  EntryBondOrigin createOrigin(
+          {required ChequesModel model, required EntryBondType originType}) =>
+      EntryBondOrigin(
         originId: model.chequesGuid!,
         originType: originType,
         originTypeId: model.chequesTypeGuid,
@@ -112,9 +121,11 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
 
 class PayBondStrategy extends BaseChequesBondStrategy {
   @override
-  List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
+  List<EntryBondItemModel> generateItems(
+      {required ChequesModel model, bool? isSimulatedVat}) {
     final date = model.chequesPayDate ?? DateTime.now().dayMonthYear;
-    final note = "سند قيد لدفع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
+    final note =
+        "سند قيد لدفع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesPayGuid!;
     return createBondItems(
@@ -123,13 +134,17 @@ class PayBondStrategy extends BaseChequesBondStrategy {
       amount: amount,
       docId: model.chequesPayGuid,
       date: date,
-      creditAccount: AccountEntity(id: AppConstants.bankAccountId, name: AppConstants.bankToAccountName),
-      debitAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
+      creditAccount: AccountEntity(
+          id: AppConstants.bankAccountId, name: AppConstants.bankToAccountName),
+      debitAccount: AccountEntity(
+          id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
     );
   }
 
   @override
-  EntryBondOrigin createOrigin({required ChequesModel model, required EntryBondType originType}) => EntryBondOrigin(
+  EntryBondOrigin createOrigin(
+          {required ChequesModel model, required EntryBondType originType}) =>
+      EntryBondOrigin(
         originId: model.chequesGuid!,
         docId: model.chequesPayGuid!,
         originType: originType,
@@ -142,9 +157,11 @@ class PayBondStrategy extends BaseChequesBondStrategy {
 
 class RefundBondStrategy extends BaseChequesBondStrategy {
   @override
-  List<EntryBondItemModel> generateItems({required ChequesModel model, bool? isSimulatedVat}) {
+  List<EntryBondItemModel> generateItems(
+      {required ChequesModel model, bool? isSimulatedVat}) {
     final date = model.chequesRefundPayDate ?? DateTime.now().dayMonthYear;
-    final note = "سند قيد لارجاع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
+    final note =
+        "سند قيد لارجاع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesGuid!;
     return createBondItems(
@@ -154,12 +171,15 @@ class RefundBondStrategy extends BaseChequesBondStrategy {
       amount: amount,
       date: date,
       creditAccount: AccountEntity(id: model.accPtr!, name: model.accPtrName!),
-      debitAccount: AccountEntity(id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
+      debitAccount: AccountEntity(
+          id: model.chequesAccount2Guid!, name: model.chequesAccount2Name!),
     );
   }
 
   @override
-  EntryBondOrigin createOrigin({required ChequesModel model, required EntryBondType originType}) => EntryBondOrigin(
+  EntryBondOrigin createOrigin(
+          {required ChequesModel model, required EntryBondType originType}) =>
+      EntryBondOrigin(
         originId: model.chequesGuid!,
         docId: model.chequesRefundPayGuid!,
         originType: originType,

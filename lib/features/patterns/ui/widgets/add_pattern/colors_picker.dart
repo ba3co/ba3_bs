@@ -15,9 +15,11 @@ class ColorsPicker extends StatelessWidget {
           allowShades: false,
           onMainColorChange: (ColorSwatch? color) {
             // ignore: deprecated_member_use
-            patternController.patternFormHandler.onMainColorChanged(color?.value);
+            patternController.patternFormHandler
+                .onMainColorChanged(color?.value);
           },
-          selectedColor: Color(patternController.patternFormHandler.selectedColorValue!)),
+          selectedColor:
+              Color(patternController.patternFormHandler.selectedColorValue!)),
     );
   }
 }

@@ -53,7 +53,8 @@ class LogController extends GetxController with FloatingLauncher {
   }
 
   void onDateRangeSubmit() {
-    if (logDateRange.value?.startDate != null && logDateRange.value?.endDate != null) {
+    if (logDateRange.value?.startDate != null &&
+        logDateRange.value?.endDate != null) {
       loadLogs();
     }
   }
@@ -96,8 +97,12 @@ class LogController extends GetxController with FloatingLauncher {
     ).toList();
   }
 
-  Future<void> addLog<T>({required T item, required LogEventType eventType, int? sourceNumber}) async {
-    final LogModel logModel = LogModelFactory.create(item: item, eventType: eventType, sourceNumber: sourceNumber);
+  Future<void> addLog<T>(
+      {required T item,
+      required LogEventType eventType,
+      int? sourceNumber}) async {
+    final LogModel logModel = LogModelFactory.create(
+        item: item, eventType: eventType, sourceNumber: sourceNumber);
 
     final result = await _repository.save(logModel);
 
@@ -149,20 +154,23 @@ class LogController extends GetxController with FloatingLauncher {
       },
 
       /// If the log is a cheque, open cheque details
-      LogOrigin.cheque: () => read<AllChequesController>().openChequesDetailsById(
+      LogOrigin.cheque: () =>
+          read<AllChequesController>().openChequesDetailsById(
             originId,
             context,
             ChequesType.byValue(sourceType),
           ),
 
       /// If the log is related to a material item, navigate to the material screen
-      LogOrigin.material: () => read<MaterialController>().navigateToAddOrUpdateMaterialScreen(
+      LogOrigin.material: () =>
+          read<MaterialController>().navigateToAddOrUpdateMaterialScreen(
             matId: originId,
             context: context,
           ),
 
       /// If the related log is related to an account, navigate to the account screen
-      LogOrigin.account: () => read<AccountsController>().navigateToAddOrUpdateAccountScreen(
+      LogOrigin.account: () =>
+          read<AccountsController>().navigateToAddOrUpdateAccountScreen(
             accountId: originId,
             context: context,
           ),

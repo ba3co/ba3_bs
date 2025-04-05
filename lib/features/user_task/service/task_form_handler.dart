@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -7,9 +6,6 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/validators/app_validator.dart';
 
 class TaskFormHandler with AppValidator {
-
-
-
   final formKey = GlobalKey<FormState>();
   TextEditingController titleTextEditingController = TextEditingController();
   TextEditingController materialTextController = TextEditingController();
@@ -26,7 +22,7 @@ class TaskFormHandler with AppValidator {
       titleTextEditingController.text = userTaskModel.title!;
 
       dueDate.value = userTaskModel.dueDate!;
-      updateDate.value = userTaskModel.updatedAt??DateTime.now();
+      updateDate.value = userTaskModel.updatedAt ?? DateTime.now();
       createDate.value = userTaskModel.createdAt!;
       selectedStatus = userTaskModel.status!.obs;
       selectedTaskType = userTaskModel.taskType!.obs;
@@ -51,7 +47,8 @@ class TaskFormHandler with AppValidator {
 
   bool validate() => formKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
   void setTaskStatus(TaskStatus value) {
     selectedStatus.value = value;

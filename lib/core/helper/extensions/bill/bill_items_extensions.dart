@@ -8,8 +8,11 @@ extension BillItemsExtension on List<BillItem> {
         (item) => item.itemGuid,
         (a, b) => a.copyWith(
           itemQuantity: a.itemQuantity + b.itemQuantity,
-          itemTotalPrice: (a.itemTotalPrice.toDouble + b.itemTotalPrice.toDouble).toStringAsFixed(2),
-          itemSubTotalPrice: (a.itemSubTotalPrice ?? 0.0) + (b.itemSubTotalPrice ?? 0.0),
+          itemTotalPrice:
+              (a.itemTotalPrice.toDouble + b.itemTotalPrice.toDouble)
+                  .toStringAsFixed(2),
+          itemSubTotalPrice:
+              (a.itemSubTotalPrice ?? 0.0) + (b.itemSubTotalPrice ?? 0.0),
           itemVatPrice: (a.itemVatPrice ?? 0.0) + (b.itemVatPrice ?? 0.0),
           itemGiftsNumber: (a.itemGiftsNumber ?? 0) + (b.itemGiftsNumber ?? 0),
           itemGiftsPrice: (a.itemGiftsPrice ?? 0.0) + (b.itemGiftsPrice ?? 0.0),

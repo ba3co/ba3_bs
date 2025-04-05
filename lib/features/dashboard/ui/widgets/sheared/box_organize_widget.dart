@@ -5,7 +5,11 @@ import '../../../../../core/styling/app_text_style.dart';
 
 class BoxOrganizeWidget extends StatelessWidget {
   const BoxOrganizeWidget(
-      {super.key, required this.titleText, required this.childWidget, required this.primaryColor, required this.secondaryColor});
+      {super.key,
+      required this.titleText,
+      required this.childWidget,
+      required this.primaryColor,
+      required this.secondaryColor});
 
   final String titleText;
   final Widget childWidget;
@@ -30,7 +34,6 @@ class BoxOrganizeWidget extends StatelessWidget {
       ),
       child: Stack(
         children: [
-
           Positioned(
             top: -40.h,
             left: -30.w,
@@ -77,13 +80,17 @@ class BoxOrganizeWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(child: Text(titleText, style: AppTextStyles.headLineStyle2.copyWith(color: Colors.white))),
-                  Divider(color: Colors.grey.shade300,),
+                  Center(
+                      child: Text(titleText,
+                          style: AppTextStyles.headLineStyle2
+                              .copyWith(color: Colors.white))),
+                  Divider(
+                    color: Colors.grey.shade300,
+                  ),
                   SizedBox(
-                    height:60.h ,
+                    height: 60.h,
                     child: childWidget,
                   ),
-
                 ],
               ),
             ),

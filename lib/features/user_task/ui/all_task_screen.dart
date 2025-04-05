@@ -25,15 +25,20 @@ class AllTaskScreen extends StatelessWidget {
               style: AppTextStyles.headLineStyle2,
             ),
             actions: [
-              AppButton(title: AppStrings.addNewTask.tr, onPressed: () => controller.lunchAddTaskScreen(context: context)),
+              AppButton(
+                  title: AppStrings.addNewTask.tr,
+                  onPressed: () =>
+                      controller.lunchAddTaskScreen(context: context)),
               HorizontalSpace()
             ]),
         title: AppStrings.allTask.tr,
         onLoaded: (e) {},
         onSelected: (event) {
-          String userTaskId = event.row?.cells[AppConstants.userTaskIdField]?.value;
+          String userTaskId =
+              event.row?.cells[AppConstants.userTaskIdField]?.value;
           log('userTaskId : $userTaskId');
-          controller.lunchAddTaskScreen(context: context, userTaskId: userTaskId);
+          controller.lunchAddTaskScreen(
+              context: context, userTaskId: userTaskId);
         },
         isLoading: controller.isTaskLoading,
         tableSourceModels: controller.userTaskList,

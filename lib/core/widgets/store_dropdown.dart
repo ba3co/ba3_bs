@@ -11,7 +11,8 @@ import '../helper/enums/enums.dart';
 import '../interfaces/i_store_selection_handler.dart';
 
 class StoreDropdown extends StatelessWidget {
-  const StoreDropdown({super.key, required this.storeSelectionHandler, this.width});
+  const StoreDropdown(
+      {super.key, required this.storeSelectionHandler, this.width});
 
   final IStoreSelectionHandler storeSelectionHandler;
   final double? width;

@@ -23,7 +23,6 @@ class StoreModel {
     // required this.storeSecurity,
   });
 
-
   factory StoreModel.fromJson(Map<String, dynamic> json) {
     return StoreModel(
       docId: json['docId'] as String,
@@ -39,7 +38,6 @@ class StoreModel {
     );
   }
 
-
   Map<String, dynamic> toJson() {
     return {
       'docId': docId,
@@ -54,7 +52,6 @@ class StoreModel {
       // 'StoreSecurity': storeSecurity,
     };
   }
-
 
   StoreModel copyWith({
     String? docId,

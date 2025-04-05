@@ -14,19 +14,16 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-
   runApp(const MaterialApp(home: TestFirestore()));
 }
 
-init()async{
-  FirebaseFirestore firestore = FirebaseFirestore.instanceFor(app: Firebase.app("test"));
+init() async {
+  FirebaseFirestore firestore =
+      FirebaseFirestore.instanceFor(app: Firebase.app("test"));
 
   try {
     log('message');
-    final snapshot = await firestore
-        .collection('materials')
-
-        .get();
+    final snapshot = await firestore.collection('materials').get();
 
     log('✅ وصلنا استجابة من Firestore: ${snapshot.docs.length}');
   } catch (e) {

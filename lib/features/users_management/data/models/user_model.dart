@@ -63,8 +63,13 @@ class UserModel implements PlutoAdaptable {
       if (userWorkStatus != null) 'userWorkStatus': userWorkStatus?.label,
       if (userHolidays != null) 'userHolidays': userHolidays?.toList(),
       if (userWorkingHours != null)
-        'userWorkingHours': Map.fromEntries(userWorkingHours!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
-      if (userTimeModel != null) "userTime": Map.fromEntries(userTimeModel!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
+        'userWorkingHours': Map.fromEntries(userWorkingHours!.entries
+            .map((e) => MapEntry(e.key, e.value.toJson()))
+            .toList()),
+      if (userTimeModel != null)
+        "userTime": Map.fromEntries(userTimeModel!.entries
+            .map((e) => MapEntry(e.key, e.value.toJson()))
+            .toList()),
     };
   }
 
@@ -75,7 +80,8 @@ class UserModel implements PlutoAdaptable {
       userTimeModel[k] = UserTimeModel.fromJson(v);
     });
 
-    var sortedEntries = userTimeModel.entries.toList()..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
+    var sortedEntries = userTimeModel.entries.toList()
+      ..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
 
     userTimeModel = Map.fromEntries(sortedEntries);
 
@@ -83,7 +89,8 @@ class UserModel implements PlutoAdaptable {
 
     (json['userWorkingHours'] ?? {}).forEach(
       (String workingHourId, dynamic userWorkingHourJson) {
-        userDailyTime[workingHourId] = UserWorkingHours.fromJson(userWorkingHourJson);
+        userDailyTime[workingHourId] =
+            UserWorkingHours.fromJson(userWorkingHourJson);
       },
     );
 
@@ -95,10 +102,15 @@ class UserModel implements PlutoAdaptable {
       userRoleId: json['userRoleId'],
       userHolidays: List<String>.from(json['userHolidays'] ?? []),
       userWorkingHours: userDailyTime,
-      userWorkStatus: UserWorkStatus.byLabel(json['userWorkStatus'] ?? UserWorkStatus.away.label),
-      userActiveStatus: json['userActiveStatus'] != null ? UserActiveStatus.byLabel(json['userActiveStatus']) : UserActiveStatus.inactive,
+      userWorkStatus: UserWorkStatus.byLabel(
+          json['userWorkStatus'] ?? UserWorkStatus.away.label),
+      userActiveStatus: json['userActiveStatus'] != null
+          ? UserActiveStatus.byLabel(json['userActiveStatus'])
+          : UserActiveStatus.inactive,
       userTimeModel: userTimeModel,
-      userTaskList: (json['userTaskList'] as List<dynamic>?)?.map((e) => UserTaskModel.fromJson(e as Map<String, dynamic>)).toList(),
+      userTaskList: (json['userTaskList'] as List<dynamic>?)
+          ?.map((e) => UserTaskModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -139,7 +151,9 @@ class UserModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     Color getStatusColor(String status) {
-      return status == UserWorkStatus.online.label ? Colors.lightGreen : Colors.redAccent;
+      return status == UserWorkStatus.online.label
+          ? Colors.lightGreen
+          : Colors.redAccent;
     }
 
     Widget buildStatusCell(String status) {
@@ -185,7 +199,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
           ? AppStrings.holiday.tr
-          : AppServiceUtils.formatDateTimeFromString(AppServiceUtils.getLastLogin(userTimeModel)?.toIso8601String()),
+          : AppServiceUtils.formatDateTimeFromString(
+              AppServiceUtils.getLastLogin(userTimeModel)?.toIso8601String()),
       PlutoColumn(
         title: AppStrings.lastCheckOutTime.tr,
         field: 'اخر خروج',
@@ -194,7 +209,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
           ? AppStrings.holiday.tr
-          : AppServiceUtils.formatDateTimeFromString(AppServiceUtils.getLastLogout(userTimeModel)?.toIso8601String()),
+          : AppServiceUtils.formatDateTimeFromString(
+              AppServiceUtils.getLastLogout(userTimeModel)?.toIso8601String()),
       PlutoColumn(
         title: AppStrings.holidaysForThisMonth.tr,
         field: 'عطل هذا الشهر',
@@ -207,7 +223,12 @@ class UserModel implements PlutoAdaptable {
         ),
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ): userHolidays?.where((date) => date.split("-")[1] == DateTime.now().month.toString().padLeft(2, '0')).toList().join(" , "),
+      ): userHolidays
+          ?.where((date) =>
+              date.split("-")[1] ==
+              DateTime.now().month.toString().padLeft(2, '0'))
+          .toList()
+          .join(" , "),
       PlutoColumn(
         title: AppStrings.status.tr,
         field: 'الحالة',
@@ -224,7 +245,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): AppServiceUtils.convertMinutesAndFormat((userTimeModel?.values.fold(
             0,
-            (previousValue, element) => previousValue! + (element.totalLogInDelay ?? 0),
+            (previousValue, element) =>
+                previousValue! + (element.totalLogInDelay ?? 0),
           ) ??
           0)),
       PlutoColumn(
@@ -235,7 +257,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): AppServiceUtils.convertMinutesAndFormat((userTimeModel?.values.fold(
             0,
-            (previousValue, element) => previousValue! + (element.totalOutEarlier ?? 0),
+            (previousValue, element) =>
+                previousValue! + (element.totalOutEarlier ?? 0),
           ) ??
           0)),
       PlutoColumn(
@@ -310,8 +333,12 @@ class UserTimeModel {
   Map<String, dynamic> toJson() {
     return {
       'dayName': dayName,
-      if (logInDateList != null) 'logInDateList': logInDateList!.map((e) => e.toIso8601String()).toList(),
-      if (logOutDateList != null) 'logOutDateList': logOutDateList!.map((e) => e.toIso8601String()).toList(),
+      if (logInDateList != null)
+        'logInDateList':
+            logInDateList!.map((e) => e.toIso8601String()).toList(),
+      if (logOutDateList != null)
+        'logOutDateList':
+            logOutDateList!.map((e) => e.toIso8601String()).toList(),
       if (totalLogInDelay != null) 'totalLogInDelay': totalLogInDelay,
       if (totalOutEarlier != null) 'totalOutEarlier': totalOutEarlier,
     };
@@ -322,8 +349,12 @@ class UserTimeModel {
       dayName: json['dayName'] as String?,
       totalLogInDelay: json['totalLogInDelay'] ?? 0,
       totalOutEarlier: json['totalOutEarlier'] ?? 0,
-      logInDateList: (json['logInDateList'] as List<dynamic>?)?.map((e) => DateTime.parse(e as String)).toList(),
-      logOutDateList: (json['logOutDateList'] as List<dynamic>?)?.map((e) => DateTime.parse(e as String)).toList(),
+      logInDateList: (json['logInDateList'] as List<dynamic>?)
+          ?.map((e) => DateTime.parse(e as String))
+          .toList(),
+      logOutDateList: (json['logOutDateList'] as List<dynamic>?)
+          ?.map((e) => DateTime.parse(e as String))
+          .toList(),
     );
   }
 
@@ -351,8 +382,12 @@ class UserTimeModel {
       dayName: dayName,
       logInDateList: logInDateList,
       logOutDateList: logOutDateList,
-      totalLogInDelay: totalLogInDelay != null ? totalLogInDelay + (this.totalLogInDelay ?? 0) : this.totalLogInDelay,
-      totalOutEarlier: totalOutEarlier != null ? totalOutEarlier + (this.totalOutEarlier ?? 0) : this.totalOutEarlier,
+      totalLogInDelay: totalLogInDelay != null
+          ? totalLogInDelay + (this.totalLogInDelay ?? 0)
+          : this.totalLogInDelay,
+      totalOutEarlier: totalOutEarlier != null
+          ? totalOutEarlier + (this.totalOutEarlier ?? 0)
+          : this.totalOutEarlier,
     );
   }
 }

@@ -91,7 +91,7 @@ class CustomAlertContainer extends StatelessWidget {
         color: options.headerBackgroundColor,
       ),
       child: Image.asset(
-        anim??'' ,
+        anim ?? '',
         fit: BoxFit.cover,
       ),
     );
@@ -105,8 +105,8 @@ class CustomAlertContainer extends StatelessWidget {
         '$title',
         textAlign: options.titleAlignment ?? TextAlign.center,
         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-          color: options.titleColor,
-        ) ??
+                  color: options.titleColor,
+                ) ??
             TextStyle(
               color: options.titleColor,
             ),
@@ -125,7 +125,7 @@ class CustomAlertContainer extends StatelessWidget {
         text = options.text;
       }
       return Text(
-        text??'' ,
+        text ?? '',
         textAlign: options.textAlignment ?? TextAlign.center,
         style: TextStyle(
           color: options.textColor,
@@ -168,7 +168,6 @@ class CustomAlertContainer extends StatelessWidget {
         return null;
       case CustomAlertType.loading:
         return null;
-
     }
   }
 }

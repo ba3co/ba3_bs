@@ -55,7 +55,9 @@ class AllRolesScreen extends StatelessWidget {
           AppButton(
             title: AppStrings.add.tr,
             onPressed: () {
-              read<UserManagementController>().userNavigator.navigateToAddRoleScreen();
+              read<UserManagementController>()
+                  .userNavigator
+                  .navigateToAddRoleScreen();
             },
             iconData: Icons.add,
           ),
@@ -75,7 +77,8 @@ class AllRolesScreen extends StatelessWidget {
                   )
                 : GridView.builder(
                     itemCount: controller.allRoles.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 6,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
@@ -87,7 +90,8 @@ class AllRolesScreen extends StatelessWidget {
                       final iconColor = _getIconColor(role.roleName);
                       return GestureDetector(
                         onTap: () {
-                          controller.userNavigator.navigateToAddRoleScreen(role);
+                          controller.userNavigator
+                              .navigateToAddRoleScreen(role);
                         },
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -109,7 +113,9 @@ class AllRolesScreen extends StatelessWidget {
                                 Text(
                                   role.roleName ?? '',
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600),
                                 ),
                               ],
                             ),

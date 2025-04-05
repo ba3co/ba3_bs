@@ -11,7 +11,7 @@ class ChartBoxWidget extends StatelessWidget {
     required this.color,
     required this.text,
     required this.totals,
-     this.onTap,
+    this.onTap,
   });
 
   final String text;
@@ -22,14 +22,15 @@ class ChartBoxWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap:onTap,
+      onTap: onTap,
       child: Row(
         children: [
           HorizontalSpace(20),
           Container(
             height: 13,
             width: 13,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(2), color: color),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2), color: color),
           ),
           SizedBox(
             width: 18.w,
@@ -58,12 +59,14 @@ class ChartColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: items.map((item) => ChartBoxWidget(
-        color: item.color,
-        text: item.text,
-        totals: item.total,
-        onTap:item.onTap ,
-      )).toList(),
+      children: items
+          .map((item) => ChartBoxWidget(
+                color: item.color,
+                text: item.text,
+                totals: item.total,
+                onTap: item.onTap,
+              ))
+          .toList(),
     );
   }
 }
@@ -74,5 +77,9 @@ class ChartItem {
   final String total;
   final VoidCallback? onTap;
 
-  ChartItem({required this.color, required this.text, required this.total,this.onTap});
+  ChartItem(
+      {required this.color,
+      required this.text,
+      required this.total,
+      this.onTap});
 }

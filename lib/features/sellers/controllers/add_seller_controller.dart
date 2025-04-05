@@ -78,7 +78,8 @@ class AddSellerController extends GetxController with AppNavigator {
   }
 
   void onSuccess(SellerModel savedSeller, {required bool isNew}) {
-    final sellersController = Get.find<SellersController>(); // Ensure Get.find is used correctly
+    final sellersController =
+        Get.find<SellersController>(); // Ensure Get.find is used correctly
 
     AppUIUtils.onSuccess('تم حفظ البائع بنجاح!');
 

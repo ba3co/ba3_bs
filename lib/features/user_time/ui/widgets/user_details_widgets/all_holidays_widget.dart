@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
@@ -29,17 +28,21 @@ class AllHolidaysWidget extends StatelessWidget {
               separatorBuilder: (context, index) => Divider(),
               shrinkWrap: true,
               physics: ClampingScrollPhysics(),
-              itemCount: userDetailsController.userFormHandler.userHolidaysLengthAtMonth,
+              itemCount: userDetailsController
+                  .userFormHandler.userHolidaysLengthAtMonth,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) => Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    userDetailsController.userFormHandler.userHolidaysAtMoth.elementAt(index),
+                    userDetailsController.userFormHandler.userHolidaysAtMoth
+                        .elementAt(index),
                     style: AppTextStyles.headLineStyle3,
                   ),
                   Text(
-                    userDetailsController.userFormHandler.userHolidaysWithDayAtMoth!.elementAt(index),
+                    userDetailsController
+                        .userFormHandler.userHolidaysWithDayAtMoth!
+                        .elementAt(index),
                     style: AppTextStyles.headLineStyle3,
                   ),
                 ],

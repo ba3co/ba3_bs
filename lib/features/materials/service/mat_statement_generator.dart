@@ -13,22 +13,24 @@ import '../../bill/services/bill/quantity_strategy_factory.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
-  final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
+  final MaterialsStatementController _materialsStatementController =
+      read<MaterialsStatementController>();
   int j = 0;
   Future<void> createAndStoreMatsStatements({
     required List sourceModels,
     void Function(double progress)? onProgress,
   }) async {
-
     final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress);
+    await _materialsStatementController.saveAllMatsStatementsModels(
+        matsStatements: matsStatementsModels, onProgress: onProgress);
     log("j is  ${j++}");
   }
 
   List<MatStatementModel> _generateMatsStatementsModels(List sourceModels) {
     return sourceModels.expand<MatStatementModel>(
       (model) {
-        final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
+        final MatStatementCreator creator =
+            MatStatementCreatorFactory.resolveMatStatementCreator(model);
         return creator.createMatStatement(model: model);
       },
     ).toList();
@@ -39,10 +41,13 @@ mixin MatsStatementsGenerator {
     List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
   }) async {
-    final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
-    final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
+    final MatStatementCreator creator =
+        MatStatementCreatorFactory.resolveMatStatementCreator(model);
+    final matsStatementsModels = creator.createMatStatement(
+        model: model, updatedMaterials: updatedMaterials);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
+    await _materialsStatementController.saveAllMatsStatementsModels(
+        matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
       final originId = matsStatementsModels.first.originId;
@@ -58,13 +63,15 @@ mixin MatsStatementsGenerator {
         },
       ).toList();
 
-      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete);
+      await _materialsStatementController
+          .deleteAllMatStatementModel(matStatementsToDelete);
     }
   }
 
   Future<void> deleteMatsStatementsModels(BillModel billModel) async {
     final String originId = billModel.billId!;
-    final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(billModel);
+    final QuantityStrategy quantityStrategy =
+        QuantityStrategyFactory.getStrategy(billModel);
 
     final mergedBillItems = billModel.items.itemList.merge();
 
@@ -78,6 +85,7 @@ mixin MatsStatementsGenerator {
         )
         .toList();
 
-    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels);
+    await _materialsStatementController
+        .deleteAllMatStatementModel(matStatementsModels);
   }
 }

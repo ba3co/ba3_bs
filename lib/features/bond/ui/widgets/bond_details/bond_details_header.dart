@@ -58,7 +58,9 @@ class BondDetailsHeader extends StatelessWidget {
                     },
                     label: "${AppStrings.account.tr} : ",
                     onSubmitted: (text) async {
-                      AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                      AccountModel? accountModel =
+                          await read<AccountsController>()
+                              .openAccountSelectionDialog(
                         query: text,
                         context: context,
                       );
@@ -66,7 +68,8 @@ class BondDetailsHeader extends StatelessWidget {
                         bondDetailsController.setAccount(accountModel);
                       }
                     },
-                    textEditingController: bondDetailsController.accountController,
+                    textEditingController:
+                        bondDetailsController.accountController,
                   ),
                   secondItem: Container()),
               const VerticalSpace(8),

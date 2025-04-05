@@ -11,7 +11,12 @@ class MonthYearPicker extends StatelessWidget {
   final Color? color;
   final Color? textColor;
 
-  const MonthYearPicker({super.key, required this.onMonthYearSelected, this.initMonthYear, this.color,this.textColor});
+  const MonthYearPicker(
+      {super.key,
+      required this.onMonthYearSelected,
+      this.initMonthYear,
+      this.color,
+      this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +27,9 @@ class MonthYearPicker extends StatelessWidget {
           DatePicker.showPicker(
             context,
             showTitleActions: true,
-
             pickerModel: CustomMonthYearPicker(
-              currentTime: DateTime.tryParse(initMonthYear ?? "") ?? DateTime.now(),
+              currentTime:
+                  DateTime.tryParse(initMonthYear ?? "") ?? DateTime.now(),
             ),
             locale: LocaleType.ar,
             onConfirm: (date) {
@@ -36,7 +41,9 @@ class MonthYearPicker extends StatelessWidget {
           enabled: false,
           filedColor: color,
           textStyle: AppTextStyles.headLineStyle4.copyWith(color: textColor),
-          textEditingController: TextEditingController()..text = '${initMonthYear!.split("-")[1]} / ${initMonthYear!.split("-")[0]}',
+          textEditingController: TextEditingController()
+            ..text =
+                '${initMonthYear!.split("-")[1]} / ${initMonthYear!.split("-")[0]}',
         ),
       ),
     );

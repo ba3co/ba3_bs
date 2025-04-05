@@ -19,10 +19,16 @@ class ProfileInfoRowShimmerWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(15.h),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.white), color: Colors.white.withAlpha(70)),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.white),
+            color: Colors.white.withAlpha(70)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [_buildShimmerBox(width: width), HorizontalSpace(), _buildShimmerBox(width: width),],
+          children: [
+            _buildShimmerBox(width: width),
+            HorizontalSpace(),
+            _buildShimmerBox(width: width),
+          ],
         ),
       ),
     );
@@ -30,11 +36,12 @@ class ProfileInfoRowShimmerWidget extends StatelessWidget {
 }
 
 // Shimmer box method for individual elements
-Widget _buildShimmerBox({required double width, double borderRadius = 4}) => Shimmer.fromColors(
+Widget _buildShimmerBox({required double width, double borderRadius = 4}) =>
+    Shimmer.fromColors(
       baseColor: Colors.red,
       highlightColor: Colors.red,
       child: Container(
-        width: (width.w /1.5),
+        width: (width.w / 1.5),
         height: 10.h,
         decoration: BoxDecoration(
           color: Colors.white.withAlpha(200),

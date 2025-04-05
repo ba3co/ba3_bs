@@ -88,7 +88,8 @@ class CustomerModel {
       certificate: json['certificate'] as String?,
       defaultAddressGuid: json['defaultAddressGuid'] as String?,
       cusVatGuid: json['cusVatGuid'] as String?,
-      customerHasVat: json['cusVatGuid'] == 'kCfkUHwNyRbxTlD71uXV' ? false : true,
+      customerHasVat:
+          json['cusVatGuid'] == 'kCfkUHwNyRbxTlD71uXV' ? false : true,
     );
   }
 

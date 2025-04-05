@@ -11,10 +11,11 @@ class LanguageDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TranslationController translationController = Get.find<TranslationController>();
+    final TranslationController translationController =
+        Get.find<TranslationController>();
 
     return Container(
-      padding: EdgeInsets.symmetric( horizontal: 15.h),
+      padding: EdgeInsets.symmetric(horizontal: 15.h),
       height: AppConstants.constHeightTextField,
       width: 1.sw,
       decoration: BoxDecoration(

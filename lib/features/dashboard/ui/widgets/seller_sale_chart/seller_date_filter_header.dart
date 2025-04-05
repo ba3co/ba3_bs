@@ -31,7 +31,7 @@ class SellerDateFilterHeader extends StatelessWidget {
             ),
             Spacer(),
             GestureDetector(
-              onTap:()=>controller.openAllSellersSales(context) ,
+              onTap: () => controller.openAllSellersSales(context),
               child: Text(
                 AppStrings.sellers,
                 style: AppTextStyles.headLineStyle1,
@@ -41,7 +41,9 @@ class SellerDateFilterHeader extends StatelessWidget {
             IconButton(
               tooltip: AppStrings.swap.tr,
               icon: Icon(
-                controller.crossSellerFadeState == CrossFadeState.showFirst?   FontAwesomeIcons.chartPie: FontAwesomeIcons.chartSimple,
+                controller.crossSellerFadeState == CrossFadeState.showFirst
+                    ? FontAwesomeIcons.chartPie
+                    : FontAwesomeIcons.chartSimple,
                 color: AppColors.lightBlueColor,
               ),
               onPressed: controller.swapSellerCrossFadeState,

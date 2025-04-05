@@ -72,7 +72,8 @@ class EntryBondDetailsScreen extends StatelessWidget {
           AppButton(
             title: AppStrings.viewOrigin.tr,
             onPressed: () {
-              read<EntryBondController>().openEntryBondOrigin(entryBondModel, context);
+              read<EntryBondController>()
+                  .openEntryBondOrigin(entryBondModel, context);
             },
             iconData: Icons.keyboard_return,
           ),

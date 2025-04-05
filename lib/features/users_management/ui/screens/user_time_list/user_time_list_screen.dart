@@ -11,7 +11,8 @@ class UserTimeListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<UserManagementController>(builder: (userManagementController) {
+    return GetBuilder<UserManagementController>(
+        builder: (userManagementController) {
       return PlutoGridWithAppBar(
         title: AppStrings.allUsers.tr,
         isLoading: userManagementController.isLoading,
@@ -19,7 +20,8 @@ class UserTimeListScreen extends StatelessWidget {
         tableSourceModels: userManagementController.filteredAllUsersWithNunTime,
         onLoaded: (event) {},
         onSelected: (selectedRow) {
-          final userId = selectedRow.row?.cells[AppConstants.userIdFiled]?.value;
+          final userId =
+              selectedRow.row?.cells[AppConstants.userIdFiled]?.value;
           userManagementController.userNavigator.navigateToUserDetails(userId);
         },
       );

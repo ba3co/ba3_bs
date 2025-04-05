@@ -60,7 +60,6 @@ class CustomAlertDialog {
       textAlignment: textAlignment,
       widget: widget,
       type: type,
-
       animType: animType,
       barrierDismissible: barrierDismissible,
       onConfirmBtnTap: () {
@@ -74,7 +73,7 @@ class CustomAlertDialog {
       confirmBtnText: confirmBtnText,
       cancelBtnText: cancelBtnText,
       confirmBtnColor: confirmBtnColor,
-      cancelBtnColor:   cancelBtnColor,
+      cancelBtnColor: cancelBtnColor,
       confirmBtnTextStyle: confirmBtnTextStyle,
       cancelBtnTextStyle: cancelBtnTextStyle,
       backgroundColor: backgroundColor,

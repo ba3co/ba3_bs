@@ -19,14 +19,19 @@ class PlutoDualTableController extends GetxController {
   }
 
   void setData(List<EntryBondItemModel> allItems) {
-    debitItems = allItems.where((item) => item.bondItemType == BondItemType.debtor).toList();
-    creditItems = allItems.where((item) => item.bondItemType == BondItemType.creditor).toList();
+    debitItems = allItems
+        .where((item) => item.bondItemType == BondItemType.debtor)
+        .toList();
+    creditItems = allItems
+        .where((item) => item.bondItemType == BondItemType.creditor)
+        .toList();
     update();
   }
 
   List<PlutoColumn> generateColumns(bool isDebit) {
     return [
-      PlutoColumn(title: 'Account', field: 'account', type: PlutoColumnType.text()),
+      PlutoColumn(
+          title: 'Account', field: 'account', type: PlutoColumnType.text()),
       PlutoColumn(
         title: isDebit ? 'Debit (مدين)' : 'Credit (دائن)',
         field: isDebit ? 'debit' : 'credit',
@@ -43,8 +48,10 @@ class PlutoDualTableController extends GetxController {
     List<PlutoRow> rows = [];
 
     for (var item in items) {
-      log('item account: ${item.account.name}, amount: ${item.amount}', name: 'generateRows');
-      if (item.amount == null || item.amount == 0.0 || (item.amount ?? 0) < .01) continue; // ✅ Skip invalid amounts
+      log('item account: ${item.account.name}, amount: ${item.amount}',
+          name: 'generateRows');
+      if (item.amount == null || item.amount == 0.0 || (item.amount ?? 0) < .01)
+        continue; // ✅ Skip invalid amounts
 
       rows.add(
         PlutoRow(

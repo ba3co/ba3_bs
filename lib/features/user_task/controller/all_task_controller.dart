@@ -99,7 +99,8 @@ class AllTaskController extends GetxController with FloatingLauncher {
   /// Adds a material to the list after selection and quantity input
   void addMaterialToList(BuildContext context) async {
     final materialController = read<MaterialController>();
-    final searchedMaterials = materialController.searchOfProductByText(taskFormHandler.materialTextController.text);
+    final searchedMaterials = materialController
+        .searchOfProductByText(taskFormHandler.materialTextController.text);
 
     // Show failure message if no materials found
     if (searchedMaterials.isEmpty) {
@@ -108,7 +109,8 @@ class AllTaskController extends GetxController with FloatingLauncher {
     }
 
     // Handle material selection (if multiple options exist)
-    final selectedMaterial = await _handleMultipleMaterialsSelection(context, searchedMaterials);
+    final selectedMaterial =
+        await _handleMultipleMaterialsSelection(context, searchedMaterials);
     if (selectedMaterial == null) {
       AppUIUtils.onFailure('يرجى اختيار مادة');
       return;
@@ -128,7 +130,8 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   /// Handles selection of material if multiple options exist
-  Future<MaterialModel?> _handleMultipleMaterialsSelection(BuildContext context, List<MaterialModel> searchedMaterials) async {
+  Future<MaterialModel?> _handleMultipleMaterialsSelection(
+      BuildContext context, List<MaterialModel> searchedMaterials) async {
     if (searchedMaterials.length == 1) return searchedMaterials.first;
 
     final materialTextEditingController = TextEditingController();
@@ -142,8 +145,10 @@ class AllTaskController extends GetxController with FloatingLauncher {
         searchedMaterials: searchedMaterials,
         onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
           // Retrieve selected material ID
-          final materialId = onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
-          selectedMaterial = read<MaterialController>().getMaterialById(materialId);
+          final materialId =
+              onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
+          selectedMaterial =
+              read<MaterialController>().getMaterialById(materialId);
           OverlayService.back();
         },
         onSubmitted: (_) async {},
@@ -156,7 +161,8 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   /// Prompts the user to enter the quantity of the selected material
-  Future<int?> _getMaterialQuantity(BuildContext context, MaterialModel selectedMaterial) async {
+  Future<int?> _getMaterialQuantity(
+      BuildContext context, MaterialModel selectedMaterial) async {
     final materialTextEditingController = TextEditingController();
 
     if (!context.mounted) return null;
@@ -177,12 +183,15 @@ class AllTaskController extends GetxController with FloatingLauncher {
   /// Updates the material list by either adding a new material or updating the quantity of an existing one
   void _updateMaterialList(MaterialModel material, int quantity) {
     final docId = material.id!;
-    int index = taskFormHandler.materialTaskList.indexWhere((m) => m.docId == docId);
+    int index =
+        taskFormHandler.materialTaskList.indexWhere((m) => m.docId == docId);
 
     if (index != -1) {
       // Update existing material quantity
-      taskFormHandler.materialTaskList[index] = taskFormHandler.materialTaskList[index].copyWith(
-        quantity: (taskFormHandler.materialTaskList[index].quantity ?? 0) + quantity,
+      taskFormHandler.materialTaskList[index] =
+          taskFormHandler.materialTaskList[index].copyWith(
+        quantity:
+            (taskFormHandler.materialTaskList[index].quantity ?? 0) + quantity,
       );
       log("🔹 تم تحديث الكمية للمادة ذات ID: $docId إلى ${taskFormHandler.materialTaskList[index].quantity}");
     } else {
@@ -300,8 +309,10 @@ class AllTaskController extends GetxController with FloatingLauncher {
     final result = await _userTaskRepo.delete(selectedTask!.docId!);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
-      userTaskList.removeWhere((userTask) => userTask.docId == selectedTask?.docId);
-      read<UserManagementController>().addTaskToUser(selectedTask!, selectedTask!.assignedTo!);
+      userTaskList
+          .removeWhere((userTask) => userTask.docId == selectedTask?.docId);
+      read<UserManagementController>()
+          .addTaskToUser(selectedTask!, selectedTask!.assignedTo!);
 
       setSelectedTask(null);
       update();
@@ -337,18 +348,24 @@ class AllTaskController extends GetxController with FloatingLauncher {
     );
   }
 
-  Future<String> uploadImageTask( String imagePath) async {
+  Future<String> uploadImageTask(String imagePath) async {
     String imgUrl = '';
     final result = await _userTaskRepo.uploadImage(imagePath);
 
-    result.fold((failure) => AppUIUtils.onFailure(failure.message), (imageUrl) async {
+    result.fold((failure) => AppUIUtils.onFailure(failure.message),
+        (imageUrl) async {
       imgUrl = imageUrl;
     });
     return imgUrl;
   }
 
-  void uploadDateTask({required UserTaskModel task, required DateTime date, required TaskStatus status}) async {
-    final updatedTask = status.isFinished ? task.copyWith(status: status, endedAt: date) : task.copyWith(status: status, updatedAt: date);
+  void uploadDateTask(
+      {required UserTaskModel task,
+      required DateTime date,
+      required TaskStatus status}) async {
+    final updatedTask = status.isFinished
+        ? task.copyWith(status: status, endedAt: date)
+        : task.copyWith(status: status, updatedAt: date);
     await updateTask(updatedTask);
   }
 }

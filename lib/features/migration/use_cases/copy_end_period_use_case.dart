@@ -17,7 +17,8 @@ class CopyEndPeriodUseCase {
   final GenerateBillRecordsUseCase _generateBillRecordsUseCase;
   final DivideLargeBillUseCase _divideLargeBillUseCase;
   final ConvertBillsToLinkedListUseCase _convertBillsToLinkedListUseCase;
-  final Future<EntitySequence> Function(String, String) fetchAndIncrementEntityNumber;
+  final Future<EntitySequence> Function(String, String)
+      fetchAndIncrementEntityNumber;
   final Future<void> Function(BillModel) saveBill;
   final Future<void> Function(String, String, int) setLastUsedNumber;
   final bool Function(String) migrationGuard;
@@ -41,9 +42,11 @@ class CopyEndPeriodUseCase {
     final materials = read<MaterialController>().materials;
 
     // ✅ Now, all GetX-related calls happen before spawning the isolate
-    List<InvoiceRecordModel> billRecords = await _generateBillRecordsUseCase.execute(materials);
+    List<InvoiceRecordModel> billRecords =
+        await _generateBillRecordsUseCase.execute(materials);
 
-    double billTotal = billRecords.fold(0, (sum, record) => sum + (record.invRecTotal ?? 0));
+    double billTotal =
+        billRecords.fold(0, (sum, record) => sum + (record.invRecTotal ?? 0));
 
     List<BillModel> linkedBills = [];
 //TODO: edite free bill
@@ -66,14 +69,17 @@ class CopyEndPeriodUseCase {
       billRecords: billRecords,
     );
 
-    final entitySequence = await fetchAndIncrementEntityNumber(ApiConstants.bills, BillType.firstPeriodInventory.label);
+    final entitySequence = await fetchAndIncrementEntityNumber(
+        ApiConstants.bills, BillType.firstPeriodInventory.label);
 
     final updatedBill = billModel.copyWith(
       billId: BillType.firstPeriodInventory.label,
-      billDetails: billModel.billDetails.copyWith(billNumber: entitySequence.nextNumber),
+      billDetails:
+          billModel.billDetails.copyWith(billNumber: entitySequence.nextNumber),
     );
 
-    final List<BillModel> splitBills = _divideLargeBillUseCase.execute(updatedBill);
+    final List<BillModel> splitBills =
+        _divideLargeBillUseCase.execute(updatedBill);
 
     // 🔹 Use the Use Case for linking bills
     linkedBills.assignAll(_convertBillsToLinkedListUseCase.execute(splitBills));

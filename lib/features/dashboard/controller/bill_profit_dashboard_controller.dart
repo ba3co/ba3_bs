@@ -16,7 +16,8 @@ import '../../sellers/controllers/seller_sales_controller.dart';
 import '../../sellers/data/models/seller_model.dart';
 import '../ui/widgets/employee_commitment_chart.dart';
 
-class BillProfitDashboardController extends GetxController with FloatingLauncher {
+class BillProfitDashboardController extends GetxController
+    with FloatingLauncher {
   Rx<RequestState> profitsBillsRequest = RequestState.initial.obs;
 
   @override
@@ -91,7 +92,8 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
     double totalProfit = 0.0;
 
     for (final item in bill.items.itemList) {
-      double itemCalcPrice = read<MaterialController>().getMaterialMinPriceById(item.itemGuid);
+      double itemCalcPrice =
+          read<MaterialController>().getMaterialMinPriceById(item.itemGuid);
 
       if (item.itemSubTotalPrice != null) {
         totalProfit += item.itemSubTotalPrice! - itemCalcPrice;
@@ -103,7 +105,8 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
   }
 
   /// **Updates daily data maps (profits & total sales)**
-  void updateDailyData(Map<String, double> dataMap, String dayKey, double value) {
+  void updateDailyData(
+      Map<String, double> dataMap, String dayKey, double value) {
     if (dataMap.containsKey(dayKey)) {
       dataMap[dayKey] = dataMap[dayKey]! + value;
     } else {
@@ -125,7 +128,10 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
     minX = profitSpots.isNotEmpty ? profitSpots.first.x : 0;
     maxX = profitSpots.isNotEmpty ? profitSpots.last.x : 1;
     maxY = totalSellsSpots.isNotEmpty
-        ? totalSellsSpots.map((e) => e.y).reduce((value, element) => value > element ? value : element) + 10000
+        ? totalSellsSpots
+                .map((e) => e.y)
+                .reduce((value, element) => value > element ? value : element) +
+            10000
         : 1;
   }
 
@@ -142,11 +148,14 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
 
   void lunchBillScreen({required BuildContext context, int? index}) {
     if (index != null) {
-      final bill = billsAndProfitChartData.groupBy((p0) => p0.billDetails.billDate!.toString().split(' ')[0]);
+      final bill = billsAndProfitChartData
+          .groupBy((p0) => p0.billDetails.billDate!.toString().split(' ')[0]);
 
-      read<AllBillsController>().lunchBillsScreen(bill[bill.keys.elementAt(index)]!, context);
+      read<AllBillsController>()
+          .lunchBillsScreen(bill[bill.keys.elementAt(index)]!, context);
     } else {
-      read<AllBillsController>().lunchBillsScreen(billsAndProfitChartData, context);
+      read<AllBillsController>()
+          .lunchBillsScreen(billsAndProfitChartData, context);
     }
   }
 
@@ -157,14 +166,17 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
       DateFilter(
           dateFieldName: ApiConstants.billDate,
           range: DateTimeRange(
-            start: DateTime(profitMonth.value.year, profitMonth.value.month, 1, 0, 0, 0),
-            end: DateTime(profitMonth.value.year, profitMonth.value.month + 1, 0, 23, 59, 59),
+            start: DateTime(
+                profitMonth.value.year, profitMonth.value.month, 1, 0, 0, 0),
+            end: DateTime(profitMonth.value.year, profitMonth.value.month + 1,
+                0, 23, 59, 59),
           )),
     );
 
     totalMonthSales = billsAndProfitChartData.fold(
       0,
-      (previousValue, element) => previousValue + element.billDetails.billTotal!,
+      (previousValue, element) =>
+          previousValue + element.billDetails.billTotal!,
     );
     profitsBillsRequest.value = RequestState.success;
     update();
@@ -179,8 +191,10 @@ class BillProfitDashboardController extends GetxController with FloatingLauncher
       DateFilter(
         dateFieldName: ApiConstants.billDate,
         range: DateTimeRange(
-          start: DateTime(profitMonth.value.year, profitMonth.value.month, 1, 0, 0, 0),
-          end: DateTime(profitMonth.value.year, profitMonth.value.month + 1, 0, 23, 59, 59),
+          start: DateTime(
+              profitMonth.value.year, profitMonth.value.month, 1, 0, 0, 0),
+          end: DateTime(profitMonth.value.year, profitMonth.value.month + 1, 0,
+              23, 59, 59),
         ),
       ),
     ));

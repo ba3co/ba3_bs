@@ -33,19 +33,23 @@ class MaterialLayout extends StatelessWidget {
                 actions: RoleItemType.administrator.hasAdminPermission
                     ? [
                         _buildAdminButton(AppStrings.downloadMaterials.tr, () {
-                          read<MaterialController>().fetchAllMaterialFromLocal();
+                          read<MaterialController>()
+                              .fetchAllMaterialFromLocal();
                         }),
                         _buildAdminButton(AppStrings.deletedMaterials.tr, () {
-                          read<MaterialController>().deleteAllMaterialFromLocal();
+                          read<MaterialController>()
+                              .deleteAllMaterialFromLocal();
                         }),
                         _buildAdminButton(AppStrings.downloadGroups.tr, () {
-                          read<MaterialGroupController>().fetchAllMaterialGroupFromLocal();
+                          read<MaterialGroupController>()
+                              .fetchAllMaterialGroupFromLocal();
                         }, width: 120),
                       ]
                     : [],
               ),
               body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
                 child: Column(
                   children: [
                     buildAppMenuItem(
@@ -61,7 +65,8 @@ class MaterialLayout extends StatelessWidget {
                       icon: Icons.category,
                       title: AppStrings.viewMaterialGroups.tr,
                       onTap: () {
-                        read<MaterialGroupController>().navigateToAllMaterialScreen(context: context);
+                        read<MaterialGroupController>()
+                            .navigateToAllMaterialScreen(context: context);
                       },
                     ),
                     if (RoleItemType.viewProduct.hasAdminPermission)
@@ -69,29 +74,37 @@ class MaterialLayout extends StatelessWidget {
                         icon: Icons.add,
                         title: AppStrings.addMaterials.tr,
                         onTap: () {
-                          read<MaterialController>().navigateToAddOrUpdateMaterialScreen(context: context);
+                          read<MaterialController>()
+                              .navigateToAddOrUpdateMaterialScreen(
+                                  context: context);
                         },
                       ),
                   ],
                 ),
               ),
-              floatingActionButton: RoleItemType.administrator.hasAdminPermission
-                  ? FloatingActionButton(
-                      onPressed: () {
-                        // read<MaterialsStatementController>().setupAllMaterials();
-                        read<MaterialController>().resetMaterialQuantityAndPrice();
-                      },
-                      backgroundColor: Colors.blue.shade700,
-                      child: const Icon(
-                        Icons.lock_reset,
-                        color: Colors.white,
-                      ),
-                    )
-                  : null,
+              floatingActionButton:
+                  RoleItemType.administrator.hasAdminPermission
+                      ? FloatingActionButton(
+                          onPressed: () {
+                            // read<MaterialsStatementController>().setupAllMaterials();
+                            read<MaterialController>()
+                                .resetMaterialQuantityAndPrice();
+                          },
+                          backgroundColor: Colors.blue.shade700,
+                          child: const Icon(
+                            Icons.lock_reset,
+                            color: Colors.white,
+                          ),
+                        )
+                      : null,
             ),
             LoadingDialog(
-              isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,
-              message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.materials.tr}',
+              isLoading: read<MaterialController>()
+                      .saveAllMaterialsRequestState
+                      .value ==
+                  RequestState.loading,
+              message:
+                  '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.materials.tr}',
               fontSize: 14.sp,
             )
           ],
@@ -100,7 +113,8 @@ class MaterialLayout extends StatelessWidget {
     );
   }
 
-  Widget _buildAdminButton(String title, VoidCallback onPressed, {double? width}) {
+  Widget _buildAdminButton(String title, VoidCallback onPressed,
+      {double? width}) {
     return Padding(
       padding: const EdgeInsets.all(6),
       child: AppButton(

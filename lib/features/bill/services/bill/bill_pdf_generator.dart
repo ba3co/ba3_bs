@@ -17,7 +17,8 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
   final _accountsController = read<AccountsController>();
 
   @override
-  Widget buildHeader(BillModel itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(BillModel itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -29,18 +30,29 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
 
   Widget _buildBillDetails(String fileName, BillModel itemModel, Font? font) {
     final details = [
-      buildDetailRow('الرقم التعريفي للفاتورة: ', itemModel.billId!, font: font),
-      buildDetailRow('رقم الفاتورة: ', itemModel.billDetails.billNumber.toString(), font: font),
+      buildDetailRow('الرقم التعريفي للفاتورة: ', itemModel.billId!,
+          font: font),
+      buildDetailRow(
+          'رقم الفاتورة: ', itemModel.billDetails.billNumber.toString(),
+          font: font),
       buildDetailRow(
         'نوع الفاتورة: ',
         billName(itemModel),
         font: font,
         valueColor: PdfColor.fromInt(itemModel.billTypeModel.color!),
       ),
-      buildDetailRow('العميل: ', _accountsController.getAccountNameById(itemModel.billDetails.billCustomerId),
+      buildDetailRow(
+          'العميل: ',
+          _accountsController
+              .getAccountNameById(itemModel.billDetails.billCustomerId),
           font: font),
-      buildDetailRow('البائع: ', _sellerController.getSellerNameById(itemModel.billDetails.billSellerId), font: font),
-      buildDetailRow('التاريخ: ', itemModel.billDetails.billDate!.dayMonthYear, font: font),
+      buildDetailRow(
+          'البائع: ',
+          _sellerController
+              .getSellerNameById(itemModel.billDetails.billSellerId),
+          font: font),
+      buildDetailRow('التاريخ: ', itemModel.billDetails.billDate!.dayMonthYear,
+          font: font),
     ];
 
     return Column(
@@ -61,7 +73,8 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
   @override
   List<Widget> buildBody(BillModel itemModel, {Font? font}) {
     return [
-      buildTitleText('تفاصيل الفاتورة', 20, font: font, weight: FontWeight.bold),
+      buildTitleText('تفاصيل الفاتورة', 20,
+          font: font, weight: FontWeight.bold),
       _buildTable(itemModel, font),
       Divider(),
       _buildTotalSection(itemModel),
@@ -69,7 +82,14 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
   }
 
   Widget _buildTable(BillModel itemModel, Font? font) {
-    final headers = ['Item Name', 'Barcode', 'Quantity', 'Unit Price', 'VAT', 'Total'];
+    final headers = [
+      'Item Name',
+      'Barcode',
+      'Quantity',
+      'Unit Price',
+      'VAT',
+      'Total'
+    ];
     final data = _buildTableData(itemModel, font);
 
     return TableHelper.fromTextArray(
@@ -93,7 +113,8 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
       ),
       // Row background (lighter version of header)
       rowDecoration: BoxDecoration(
-        color: PdfColor.fromInt(lightenColor(itemModel.billTypeModel.color!, 0.9)),
+        color:
+            PdfColor.fromInt(lightenColor(itemModel.billTypeModel.color!, 0.9)),
       ),
       cellHeight: 30,
       columnWidths: _columnWidths,

@@ -7,9 +7,11 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 import '../data/models/cheques_model.dart';
 
-class ChequesPdfGenerator extends PdfGeneratorBase<ChequesModel> with PdfHelperMixin {
+class ChequesPdfGenerator extends PdfGeneratorBase<ChequesModel>
+    with PdfHelperMixin {
   @override
-  Widget buildHeader(ChequesModel itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(ChequesModel itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -19,14 +21,21 @@ class ChequesPdfGenerator extends PdfGeneratorBase<ChequesModel> with PdfHelperM
     );
   }
 
-  Widget _buildHeaderText(String fileName, ChequesModel afterUpdate, Font? font) {
+  Widget _buildHeaderText(
+      String fileName, ChequesModel afterUpdate, Font? font) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
-        buildDetailRow('رقم الشيك التعريفي: ', afterUpdate.chequesGuid.toString(), font: font),
-        buildDetailRow('رقم الشيك: ', afterUpdate.chequesNumber.toString().toString(), font: font),
-        buildDetailRow('نوع الشيك: ', ChequesType.byTypeGuide(afterUpdate.chequesTypeGuid!).value, font: font),
+        buildDetailRow(
+            'رقم الشيك التعريفي: ', afterUpdate.chequesGuid.toString(),
+            font: font),
+        buildDetailRow(
+            'رقم الشيك: ', afterUpdate.chequesNumber.toString().toString(),
+            font: font),
+        buildDetailRow('نوع الشيك: ',
+            ChequesType.byTypeGuide(afterUpdate.chequesTypeGuid!).value,
+            font: font),
       ],
     );
   }

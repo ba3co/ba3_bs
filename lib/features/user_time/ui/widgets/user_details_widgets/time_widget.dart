@@ -33,7 +33,9 @@ class TimeWidget extends StatelessWidget {
         itemCount: userDetailsController.userFormHandler.userTimeAtMonthLength,
         separatorBuilder: (context, index) => VerticalSpace(),
         itemBuilder: (context, index) {
-          final userTimeModel = userDetailsController.userFormHandler.userTimeModelAtMonth.values.toList()[index];
+          final userTimeModel = userDetailsController
+              .userFormHandler.userTimeModelAtMonth.values
+              .toList()[index];
 
           return Column(
             children: [
@@ -50,59 +52,62 @@ class TimeWidget extends StatelessWidget {
   Widget _buildDayHeader(String dayName) {
     return Container(
       width: 1.sw,
-
-      decoration: BoxDecoration(border: Border.symmetric(horizontal: BorderSide(color: AppColors.grayColor))),
+      decoration: BoxDecoration(
+          border: Border.symmetric(
+              horizontal: BorderSide(color: AppColors.grayColor))),
       child: Wrap(
         alignment: WrapAlignment.spaceEvenly,
         runAlignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
         runSpacing: 10,
         children: [
-
           Row(
-             mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text("اليوم :", style: AppTextStyles.headLineStyle2),
               Text(dayName, style: AppTextStyles.headLineStyle2),
             ],
           ),
-
           Container(
-            decoration: BoxDecoration(border: Border.symmetric(vertical: BorderSide(color: Colors.red))),
+            decoration: BoxDecoration(
+                border:
+                    Border.symmetric(vertical: BorderSide(color: Colors.red))),
             padding: EdgeInsets.all(8),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-
               children: [
-                Text("التأخير :", style: AppTextStyles.headLineStyle4.copyWith(color: Colors.red)),
-                Text(userDetailsController.userDelay(dayName), style: AppTextStyles.headLineStyle4),
+                Text("التأخير :",
+                    style: AppTextStyles.headLineStyle4
+                        .copyWith(color: Colors.red)),
+                Text(userDetailsController.userDelay(dayName),
+                    style: AppTextStyles.headLineStyle4),
                 // VerticalSpace(),
                 VerticalDivider(),
-                Text("الخروج المبكر :", style: AppTextStyles.headLineStyle4.copyWith(color: Colors.red)),
-                Text(userDetailsController.userEarlier(dayName), style: AppTextStyles.headLineStyle4),
+                Text("الخروج المبكر :",
+                    style: AppTextStyles.headLineStyle4
+                        .copyWith(color: Colors.red)),
+                Text(userDetailsController.userEarlier(dayName),
+                    style: AppTextStyles.headLineStyle4),
               ],
             ),
           )
-
-
         ],
       ),
     );
   }
 
-  Widget _buildLogTimes( UserTimeModel?  userTimeModel) {
+  Widget _buildLogTimes(UserTimeModel? userTimeModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildLogList("دخول :", userTimeModel?.logInDateList),
-      Container(
-        color: AppColors.grayColor,
-        width: 1,
-        height: 50,
-
-      ),
+        Container(
+          color: AppColors.grayColor,
+          width: 1,
+          height: 50,
+        ),
         _buildLogList("خروج :", userTimeModel?.logOutDateList),
       ],
     );

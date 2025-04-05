@@ -31,7 +31,8 @@ class RolesDatasource extends RemoteDatasourceBase<RoleModel> {
 
   @override
   Future<RoleModel> save(RoleModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.roleId, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.roleId, data: item.toJson());
 
     return RoleModel.fromJson(data);
   }

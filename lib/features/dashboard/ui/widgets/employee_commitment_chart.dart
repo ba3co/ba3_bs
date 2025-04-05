@@ -14,7 +14,10 @@ class EmployeeCommitmentChart extends StatelessWidget {
         Container(
             color: Colors.white,
             height: 800,
-            child: ListView.builder(itemBuilder: (context, index) => buildEmployeeCard(employees[index]), itemCount: employees.length))
+            child: ListView.builder(
+                itemBuilder: (context, index) =>
+                    buildEmployeeCard(employees[index]),
+                itemCount: employees.length))
       ],
     );
   }
@@ -44,14 +47,16 @@ class Employee {
   //   return score.clamp(0, 25);
   // }
 
-  double get accessoriesScore => ((accessoriesTarget / 75000 )* 25).clamp(0, 25);
+  double get accessoriesScore =>
+      ((accessoriesTarget / 75000) * 25).clamp(0, 25);
 
-  double get mobilesScore => ((mobilesTarget / 150000 )* 25).clamp(0, 25);
+  double get mobilesScore => ((mobilesTarget / 150000) * 25).clamp(0, 25);
 
   double get taskScore => (taskCompletion / 100 * 25).clamp(0, 25);
   double get attendanceScore => ((absentDays / 30) * 25).clamp(0, 25);
 
-  double get totalCommitment => accessoriesScore + mobilesScore + attendanceScore + taskScore;
+  double get totalCommitment =>
+      accessoriesScore + mobilesScore + attendanceScore + taskScore;
 }
 
 Widget buildEmployeeCard(Employee employee) {
@@ -62,14 +67,19 @@ Widget buildEmployeeCard(Employee employee) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(employee.name, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(employee.name,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 10),
-          Text("Accessories: ${employee.accessoriesScore.toStringAsFixed(1)} / 25"),
+          Text(
+              "Accessories: ${employee.accessoriesScore.toStringAsFixed(1)} / 25"),
           Text("Mobiles: ${employee.mobilesScore.toStringAsFixed(1)} / 25"),
-          Text("Attendance: ${employee.attendanceScore.toStringAsFixed(1)} / 25"),
+          Text(
+              "Attendance: ${employee.attendanceScore.toStringAsFixed(1)} / 25"),
           Text("Tasks: ${employee.taskScore.toStringAsFixed(1)} / 25"),
           Divider(),
-          Text("Total Commitment: ${employee.totalCommitment.toStringAsFixed(1)} / 100", style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+              "Total Commitment: ${employee.totalCommitment.toStringAsFixed(1)} / 100",
+              style: TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     ),

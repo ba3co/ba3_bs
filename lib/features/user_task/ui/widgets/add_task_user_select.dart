@@ -6,12 +6,8 @@ import '../../../../core/widgets/app_spacer.dart';
 import '../../controller/all_task_controller.dart';
 
 class AddTaskUserSelect extends StatelessWidget {
-
-  final  AllTaskController controller;
-  const AddTaskUserSelect({
-    super.key,
-    required  this.controller
-  });
+  final AllTaskController controller;
+  const AddTaskUserSelect({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +23,17 @@ class AddTaskUserSelect extends StatelessWidget {
             itemCount: controller.userList.length,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(controller.userList[index].userName!, style: TextStyle(fontSize: 16)),
-                subtitle: Text("${AppStrings.identificationNumber.tr}: ${controller.userList[index].userId}",
+                title: Text(controller.userList[index].userName!,
+                    style: TextStyle(fontSize: 16)),
+                subtitle: Text(
+                    "${AppStrings.identificationNumber.tr}: ${controller.userList[index].userId}",
                     style: TextStyle(color: Colors.grey)),
                 trailing: Checkbox(
-                  value: controller.checkUserStatus(controller.userList[index].userId!),
+                  value: controller
+                      .checkUserStatus(controller.userList[index].userId!),
                   onChanged: (bool? value) {
-                    controller.updatedSelectedUsers(controller.userList[index].userId!, value!);
+                    controller.updatedSelectedUsers(
+                        controller.userList[index].userId!, value!);
                   },
                 ),
               );
@@ -43,11 +43,14 @@ class AddTaskUserSelect extends StatelessWidget {
         VerticalSpace(5),
         Row(
           children: [
-            Text('تم تحديد ${controller.taskFormHandler.selectedUsers.length} من المستخدمين'),
+            Text(
+                'تم تحديد ${controller.taskFormHandler.selectedUsers.length} من المستخدمين'),
             Spacer(),
             Row(
               children: [
-                Text(controller.taskFormHandler.selectedUsers.isEmpty ? 'تحديد الكل' : 'الغاء الكل'),
+                Text(controller.taskFormHandler.selectedUsers.isEmpty
+                    ? 'تحديد الكل'
+                    : 'الغاء الكل'),
                 HorizontalSpace(10),
                 IconButton(
                     padding: EdgeInsets.zero,

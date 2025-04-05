@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +25,10 @@ class ProfileFooter extends StatelessWidget {
           },
           child: Container(
             padding: EdgeInsets.all(15.h),
-
             alignment: Alignment.center,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: AppColors.blueColor),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: AppColors.blueColor),
             child: Text(
               AppStrings.logout.tr,
               style: TextStyle(
@@ -39,7 +39,6 @@ class ProfileFooter extends StatelessWidget {
             ),
           ),
         ),
-
       ],
     );
   }

@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,10 +38,12 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final Color? filedColor;
 
   @override
-  State<CustomTextFieldWithoutIcon> createState() => _CustomTextFieldWithoutIconState();
+  State<CustomTextFieldWithoutIcon> createState() =>
+      _CustomTextFieldWithoutIconState();
 }
 
-class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon> {
+class _CustomTextFieldWithoutIconState
+    extends State<CustomTextFieldWithoutIcon> {
   @override
   void initState() {
     super.initState();
@@ -64,7 +65,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
       );
 
       if (text != convertedText) {
-        widget.textEditingController.value = widget.textEditingController.value.copyWith(
+        widget.textEditingController.value =
+            widget.textEditingController.value.copyWith(
           text: convertedText,
           selection: TextSelection.collapsed(offset: convertedText.length),
         );
@@ -74,9 +76,8 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
 
   @override
   Widget build(BuildContext context) {
-
     return SizedBox(
-      height: widget.height?? AppConstants.constHeightTextField,
+      height: widget.height ?? AppConstants.constHeightTextField,
       child: TextFormField(
         maxLines: widget.maxLine,
         maxLength: widget.maxLength,
@@ -89,15 +90,15 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
         keyboardType: widget.keyboardType,
         scrollPadding: EdgeInsets.zero,
         cursorHeight: 15,
-        onTap: () => widget.textEditingController.selection =
-            TextSelection(baseOffset: 0, extentOffset: widget.textEditingController.text.length),
+        onTap: () => widget.textEditingController.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: widget.textEditingController.text.length),
         inputFormatters: widget.inputFormatters,
-        style:widget.textStyle?? const TextStyle(fontSize: 12),
+        style: widget.textStyle ?? const TextStyle(fontSize: 12),
         decoration: InputDecoration(
             fillColor: widget.filedColor ?? Colors.white,
             filled: true,
             isDense: true,
-
             focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(
                 color: Colors.blue, // Change the border color when focused
@@ -106,7 +107,7 @@ class _CustomTextFieldWithoutIconState extends State<CustomTextFieldWithoutIcon>
               borderRadius: BorderRadius.circular(5.0),
             ),
             // suffixIcon: SizedBox.shrink(),
-            contentPadding: const EdgeInsets.fromLTRB(0, 12,0, 12)),
+            contentPadding: const EdgeInsets.fromLTRB(0, 12, 0, 12)),
         textAlign: TextAlign.center,
         // Center the text horizontally
       ),

@@ -8,7 +8,6 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../controller/bill_profit_dashboard_controller.dart';
 
 class EmployeeDateMonthHeader extends StatelessWidget {
-
   const EmployeeDateMonthHeader({super.key});
 
   @override
@@ -22,7 +21,6 @@ class EmployeeDateMonthHeader extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         child: Row(
           children: [
-
             Spacer(),
             GestureDetector(
               onTap: () {},
@@ -38,9 +36,9 @@ class EmployeeDateMonthHeader extends StatelessWidget {
                 FontAwesomeIcons.refresh,
                 color: AppColors.lightBlueColor,
               ),
-              onPressed: (){
-                read<BillProfitDashboardController>().getAllEmployeeCommitment();
-
+              onPressed: () {
+                read<BillProfitDashboardController>()
+                    .getAllEmployeeCommitment();
               },
             ),
           ],

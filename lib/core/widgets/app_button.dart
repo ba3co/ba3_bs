@@ -34,10 +34,14 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(isLoading ? Colors.grey : (color ?? Colors.blue.shade700)),
-          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+          backgroundColor: WidgetStatePropertyAll(
+              isLoading ? Colors.grey : (color ?? Colors.blue.shade700)),
+          padding: WidgetStateProperty.all(
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
           shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: borderRadius ?? BorderRadius.all(Radius.circular(5))),
+            RoundedRectangleBorder(
+                borderRadius:
+                    borderRadius ?? BorderRadius.all(Radius.circular(5))),
           ),
         ),
         onPressed: isLoading ? () {} : onPressed,
@@ -46,7 +50,9 @@ class AppButton extends StatelessWidget {
           height: height ?? 35,
           child: Center(
             child: Row(
-              mainAxisAlignment: iconData != null ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+              mainAxisAlignment: iconData != null
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.center,
               children: [
                 isLoading
                     ? AppUIUtils.showLoadingIndicator(width: 16, height: 16)
@@ -56,10 +62,12 @@ class AppButton extends StatelessWidget {
                           maxLines: 1,
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.headLineStyle3.copyWith(fontSize: fontSize ?? 12, color: Colors.white),
+                          style: AppTextStyles.headLineStyle3.copyWith(
+                              fontSize: fontSize ?? 12, color: Colors.white),
                         ),
                       ),
-                if (iconData != null) Icon(iconData, size: iconSize ?? 18, color: Colors.white),
+                if (iconData != null)
+                  Icon(iconData, size: iconSize ?? 18, color: Colors.white),
               ],
             ),
           ),

@@ -16,7 +16,8 @@ class RemoteDataSourceRepository<T> {
       final items = await _dataSource.fetchAll();
       return Right(items); // Return list of items
     } catch (e, stackTrace) {
-      log('Error in getAll: $e', stackTrace: stackTrace, name: 'RemoteDataSourceRepository getAll');
+      log('Error in getAll: $e',
+          stackTrace: stackTrace, name: 'RemoteDataSourceRepository getAll');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
@@ -26,8 +27,10 @@ class RemoteDataSourceRepository<T> {
       final item = await _dataSource.fetchById(id);
       return Right(item); // Return the found item
     } catch (e, stackTrace) {
-      log('Error in getById: $e', stackTrace: stackTrace, name: 'RemoteDataSourceRepository getById');
-      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
+      log('Error in getById: $e',
+          stackTrace: stackTrace, name: 'RemoteDataSourceRepository getById');
+      return Left(
+          ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
 
@@ -36,7 +39,8 @@ class RemoteDataSourceRepository<T> {
       await _dataSource.delete(id);
       return const Right(unit); // Return success
     } catch (e, stackTrace) {
-      log('Error in delete: $e', stackTrace: stackTrace, name: 'RemoteDataSourceRepository delete');
+      log('Error in delete: $e',
+          stackTrace: stackTrace, name: 'RemoteDataSourceRepository delete');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
@@ -47,7 +51,8 @@ class RemoteDataSourceRepository<T> {
 
       return Right(savedItem); // Return success
     } catch (e, stackTrace) {
-      log('Error in save: $e', stackTrace: stackTrace, name: 'RemoteDataSourceRepository save');
+      log('Error in save: $e',
+          stackTrace: stackTrace, name: 'RemoteDataSourceRepository save');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }

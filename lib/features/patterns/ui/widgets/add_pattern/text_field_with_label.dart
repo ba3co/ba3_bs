@@ -16,13 +16,13 @@ class TextFieldWithLabel extends StatelessWidget {
     required this.textEditingController,
     required this.validator,
     this.textStyle,
-    this.visible=true,
+    this.visible = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible:visible ,
+      visible: visible,
       child: SizedBox(
         width: Get.width * 0.45,
         child: Row(

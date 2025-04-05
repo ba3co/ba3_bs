@@ -8,8 +8,6 @@ import '../../../../../core/constants/app_strings.dart';
 class BodyBondLayoutShimmerWidget extends StatelessWidget {
   const BodyBondLayoutShimmerWidget({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return Row(

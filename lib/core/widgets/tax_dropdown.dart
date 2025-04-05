@@ -17,7 +17,7 @@ class TaxDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextAndExpandedChildField(
-    label: AppStrings.tax.tr,
+      label: AppStrings.tax.tr,
       child: Container(
         height: AppConstants.constHeightDropDown,
         alignment: Alignment.center,

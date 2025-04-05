@@ -38,7 +38,8 @@ class RightMainWidget extends StatelessWidget {
                   tabIndex: mainController.tabIndex,
                   title: mainController.appLayouts[index].name.tr,
                   icon: mainController.appLayouts[index].icon,
-                  unSelectedIcon: mainController.appLayouts[index].unSelectedIcon,
+                  unSelectedIcon:
+                      mainController.appLayouts[index].unSelectedIcon,
                   onTap: () {
                     mainController.setIndex = index;
                   },

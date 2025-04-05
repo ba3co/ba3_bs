@@ -76,15 +76,18 @@ class ExportXmlService {
         _static.buildStaticSections(
           builder: builder,
           materials: materials,
-          bonds: bonds,bills: bills,
+          bonds: bonds,
+          bills: bills,
           chequesList: cheques,
         );
 
         // Build the Accounts section using exported accounts XML elements
-        builder.element('Accounts', nest: _accounts.exportAccounts(accounts).children);
+        builder.element('Accounts',
+            nest: _accounts.exportAccounts(accounts).children);
 
         // Build the Customers section using exported customers XML elements
-        builder.element('Customers', nest: _customers.exportCustomers(customers).children);
+        builder.element('Customers',
+            nest: _customers.exportCustomers(customers).children);
 
         // Build the Addresses section (populates the XML builder directly)
         _addresses.buildAddresses(builder);
@@ -93,30 +96,40 @@ class ExportXmlService {
         builder.element('Groups', nest: _groups.exportGroups(groups).children);
 
         // Build the Stores section using exported stores XML elements
-        builder.element('Stores', nest: _stores.exportStores(allStore).children);
+        builder.element('Stores',
+            nest: _stores.exportStores(allStore).children);
 
         // Build the Costs section using exported costs XML elements
         builder.element('Cost1', nest: _costs.exportCosts(sellers).children);
 
         // Build the Materials section using exported materials XML elements
-        builder.element('Materials', nest: _materials.exportMaterials(materials).children);
+        builder.element('Materials',
+            nest: _materials.exportMaterials(materials).children);
 
         // Build the Pay section (bonds) by flattening the list of bond models from the map values
-        builder.element('Pay', nest: _bonds.exportBonds(bonds.values.expand((bonds) => bonds).toList()).children);
+        builder.element('Pay',
+            nest: _bonds
+                .exportBonds(bonds.values.expand((bonds) => bonds).toList())
+                .children);
 
         // Build the BillGuids section using exported bill GUIDs
-        builder.element('BillGuids', nest: _bills.exportBillGuids(bills.values.expand((bills) => bills).toList()).children);
+        builder.element('BillGuids',
+            nest: _bills
+                .exportBillGuids(bills.values.expand((bills) => bills).toList())
+                .children);
 
         // Add a BillTotCount element representing the total number of bill types (map keys count)
         builder.element('BillTotCount', nest: bills.length.toString());
 
         // Build the individual Bill elements by iterating over the exported bills
-        for (var bill in _bills.exportBills(bills.values.expand((bills) => bills).toList())) {
+        for (var bill in _bills
+            .exportBills(bills.values.expand((bills) => bills).toList())) {
           builder.element('Bill', nest: bill.children);
         }
 
         // Build the Checks section using exported cheques XML elements
-        builder.element('Checks', nest: _cheques.exportChecks(cheques).children);
+        builder.element('Checks',
+            nest: _cheques.exportChecks(cheques).children);
       });
     });
 

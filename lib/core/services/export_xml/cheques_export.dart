@@ -35,11 +35,13 @@ class ChequesExport {
             // Secondary cheque number.
             XmlHelpers.element('CheckNum', chq.chequesNum?.toString()),
             // Parent GUID for the cheque (default value).
-            XmlHelpers.element('CheckParentGuid', '00000000-0000-0000-0000-000000000000'),
+            XmlHelpers.element(
+                'CheckParentGuid', '00000000-0000-0000-0000-000000000000'),
             // Unique cheque GUID.
             XmlHelpers.element('CheckGuid', chq.chequesGuid),
             // Branch GUID for the cheque (default value).
-            XmlHelpers.element('CheckBrGuid', '00000000-0000-0000-0000-000000000000'),
+            XmlHelpers.element(
+                'CheckBrGuid', '00000000-0000-0000-0000-000000000000'),
             // Cheque direction indicator (set to '2').
             XmlHelpers.element('CheckDir', '2'),
             // Account pointer associated with the cheque.
@@ -51,13 +53,15 @@ class ChequesExport {
             // Cheque collection date (default value).
             XmlHelpers.element('CheckColDate', '1-1-1980'),
             // Bank GUID for the cheque (default value).
-            XmlHelpers.element('CheckBankGuid', '00000000-0000-0000-0000-000000000000'),
+            XmlHelpers.element(
+                'CheckBankGuid', '00000000-0000-0000-0000-000000000000'),
             // Cheque note.
             XmlHelpers.element('CheckNote', chq.chequesNote),
             // Cheque value (defaults to '0' if null).
             XmlHelpers.element('CheckVal', chq.chequesVal?.toString() ?? '0'),
             // Currency GUID for the cheque.
-            XmlHelpers.element('CheckCurGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
+            XmlHelpers.element(
+                'CheckCurGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
             // Currency value (typically '1').
             XmlHelpers.element('CheckCurVal', '1'),
             // Cheque security level (set to '1').
@@ -75,9 +79,11 @@ class ChequesExport {
             // Cheque file date, using the cheque date.
             XmlHelpers.element('CheckFileDate', chq.chequesDate),
             // First cost GUID for the cheque (default value).
-            XmlHelpers.element('CheckCost1Guid', '00000000-0000-0000-0000-000000000000'),
+            XmlHelpers.element(
+                'CheckCost1Guid', '00000000-0000-0000-0000-000000000000'),
             // Second cost GUID for the cheque (default value).
-            XmlHelpers.element('CheckCost2Guid', '00000000-0000-0000-0000-000000000000'),
+            XmlHelpers.element(
+                'CheckCost2Guid', '00000000-0000-0000-0000-000000000000'),
             // Secondary account GUID for the cheque.
             XmlHelpers.element('CheckAccount2Guid', chq.chequesAccount2Guid),
             // Cheque state: '1' if paid, '0' otherwise.
@@ -109,7 +115,8 @@ class ChequesExport {
   ///
   /// Returns:
   /// - An [xml.XmlElement] representing the check collection entry.
-  static xml.XmlElement _buildCheckCollectEntry(ChequesModel chq, String entryGuid) {
+  static xml.XmlElement _buildCheckCollectEntry(
+      ChequesModel chq, String entryGuid) {
     return xml.XmlElement(
       xml.XmlName('CheckCollectEntry'),
       [],
@@ -129,13 +136,16 @@ class ChequesExport {
             // Collection entry posting date (same as payment date).
             XmlHelpers.element('CEntryPostDate', chq.chequesPayDate),
             // Debit amount for the collection entry.
-            XmlHelpers.element('CEntryDebit', chq.chequesVal?.toString() ?? '0'),
+            XmlHelpers.element(
+                'CEntryDebit', chq.chequesVal?.toString() ?? '0'),
             // Credit amount for the collection entry.
-            XmlHelpers.element('CEntryCredit', chq.chequesVal?.toString() ?? '0'),
+            XmlHelpers.element(
+                'CEntryCredit', chq.chequesVal?.toString() ?? '0'),
             // Note for the collection entry.
             XmlHelpers.element('CEntryNote', chq.chequesNote),
             // Currency GUID for the collection entry.
-            XmlHelpers.element('CEntryCurrencyGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
+            XmlHelpers.element(
+                'CEntryCurrencyGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
             // Currency value (typically '1').
             XmlHelpers.element('CEntryCurrencyVal', '1'),
             // Indicator that the entry is posted (set to '1').
@@ -145,7 +155,8 @@ class ChequesExport {
             // Security level for the entry (set to '1').
             XmlHelpers.element('CEntrySecurity', '1'),
             // Branch GUID for the collection entry (default value).
-            XmlHelpers.element('CEntryBranch', '00000000-0000-0000-0000-000000000000'),
+            XmlHelpers.element(
+                'CEntryBranch', '00000000-0000-0000-0000-000000000000'),
             // Collection entry number (default '0').
             XmlHelpers.element('CEntryNumber', '0'),
             // Nested PayItems element for potential payment item details.
@@ -158,27 +169,33 @@ class ChequesExport {
                   [],
                   [
                     // Payment item account GUID.
-                    XmlHelpers.element('EntryAccountGuid', chq.chequesAccount2Guid),
+                    XmlHelpers.element(
+                        'EntryAccountGuid', chq.chequesAccount2Guid),
                     // Payment item date (cheque payment date).
                     XmlHelpers.element('EntryDate', chq.chequesPayDate),
                     // Payment item debit amount.
-                    XmlHelpers.element('EntryDebit', chq.chequesVal?.toString() ?? '0'),
+                    XmlHelpers.element(
+                        'EntryDebit', chq.chequesVal?.toString() ?? '0'),
                     // Payment item credit amount (set to '0').
                     XmlHelpers.element('EntryCredit', '0'),
                     // Note for the payment item.
                     XmlHelpers.element('EntryNote', chq.chequesNote),
                     // Currency GUID for the payment item.
-                    XmlHelpers.element('EntryCurrencyGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
+                    XmlHelpers.element('EntryCurrencyGuid',
+                        '884edcde-c172-490d-a2f2-f10a0b90326a'),
                     // Currency value (typically '1').
                     XmlHelpers.element('EntryCurrencyVal', '1'),
                     // Cost GUID for the payment item (default value).
-                    XmlHelpers.element('EntryCostGuid', '00000000-0000-0000-0000-000000000000'),
+                    XmlHelpers.element('EntryCostGuid',
+                        '00000000-0000-0000-0000-000000000000'),
                     // Class information for the payment item (derived from cheque number).
-                    XmlHelpers.element('EntryClass', chq.chequesNum?.toString()),
+                    XmlHelpers.element(
+                        'EntryClass', chq.chequesNum?.toString()),
                     // Payment item number (default '0').
                     XmlHelpers.element('EntryNumber', '0'),
                     // Customer GUID for the payment item (default value).
-                    XmlHelpers.element('EntryCustomerGuid', '00000000-0000-0000-0000-000000000000'),
+                    XmlHelpers.element('EntryCustomerGuid',
+                        '00000000-0000-0000-0000-000000000000'),
                     // Entry type (set to '0').
                     XmlHelpers.element('EntryType', '0'),
                   ],
@@ -205,7 +222,8 @@ class ChequesExport {
   ///
   /// Returns:
   /// - An [xml.XmlElement] representing the check entry relation.
-  static xml.XmlElement _buildCheckEntryRelation(ChequesModel chq, String entryGuid) {
+  static xml.XmlElement _buildCheckEntryRelation(
+      ChequesModel chq, String entryGuid) {
     // Generate a unique GUID for the entry relation.
     final erGuid = XmlHelpers.uuid.v4();
 
@@ -226,7 +244,8 @@ class ChequesExport {
             // Parent type (set to '6').
             XmlHelpers.element('ErParentType', '6'),
             // Cheque number (defaults to '1' if null).
-            XmlHelpers.element('ErParentNumber', chq.chequesNumber?.toString() ?? '1'),
+            XmlHelpers.element(
+                'ErParentNumber', chq.chequesNumber?.toString() ?? '1'),
           ],
         ),
       ],

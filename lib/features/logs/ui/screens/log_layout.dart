@@ -25,14 +25,12 @@ class _LogLayoutState extends State<LogLayout> {
 
   void _showDateRangeDialog(BuildContext context, LogController controller) {
     showDialog(
-
       context: context,
-
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.backGroundColor,
         buttonPadding: EdgeInsets.zero,
         actionsPadding: EdgeInsets.zero,
-        titlePadding:   EdgeInsets.zero,
+        titlePadding: EdgeInsets.zero,
         contentPadding: EdgeInsets.zero,
         content: SizedBox(
           height: 500,
@@ -56,7 +54,6 @@ class _LogLayoutState extends State<LogLayout> {
               selectionMode: DateRangePickerSelectionMode.range,
             ),
           ),
-
         ),
       ),
     );
@@ -93,12 +90,19 @@ class _LogLayoutState extends State<LogLayout> {
                           Expanded(
                             child: Obx(() {
                               final range = controller.logDateRange.value;
-                              if (range == null || range.startDate == null || range.endDate == null) {
-                                return const Text("التاريخ", style: TextStyle(color: Colors.black54));
+                              if (range == null ||
+                                  range.startDate == null ||
+                                  range.endDate == null) {
+                                return const Text("التاريخ",
+                                    style: TextStyle(color: Colors.black54));
                               }
-                              final from = controller.formatShortDate(range.startDate!);
-                              final to = controller.formatShortDate(range.endDate!);
-                              return Text("$to → $from", style: const TextStyle(fontSize: 14, color: Colors.black));
+                              final from =
+                                  controller.formatShortDate(range.startDate!);
+                              final to =
+                                  controller.formatShortDate(range.endDate!);
+                              return Text("$to → $from",
+                                  style: const TextStyle(
+                                      fontSize: 14, color: Colors.black));
                             }),
                           ),
                         ],
@@ -117,7 +121,8 @@ class _LogLayoutState extends State<LogLayout> {
                     decoration: InputDecoration(
                       hintText: 'ابحث بأسم المستخدم أو الملاحظة...',
                       prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     onChanged: (value) => controller.applyFilters(),
                   ),
@@ -171,11 +176,14 @@ class _LogLayoutState extends State<LogLayout> {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator(color: Colors.blue));
+                return const Center(
+                    child: CircularProgressIndicator(color: Colors.blue));
               }
 
               if (controller.filteredLogs.isEmpty) {
-                return const Center(child: Text('لا يوجد سجلات', style: TextStyle(fontSize: 18)));
+                return const Center(
+                    child:
+                        Text('لا يوجد سجلات', style: TextStyle(fontSize: 18)));
               }
 
               return CustomScrollView(
@@ -190,12 +198,15 @@ class _LogLayoutState extends State<LogLayout> {
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                           child: InkWell(
-                            onTap: () => controller.openLogModelOrigin(log, context),
+                            onTap: () =>
+                                controller.openLogModelOrigin(log, context),
                             child: Card(
                               color: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
                               elevation: 2,
-                              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               child: Padding(
                                 padding: const EdgeInsets.all(16),
                                 child: Row(
@@ -209,18 +220,24 @@ class _LogLayoutState extends State<LogLayout> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             log.note,
-                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
                                           ),
                                           const SizedBox(height: 4),
-                                          Text("${log.userName} • ${log.sourceType} • #${log.sourceNumber}"),
+                                          Text(
+                                              "${log.userName} • ${log.sourceType} • #${log.sourceNumber}"),
                                           const SizedBox(height: 4),
                                           Text(
                                             controller.formatDate(log.date),
-                                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600]),
                                           ),
                                         ],
                                       ),

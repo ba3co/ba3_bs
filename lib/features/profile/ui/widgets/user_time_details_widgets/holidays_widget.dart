@@ -23,7 +23,7 @@ class HolidaysWidget extends StatelessWidget {
     return OrganizedWidget(
         titleWidget: Center(
             child: Text(
-              AppStrings.holidaysForThisMonth.tr,
+          AppStrings.holidaysForThisMonth.tr,
           style: AppTextStyles.headLineStyle2,
         )),
         bodyWidget: Column(
@@ -55,7 +55,8 @@ class HolidaysWidget extends StatelessWidget {
 
 final List<String> holidays = List.generate(
   2,
-  (index) => "2024-${(index + 1).toString().padLeft(2, "0")}-${(Random().nextInt(30) + 1).toString().padLeft(2, "0")}",
+  (index) =>
+      "2024-${(index + 1).toString().padLeft(2, "0")}-${(Random().nextInt(30) + 1).toString().padLeft(2, "0")}",
 );
 final List<String> holidaysName = holidays
     .map(

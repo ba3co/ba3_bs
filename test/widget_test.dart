@@ -12,9 +12,11 @@ import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 
 // Mock Dependencies
-class MockRemoteDataSourceRepository<T> extends Mock implements RemoteDataSourceRepository<T> {}
+class MockRemoteDataSourceRepository<T> extends Mock
+    implements RemoteDataSourceRepository<T> {}
 
-class MockFilterableDataSourceRepository<T> extends Mock implements FilterableDataSourceRepository<T> {}
+class MockFilterableDataSourceRepository<T> extends Mock
+    implements FilterableDataSourceRepository<T> {}
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
 
@@ -33,10 +35,12 @@ void main() {
     mockRolesRepo = MockRemoteDataSourceRepository<RoleModel>();
     mockUsersRepo = MockFilterableDataSourceRepository<UserModel>();
 
-    when(() => mockRolesRepo.getAll()).thenAnswer((_) async => Right([RoleModel(roleId: 'roleId1', roles: {})]));
+    when(() => mockRolesRepo.getAll()).thenAnswer(
+        (_) async => Right([RoleModel(roleId: 'roleId1', roles: {})]));
     when(() => mockUsersRepo.getAll()).thenAnswer((_) async => Right([]));
 
-    var sharedPreferencesService = await Get.putAsync(() => SharedPreferencesService().init());
+    var sharedPreferencesService =
+        await Get.putAsync(() => SharedPreferencesService().init());
 
     // Register mock Firestore in GetX
     Get.put<FirebaseFirestore>(mockFirestore);

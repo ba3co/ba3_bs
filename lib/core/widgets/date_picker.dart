@@ -16,7 +16,8 @@ class DatePicker extends StatelessWidget {
   final String? initDate;
   final Color? color;
 
-  const DatePicker({super.key, required this.onDateSelected, this.initDate, this.color});
+  const DatePicker(
+      {super.key, required this.onDateSelected, this.initDate, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class DatePicker extends StatelessWidget {
             showDivider: false,
             borderRadius: BorderRadius.circular(16),
             contentPadding: EdgeInsets.zero,
-            title:AppStrings. choseDay.tr,
+            title: AppStrings.choseDay.tr,
             color: AppColors.backGroundColor,
             content: ClipRRect(
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
@@ -43,14 +44,18 @@ class DatePicker extends StatelessWidget {
                   OverlayService.back();
                 },
                 backgroundColor: AppColors.whiteColor,
-                headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
-                navigationDirection: DateRangePickerNavigationDirection.vertical,
+                headerStyle: const DateRangePickerHeaderStyle(
+                    backgroundColor: Colors.transparent),
+                navigationDirection:
+                    DateRangePickerNavigationDirection.vertical,
                 selectionMode: DateRangePickerSelectionMode.single,
-                monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: true),
+                monthViewSettings: const DateRangePickerMonthViewSettings(
+                    enableSwipeSelection: true),
                 showNavigationArrow: false,
                 navigationMode: DateRangePickerNavigationMode.scroll,
                 onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                  DateTime selectedDate = dateRangePickerSelectionChangedArgs.value as DateTime;
+                  DateTime selectedDate =
+                      dateRangePickerSelectionChangedArgs.value as DateTime;
                   onDateSelected(selectedDate);
                   OverlayService.back();
                 },

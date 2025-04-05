@@ -43,28 +43,39 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   List<PlutoRow> additionsDiscountsRows = [];
 
-  List<PlutoColumn> additionsDiscountsColumns = AdditionsDiscountsRecordModel().toEditedMap().keys.toList();
+  List<PlutoColumn> additionsDiscountsColumns =
+      AdditionsDiscountsRecordModel().toEditedMap().keys.toList();
 
   @override
-  Map<MaterialModel, List<TextEditingController>> buyMaterialsSerialsControllers = {};
+  Map<MaterialModel, List<TextEditingController>>
+      buyMaterialsSerialsControllers = {};
 
   @override
-  Map<MaterialModel, List<TextEditingController>> sellMaterialsSerialsControllers = {};
+  Map<MaterialModel, List<TextEditingController>>
+      sellMaterialsSerialsControllers = {};
 
   // State managers
   @override
-  PlutoGridStateManager recordsTableStateManager =
-      PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
+  PlutoGridStateManager recordsTableStateManager = PlutoGridStateManager(
+      columns: [],
+      rows: [],
+      gridFocusNode: FocusNode(),
+      scroll: PlutoGridScrollController());
 
   @override
-  PlutoGridStateManager additionsDiscountsStateManager =
-      PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
+  PlutoGridStateManager additionsDiscountsStateManager = PlutoGridStateManager(
+      columns: [],
+      rows: [],
+      gridFocusNode: FocusNode(),
+      scroll: PlutoGridScrollController());
 
   @override
-  String calculateAmountFromRatio(double ratio, double total) => _calculator.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
+  String calculateAmountFromRatio(double ratio, double total) =>
+      _calculator.calculateAmountFromRatio(ratio, total).toStringAsFixed(2);
 
   @override
-  String calculateRatioFromAmount(double amount, double total) => _calculator.calculateRatioFromAmount(amount, total).toStringAsFixed(2);
+  String calculateRatioFromAmount(double amount, double total) =>
+      _calculator.calculateRatioFromAmount(amount, total).toStringAsFixed(2);
 
   @override
   double get computeWithVatTotal => _calculator.computeWithVatTotal;
@@ -82,13 +93,16 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   double get computeGifts => _calculator.computeGifts;
 
   @override
-  double get computeAdditions => _calculator.computeAdditions(_plutoUtils, computeWithVatTotal);
+  double get computeAdditions =>
+      _calculator.computeAdditions(_plutoUtils, computeWithVatTotal);
 
   @override
-  double get calculateFinalTotal => _calculator.calculateFinalTotal(_plutoUtils);
+  double get calculateFinalTotal =>
+      _calculator.calculateFinalTotal(_plutoUtils);
 
   @override
-  double get computeDiscounts => _calculator.computeDiscounts(_plutoUtils, computeWithVatTotal);
+  double get computeDiscounts =>
+      _calculator.computeDiscounts(_plutoUtils, computeWithVatTotal);
 
   @override
   List<InvoiceRecordModel> get generateRecords {
@@ -96,8 +110,11 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
     final materialController = read<MaterialController>();
 
-    final List<InvoiceRecordModel> invoiceRecords =
-        recordsTableStateManager.rows.map((row) => _processBillRow(row, materialController)).whereType<InvoiceRecordModel>().toList();
+    final List<InvoiceRecordModel> invoiceRecords = recordsTableStateManager
+        .rows
+        .map((row) => _processBillRow(row, materialController))
+        .whereType<InvoiceRecordModel>()
+        .toList();
 
     generateSellMaterialsSerialsControllers(invoiceRecords);
 
@@ -106,22 +123,27 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     return invoiceRecords;
   }
 
-  Map<Account, List<DiscountAdditionAccountModel>> get generateDiscountsAndAdditions =>
-      _gridService.collectDiscountsAndAdditions(_plutoUtils);
+  Map<Account, List<DiscountAdditionAccountModel>>
+      get generateDiscountsAndAdditions =>
+          _gridService.collectDiscountsAndAdditions(_plutoUtils);
 
   @override
-  void moveToNextRow(PlutoGridStateManager stateManager, String cellField) => _gridService.moveToNextRow(stateManager, cellField);
+  void moveToNextRow(PlutoGridStateManager stateManager, String cellField) =>
+      _gridService.moveToNextRow(stateManager, cellField);
 
   @override
-  void restoreCurrentCell(PlutoGridStateManager stateManager) => _gridService.restoreCurrentCell(stateManager, billTypeModel);
+  void restoreCurrentCell(PlutoGridStateManager stateManager) =>
+      _gridService.restoreCurrentCell(stateManager, billTypeModel);
 
-  void generateSellMaterialsSerialsControllers(List<InvoiceRecordModel> invRecords) {
+  void generateSellMaterialsSerialsControllers(
+      List<InvoiceRecordModel> invRecords) {
     // Clear existing data to avoid duplicates
     sellMaterialsSerialsControllers.clear();
 
     for (final record in invRecords) {
       // Extract MaterialModel and serial number
-      MaterialModel? material = read<MaterialController>().searchMaterialByName(record.invRecProduct);
+      MaterialModel? material =
+          read<MaterialController>().searchMaterialByName(record.invRecProduct);
       String? serialNumber = record.invRecProductSoldSerial;
 
       if (material != null && serialNumber != null && serialNumber.isNotEmpty) {
@@ -129,7 +151,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         sellMaterialsSerialsControllers.putIfAbsent(material, () => []);
 
         // Add the serial number as a TextEditingController
-        sellMaterialsSerialsControllers[material]!.add(TextEditingController(text: serialNumber));
+        sellMaterialsSerialsControllers[material]!
+            .add(TextEditingController(text: serialNumber));
       }
     }
 
@@ -138,10 +161,12 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   @override
-  void initSerialControllers(MaterialModel materialModel, int serialCount, BillItem billItem) {
+  void initSerialControllers(
+      MaterialModel materialModel, int serialCount, BillItem billItem) {
     buyMaterialsSerialsControllers.update(
       materialModel,
-      (existingList) => _matchControllerCount(existingList, serialCount, billItem),
+      (existingList) =>
+          _matchControllerCount(existingList, serialCount, billItem),
       ifAbsent: () => _createControllers(serialCount, billItem),
     );
   }
@@ -149,13 +174,17 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   /// Ensures the [controllers] list has exactly [requiredCount] items.
   /// Adds [TextEditingController] instances if there are fewer than required,
   /// or disposes and removes any excess controllers.
-  List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount, BillItem billItem) {
+  List<TextEditingController> _matchControllerCount(
+      List<TextEditingController> controllers,
+      int requiredCount,
+      BillItem billItem) {
     final int currentCount = controllers.length;
 
     if (currentCount < requiredCount) {
       // Add missing controllers and maintain existing values
       final int needed = requiredCount - currentCount;
-      controllers.addAll(_createControllers(needed, billItem, startIndex: currentCount));
+      controllers.addAll(
+          _createControllers(needed, billItem, startIndex: currentCount));
     } else if (currentCount > requiredCount) {
       // Dispose of and remove extras
       for (int i = requiredCount; i < currentCount; i++) {
@@ -169,12 +198,14 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   /// Creates a list of [TextEditingController] with [count] items,
   /// optionally starting from a specific index to ensure sequential serials.
-  List<TextEditingController> _createControllers(int count, BillItem billItem, {int startIndex = 0}) {
+  List<TextEditingController> _createControllers(int count, BillItem billItem,
+      {int startIndex = 0}) {
     return List.generate(
       count,
       (index) {
         final actualIndex = startIndex + index;
-        final text = (billItem.itemSerialNumbers != null && actualIndex < billItem.itemSerialNumbers!.length)
+        final text = (billItem.itemSerialNumbers != null &&
+                actualIndex < billItem.itemSerialNumbers!.length)
             ? billItem.itemSerialNumbers![actualIndex]
             : '';
         return TextEditingController(text: text);
@@ -195,7 +226,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     _plutoUtils = BillPlutoUtils(this);
     _contextMenu = BillPlutoContextMenu(this);
 
-    recordsTableColumns = InvoiceRecordModel().toEditedMap(billTypeModel).keys.toList();
+    recordsTableColumns =
+        InvoiceRecordModel().toEditedMap(billTypeModel).keys.toList();
   }
 
   void onMainTableLoaded(PlutoGridOnLoadedEvent event) {
@@ -204,11 +236,14 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final newRows = recordsTableStateManager.getNewRows(count: 30);
     recordsTableStateManager.appendRows(newRows);
 
-    if (recordsTableStateManager.rows.isNotEmpty && recordsTableStateManager.rows.first.cells.length > 1) {
-      final secondCell = recordsTableStateManager.rows.first.cells.entries.elementAt(1).value;
+    if (recordsTableStateManager.rows.isNotEmpty &&
+        recordsTableStateManager.rows.first.cells.length > 1) {
+      final secondCell =
+          recordsTableStateManager.rows.first.cells.entries.elementAt(1).value;
       recordsTableStateManager.setCurrentCell(secondCell, 0);
 
-      FocusScope.of(event.stateManager.gridFocusNode.context!).requestFocus(event.stateManager.gridFocusNode);
+      FocusScope.of(event.stateManager.gridFocusNode.context!)
+          .requestFocus(event.stateManager.gridFocusNode);
     }
   }
 
@@ -219,13 +254,16 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     additionsDiscountsStateManager.appendRows(newRows);
   }
 
-  void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event, CustomerModel? customer) {
+  void onMainTableStateManagerChanged(
+      PlutoGridOnChangedEvent event, CustomerModel? customer) {
     log('onMainTableStateManagerChanged');
 
     if (recordsTableStateManager.currentRow == null) return;
     final String field = event.column.field;
 
-    bool isPurchaseWithOutVat = billTypeModel.isPurchaseRelated && customer != null && customer.customerHasVat != true;
+    bool isPurchaseWithOutVat = billTypeModel.isPurchaseRelated &&
+        customer != null &&
+        customer.customerHasVat != true;
     // Extract and calculate values
     final quantity = _getQuantity();
     final subTotal = _getSubTotal();
@@ -234,17 +272,26 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final subTotalWithVat = _getSubTotalWithVat();
 
     // Handle updates based on the changed column
-    _handleColumnUpdate(field, quantity, subTotal, total, vat, subTotalWithVat, isPurchaseWithOutVat);
+    _handleColumnUpdate(field, quantity, subTotal, total, vat, subTotalWithVat,
+        isPurchaseWithOutVat);
 
     safeUpdateUI();
   }
 
   void _handleColumnUpdate(
-      String columnField, int quantity, double subTotal, double total, double vat, double subTotalWithVat, bool isPurchaseWithOutVat) {
+      String columnField,
+      int quantity,
+      double subTotal,
+      double total,
+      double vat,
+      double subTotalWithVat,
+      bool isPurchaseWithOutVat) {
     if (columnField == AppConstants.invRecSubTotal) {
-      _gridService.updateInvoiceValues(subTotal, quantity, billTypeModel, isPurchaseWithOutVat);
+      _gridService.updateInvoiceValues(
+          subTotal, quantity, billTypeModel, isPurchaseWithOutVat);
     } else if (columnField == AppConstants.invRecTotal) {
-      _gridService.updateInvoiceValuesByTotal(total, quantity, billTypeModel, isPurchaseWithOutVat);
+      _gridService.updateInvoiceValuesByTotal(
+          total, quantity, billTypeModel, isPurchaseWithOutVat);
     } else if (columnField == AppConstants.invRecQuantity && quantity > 0) {
       _gridService.updateInvoiceValuesByQuantity(
         quantity,
@@ -252,8 +299,10 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         vat,
         billTypeModel,
       );
-    } else if (columnField == AppConstants.invRecSubTotalWithVat && quantity > 0) {
-      _gridService.updateInvoiceValuesBySubTotalWithVat(subTotalWithVat, quantity, billTypeModel, isPurchaseWithOutVat);
+    } else if (columnField == AppConstants.invRecSubTotalWithVat &&
+        quantity > 0) {
+      _gridService.updateInvoiceValuesBySubTotalWithVat(
+          subTotalWithVat, quantity, billTypeModel, isPurchaseWithOutVat);
     }
     if (billTypeModel.billPatternType?.hasDiscountsAccount ?? true) {
       updateAdditionDiscountCell(computeWithVatTotal);
@@ -281,29 +330,39 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   double _getSubTotalWithVat() {
-    final subTotalWithVat = _extractCellValueAsNumber(AppConstants.invRecSubTotalWithVat);
+    final subTotalWithVat =
+        _extractCellValueAsNumber(AppConstants.invRecSubTotalWithVat);
     return subTotalWithVat.toDouble;
   }
 
   String _extractCellValueAsNumber(String field) {
-    final cellValue = recordsTableStateManager.currentRow!.cells[field]?.value?.toString() ?? '';
+    final cellValue =
+        recordsTableStateManager.currentRow!.cells[field]?.value?.toString() ??
+            '';
     return AppServiceUtils.extractNumbersAndCalculate(cellValue);
   }
 
-  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context, CustomerModel? customer) {
-    bool isPurchaseWithOutVat = billTypeModel.isPurchaseRelated && customer != null && customer.customerHasVat != true;
+  void onMainTableRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event,
+      BuildContext context, CustomerModel? customer) {
+    bool isPurchaseWithOutVat = billTypeModel.isPurchaseRelated &&
+        customer != null &&
+        customer.customerHasVat != true;
 
     final materialName = event.row.cells[AppConstants.invRecProduct]?.value;
     if (materialName == null) return;
 
-    final MaterialModel? materialModel = read<MaterialController>().getMaterialByName(materialName);
+    final MaterialModel? materialModel =
+        read<MaterialController>().getMaterialByName(materialName);
     if (materialModel == null) return;
 
     _handleContextMenu(event, materialModel, context, isPurchaseWithOutVat);
   }
 
   void _handleContextMenu(
-      PlutoGridOnRowSecondaryTapEvent event, MaterialModel materialModel, BuildContext context, bool isPurchaseWithOutVat) {
+      PlutoGridOnRowSecondaryTapEvent event,
+      MaterialModel materialModel,
+      BuildContext context,
+      bool isPurchaseWithOutVat) {
     final field = event.cell.column.field;
     final row = event.row;
 
@@ -312,11 +371,13 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     } else if (field == AppConstants.invRecProduct) {
       _showMatMenu(event, materialModel, context, row);
     } else if (field == AppConstants.invRecSubTotal) {
-      _showPriceTypeMenu(event, materialModel, context, row, isPurchaseWithOutVat);
+      _showPriceTypeMenu(
+          event, materialModel, context, row, isPurchaseWithOutVat);
     }
   }
 
-  void _showPriceTypeMenu(event, MaterialModel materialModel, BuildContext context, PlutoRow row, bool isPurchaseWithOutVat) {
+  void _showPriceTypeMenu(event, MaterialModel materialModel,
+      BuildContext context, PlutoRow row, bool isPurchaseWithOutVat) {
     _contextMenu.showPriceTypeMenu(
         row: row,
         context: context,
@@ -334,10 +395,12 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
         if (billTypeModel.isPurchaseRelated) 'إضافة serial',
       ];
 
-  void _showMatMenu(event, MaterialModel materialModel, BuildContext context, PlutoRow row) {
+  void _showMatMenu(
+      event, MaterialModel materialModel, BuildContext context, PlutoRow row) {
     final materialController = read<MaterialController>();
 
-    final InvoiceRecordModel? invoiceRecordModel = _processBillRow(row, materialController);
+    final InvoiceRecordModel? invoiceRecordModel =
+        _processBillRow(row, materialController);
 
     if (invoiceRecordModel == null) return;
 
@@ -355,7 +418,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     );
   }
 
-  void _showDeleteConfirmationDialog(event, BuildContext context) => _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
+  void _showDeleteConfirmationDialog(event, BuildContext context) =>
+      _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
     log("onAdditionsDiscountsChanged");
@@ -379,7 +443,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     }.contains(field);
   }
 
-  void _updateAdditionsDiscountsCells(String field, PlutoRow row, Map<String, PlutoCell> cells, double total) {
+  void _updateAdditionsDiscountsCells(
+      String field, PlutoRow row, Map<String, PlutoCell> cells, double total) {
     if (additionsDiscountsStateManager.rows.isEmpty) return;
 
     final inputValue = _plutoUtils.getCellValueInDouble(cells, field);
@@ -388,29 +453,42 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final isRatioCell = _isRatioField(field);
     final targetField = _getTargetField(field, isRatioCell);
 
-    final calculateNewValue = isRatioCell ? calculateAmountFromRatio : calculateRatioFromAmount;
+    final calculateNewValue =
+        isRatioCell ? calculateAmountFromRatio : calculateRatioFromAmount;
     final newValue = calculateNewValue(inputValue, total);
 
-    _gridService.updateAdditionsDiscountsCellValue(row.cells[field]!, inputValue);
-    _gridService.updateAdditionsDiscountsCellValue(row.cells[targetField]!, newValue);
+    _gridService.updateAdditionsDiscountsCellValue(
+        row.cells[field]!, inputValue);
+    _gridService.updateAdditionsDiscountsCellValue(
+        row.cells[targetField]!, newValue);
   }
 
-  bool _isRatioField(String field) => field == AppConstants.discountRatio || field == AppConstants.additionRatio;
+  bool _isRatioField(String field) =>
+      field == AppConstants.discountRatio ||
+      field == AppConstants.additionRatio;
 
   String _getTargetField(String field, bool isRatioCell) {
     if (isRatioCell) {
-      return field == AppConstants.discountRatio ? AppConstants.discount : AppConstants.addition;
+      return field == AppConstants.discountRatio
+          ? AppConstants.discount
+          : AppConstants.addition;
     } else {
-      return field == AppConstants.discount ? AppConstants.discountRatio : AppConstants.additionRatio;
+      return field == AppConstants.discount
+          ? AppConstants.discountRatio
+          : AppConstants.additionRatio;
     }
   }
 
-  void updateAdditionDiscountCell(double total) => _gridService.updateAdditionDiscountCells(total, _plutoUtils);
+  void updateAdditionDiscountCell(double total) =>
+      _gridService.updateAdditionDiscountCells(total, _plutoUtils);
 
-  InvoiceRecordModel? _processBillRow(PlutoRow row, MaterialController materialController) {
-    final materialModel = materialController.searchMaterialByName(row.cells[AppConstants.invRecProduct]!.value.toString());
+  InvoiceRecordModel? _processBillRow(
+      PlutoRow row, MaterialController materialController) {
+    final materialModel = materialController.searchMaterialByName(
+        row.cells[AppConstants.invRecProduct]!.value.toString());
 
-    if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) && materialModel != null) {
+    if (_plutoUtils.isValidItemQuantity(row, AppConstants.invRecQuantity) &&
+        materialModel != null) {
       if (billTypeModel.billPatternType?.hasVat ?? false) {
         return _createInvoiceRecord(row, materialModel.id!);
       } else {
@@ -422,7 +500,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   // Helper method to create an InvoiceRecordModel from a row
-  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) => InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) =>
+      InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
 
   void prepareBillMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();
@@ -430,7 +509,8 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final newRows = recordsTableStateManager.getNewRows(count: 30);
 
     if (invRecords.isNotEmpty) {
-      recordsTableRows = _gridService.convertRecordsToRows(invRecords, billTypeModel);
+      recordsTableRows =
+          _gridService.convertRecordsToRows(invRecords, billTypeModel);
 
       recordsTableStateManager.appendRows(recordsTableRows);
       recordsTableStateManager.appendRows(newRows);
@@ -440,20 +520,25 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     }
   }
 
-  void prepareAdditionsDiscountsRows(List<Map<String, String>> additionsDiscountsRecords) {
+  void prepareAdditionsDiscountsRows(
+      List<Map<String, String>> additionsDiscountsRecords) {
     additionsDiscountsStateManager.removeAllRows();
 
     if (additionsDiscountsRecords.isNotEmpty) {
-      additionsDiscountsRows = _gridService.convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
+      additionsDiscountsRows = _gridService
+          .convertAdditionsDiscountsRecordsToRows(additionsDiscountsRecords);
 
       additionsDiscountsStateManager.appendRows(additionsDiscountsRows);
     } else {
       additionsDiscountsRows = [];
-      additionsDiscountsStateManager.appendRows(_plutoUtils.emptyAdditionsDiscountsRecords());
+      additionsDiscountsStateManager
+          .appendRows(_plutoUtils.emptyAdditionsDiscountsRecords());
     }
   }
 
-  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
+  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized()
+          .waitUntilFirstFrameRasterized
+          .then(
         (value) {
           update();
         },
@@ -469,12 +554,14 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   clearVat() {
-    _gridService.clearAllVatAndAddedToSubTotal(recordsTableStateManager, billTypeModel);
+    _gridService.clearAllVatAndAddedToSubTotal(
+        recordsTableStateManager, billTypeModel);
     safeUpdateUI();
   }
 
   returnVat() {
-    _gridService.returnVatAndAddedToSubTotal(recordsTableStateManager, billTypeModel);
+    _gridService.returnVatAndAddedToSubTotal(
+        recordsTableStateManager, billTypeModel);
     safeUpdateUI();
   }
 

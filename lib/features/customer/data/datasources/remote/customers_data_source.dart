@@ -14,7 +14,8 @@ class CustomersDatasource extends BulkSavableDatasource<CustomerModel> {
   Future<List<CustomerModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final entryBonds = data.map((item) => CustomerModel.fromJson(item)).toList();
+    final entryBonds =
+        data.map((item) => CustomerModel.fromJson(item)).toList();
 
     return entryBonds;
   }
@@ -32,7 +33,8 @@ class CustomersDatasource extends BulkSavableDatasource<CustomerModel> {
 
   @override
   Future<CustomerModel> save(CustomerModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.id, data: item.toJson());
 
     return CustomerModel.fromJson(data);
   }

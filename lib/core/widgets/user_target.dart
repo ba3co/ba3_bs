@@ -10,7 +10,7 @@ class UserTargets extends StatelessWidget {
   const UserTargets({
     super.key,
     required this.salesController,
-     this.height,
+    this.height,
   });
 
   final SellerSalesController salesController;
@@ -32,9 +32,9 @@ class UserTargets extends StatelessWidget {
                   style: TextStyle(fontSize: 22),
                 ),
                 Container(
-                  color: Colors.red,
-                    width:1.sw,
-                    height:height?? 400,
+                    color: Colors.red,
+                    width: 1.sw,
+                    height: height ?? 400,
                     child: TargetPointerWidget(
                       maxValue: 350000,
                       midValue: 250000,
@@ -52,9 +52,8 @@ class UserTargets extends StatelessWidget {
                   style: TextStyle(fontSize: 22),
                 ),
                 SizedBox(
-                    width:1.sw,
-
-                    height:height?? 400,
+                    width: 1.sw,
+                    height: height ?? 400,
                     child: TargetPointerWidget(
                       maxValue: 200000,
                       midValue: 150000,

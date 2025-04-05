@@ -10,14 +10,17 @@ import 'remote_datasource_repo.dart';
 class BulkSavableDatasourceRepository<T> extends RemoteDataSourceRepository<T> {
   final BulkSavableDatasource<T> _bulkSavableDatasource;
 
-  BulkSavableDatasourceRepository(this._bulkSavableDatasource) : super(_bulkSavableDatasource);
+  BulkSavableDatasourceRepository(this._bulkSavableDatasource)
+      : super(_bulkSavableDatasource);
 
   Future<Either<Failure, List<T>>> saveAll(List<T> items) async {
     try {
       final savedItems = await _bulkSavableDatasource.saveAll(items);
       return Right(savedItems); // Return the list of saved items
     } catch (e, stackTrace) {
-      log('Error in saveAll: $e', stackTrace: stackTrace, name: 'BulkSavableDatasourceRepository saveAll');
+      log('Error in saveAll: $e',
+          stackTrace: stackTrace,
+          name: 'BulkSavableDatasourceRepository saveAll');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }

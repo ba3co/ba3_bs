@@ -14,12 +14,14 @@ import '../../../../core/helper/mixin/pdf_helper.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 
 /// UpdatedBillPdfGenerator
-class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with PdfHelperMixin {
+class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>>
+    with PdfHelperMixin {
   final _accountsController = read<AccountsController>();
   final _sellerController = read<SellersController>();
 
   @override
-  Widget buildHeader(List<BillModel> itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(List<BillModel> itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font}) {
     final afterUpdate = itemModel[1];
 
     return Row(
@@ -42,8 +44,11 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
           weight: FontWeight.bold,
           color: PdfColors.red,
         ),
-        buildDetailRow('الرقم التعريفي للفاتورة: ', afterUpdate.billId!, font: font),
-        buildDetailRow(' رقم الفاتورة: ', afterUpdate.billDetails.billNumber.toString(), font: font),
+        buildDetailRow('الرقم التعريفي للفاتورة: ', afterUpdate.billId!,
+            font: font),
+        buildDetailRow(
+            ' رقم الفاتورة: ', afterUpdate.billDetails.billNumber.toString(),
+            font: font),
         buildDetailRow(
           'نوع الفاتورة: ',
           billName(afterUpdate),
@@ -60,7 +65,8 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     final afterUpdate = itemModel[1];
 
     return [
-      buildTitleText('تفاصيل التعديلات', 20, font: font, weight: FontWeight.bold),
+      buildTitleText('تفاصيل التعديلات', 20,
+          font: font, weight: FontWeight.bold),
       _buildComparisonTable(beforeUpdate, afterUpdate, font),
       SizedBox(height: 20),
       _buildItemsTable(beforeUpdate, afterUpdate, font),
@@ -69,7 +75,8 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     ];
   }
 
-  Widget _buildComparisonTable(BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
+  Widget _buildComparisonTable(
+      BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
     return TableHelper.fromTextArray(
       headers: ['الحقل', AppStrings.before.tr, AppStrings.after.tr],
       data: _buildComparisonData(beforeUpdate, afterUpdate, font),
@@ -88,11 +95,13 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
       ),
 
       headerDecoration: BoxDecoration(
-        color: PdfColor.fromInt(afterUpdate.billTypeModel.color!), // Header color
+        color:
+            PdfColor.fromInt(afterUpdate.billTypeModel.color!), // Header color
       ),
       // Row background (lighter version of header)
       rowDecoration: BoxDecoration(
-        color: PdfColor.fromInt(lightenColor(afterUpdate.billTypeModel.color!, 0.9)),
+        color: PdfColor.fromInt(
+            lightenColor(afterUpdate.billTypeModel.color!, 0.9)),
       ),
       cellHeight: 30,
       columnWidths: _columnWidthsSummary,
@@ -100,7 +109,8 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     );
   }
 
-  Widget _buildItemsTable(BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
+  Widget _buildItemsTable(
+      BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
     return TableHelper.fromTextArray(
       headers: _itemHeaders,
       data: _buildItemsComparisonData(beforeUpdate, afterUpdate, font),
@@ -122,11 +132,13 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
       ),
       // Header background
       headerDecoration: BoxDecoration(
-        color: PdfColor.fromInt(afterUpdate.billTypeModel.color!), // Header color
+        color:
+            PdfColor.fromInt(afterUpdate.billTypeModel.color!), // Header color
       ),
       // Row background (lighter version of header)
       rowDecoration: BoxDecoration(
-        color: PdfColor.fromInt(lightenColor(afterUpdate.billTypeModel.color!, 0.9)),
+        color: PdfColor.fromInt(
+            lightenColor(afterUpdate.billTypeModel.color!, 0.9)),
       ),
       cellHeight: 30,
       columnWidths: _columnWidthsItems,
@@ -134,15 +146,21 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     );
   }
 
-  List<List<dynamic>> _buildItemsComparisonData(BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
-    final itemsBefore = {for (var item in beforeUpdate.items.itemList) item.itemGuid: item};
-    final itemsAfter = {for (var item in afterUpdate.items.itemList) item.itemGuid: item};
+  List<List<dynamic>> _buildItemsComparisonData(
+      BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
+    final itemsBefore = {
+      for (var item in beforeUpdate.items.itemList) item.itemGuid: item
+    };
+    final itemsAfter = {
+      for (var item in afterUpdate.items.itemList) item.itemGuid: item
+    };
     final allGuids = {...itemsBefore.keys, ...itemsAfter.keys};
 
     return allGuids.map((guid) {
       final before = itemsBefore[guid];
       final after = itemsAfter[guid];
-      final statusLabel = getItemStatus(before?.itemQuantity, after?.itemQuantity);
+      final statusLabel =
+          getItemStatus(before?.itemQuantity, after?.itemQuantity);
       final itemName = before?.itemName ?? after?.itemName;
 
       return [
@@ -202,7 +220,8 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     }).toList();
   }
 
-  Widget _buildSummary(BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
+  Widget _buildSummary(
+      BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
     final beforeTotal = beforeUpdate.billDetails.billTotal ?? 0;
     final afterTotal = afterUpdate.billDetails.billTotal ?? 0;
 
@@ -240,7 +259,11 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     );
   }
 
-  Widget _buildSummaryRow({required String title, required Widget value, Font? font, FontWeight? weight}) {
+  Widget _buildSummaryRow(
+      {required String title,
+      required Widget value,
+      Font? font,
+      FontWeight? weight}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -257,12 +280,17 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>> with 
     );
   }
 
-  List<List<dynamic>> _buildComparisonData(BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
-    final beforeCustomerName = _accountsController.getAccountNameById(beforeUpdate.billDetails.billCustomerId);
-    final afterCustomerName = _accountsController.getAccountNameById(afterUpdate.billDetails.billCustomerId);
+  List<List<dynamic>> _buildComparisonData(
+      BillModel beforeUpdate, BillModel afterUpdate, Font? font) {
+    final beforeCustomerName = _accountsController
+        .getAccountNameById(beforeUpdate.billDetails.billCustomerId);
+    final afterCustomerName = _accountsController
+        .getAccountNameById(afterUpdate.billDetails.billCustomerId);
 
-    final beforeSellerName = _sellerController.getSellerNameById(beforeUpdate.billDetails.billSellerId);
-    final afterSellerName = _sellerController.getSellerNameById(afterUpdate.billDetails.billSellerId);
+    final beforeSellerName = _sellerController
+        .getSellerNameById(beforeUpdate.billDetails.billSellerId);
+    final afterSellerName = _sellerController
+        .getSellerNameById(afterUpdate.billDetails.billSellerId);
 
     return [
       [

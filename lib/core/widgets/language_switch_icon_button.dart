@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../styling/app_colors.dart';
 
-
 class LanguageSwitchIconButton extends StatelessWidget {
   final Widget icon;
   final VoidCallback onPressed;

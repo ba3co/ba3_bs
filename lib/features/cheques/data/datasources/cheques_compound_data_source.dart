@@ -6,15 +6,18 @@ import '../../../../core/models/date_filter.dart';
 import '../../../../core/services/firebase/interfaces/compound_datasource_base.dart';
 import '../models/cheques_model.dart';
 
-class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, ChequesType> {
+class ChequesCompoundDatasource
+    extends CompoundDatasourceBase<ChequesModel, ChequesType> {
   ChequesCompoundDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "cheques")
   @override
-  String get rootCollectionPath => ApiConstants.cheques; // Collection name in Firestore
+  String get rootCollectionPath =>
+      ApiConstants.cheques; // Collection name in Firestore
 
   @override
-  Future<List<ChequesModel>> fetchAll({required ChequesType itemIdentifier}) async {
+  Future<List<ChequesModel>> fetchAll(
+      {required ChequesType itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -24,7 +27,8 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
       subCollectionPath: subCollectionPath,
     );
 
-    final chequesList = data.map((item) => ChequesModel.fromJson(item)).toList();
+    final chequesList =
+        data.map((item) => ChequesModel.fromJson(item)).toList();
 
     chequesList.sort((a, b) => a.chequesNumber!.compareTo(b.chequesNumber!));
 
@@ -32,7 +36,11 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<List<ChequesModel>> fetchWhere<V>({required ChequesType itemIdentifier, String? field, V? value, DateFilter? dateFilter}) async {
+  Future<List<ChequesModel>> fetchWhere<V>(
+      {required ChequesType itemIdentifier,
+      String? field,
+      V? value,
+      DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: getRootDocumentId(itemIdentifier),
@@ -47,7 +55,8 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<ChequesModel> fetchById({required String id, required ChequesType itemIdentifier}) async {
+  Future<ChequesModel> fetchById(
+      {required String id, required ChequesType itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -81,7 +90,8 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
     final rootDocumentId = getRootDocumentId(chequesType);
     final subCollectionPath = getSubCollectionPath(chequesType);
 
-    final updatedCheques = item.chequesGuid == null ? await _assignChequesNumber(item) : item;
+    final updatedCheques =
+        item.chequesGuid == null ? await _assignChequesNumber(item) : item;
 
     final savedData = await _saveChequesData(
       rootDocumentId,
@@ -90,16 +100,22 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
       updatedCheques.toJson(),
     );
 
-    return item.chequesGuid == null ? ChequesModel.fromJson(savedData) : updatedCheques;
+    return item.chequesGuid == null
+        ? ChequesModel.fromJson(savedData)
+        : updatedCheques;
   }
 
   Future<ChequesModel> _assignChequesNumber(ChequesModel cheques) async {
-    final newChequesNumber = await fetchAndIncrementEntityNumber(rootCollectionPath, cheques.chequesTypeGuid!);
+    final newChequesNumber = await fetchAndIncrementEntityNumber(
+        rootCollectionPath, cheques.chequesTypeGuid!);
     return cheques.copyWith(chequesNumber: newChequesNumber.nextNumber);
   }
 
   Future<Map<String, dynamic>> _saveChequesData(
-          String rootDocumentId, String subCollectionPath, String? chequesId, Map<String, dynamic> data) async =>
+          String rootDocumentId,
+          String subCollectionPath,
+          String? chequesId,
+          Map<String, dynamic> data) async =>
       compoundDatabaseService.add(
         rootCollectionPath: rootCollectionPath,
         rootDocumentId: rootDocumentId,
@@ -109,7 +125,9 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
       );
 
   @override
-  Future<int> countDocuments({required ChequesType itemIdentifier, QueryFilter<dynamic>? countQueryFilter}) async {
+  Future<int> countDocuments(
+      {required ChequesType itemIdentifier,
+      QueryFilter<dynamic>? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -124,7 +142,8 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<Map<ChequesType, List<ChequesModel>>> fetchAllNested({required List<ChequesType> itemIdentifiers}) async {
+  Future<Map<ChequesType, List<ChequesModel>>> fetchAllNested(
+      {required List<ChequesType> itemIdentifiers}) async {
     final chequesMapByType = <ChequesType, List<ChequesModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -144,7 +163,9 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<List<ChequesModel>> saveAll({required List<ChequesModel> items, required ChequesType itemIdentifier}) async {
+  Future<List<ChequesModel>> saveAll(
+      {required List<ChequesModel> items,
+      required ChequesType itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -196,7 +217,8 @@ class ChequesCompoundDatasource extends CompoundDatasourceBase<ChequesModel, Che
   }
 
   @override
-  Future<double> fetchMetaData({required String id, required ChequesType itemIdentifier}) {
+  Future<double> fetchMetaData(
+      {required String id, required ChequesType itemIdentifier}) {
     throw UnimplementedError();
   }
 }

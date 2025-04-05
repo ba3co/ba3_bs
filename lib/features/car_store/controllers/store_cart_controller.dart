@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
@@ -16,7 +15,8 @@ import '../../patterns/data/models/bill_type_model.dart';
 
 class StoreCartController extends GetxController {
   final ListenDataSourceRepository<StoreCartModel> _dataSourceRepository;
-  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel>
+      _billsFirebaseRepo;
 
   List<StoreCartModel> storeCartModels = [];
   List<BillModel> bills = [];
@@ -41,12 +41,13 @@ class StoreCartController extends GetxController {
     for (var element in storeCartModels) {
       final double billTotal = element.storeProducts!.storeProduct.fold(
         0,
-        (previousValue, element) => previousValue + (element.price! * element.amount!),
+        (previousValue, element) =>
+            previousValue + (element.price! * element.amount!),
       );
 
       saveBillFromStoreCardAndHandleResult(
         BillModel(
-            freeBill:false,
+          freeBill: false,
           billTypeModel: read<PatternController>().billsTypeSales,
           items: element.storeProducts!.toBillItems(),
           billDetails: BillDetails(
@@ -74,8 +75,7 @@ class StoreCartController extends GetxController {
       final result = await _dataSourceRepository.delete(storeCard.id!);
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (_) {
-        },
+        (_) {},
       );
     }
   }
@@ -85,8 +85,7 @@ class StoreCartController extends GetxController {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) {
-      },
+      (_) {},
     );
   }
 }

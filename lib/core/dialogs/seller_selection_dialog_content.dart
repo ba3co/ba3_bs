@@ -5,7 +5,8 @@ class SellerSelectionDialogContent extends StatelessWidget {
   final List<SellerModel> sellers;
   final Function(SellerModel selectedSeller) onSellerTap;
 
-  const SellerSelectionDialogContent({super.key, required this.sellers, required this.onSellerTap});
+  const SellerSelectionDialogContent(
+      {super.key, required this.sellers, required this.onSellerTap});
 
   @override
   Widget build(BuildContext context) {

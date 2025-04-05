@@ -11,7 +11,8 @@ import '../interfaces/i_pdf_generator.dart';
 
 abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
   @override
-  Widget buildHeader(T itemModel, String fileName, {Uint8List? logoUint8List, Font? font});
+  Widget buildHeader(T itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font});
 
   @override
   List<Widget> buildBody(T itemModel, {Font? font});
@@ -27,7 +28,8 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             buildSimpleText(title: '', value: 'Thank You To Visit:'),
             SizedBox(width: 1 * PdfPageFormat.mm),
-            buildSimpleText(title: 'Burj ALArab', value: PrinterConstants.contactNumber),
+            buildSimpleText(
+                title: 'Burj ALArab', value: PrinterConstants.contactNumber),
           ])
         ],
       ));
@@ -47,7 +49,8 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
   }
 
   @override
-  Future<String> generatePdf(T itemModel, String fileName, {String? logoSrc, String? fontSrc}) async {
+  Future<String> generatePdf(T itemModel, String fileName,
+      {String? logoSrc, String? fontSrc}) async {
     final Uint8List? logoUint8List;
     final Font? arabicFont;
 
@@ -83,7 +86,8 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
         header: (context) {
           // Display the header only on the first page
           if (context.pageNumber == 1) {
-            return buildHeader(itemModel, fileName, logoUint8List: logoUint8List, font: arabicFont);
+            return buildHeader(itemModel, fileName,
+                logoUint8List: logoUint8List, font: arabicFont);
           }
           return SizedBox.shrink(); // Return an empty container instead of null
         },
@@ -101,7 +105,8 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
     // Save the PDF locally
     final directory = await getApplicationDocumentsDirectory();
 
-    final updatedFileName = '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
+    final updatedFileName =
+        '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
     final filePath = '${directory.path}/$updatedFileName';
 
     final file = File(filePath);

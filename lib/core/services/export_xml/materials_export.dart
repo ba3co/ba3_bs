@@ -60,9 +60,11 @@ class MaterialsExport {
         // GUID for the material currency.
         XmlHelpers.element('MatCurrencyGuid', mat.matCurrencyGuid),
         // Currency value for the material; defaults to '1'.
-        XmlHelpers.element('MatCurrencyVal', mat.matCurrencyVal?.toString() ?? '1'),
+        XmlHelpers.element(
+            'MatCurrencyVal', mat.matCurrencyVal?.toString() ?? '1'),
         // Picture GUID for the material; defaults to a standard GUID if null.
-        XmlHelpers.element('MatPictureGuid', mat.matPictureGuid ?? '00000000-0000-0000-0000-000000000000'),
+        XmlHelpers.element('MatPictureGuid',
+            mat.matPictureGuid ?? '00000000-0000-0000-0000-000000000000'),
         // Material type as string; defaults to '0'.
         XmlHelpers.element('MatType', mat.matType?.toString() ?? '0'),
         // Security level for the material; defaults to '1'.
@@ -70,7 +72,8 @@ class MaterialsExport {
         // Flag for the material; defaults to '0'.
         XmlHelpers.element('MatFlag', mat.matFlag?.toString() ?? '0'),
         // Expiration flag; defaults to '0'.
-        XmlHelpers.element('MatExpireFlag', mat.matExpireFlag?.toString() ?? '0'),
+        XmlHelpers.element(
+            'MatExpireFlag', mat.matExpireFlag?.toString() ?? '0'),
         // Production flag; defaults to '0'.
         XmlHelpers.element('MatProdFlag', mat.matProdFlag?.toString() ?? '0'),
         // Serial number flag; defaults to '-1' if not provided.
@@ -80,9 +83,11 @@ class MaterialsExport {
         // Default unit for the material; defaults to '1'.
         XmlHelpers.element('MatDefUnit', mat.matDefUnit?.toString() ?? '1'),
         // Material creation date in ISO8601 format; defaults to '1980-01-01T00:00:00'.
-        XmlHelpers.element('MatCreateDate', mat.matCreateDate?.toIso8601String() ?? '1980-01-01T00:00:00'),
+        XmlHelpers.element('MatCreateDate',
+            mat.matCreateDate?.toIso8601String() ?? '1980-01-01T00:00:00'),
         // First cost date for the material in ISO8601 format; defaults to '1980-01-01T00:00:00'.
-        XmlHelpers.element('MatFirstCostDate', mat.matFirstCostDate?.toIso8601String() ?? '1980-01-01T00:00:00'),
+        XmlHelpers.element('MatFirstCostDate',
+            mat.matFirstCostDate?.toIso8601String() ?? '1980-01-01T00:00:00'),
         // Previous quantity of the material; defaults to '0.00'.
         XmlHelpers.element('MatPrevQty', mat.matPrevQty ?? '0.00'),
       ],

@@ -106,12 +106,30 @@ class MaterialGroupModel implements PlutoAdaptable {
           type: PlutoColumnType.text(),
           hide: true): matGroupGuid,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: AppStrings.materialName.tr, field: 'اسم المادة', type: PlutoColumnType.text()): groupName,
-      PlutoColumn(title: AppStrings.groupCode.tr, field: 'رمز المجموعة', type: PlutoColumnType.text()): groupCode,
-      PlutoColumn(title: AppStrings.groupNumber.tr, field: 'رقم المجموعة', type: PlutoColumnType.text()): groupNumber,
-      PlutoColumn(title: AppStrings.latinName.tr, field: 'الاسم اللاتيني', type: PlutoColumnType.text()): groupLatinName,
-      PlutoColumn(title: AppStrings.notes.tr, field: 'المُلاحظات', type: PlutoColumnType.text()): groupNotes,
-      PlutoColumn(title: AppStrings.children.tr, field: AppStrings.children, type: PlutoColumnType.text()):
+      PlutoColumn(
+          title: AppStrings.materialName.tr,
+          field: 'اسم المادة',
+          type: PlutoColumnType.text()): groupName,
+      PlutoColumn(
+          title: AppStrings.groupCode.tr,
+          field: 'رمز المجموعة',
+          type: PlutoColumnType.text()): groupCode,
+      PlutoColumn(
+          title: AppStrings.groupNumber.tr,
+          field: 'رقم المجموعة',
+          type: PlutoColumnType.text()): groupNumber,
+      PlutoColumn(
+          title: AppStrings.latinName.tr,
+          field: 'الاسم اللاتيني',
+          type: PlutoColumnType.text()): groupLatinName,
+      PlutoColumn(
+          title: AppStrings.notes.tr,
+          field: 'المُلاحظات',
+          type: PlutoColumnType.text()): groupNotes,
+      PlutoColumn(
+              title: AppStrings.children.tr,
+              field: AppStrings.children,
+              type: PlutoColumnType.text()):
           read<MaterialController>().productsGrouped[matGroupGuid]?.length ?? 0,
     };
   }

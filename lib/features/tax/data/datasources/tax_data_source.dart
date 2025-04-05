@@ -4,7 +4,8 @@ import 'package:ba3_bs/features/tax/data/models/tax_model.dart';
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/firebase/interfaces/remote_datasource_base.dart';
 
-class TaxDataSource extends RemoteDatasourceBase<TaxModel> with FirestoreSequentialNumbers {
+class TaxDataSource extends RemoteDatasourceBase<TaxModel>
+    with FirestoreSequentialNumbers {
   TaxDataSource({required super.databaseService});
 
   @override
@@ -14,7 +15,8 @@ class TaxDataSource extends RemoteDatasourceBase<TaxModel> with FirestoreSequent
   Future<List<TaxModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final List<TaxModel> taxList = data.map((item) => TaxModel.fromJson(item)).toList();
+    final List<TaxModel> taxList =
+        data.map((item) => TaxModel.fromJson(item)).toList();
 
     // Sort the list by `taxNumber` in ascending order
     taxList.sort((a, b) => a.taxGuid!.compareTo(b.taxGuid!));
@@ -35,7 +37,8 @@ class TaxDataSource extends RemoteDatasourceBase<TaxModel> with FirestoreSequent
 
   @override
   Future<TaxModel> save(TaxModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.taxGuid, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.taxGuid, data: item.toJson());
     return TaxModel.fromJson(data);
   }
 }

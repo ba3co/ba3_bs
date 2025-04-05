@@ -14,9 +14,11 @@ class BillPlutoUtils {
 
   BillPlutoUtils(this.controller);
 
-  PlutoGridStateManager get additionsDiscountsStateManager => controller.additionsDiscountsStateManager;
+  PlutoGridStateManager get additionsDiscountsStateManager =>
+      controller.additionsDiscountsStateManager;
 
-  double getPrice({required MaterialModel materialModel, required PriceType type}) {
+  double getPrice(
+      {required MaterialModel materialModel, required PriceType type}) {
     switch (type) {
       case PriceType.consumer:
         return double.tryParse(materialModel.endUserPrice ?? '') ?? 0;
@@ -27,14 +29,17 @@ class BillPlutoUtils {
       case PriceType.mainPrice:
         return double.tryParse(materialModel.calcMinPrice.toString()) ?? 0;
       case PriceType.lastEnterPrice:
-        return double.tryParse(materialModel.matLastPriceCurVal.toString()) ?? 0;
+        return double.tryParse(materialModel.matLastPriceCurVal.toString()) ??
+            0;
     }
   }
 
   double parseExpression(String expression) {
     if (expression.isEmpty) return 0;
     try {
-      return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
+      return Parser()
+          .parse(expression)
+          .evaluate(EvaluationType.REAL, ContextModel());
     } catch (e) {
       AppUIUtils.onFailure('من فضلك قم بادخال قيمة صحيحة');
       return 0;
@@ -44,7 +49,8 @@ class BillPlutoUtils {
   bool isValidItemQuantity(PlutoRow row, String cellKey) {
     final String cellValue = row.cells[cellKey]?.value.toString() ?? '';
 
-    int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt;
+    int invRecQuantity =
+        AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt;
 
     return invRecQuantity > 0;
   }
@@ -52,7 +58,8 @@ class BillPlutoUtils {
   double getCellValueInDouble(Map<String, PlutoCell> cells, String cellKey) {
     final String cellValue = cells[cellKey]?.value.toString() ?? '';
 
-    final cellValueStr = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue);
+    final cellValueStr =
+        AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue);
 
     return parseExpression(cellValueStr);
   }

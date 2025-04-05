@@ -24,8 +24,11 @@ class LogDataSource extends FilterableDatasource<LogModel> {
   }
 
   @override
-  Future<List<LogModel>> fetchWhere({required List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters, dateFilter: dateFilter);
+  Future<List<LogModel>> fetchWhere(
+      {required List<QueryFilter>? queryFilters,
+      DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(
+        path: path, queryFilters: queryFilters, dateFilter: dateFilter);
 
     final users = data.map((item) => LogModel.fromJson(item)).toList();
 
@@ -39,7 +42,8 @@ class LogDataSource extends FilterableDatasource<LogModel> {
 
   @override
   Future<LogModel> save(LogModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.docId, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.docId, data: item.toJson());
     return LogModel.fromJson(data);
   }
 }

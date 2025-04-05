@@ -34,12 +34,14 @@ class UserDetailsController extends GetxController {
 
   int get holidaysLength => holidays.length;
 
-  UserManagementController get allUserController => read<UserManagementController>();
+  UserManagementController get allUserController =>
+      read<UserManagementController>();
 
   // UserModel? get selectedUserModel => allUserController.selectedUserModel;
   UserModel? selectedUserModel;
 
-  UserModel getUserById(String userId) => selectedUserModel = allUserController.allUsers.firstWhere((user) => user.userId == userId);
+  UserModel getUserById(String userId) => selectedUserModel =
+      allUserController.allUsers.firstWhere((user) => user.userId == userId);
 
   @override
   void onInit() {
@@ -67,8 +69,10 @@ class UserDetailsController extends GetxController {
   }
 
   void addWorkingHour() {
-    workingHours[workingHoursLength.toString()] =
-        UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
+    workingHours[workingHoursLength.toString()] = UserWorkingHours(
+        id: workingHoursLength.toString(),
+        enterTime: "AM 12:00",
+        outTime: "AM 12:00");
     update();
   }
 
@@ -76,7 +80,6 @@ class UserDetailsController extends GetxController {
     workingHours.remove(key.toString());
     update();
   }
-
 
   void addHoliday() {
     Get.defaultDialog(
@@ -87,7 +90,8 @@ class UserDetailsController extends GetxController {
           Get.back();
         },
         onTimeSelect: (dateRangePickerSelectionChangedArgs) {
-          final selectedDateList = dateRangePickerSelectionChangedArgs.value as List<DateTime>;
+          final selectedDateList =
+              dateRangePickerSelectionChangedArgs.value as List<DateTime>;
           holidays.addAll(
             selectedDateList.map((e) => e.toIso8601String().split("T")[0]),
           );
@@ -147,7 +151,8 @@ class UserDetailsController extends GetxController {
   }
 
   // Call the ChangesController to create the document
-  Future<void> _createChangeDocument(String userId) async => await read<ChangesController>().createChangeDocument(userId);
+  Future<void> _createChangeDocument(String userId) async =>
+      await read<ChangesController>().createChangeDocument(userId);
 
   void initUserFormHandler(UserModel? user) {
     userFormHandler.init(user);
@@ -156,32 +161,31 @@ class UserDetailsController extends GetxController {
   String userDelay(String dayName) {
     UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
     if (userTimeModel == null) return "";
-    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalLogInDelay ?? 0);
+    return AppServiceUtils.convertMinutesAndFormat(
+        userTimeModel.totalLogInDelay ?? 0);
   }
 
   String userEarlier(String dayName) {
     UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
     if (userTimeModel == null) return "";
-    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalOutEarlier ?? 0);
+    return AppServiceUtils.convertMinutesAndFormat(
+        userTimeModel.totalOutEarlier ?? 0);
   }
 
-
-
-  void resetDelay() async{
-    if ( selectedUserModel?.userTimeModel == null) return;
+  void resetDelay() async {
+    if (selectedUserModel?.userTimeModel == null) return;
     selectedUserModel!.userTimeModel!.forEach((key, value) {
       value.totalLogInDelay = 0;
       value.totalOutEarlier = 0;
     });
     // log((selectedUserModel?.userTimeModel?.values.map((e) => e.totalOutEarlier,).toList().toString()).toString());
-if(selectedUserModel != null) {
-  final result = await _usersFirebaseRepo.save( selectedUserModel!);
-  result.fold(
+    if (selectedUserModel != null) {
+      final result = await _usersFirebaseRepo.save(selectedUserModel!);
+      result.fold(
         (failure) => _handleFailure(failure),
         (userModel) => _onUserSaved(userModel),
-  );
-}
-
+      );
+    }
 
     update();
   }

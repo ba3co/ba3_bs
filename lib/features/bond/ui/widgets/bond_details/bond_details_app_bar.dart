@@ -39,8 +39,8 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             bondSearchController.last();
           },
           disabled: bondSearchController.isLast,
-          icon: LanguageSwitchFaIcon(iconData:
-            FontAwesomeIcons.arrowRotateRight,
+          icon: LanguageSwitchFaIcon(
+            iconData: FontAwesomeIcons.arrowRotateRight,
             size: 14,
           ),
         ),
@@ -50,8 +50,8 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             bondSearchController.jumpTenForward();
           },
-          icon: LanguageSwitchFaIcon(iconData:
-            Icons.keyboard_double_arrow_right_outlined,
+          icon: LanguageSwitchFaIcon(
+            iconData: Icons.keyboard_double_arrow_right_outlined,
           ),
         ),
         CustomIconButton(
@@ -59,8 +59,8 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () {
             bondSearchController.next();
           },
-          icon: LanguageSwitchFaIcon(iconData:
-            Icons.keyboard_arrow_right_outlined,
+          icon: LanguageSwitchFaIcon(
+            iconData: Icons.keyboard_arrow_right_outlined,
           ),
         ),
         HorizontalSpace(5),
@@ -80,8 +80,8 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             bondSearchController.previous();
           },
           disabled: bondSearchController.isFirst,
-          icon: LanguageSwitchFaIcon(iconData:
-            Icons.keyboard_arrow_left_outlined,
+          icon: LanguageSwitchFaIcon(
+            iconData: Icons.keyboard_arrow_left_outlined,
           ),
         ),
         CustomIconButton(
@@ -89,8 +89,8 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             bondSearchController.jumpTenBackward();
           },
           disabled: bondSearchController.isFirst,
-          icon: LanguageSwitchFaIcon(iconData:
-            Icons.keyboard_double_arrow_left,
+          icon: LanguageSwitchFaIcon(
+            iconData: Icons.keyboard_double_arrow_left,
           ),
         ),
         HorizontalSpace(5),
@@ -99,8 +99,8 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             bondSearchController.first();
           },
           disabled: bondSearchController.isFirst,
-          icon: LanguageSwitchFaIcon(iconData:
-            FontAwesomeIcons.arrowRotateLeft,
+          icon: LanguageSwitchFaIcon(
+            iconData: FontAwesomeIcons.arrowRotateLeft,
             size: 14,
           ),
         ),

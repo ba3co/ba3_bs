@@ -7,7 +7,8 @@ class OverlayEntryWithPriorityManager {
   OverlayEntryWithPriorityManager._();
 
   /// The singleton instance of the manager.
-  static final OverlayEntryWithPriorityManager instance = OverlayEntryWithPriorityManager._();
+  static final OverlayEntryWithPriorityManager instance =
+      OverlayEntryWithPriorityManager._();
 
   /// Stores overlay entries; lower priority numbers indicate higher importance.
   final List<OverlayEntryWithPriority> _overlayEntries = [];
@@ -70,8 +71,12 @@ class OverlayEntryWithPriorityManager {
                   child: Container(
                     width: width ?? 500,
                     height: height ?? 500,
-                    padding: contentPadding ?? const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                    decoration: BoxDecoration(color: color ?? Colors.white, borderRadius: borderRadius ?? BorderRadius.circular(24)),
+                    padding: contentPadding ??
+                        const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    decoration: BoxDecoration(
+                        color: color ?? Colors.white,
+                        borderRadius:
+                            borderRadius ?? BorderRadius.circular(24)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -84,14 +89,16 @@ class OverlayEntryWithPriorityManager {
                               Text(
                                 title,
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w500),
                               ),
                               if (showDivider ?? true) const Divider(),
                             ],
                           ),
 
                         // Content Area
-                        Expanded(child: content ?? const Text('Content shown here')),
+                        Expanded(
+                            child: content ?? const Text('Content shown here')),
                       ],
                     ),
                   ),
@@ -133,7 +140,8 @@ class OverlayEntryWithPriorityManager {
 
   /// Checks if any overlay exists with a priority higher than the given [defaultPriority].
   /// Lower numbers indicate higher priority (e.g., 0 is higher than 1).
-  bool hasHigherPriorityOverlay([int defaultPriority = 1]) => _overlayEntries.any((entry) => entry.priority < defaultPriority);
+  bool hasHigherPriorityOverlay([int defaultPriority = 1]) =>
+      _overlayEntries.any((entry) => entry.priority < defaultPriority);
 
   void clearAllHigherPriorityOverlay() {
     if (hasHigherPriorityOverlay()) {

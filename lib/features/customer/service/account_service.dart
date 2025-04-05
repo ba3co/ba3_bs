@@ -9,13 +9,10 @@ class AccountService {
     required String accCode,
     required String accLatinName,
     required AccountType accType,
-     String? accParentGuid,
-     String? accParentName,
+    String? accParentGuid,
+    String? accParentName,
     required DateTime accCheckDate,
   }) {
-
-
-
     if (accountModel == null) {
       return AccountModel(
         accName: accName,

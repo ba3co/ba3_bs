@@ -10,7 +10,8 @@ class RoleFormHandler with AppValidator {
   final roleNameController = TextEditingController();
   Map<RoleItemType, List<RoleItem>> rolesMap = {};
 
-  UserManagementController get userManagementController => read<UserManagementController>();
+  UserManagementController get userManagementController =>
+      read<UserManagementController>();
 
   void init(RoleModel? role) {
     if (role != null) {
@@ -36,5 +37,6 @@ class RoleFormHandler with AppValidator {
     roleNameController.dispose();
   }
 
-  String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? defaultValidator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 }

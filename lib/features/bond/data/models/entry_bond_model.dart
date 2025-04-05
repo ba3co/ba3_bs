@@ -21,7 +21,8 @@ class EntryBondModel {
   /// Creates an instance from a JSON object.
   factory EntryBondModel.fromJson(Map<String, dynamic> json) {
     return EntryBondModel(
-      items: json['items'] != null ? EntryBondItems.fromJson(json['items']) : null,
+      items:
+          json['items'] != null ? EntryBondItems.fromJson(json['items']) : null,
       origin: EntryBondOrigin.fromJson(json['origin']),
     );
   }
@@ -62,7 +63,10 @@ class EntryBondItems {
     return EntryBondItems(
       id: json['id'] ?? json['docId'],
       docId: json['docId'] as String?,
-      itemList: (json['items'] as List<dynamic>).map((item) => EntryBondItemModel.fromJson(item as Map<String, dynamic>)).toList(),
+      itemList: (json['items'] as List<dynamic>)
+          .map((item) =>
+              EntryBondItemModel.fromJson(item as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -175,8 +179,11 @@ class EntryBondItemModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
-      PlutoColumn(hide: true, title: AppStrings.identificationNumber.tr, field: AppConstants.entryBonIdFiled, type: PlutoColumnType.text()):
-      originId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: AppStrings.identificationNumber.tr,
+          field: AppConstants.entryBonIdFiled,
+          type: PlutoColumnType.text()): originId ?? '',
       createAutoIdColumn(): '#',
       PlutoColumn(
           title: AppStrings.debtor.tr,
@@ -194,9 +201,18 @@ class EntryBondItemModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(title: AppStrings.account.tr.tr, field: 'الحساب', type: PlutoColumnType.text()): account.name,
-      PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()): date,
-      PlutoColumn(title: AppStrings.illustration.tr, field: 'البيان', type: PlutoColumnType.text()): note,
+      PlutoColumn(
+          title: AppStrings.account.tr.tr,
+          field: 'الحساب',
+          type: PlutoColumnType.text()): account.name,
+      PlutoColumn(
+          title: AppStrings.date.tr,
+          field: 'التاريخ',
+          type: PlutoColumnType.date()): date,
+      PlutoColumn(
+          title: AppStrings.illustration.tr,
+          field: 'البيان',
+          type: PlutoColumnType.text()): note,
     };
   }
 }

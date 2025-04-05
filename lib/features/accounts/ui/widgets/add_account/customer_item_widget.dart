@@ -8,7 +8,8 @@ import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 
 class CustomerItemWidget extends StatelessWidget {
-  const CustomerItemWidget({super.key, required this.customerModel, required this.onDelete});
+  const CustomerItemWidget(
+      {super.key, required this.customerModel, required this.onDelete});
 
   final CustomerModel customerModel;
   final VoidCallback onDelete;
@@ -28,7 +29,9 @@ class CustomerItemWidget extends StatelessWidget {
             Container(
               height: 30,
               width: 150,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   customerModel.name ?? '',
@@ -49,7 +52,9 @@ class CustomerItemWidget extends StatelessWidget {
             Container(
               height: 30,
               width: 150,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   customerModel.phone1 ?? '',
@@ -70,7 +75,9 @@ class CustomerItemWidget extends StatelessWidget {
             Container(
               height: 30,
               width: 250,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.grey, width: 2)),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
                   VatEnums.byGuid(customerModel.cusVatGuid!).taxName ?? '',

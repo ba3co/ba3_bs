@@ -6,10 +6,7 @@ import '../../../../core/styling/app_text_style.dart';
 import '../../controller/all_task_controller.dart';
 
 class AddTaskMaterialSelected extends StatelessWidget {
-  const AddTaskMaterialSelected({
-    super.key,
-    required this.controller
-  });
+  const AddTaskMaterialSelected({super.key, required this.controller});
 
   final AllTaskController controller;
 

@@ -25,7 +25,8 @@ class UserTotalDelay extends StatelessWidget {
           style: AppTextStyles.headLineStyle2,
         ),
       ),
-      bodyWidget: _buildDayHeader(userDetailsController.userFormHandler.userTimeModelWithTotalDelayAndEarlierAtMonth!),
+      bodyWidget: _buildDayHeader(userDetailsController
+          .userFormHandler.userTimeModelWithTotalDelayAndEarlierAtMonth!),
     );
   }
 
@@ -35,13 +36,16 @@ class UserTotalDelay extends StatelessWidget {
       children: [
         Spacer(),
         Text("الشهر : ", style: AppTextStyles.headLineStyle2),
-        Text(int.parse(userTime.dayName!).toString(), style: AppTextStyles.headLineStyle2),
+        Text(int.parse(userTime.dayName!).toString(),
+            style: AppTextStyles.headLineStyle2),
         Spacer(),
         Text("التأخير : ", style: AppTextStyles.headLineStyle2),
-        Text(AppServiceUtils.convertMinutesAndFormat(userTime.totalLogInDelay!), style: AppTextStyles.headLineStyle2),
+        Text(AppServiceUtils.convertMinutesAndFormat(userTime.totalLogInDelay!),
+            style: AppTextStyles.headLineStyle2),
         Spacer(),
         Text("الخروج المبكر : ", style: AppTextStyles.headLineStyle2),
-        Text(AppServiceUtils.convertMinutesAndFormat(userTime.totalOutEarlier!), style: AppTextStyles.headLineStyle2),
+        Text(AppServiceUtils.convertMinutesAndFormat(userTime.totalOutEarlier!),
+            style: AppTextStyles.headLineStyle2),
         Spacer(),
       ],
     );

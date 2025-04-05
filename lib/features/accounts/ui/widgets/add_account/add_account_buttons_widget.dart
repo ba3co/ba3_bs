@@ -18,8 +18,11 @@ class AddAccountButtonsWidget extends StatelessWidget {
       children: [
         Obx(() {
           return AppButton(
-            isLoading: controller.saveAccountRequestState.value == RequestState.loading,
-            title: controller.isEditAccount ? AppStrings.edit.tr : AppStrings.add.tr,
+            isLoading: controller.saveAccountRequestState.value ==
+                RequestState.loading,
+            title: controller.isEditAccount
+                ? AppStrings.edit.tr
+                : AppStrings.add.tr,
             onPressed: () {
               controller.saveOrUpdateAccount();
             },
@@ -28,7 +31,8 @@ class AddAccountButtonsWidget extends StatelessWidget {
         if (controller.isEditAccount)
           Obx(() {
             return AppButton(
-              isLoading: controller.deleteAccountRequestState.value == RequestState.loading,
+              isLoading: controller.deleteAccountRequestState.value ==
+                  RequestState.loading,
               title: AppStrings.delete.tr,
               onPressed: () {
                 controller.deleteAccount();

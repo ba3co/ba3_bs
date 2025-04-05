@@ -14,21 +14,25 @@ import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 import '../services/pattern_form_handler.dart';
 
-class PatternController extends GetxController with AppNavigator, FloatingLauncher {
+class PatternController extends GetxController
+    with AppNavigator, FloatingLauncher {
   final RemoteDataSourceRepository<BillTypeModel> _repository;
 
   PatternController(this._repository);
 
   final List<BillTypeModel> billsTypes = [];
 
-  final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
+  final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap =
+      {};
 
   // Form Handlers
   late final PatternFormHandler patternFormHandler;
 
-  BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType.value;
+  BillPatternType? get selectedBillPatternType =>
+      patternFormHandler.selectedBillPatternType.value;
 
-  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
+  BillTypeModel get billsTypeSales => billsTypes.firstWhere(
+      (billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
 
   @override
   void onInit() {
@@ -44,41 +48,79 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
   void autoFillControllers(BillPatternType newType) {
     switch (newType) {
       case BillPatternType.sales:
-        fillControllers(shortName: 'مبيعات', fullName: 'فاتورة مبيعات', latinShortName: 'Sales', latinFullName: 'Sales Invoice');
+        fillControllers(
+            shortName: 'مبيعات',
+            fullName: 'فاتورة مبيعات',
+            latinShortName: 'Sales',
+            latinFullName: 'Sales Invoice');
         break;
 
       case BillPatternType.purchase:
-        fillControllers(shortName: 'شراء', fullName: 'فاتورة مشتريات', latinShortName: 'Buy', latinFullName: 'Purchase Invoice');
+        fillControllers(
+            shortName: 'شراء',
+            fullName: 'فاتورة مشتريات',
+            latinShortName: 'Buy',
+            latinFullName: 'Purchase Invoice');
         break;
 
       case BillPatternType.add:
-        fillControllers(shortName: 'إضافة', fullName: 'فاتورة إضافة', latinShortName: 'Add', latinFullName: 'Addition Invoice');
+        fillControllers(
+            shortName: 'إضافة',
+            fullName: 'فاتورة إضافة',
+            latinShortName: 'Add',
+            latinFullName: 'Addition Invoice');
         break;
 
       case BillPatternType.remove:
-        fillControllers(shortName: 'سحب', fullName: 'فاتورة سحب', latinShortName: 'Remove', latinFullName: 'Removal Invoice');
+        fillControllers(
+            shortName: 'سحب',
+            fullName: 'فاتورة سحب',
+            latinShortName: 'Remove',
+            latinFullName: 'Removal Invoice');
         break;
 
       case BillPatternType.buyReturn:
         fillControllers(
-            shortName: 'مرتجع شراء', fullName: 'فاتورة مرتجع مشتريات', latinShortName: 'Return Buy', latinFullName: 'Purchase Return Invoice');
+            shortName: 'مرتجع شراء',
+            fullName: 'فاتورة مرتجع مشتريات',
+            latinShortName: 'Return Buy',
+            latinFullName: 'Purchase Return Invoice');
         break;
 
       case BillPatternType.salesReturn:
         fillControllers(
-            shortName: 'مرتجع مبيعات', fullName: 'فاتورة مرتجع مبيعات', latinShortName: 'Return Sales', latinFullName: 'Sales Return Invoice');
+            shortName: 'مرتجع مبيعات',
+            fullName: 'فاتورة مرتجع مبيعات',
+            latinShortName: 'Return Sales',
+            latinFullName: 'Sales Return Invoice');
         break;
       case BillPatternType.firstPeriodInventory:
-        fillControllers(shortName: 'القيد الافتتاحي', fullName: 'بضاعة اول مدة', latinShortName: 'Add', latinFullName: 'first Period Inventory');
+        fillControllers(
+            shortName: 'القيد الافتتاحي',
+            fullName: 'بضاعة اول مدة',
+            latinShortName: 'Add',
+            latinFullName: 'first Period Inventory');
 
       case BillPatternType.transferOut:
-        fillControllers(shortName: 'النقص', fullName: 'تسوية النقص', latinShortName: 'remove', latinFullName: 'Settlement of the dicrease');
+        fillControllers(
+            shortName: 'النقص',
+            fullName: 'تسوية النقص',
+            latinShortName: 'remove',
+            latinFullName: 'Settlement of the dicrease');
 
       case BillPatternType.transferIn:
-        fillControllers(shortName: 'الزيادة', fullName: 'تسوية الزيادة', latinShortName: 'Add', latinFullName: 'Settlement of the increase');
+        fillControllers(
+            shortName: 'الزيادة',
+            fullName: 'تسوية الزيادة',
+            latinShortName: 'Add',
+            latinFullName: 'Settlement of the increase');
 
       case BillPatternType.salesService:
-        fillControllers(shortName: 'مبيعات', fullName: 'فاتورة مبيعات', latinShortName: 'Sales', latinFullName: 'Sales Invoice');
+        fillControllers(
+            shortName: 'مبيعات',
+            fullName: 'فاتورة مبيعات',
+            latinShortName: 'Sales',
+            latinFullName: 'Sales Invoice');
         break;
     }
   }
@@ -97,10 +139,14 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
     update();
   }
 
-  void navigateToAddPatternScreen({BillTypeModel? billType, required BuildContext context}) {
+  void navigateToAddPatternScreen(
+      {BillTypeModel? billType, required BuildContext context}) {
     patternFormHandler.init(billType);
 
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.patterns.tr, floatingScreen: AddPatternScreen());
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: ApiConstants.patterns.tr,
+        floatingScreen: AddPatternScreen());
 
     // to(AppRoutes.addPatternsScreen);
   }
@@ -137,11 +183,12 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
   BillTypeModel _createBillTypeModel() {
     Map<Account, AccountModel> accounts = patternFormHandler.selectedAccounts;
 
-    accounts[BillAccounts.store] = patternFormHandler.selectedStore.value.toStoreAccountModel;
+    accounts[BillAccounts.store] =
+        patternFormHandler.selectedStore.value.toStoreAccountModel;
 
     final selectedBillTypeModel = patternFormHandler.selectedBillTypeModel;
 
-    log(accounts.toString(),name: 'accounts');
+    log(accounts.toString(), name: 'accounts');
 
     if (selectedBillTypeModel != null) {
       return selectedBillTypeModel.copyWith(
@@ -150,7 +197,9 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
         fullName: patternFormHandler.fullNameController.text,
         latinFullName: patternFormHandler.latinFullNameController.text,
         billTypeLabel: patternFormHandler.selectedBillPatternType.value!.value,
-        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType.value!.value).typeGuide,
+        billTypeId: BillType.byLabel(
+                patternFormHandler.selectedBillPatternType.value!.value)
+            .typeGuide,
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );
@@ -161,7 +210,9 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
         fullName: patternFormHandler.fullNameController.text,
         latinFullName: patternFormHandler.latinFullNameController.text,
         billTypeLabel: patternFormHandler.selectedBillPatternType.value!.value,
-        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType.value!.value).typeGuide,
+        billTypeId: BillType.byLabel(
+                patternFormHandler.selectedBillPatternType.value!.value)
+            .typeGuide,
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );

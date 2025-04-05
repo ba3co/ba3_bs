@@ -19,7 +19,11 @@ typedef LogModelCreator<T> = LogModel Function({
 /// Map that holds model-specific log model factories
 /// Each entry defines how to convert a specific type (T) into a LogModel
 final Map<Type, LogModelCreator> _logModelFactories = {
-  EntryBondModel: ({required String userName, required dynamic item, required LogEventType eventType, int? sourceNumber}) {
+  EntryBondModel: (
+      {required String userName,
+      required dynamic item,
+      required LogEventType eventType,
+      int? sourceNumber}) {
     if (sourceNumber == null) {
       throw ArgumentError("Source number is required for EntryBondModel");
     }
@@ -31,21 +35,33 @@ final Map<Type, LogModelCreator> _logModelFactories = {
       sourceNumber: sourceNumber,
     );
   },
-  BillModel: ({required String userName, required dynamic item, required LogEventType eventType, int? sourceNumber}) {
+  BillModel: (
+      {required String userName,
+      required dynamic item,
+      required LogEventType eventType,
+      int? sourceNumber}) {
     return LogModel.fromBillModel(
       userName: userName,
       bill: item as BillModel,
       eventType: eventType,
     );
   },
-  AccountModel: ({required String userName, required dynamic item, required LogEventType eventType, int? sourceNumber}) {
+  AccountModel: (
+      {required String userName,
+      required dynamic item,
+      required LogEventType eventType,
+      int? sourceNumber}) {
     return LogModel.fromAccountModel(
       userName: userName,
       account: item as AccountModel,
       eventType: eventType,
     );
   },
-  MaterialModel: ({required String userName, required dynamic item, required LogEventType eventType, int? sourceNumber}) {
+  MaterialModel: (
+      {required String userName,
+      required dynamic item,
+      required LogEventType eventType,
+      int? sourceNumber}) {
     return LogModel.fromMaterialModel(
       userName: userName,
       material: item as MaterialModel,
@@ -58,18 +74,25 @@ final Map<Type, LogModelCreator> _logModelFactories = {
 /// based on the model type (T) using appropriate factory function
 class LogModelFactory {
   /// Creates a LogModel for the given [item] using its registered factory
-  static LogModel create<T>({required T item, required LogEventType eventType, int? sourceNumber}) {
+  static LogModel create<T>(
+      {required T item, required LogEventType eventType, int? sourceNumber}) {
     /// Get the username of the currently logged-in user
-    final userName = read<UserManagementController>().loggedInUserModel!.userName!;
+    final userName =
+        read<UserManagementController>().loggedInUserModel!.userName!;
 
     // Lookup the corresponding factory for the given type T
     final factory = _logModelFactories[T];
     if (factory != null) {
       // If factory exists, create the log using it
-      return factory(userName: userName, item: item, eventType: eventType, sourceNumber: sourceNumber);
+      return factory(
+          userName: userName,
+          item: item,
+          eventType: eventType,
+          sourceNumber: sourceNumber);
     }
 
     // Throw if there's no factory registered for this type
-    throw UnimplementedError("No LogModel factory registered for type ${T.toString()}");
+    throw UnimplementedError(
+        "No LogModel factory registered for type ${T.toString()}");
   }
 }

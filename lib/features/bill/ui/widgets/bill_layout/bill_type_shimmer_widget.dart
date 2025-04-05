@@ -65,7 +65,6 @@ class BillTypeShimmerWidget extends StatelessWidget {
             child: _buildShimmerBox(width: 220, height: 30, borderRadius: 5),
           ),
 
-
           Positioned(
             bottom: 15,
             right: 0,

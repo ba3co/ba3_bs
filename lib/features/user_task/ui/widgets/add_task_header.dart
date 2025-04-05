@@ -27,14 +27,17 @@ class AddTaskHeader extends StatelessWidget {
         TextAndExpandedChildField(
           label: AppStrings.taskTitle.tr,
           child: CustomTextFieldWithoutIcon(
-            textEditingController: controller.taskFormHandler.titleTextEditingController,
-            validator: (value) => controller.taskFormHandler.validator(value, 'يرجى إدخال العنوان'),
+            textEditingController:
+                controller.taskFormHandler.titleTextEditingController,
+            validator: (value) => controller.taskFormHandler
+                .validator(value, 'يرجى إدخال العنوان'),
           ),
         ),
         TextAndExpandedChildField(
           label: AppStrings.materials.tr,
           child: CustomTextFieldWithoutIcon(
-            textEditingController: controller.taskFormHandler.materialTextController,
+            textEditingController:
+                controller.taskFormHandler.materialTextController,
             onSubmitted: (_) async {
               controller.addMaterialToList(context);
             },
@@ -95,7 +98,8 @@ class AddTaskHeader extends StatelessWidget {
             label: AppStrings.createdDate.tr,
             child: Obx(() {
               return DatePicker(
-                initDate: controller.taskFormHandler.createDate.value.dayMonthYear,
+                initDate:
+                    controller.taskFormHandler.createDate.value.dayMonthYear,
                 onDateSelected: (date) {
                   controller.taskFormHandler.setCreateDate(date);
                 },

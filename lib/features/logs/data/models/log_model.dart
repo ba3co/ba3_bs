@@ -66,7 +66,8 @@ class LogModel {
     required LogEventType eventType,
     required String userName,
   }) {
-    final sourceType = BillType.byTypeGuide(bill.billTypeModel.billTypeId!).value;
+    final sourceType =
+        BillType.byTypeGuide(bill.billTypeModel.billTypeId!).value;
     final int billNumber = bill.billDetails.billNumber!;
 
     return LogModel(
@@ -114,7 +115,8 @@ class LogModel {
       sourceType: sourceType,
       userName: userName,
       eventType: eventType,
-      note: 'حدث ${eventType.label} خاص ب مادة $sourceType ذات الباركود رقم $matBarCode',
+      note:
+          'حدث ${eventType.label} خاص ب مادة $sourceType ذات الباركود رقم $matBarCode',
     );
   }
 

@@ -17,8 +17,8 @@ class UserTargetShimmerWidget extends StatelessWidget {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
-
-      child: UserTargets(salesController: read<SellerSalesController>(),
+      child: UserTargets(
+        salesController: read<SellerSalesController>(),
       ),
     );
   }

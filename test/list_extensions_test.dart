@@ -258,12 +258,15 @@ void main() {
 
     test('associate transforms a list into a map', () {
       final fruits = ['apple', 'banana', 'cherry'];
-      final fruitLengths = fruits.associate((fruit) => MapEntry(fruit, fruit.length));
+      final fruitLengths =
+          fruits.associate((fruit) => MapEntry(fruit, fruit.length));
 
       expect(fruitLengths, equals({'apple': 5, 'banana': 6, 'cherry': 6}));
     });
 
-    test('associateBy creates a map with elements as values and keys from keySelector', () {
+    test(
+        'associateBy creates a map with elements as values and keys from keySelector',
+        () {
       final users = [
         {'id': 1, 'name': 'Alice'},
         {'id': 2, 'name': 'Bob'}
@@ -274,7 +277,9 @@ void main() {
       expect(userMap[2]?['name'], 'Bob');
     });
 
-    test('associateWith creates a map where keys are elements and values are computed', () {
+    test(
+        'associateWith creates a map where keys are elements and values are computed',
+        () {
       final fruits = ['apple', 'banana', 'cherry'];
       final fruitColors = fruits.associateWith((fruit) => fruit == 'apple'
           ? 'red'
@@ -282,7 +287,8 @@ void main() {
               ? 'yellow'
               : 'red');
 
-      expect(fruitColors, equals({'apple': 'red', 'banana': 'yellow', 'cherry': 'red'}));
+      expect(fruitColors,
+          equals({'apple': 'red', 'banana': 'yellow', 'cherry': 'red'}));
     });
 
     test('flatten flattens nested lists', () {
@@ -308,14 +314,21 @@ void main() {
       final numbers = [1, 2, 3, 4, 5];
       final result = numbers.takeWhileInclusive((n) => n < 3);
 
-      expect(result, equals([1, 2, 3])); // Includes 3, even though 3 < 3 is false
+      expect(
+          result, equals([1, 2, 3])); // Includes 3, even though 3 < 3 is false
     });
 
     test('dropWhileInclusive includes the first non-matching element', () {
       final numbers = [1, 2, 3, 4, 5];
       final result = numbers.dropWhileInclusive((n) => n < 3);
 
-      expect(result, equals([3, 4, 5])); // 3 is included, since it's the first that fails the predicate
+      expect(
+          result,
+          equals([
+            3,
+            4,
+            5
+          ])); // 3 is included, since it's the first that fails the predicate
     });
 
     test('windowed creates sliding windows of given size', () {

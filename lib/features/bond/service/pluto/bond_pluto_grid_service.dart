@@ -10,9 +10,11 @@ class BondPlutoGridService {
     this.controller,
   );
 
-  PlutoGridStateManager get mainTableStateManager => controller.recordsTableStateManager;
+  PlutoGridStateManager get mainTableStateManager =>
+      controller.recordsTableStateManager;
 
-  void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
+  void updateCellValue(
+      PlutoGridStateManager stateManager, String field, dynamic value) {
     stateManager.changeCellValue(
       stateManager.currentRow!.cells[field]!,
       value,
@@ -45,21 +47,28 @@ class BondPlutoGridService {
     }
   }
 
-  void updateBondSelectedRowValues(PlutoRow currentRow, double subTotal, int quantity) {
+  void updateBondSelectedRowValues(
+      PlutoRow currentRow, double subTotal, int quantity) {
     final isZeroSubtotal = subTotal == 0;
 
     final subTotalStr = isZeroSubtotal ? '' : subTotal.toStringAsFixed(2);
     final vat = isZeroSubtotal ? '' : (subTotal * 0.05).toStringAsFixed(2);
-    final total = isZeroSubtotal ? '' : ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2);
+    final total = isZeroSubtotal
+        ? ''
+        : ((subTotal + subTotal * 0.05) * quantity).toStringAsFixed(2);
 
-    updateSelectedRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecVat, vat);
-    updateSelectedRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecSubTotal, subTotalStr);
-    updateSelectedRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecTotal, total);
-    updateSelectedRowCellValue(mainTableStateManager, currentRow, AppConstants.invRecQuantity, quantity);
+    updateSelectedRowCellValue(
+        mainTableStateManager, currentRow, AppConstants.invRecVat, vat);
+    updateSelectedRowCellValue(mainTableStateManager, currentRow,
+        AppConstants.invRecSubTotal, subTotalStr);
+    updateSelectedRowCellValue(
+        mainTableStateManager, currentRow, AppConstants.invRecTotal, total);
+    updateSelectedRowCellValue(mainTableStateManager, currentRow,
+        AppConstants.invRecQuantity, quantity);
   }
 
-  void updateSelectedRowCellValue(
-      PlutoGridStateManager stateManager, PlutoRow currentRow, String field, dynamic value) {
+  void updateSelectedRowCellValue(PlutoGridStateManager stateManager,
+      PlutoRow currentRow, String field, dynamic value) {
     if (currentRow.cells.containsKey(field)) {
       // Update the cell value in the previous row.
       stateManager.changeCellValue(

@@ -35,7 +35,9 @@ class AddTaskButtons extends StatelessWidget {
           onPressed: () {
             controller.saveOrUpdateTask();
           },
-          iconData: controller.isNewTask ? FontAwesomeIcons.plusSquare : FontAwesomeIcons.edit,
+          iconData: controller.isNewTask
+              ? FontAwesomeIcons.plusSquare
+              : FontAwesomeIcons.edit,
         ),
       ],
     );

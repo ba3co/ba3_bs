@@ -45,7 +45,10 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
   /// this for cheques in this month
   List<ChequesModel> get allChequesDuesThisMonth => allCheques
       .where(
-        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 30))),
+        (user) =>
+            user.isPayed != true &&
+            DateTime.parse(user.chequesDueDate!)
+                .isBefore(now.add(Duration(days: 30))),
       )
       .toList();
 
@@ -54,7 +57,10 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
   /// this for cheques Last 10 days
   List<ChequesModel> get allChequesDuesLastTen => allCheques
       .where(
-        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now.add(Duration(days: 10))),
+        (user) =>
+            user.isPayed != true &&
+            DateTime.parse(user.chequesDueDate!)
+                .isBefore(now.add(Duration(days: 10))),
       )
       .toList();
 
@@ -63,7 +69,9 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
   /// this for cheques today
   List<ChequesModel> get allChequesDuesToday => allCheques
       .where(
-        (user) => user.isPayed != true && DateTime.parse(user.chequesDueDate!).isBefore(now),
+        (user) =>
+            user.isPayed != true &&
+            DateTime.parse(user.chequesDueDate!).isBefore(now),
       )
       .toList();
 
@@ -73,20 +81,24 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
     chequesChartRequestState.value = RequestState.loading;
     barGroups = [];
     groupedData.clear();
-    allCheques = await read<AllChequesController>().fetchChequesByType(ChequesType.paidChecks);
+    allCheques = await read<AllChequesController>()
+        .fetchChequesByType(ChequesType.paidChecks);
     List<DateTime> dueDates = allCheques
         .where((cheque) =>
             cheque.isPayed != true &&
             cheque.chequesDueDate != null &&
-            DateTime.parse(cheque.chequesDueDate!).isBefore(now.add(const Duration(days: 1))))
+            DateTime.parse(cheque.chequesDueDate!)
+                .isBefore(now.add(const Duration(days: 1))))
         .map((cheque) => DateTime.parse(cheque.chequesDueDate!))
         .toList();
     for (var date in dueDates) {
       String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      groupedData.update(formattedDate, (value) => value + 1, ifAbsent: () => 1);
+      groupedData.update(formattedDate, (value) => value + 1,
+          ifAbsent: () => 1);
     }
 
-    sortedEntries = groupedData.entries.toList()..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
+    sortedEntries = groupedData.entries.toList()
+      ..sort((a, b) => DateTime.parse(a.key).compareTo(DateTime.parse(b.key)));
 
     datesList = sortedEntries.map((e) => e.key).toList();
     int index = 0;
@@ -119,7 +131,8 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
   }
 
   openChequesDuesScreen(BuildContext context) {
-    read<AllChequesController>().navigateToChequesScreen(onlyDues: true, context: context);
+    read<AllChequesController>()
+        .navigateToChequesScreen(onlyDues: true, context: context);
   }
 
   void lunchChequesScreen(BuildContext context, int index) {
@@ -128,7 +141,10 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
     read<AllChequesController>().navigateToChequesScreenByList(
         chequesListItems: allCheques
             .where(
-              (element) => element.chequesDueDate == sortedEntries.elementAt(index).key && element.isPayed == false,
+              (element) =>
+                  element.chequesDueDate ==
+                      sortedEntries.elementAt(index).key &&
+                  element.isPayed == false,
             )
             .toList(),
         context: context);

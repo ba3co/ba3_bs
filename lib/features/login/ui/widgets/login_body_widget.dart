@@ -56,7 +56,9 @@ class LoginBodyWidget extends StatelessWidget {
                   label: Text(AppStrings.password.tr),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      userManagementController.isPasswordVisible.value ? Icons.visibility : Icons.visibility_off,
+                      userManagementController.isPasswordVisible.value
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       size: 20,
                       color: AppColors.blueColor,
                     ),
@@ -88,7 +90,7 @@ class LoginBodyWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-        /*          if (RoleItemType.viewUserManagement.hasAdminPermission)
+                  /*          if (RoleItemType.viewUserManagement.hasAdminPermission)
                     IconButton(
                       icon: Icon(
                         userManagementController.isGuestLoginButtonVisible.value ? Icons.visibility : Icons.visibility_off,
@@ -100,7 +102,9 @@ class LoginBodyWidget extends StatelessWidget {
                   if (userManagementController.isGuestLoginButtonVisible.value)
                     LoginButtonWidget(
                       text: AppStrings.registrationAsAGust.tr,
-                      width: RoleItemType.viewUserManagement.hasAdminPermission ? .15.sw : null,
+                      width: RoleItemType.viewUserManagement.hasAdminPermission
+                          ? .15.sw
+                          : null,
                       onTap: userManagementController.loginAsGuest,
                     ),
                 ],

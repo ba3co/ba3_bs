@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'ba3-bs.firebasestorage.app',
     measurementId: 'G-BR6KLWJZ9B',
   );
-
 }

@@ -12,7 +12,8 @@ class AllAttendanceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return  GetBuilder<UserManagementController>(builder: (userManagementController) {
+    return GetBuilder<UserManagementController>(
+        builder: (userManagementController) {
       return SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
@@ -21,7 +22,8 @@ class AllAttendanceScreen extends StatelessWidget {
             alignment: WrapAlignment.center,
             spacing: 10,
             runSpacing: 10,
-            children: userManagementController.filteredUsersWithDetails.map((user) {
+            children:
+                userManagementController.filteredUsersWithDetails.map((user) {
               return Container(
                 padding: const EdgeInsets.all(8),
                 alignment: Alignment.center,
@@ -29,7 +31,10 @@ class AllAttendanceScreen extends StatelessWidget {
                   color: AppColors.backGroundColor,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
-                    BoxShadow(color: Colors.grey.withOpacity(0.3), spreadRadius: 2, blurRadius: 5),
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5),
                   ],
                 ),
                 height: 90.h,
@@ -37,12 +42,25 @@ class AllAttendanceScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(child: Text(user.userName!, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-                    if (user.loginDelay == AppStrings.notLoggedToday.tr && user.logoutDelay == AppStrings.notLoggedToday.tr)
-                      Expanded(child: Text(AppStrings.notLoggedToday.tr, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)))
+                    Expanded(
+                        child: Text(user.userName!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold))),
+                    if (user.loginDelay == AppStrings.notLoggedToday.tr &&
+                        user.logoutDelay == AppStrings.notLoggedToday.tr)
+                      Expanded(
+                          child: Text(AppStrings.notLoggedToday.tr,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold)))
                     else ...[
-                      Expanded(child: Text("${AppStrings.delayedEntry.tr}: ${user.loginDelay ?? AppStrings.nothing.tr}")),
-                      Expanded(child: Text("${AppStrings.leaveEarly.tr}: ${user.logoutDelay ?? AppStrings.nothing.tr}")),
+                      Expanded(
+                          child: Text(
+                              "${AppStrings.delayedEntry.tr}: ${user.loginDelay ?? AppStrings.nothing.tr}")),
+                      Expanded(
+                          child: Text(
+                              "${AppStrings.leaveEarly.tr}: ${user.logoutDelay ?? AppStrings.nothing.tr}")),
                     ],
                   ],
                 ),

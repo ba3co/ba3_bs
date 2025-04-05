@@ -37,7 +37,8 @@ class PatternsDatasource extends RemoteDatasourceBase<BillTypeModel> {
 
   @override
   Future<BillTypeModel> save(BillTypeModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.id, data: item.toJson());
 
     return BillTypeModel.fromJson(data);
   }

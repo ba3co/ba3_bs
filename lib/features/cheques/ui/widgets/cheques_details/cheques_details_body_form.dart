@@ -43,26 +43,31 @@ class AddChequeForm extends StatelessWidget {
                   child: Obx(() {
                     return DatePicker(
                       initDate: chequesDetailsController.chequesDueDate.value,
-                      onDateSelected: chequesDetailsController.setChequesDueDate,
+                      onDateSelected:
+                          chequesDetailsController.setChequesDueDate,
                     );
                   }),
                 )),
             const VerticalSpace(),
             FormFieldRow(
                 firstItem: TextAndExpandedChildField(
-                  label:AppStrings.chequesNumber.tr,
+                  label: AppStrings.chequesNumber.tr,
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: chequesDetailsController.chequesNumController,
+                    textEditingController:
+                        chequesDetailsController.chequesNumController,
                     suffixIcon: const SizedBox.shrink(),
-                    validator: (value) => chequesDetailsController.validator(value, 'رقم الشيك'),
+                    validator: (value) =>
+                        chequesDetailsController.validator(value, 'رقم الشيك'),
                   ),
                 ),
                 secondItem: TextAndExpandedChildField(
                   label: AppStrings.chequesAmount.tr,
                   child: CustomTextFieldWithoutIcon(
-                    textEditingController: chequesDetailsController.chequesAmountController,
+                    textEditingController:
+                        chequesDetailsController.chequesAmountController,
                     suffixIcon: const SizedBox.shrink(),
-                    validator: (value) => chequesDetailsController.validator(value, 'قيمة الشيك'),
+                    validator: (value) =>
+                        chequesDetailsController.validator(value, 'قيمة الشيك'),
                   ),
                 )),
             const VerticalSpace(),
@@ -70,7 +75,9 @@ class AddChequeForm extends StatelessWidget {
                 firstItem: SearchableAccountField(
                   label: AppStrings.account.tr,
                   onSubmitted: (text) async {
-                    AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                    AccountModel? accountModel =
+                        await read<AccountsController>()
+                            .openAccountSelectionDialog(
                       query: text,
                       context: context,
                     );
@@ -78,15 +85,21 @@ class AddChequeForm extends StatelessWidget {
                       chequesDetailsController.setTowAccount(accountModel);
                     }
                   },
-                  textEditingController: chequesDetailsController.chequesToAccountController,
-                  validator: (value) => chequesDetailsController.validator(value, 'الحساب المدفوع له'),
+                  textEditingController:
+                      chequesDetailsController.chequesToAccountController,
+                  validator: (value) => chequesDetailsController.validator(
+                      value, 'الحساب المدفوع له'),
                 ),
                 secondItem: SearchableAccountField(
                   label: '${AppStrings.pay.tr} ${AppStrings.to.tr}',
-                  textEditingController: chequesDetailsController.chequesAccPtrController,
-                  validator: (value) => chequesDetailsController.validator(value, 'الحساب'),
+                  textEditingController:
+                      chequesDetailsController.chequesAccPtrController,
+                  validator: (value) =>
+                      chequesDetailsController.validator(value, 'الحساب'),
                   onSubmitted: (text) async {
-                    AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                    AccountModel? accountModel =
+                        await read<AccountsController>()
+                            .openAccountSelectionDialog(
                       query: text,
                       context: context,
                     );
@@ -106,7 +119,8 @@ class AddChequeForm extends StatelessWidget {
                     height: 60,
                     keyboardType: TextInputType.multiline,
                     maxLine: 4,
-                    textEditingController: chequesDetailsController.chequesNoteController,
+                    textEditingController:
+                        chequesDetailsController.chequesNoteController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 )

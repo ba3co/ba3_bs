@@ -34,7 +34,8 @@ class AppThemes {
       backgroundColor: WidgetStatePropertyAll(AppColors.blueColor),
       elevation: WidgetStatePropertyAll(5),
     )),
-    colorScheme: ColorScheme.fromSeed(primary: Colors.black, seedColor: Colors.black, surface: Colors.white),
+    colorScheme: ColorScheme.fromSeed(
+        primary: Colors.black, seedColor: Colors.black, surface: Colors.white),
     useMaterial3: true,
   );
 }

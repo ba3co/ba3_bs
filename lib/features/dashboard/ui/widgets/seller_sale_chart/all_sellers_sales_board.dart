@@ -19,7 +19,7 @@ class AllSellersSalesBoard extends StatelessWidget {
       children: [
         SellerDateFilterHeader(controller: controller),
         AnimatedCrossFade(
-            firstChild:    AllSellersSalesBarChart(controller: controller),
+            firstChild: AllSellersSalesBarChart(controller: controller),
             secondChild: AllSellersSalesPieChart(controller: controller),
             crossFadeState: controller.crossSellerFadeState,
             duration: Durations.extralong4),

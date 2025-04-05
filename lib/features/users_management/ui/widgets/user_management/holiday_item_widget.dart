@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import '../../../../../core/styling/app_text_style.dart';
 
 class HolidayItemWidget extends StatelessWidget {
-  const HolidayItemWidget({super.key, required this.holiday, required this.onDelete});
+  const HolidayItemWidget(
+      {super.key, required this.holiday, required this.onDelete});
 
   final String holiday;
 

@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -35,7 +34,8 @@ class InventoryTaskDialog extends StatelessWidget {
                     task.materialTask![materialIndex].materialName!,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text("${AppStrings.identificationNumber.tr}: ${task.materialTask![materialIndex].docId}",
+                  subtitle: Text(
+                      "${AppStrings.identificationNumber.tr}: ${task.materialTask![materialIndex].docId}",
                       style: TextStyle(color: Colors.grey)),
                   leading: Icon(Icons.inventory),
                   trailing: Row(
@@ -59,14 +59,18 @@ class InventoryTaskDialog extends StatelessWidget {
                               child: TextField(
                                 onChanged: (value) {
                                   if (value.isNotEmpty) {
-                                    task.materialTask![materialIndex].quantityInTask =
-                                  AppServiceUtils.extractNumbersAndCalculate(value).toDouble.toInt();
+                                    task.materialTask![materialIndex]
+                                        .quantityInTask = AppServiceUtils
+                                            .extractNumbersAndCalculate(value)
+                                        .toDouble
+                                        .toInt();
                                   }
                                 },
                                 decoration: InputDecoration(
                                   enabled: task.status.isInProgress,
                                   border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 5),
                                 ),
                                 keyboardType: TextInputType.number,
                               ),
@@ -79,10 +83,14 @@ class InventoryTaskDialog extends StatelessWidget {
           ),
           if (!task.status.isFinished)
             AppButton(
-              title: task.status.isInProgress ? AppStrings.save.tr : AppStrings.start,
+              title: task.status.isInProgress
+                  ? AppStrings.save.tr
+                  : AppStrings.start,
               onPressed: () {
                 controller.updateInventoryTask(task: task);
-                task.status = task.status.isInProgress ? TaskStatus.done : TaskStatus.inProgress;
+                task.status = task.status.isInProgress
+                    ? TaskStatus.done
+                    : TaskStatus.inProgress;
               },
             )
         ],

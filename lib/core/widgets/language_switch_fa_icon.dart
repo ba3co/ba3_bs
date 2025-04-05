@@ -20,9 +20,7 @@ class LanguageSwitchFaIcon extends StatelessWidget {
     return GetBuilder<TranslationController>(builder: (controller) {
       return Transform.scale(
         alignment: Alignment.center,
-        scaleX:!(controller.currentLocaleIsRtl ) ? -1.0 : 1.0,
-
-
+        scaleX: !(controller.currentLocaleIsRtl) ? -1.0 : 1.0,
         child: FaIcon(
           iconData,
           size: size,

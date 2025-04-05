@@ -14,7 +14,7 @@ class CalculationCard extends StatelessWidget {
     required this.color,
     required this.value,
     required this.label,
-     this.visible,
+    this.visible,
     this.width,
     this.height,
   });
@@ -22,13 +22,14 @@ class CalculationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: visible??true,
+      visible: visible ?? true,
       child: Container(
         width: width ?? 50.0.w,
         height: height ?? 80.h,
         padding: const EdgeInsets.all(2),
         // margin: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
+        decoration:
+            BoxDecoration(color: color, borderRadius: BorderRadius.circular(5)),
         child: Stack(
           // crossAxisAlignment: CrossAxisAlignment.start,
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,

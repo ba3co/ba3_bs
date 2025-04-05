@@ -42,11 +42,13 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   bool isSellerMobileTargetVisible = true;
   bool isSellerAccessoryTargetVisible = true;
   List<BillModel> allSellerBillsThisMonth = [];
-  PickerDateRange dateRange = PickerDateRange( DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-    DateTime.now().day,
-  ).subtract(Duration(days: 1)),DateTime.now());
+  PickerDateRange dateRange = PickerDateRange(
+      DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      ).subtract(Duration(days: 1)),
+      DateTime.now());
   final now = DateTime.now();
 
   List<PieChartSectionData> getSellerPieChartSections() {
@@ -72,7 +74,8 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   }
 
   lunchSellerScree(BuildContext context, int index) {
-    read<SellerSalesController>().launchToSellerSalesScreen(sellerChartData[index].bills, context, dateRange);
+    read<SellerSalesController>().launchToSellerSalesScreen(
+        sellerChartData[index].bills, context, dateRange);
   }
 
   getSellersBillsByDate() async {
@@ -81,7 +84,8 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
       BillType.sales.billTypeModel,
       DateFilter(
         dateFieldName: ApiConstants.billDate,
-        range: DateTimeRange(start: dateRange.startDate ?? now, end: dateRange.endDate ?? now),
+        range: DateTimeRange(
+            start: dateRange.startDate ?? now, end: dateRange.endDate ?? now),
       ),
     );
 
@@ -113,7 +117,8 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
       update();
     } else if (startDate == null && endDate != null) {
       log('dateRange!.startDate == null');
-      final startDay = DateTime(endDate.year, endDate.month, 1); // First day of the month
+      final startDay =
+          DateTime(endDate.year, endDate.month, 1); // First day of the month
       setDateRange = PickerDateRange(startDay, endDate);
       update();
     }
@@ -139,10 +144,14 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
   }
 
   getSellerChartData() {
-    sellerChartData = read<SellerSalesController>().aggregateSalesBySeller(bills: allSellerBillsThisMonth);
+    sellerChartData = read<SellerSalesController>()
+        .aggregateSalesBySeller(bills: allSellerBillsThisMonth);
     totalSellerSales = sellerChartData.fold(
       0,
-      (previousValue, element) => previousValue + element.totalAccessorySales + element.totalMobileSales,
+      (previousValue, element) =>
+          previousValue +
+          element.totalAccessorySales +
+          element.totalMobileSales,
     );
     totalSellerSalesAccessory = sellerChartData.fold(
       0,
@@ -188,7 +197,9 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
               ),
             if (sellerTotalFees)
               BarChartRodData(
-                toY: sellerChartData[i].totalFess < 0 ? 0 : sellerChartData[i].totalFess,
+                toY: sellerChartData[i].totalFess < 0
+                    ? 0
+                    : sellerChartData[i].totalFess,
                 width: 20,
                 color: AppColors.feesSaleColor,
                 borderRadius: BorderRadius.circular(3),
@@ -198,7 +209,11 @@ class SellerDashboardController extends GetxController with FloatingLauncher {
       );
     }
 
-    sellerMaxY = sellerChartData.isNotEmpty ? sellerChartData.map((d) => d.totalMobileSales).reduce((a, b) => a > b ? a : b) : 0;
+    sellerMaxY = sellerChartData.isNotEmpty
+        ? sellerChartData
+            .map((d) => d.totalMobileSales)
+            .reduce((a, b) => a > b ? a : b)
+        : 0;
     sellerMaxY *= 1.5;
   }
 

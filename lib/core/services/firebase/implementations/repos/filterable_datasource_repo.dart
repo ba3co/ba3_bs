@@ -12,14 +12,19 @@ import 'remote_datasource_repo.dart';
 class FilterableDataSourceRepository<T> extends RemoteDataSourceRepository<T> {
   final FilterableDatasource<T> _filterableDatasource;
 
-  FilterableDataSourceRepository(this._filterableDatasource) : super(_filterableDatasource);
+  FilterableDataSourceRepository(this._filterableDatasource)
+      : super(_filterableDatasource);
 
-  Future<Either<Failure, List<T>>> fetchWhere({List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
+  Future<Either<Failure, List<T>>> fetchWhere(
+      {List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
     try {
-      final savedItems = await _filterableDatasource.fetchWhere(queryFilters: queryFilters, dateFilter: dateFilter);
+      final savedItems = await _filterableDatasource.fetchWhere(
+          queryFilters: queryFilters, dateFilter: dateFilter);
       return Right(savedItems); // Return the list of saved items
     } catch (e, stackTrace) {
-      log('Error in fetchWhere: $e', stackTrace: stackTrace, name: 'FilterableDataSourceRepository fetchWhere');
+      log('Error in fetchWhere: $e',
+          stackTrace: stackTrace,
+          name: 'FilterableDataSourceRepository fetchWhere');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }

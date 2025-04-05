@@ -21,40 +21,47 @@ class AddMaterialForm extends StatelessWidget {
           spacing: 20,
           children: [
             OrganizedWidget(
-                titleWidget: Center(child: Text(AppStrings.materialInformation.tr)),
+                titleWidget:
+                    Center(child: Text(AppStrings.materialInformation.tr)),
                 bodyWidget: Column(
                   spacing: 8,
                   children: [
                     FormFieldRow(
-
                       firstItem: TextAndExpandedChildField(
                           label: AppStrings.materialName.tr,
                           child: CustomTextFieldWithoutIcon(
                             filedColor: AppColors.backGroundColor,
-                            textEditingController: controller.materialFromHandler.nameController,
-                            validator: (value) => controller.materialFromHandler.defaultValidator(value, 'اسم المادة'),
+                            textEditingController:
+                                controller.materialFromHandler.nameController,
+                            validator: (value) => controller.materialFromHandler
+                                .defaultValidator(value, 'اسم المادة'),
                           )),
                       secondItem: TextAndExpandedChildField(
-                          label:AppStrings.latinName.tr,
+                          label: AppStrings.latinName.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.latinNameController)),
+                              textEditingController: controller
+                                  .materialFromHandler.latinNameController)),
                     ),
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
-                          label:AppStrings.materialCode.tr,
+                          label: AppStrings.materialCode.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              validator: (value) =>
-                                  controller.materialFromHandler.defaultValidator(value, 'رمز المادة'),
-                              textEditingController: controller.materialFromHandler.codeController)),
+                              validator: (value) => controller
+                                  .materialFromHandler
+                                  .defaultValidator(value, 'رمز المادة'),
+                              textEditingController: controller
+                                  .materialFromHandler.codeController)),
                       secondItem: TextAndExpandedChildField(
                           label: AppStrings.materialBarcode.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              validator: (value) =>
-                                  controller.materialFromHandler.defaultValidator(value, 'رمز الباركود'),
-                              textEditingController: controller.materialFromHandler.barcodeController)),
+                              validator: (value) => controller
+                                  .materialFromHandler
+                                  .defaultValidator(value, 'رمز الباركود'),
+                              textEditingController: controller
+                                  .materialFromHandler.barcodeController)),
                     ),
                   ],
                 )),
@@ -68,20 +75,26 @@ class AddMaterialForm extends StatelessWidget {
                           label: AppStrings.consumer.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              validator: (value) => controller.materialFromHandler.defaultValidator(value, 'المستهلك'),
-                              textEditingController: controller.materialFromHandler.customerPriceController)),
+                              validator: (value) => controller
+                                  .materialFromHandler
+                                  .defaultValidator(value, 'المستهلك'),
+                              textEditingController: controller
+                                  .materialFromHandler
+                                  .customerPriceController)),
                       secondItem: TextAndExpandedChildField(
-                          label:AppStrings.retail.tr,
+                          label: AppStrings.retail.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.retailPriceController)),
+                              textEditingController: controller
+                                  .materialFromHandler.retailPriceController)),
                     ),
                     FormFieldRow(
                       firstItem: TextAndExpandedChildField(
                           label: AppStrings.wholesale.tr,
                           child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
-                              textEditingController: controller.materialFromHandler.wholePriceController)),
+                              textEditingController: controller
+                                  .materialFromHandler.wholePriceController)),
                       secondItem: SizedBox(),
                     ),
                   ],

@@ -32,7 +32,8 @@ class SellersDatasource extends BulkSavableDatasource<SellerModel> {
 
   @override
   Future<SellerModel> save(SellerModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.costGuid, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.costGuid, data: item.toJson());
 
     return SellerModel.fromJson(data);
   }
@@ -41,7 +42,9 @@ class SellersDatasource extends BulkSavableDatasource<SellerModel> {
   Future<List<SellerModel>> saveAll(List<SellerModel> items) async {
     final savedData = await databaseService.addAll(
       path: path,
-      data: items.map((item) => {...item.toJson(), 'docId': item.costGuid}).toList(),
+      data: items
+          .map((item) => {...item.toJson(), 'docId': item.costGuid})
+          .toList(),
     );
 
     return savedData.map(SellerModel.fromJson).toList();

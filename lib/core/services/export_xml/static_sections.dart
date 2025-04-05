@@ -61,8 +61,10 @@ class StaticSections {
         final billTypes = bills.keys.map((billType) {
           final typeGuideString = billType.billTypeId.toString();
           final billsForType = bills[billType];
-          final lastBillNumber = billsForType?.lastOrNull?.billDetails.billNumber ?? '0';
-          final firstBillNumber = billsForType?.firstOrNull?.billDetails.billNumber ?? '0';
+          final lastBillNumber =
+              billsForType?.lastOrNull?.billDetails.billNumber ?? '0';
+          final firstBillNumber =
+              billsForType?.firstOrNull?.billDetails.billNumber ?? '0';
           return [typeGuideString, '$lastBillNumber,$firstBillNumber'];
         }).toList();
         for (var bill in billTypes) {
@@ -90,7 +92,10 @@ class StaticSections {
       builder.element('ChkCnt', nest: '3');
       builder.element('Notes', nest: () {
         final chequeType = [
-          ['fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18', '${chequesList.lastOrNull?.chequesNumber ?? '0'},1'],
+          [
+            'fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18',
+            '${chequesList.lastOrNull?.chequesNumber ?? '0'},1'
+          ],
           ['c27c5972-2b40-47df-8e3e-6ee29c4d5838', '1,1'],
         ];
         for (var note in chequeType) {
@@ -154,24 +159,24 @@ class StaticSections {
   }
 
   /// Builds a list of bill types, including names, IDs, and ranges.
-  void _buildBillsTypes(XmlBuilder builder,  Map<BillTypeModel, List<BillModel>> bills) {
-    final billTypes = bills.entries
-        .where((e) => e.value.isNotEmpty)
-        .map((entry) {
+  void _buildBillsTypes(
+      XmlBuilder builder, Map<BillTypeModel, List<BillModel>> bills) {
+    final billTypes =
+        bills.entries.where((e) => e.value.isNotEmpty).map((entry) {
       final billType = entry.key;
       final billList = entry.value;
-      final from = billList.firstOrNull?.billDetails.billNumber?.toString() ?? '0';
+      final from =
+          billList.firstOrNull?.billDetails.billNumber?.toString() ?? '0';
       final to = billList.lastOrNull?.billDetails.billNumber?.toString() ?? '0';
       return [
         billType.id,
         billType.fullName,
         billType.latinFullName,
-      '1',
+        '1',
         from,
         to,
       ];
-    })
-        .toList();
+    }).toList();
 
     builder.element('BillsTypes', nest: () {
       for (final t in billTypes) {
@@ -190,8 +195,20 @@ class StaticSections {
   /// Builds cheque type definitions with their IDs, names, and ranges.
   void _buildChequesDescription(XmlBuilder builder) {
     final cheques = [
-      ['fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18', 'شيكات مدفوعة', 'شيكات مدفوعة', '1', '99'],
-      ['c27c5972-2b40-47df-8e3e-6ee29c4d5838', 'شيكات تأمين', 'شيكات تأمين', '1', '1'],
+      [
+        'fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18',
+        'شيكات مدفوعة',
+        'شيكات مدفوعة',
+        '1',
+        '99'
+      ],
+      [
+        'c27c5972-2b40-47df-8e3e-6ee29c4d5838',
+        'شيكات تأمين',
+        'شيكات تأمين',
+        '1',
+        '1'
+      ],
     ];
 
     builder.element('ChkDesc', nest: () {
@@ -200,8 +217,10 @@ class StaticSections {
           builder.element('Type', nest: c[0]);
           builder.element('Name', nest: c[1]);
           builder.element('LatinName', nest: c[2]);
-          builder.element('DefPayAccGuid', nest: '00000000-0000-0000-0000-000000000000');
-          builder.element('DefRecAccGuid', nest: '00000000-0000-0000-0000-000000000000');
+          builder.element('DefPayAccGuid',
+              nest: '00000000-0000-0000-0000-000000000000');
+          builder.element('DefRecAccGuid',
+              nest: '00000000-0000-0000-0000-000000000000');
           builder.element('From', nest: c[3]);
           builder.element('To', nest: c[4]);
         });
@@ -210,7 +229,8 @@ class StaticSections {
   }
 
   /// Builds payment type definitions and their ranges dynamically from bond data.
-  void _buildPayTypesDescription(XmlBuilder builder, Map<BondType, List<BondModel>> bonds) {
+  void _buildPayTypesDescription(
+      XmlBuilder builder, Map<BondType, List<BondModel>> bonds) {
     builder.element('PayDesc', nest: () {
       for (final entry in bonds.entries) {
         final type = entry.key;
@@ -228,19 +248,20 @@ class StaticSections {
           builder.element('LatinName', nest: type.value);
           builder.element('From', nest: firstNumber);
           builder.element('To', nest: lastNumber);
-          builder.element('TaxType', nest: type.taxType.toString()); // تأكد أنك تملك taxType
+          builder.element('TaxType',
+              nest: type.taxType.toString()); // تأكد أنك تملك taxType
         });
       }
     });
   }
-
 
   /// Builds currency metadata section, currently only includes UAE Dirham.
   void _buildCurrencySection(XmlBuilder builder) {
     builder.element('Currency', nest: () {
       builder.element('CurrencyCount', nest: '1');
       builder.element('cr', nest: () {
-        builder.element('CurGuid', nest: '884EDCDE-C172-490D-A2F2-F10A0B90326A');
+        builder.element('CurGuid',
+            nest: '884EDCDE-C172-490D-A2F2-F10A0B90326A');
         builder.element('CurCode', nest: 'د.هـ.');
         builder.element('CurName', nest: 'درهم إماراتي');
         builder.element('CurVal', nest: '1');
@@ -250,7 +271,8 @@ class StaticSections {
         builder.element('CurDate', nest: '1-1-1980');
         builder.element('CurLatinName', nest: 'UAE Dirham');
         builder.element('CurLatinPartName', nest: 'Fils');
-        builder.element('CurNumber', nest: '4.94065645841246544176568792868e-324');
+        builder.element('CurNumber',
+            nest: '4.94065645841246544176568792868e-324');
         builder.element('CurBranchMask', nest: '0');
       });
     });
@@ -277,8 +299,10 @@ class StaticSections {
         builder.element('GCCMaterialTax', nest: () {
           builder.element('GCCMaterialTaxGUID', nest: generatedId);
           builder.element('GCCMaterialTaxType', nest: '1.00');
-          builder.element('GCCMaterialTaxCode', nest: isTaxable ? '1.00' : '4.00');
-          builder.element('GCCMaterialTaxRatio', nest: isTaxable ? '5.00' : '0.0');
+          builder.element('GCCMaterialTaxCode',
+              nest: isTaxable ? '1.00' : '4.00');
+          builder.element('GCCMaterialTaxRatio',
+              nest: isTaxable ? '5.00' : '0.0');
           builder.element('GCCMaterialTaxMatGUID', nest: mat.id);
           builder.element('GCCMaterialTaxProfitMargin', nest: 'F');
         });

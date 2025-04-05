@@ -12,8 +12,6 @@ import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 class AllBondScreen extends StatelessWidget {
   const AllBondScreen({super.key});
 
-
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AllBondsController>(builder: (controller) {
@@ -22,7 +20,8 @@ class AllBondScreen extends StatelessWidget {
         onLoaded: (e) {},
         onSelected: (event) {
           String bondId = event.row?.cells[AppConstants.bondIdFiled]?.value;
-          BondType bondType = BondType.byTypeGuide(event.row?.cells['type']?.value);
+          BondType bondType =
+              BondType.byTypeGuide(event.row?.cells['type']?.value);
           log('bondId : $bondId');
           controller.openBondDetailsById(bondId, context, bondType);
         },

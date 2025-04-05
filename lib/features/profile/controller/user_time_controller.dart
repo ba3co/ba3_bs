@@ -37,7 +37,9 @@ class UserTimeController extends GetxController {
       ?.userHolidays
       ?.toList()
       .where(
-        (element) => element.split("-")[1] == Timestamp.now().toDate().month.toString().padLeft(2, "0"),
+        (element) =>
+            element.split("-")[1] ==
+            Timestamp.now().toDate().month.toString().padLeft(2, "0"),
       )
       .toList();
 
@@ -57,10 +59,16 @@ class UserTimeController extends GetxController {
         return AppUIUtils.onFailure(failure.message);
       },
       (location) {
-        return isWithinRegion =
-            _userTimeServices.isWithinRegion(location, AppConstants.targetLatitude, AppConstants.targetLongitude, AppConstants.radiusInMeters) ||
-                _userTimeServices.isWithinRegion(
-                    location, AppConstants.secondTargetLatitude, AppConstants.secondTargetLongitude, AppConstants.secondRadiusInMeters);
+        return isWithinRegion = _userTimeServices.isWithinRegion(
+                location,
+                AppConstants.targetLatitude,
+                AppConstants.targetLongitude,
+                AppConstants.radiusInMeters) ||
+            _userTimeServices.isWithinRegion(
+                location,
+                AppConstants.secondTargetLatitude,
+                AppConstants.secondTargetLongitude,
+                AppConstants.secondRadiusInMeters);
       },
     );
 
@@ -73,7 +81,10 @@ class UserTimeController extends GetxController {
     getLastOutTime();
   }
 
-  Future<void> checkUserLog({required UserWorkStatus logStatus, required Function(UserModel) onChecked, required String errorMessage}) async {
+  Future<void> checkUserLog(
+      {required UserWorkStatus logStatus,
+      required Function(UserModel) onChecked,
+      required String errorMessage}) async {
     if (logStatus == UserWorkStatus.online) {
       logInState.value = RequestState.loading;
     } else {
@@ -93,7 +104,9 @@ class UserTimeController extends GetxController {
     /// check if user want to login again before logout
     /// or
     /// check if user want to logout again before login
-    if (userModel!.userWorkStatus != logStatus || userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] == null) {
+    if (userModel!.userWorkStatus != logStatus ||
+        userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] ==
+            null) {
       final updatedUserModel = onChecked(userModel);
 
       /// check if user want to log in
@@ -107,7 +120,8 @@ class UserTimeController extends GetxController {
     }
   }
 
-  UserModel? getUserById() => read<UserManagementController>().loggedInUserModel!;
+  UserModel? getUserById() =>
+      read<UserManagementController>().loggedInUserModel!;
 
   Future<void> checkLogInAndSave() async {
     await checkUserLog(
@@ -143,7 +157,8 @@ class UserTimeController extends GetxController {
       },
       (fetchedUser) {
         handleSuccess('تم تسجيل الخروج بنجاح', UserWorkStatus.away);
-        setLastOutTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
+        setLastOutTime =
+            AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
     );
   }
@@ -158,20 +173,23 @@ class UserTimeController extends GetxController {
       (fetchedUser) {
         handleSuccess('تم تسجيل الدخول بنجاح', UserWorkStatus.online);
 
-        setLastEnterTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
+        setLastEnterTime =
+            AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
     );
   }
 
   getLastEnterTime() async {
-    List<DateTime> enterTimeList = _userTimeServices.getEnterTimes(getUserById()) ?? [];
+    List<DateTime> enterTimeList =
+        _userTimeServices.getEnterTimes(getUserById()) ?? [];
     if (enterTimeList.isNotEmpty) {
       setLastEnterTime = AppServiceUtils.formatDateTime(enterTimeList.last);
     }
   }
 
   getLastOutTime() async {
-    List<DateTime> outTimeList = _userTimeServices.getOutTimes(getUserById()) ?? [];
+    List<DateTime> outTimeList =
+        _userTimeServices.getOutTimes(getUserById()) ?? [];
     if (outTimeList.isNotEmpty) {
       setLastOutTime = AppServiceUtils.formatDateTime(outTimeList.last);
     }

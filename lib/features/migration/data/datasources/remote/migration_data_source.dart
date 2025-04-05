@@ -15,7 +15,8 @@ class MigrationRemoteDatasource extends RemoteDatasourceBase<MigrationModel> {
   Future<List<MigrationModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final materials = data.map((item) => MigrationModel.fromJson(item)).toList();
+    final materials =
+        data.map((item) => MigrationModel.fromJson(item)).toList();
 
     return materials;
   }
@@ -33,7 +34,8 @@ class MigrationRemoteDatasource extends RemoteDatasourceBase<MigrationModel> {
 
   @override
   Future<MigrationModel> save(MigrationModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.id, data: item.toJson());
 
     return MigrationModel.fromJson(data);
   }

@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TranslationController translationController = read<TranslationController>();
+    final TranslationController translationController =
+        read<TranslationController>();
 
     return ScreenUtilInit(
       designSize: const Size(390, 852),

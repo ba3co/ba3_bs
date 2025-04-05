@@ -4,7 +4,6 @@ import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class SellerTargetScreen extends StatelessWidget {
   const SellerTargetScreen({super.key});
 

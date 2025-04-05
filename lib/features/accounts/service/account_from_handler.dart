@@ -10,7 +10,9 @@ import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
 
-class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandler {
+class AccountFromHandler
+    with AppValidator
+    implements IAccountTypeSelectionHandler {
   AccountsController get accountController => read<AccountsController>();
 
   final formKey = GlobalKey<FormState>();
@@ -24,11 +26,12 @@ class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandl
 
   void init({AccountModel? accountModel}) {
     if (accountModel != null) {
-      nameController.text =accountModel.accName!;
+      nameController.text = accountModel.accName!;
       latinNameController.text = accountModel.accLatinName!;
       codeController.text = accountModel.accCode!;
-      accountParentModel = accountController.getAccountModelById(accountModel.accParentGuid!);
-      accParentName.text = accountParentModel?.accName??'';
+      accountParentModel =
+          accountController.getAccountModelById(accountModel.accParentGuid!);
+      accParentName.text = accountParentModel?.accName ?? '';
       accountType = AccountType.byIndex(accountModel.accType!);
     } else {
       log("accountModel =null");
@@ -55,7 +58,8 @@ class AccountFromHandler with AppValidator implements IAccountTypeSelectionHandl
     latinNameController.dispose();
   }
 
-  String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? defaultValidator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
   @override
   void onSelectedAccountTypeChanged(AccountType? newType) {

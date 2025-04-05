@@ -47,7 +47,8 @@ class AccountLayout extends StatelessWidget {
                 onTap: () {
                   showDialog<String>(
                     context: Get.context!,
-                    builder: (BuildContext context) => showAccountFilterDialog(context),
+                    builder: (BuildContext context) =>
+                        showAccountFilterDialog(context),
                   );
                 },
               ),
@@ -55,14 +56,16 @@ class AccountLayout extends StatelessWidget {
                 icon: Icons.person_add_alt,
                 title: AppStrings.addAccount.tr,
                 onTap: () {
-                  read<AccountsController>().navigateToAddOrUpdateAccountScreen(context: context);
+                  read<AccountsController>()
+                      .navigateToAddOrUpdateAccountScreen(context: context);
                 },
               ),
               buildAppMenuItem(
                 icon: Icons.insert_chart_outlined,
                 title: AppStrings.finalAccounts.tr,
                 onTap: () {
-                  read<AccountsController>().navigateToFinalAccountsScreen(context);
+                  read<AccountsController>()
+                      .navigateToFinalAccountsScreen(context);
                 },
               ),
             ],

@@ -16,7 +16,8 @@ class ChequesBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return chequesTimelineController.chequesChartRequestState.value == RequestState.loading
+      return chequesTimelineController.chequesChartRequestState.value ==
+              RequestState.loading
           ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -43,16 +44,16 @@ class ChequesBarChart extends StatelessWidget {
                     touchCallback: (p0, p1) {
                       if (p0 is FlPanDownEvent) {
                         if (p1?.spot?.spot.x != null) {
-
-                          chequesTimelineController.lunchChequesScreen(context,(p1?.spot?.spot.x)!.toInt());
-
+                          chequesTimelineController.lunchChequesScreen(
+                              context, (p1?.spot?.spot.x)!.toInt());
                         }
                       }
                       // log(p1.toString());
                     },
                     touchTooltipData: BarTouchTooltipData(
                       getTooltipColor: (group) => Colors.black,
-                      tooltipBorder: BorderSide(color: AppColors.backGroundColor),
+                      tooltipBorder:
+                          BorderSide(color: AppColors.backGroundColor),
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         return BarTooltipItem(
                           '${rod.toY.toString()} ',
@@ -64,24 +65,33 @@ class ChequesBarChart extends StatelessWidget {
                       },
                     ),
                   ),
-
-                  maxY: chequesTimelineController.sortedEntries.map((e) => e.value).fold(0,(a, b) => a > b ? a : b).toDouble() + 1,
+                  maxY: chequesTimelineController.sortedEntries
+                          .map((e) => e.value)
+                          .fold(0, (a, b) => a > b ? a : b)
+                          .toDouble() +
+                      1,
                   barGroups: chequesTimelineController.barGroups,
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                      sideTitles:
+                          SideTitles(showTitles: true, reservedSize: 40),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
                           int index = value.toInt();
-                          if (index >= 0 && index < chequesTimelineController.datesList.length) {
+                          if (index >= 0 &&
+                              index <
+                                  chequesTimelineController.datesList.length) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
-                                DateFormat('MM/dd').format(DateTime.parse(chequesTimelineController.datesList[index])),
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                DateFormat('MM/dd').format(DateTime.parse(
+                                    chequesTimelineController
+                                        .datesList[index])),
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             );
                           }

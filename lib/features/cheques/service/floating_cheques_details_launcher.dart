@@ -8,19 +8,29 @@ import '../controllers/cheques/cheques_details_controller.dart';
 import '../controllers/cheques/cheques_search_controller.dart';
 import '../data/models/cheques_model.dart';
 
-class FloatingChequesDetailsLauncher extends GetxController with FloatingLauncher, ControllerInitializer {
+class FloatingChequesDetailsLauncher extends GetxController
+    with FloatingLauncher, ControllerInitializer {
   /// Initializes and manages controllers for the Cheques Details screen with floating window capabilities.
-  Map<String, GetxController> setupControllers({required Map<String, dynamic> params}) {
+  Map<String, GetxController> setupControllers(
+      {required Map<String, dynamic> params}) {
     final tag = requireParam<String>(params, key: 'tag');
 
     final chequesType = requireParam<ChequesType>(params, key: 'chequesType');
 
-    final chequesSearchController = requireParam<ChequesSearchController>(params, key: 'chequesSearchController');
-    final chequesFirebaseRepo = requireParam<CompoundDatasourceRepository<ChequesModel, ChequesType>>(params, key: 'chequesFirebaseRepo');
+    final chequesSearchController = requireParam<ChequesSearchController>(
+        params,
+        key: 'chequesSearchController');
+    final chequesFirebaseRepo =
+        requireParam<CompoundDatasourceRepository<ChequesModel, ChequesType>>(
+            params,
+            key: 'chequesFirebaseRepo');
 
-    final chequesSearchControllerWithTag = createController<ChequesSearchController>(tag, controller: chequesSearchController);
+    final chequesSearchControllerWithTag =
+        createController<ChequesSearchController>(tag,
+            controller: chequesSearchController);
 
-    final chequesDetailsControllerWithTag = createController<ChequesDetailsController>(
+    final chequesDetailsControllerWithTag =
+        createController<ChequesDetailsController>(
       tag,
       controller: ChequesDetailsController(
         chequesFirebaseRepo,

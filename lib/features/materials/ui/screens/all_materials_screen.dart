@@ -23,15 +23,18 @@ class AllMaterialsScreen extends StatelessWidget {
         tableSourceModels: controller.materialsForShow,
         onLoaded: (event) {},
         onRowSecondaryTap: (selectedRow) {
-          MaterialModel materialModel = controller.getMaterialById(selectedRow.row.cells[AppConstants.materialIdFiled]?.value);
+          MaterialModel materialModel = controller.getMaterialById(
+              selectedRow.row.cells[AppConstants.materialIdFiled]?.value);
 
-          read<MaterialsStatementController>().fetchMatStatements(materialModel, context: context);
+          read<MaterialsStatementController>()
+              .fetchMatStatements(materialModel, context: context);
         },
         onSelected: (selectedRow) {
-
-          String? matId = selectedRow.row?.cells[AppConstants.materialIdFiled]?.value;
+          String? matId =
+              selectedRow.row?.cells[AppConstants.materialIdFiled]?.value;
           log('mat id is $matId');
-          read<MaterialController>().navigateToAddOrUpdateMaterialScreen(matId: matId, context: context);
+          read<MaterialController>().navigateToAddOrUpdateMaterialScreen(
+              matId: matId, context: context);
         },
       );
     });

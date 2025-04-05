@@ -97,17 +97,18 @@ class BillTypeItemWidget extends StatelessWidget {
               top: 0,
               right: 0,
               child: Container(
-
                 width: 220,
                 height: 30,
                 decoration: BoxDecoration(
                   color: color,
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(5)),
+                  borderRadius:
+                      const BorderRadius.only(bottomLeft: Radius.circular(5)),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   text.tr,
-                  style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  style: AppTextStyles.headLineStyle3
+                      .copyWith(color: Colors.white),
                   textDirection: TextDirection.rtl,
                 ),
               ),

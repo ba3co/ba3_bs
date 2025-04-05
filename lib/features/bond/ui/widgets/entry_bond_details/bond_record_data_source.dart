@@ -19,9 +19,10 @@ class BondDataGridSource extends DataGridSource {
       cells: row
           .getCells()
           .map<Widget>((dataGridCell) => Container(
-                alignment: dataGridCell.columnName == AppConstants.rowBondDescription
-                    ? Alignment.centerRight
-                    : Alignment.center,
+                alignment:
+                    dataGridCell.columnName == AppConstants.rowBondDescription
+                        ? Alignment.centerRight
+                        : Alignment.center,
                 color: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
@@ -39,8 +40,11 @@ class BondDataGridSource extends DataGridSource {
   }
 
   @override
-  Widget? buildTableSummaryCellWidget(GridTableSummaryRow summaryRow, GridSummaryColumn? summaryColumn,
-      RowColumnIndex rowColumnIndex, String summaryValue) {
+  Widget? buildTableSummaryCellWidget(
+      GridTableSummaryRow summaryRow,
+      GridSummaryColumn? summaryColumn,
+      RowColumnIndex rowColumnIndex,
+      String summaryValue) {
     return Container(
       padding: const EdgeInsets.all(15.0),
       child: Text(summaryValue),
@@ -48,7 +52,8 @@ class BondDataGridSource extends DataGridSource {
   }
 
   @override
-  Future<bool> canSubmitCell(DataGridRow dataGridRow, RowColumnIndex rowColumnIndex, GridColumn column) async {
+  Future<bool> canSubmitCell(DataGridRow dataGridRow,
+      RowColumnIndex rowColumnIndex, GridColumn column) async {
     return false; // Prevent submission; keep cells editable
   }
 }

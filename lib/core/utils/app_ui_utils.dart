@@ -18,7 +18,8 @@ import '../widgets/app_button.dart';
 import '../widgets/app_spacer.dart';
 
 class AppUIUtils {
-  static void showToast(String text, {bool isSuccess = false, bool isInfo = false, bool long = false}) {
+  static void showToast(String text,
+      {bool isSuccess = false, bool isInfo = false, bool long = false}) {
     Color color = Colors.red;
     if (isInfo) {
       color = Colors.orangeAccent;
@@ -26,12 +27,16 @@ class AppUIUtils {
       color = Colors.green;
     }
     Fluttertoast.showToast(
-        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        msg: text,
+        backgroundColor: color,
+        fontSize: 16.sp,
+        toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String convertArabicNumbers(String input) {
     // Check if the input contains any non-Arabic characters
-    final nonArabicRegex = RegExp(r'[^٠-٩]'); // Matches any character that is not an Arabic numeral
+    final nonArabicRegex = RegExp(
+        r'[^٠-٩]'); // Matches any character that is not an Arabic numeral
 
     // If the input contains any non-Arabic characters, return it unchanged
     if (nonArabicRegex.hasMatch(input)) {
@@ -54,7 +59,8 @@ class AppUIUtils {
 
     // Process the input and replace only Arabic numerals
     return input.split('').map((char) {
-      return arabicToWestern[char] ?? char; // Replace Arabic numerals, keep others unchanged
+      return arabicToWestern[char] ??
+          char; // Replace Arabic numerals, keep others unchanged
     }).join('');
   }
 
@@ -98,7 +104,8 @@ class AppUIUtils {
     List<String> dates = [];
     DateTime currentDate = startDate;
 
-    while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
+    while (currentDate.isBefore(endDate) ||
+        currentDate.isAtSameMomentAs(endDate)) {
       dates.add(currentDate.dayMonthYear);
       currentDate = currentDate.add(const Duration(days: 1));
     }
@@ -106,7 +113,8 @@ class AppUIUtils {
     return dates;
   }
 
-  static void showExportSuccessDialog(String filePath, String successMessage, String title) {
+  static void showExportSuccessDialog(
+      String filePath, String successMessage, String title) {
     AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!');
     Get.defaultDialog(
       title: 'تم تصدير الملف إلى:',
@@ -234,10 +242,16 @@ class AppUIUtils {
     Color? color = Colors.white,
   }) =>
       Center(
-        child: SizedBox(width: width, height: height, child: CircularProgressIndicator(color: color)),
+        child: SizedBox(
+            width: width,
+            height: height,
+            child: CircularProgressIndicator(color: color)),
       );
 
-  static showErrorSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
+  static showErrorSnackBar(
+      {String? title,
+      required String message,
+      NotificationStatus status = NotificationStatus.error}) {
     // Close any existing SnackBar
     if (Get.isSnackbarOpen) {
       Get.closeCurrentSnackbar();
@@ -260,7 +274,10 @@ class AppUIUtils {
     );
   }
 
-  static showSuccessSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
+  static showSuccessSnackBar(
+      {String? title,
+      required String message,
+      NotificationStatus status = NotificationStatus.success}) {
     // Close any existing SnackBar
     if (Get.isSnackbarOpen) {
       Get.closeCurrentSnackbar();
@@ -373,7 +390,9 @@ class AppUIUtils {
         canPop: true,
         onPopInvokedWithResult: onPopInvokedWithResult,
         child: AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.red)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+              side: BorderSide(color: Colors.red)),
           alignment: Alignment.center,
           backgroundColor: AppColors.backGroundColor,
           title: title == null
@@ -504,7 +523,8 @@ class AppUIUtils {
     );
   }
 
-  static void showFullScreenNetworkImage(BuildContext context, String imagePath) {
+  static void showFullScreenNetworkImage(
+      BuildContext context, String imagePath) {
     OverlayService.showDialog(
       context: context,
       width: 1.sw,

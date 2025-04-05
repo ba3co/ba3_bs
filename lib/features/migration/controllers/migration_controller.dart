@@ -27,15 +27,19 @@ import '../use_cases/copy_unpaid_cheque_use_case.dart';
 import '../use_cases/generate_bill_records_use_case.dart';
 import '../use_cases/rotate_balance_use_case.dart';
 
-class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGenerator, FirestoreSequentialNumbers {
+class MigrationController extends FloatingBondDetailsLauncher
+    with EntryBondsGenerator, FirestoreSequentialNumbers {
   final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
-  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel>
+      _billsFirebaseRepo;
 
-  final CompoundDatasourceRepository<ChequesModel, ChequesType> _chequesFirebaseRepo;
+  final CompoundDatasourceRepository<ChequesModel, ChequesType>
+      _chequesFirebaseRepo;
   final RemoteDataSourceRepository<MigrationModel> _migrationFirebaseRep;
   final TextEditingController migrationController = TextEditingController();
 
-  MigrationController(this._bondsFirebaseRepo, this._billsFirebaseRepo, this._chequesFirebaseRepo, this._migrationFirebaseRep);
+  MigrationController(this._bondsFirebaseRepo, this._billsFirebaseRepo,
+      this._chequesFirebaseRepo, this._migrationFirebaseRep);
 
   RxBool isMigrating = false.obs;
   RxString migrationStatus = ''.obs;
@@ -52,10 +56,13 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
 
   late final CloseAccountsAndItemsUseCase _closeAccountsAndItemsUseCase;
 
-  final Rx<RequestState> getMigrationVersionsRequestState = RequestState.initial.obs;
-  final Rx<RequestState> addMigrationVersionsRequestState = RequestState.initial.obs;
+  final Rx<RequestState> getMigrationVersionsRequestState =
+      RequestState.initial.obs;
+  final Rx<RequestState> addMigrationVersionsRequestState =
+      RequestState.initial.obs;
 
-  final Rx<RequestState> updateMigrationVersionsRequestState = RequestState.initial.obs;
+  final Rx<RequestState> updateMigrationVersionsRequestState =
+      RequestState.initial.obs;
 
   @override
   void onInit() {
@@ -92,7 +99,8 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
       setCurrentVersion: (v) => currentVersion = v,
     );
 
-    _closeAccountsAndItemsUseCase = CloseAccountsAndItemsUseCase(migrationGuard: migrationGuard);
+    _closeAccountsAndItemsUseCase =
+        CloseAccountsAndItemsUseCase(migrationGuard: migrationGuard);
   }
 
   // 🔹 Available migration versions
@@ -106,7 +114,8 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
   set currentVersion(String version) => selectedVersion.value = version;
 
   String get year {
-    return currentVersion == AppConstants.defaultVersion || currentVersion.isEmpty
+    return currentVersion == AppConstants.defaultVersion ||
+            currentVersion.isEmpty
         ? ''
         : '${currentVersion}_'; // 🔹 Ensures it always fetches the latest version
   }
@@ -131,8 +140,10 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
         getMigrationVersionsRequestState.value = RequestState.success;
 
         if (fetchedMigrationVersions.isNotEmpty) {
-          migrationVersions.addAll(fetchedMigrationVersions.first.migrationVersions ?? []);
-          selectedVersion.value = fetchedMigrationVersions.first.currentVersion ?? '';
+          migrationVersions
+              .addAll(fetchedMigrationVersions.first.migrationVersions ?? []);
+          selectedVersion.value =
+              fetchedMigrationVersions.first.currentVersion ?? '';
         }
       },
     );
@@ -184,7 +195,10 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
       MigrationModel(
         id: 'main-migration',
         currentVersion: newVersion,
-        migrationVersions: [...migrationVersions, newVersion], // Add new version
+        migrationVersions: [
+          ...migrationVersions,
+          newVersion
+        ], // Add new version
       ),
     );
 
@@ -255,9 +269,11 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
 
     await Get.defaultDialog(
       title: "تأكيد الترحيل",
-      titleStyle: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+      titleStyle: TextStyle(
+          color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
       middleTextStyle: TextStyle(color: Colors.black, fontSize: 13),
-      middleText: "هل أنت متأكد أنك تريد تنفيذ الترحيل؟\nهذه العملية لا يمكن التراجع عنها.",
+      middleText:
+          "هل أنت متأكد أنك تريد تنفيذ الترحيل؟\nهذه العملية لا يمكن التراجع عنها.",
       textConfirm: "نعم، متابعة",
       textCancel: "إلغاء",
       confirmTextColor: Colors.white,
@@ -318,8 +334,10 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
     final payItems = entryBondItems
         .map(
           (EntryBondItemModel item) => PayItem(
-            entryCredit: item.bondItemType == BondItemType.creditor ? item.amount : 0,
-            entryDebit: item.bondItemType == BondItemType.debtor ? item.amount : 0,
+            entryCredit:
+                item.bondItemType == BondItemType.creditor ? item.amount : 0,
+            entryDebit:
+                item.bondItemType == BondItemType.debtor ? item.amount : 0,
             entryAccountGuid: item.account.id,
             entryAccountName: item.account.name,
             entryDate: item.date,
@@ -342,7 +360,8 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
 
       // 🔹 Notify user about invalid selection
       AppUIUtils.showInfoSnackBar(
-        message: "يرجى اختيار إصدار ترحيل صالح قبل المتابعة. هذا هو الإصدار الأساسي ولا يمكن الترحيل له.",
+        message:
+            "يرجى اختيار إصدار ترحيل صالح قبل المتابعة. هذا هو الإصدار الأساسي ولا يمكن الترحيل له.",
         status: NotificationStatus.error,
       );
 
@@ -377,7 +396,8 @@ class MigrationController extends FloatingBondDetailsLauncher with EntryBondsGen
     );
   }
 
-  Future<void> saveAllCheques(List<ChequesModel> cheques, ChequesType type) async {
+  Future<void> saveAllCheques(
+      List<ChequesModel> cheques, ChequesType type) async {
     // Save the cheques to Firestore
     final result = await _chequesFirebaseRepo.saveAll(cheques, type);
 
@@ -417,7 +437,8 @@ bool dateBaseGuard(String rootCollectionPath) {
   }
 
   // ✅ إذا بدأ `_` أو رقم، السماح بالترحيل
-  log('✅ Valid root collection path: \'$rootCollectionPath\' - Proceeding with migration.', name: 'MigrationGuard');
+  log('✅ Valid root collection path: \'$rootCollectionPath\' - Proceeding with migration.',
+      name: 'MigrationGuard');
   log('Migration is allowed.', name: 'MigrationGuard');
 
   return false; // ✅ السماح بالترحيل

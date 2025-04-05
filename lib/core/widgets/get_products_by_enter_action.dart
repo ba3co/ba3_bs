@@ -33,7 +33,9 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
         row: stateManager.currentRow,
         rowIdx: stateManager.currentRowIdx,
         cell: stateManager.currentCell,
-        selectedRows: stateManager.mode.isMultiSelectMode ? stateManager.currentSelectingRows : null,
+        selectedRows: stateManager.mode.isMultiSelectMode
+            ? stateManager.currentSelectingRows
+            : null,
       ));
       return;
     }
@@ -50,7 +52,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     if (stateManager.configuration.enterKeyAction.isToggleEditing) {
       stateManager.toggleEditing(notify: false);
     } else {
-      if (stateManager.isEditing == true || stateManager.currentColumn?.enableEditingMode == false) {
+      if (stateManager.isEditing == true ||
+          stateManager.currentColumn?.enableEditingMode == false) {
         final saveIsEditing = stateManager.isEditing;
 
         _moveCell(keyEvent, stateManager);
@@ -68,7 +71,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     stateManager.notifyListeners();
   }
 
-  Future<void> getProduct(PlutoGridStateManager stateManager, IPlutoController plutoController) async {
+  Future<void> getProduct(PlutoGridStateManager stateManager,
+      IPlutoController plutoController) async {
     if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
 
     // Initialize variables
@@ -79,7 +83,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     final materialController = read<MaterialController>();
 
     // Search for matching materials
-    var searchedMaterials = materialController.searchOfProductByText(productText);
+    var searchedMaterials =
+        materialController.searchOfProductByText(productText);
 
     MaterialModel? selectedMaterial;
 
@@ -97,7 +102,11 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       // No matches
       AppUIUtils.onFailure('هذه المادة غير موجودة');
 
-      updateWithSelectedMaterial(inputSearch: productText, materialModel: null, stateManager: stateManager, plutoController: plutoController);
+      updateWithSelectedMaterial(
+          inputSearch: productText,
+          materialModel: null,
+          stateManager: stateManager,
+          plutoController: plutoController);
     } else {
       // Multiple matches, show search dialog
       _showSearchDialog(
@@ -126,15 +135,22 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       content: ProductSelectionDialogContent(
         searchedMaterials: searchedMaterials,
         onRowSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
-          final materialId = onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
-          final selectedMaterial = materialId != null ? materialController.getMaterialById(materialId) : null;
+          final materialId =
+              onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
+          final selectedMaterial = materialId != null
+              ? materialController.getMaterialById(materialId)
+              : null;
           updateWithSelectedMaterial(
-              inputSearch: inputSearch, materialModel: selectedMaterial, stateManager: stateManager, plutoController: plutoController);
+              inputSearch: inputSearch,
+              materialModel: selectedMaterial,
+              stateManager: stateManager,
+              plutoController: plutoController);
 
           OverlayService.back();
         },
         onSubmitted: (_) async {
-          searchedMaterials = materialController.searchOfProductByText(productTextController.text);
+          searchedMaterials = materialController
+              .searchOfProductByText(productTextController.text);
           materialController.update();
         },
         productTextController: productTextController,
@@ -153,7 +169,10 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
   }) {
     log(materialModel.toString());
     if (materialModel != null) {
-      _updateRowWithMaterial(inputSearch: inputSearch, materialModel: materialModel, stateManager: stateManager);
+      _updateRowWithMaterial(
+          inputSearch: inputSearch,
+          materialModel: materialModel,
+          stateManager: stateManager);
       plutoController.moveToNextRow(stateManager, AppConstants.invRecProduct);
     } else {
       plutoController.restoreCurrentCell(stateManager);
@@ -163,16 +182,23 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     plutoController.update();
   }
 
-  void _updateRowWithMaterial({required String inputSearch, required MaterialModel materialModel, required PlutoGridStateManager stateManager}) {
+  void _updateRowWithMaterial(
+      {required String inputSearch,
+      required MaterialModel materialModel,
+      required PlutoGridStateManager stateManager}) {
     // Check if the input search matches any serial number
-    final String? searchedSerial = materialModel.serialNumbers?.keys.toList().firstWhereOrNull(
-          (serial) => serial.toLowerCase().startsWith(inputSearch.toLowerCase().trim()),
+    final String? searchedSerial = materialModel.serialNumbers?.keys
+        .toList()
+        .firstWhereOrNull(
+          (serial) =>
+              serial.toLowerCase().startsWith(inputSearch.toLowerCase().trim()),
         );
 
     if (!AppConstants.hideInvRecProductSoldSerial) {
       if (searchedSerial != null && searchedSerial.isNotEmpty) {
         // Update the grid with the found serial number
-        updateCellValue(stateManager, AppConstants.invRecProductSoldSerial, searchedSerial);
+        updateCellValue(
+            stateManager, AppConstants.invRecProductSoldSerial, searchedSerial);
       } else {
         // Clear the grid value for the serial number
         updateCellValue(stateManager, AppConstants.invRecProductSoldSerial, '');
@@ -180,16 +206,19 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     }
 
     // Update other fields with material data
-    updateCellValue(stateManager, AppConstants.invRecProduct, materialModel.matName);
-    updateCellValue(stateManager, AppConstants.invRecSubTotal, materialModel.endUserPrice);
+    updateCellValue(
+        stateManager, AppConstants.invRecProduct, materialModel.matName);
+    updateCellValue(
+        stateManager, AppConstants.invRecSubTotal, materialModel.endUserPrice);
     updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
-
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {
     return stateManager.currentCell != null &&
         stateManager.enabledRowGroups &&
-        stateManager.rowGroupDelegate?.isExpandableCell(stateManager.currentCell!) == true;
+        stateManager.rowGroupDelegate
+                ?.isExpandableCell(stateManager.currentCell!) ==
+            true;
   }
 
   void _moveCell(
@@ -202,15 +231,15 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       return;
     }
 
-
-
-
     // تحقق مما إذا كان في الخلية الأخيرة
-    bool isLastCellInRow = stateManager.currentColumn?.field == stateManager.columns.elementAt(6).field;
-    bool isFirstCellInRow = stateManager.currentColumn?.field == stateManager.columns.elementAt(1).field ;
+    bool isLastCellInRow = stateManager.currentColumn?.field ==
+        stateManager.columns.elementAt(6).field;
+    bool isFirstCellInRow = stateManager.currentColumn?.field ==
+        stateManager.columns.elementAt(1).field;
     bool isLastRow = stateManager.currentRowIdx == stateManager.rows.length - 1;
 
-    if (enterKeyAction.isEditingAndMoveDown || enterKeyAction.isEditingAndMoveRight) {
+    if (enterKeyAction.isEditingAndMoveDown ||
+        enterKeyAction.isEditingAndMoveRight) {
       if (HardwareKeyboard.instance.isShiftPressed) {
         log('i am here 1');
         // الانتقال للأعلى إذا كان Shift مضغوط
@@ -224,11 +253,12 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
         // إذا كانت الخلية الأخيرة في السطر الحالي، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
-          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.elementAt(1).field],
+          stateManager.rows[stateManager.currentRowIdx! + 1]
+              .cells[stateManager.columns.elementAt(1).field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );
-      } else if(keyEvent.event.physicalKey.usbHidUsage== 0x00070058){
+      } else if (keyEvent.event.physicalKey.usbHidUsage == 0x00070058) {
         log('i am here 3');
 
         // إذا لم تكن في آخر خلية، انتقل إلى الخلية التالية
@@ -238,7 +268,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       }
-    } else if (enterKeyAction.isEditingAndMoveRight||isFirstCellInRow) {
+    } else if (enterKeyAction.isEditingAndMoveRight || isFirstCellInRow) {
       log('i am here 4');
 
       if (HardwareKeyboard.instance.isShiftPressed) {
@@ -255,7 +285,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
         // إذا كانت الخلية الأخيرة في السطر، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
-          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.rows[stateManager.currentRowIdx! + 1]
+              .cells[stateManager.columns.first.field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );
@@ -263,11 +294,12 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
         log('i am here 7');
 
         stateManager.setCurrentCell(
-          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.rows[stateManager.currentRowIdx! + 1]
+              .cells[stateManager.columns.first.field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );
-     /*   // الانتقال لليمين إذا لم تكن في آخر خلية
+        /*   // الانتقال لليمين إذا لم تكن في آخر خلية
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
           force: true,
@@ -277,7 +309,8 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     }
   }
 
-  void updateCellValue(PlutoGridStateManager stateManager, String field, dynamic value) {
+  void updateCellValue(
+      PlutoGridStateManager stateManager, String field, dynamic value) {
     stateManager.changeCellValue(
       stateManager.currentRow!.cells[field]!,
       value,

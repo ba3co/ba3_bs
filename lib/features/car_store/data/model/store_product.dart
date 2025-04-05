@@ -23,9 +23,9 @@ class StoreProduct {
   // fromJson factory constructor
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
     return StoreProduct(
-      amount: json['amount'] .toString().toInt,
+      amount: json['amount'].toString().toInt,
       barcode: json['barcode'] as String?,
-      price: json['price'] .toString().toDouble,
+      price: json['price'].toString().toDouble,
     );
   }
 
@@ -58,7 +58,9 @@ class StoreProducts {
   // fromJson factory constructor
   factory StoreProducts.fromJson(List? json) {
     return StoreProducts(
-      storeProduct: (json ?? []).map((e) => StoreProduct.fromJson(e as Map<String, dynamic>)).toList(),
+      storeProduct: (json ?? [])
+          .map((e) => StoreProduct.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 

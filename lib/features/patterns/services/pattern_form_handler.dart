@@ -68,7 +68,8 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
 
     final accounts = billType.accounts;
 
-    patternController.controllerToBillAccountsMap.forEach((controller, accountType) {
+    patternController.controllerToBillAccountsMap
+        .forEach((controller, accountType) {
       // Update the controller text based on the account map
       if (accounts != null && accounts.containsKey(accountType)) {
         controller.text = accounts[accountType]?.accName ?? '';
@@ -166,5 +167,6 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
     }
   }
 
-  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 }

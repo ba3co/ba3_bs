@@ -8,11 +8,13 @@ import '../../../bond/data/models/entry_bond_model.dart';
 
 class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
   @override
-  List<EntryBondItemModel> generateItems({required BondModel model, bool? isSimulatedVat}) {
+  List<EntryBondItemModel> generateItems(
+      {required BondModel model, bool? isSimulatedVat}) {
     List<EntryBondItemModel> itemBonds = [];
 
     final date = _currentDate;
-    final note = "سند قيد ل${BondType.byTypeGuide(model.payTypeGuid!).value} رقم :${model.payNumber}";
+    final note =
+        "سند قيد ل${BondType.byTypeGuide(model.payTypeGuid!).value} رقم :${model.payNumber}";
     final originId = model.payGuid;
     for (var element in model.payItems.itemList) {
       itemBonds.add(EntryBondItemModel(
@@ -24,8 +26,11 @@ class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
           id: element.entryAccountGuid!,
           name: element.entryAccountName!,
         ),
-        bondItemType: element.entryCredit! > 0 ? BondItemType.creditor : BondItemType.debtor,
-        amount: element.entryCredit! > 0 ? element.entryCredit : element.entryDebit,
+        bondItemType: element.entryCredit! > 0
+            ? BondItemType.creditor
+            : BondItemType.debtor,
+        amount:
+            element.entryCredit! > 0 ? element.entryCredit : element.entryDebit,
       ));
     }
     return itemBonds;
@@ -34,7 +39,9 @@ class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
   String get _currentDate => DateTime.now().dayMonthYear;
 
   @override
-  EntryBondOrigin createOrigin({required BondModel model, required EntryBondType originType}) => EntryBondOrigin(
+  EntryBondOrigin createOrigin(
+          {required BondModel model, required EntryBondType originType}) =>
+      EntryBondOrigin(
         originId: model.payGuid,
         originType: originType,
         originTypeId: model.payTypeGuid,

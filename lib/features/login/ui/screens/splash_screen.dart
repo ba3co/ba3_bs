@@ -20,7 +20,8 @@ class SplashScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(body: Center(child: LoginLogoWidget()));
         } else if (snapshot.hasError) {
-          return Scaffold(body: Center(child: Text("Error: ${snapshot.error}")));
+          return Scaffold(
+              body: Center(child: Text("Error: ${snapshot.error}")));
         } else {
           _navigateToLogin();
           return Scaffold(body: Center(child: LoginLogoWidget()));
@@ -30,7 +31,8 @@ class SplashScreen extends StatelessWidget {
   }
 
   Future<void> _initializeApp() async {
-    final sharedPreferencesService = await putAsync(SharedPreferencesService().init());
+    final sharedPreferencesService =
+        await putAsync(SharedPreferencesService().init());
 
     put(
       UserManagementController(

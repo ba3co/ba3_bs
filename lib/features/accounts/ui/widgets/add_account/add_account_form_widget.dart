@@ -22,30 +22,32 @@ class AddAccountFormWidget extends StatelessWidget {
         spacing: 20,
         children: [
           FormFieldRow(
-
             firstItem: TextAndExpandedChildField(
               label: AppStrings.accountName.tr,
               child: CustomTextFieldWithoutIcon(
-                validator: (value) => controller.accountFromHandler.defaultValidator(value, "اسم الحساب"),
-                textEditingController: controller.accountFromHandler.nameController,
+                validator: (value) => controller.accountFromHandler
+                    .defaultValidator(value, "اسم الحساب"),
+                textEditingController:
+                    controller.accountFromHandler.nameController,
               ),
             ),
             secondItem: TextAndExpandedChildField(
               label: AppStrings.latinAccountName.tr,
               child: CustomTextFieldWithoutIcon(
-
                 suffixIcon: const SizedBox(),
-                textEditingController: controller.accountFromHandler.latinNameController,
+                textEditingController:
+                    controller.accountFromHandler.latinNameController,
               ),
             ),
           ),
           FormFieldRow(
-
             firstItem: SearchableAccountField(
-              textEditingController: controller.accountFromHandler.accParentName,
+              textEditingController:
+                  controller.accountFromHandler.accParentName,
               label: AppStrings.fatherAccount.tr,
               onSubmitted: (text) async {
-                AccountModel? accountModel = await controller.openAccountSelectionDialog(
+                AccountModel? accountModel =
+                    await controller.openAccountSelectionDialog(
                   query: text,
                   context: context,
                 );
@@ -58,12 +60,13 @@ class AddAccountFormWidget extends StatelessWidget {
               label: AppStrings.accountCode.tr,
               child: CustomTextFieldWithoutIcon(
                 suffixIcon: const SizedBox(),
-                validator: (value) => controller.accountFromHandler.defaultValidator(value, "رمز الحساب"),
-                textEditingController: controller.accountFromHandler.codeController,
+                validator: (value) => controller.accountFromHandler
+                    .defaultValidator(value, "رمز الحساب"),
+                textEditingController:
+                    controller.accountFromHandler.codeController,
               ),
             ),
           ),
-
         ],
       ),
     );

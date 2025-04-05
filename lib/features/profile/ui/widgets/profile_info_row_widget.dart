@@ -23,7 +23,8 @@ class ProfileInfoRowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(15.h),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

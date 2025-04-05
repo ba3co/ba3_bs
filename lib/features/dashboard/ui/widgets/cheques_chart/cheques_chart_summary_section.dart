@@ -32,7 +32,7 @@ class ChequesChartSummarySection extends StatelessWidget {
               ChartItem(
                 color: AppColors.blueColor,
                 // onTap:controller.changeSellerTotalMobileTarget,
-                text:AppStrings.lastTenDays.tr,
+                text: AppStrings.lastTenDays.tr,
                 total: controller.allChequesDuesLastTenLength.toString(),
               ),
             ],

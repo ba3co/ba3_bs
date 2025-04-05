@@ -8,7 +8,8 @@ mixin FirestorePathHelper<ItemTypeModel> {
   /// Example: "eb10653a-a43f-44e5-889d-41ce68c43ec4"
   String getRootDocumentId(ItemTypeModel typeModel) {
     if (typeModel is BillTypeModel) {
-      return typeModel.billTypeId ?? (throw ArgumentError('billTypeId is required for BillTypeModel.'));
+      return typeModel.billTypeId ??
+          (throw ArgumentError('billTypeId is required for BillTypeModel.'));
     }
     if (typeModel is BondType) {
       return typeModel.typeGuide;
@@ -35,11 +36,13 @@ mixin FirestorePathHelper<ItemTypeModel> {
       ChequesType(:final label) => label,
       AccountEntity(:final id) => id,
       String name => name, // For String, directly return it.
-      _ => throw ArgumentError('Unsupported typeModel for getSubCollectionPath.'),
+      _ =>
+        throw ArgumentError('Unsupported typeModel for getSubCollectionPath.'),
     };
 
     if (label == null) {
-      throw ArgumentError('A valid label is required for the provided typeModel.');
+      throw ArgumentError(
+          'A valid label is required for the provided typeModel.');
     }
 
     return label.replaceAll('/', ' ');

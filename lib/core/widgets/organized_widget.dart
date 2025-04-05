@@ -7,7 +7,7 @@ class OrganizedWidget extends StatelessWidget {
     super.key,
     required this.titleWidget,
     required this.bodyWidget,
-     this.titleHeight,
+    this.titleHeight,
   });
 
   final Widget titleWidget;
@@ -20,7 +20,7 @@ class OrganizedWidget extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height:titleHeight?? 35,
+            height: titleHeight ?? 35,
             decoration: BoxDecoration(
               // boxShadow: [BoxShadow(color: AppColors.blueColor, blurRadius: 10, spreadRadius: 0.2)],
               color: AppColors.whiteColor,

@@ -17,17 +17,14 @@ class AddTimeWidget extends StatelessWidget {
 
   final UserTimeController userTimeController;
 
-
-
   @override
   Widget build(BuildContext context) {
     return OrganizedWidget(
       titleWidget: Center(
           child: Text(
-            AppStrings.work.tr,
-            style: AppTextStyles.headLineStyle2,
-          )),
-
+        AppStrings.work.tr,
+        style: AppTextStyles.headLineStyle2,
+      )),
       bodyWidget: Column(
         children: [
           Obx(() {
@@ -39,7 +36,8 @@ class AddTimeWidget extends StatelessWidget {
                   width: 40.w,
                   height: 20,
                   onPressed: () => userTimeController.checkLogInAndSave(),
-                  isLoading: userTimeController.logInState.value == RequestState.loading,
+                  isLoading: userTimeController.logInState.value ==
+                      RequestState.loading,
                 ),
                 Spacer(),
                 SizedBox(
@@ -62,7 +60,8 @@ class AddTimeWidget extends StatelessWidget {
                   width: 40.w,
                   height: 20,
                   onPressed: () => userTimeController.checkLogOutAndSave(),
-                  isLoading: userTimeController.logOutState.value == RequestState.loading,
+                  isLoading: userTimeController.logOutState.value ==
+                      RequestState.loading,
                 ),
                 Spacer(),
                 SizedBox(

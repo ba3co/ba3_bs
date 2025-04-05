@@ -27,11 +27,14 @@ class CopyUnpaidChequesUseCase {
 
     final unpaidCheques = fetchedCheques
         .where((cheque) =>
-            (cheque.isPayed == false || cheque.isPayed == null) && (cheque.isRefund == false || cheque.isRefund == null))
+            (cheque.isPayed == false || cheque.isPayed == null) &&
+            (cheque.isRefund == false || cheque.isRefund == null))
         .toList();
 
-    log("fetchedCheques is \${fetchedCheques.length}", name: "CopyUnpaidChequesUseCase");
-    log("unpaidCheques is \${unpaidCheques.length}", name: "CopyUnpaidChequesUseCase");
+    log("fetchedCheques is \${fetchedCheques.length}",
+        name: "CopyUnpaidChequesUseCase");
+    log("unpaidCheques is \${unpaidCheques.length}",
+        name: "CopyUnpaidChequesUseCase");
 
     // Restore current version
     setCurrentVersion(currentYear);
@@ -40,6 +43,7 @@ class CopyUnpaidChequesUseCase {
 
     await saveAllCheques(unpaidCheques, ChequesType.paidChecks);
 
-    log("\uD83D\uDCCC تم نقل الشيكات الغير المقبوضة والغير المدفوعة.", name: "CopyUnpaidChequesUseCase");
+    log("\uD83D\uDCCC تم نقل الشيكات الغير المقبوضة والغير المدفوعة.",
+        name: "CopyUnpaidChequesUseCase");
   }
 }

@@ -33,7 +33,9 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
         row: stateManager.currentRow,
         rowIdx: stateManager.currentRowIdx,
         cell: stateManager.currentCell,
-        selectedRows: stateManager.mode.isMultiSelectMode ? stateManager.currentSelectingRows : null,
+        selectedRows: stateManager.mode.isMultiSelectMode
+            ? stateManager.currentSelectingRows
+            : null,
       ));
       return;
     }
@@ -50,7 +52,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     if (stateManager.configuration.enterKeyAction.isToggleEditing) {
       stateManager.toggleEditing(notify: false);
     } else {
-      if (stateManager.isEditing == true || stateManager.currentColumn?.enableEditingMode == false) {
+      if (stateManager.isEditing == true ||
+          stateManager.currentColumn?.enableEditingMode == false) {
         final saveIsEditing = stateManager.isEditing;
 
         _moveCell(keyEvent, stateManager);
@@ -87,12 +90,14 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     if (searchedAccounts.length == 1) {
       // Single match
       selectedAccountModel = searchedAccounts.first;
-      updateWithSelectedAccount(selectedAccountModel, stateManager, plutoController, columnField!);
+      updateWithSelectedAccount(
+          selectedAccountModel, stateManager, plutoController, columnField!);
     } else if (searchedAccounts.isEmpty) {
       // No matches
       _resetCellValue(stateManager, columnField);
 
-      updateWithSelectedAccount(null, stateManager, plutoController, columnField!);
+      updateWithSelectedAccount(
+          null, stateManager, plutoController, columnField!);
     } else {
       // Multiple matches, show search dialog
       _showSearchDialog(
@@ -118,7 +123,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
         onAccountTap: (selectedAccount) {
           OverlayService.back();
 
-          updateWithSelectedAccount(selectedAccount, stateManager, plutoController, columnField);
+          updateWithSelectedAccount(
+              selectedAccount, stateManager, plutoController, columnField);
         },
       ),
       onCloseCallback: () {
@@ -144,7 +150,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   }
 
   /// Updates the value of the current cell.
-  void _updateCellValue(PlutoGridStateManager stateManager, String? columnField, String? newValue) {
+  void _updateCellValue(PlutoGridStateManager stateManager, String? columnField,
+      String? newValue) {
     stateManager.changeCellValue(
       stateManager.currentRow!.cells[columnField]!,
       newValue,
@@ -155,7 +162,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   }
 
   /// Resets the value of the current cell to its original state.
-  void _resetCellValue(PlutoGridStateManager stateManager, String? columnField) {
+  void _resetCellValue(
+      PlutoGridStateManager stateManager, String? columnField) {
     stateManager.changeCellValue(
       stateManager.currentRow!.cells[columnField]!,
       stateManager.currentCell?.value,
@@ -167,7 +175,9 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
   bool _isExpandableCell(PlutoGridStateManager stateManager) {
     return stateManager.currentCell != null &&
         stateManager.enabledRowGroups &&
-        stateManager.rowGroupDelegate?.isExpandableCell(stateManager.currentCell!) == true;
+        stateManager.rowGroupDelegate
+                ?.isExpandableCell(stateManager.currentCell!) ==
+            true;
   }
 
   void _moveCell(
@@ -181,10 +191,12 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
     }
 
     // تحقق مما إذا كان في الخلية الأخيرة
-    bool isLastCellInRow = stateManager.currentColumn?.field == stateManager.columns.last.field;
+    bool isLastCellInRow =
+        stateManager.currentColumn?.field == stateManager.columns.last.field;
     bool isLastRow = stateManager.currentRowIdx == stateManager.rows.length - 1;
 
-    if (enterKeyAction.isEditingAndMoveDown || enterKeyAction.isEditingAndMoveRight) {
+    if (enterKeyAction.isEditingAndMoveDown ||
+        enterKeyAction.isEditingAndMoveRight) {
       if (HardwareKeyboard.instance.isShiftPressed) {
         // الانتقال للأعلى إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
@@ -195,7 +207,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       } else if (isLastCellInRow && !isLastRow) {
         // إذا كانت الخلية الأخيرة في السطر الحالي، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
-          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.rows[stateManager.currentRowIdx! + 1]
+              .cells[stateManager.columns.first.field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );
@@ -218,7 +231,8 @@ class GetAccountsByEnterAction extends PlutoGridShortcutAction {
       } else if (isLastCellInRow && !isLastRow) {
         // إذا كانت الخلية الأخيرة في السطر، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
-          stateManager.rows[stateManager.currentRowIdx! + 1].cells[stateManager.columns.first.field],
+          stateManager.rows[stateManager.currentRowIdx! + 1]
+              .cells[stateManager.columns.first.field],
           stateManager.currentRowIdx! + 1,
           notify: true,
         );

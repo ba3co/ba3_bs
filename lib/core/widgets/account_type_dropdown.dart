@@ -9,7 +9,8 @@ import '../../features/bill/ui/widgets/bill_shared/bill_header_field.dart';
 import '../constants/app_constants.dart';
 
 class AccountTypeDropdown extends StatelessWidget {
-  const AccountTypeDropdown({super.key, required this.accountSelectionHandler, this.width});
+  const AccountTypeDropdown(
+      {super.key, required this.accountSelectionHandler, this.width});
 
   final IAccountTypeSelectionHandler accountSelectionHandler;
   final double? width;

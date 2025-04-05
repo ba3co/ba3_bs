@@ -10,7 +10,9 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   /// Subscribe to changes for a specific document ID
   @override
   Stream<ChangesModel> subscribeToDoc({required String documentId}) {
-    return databaseService.subscribeToDoc(path: path, documentId: documentId).map((data) => ChangesModel.fromJson(data));
+    return databaseService
+        .subscribeToDoc(path: path, documentId: documentId)
+        .map((data) => ChangesModel.fromJson(data));
   }
 
   @override
@@ -52,7 +54,8 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
       final nestedFieldData = <String, dynamic>{};
 
       item.changeItems.forEach((collection, changes) {
-        nestedFieldData[collection.name] = changes.map((changeItem) => changeItem.toJson()).toList();
+        nestedFieldData[collection.name] =
+            changes.map((changeItem) => changeItem.toJson()).toList();
       });
 
       return {
@@ -76,6 +79,7 @@ class ChangesListenDatasource extends ListenableDatasource<ChangesModel> {
   /// Delete a change by ID
   @override
   Future<void> delete(String id) async {
-    await databaseService.delete(path: path, documentId: id, mapFieldName: 'changeItems');
+    await databaseService.delete(
+        path: path, documentId: id, mapFieldName: 'changeItems');
   }
 }

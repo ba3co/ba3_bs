@@ -3,7 +3,8 @@ import 'package:ba3_bs/core/services/firebase/interfaces/uploader_storage_dataso
 import 'filterable_datasource.dart';
 import 'remote_datasource_base.dart';
 
-abstract class UploaderStorageQueryableDatasource<T> extends RemoteDatasourceBase<T>
+abstract class UploaderStorageQueryableDatasource<T>
+    extends RemoteDatasourceBase<T>
     implements UploaderCapability<T>, FetchWhereCapability<T> {
   // final IRemoteStorageService<String> databaseStorageService;
   //

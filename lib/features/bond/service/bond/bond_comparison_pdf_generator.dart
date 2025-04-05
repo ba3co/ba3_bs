@@ -53,7 +53,11 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
     final BondModel beforeUpdate = itemModel[0];
     final BondModel afterUpdate = itemModel[1];
 
-    final headersComparison = ['Field', AppStrings.before.tr, AppStrings.after.tr];
+    final headersComparison = [
+      'Field',
+      AppStrings.before.tr,
+      AppStrings.after.tr
+    ];
     final dataComparison = _buildComparisonData(beforeUpdate, afterUpdate);
 
     final headersItems = [

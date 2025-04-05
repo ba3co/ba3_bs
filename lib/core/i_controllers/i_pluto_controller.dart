@@ -43,11 +43,14 @@ abstract class IPlutoController<T> extends IRecodesPlutoController<T> {
 
   void restoreCurrentCell(PlutoGridStateManager stateManager);
 
-  Map<MaterialModel, List<TextEditingController>> get buyMaterialsSerialsControllers => {};
+  Map<MaterialModel, List<TextEditingController>>
+      get buyMaterialsSerialsControllers => {};
 
-  Map<MaterialModel, List<TextEditingController>> get sellMaterialsSerialsControllers => {};
+  Map<MaterialModel, List<TextEditingController>>
+      get sellMaterialsSerialsControllers => {};
 
-  void initSerialControllers(MaterialModel materialModel, int serialCount, BillItem billItem);
+  void initSerialControllers(
+      MaterialModel materialModel, int serialCount, BillItem billItem);
 
   /// this for mobile
 /*  void updateWithSelectedMaterial({

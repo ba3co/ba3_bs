@@ -6,7 +6,8 @@ import '../../../../../core/models/query_filter.dart';
 import '../../../../../core/services/firebase/interfaces/queryable_savable_datasource.dart';
 import '../../models/materials/material_model.dart';
 
-class MaterialsRemoteDatasource extends QueryableSavableDatasource<MaterialModel> {
+class MaterialsRemoteDatasource
+    extends QueryableSavableDatasource<MaterialModel> {
   MaterialsRemoteDatasource({required super.databaseService});
 
   @override
@@ -34,7 +35,8 @@ class MaterialsRemoteDatasource extends QueryableSavableDatasource<MaterialModel
 
   @override
   Future<MaterialModel> save(MaterialModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.id, data: item.toJson());
 
     return MaterialModel.fromJson(data);
   }
@@ -50,8 +52,11 @@ class MaterialsRemoteDatasource extends QueryableSavableDatasource<MaterialModel
   }
 
   @override
-  Future<List<MaterialModel>> fetchWhere({required List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters, dateFilter: dateFilter);
+  Future<List<MaterialModel>> fetchWhere(
+      {required List<QueryFilter>? queryFilters,
+      DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(
+        path: path, queryFilters: queryFilters, dateFilter: dateFilter);
 
     final materials = data.map((item) => MaterialModel.fromJson(item)).toList();
 

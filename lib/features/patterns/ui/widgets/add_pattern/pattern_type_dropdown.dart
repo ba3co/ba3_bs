@@ -21,7 +21,9 @@ class PatternTypeDropdown extends StatelessWidget {
       label: AppStrings.billType.tr,
       child: Obx(() {
         return OverlayService.showDropdown<BillPatternType>(
-          value: patternController.patternFormHandler.selectedBillPatternType.value ?? BillPatternType.values.first,
+          value: patternController
+                  .patternFormHandler.selectedBillPatternType.value ??
+              BillPatternType.values.first,
           items: BillPatternType.values,
           onChanged: patternController.patternFormHandler.onSelectedTypeChanged,
           itemLabelBuilder: (type) => type.label.tr,

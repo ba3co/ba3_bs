@@ -37,7 +37,6 @@ class AccountModel implements PlutoAdaptable {
   final int? accBranchMask;
   final List<String>? accCustomer;
 
-
   // final List<String>? billsId;
 
   const AccountModel({
@@ -76,8 +75,11 @@ class AccountModel implements PlutoAdaptable {
       accName: json['AccName'] ?? '',
       accLatinName: json['AccLatinName'] ?? '',
       accCode: json['AccCode'] ?? '',
-      accCDate: json['AccCDate'] == null ? null : DateTime.tryParse(json['AccCDate']),
-      accCheckDate: json['AccCheckDate'] == null ? null : DateTime.tryParse(json['AccCheckDate']),
+      accCDate:
+          json['AccCDate'] == null ? null : DateTime.tryParse(json['AccCDate']),
+      accCheckDate: json['AccCheckDate'] == null
+          ? null
+          : DateTime.tryParse(json['AccCheckDate']),
       accParentGuid: json['AccParentGuid'] ?? '',
       accFinalGuid: json['AccFinalGuid'] ?? '',
       accAccNSons: json['AccAccNSons'] ?? 0,
@@ -205,17 +207,47 @@ class AccountModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(field: AppConstants.accountIdFiled, type: PlutoColumnType.text(), title: AppStrings.identificationNumber.tr, hide: true): id,
+      PlutoColumn(
+          field: AppConstants.accountIdFiled,
+          type: PlutoColumnType.text(),
+          title: AppStrings.identificationNumber.tr,
+          hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: AppStrings.accountNumber.tr, type: PlutoColumnType.text(), field: 'رقم الحساب', width: 180): accNumber,
-      PlutoColumn(title: AppStrings.accountCode.tr, type: PlutoColumnType.text(), field: 'رمز الحساب', width: 180): accCode,
-      PlutoColumn(title: AppStrings.accountName.tr, type: PlutoColumnType.text(), field: 'اسم الحساب'): accName,
-      PlutoColumn(title: AppStrings.latinName.tr, type: PlutoColumnType.text(), field: 'الاسم الاتيني'): accLatinName,
-      PlutoColumn(title: AppStrings.accountType.tr, type: PlutoColumnType.text(), field: 'نوع الحساب'): AppServiceUtils.getAccountType(accType),
-      PlutoColumn(title: AppStrings.fatherAccount.tr, type: PlutoColumnType.text(), field: 'حساب الاب'): accParentName,
-      PlutoColumn(title: AppStrings.children.tr, type: PlutoColumnType.text(), field: 'الاولاد'):
+      PlutoColumn(
+          title: AppStrings.accountNumber.tr,
+          type: PlutoColumnType.text(),
+          field: 'رقم الحساب',
+          width: 180): accNumber,
+      PlutoColumn(
+          title: AppStrings.accountCode.tr,
+          type: PlutoColumnType.text(),
+          field: 'رمز الحساب',
+          width: 180): accCode,
+      PlutoColumn(
+          title: AppStrings.accountName.tr,
+          type: PlutoColumnType.text(),
+          field: 'اسم الحساب'): accName,
+      PlutoColumn(
+          title: AppStrings.latinName.tr,
+          type: PlutoColumnType.text(),
+          field: 'الاسم الاتيني'): accLatinName,
+      PlutoColumn(
+          title: AppStrings.accountType.tr,
+          type: PlutoColumnType.text(),
+          field: 'نوع الحساب'): AppServiceUtils.getAccountType(accType),
+      PlutoColumn(
+          title: AppStrings.fatherAccount.tr,
+          type: PlutoColumnType.text(),
+          field: 'حساب الاب'): accParentName,
+      PlutoColumn(
+              title: AppStrings.children.tr,
+              type: PlutoColumnType.text(),
+              field: 'الاولاد'):
           read<AccountsController>().getAccountChildrenNames(id).join(' , '),
-      PlutoColumn(title: AppStrings.customers.tr, type: PlutoColumnType.text(), field: 'الزبائن'): accCustomer?.toList().join(' , '),
+      PlutoColumn(
+          title: AppStrings.customers.tr,
+          type: PlutoColumnType.text(),
+          field: 'الزبائن'): accCustomer?.toList().join(' , '),
     };
   }
 }

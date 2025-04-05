@@ -37,11 +37,13 @@ mixin PdfHelperMixin {
     return Text(
       text,
       textDirection: TextDirection.rtl,
-      style: TextStyle(fontSize: size, fontWeight: weight, font: font, color: color),
+      style: TextStyle(
+          fontSize: size, fontWeight: weight, font: font, color: color),
     );
   }
 
-  String cleanText(String input) => input.replaceAll(RegExp(r'[\u200B-\u200D\u2060-\u206F]'), '');
+  String cleanText(String input) =>
+      input.replaceAll(RegExp(r'[\u200B-\u200D\u2060-\u206F]'), '');
 
   Widget buildTextCell(String? value, Font? font) {
     final textValue = value?.trim() ?? 'Unknown';
@@ -51,13 +53,17 @@ mixin PdfHelperMixin {
     final containsArabic = arabicRegex.hasMatch(cleanTextValue);
 
     // Split into words
-    final words = cleanTextValue.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
+    final words = cleanTextValue
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
 
     final spans = <InlineSpan>[];
 
     for (final word in words) {
       final isArabicWord = arabicRegex.hasMatch(word);
-      final textDirection = isArabicWord ? TextDirection.rtl : TextDirection.ltr;
+      final textDirection =
+          isArabicWord ? TextDirection.rtl : TextDirection.ltr;
 
       spans.add(
         WidgetSpan(
@@ -87,7 +93,9 @@ mixin PdfHelperMixin {
   }
 
   TextDirection _getTextDirection(String text) =>
-      RegExp(r'[\u0600-\u06FF]').hasMatch(text) ? TextDirection.rtl : TextDirection.ltr;
+      RegExp(r'[\u0600-\u06FF]').hasMatch(text)
+          ? TextDirection.rtl
+          : TextDirection.ltr;
 
   Widget buildSpacing() => SizedBox(height: 0.4 * PdfPageFormat.cm);
 
@@ -104,7 +112,8 @@ mixin PdfHelperMixin {
     );
   }
 
-  Widget buildDetailRow(String title, String value, {PdfColor? valueColor, Font? font}) {
+  Widget buildDetailRow(String title, String value,
+      {PdfColor? valueColor, Font? font}) {
     return RichText(
       textDirection: TextDirection.rtl,
       text: TextSpan(
@@ -139,7 +148,8 @@ mixin PdfHelperMixin {
   String getItemStatus(int? before, int? after) {
     if (before == after) return ''; // No change
 
-    int beforeValue = before == null ? 0 : 1; // If `null`, treat as 0 (not existing)
+    int beforeValue =
+        before == null ? 0 : 1; // If `null`, treat as 0 (not existing)
     int afterValue = after == null ? 0 : 1;
 
     if (beforeValue == 0 && afterValue > 0) {
@@ -160,5 +170,6 @@ mixin PdfHelperMixin {
     return Color.fromARGB(original.alpha, r, g, b).value; // Convert back to int
   }
 
-  String billName(BillModel billModel) => BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value;
+  String billName(BillModel billModel) =>
+      BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value;
 }

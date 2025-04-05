@@ -24,9 +24,13 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final salesController = read<SellerSalesController>();
-    salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel?.userSellerId).then(
+    salesController
+        .onSelectSeller(
+            sellerId: read<UserManagementController>()
+                .loggedInUserModel
+                ?.userSellerId)
+        .then(
           (value) => salesController.calculateTotalAccessoriesMobiles(),
         );
     return Scaffold(
@@ -35,7 +39,8 @@ class ProfileScreen extends StatelessWidget {
         child: Row(
           children: [
             Expanded(child: Obx(() {
-              return salesController.profileScreenState.value == RequestState.loading
+              return salesController.profileScreenState.value ==
+                      RequestState.loading
                   ? ListView(
                       children: List.generate(
                         10,
@@ -48,21 +53,26 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     )
                   : SingleChildScrollView(
-                      child: GetBuilder<UserManagementController>(builder: (controller) {
+                      child: GetBuilder<UserManagementController>(
+                          builder: (controller) {
                         return Column(
                           spacing: 10,
                           children: [
                             ProfileInfoRowWidget(
                               label: AppStrings.userName.tr,
-                              value: controller.loggedInUserModel!.userName.toString(),
+                              value: controller.loggedInUserModel!.userName
+                                  .toString(),
                             ),
                             ProfileInfoRowWidget(
                               label: AppStrings.password.tr,
-                              value: controller.loggedInUserModel!.userPassword.toString(),
+                              value: controller.loggedInUserModel!.userPassword
+                                  .toString(),
                             ),
                             ProfileInfoRowWidget(
                               label: AppStrings.totalSales.tr,
-                              value: (salesController.totalAccessoriesSales + salesController.totalMobilesSales).toString(),
+                              value: (salesController.totalAccessoriesSales +
+                                      salesController.totalMobilesSales)
+                                  .toString(),
                             ),
                             AddTimeWidget(
                               userTimeController: read<UserTimeController>(),
@@ -71,7 +81,8 @@ class ProfileScreen extends StatelessWidget {
                               userTimeController: read<UserTimeController>(),
                             ),
                             UserDailyTimeWidget(
-                              userModel: read<UserTimeController>().getUserById()!,
+                              userModel:
+                                  read<UserTimeController>().getUserById()!,
                             ),
                             Row(
                               spacing: 10,
@@ -83,7 +94,9 @@ class ProfileScreen extends StatelessWidget {
                                       OverlayService.showDialog(
                                         height: 460,
                                         context: context,
-                                        content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
+                                        content: TaskDialogFactory.getStrategy(
+                                                task.taskType!)
+                                            .buildDialog(task),
                                       );
                                     },
                                     title: AppStrings.tasksTodo.tr,
@@ -96,7 +109,9 @@ class ProfileScreen extends StatelessWidget {
                                       OverlayService.showDialog(
                                         height: 460,
                                         context: context,
-                                        content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
+                                        content: TaskDialogFactory.getStrategy(
+                                                task.taskType!)
+                                            .buildDialog(task),
                                       );
                                     },
                                     title: AppStrings.tasksEnded.tr,
@@ -113,7 +128,8 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(
                 width: 700,
                 child: Obx(() {
-                  return salesController.profileScreenState.value == RequestState.loading
+                  return salesController.profileScreenState.value ==
+                          RequestState.loading
                       ? UserTargetShimmerWidget()
                       : UserTargets(
                           salesController: salesController,

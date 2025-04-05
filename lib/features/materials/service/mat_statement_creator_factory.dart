@@ -10,19 +10,20 @@ class MatStatementCreatorFactory {
       // Returns a single BillEntryBondCreator wrapped in a list
       return BillMatStatementCreator();
     }
-    throw UnimplementedError("No EntryBondCreator implementation for model of type ${model.runtimeType}");
+    throw UnimplementedError(
+        "No EntryBondCreator implementation for model of type ${model.runtimeType}");
   }
 
   static MatOrigin resolveOriginType<T>(T model) {
     if (model is BillModel) {
       return MatOrigin(
-        originId: model.billId,
-        originNumber: model.billDetails.billNumber,
-        originTypeId: model.billTypeModel.billTypeId,
-        originType: MatOriginType.bill,
-        fromBill: model.freeBill
-      );
+          originId: model.billId,
+          originNumber: model.billDetails.billNumber,
+          originTypeId: model.billTypeModel.billTypeId,
+          originType: MatOriginType.bill,
+          fromBill: model.freeBill);
     }
-    throw UnimplementedError("No EntryBondType defined for model of type ${model.runtimeType}");
+    throw UnimplementedError(
+        "No EntryBondType defined for model of type ${model.runtimeType}");
   }
 }

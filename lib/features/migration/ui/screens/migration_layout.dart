@@ -19,7 +19,9 @@ class MigrationLayout extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: "إضافة إصدار جديد",
-            onPressed: controller.isMigrating.value ? null : () => _showAddVersionDialog(context, controller),
+            onPressed: controller.isMigrating.value
+                ? null
+                : () => _showAddVersionDialog(context, controller),
           ),
         ],
       ),
@@ -39,19 +41,23 @@ class MigrationLayout extends StatelessWidget {
 
               // 🔹 Show Loading Indicator while Fetching Versions
               Obx(() {
-                if (controller.getMigrationVersionsRequestState.value == RequestState.loading) {
+                if (controller.getMigrationVersionsRequestState.value ==
+                    RequestState.loading) {
                   return const CircularProgressIndicator();
                 }
                 return DropdownButton<String>(
-                  value: controller.selectedVersion.value.isNotEmpty ? controller.selectedVersion.value : null,
+                  value: controller.selectedVersion.value.isNotEmpty
+                      ? controller.selectedVersion.value
+                      : null,
                   hint: const Text("اختر إصدار الترحيل"),
-                  onChanged: controller.isMigrating.value ? null : (newValue) => controller.setMigrationVersion(newValue!),
+                  onChanged: controller.isMigrating.value
+                      ? null
+                      : (newValue) => controller.setMigrationVersion(newValue!),
                   items: controller.migrationVersions
-                      .map((version) =>
-                      DropdownMenuItem(
-                        value: version,
-                        child: Text("إصدار $version"),
-                      ))
+                      .map((version) => DropdownMenuItem(
+                            value: version,
+                            child: Text("إصدار $version"),
+                          ))
                       .toList(),
                 );
               }),
@@ -59,33 +65,40 @@ class MigrationLayout extends StatelessWidget {
 
               // 🔹 Migration Button
               Obx(
-                    () =>
-                    SizedBox(
-                      width: 180,
-                      child: ElevatedButton(
-                        onPressed: controller.isMigrating.value ? null : controller.startMigration,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
-                        ),
-                        child: controller.isMigrating.value
-                            ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                            : const Text("ابدأ الترحيل"),
-                      ),
+                () => SizedBox(
+                  width: 180,
+                  child: ElevatedButton(
+                    onPressed: controller.isMigrating.value
+                        ? null
+                        : controller.startMigration,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 30),
                     ),
+                    child: controller.isMigrating.value
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2),
+                          )
+                        : const Text("ابدأ الترحيل"),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
 
               // 🔹 Migration Status
-              Obx(() =>
-                  Text(
-                    controller.migrationStatus.value,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
-                    textAlign: TextAlign.center,
-                  ),),
+              Obx(
+                () => Text(
+                  controller.migrationStatus.value,
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ],
           ),
         ),
@@ -94,7 +107,8 @@ class MigrationLayout extends StatelessWidget {
   }
 
   /// 🔹 Show Add New Migration Version Dialog
-  void _showAddVersionDialog(BuildContext context, MigrationController controller) {
+  void _showAddVersionDialog(
+      BuildContext context, MigrationController controller) {
     TextEditingController versionController = TextEditingController();
 
     Get.dialog(
@@ -112,20 +126,23 @@ class MigrationLayout extends StatelessWidget {
             onPressed: () => Get.back(),
             child: const Text("إلغاء"),
           ),
-          Obx(() =>
-              ElevatedButton(
-                onPressed: controller.addMigrationVersionsRequestState.value == RequestState.loading
+          Obx(() => ElevatedButton(
+                onPressed: controller.addMigrationVersionsRequestState.value ==
+                        RequestState.loading
                     ? null
                     : () {
-                  controller.migrationController.text = versionController.text.trim();
-                  controller.addMigrationVersion();
-                },
-                child: controller.addMigrationVersionsRequestState.value == RequestState.loading
+                        controller.migrationController.text =
+                            versionController.text.trim();
+                        controller.addMigrationVersion();
+                      },
+                child: controller.addMigrationVersionsRequestState.value ==
+                        RequestState.loading
                     ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                )
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
+                      )
                     : const Text("إضافة"),
               )),
         ],

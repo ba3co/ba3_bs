@@ -22,9 +22,11 @@ import '../../data/models/entry_bond_model.dart';
 class EntryBondController extends GetxController with FloatingLauncher {
   final BulkSavableDatasourceRepository<EntryBondModel> _entryBondsFirebaseRepo;
 
-  final CompoundDatasourceRepository<EntryBondItems, AccountEntity> _accountsStatementsFirebaseRepo;
+  final CompoundDatasourceRepository<EntryBondItems, AccountEntity>
+      _accountsStatementsFirebaseRepo;
 
-  EntryBondController(this._entryBondsFirebaseRepo, this._accountsStatementsFirebaseRepo);
+  EntryBondController(
+      this._entryBondsFirebaseRepo, this._accountsStatementsFirebaseRepo);
 
   /// Method to save an Entry Bond and update related account statements
   Future<List<EntryBondModel>> fetchAllEntryBonds() async {
@@ -81,7 +83,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
         // 3. For each successfully saved bond, run post-save logic
         int counter = 0;
         for (final savedBond in savedBonds) {
-          await _onEntryBondSaved(entryBondModel: savedBond, sourceNumber: sourceNumbers[counter], isSave: isSave);
+          await _onEntryBondSaved(
+              entryBondModel: savedBond,
+              sourceNumber: sourceNumbers[counter],
+              isSave: isSave);
 
           // Update progress
           onProgress?.call(++counter / savedBonds.length);
@@ -114,16 +119,21 @@ class EntryBondController extends GetxController with FloatingLauncher {
       ),
     ]);
 
-    read<LogController>()
-        .addLog(item: entryBondModel, eventType: isSave ? LogEventType.add : LogEventType.update, sourceNumber: sourceNumber);
+    read<LogController>().addLog(
+        item: entryBondModel,
+        eventType: isSave ? LogEventType.add : LogEventType.update,
+        sourceNumber: sourceNumber);
 
     log('Finish _onEntryBondSaved');
   }
 
   /// Saves grouped Entry Bond items by account, in parallel
-  Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems) async {
-    log('Start _saveGroupedEntryBondItems', name: entryBondItems.isNotEmpty ? entryBondItems.first.account.id : '');
-    final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
+  Future<void> _saveGroupedEntryBondItems(
+      List<EntryBondItemModel> entryBondItems) async {
+    log('Start _saveGroupedEntryBondItems',
+        name: entryBondItems.isNotEmpty ? entryBondItems.first.account.id : '');
+    final itemsGroupedByAccount =
+        entryBondItems.groupBy((item) => item.account.id);
 
     // Build a list of futures
     final List<Future<Either<Failure, EntryBondItems>>> futures = [];
@@ -180,7 +190,8 @@ class EntryBondController extends GetxController with FloatingLauncher {
     // Handle potential failures
     for (final result in results) {
       result.fold(
-        (failure) => AppUIUtils.onFailure('${failure.message} in _handleModifiedEntryBondItems'),
+        (failure) => AppUIUtils.onFailure(
+            '${failure.message} in _handleModifiedEntryBondItems'),
         (_) => {},
       );
     }
@@ -216,29 +227,39 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   // Method to create a bond based on bill type
-  Future<void> deleteEntryBondModel({required String entryId, required int sourceNumber}) async {
+  Future<void> deleteEntryBondModel(
+      {required String entryId, required int sourceNumber}) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (entryBondModel) async =>
-          await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId, sourceNumber: sourceNumber),
+      (entryBondModel) async => await onEntryBondDeleted(
+          entryBondModel: entryBondModel,
+          entryId: entryId,
+          sourceNumber: sourceNumber),
     );
   }
 
   Future<void> onEntryBondDeleted(
-      {required EntryBondModel entryBondModel, required String entryId, required int sourceNumber}) async {
+      {required EntryBondModel entryBondModel,
+      required String entryId,
+      required int sourceNumber}) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[]; // Collect error messages.
 
     final entryBondItems = entryBondModel.items!.itemList;
 
     for (final entryBondItem in entryBondItems) {
-      final itemsGroupedByAccount = entryBondItems.where((item) => item.account.id == entryBondItem.account.id).toList();
+      final itemsGroupedByAccount = entryBondItems
+          .where((item) => item.account.id == entryBondItem.account.id)
+          .toList();
 
       deletedTasks.add(
         _accountsStatementsFirebaseRepo
-            .delete(EntryBondItems(docId: entryBondItem.docId, id: entryBondItem.originId!, itemList: itemsGroupedByAccount))
+            .delete(EntryBondItems(
+                docId: entryBondItem.docId,
+                id: entryBondItem.originId!,
+                itemList: itemsGroupedByAccount))
             .then(
           (deleteResult) {
             deleteResult.fold(
@@ -266,7 +287,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
       (_) {
         log('deleteBond Success');
 
-        read<LogController>().addLog(item: entryBondModel, eventType: LogEventType.delete, sourceNumber: sourceNumber);
+        read<LogController>().addLog(
+            item: entryBondModel,
+            eventType: LogEventType.delete,
+            sourceNumber: sourceNumber);
       },
     );
   }
@@ -284,26 +308,34 @@ class EntryBondController extends GetxController with FloatingLauncher {
   //   return EntryBondItems(itemList: uniqueItemsByAccountId.values.toList());
   // }
 
-  void openEntryBondOrigin(EntryBondModel entryBondModel, BuildContext context) {
+  void openEntryBondOrigin(
+      EntryBondModel entryBondModel, BuildContext context) {
     final origin = entryBondModel.origin;
 
     // Handle the case where origin details are missing
-    if (origin == null || origin.originType == null || origin.originId == null) {
+    if (origin == null ||
+        origin.originType == null ||
+        origin.originId == null) {
       return;
     }
 
     final actions = {
-      EntryBondType.bond: () => read<AllBondsController>()
-          .openBondDetailsById(origin.originId!, context, BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+      EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(
+          origin.originId!,
+          context,
+          BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
       EntryBondType.bill: () {
         log(origin.toJson().toString());
         read<AllBillsController>().openFloatingBillDetailsById(
             billId: origin.originId!,
             context: context,
-            bilTypeModel: BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel);
+            bilTypeModel:
+                BillType.byTypeGuide(entryBondModel.origin!.originTypeId!)
+                    .billTypeModel);
       },
       EntryBondType.cheque: () => read<AllChequesController>()
-          .openChequesDetailsById(origin.originId!, context, ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+          .openChequesDetailsById(origin.originId!, context,
+              ChequesType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
     };
 
     final action = actions[origin.originType];

@@ -27,14 +27,17 @@ class _AddSerialWidgetState extends State<AddSerialWidget> {
   @override
   void initState() {
     // Initialize controllers for the specific material id
-    widget.plutoController.initSerialControllers(widget.materialModel, widget.serialCount, widget.billItem);
+    widget.plutoController.initSerialControllers(
+        widget.materialModel, widget.serialCount, widget.billItem);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     // Retrieve the controllers for the given matId.
-    final serialsControllers = widget.plutoController.buyMaterialsSerialsControllers[widget.materialModel] ?? [];
+    final serialsControllers = widget.plutoController
+            .buyMaterialsSerialsControllers[widget.materialModel] ??
+        [];
 
     return Scaffold(
       backgroundColor: Colors.white,

@@ -39,7 +39,6 @@ class UserTaskModel implements PlutoAdaptable {
     this.endedAt,
   });
 
-
   Map<String, dynamic> toJson() {
     return {
       'docId': docId,
@@ -57,24 +56,28 @@ class UserTaskModel implements PlutoAdaptable {
     };
   }
 
-
   factory UserTaskModel.fromJson(Map<String, dynamic> json) {
     return UserTaskModel(
       docId: json['docId'] as String?,
       title: json['title'] as String?,
       materialTask: json['materialTask'] == null
           ? []
-          : (json['materialTask'] as List<dynamic>).map((materialTaskJson) => MaterialTaskModel.fromJson(materialTaskJson)).toList(),
-      dueDate:AppServiceUtils.convertToDateTime (json['dueDate']) ,
+          : (json['materialTask'] as List<dynamic>)
+              .map((materialTaskJson) =>
+                  MaterialTaskModel.fromJson(materialTaskJson))
+              .toList(),
+      dueDate: AppServiceUtils.convertToDateTime(json['dueDate']),
       status: TaskStatus.byValue(json['status'] ?? ''),
-      assignedTo: (json['assignedTo'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      assignedTo: (json['assignedTo'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList(),
       assignedBy: json['assignedBy'] as String?,
       taskType: TaskType.byValue(json['taskType'] ?? ''),
       // json['taskType'] as String?,
       taskImage: json['taskImage'] as String?,
-      createdAt: AppServiceUtils.convertToDateTime(json['createdAt'] ),
-      updatedAt: AppServiceUtils.convertToDateTime(json['updatedAt'] ),
-      endedAt: AppServiceUtils.convertToDateTime(json['endedAt'] ),
+      createdAt: AppServiceUtils.convertToDateTime(json['createdAt']),
+      updatedAt: AppServiceUtils.convertToDateTime(json['updatedAt']),
+      endedAt: AppServiceUtils.convertToDateTime(json['endedAt']),
     );
   }
 
@@ -133,44 +136,52 @@ class UserTaskModel implements PlutoAdaptable {
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ):title,
+      ): title,
       PlutoColumn(
         title: AppStrings.assignedBy.tr,
         field: 'اضيفت من قبل',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
-
         type: PlutoColumnType.text(),
-      ):  read<UserManagementController>().getUserNameById(assignedBy!),
+      ): read<UserManagementController>().getUserNameById(assignedBy!),
       PlutoColumn(
         title: AppStrings.assignedTo.tr,
         field: 'اضيفت الى',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ):assignedTo?.map((e) => read<UserManagementController>().getUserNameById(e),).join(' -- ') ,
+      ): assignedTo
+          ?.map(
+            (e) => read<UserManagementController>().getUserNameById(e),
+          )
+          .join(' -- '),
       PlutoColumn(
         title: AppStrings.materialInTask.tr,
         field: 'مواد الجرد',
         width: 400,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ):materialTask?.map((e) => "${e.materialName!} (${e.quantity}/${e.quantityInTask})",).join(' \\_/ ',) ,
-
+      ): materialTask
+          ?.map(
+            (e) => "${e.materialName!} (${e.quantity}/${e.quantityInTask})",
+          )
+          .join(
+            ' \\_/ ',
+          ),
       PlutoColumn(
         title: AppStrings.createdDate.tr,
-        field:'تاريخ الانشاء',
+        field: 'تاريخ الانشاء',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.date(),
-      ):createdAt,
+      ): createdAt,
       PlutoColumn(
         title: AppStrings.taskDeadline.tr,
         field: 'تاريخ التسليم',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.date(),
-      ):dueDate,
+      ): dueDate,
       PlutoColumn(
         title: AppStrings.status.tr,
         field: 'الحالة',
@@ -180,21 +191,21 @@ class UserTaskModel implements PlutoAdaptable {
       ): status?.value,
       PlutoColumn(
         title: AppStrings.taskType.tr,
-        field:  'نوع المهمة',
+        field: 'نوع المهمة',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
       ): taskType?.label,
       PlutoColumn(
         title: AppStrings.updatedAt,
-        field:'تاريخ التعديل',
+        field: 'تاريخ التعديل',
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
       ): updatedAt,
       PlutoColumn(
         title: AppStrings.endedDate.tr,
-        field:AppStrings.endedDate,
+        field: AppStrings.endedDate,
         width: 200,
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
@@ -214,9 +225,7 @@ class MaterialTaskModel {
     this.materialName,
     this.quantity,
     this.quantityInTask,
-
   });
-
 
   Map<String, dynamic> toJson() {
     return {
@@ -226,7 +235,6 @@ class MaterialTaskModel {
       'quantityInTask': quantityInTask,
     };
   }
-
 
   factory MaterialTaskModel.fromJson(Map<String, dynamic> json) {
     return MaterialTaskModel(

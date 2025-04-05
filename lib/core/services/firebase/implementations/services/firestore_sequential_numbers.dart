@@ -9,7 +9,8 @@ mixin FirestoreSequentialNumbers {
 
   final String _parentCollection = ApiConstants.sequentialNumbers;
 
-  Future<EntitySequence> fetchAndIncrementEntityNumber(String category, String entityType) async {
+  Future<EntitySequence> fetchAndIncrementEntityNumber(
+      String category, String entityType) async {
     final docRef = _firestoreInstance
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
@@ -54,10 +55,13 @@ mixin FirestoreSequentialNumbers {
       '$entityType.${ApiConstants.lastNumber}': newNumber,
     });
 
-    return EntitySequence(currentNumber: lastNumber == 0 ? null : lastNumber, nextNumber: newNumber);
+    return EntitySequence(
+        currentNumber: lastNumber == 0 ? null : lastNumber,
+        nextNumber: newNumber);
   }
 
-  Future<void> setLastUsedNumber(String category, String entityType, int number) async {
+  Future<void> setLastUsedNumber(
+      String category, String entityType, int number) async {
     final docRef = _firestoreInstance
         .collection(_parentCollection) // Parent collection
         .doc(category); // Document for category (e.g., "bills", "bonds")
@@ -73,8 +77,10 @@ mixin FirestoreSequentialNumbers {
     );
   }
 
-  Future<void> decrementLastNumber(String category, String entityType, {int? number}) async {
-    final docRef = _firestoreInstance.collection(_parentCollection).doc(category);
+  Future<void> decrementLastNumber(String category, String entityType,
+      {int? number}) async {
+    final docRef =
+        _firestoreInstance.collection(_parentCollection).doc(category);
 
     await docRef.set(
       {
@@ -86,7 +92,10 @@ mixin FirestoreSequentialNumbers {
     );
   }
 
-  Future<int> getLastNumber({required String category, required String entityType, int? number}) async {
+  Future<int> getLastNumber(
+      {required String category,
+      required String entityType,
+      int? number}) async {
     if (number != null) {
       return number;
     }

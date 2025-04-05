@@ -26,39 +26,46 @@ class CostsExport {
       ),
       // Map each seller model to its XML representation.
       ...sellers.map((s) => xml.XmlElement(
-        xml.XmlName('Q'),
-        [],
-        [
-          // Unique identifier for the seller entry.
-          XmlHelpers.element('CostGuid', s.costGuid),
-          // Cost code converted to string if available.
-          XmlHelpers.element('CostCode', s.costCode?.toString()),
-          // Name of the seller.
-          XmlHelpers.element('CostName', s.costName),
-          // Latin name representation of the seller.
-          XmlHelpers.element('CostLatinName', s.costLatinName),
-          // Parent GUID for the seller; defaults to a standard value if null.
-          XmlHelpers.element('CostParentGuid', s.costParentGuid ?? '00000000-0000-0000-0000-000000000000'),
-          // Notes associated with the seller.
-          XmlHelpers.element('CostNote', s.costNote),
-          // Debit amount; defaults to '0.00' if null.
-          XmlHelpers.element('CostDebit', s.costDebit ?? '0.00'),
-          // Credit amount; defaults to '0.00' if null.
-          XmlHelpers.element('CostCredit', s.costCredit ?? '0.00'),
-          // Cost type formatted to two decimal places; defaults to '0.00' if null.
-          XmlHelpers.element('CostType', s.costType?.toStringAsFixed(2) ?? '0.00'),
-          // Security level formatted to two decimal places; defaults to '1.00' if null.
-          XmlHelpers.element('CostSecurity', s.costSecurity?.toStringAsFixed(2) ?? '1.00'),
-          // First resource value formatted to two decimals; defaults to '0.00' if null.
-          XmlHelpers.element('CostRes1', s.costRes1?.toStringAsFixed(2) ?? '0.00'),
-          // Second resource value formatted to two decimals; defaults to '0.00' if null.
-          XmlHelpers.element('CostRes2', s.costRes2?.toStringAsFixed(2) ?? '0.00'),
-          // Branch mask for the seller; defaults to '0' if null.
-          XmlHelpers.element('CostBranchMask', s.costBranchMask?.toString() ?? '0'),
-          // Indicates whether the seller ratio is changeable, formatted to two decimals; defaults to '0.00' if null.
-          XmlHelpers.element('CostIsChangeableRatio', s.costIsChangeableRatio?.toStringAsFixed(2) ?? '0.00'),
-        ],
-      )),
+            xml.XmlName('Q'),
+            [],
+            [
+              // Unique identifier for the seller entry.
+              XmlHelpers.element('CostGuid', s.costGuid),
+              // Cost code converted to string if available.
+              XmlHelpers.element('CostCode', s.costCode?.toString()),
+              // Name of the seller.
+              XmlHelpers.element('CostName', s.costName),
+              // Latin name representation of the seller.
+              XmlHelpers.element('CostLatinName', s.costLatinName),
+              // Parent GUID for the seller; defaults to a standard value if null.
+              XmlHelpers.element('CostParentGuid',
+                  s.costParentGuid ?? '00000000-0000-0000-0000-000000000000'),
+              // Notes associated with the seller.
+              XmlHelpers.element('CostNote', s.costNote),
+              // Debit amount; defaults to '0.00' if null.
+              XmlHelpers.element('CostDebit', s.costDebit ?? '0.00'),
+              // Credit amount; defaults to '0.00' if null.
+              XmlHelpers.element('CostCredit', s.costCredit ?? '0.00'),
+              // Cost type formatted to two decimal places; defaults to '0.00' if null.
+              XmlHelpers.element(
+                  'CostType', s.costType?.toStringAsFixed(2) ?? '0.00'),
+              // Security level formatted to two decimal places; defaults to '1.00' if null.
+              XmlHelpers.element(
+                  'CostSecurity', s.costSecurity?.toStringAsFixed(2) ?? '1.00'),
+              // First resource value formatted to two decimals; defaults to '0.00' if null.
+              XmlHelpers.element(
+                  'CostRes1', s.costRes1?.toStringAsFixed(2) ?? '0.00'),
+              // Second resource value formatted to two decimals; defaults to '0.00' if null.
+              XmlHelpers.element(
+                  'CostRes2', s.costRes2?.toStringAsFixed(2) ?? '0.00'),
+              // Branch mask for the seller; defaults to '0' if null.
+              XmlHelpers.element(
+                  'CostBranchMask', s.costBranchMask?.toString() ?? '0'),
+              // Indicates whether the seller ratio is changeable, formatted to two decimals; defaults to '0.00' if null.
+              XmlHelpers.element('CostIsChangeableRatio',
+                  s.costIsChangeableRatio?.toStringAsFixed(2) ?? '0.00'),
+            ],
+          )),
     ];
 
     // Return the root 'Cost1' XML element that encapsulates all seller elements.

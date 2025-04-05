@@ -19,7 +19,8 @@ class AddMaterialScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(controller.selectedMaterial?.matName ?? AppStrings.newMaterial.tr),
+          title: Text(controller.selectedMaterial?.matName ??
+              AppStrings.newMaterial.tr),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -30,10 +31,12 @@ class AddMaterialScreen extends StatelessWidget {
                 controller: controller,
               ),
               FormFieldRow(
-                firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
+                firstItem: TaxDropdown(
+                    taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
                   label: AppStrings.group.tr,
-                  textController: controller.materialFromHandler.parentController,
+                  textController:
+                      controller.materialFromHandler.parentController,
                   onSubmitted: (text) {
                     controller.openMaterialGroupSelectionDialog(
                       query: text,
@@ -44,18 +47,26 @@ class AddMaterialScreen extends StatelessWidget {
               ),
               Obx(() {
                 return AppButton(
-                  isLoading: controller.saveMaterialRequestState.value == RequestState.loading,
-                  title: controller.selectedMaterial?.id == null ? AppStrings.add.tr : AppStrings.edit.tr,
+                  isLoading: controller.saveMaterialRequestState.value ==
+                      RequestState.loading,
+                  title: controller.selectedMaterial?.id == null
+                      ? AppStrings.add.tr
+                      : AppStrings.edit.tr,
                   onPressed: () {
                     controller.saveOrUpdateMaterial();
                   },
-                  iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
-                  color: controller.selectedMaterial?.id == null ? null : Colors.green,
+                  iconData: controller.selectedMaterial?.id == null
+                      ? Icons.add
+                      : Icons.edit,
+                  color: controller.selectedMaterial?.id == null
+                      ? null
+                      : Colors.green,
                 );
               }),
               Obx(() {
                 return AppButton(
-                  isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
+                  isLoading: controller.deleteMaterialRequestState.value ==
+                      RequestState.loading,
                   title: AppStrings.delete.tr,
                   onPressed: () {
                     controller.deleteMaterial();

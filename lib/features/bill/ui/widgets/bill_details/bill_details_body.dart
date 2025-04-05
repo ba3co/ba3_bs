@@ -44,12 +44,19 @@ class BillDetailsBody extends StatelessWidget {
                       child: PlutoWithEdite(
                         columns: billDetailsPlutoController.recordsTableColumns,
                         rows: billDetailsPlutoController.recordsTableRows,
-                        onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
-                          billDetailsPlutoController.onMainTableRowSecondaryTap(event, context,(billDetailsController.selectedCustomerAccount));
+                        onRowSecondaryTap:
+                            (PlutoGridOnRowSecondaryTapEvent event) {
+                          billDetailsPlutoController.onMainTableRowSecondaryTap(
+                              event,
+                              context,
+                              (billDetailsController.selectedCustomerAccount));
                         },
-                        onChanged: (event)=>billDetailsPlutoController.onMainTableStateManagerChanged(event, billDetailsController.selectedCustomerAccount),
+                        onChanged: (event) => billDetailsPlutoController
+                            .onMainTableStateManagerChanged(event,
+                                billDetailsController.selectedCustomerAccount),
                         onLoaded: billDetailsPlutoController.onMainTableLoaded,
-                        shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),
+                        shortCut: customPlutoShortcut(GetProductByEnterAction(
+                            billDetailsPlutoController, context)),
                         evenRowColor: Color(billTypeModel.color!),
                       ),
                     );
@@ -65,10 +72,13 @@ class BillDetailsBody extends StatelessWidget {
                   builder: (_) {
                     return BillGridWidget(
                       rowColor: Colors.grey,
-                      columns: billDetailsPlutoController.additionsDiscountsColumns,
+                      columns:
+                          billDetailsPlutoController.additionsDiscountsColumns,
                       rows: billDetailsPlutoController.additionsDiscountsRows,
-                      onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
-                      onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
+                      onChanged: billDetailsPlutoController
+                          .onAdditionsDiscountsChanged,
+                      onLoaded:
+                          billDetailsPlutoController.onAdditionsDiscountsLoaded,
                       shortCut: customPlutoShortcut(GetAccountsByEnterAction(
                         plutoController: billDetailsPlutoController,
                         textFieldName: AppConstants.id,

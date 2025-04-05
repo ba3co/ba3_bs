@@ -14,7 +14,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _fadeAnimation;
@@ -27,7 +28,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
@@ -52,12 +54,18 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [BoxShadow(color: AppColors.grayColor, blurRadius: 25, spreadRadius: 0.1)],
+                boxShadow: [
+                  BoxShadow(
+                      color: AppColors.grayColor,
+                      blurRadius: 25,
+                      spreadRadius: 0.1)
+                ],
                 color: Colors.white,
               ),
               child: Row(
                 children: [
-                  LoginBodyWidget(userManagementController: userManagementController),
+                  LoginBodyWidget(
+                      userManagementController: userManagementController),
                   VerticalDivider(),
                   const Expanded(
                     child: LoginLogoWidget(text: 'Ba3 Business Solutions'),

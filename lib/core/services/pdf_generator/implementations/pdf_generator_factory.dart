@@ -24,13 +24,14 @@ class PdfGeneratorFactory {
     } else if (model is List<BondModel>) {
       // Returns a single BondEntryBondCreator wrapped in a list
       return BondComparisonPdfGenerator();
-    }else if (model is ChequesModel) {
+    } else if (model is ChequesModel) {
       // Returns a single BondEntryBondCreator wrapped in a list
       return ChequesPdfGenerator();
     } else if (model is List<ChequesModel>) {
       // Returns a single BondEntryBondCreator wrapped in a list
       return ChequesComparisonPdfGenerator();
     }
-    throw UnimplementedError("No EntryBondCreator implementation for model of type ${model.runtimeType}");
+    throw UnimplementedError(
+        "No EntryBondCreator implementation for model of type ${model.runtimeType}");
   }
 }

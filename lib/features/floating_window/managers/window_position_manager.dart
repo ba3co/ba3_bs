@@ -23,7 +23,8 @@ class WindowPositionManager {
   /// Calculates and returns the next available position for a new window,
   /// based on the parent window's dimensions.
   /// The position is returned as a ratio of the parent's width and height.
-  Offset getNextWindowPositionRatio(double windowWidth, double windowHeight, double parentWidth, double parentHeight) {
+  Offset getNextWindowPositionRatio(double windowWidth, double windowHeight,
+      double parentWidth, double parentHeight) {
     // If no previous positions exist, set the initial position.
     if (windowPositionRatios.isEmpty) {
       final ratio = Offset(
@@ -38,7 +39,8 @@ class WindowPositionManager {
     final lastWindowRatio = windowPositionRatios.last;
 
     // Convert the last window's position ratio to absolute coordinates.
-    final lastWindowPosition = Offset(lastWindowRatio.dx * parentWidth, lastWindowRatio.dy * parentHeight);
+    final lastWindowPosition = Offset(
+        lastWindowRatio.dx * parentWidth, lastWindowRatio.dy * parentHeight);
 
     // Calculate the new x-position of the window.
     double x = lastWindowPosition.dx + windowWidth + horizontalPadding;
@@ -59,7 +61,8 @@ class WindowPositionManager {
     }
 
     // Convert the new position to a ratio and add it to the list.
-    final newRatio = Offset(x / parentWidth, (lastWindowPosition.dy) / parentHeight);
+    final newRatio =
+        Offset(x / parentWidth, (lastWindowPosition.dy) / parentHeight);
 
     windowPositionRatios.add(newRatio);
     return newRatio;

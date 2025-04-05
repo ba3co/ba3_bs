@@ -13,7 +13,8 @@ class UserTimeRepository {
       // Check if location services are enabled.
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        return left(Failure(404, "site is not enabled")); // If the site is not enabled
+        return left(
+            Failure(404, "site is not enabled")); // If the site is not enabled
       }
 
       // Check site permission
@@ -21,16 +22,19 @@ class UserTimeRepository {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          return left(Failure(403, " permission is denied")); // If permission is denied
+          return left(
+              Failure(403, " permission is denied")); // If permission is denied
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        return left(Failure(403, " permission is denied")); // If permission is permanently denied
+        return left(Failure(403,
+            " permission is denied")); // If permission is permanently denied
       }
 
       // Get current location
-      return right(await Geolocator.getCurrentPosition(locationSettings: LocationSettings(accuracy: LocationAccuracy.high)));
+      return right(await Geolocator.getCurrentPosition(
+          locationSettings: LocationSettings(accuracy: LocationAccuracy.high)));
     } catch (e) {
       return Left(ErrorHandler(e).failure); // Return error
     }

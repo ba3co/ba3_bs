@@ -16,8 +16,9 @@ class DisplayAllBillsButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-          width:1.w,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+          width: 1.w,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(20)),
           padding: const EdgeInsets.all(30.0),
           child: Center(
             child: Text(

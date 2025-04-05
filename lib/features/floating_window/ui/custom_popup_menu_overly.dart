@@ -30,7 +30,8 @@ void customPopupMenuOverlay<T>({
               onSelected.call(item);
             },
             child: Padding(
-              padding: padding ?? const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: padding ??
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 itemLabelBuilder(item),
                 style: const TextStyle(fontSize: 16.0, color: Colors.black),
@@ -52,7 +53,8 @@ void customPopupMenuOverlay<T>({
               back();
             },
             child: Container(
-              color: Colors.transparent, // Ensures the tap is registered but keeps it invisible
+              color: Colors
+                  .transparent, // Ensures the tap is registered but keeps it invisible
             ),
           ),
           Positioned(

@@ -38,7 +38,8 @@ class UserAllWorkingHour extends StatelessWidget {
                 onOutTimeChange: (time) {
                   controller.setOutTime(index, time);
                 },
-                userWorkingHours: controller.workingHours.values.elementAt(index),
+                userWorkingHours:
+                    controller.workingHours.values.elementAt(index),
               ),
               separatorBuilder: (context, index) => VerticalSpace(),
               itemCount: controller.workingHoursLength,
@@ -60,7 +61,8 @@ class UserAllWorkingHour extends StatelessWidget {
                       HorizontalSpace(),
                       Text(
                         'اضافة',
-                        style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
+                        style: AppTextStyles.headLineStyle4
+                            .copyWith(fontSize: 12, color: AppColors.blueColor),
                       )
                     ],
                   )),

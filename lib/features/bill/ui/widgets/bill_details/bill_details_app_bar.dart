@@ -37,8 +37,11 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       leadingWidth: 400.w,
       centerTitle: false,
-      title:   Text( read<TranslationController>().currentLocaleIsRtl? '${billTypeModel.fullName}':'${billTypeModel.latinFullName}',),
-
+      title: Text(
+        read<TranslationController>().currentLocaleIsRtl
+            ? '${billTypeModel.fullName}'
+            : '${billTypeModel.latinFullName}',
+      ),
       actions: [
         Visibility(
           visible: RoleItemType.viewBill.hasAdminPermission,
@@ -79,7 +82,8 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
                 width: Get.width * 0.10,
                 child: CustomTextFieldWithoutIcon(
                   isNumeric: true,
-                  textEditingController: billDetailsController.billNumberController,
+                  textEditingController:
+                      billDetailsController.billNumberController,
                   onSubmitted: (billNumber) {
                     billSearchController.goToBillByNumber(billNumber.toInt);
                   },
@@ -119,8 +123,9 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
         ),
-     ///this for mobile
-     /*   CustomIconButton(
+
+        ///this for mobile
+        /*   CustomIconButton(
           disabled: false,
           onPressed: () {
             billDetailsController.showBarCodeScanner(context, billTypeModel);

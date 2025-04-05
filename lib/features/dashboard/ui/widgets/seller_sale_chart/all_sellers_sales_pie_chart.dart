@@ -1,4 +1,3 @@
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,11 +46,14 @@ class AllSellersSalesPieChart extends StatelessWidget {
                   sectionsSpace: 0,
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                      if (!event.isInterestedForInteractions || pieTouchResponse == null) return;
+                      if (!event.isInterestedForInteractions ||
+                          pieTouchResponse == null) return;
                       final touchedSection = pieTouchResponse.touchedSection;
                       if (event is FlPanDownEvent) {
-                        if (touchedSection?.touchedSectionIndex == null|| touchedSection?.touchedSectionIndex == -1) return;
-                        controller.lunchSellerScree(context, touchedSection!.touchedSectionIndex);
+                        if (touchedSection?.touchedSectionIndex == null ||
+                            touchedSection?.touchedSectionIndex == -1) return;
+                        controller.lunchSellerScree(
+                            context, touchedSection!.touchedSectionIndex);
                       }
                       if (touchedSection == null) return;
                     },

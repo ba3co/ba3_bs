@@ -5,7 +5,8 @@ import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 
 import '../../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 
-class AccountsDatasource extends BulkSavableDatasource<AccountModel> with FirestoreSequentialNumbers {
+class AccountsDatasource extends BulkSavableDatasource<AccountModel>
+    with FirestoreSequentialNumbers {
   AccountsDatasource({required super.databaseService});
 
   @override
@@ -33,7 +34,8 @@ class AccountsDatasource extends BulkSavableDatasource<AccountModel> with Firest
 
   @override
   Future<AccountModel> save(AccountModel item) async {
-    final updatedItem = item.id == null ? await _assignAccountNumber(item) : item;
+    final updatedItem =
+        item.id == null ? await _assignAccountNumber(item) : item;
 
     final savedData = await databaseService.add(
       path: path,

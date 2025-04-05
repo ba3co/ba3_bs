@@ -32,19 +32,24 @@ class LoadingDialog extends StatelessWidget {
               child: Dialog(
                 backgroundColor: AppColors.whiteColor,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         ' جاري تحميل $message',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              fontSize: fontSize,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: fontSize,
+                                ),
                       ),
                       HorizontalSpace(6.w),
-                      SizedBox(width: 20, height: 20, child: const CircularProgressIndicator()),
+                      SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: const CircularProgressIndicator()),
                     ],
                   ),
                 ),

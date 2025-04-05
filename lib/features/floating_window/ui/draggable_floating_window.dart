@@ -32,15 +32,19 @@ class DraggableFloatingWindow extends StatelessWidget {
       builder: (controller) {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            final newParentSize = Size(constraints.maxWidth, constraints.maxHeight);
+            final newParentSize =
+                Size(constraints.maxWidth, constraints.maxHeight);
 
             if (controller.parentSize.value != newParentSize) {
               log('controller.parentSize.value != newParentSize');
-              controller.updateWindowForSizeChange(newParentSize: newParentSize, positionRatio: targetPositionRatio);
+              controller.updateWindowForSizeChange(
+                  newParentSize: newParentSize,
+                  positionRatio: targetPositionRatio);
             }
 
             return GestureDetector(
-              onPanUpdate: controller.isMinimized ? null : controller.onPanUpdate,
+              onPanUpdate:
+                  controller.isMinimized ? null : controller.onPanUpdate,
               onPanStart: controller.isMinimized ? null : controller.onPanStart,
               onPanEnd: controller.isMinimized ? null : controller.onPanEnd,
               child: Stack(
@@ -50,7 +54,8 @@ class DraggableFloatingWindow extends StatelessWidget {
                     top: controller.y,
                     child: Obx(() {
                       return MouseRegion(
-                        onHover: controller.isMinimized ? null : controller.onHover,
+                        onHover:
+                            controller.isMinimized ? null : controller.onHover,
                         cursor: controller.mouseCursor.value,
                         child: Material(
                           key: controller.floatingWindowKey,
@@ -59,7 +64,9 @@ class DraggableFloatingWindow extends StatelessWidget {
                           child: Container(
                               width: controller.width,
                               height: controller.height,
-                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12)),
                               child: Column(
                                 children: [
                                   Flexible(
@@ -71,52 +78,68 @@ class DraggableFloatingWindow extends StatelessWidget {
                                           InkWell(
                                             onTap: onBringToTop,
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(vertical: 10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 10),
                                               decoration: const BoxDecoration(
                                                 color: Color(0xFF2C2C2E),
                                                 borderRadius: BorderRadius.only(
                                                   topLeft: Radius.circular(8.0),
-                                                  topRight: Radius.circular(8.0),
+                                                  topRight:
+                                                      Radius.circular(8.0),
                                                 ),
                                               ),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
                                                 children: [
                                                   const HorizontalSpace(),
                                                   InkWell(
                                                     onTap: onClose,
                                                     child: const CircleAvatar(
-                                                      backgroundColor: Color(0xFFFF605C),
+                                                      backgroundColor:
+                                                          Color(0xFFFF605C),
                                                       radius: 7,
-                                                      child: Icon(Icons.close, color: Colors.black, size: 12),
+                                                      child: Icon(Icons.close,
+                                                          color: Colors.black,
+                                                          size: 12),
                                                     ),
                                                   ),
                                                   const HorizontalSpace(),
                                                   InkWell(
                                                     onTap: () {
-                                                      controller.minimize(targetPositionRatio);
+                                                      controller.minimize(
+                                                          targetPositionRatio);
                                                     },
                                                     child: const CircleAvatar(
-                                                      backgroundColor: Color(0xFFFFBD44),
+                                                      backgroundColor:
+                                                          Color(0xFFFFBD44),
                                                       radius: 7,
-                                                      child: Icon(Icons.remove, color: Colors.black, size: 12),
+                                                      child: Icon(Icons.remove,
+                                                          color: Colors.black,
+                                                          size: 12),
                                                     ),
                                                   ),
                                                   const HorizontalSpace(),
                                                   InkWell(
                                                     onTap: controller.maximize,
                                                     child: const CircleAvatar(
-                                                      backgroundColor: Color(0xFF00CA4E),
+                                                      backgroundColor:
+                                                          Color(0xFF00CA4E),
                                                       radius: 7,
-                                                      child: Icon(Icons.fullscreen_outlined,
-                                                          color: Colors.black, size: 12),
+                                                      child: Icon(
+                                                          Icons
+                                                              .fullscreen_outlined,
+                                                          color: Colors.black,
+                                                          size: 12),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                          Expanded(child: floatingWindowContent),
+                                          Expanded(
+                                              child: floatingWindowContent),
                                         ],
                                       ),
                                     ),
@@ -130,27 +153,36 @@ class DraggableFloatingWindow extends StatelessWidget {
                                         textStyle: Theme.of(context)
                                             .textTheme
                                             .bodyMedium
-                                            ?.copyWith(fontSize: 15, color: Colors.white),
+                                            ?.copyWith(
+                                                fontSize: 15,
+                                                color: Colors.white),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
                                           children: [
                                             Expanded(
                                               child: IconButton(
-                                                icon: Icon(Icons.keyboard_arrow_up, size: .026.sh),
+                                                icon: Icon(
+                                                    Icons.keyboard_arrow_up,
+                                                    size: .026.sh),
                                                 //  tooltip: 'اظهار',
-                                                onPressed: controller.restoreWindowFromMinimized,
+                                                onPressed: controller
+                                                    .restoreWindowFromMinimized,
                                               ),
                                             ),
                                             Expanded(
                                               child: IconButton(
-                                                icon: Icon(Icons.fullscreen, size: .026.sh),
+                                                icon: Icon(Icons.fullscreen,
+                                                    size: .026.sh),
                                                 //   tooltip: 'تكبير',
-                                                onPressed: controller.maximizeWindowFromMinimized,
+                                                onPressed: controller
+                                                    .maximizeWindowFromMinimized,
                                               ),
                                             ),
                                             Expanded(
                                               child: IconButton(
-                                                icon: Icon(Icons.close, size: .026.sh),
+                                                icon: Icon(Icons.close,
+                                                    size: .026.sh),
                                                 // tooltip: 'اغلاق',
                                                 onPressed: onClose,
                                               ),

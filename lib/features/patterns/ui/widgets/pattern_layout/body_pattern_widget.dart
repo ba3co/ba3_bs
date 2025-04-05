@@ -4,20 +4,21 @@ import 'package:flutter/material.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 
 class BodyPatternWidget extends StatelessWidget {
-  const BodyPatternWidget({super.key, required this.firstText, required this.secondText,this.visible});
+  const BodyPatternWidget(
+      {super.key,
+      required this.firstText,
+      required this.secondText,
+      this.visible});
 
   final String firstText, secondText;
-final bool? visible;
+  final bool? visible;
   @override
   Widget build(BuildContext context) {
-
-
     return Visibility(
-      visible: visible??true,
+      visible: visible ?? true,
       child: Column(
         children: [
           Row(
-
             children: [
               SizedBox(
                 width: 200,

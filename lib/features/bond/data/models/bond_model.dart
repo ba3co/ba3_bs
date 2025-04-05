@@ -76,7 +76,8 @@ class BondModel extends PlutoAdaptable {
   }) {
     final items = PayItems.fromBondRecords(bondRecordsItems);
 
-    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) {
+    if (bondType == BondType.journalVoucher ||
+        bondType == BondType.openingEntry) {
       payAccountGuid = "00000000-0000-0000-0000-000000000000";
     }
 
@@ -133,7 +134,8 @@ class BondModel extends PlutoAdaptable {
     };
   }
 
-  factory BondModel.empty({required BondType bondType, int lastBondNumber = 0}) {
+  factory BondModel.empty(
+      {required BondType bondType, int lastBondNumber = 0}) {
     return BondModel(
         payAccountGuid: '',
         payItems: PayItems(itemList: []),
@@ -193,7 +195,9 @@ class BondModel extends PlutoAdaptable {
       payNumber: payJson["PayNumber"],
       payGuid: payJson["PayGuid"],
       payBranchGuid: payJson["PayBranchGuid"],
-      payDate: dateFormat.parse(payJson["PayDate"].toString().toYearMonthDayFormat()).dayMonthYear,
+      payDate: dateFormat
+          .parse(payJson["PayDate"].toString().toYearMonthDayFormat())
+          .dayMonthYear,
       entryPostDate: payJson["EntryPostDate"],
       payNote: payJson["PayNote"].toString(),
       payCurrencyGuid: payJson["PayCurrencyGuid"],
@@ -217,11 +221,35 @@ class BondModel extends PlutoAdaptable {
         hide: true,
       ): payGuid,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: 'رقم السند', field: 'رقم السند', type: PlutoColumnType.text()): payNumber,
-      PlutoColumn(title: 'تاريخ السند', field: 'تاريخ السند', type: PlutoColumnType.date()): payDate,
-      PlutoColumn(title: 'المبلغ', field: 'المبلغ', type: PlutoColumnType.number()): payItems.itemList.fold(0.0, (previousValue, element) => previousValue+element.entryDebit!,),
-      PlutoColumn(title: 'الحسابات المتأثرة', field: 'الحسابات', type: PlutoColumnType.text(),width: 0.6.sw): payItems.itemList.map((item) =>item.entryAccountName ,).toList().join(', '),
-      PlutoColumn(title: 'type', field: 'type', type: PlutoColumnType.text(),       hide: true,): payTypeGuid,
+      PlutoColumn(
+          title: 'رقم السند',
+          field: 'رقم السند',
+          type: PlutoColumnType.text()): payNumber,
+      PlutoColumn(
+          title: 'تاريخ السند',
+          field: 'تاريخ السند',
+          type: PlutoColumnType.date()): payDate,
+      PlutoColumn(
+          title: 'المبلغ',
+          field: 'المبلغ',
+          type: PlutoColumnType.number()): payItems.itemList.fold(
+        0.0,
+        (previousValue, element) => previousValue + element.entryDebit!,
+      ),
+      PlutoColumn(
+              title: 'الحسابات المتأثرة', field: 'الحسابات', type: PlutoColumnType.text(), width: 0.6.sw):
+          payItems.itemList
+              .map(
+                (item) => item.entryAccountName,
+              )
+              .toList()
+              .join(', '),
+      PlutoColumn(
+        title: 'type',
+        field: 'type',
+        type: PlutoColumnType.text(),
+        hide: true,
+      ): payTypeGuid,
     };
   }
 }

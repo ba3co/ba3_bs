@@ -13,7 +13,8 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
   final _accountsController = read<AccountsController>();
 
   @override
-  Widget buildHeader(BondModel itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(BondModel itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -34,7 +35,8 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
       children: [
         buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
         buildSpacing(),
-        buildDetailRow('Bond number: ', itemModel.payNumber.toString(), font: font),
+        buildDetailRow('Bond number: ', itemModel.payNumber.toString(),
+            font: font),
         buildSpacing(),
         buildDetailRow('Bond type: ', bondName(itemModel), font: font),
         buildSpacing(),
@@ -75,7 +77,8 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
     return List.generate(itemModel.payItems.itemList.length, (index) {
       final item = itemModel.payItems.itemList[index];
 
-      final accountName = _accountsController.getAccountNameById(item.entryAccountGuid);
+      final accountName =
+          _accountsController.getAccountNameById(item.entryAccountGuid);
 
       return [
         index,
@@ -103,5 +106,6 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
         4: Alignment.center, // nots
       };
 
-  String bondName(BondModel bondModel) => BondType.byTypeGuide(bondModel.payTypeGuid!).value;
+  String bondName(BondModel bondModel) =>
+      BondType.byTypeGuide(bondModel.payTypeGuid!).value;
 }

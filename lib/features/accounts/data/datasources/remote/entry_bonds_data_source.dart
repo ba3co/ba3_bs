@@ -17,7 +17,8 @@ class EntryBondsDatasource extends BulkSavableDatasource<EntryBondModel> {
   Future<List<EntryBondModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final entryBonds = data.map((item) => EntryBondModel.fromJson(item)).toList();
+    final entryBonds =
+        data.map((item) => EntryBondModel.fromJson(item)).toList();
 
     return entryBonds;
   }
@@ -49,7 +50,12 @@ class EntryBondsDatasource extends BulkSavableDatasource<EntryBondModel> {
   Future<List<EntryBondModel>> saveAll(List<EntryBondModel> items) async {
     final savedData = await databaseService.addAll(
       path: path,
-      data: items.map((item) => {...item.toJson(), 'docId': item.origin?.docId ?? item.origin?.originId}).toList(),
+      data: items
+          .map((item) => {
+                ...item.toJson(),
+                'docId': item.origin?.docId ?? item.origin?.originId
+              })
+          .toList(),
     );
 
     return savedData.map(EntryBondModel.fromJson).toList();

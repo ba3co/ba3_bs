@@ -52,7 +52,8 @@ class CustomersController extends GetxController with AppNavigator {
   // }
   //
 
-  Future<Either<Failure, List<CustomerModel>>> addCustomers(List<CustomerModel> customers) async =>
+  Future<Either<Failure, List<CustomerModel>>> addCustomers(
+          List<CustomerModel> customers) async =>
       await _customersFirestoreRepo.saveAll(customers);
 
   // Initialize a progress observable
@@ -99,11 +100,11 @@ class CustomersController extends GetxController with AppNavigator {
   }
 
   CustomerModel? getCustomerById(String? billCustomerId) {
-
     if (billCustomerId == null || billCustomerId.isEmpty) return null;
 
-    return  customers.where((customer) => customer.id == billCustomerId).firstOrNull;
-
+    return customers
+        .where((customer) => customer.id == billCustomerId)
+        .firstOrNull;
   }
 
 //

@@ -9,9 +9,11 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 import '../data/models/cheques_model.dart';
 
-class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>> with PdfHelperMixin {
+class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
+    with PdfHelperMixin {
   @override
-  Widget buildHeader(List<ChequesModel> itemModel, String fileName, {Uint8List? logoUint8List, Font? font}) {
+  Widget buildHeader(List<ChequesModel> itemModel, String fileName,
+      {Uint8List? logoUint8List, Font? font}) {
     final afterUpdate = itemModel[1];
 
     return Row(
@@ -23,14 +25,21 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
     );
   }
 
-  Widget _buildHeaderText(String fileName, ChequesModel afterUpdate, Font? font) {
+  Widget _buildHeaderText(
+      String fileName, ChequesModel afterUpdate, Font? font) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildTitleText(fileName, 24, font: font, weight: FontWeight.bold),
-        buildDetailRow('رقم الشيك التعريفي: ', afterUpdate.chequesGuid.toString(), font: font),
-        buildDetailRow('رقم الشيك: ', afterUpdate.chequesNumber.toString().toString(), font: font),
-        buildDetailRow('نوع الشيك: ', ChequesType.byTypeGuide(afterUpdate.chequesTypeGuid!).value, font: font),
+        buildDetailRow(
+            'رقم الشيك التعريفي: ', afterUpdate.chequesGuid.toString(),
+            font: font),
+        buildDetailRow(
+            'رقم الشيك: ', afterUpdate.chequesNumber.toString().toString(),
+            font: font),
+        buildDetailRow('نوع الشيك: ',
+            ChequesType.byTypeGuide(afterUpdate.chequesTypeGuid!).value,
+            font: font),
       ],
     );
   }
@@ -40,7 +49,11 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
     final ChequesModel beforeUpdate = itemModel[0];
     final ChequesModel afterUpdate = itemModel[1];
 
-    final headersComparison = ['Field', AppStrings.before.tr, AppStrings.after.tr];
+    final headersComparison = [
+      'Field',
+      AppStrings.before.tr,
+      AppStrings.after.tr
+    ];
     final dataComparison = _buildComparisonData(beforeUpdate, afterUpdate);
 
     return <Widget>[
@@ -83,17 +96,50 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
         9: Alignment.center,
       };
 
-  List<List<dynamic>> _buildComparisonData(ChequesModel beforeUpdate, ChequesModel afterUpdate) {
+  List<List<dynamic>> _buildComparisonData(
+      ChequesModel beforeUpdate, ChequesModel afterUpdate) {
     return [
       ['دفع الى', beforeUpdate.accPtrName, afterUpdate.accPtrName],
-      ['الحساب', beforeUpdate.chequesAccount2Name, afterUpdate.chequesAccount2Name],
-      ['التاريخ', beforeUpdate.chequesDate ?? '', afterUpdate.chequesDate ?? ''],
-      ['تاريخ الاستحقاق', beforeUpdate.chequesDueDate ?? '', afterUpdate.chequesDueDate ?? ''],
-      ['قيمة الشيك', beforeUpdate.chequesVal ?? '', afterUpdate.chequesVal ?? ''],
-      ['رقم الشيك', beforeUpdate.chequesNumber ?? '', afterUpdate.chequesNumber ?? ''],
-      ['رقم الورقة', beforeUpdate.chequesNum ?? '', afterUpdate.chequesNum ?? ''],
-      ['تم الدفع', (beforeUpdate.isPayed ?? false) ? 'نعم' : 'لا', (afterUpdate.isPayed ?? false) ? 'نعم' : 'لا'],
-      ['تم الارجاع', (beforeUpdate.isRefund ?? false) ? 'نعم' : 'لا', (afterUpdate.isRefund ?? false) ? 'نعم' : 'لا'],
+      [
+        'الحساب',
+        beforeUpdate.chequesAccount2Name,
+        afterUpdate.chequesAccount2Name
+      ],
+      [
+        'التاريخ',
+        beforeUpdate.chequesDate ?? '',
+        afterUpdate.chequesDate ?? ''
+      ],
+      [
+        'تاريخ الاستحقاق',
+        beforeUpdate.chequesDueDate ?? '',
+        afterUpdate.chequesDueDate ?? ''
+      ],
+      [
+        'قيمة الشيك',
+        beforeUpdate.chequesVal ?? '',
+        afterUpdate.chequesVal ?? ''
+      ],
+      [
+        'رقم الشيك',
+        beforeUpdate.chequesNumber ?? '',
+        afterUpdate.chequesNumber ?? ''
+      ],
+      [
+        'رقم الورقة',
+        beforeUpdate.chequesNum ?? '',
+        afterUpdate.chequesNum ?? ''
+      ],
+      [
+        'تم الدفع',
+        (beforeUpdate.isPayed ?? false) ? 'نعم' : 'لا',
+        (afterUpdate.isPayed ?? false) ? 'نعم' : 'لا'
+      ],
+      [
+        'تم الارجاع',
+        (beforeUpdate.isRefund ?? false) ? 'نعم' : 'لا',
+        (afterUpdate.isRefund ?? false) ? 'نعم' : 'لا'
+      ],
       ['البيان', beforeUpdate.chequesNote ?? '', afterUpdate.chequesNote ?? ''],
       // Add more comparisons as needed
     ];

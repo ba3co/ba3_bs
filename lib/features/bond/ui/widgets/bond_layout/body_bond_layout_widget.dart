@@ -2,7 +2,8 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
 
 class BodyBondLayoutWidget extends StatelessWidget {
-  const BodyBondLayoutWidget({super.key, required this.firstText, required this.secondText});
+  const BodyBondLayoutWidget(
+      {super.key, required this.firstText, required this.secondText});
 
   final String firstText, secondText;
 

@@ -25,7 +25,7 @@ class ChequesTimelineHeader extends StatelessWidget {
           children: [
             Spacer(),
             GestureDetector(
-              onTap:()=>controller.openChequesDuesScreen(context) ,
+              onTap: () => controller.openChequesDuesScreen(context),
               child: Text(
                 AppStrings.chequesDues.tr,
                 style: AppTextStyles.headLineStyle1,

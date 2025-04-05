@@ -31,7 +31,8 @@ abstract class FirstPeriodInventoryDataSource {
   });
 }
 
-class FirstPeriodInventoryDataSourceImpl extends FirstPeriodInventoryDataSource {
+class FirstPeriodInventoryDataSourceImpl
+    extends FirstPeriodInventoryDataSource {
   FirstPeriodInventoryDataSourceImpl(super.firestore);
 
   @override
@@ -40,7 +41,10 @@ class FirstPeriodInventoryDataSourceImpl extends FirstPeriodInventoryDataSource 
     required void Function(double) onProgress,
     int chunkSize = 250,
   }) async {
-    final billsCollection = firestore.collection(_parentCollection).doc(bill.billTypeModel.billTypeId).collection(bill.billTypeModel.billTypeLabel!);
+    final billsCollection = firestore
+        .collection(_parentCollection)
+        .doc(bill.billTypeModel.billTypeId)
+        .collection(bill.billTypeModel.billTypeLabel!);
     final billDocRef = billsCollection.doc(bill.billId);
 
     final billWithoutItems = bill.copyWith(
@@ -86,7 +90,8 @@ class FirstPeriodInventoryDataSourceImpl extends FirstPeriodInventoryDataSource 
     for (final doc in itemsSnapshot.docs) {
       final data = doc.data();
       final itemsList = data['items'] as List<dynamic>? ?? [];
-      final chunkItems = itemsList.map((json) => BillItem.fromJson(json)).toList();
+      final chunkItems =
+          itemsList.map((json) => BillItem.fromJson(json)).toList();
       allItems.addAll(chunkItems);
     }
     return allItems;

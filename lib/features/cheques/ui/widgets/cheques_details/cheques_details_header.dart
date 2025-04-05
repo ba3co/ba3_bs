@@ -21,12 +21,15 @@ class ChequesDetailsHeader extends StatelessWidget {
         // padding: const EdgeInsets.all(8),
 
         decoration: BoxDecoration(
-            color: chequesDetailsController.isPayed! ? Colors.green : Colors.red,
+            color:
+                chequesDetailsController.isPayed! ? Colors.green : Colors.red,
             border: Border.all(color: Colors.white),
             borderRadius: BorderRadius.circular(4)),
         child: Center(
             child: Text(
-          chequesDetailsController.isPayed! ? ChequesStatus.paid.label : ChequesStatus.notPaid.label,
+          chequesDetailsController.isPayed!
+              ? ChequesStatus.paid.label
+              : ChequesStatus.notPaid.label,
           style: const TextStyle(
             color: Colors.white,
           ),

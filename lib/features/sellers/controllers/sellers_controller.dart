@@ -21,7 +21,8 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../floating_window/services/overlay_service.dart';
 import '../data/models/seller_model.dart';
 
-class SellersController extends GetxController with AppNavigator, FloatingLauncher {
+class SellersController extends GetxController
+    with AppNavigator, FloatingLauncher {
   final BulkSavableDatasourceRepository<SellerModel> _sellersFirebaseRepo;
 
   final ImportRepository<SellerModel> _sellersImportRepo;
@@ -66,16 +67,19 @@ class SellersController extends GetxController with AppNavigator, FloatingLaunch
           logger.e("Error log", error: failure.message);
           AppUIUtils.onFailure(failure.message);
         },
-        (fetchedSellers) => _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
+        (fetchedSellers) =>
+            _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
       );
     }
   }
 
-  void _handelFetchAllSellersFromLocalSuccess(List<SellerModel> fetchedSellers) async {
+  void _handelFetchAllSellersFromLocalSuccess(
+      List<SellerModel> fetchedSellers) async {
     log("fetchedSellers length ${fetchedSellers.length}");
     log('current sellers length is ${sellers.length}');
 
-    final newSellers = fetchedSellers.subtract(sellers, (seller) => seller.costName);
+    final newSellers =
+        fetchedSellers.subtract(sellers, (seller) => seller.costName);
     log('newSellers length is ${newSellers.length}');
 
     if (newSellers.isNotEmpty) {
@@ -132,36 +136,49 @@ class SellersController extends GetxController with AppNavigator, FloatingLaunch
   // Search for sellers by text query
 
   List<SellerModel> searchSellersByNameOrCode(text) => sellers
-      .where((item) => item.costName!.toLowerCase().contains(text.toLowerCase()) || item.costCode.toString().contains(text))
+      .where((item) =>
+          item.costName!.toLowerCase().contains(text.toLowerCase()) ||
+          item.costCode.toString().contains(text))
       .toList();
 
   List<String> getSellersNames(String query) {
-    return searchSellersByNameOrCode(query).map((seller) => seller.costName!).toList();
+    return searchSellersByNameOrCode(query)
+        .map((seller) => seller.costName!)
+        .toList();
   }
 
-  List<SellerModel> getSellersAccounts(String query) => searchSellersByNameOrCode(query);
+  List<SellerModel> getSellersAccounts(String query) =>
+      searchSellersByNameOrCode(query);
 
   // Get seller name by ID
   String getSellerNameById(String? id) {
     if (id == null || id.isEmpty) return '';
-    return sellers.firstWhereOrNull((seller) => seller.costGuid == id)?.costName ?? '';
+    return sellers
+            .firstWhereOrNull((seller) => seller.costGuid == id)
+            ?.costName ??
+        '';
   }
 
   // Get seller ID by name
   String getSellerIdByName(String? name) {
     if (name == null || name.isEmpty) return '';
-    return sellers.firstWhereOrNull((seller) => seller.costName == name)?.costGuid ?? '';
+    return sellers
+            .firstWhereOrNull((seller) => seller.costName == name)
+            ?.costGuid ??
+        '';
   }
 
   // Get seller  by ID
   SellerModel getSellerById(String id) {
-    return sellers.firstWhereOrNull((seller) => seller.costGuid == id) ?? SellerModel(costName: '');
+    return sellers.firstWhereOrNull((seller) => seller.costGuid == id) ??
+        SellerModel(costName: '');
   }
 
   // Replace Arabic numerals with English numerals
   String replaceArabicNumbersWithEnglish(String input) {
     return input.replaceAllMapped(RegExp(r'[٠-٩]'), (Match match) {
-      return String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
+      return String.fromCharCode(
+          match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
     });
   }
 
@@ -200,7 +217,8 @@ class SellersController extends GetxController with AppNavigator, FloatingLaunch
         },
       );
     } else {
-      AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
+      AppUIUtils.showErrorSnackBar(
+          title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }
     return selectedSellerAccount;
   }

@@ -20,7 +20,8 @@ class EInvoiceDialogContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = 'https://ba3-bs.firebaseapp.com/?id=$billId&year=${DateTime.now().year}';
+    final url =
+        'https://ba3-bs.firebaseapp.com/?id=$billId&year=${DateTime.now().year}';
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -51,7 +52,8 @@ class EInvoiceDialogContent extends StatelessWidget {
                   //   url: url,
                   // );
 
-                  billDetailsController.generateAndSendBillPdfToEmail(billModel, recipientEmail: recipientEmail);
+                  billDetailsController.generateAndSendBillPdfToEmail(billModel,
+                      recipientEmail: recipientEmail);
                 },
               ),
             ),

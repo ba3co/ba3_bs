@@ -13,7 +13,8 @@ import '../../../core/utils/app_service_utils.dart';
 import '../data/models/user_model.dart';
 
 class UserFormHandler with AppValidator {
-  UserDetailsController get userDetailsController => read<UserDetailsController>();
+  UserDetailsController get userDetailsController =>
+      read<UserDetailsController>();
 
   final formKey = GlobalKey<FormState>();
   final userNameController = TextEditingController();
@@ -22,7 +23,8 @@ class UserFormHandler with AppValidator {
   RxnString selectedSellerId = RxnString();
   RxnString selectedRoleId = RxnString();
 
-  Rx<bool> get isUserActive => userActiveStatus.value == UserActiveStatus.active ? true.obs : false.obs;
+  Rx<bool> get isUserActive =>
+      userActiveStatus.value == UserActiveStatus.active ? true.obs : false.obs;
   Rx<UserActiveStatus> userActiveStatus = UserActiveStatus.active.obs;
 
   void init(UserModel? user) {
@@ -81,13 +83,16 @@ class UserFormHandler with AppValidator {
     userDetailsController.update();
   }
 
-  String? passwordValidator(String? value, String fieldName) => isPasswordValid(value, fieldName);
+  String? passwordValidator(String? value, String fieldName) =>
+      isPasswordValid(value, fieldName);
 
-  String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? defaultValidator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
   String userListSelectedMonth = AppConstants.months.keys.first;
 
-  List<String> get userHolidays => userDetailsController.selectedUserModel?.userHolidays?.toList() ?? [];
+  List<String> get userHolidays =>
+      userDetailsController.selectedUserModel?.userHolidays?.toList() ?? [];
 
   List<String>? get userHolidaysWithDay => userHolidays
       .map(
@@ -97,7 +102,9 @@ class UserFormHandler with AppValidator {
 
   List<String>? get userHolidaysWithDayAtMoth => userHolidays
       .where(
-        (element) => element.split('-')[1].split("-")[0] == AppConstants.months[userListSelectedMonth],
+        (element) =>
+            element.split('-')[1].split("-")[0] ==
+            AppConstants.months[userListSelectedMonth],
       )
       .map(
         (date) => AppServiceUtils.getDayNameAndMonthName(date),
@@ -106,7 +113,9 @@ class UserFormHandler with AppValidator {
 
   List<String> get userHolidaysAtMoth => userHolidays
       .where(
-        (element) => element.split('-')[1].split("-")[0] == AppConstants.months[userListSelectedMonth],
+        (element) =>
+            element.split('-')[1].split("-")[0] ==
+            AppConstants.months[userListSelectedMonth],
       )
       .toList();
 
@@ -117,7 +126,8 @@ class UserFormHandler with AppValidator {
   List<UserTimeModel>? get userTimeModelWithTotalDelayAndEarlier {
     return userDetailsController.selectedUserModel?.userTimeModel?.values
         .map(
-          (e) => e.copyWith(dayName: e.dayName?.split('-')[1].split('-')[0].toString()),
+          (e) => e.copyWith(
+              dayName: e.dayName?.split('-')[1].split('-')[0].toString()),
         )
         .toList()
         .mergeBy(
@@ -129,20 +139,25 @@ class UserFormHandler with AppValidator {
         );
   }
 
-  UserTimeModel? get userTimeModelWithTotalDelayAndEarlierAtMonth => userTimeModelWithTotalDelayAndEarlier?.firstWhereOrNull(
-        (element) => element.dayName == AppConstants.months[userListSelectedMonth],
+  UserTimeModel? get userTimeModelWithTotalDelayAndEarlierAtMonth =>
+      userTimeModelWithTotalDelayAndEarlier?.firstWhereOrNull(
+        (element) =>
+            element.dayName == AppConstants.months[userListSelectedMonth],
       );
 
-  int get userTimeModelWithTotalDelayAndEarlierLength => userTimeModelWithTotalDelayAndEarlier?.length ?? 0;
+  int get userTimeModelWithTotalDelayAndEarlierLength =>
+      userTimeModelWithTotalDelayAndEarlier?.length ?? 0;
 
   void updateSelectedMonth(String value) {
     userListSelectedMonth = value.tr;
     userDetailsController.update();
   }
 
-  Map<String, UserTimeModel> get userTimeModelAtMonth =>
-      Map.fromEntries(userDetailsController.selectedUserModel?.userTimeModel?.entries.where(
-            (userWorkingHour) => userWorkingHour.key.split('-')[1].split('-')[0] == AppConstants.months[userListSelectedMonth],
+  Map<String, UserTimeModel> get userTimeModelAtMonth => Map.fromEntries(
+      userDetailsController.selectedUserModel?.userTimeModel?.entries.where(
+            (userWorkingHour) =>
+                userWorkingHour.key.split('-')[1].split('-')[0] ==
+                AppConstants.months[userListSelectedMonth],
           ) ??
           []);
 

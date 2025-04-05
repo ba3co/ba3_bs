@@ -11,13 +11,16 @@ class BondPlutoUtils {
 
   double parseExpression(String expression) {
     if (expression.isEmpty) return 0;
-    return Parser().parse(expression).evaluate(EvaluationType.REAL, ContextModel());
+    return Parser()
+        .parse(expression)
+        .evaluate(EvaluationType.REAL, ContextModel());
   }
 
   double getCellValueInDouble(Map<String, PlutoCell> cells, String cellKey) {
     final String cellValue = cells[cellKey]?.value.toString() ?? '';
 
-    final cellValueStr = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue);
+    final cellValueStr =
+        AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue);
 
     return parseExpression(cellValueStr);
   }

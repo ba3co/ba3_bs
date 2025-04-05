@@ -18,7 +18,8 @@ class AppServiceUtils {
     final lastPart = email.split("@").last;
     var secretFormatted = "";
     for (int i = 0; i < firstPart.length; i++) {
-      secretFormatted += (i == 0 || i == firstPart.length - 1) ? firstPart[i] : "*";
+      secretFormatted +=
+          (i == 0 || i == firstPart.length - 1) ? firstPart[i] : "*";
     }
     return "$secretFormatted@$lastPart";
   }
@@ -67,7 +68,8 @@ class AppServiceUtils {
 
   static String replaceArabicNumbersWithEnglish(String input) {
     return input.replaceAllMapped(RegExp(r'[٠-٩]'), (Match match) {
-      return String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
+      return String.fromCharCode(
+          match.group(0)!.codeUnitAt(0) - 0x0660 + 0x0030);
     });
   }
 
@@ -81,7 +83,8 @@ class AppServiceUtils {
     bool hasOperators = cleanedInput.contains(RegExp(r'[+\-*/]'));
 
     // معالجة الفواصل الزائدة بحيث تبقى فقط الفاصلة الأولى
-    cleanedInput = cleanedInput.replaceAllMapped(RegExp(r'(\d+)\.(\d+)\.(\d+)'), (match) {
+    cleanedInput =
+        cleanedInput.replaceAllMapped(RegExp(r'(\d+)\.(\d+)\.(\d+)'), (match) {
       return '${match.group(1)}.${match.group(2)}';
     });
     if (hasOperators) {
@@ -126,7 +129,8 @@ class AppServiceUtils {
       //! إذا لم يكن هناك معاملات، فقط استخرج الأرقام /
       RegExp regex = RegExp(r'[0-9.]+');
       Iterable<Match> matches = regex.allMatches(cleanedInput);
-      List<double> numbers = matches.map((match) => double.parse(match.group(0)!)).toList();
+      List<double> numbers =
+          matches.map((match) => double.parse(match.group(0)!)).toList();
 
       // إذا لم توجد أرقام، قم بإرجاع 0
       return numbers.isNotEmpty ? numbers.first.toString() : "0.0";
@@ -143,7 +147,8 @@ class AppServiceUtils {
     bool hasOperators = cleanedInput.contains(RegExp(r'[+\-*/]'));
 
     // معالجة الفواصل الزائدة بحيث تبقى فقط الفاصلة الأولى
-    cleanedInput = cleanedInput.replaceAllMapped(RegExp(r'(\d+)\.(\d+)\.(\d+)'), (match) {
+    cleanedInput =
+        cleanedInput.replaceAllMapped(RegExp(r'(\d+)\.(\d+)\.(\d+)'), (match) {
       return '${match.group(1)}.${match.group(2)}';
     });
     if (hasOperators) {
@@ -188,7 +193,8 @@ class AppServiceUtils {
       //! إذا لم يكن هناك معاملات، فقط استخرج الأرقام /
       RegExp regex = RegExp(r'[0-9.]+');
       Iterable<Match> matches = regex.allMatches(cleanedInput);
-      List<double> numbers = matches.map((match) => double.parse(match.group(0)!)).toList();
+      List<double> numbers =
+          matches.map((match) => double.parse(match.group(0)!)).toList();
 
       // إذا لم توجد أرقام، قم بإرجاع 0
       return numbers.isNotEmpty ? numbers.first.toString() : "0.0";
@@ -229,25 +235,29 @@ class AppServiceUtils {
   }
 
   static double calcVat(int? vatRatio, double? subTotal) {
-    if (vatRatio == null || vatRatio == 0 || subTotal == null || subTotal == 0) return 0;
+    if (vatRatio == null || vatRatio == 0 || subTotal == null || subTotal == 0)
+      return 0;
 
     return calcSub(vatRatio, subTotal) - subTotal;
   }
 
   static double calcSubtotal(int? quantity, double? total) {
-    if (quantity == null || quantity == 0 || total == null || total == 0) return 0;
+    if (quantity == null || quantity == 0 || total == null || total == 0)
+      return 0;
 
     return total / quantity;
   }
 
   static double calcGiftPrice(int? quantity, double? subTotal) {
-    if (quantity == null || quantity == 0 || subTotal == null || subTotal == 0) return 0;
+    if (quantity == null || quantity == 0 || subTotal == null || subTotal == 0)
+      return 0;
 
     return subTotal * quantity;
   }
 
   static double calcTotal(int? quantity, double? subtotal, double? vat) {
-    if (quantity == null || quantity == 0 || subtotal == null || subtotal == 0) return 0;
+    if (quantity == null || quantity == 0 || subtotal == null || subtotal == 0)
+      return 0;
 
     return quantity * (subtotal + (vat ?? 0));
   }
@@ -255,24 +265,29 @@ class AppServiceUtils {
   static int getItemQuantity(PlutoRow row) {
     final String cellValue = getCellValue(row, AppConstants.invRecQuantity);
 
-    int invRecQuantity = AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt;
+    int invRecQuantity =
+        AppServiceUtils.replaceArabicNumbersWithEnglish(cellValue).toInt;
 
     return invRecQuantity;
   }
 
-  static String getCellValue(PlutoRow row, String cellKey) => row.cells[cellKey]?.value.toString() ?? '';
+  static String getCellValue(PlutoRow row, String cellKey) =>
+      row.cells[cellKey]?.value.toString() ?? '';
 
-  static String zeroToEmpty(double? value) => value == null || value == 0 ? '' : value.toStringAsFixed(2);
+  static String zeroToEmpty(double? value) =>
+      value == null || value == 0 ? '' : value.toStringAsFixed(2);
 
   // Generates a unique tag for identifying controllers.
-  static String generateUniqueTag(String controllerName) => '${controllerName}_${UniqueKey().toString()}';
+  static String generateUniqueTag(String controllerName) =>
+      '${controllerName}_${UniqueKey().toString()}';
 
-  static AccountModel? getAccountModelFromLabel(accLabel) => read<AccountsController>()
-      .accounts
-      .where(
-        (element) => element.accName == accLabel || element.id == accLabel,
-      )
-      .firstOrNull;
+  static AccountModel? getAccountModelFromLabel(accLabel) =>
+      read<AccountsController>()
+          .accounts
+          .where(
+            (element) => element.accName == accLabel || element.id == accLabel,
+          )
+          .firstOrNull;
 
   static String generateUniqueId() {
     return DateTime.now().microsecondsSinceEpoch.toString();
@@ -329,7 +344,8 @@ class AppServiceUtils {
     if (hour == 0) hour = 12; // تحويل الساعة 0 إلى 12
 
     // تنسيق التاريخ والوقت
-    String formattedDateTime = "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} \n"
+    String formattedDateTime =
+        "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} \n"
         "${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $period";
 
     return formattedDateTime;
@@ -340,7 +356,9 @@ class AppServiceUtils {
       return '';
     }
 
-    final originName = billTypeId != null ? BillType.byTypeGuide(billTypeId).billPatternType.label : '';
+    final originName = billTypeId != null
+        ? BillType.byTypeGuide(billTypeId).billPatternType.label
+        : '';
     final originNumber = billNumber != null ? billNumber.toString() : '';
 
     if (originName.isEmpty && originNumber.isEmpty) {
@@ -373,7 +391,8 @@ class AppServiceUtils {
     userTimeModel.forEach((date, record) {
       if (record.logInDateList != null) {
         for (var login in record.logInDateList!) {
-          if (latestLogin == null || login.isAfter(latestLogin ?? DateTime.now())) {
+          if (latestLogin == null ||
+              login.isAfter(latestLogin ?? DateTime.now())) {
             latestLogin = login;
           }
         }
@@ -391,7 +410,8 @@ class AppServiceUtils {
     userTimeModel.forEach((date, record) {
       if (record.logOutDateList != null) {
         for (var logout in record.logOutDateList!) {
-          if (latestLogout == null || logout.isAfter(latestLogout ?? DateTime.now())) {
+          if (latestLogout == null ||
+              logout.isAfter(latestLogout ?? DateTime.now())) {
             latestLogout = logout;
           }
         }
@@ -414,11 +434,15 @@ class AppServiceUtils {
 
   static double parseDouble(dynamic value) {
     if (value == null) return 0.0;
-    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString())) ?? 0;
+    return double.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(
+            value.toString())) ??
+        0;
   }
 
   static int parseInt(dynamic value) {
     if (value == null) return 0;
-    return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(value.toString())) ?? 0;
+    return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(
+            value.toString())) ??
+        0;
   }
 }

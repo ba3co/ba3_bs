@@ -19,7 +19,8 @@ class AddSellerScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(controller.selectedSellerModel?.costName ?? AppStrings.newS.tr),
+          title: Text(
+              controller.selectedSellerModel?.costName ?? AppStrings.newS.tr),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -47,13 +48,20 @@ class AddSellerScreen extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: .15.sh),
                   child: Obx(() {
                     return AppButton(
-                      isLoading: controller.saveSellerRequestState.value == RequestState.loading,
-                      title: controller.selectedSellerModel?.costGuid == null ? AppStrings.add.tr : AppStrings.edit.tr,
+                      isLoading: controller.saveSellerRequestState.value ==
+                          RequestState.loading,
+                      title: controller.selectedSellerModel?.costGuid == null
+                          ? AppStrings.add.tr
+                          : AppStrings.edit.tr,
                       onPressed: () {
                         controller.saveOrUpdateSeller();
                       },
-                      iconData: controller.selectedSellerModel?.costGuid == null ? Icons.add : Icons.edit,
-                      color: controller.selectedSellerModel?.costGuid == null ? null : Colors.green,
+                      iconData: controller.selectedSellerModel?.costGuid == null
+                          ? Icons.add
+                          : Icons.edit,
+                      color: controller.selectedSellerModel?.costGuid == null
+                          ? null
+                          : Colors.green,
                     );
                   }),
                 ),

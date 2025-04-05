@@ -33,7 +33,8 @@ class SaleTaskDialog extends StatelessWidget {
                   task.materialTask![materialIndex].materialName!,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("${AppStrings.identificationNumber.tr}: ${task.materialTask![materialIndex].docId}",
+                subtitle: Text(
+                    "${AppStrings.identificationNumber.tr}: ${task.materialTask![materialIndex].docId}",
                     style: TextStyle(color: Colors.grey)),
                 leading: Icon(Icons.inventory),
                 trailing: Row(
@@ -46,13 +47,15 @@ class SaleTaskDialog extends StatelessWidget {
                     ),
                     VerticalDivider(),
                     FutureBuilder<int>(
-                      future: read<UserManagementController>().getCurrentUserMaterialsSales(
-                        materialId: task.materialTask![materialIndex].docId!,
-                        startDay:task.dueDate!,
-                        endDay: task.createdAt!
-                      ),
+                      future: read<UserManagementController>()
+                          .getCurrentUserMaterialsSales(
+                              materialId:
+                                  task.materialTask![materialIndex].docId!,
+                              startDay: task.dueDate!,
+                              endDay: task.createdAt!),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Text(
                             "${AppStrings.sold.tr} \n ...",
                             style: AppTextStyles.headLineStyle4,

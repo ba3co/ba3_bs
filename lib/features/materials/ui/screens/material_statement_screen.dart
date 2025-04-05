@@ -21,7 +21,10 @@ class MaterialStatementScreen extends StatelessWidget {
           onSelected: (event) {
             String originId = event.row?.cells['originId']?.value;
             String billTypeId = event.row?.cells['billTypeId']?.value;
-            read<AllBillsController>().      openFloatingBillDetailsById(billId: originId, context: context, bilTypeModel: BillType.byTypeGuide(billTypeId).billTypeModel);
+            read<AllBillsController>().openFloatingBillDetailsById(
+                billId: originId,
+                context: context,
+                bilTypeModel: BillType.byTypeGuide(billTypeId).billTypeModel);
             /*
             read<AllBillsController>()
                 .openFloatingBillDetailsById(origin.originId!, context, BillType.byTypeGuide(entryBondModel.origin!.originTypeId!).billTypeModel);*/
@@ -40,14 +43,20 @@ class MaterialStatementScreen extends StatelessWidget {
                   children: [
                     Text(
                       "${AppStrings.total.tr} :",
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 24),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     Text(
                       controller.totalQuantity.toString(),
-                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+                      style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32),
                     ),
                   ],
                 ),

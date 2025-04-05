@@ -29,7 +29,8 @@ class DrawerListTile extends StatelessWidget {
         width: 0.15.sw,
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-            color: index == tabIndex ? AppColors.blueColor : AppColors.whiteColor,
+            color:
+                index == tabIndex ? AppColors.blueColor : AppColors.whiteColor,
             borderRadius: BorderRadius.circular(8)),
         alignment: Alignment.centerRight,
         child: Row(
@@ -47,7 +48,9 @@ class DrawerListTile extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
-                  color: index == tabIndex ? AppColors.whiteColor : AppColors.grayColor,
+                  color: index == tabIndex
+                      ? AppColors.whiteColor
+                      : AppColors.grayColor,
                 ),
               ),
             ),

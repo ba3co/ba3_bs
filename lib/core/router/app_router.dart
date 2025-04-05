@@ -33,10 +33,17 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(name: AppRoutes.mainLayout, page: () => const MainLayout()),
   GetPage(name: AppRoutes.loginScreen, page: () => const LoginScreen()),
   GetPage(name: AppRoutes.patternsScreen, page: () => const PatternLayout()),
-  GetPage(name: AppRoutes.addPatternsScreen, page: () => const AddPatternScreen()),
-  GetPage(name: AppRoutes.showAllMaterialsScreen, page: () => const AllMaterialsScreen()),
-  GetPage(name: AppRoutes.showAllAccountsScreen, page: () => const AllAccountScreen()),
-  GetPage(name: AppRoutes.finalAccountsScreen, page: () => const FinalAccountScreen()),
+  GetPage(
+      name: AppRoutes.addPatternsScreen, page: () => const AddPatternScreen()),
+  GetPage(
+      name: AppRoutes.showAllMaterialsScreen,
+      page: () => const AllMaterialsScreen()),
+  GetPage(
+      name: AppRoutes.showAllAccountsScreen,
+      page: () => const AllAccountScreen()),
+  GetPage(
+      name: AppRoutes.finalAccountsScreen,
+      page: () => const FinalAccountScreen()),
   GetPage(
       name: AppRoutes.finalAccountDetailsScreen,
       page: () {
@@ -50,7 +57,8 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.bondDetailsScreen,
     page: () {
-      final Map<String, dynamic> arguments = Get.arguments as Map<String, dynamic>;
+      final Map<String, dynamic> arguments =
+          Get.arguments as Map<String, dynamic>;
       return BondDetailsScreen(
         fromBondById: arguments['fromBondById'],
         bondDetailsController: arguments['bondDetailsController'],
@@ -63,7 +71,8 @@ List<GetPage<dynamic>>? appRouter = [
   GetPage(
     name: AppRoutes.bondDetailsScreen,
     page: () {
-      final Map<String, dynamic> arguments = Get.arguments as Map<String, dynamic>;
+      final Map<String, dynamic> arguments =
+          Get.arguments as Map<String, dynamic>;
       return BondDetailsScreen(
         fromBondById: arguments['fromBondById'],
         bondDetailsController: arguments['bondDetailsController'],
@@ -73,7 +82,9 @@ List<GetPage<dynamic>>? appRouter = [
       );
     },
   ),
-  GetPage(name: AppRoutes.accountStatementScreen, page: () => const AccountStatementScreen()),
+  GetPage(
+      name: AppRoutes.accountStatementScreen,
+      page: () => const AccountStatementScreen()),
   GetPage(
       name: AppRoutes.showAllChequesScreen,
       page: () {

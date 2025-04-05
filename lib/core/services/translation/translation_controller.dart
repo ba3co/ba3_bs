@@ -11,7 +11,9 @@ class TranslationController extends GetxController {
 
   TranslationController(this.appLocalLangService);
 
-  String get localLangCode => appLocalLangService.fetchById(AppConstants.appLocalLangBox) ?? AppConstants.defaultLangCode;
+  String get localLangCode =>
+      appLocalLangService.fetchById(AppConstants.appLocalLangBox) ??
+      AppConstants.defaultLangCode;
 
   Future<void> changeLang(String langCode) async {
     await appLocalLangService.insert(AppConstants.appLocalLangBox, langCode);
@@ -58,5 +60,5 @@ class TranslationController extends GetxController {
 
   String? get currentLangCode => Get.locale?.languageCode;
 
-  bool get currentLocaleIsRtl =>Locale(currentLangCode!) .isRtl;
+  bool get currentLocaleIsRtl => Locale(currentLangCode!).isRtl;
 }

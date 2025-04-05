@@ -20,8 +20,10 @@ class AccountStatementScreen extends StatelessWidget {
           title: controller.screenTitle.tr,
           onLoaded: (e) {},
           onSelected: (event) {
-            String originId = event.row?.cells[AppConstants.entryBonIdFiled]?.value;
-            controller.launchBondEntryBondScreen(context: context, originId: originId);
+            String originId =
+                event.row?.cells[AppConstants.entryBonIdFiled]?.value;
+            controller.launchBondEntryBondScreen(
+                context: context, originId: originId);
           },
           isLoading: controller.isLoading,
           tableSourceModels: controller.filteredEntryBondItems,
@@ -50,14 +52,21 @@ class AccountStatementScreen extends StatelessWidget {
                   children: [
                     Text(
                       AppStrings.debtor.tr,
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 24),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     Text(
-                      AppUIUtils.formatDecimalNumberWithCommas(controller.debitValue),
-                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+                      AppUIUtils.formatDecimalNumberWithCommas(
+                          controller.debitValue),
+                      style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32),
                     ),
                   ],
                 ),
@@ -67,14 +76,21 @@ class AccountStatementScreen extends StatelessWidget {
                   children: [
                     Text(
                       AppStrings.creditor.tr,
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 24),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     Text(
-                      AppUIUtils.formatDecimalNumberWithCommas(controller.creditValue),
-                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+                      AppUIUtils.formatDecimalNumberWithCommas(
+                          controller.creditValue),
+                      style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32),
                     ),
                   ],
                 ),
@@ -84,14 +100,21 @@ class AccountStatementScreen extends StatelessWidget {
                   children: [
                     Text(
                       AppStrings.theTotal.tr,
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w300,
+                          fontSize: 24),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     Text(
-                      AppUIUtils.formatDecimalNumberWithCommas(controller.totalValue),
-                      style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+                      AppUIUtils.formatDecimalNumberWithCommas(
+                          controller.totalValue),
+                      style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 32),
                     ),
                   ],
                 ),

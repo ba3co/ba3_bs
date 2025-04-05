@@ -9,7 +9,12 @@ class TargetPointerWidget extends StatefulWidget {
   final double minValue;
   final double midValue;
 
-  const TargetPointerWidget({super.key, required this.value, required this.maxValue, required this.minValue, required this.midValue});
+  const TargetPointerWidget(
+      {super.key,
+      required this.value,
+      required this.maxValue,
+      required this.minValue,
+      required this.midValue});
 
   @override
   State<TargetPointerWidget> createState() => TargetPointerWidgetState();
@@ -20,7 +25,6 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
   double _value = 0;
   double limit = 0;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,8 +34,7 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
           children: [
             // SfRadialGauge يملأ كامل الشاشة
 
-            _buildWidgetPointerExample(context)
-            ,
+            _buildWidgetPointerExample(context),
             // قيمة المؤشر تظهر في المنتصف
             Container(
               height: 75,
@@ -56,7 +59,6 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
       ),
     );
   }
-
 
   @override
   void initState() {
@@ -124,7 +126,7 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
       enableLoadingAnimation: true,
       axes: <RadialAxis>[
         RadialAxis(
-          interval: widget.maxValue/10,
+          interval: widget.maxValue / 10,
           labelOffset: 0.12,
           tickOffset: 0.125,
           radiusFactor: 1.1,
@@ -147,8 +149,9 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
           ranges: <GaugeRange>[
             GaugeRange(
               startValue: 0,
-              label:widget.minValue.toString() ,
-              labelStyle: GaugeTextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              label: widget.minValue.toString(),
+              labelStyle: GaugeTextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
               endValue: widget.minValue,
               startWidth: 40,
               endWidth: 40,
@@ -157,8 +160,9 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
             GaugeRange(
               startValue: widget.minValue,
               endValue: widget.midValue,
-              label:widget.midValue.toString() ,
-              labelStyle: GaugeTextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              label: widget.midValue.toString(),
+              labelStyle: GaugeTextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
               startWidth: 40,
               endWidth: 40,
               color: const Color.fromRGBO(251, 190, 32, 1),
@@ -166,8 +170,9 @@ class TargetPointerWidgetState extends State<TargetPointerWidget> {
             GaugeRange(
               startValue: widget.midValue,
               endValue: widget.maxValue,
-              label:widget.maxValue.toString() ,
-              labelStyle: GaugeTextStyle(color: Colors.white,fontWeight: FontWeight.bold),
+              label: widget.maxValue.toString(),
+              labelStyle: GaugeTextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
               startWidth: 40,
               endWidth: 40,
               color: const Color.fromRGBO(237, 34, 35, 1),

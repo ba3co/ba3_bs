@@ -21,7 +21,9 @@ class DashBoardAccountShimmerWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 3.w),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8), color: Colors.green.withAlpha(150), border: Border.all(color: AppColors.whiteColor)),
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.green.withAlpha(150),
+            border: Border.all(color: AppColors.whiteColor)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.end,

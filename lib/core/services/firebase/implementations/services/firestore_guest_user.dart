@@ -27,7 +27,8 @@ mixin FirestoreGuestUser {
     }
   }
 
-  Future<void> updateGuestUser(String documentId, {required bool visible}) async {
+  Future<void> updateGuestUser(String documentId,
+      {required bool visible}) async {
     try {
       await _firestoreInstance.collection(guestCollection).doc(documentId).set({
         'docId': documentId,
@@ -45,7 +46,10 @@ mixin FirestoreGuestUser {
   /// Returns a map containing the guest user data, or `null` if the document doesn't exist.
   Future<Map<String, dynamic>?> fetchGuestUser(String documentId) async {
     try {
-      final docSnapshot = await _firestoreInstance.collection(guestCollection).doc(documentId).get();
+      final docSnapshot = await _firestoreInstance
+          .collection(guestCollection)
+          .doc(documentId)
+          .get();
       if (docSnapshot.exists) {
         log('Guest user fetched successfully.');
         return docSnapshot.data();
@@ -69,7 +73,8 @@ mixin FirestoreGuestUser {
       log('Guest user visibility: $isVisible');
       return isVisible;
     } catch (e, stacktrace) {
-      log('Error checking guest user visibility: $e', error: e, stackTrace: stacktrace);
+      log('Error checking guest user visibility: $e',
+          error: e, stackTrace: stacktrace);
       rethrow;
     }
   }
@@ -77,7 +82,10 @@ mixin FirestoreGuestUser {
   /// Deletes the guest user document from Firestore.
   Future<void> deleteGuestUser(String documentId) async {
     try {
-      await _firestoreInstance.collection(guestCollection).doc(documentId).delete();
+      await _firestoreInstance
+          .collection(guestCollection)
+          .doc(documentId)
+          .delete();
       log('Guest user document deleted successfully from $documentId collection.');
     } catch (e, stacktrace) {
       log('Error deleting guest user: $e', error: e, stackTrace: stacktrace);

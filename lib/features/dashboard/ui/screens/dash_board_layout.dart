@@ -23,7 +23,8 @@ class DashBoardLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<DashboardLayoutController>(builder: (dashboardLayoutController) {
+      body: GetBuilder<DashboardLayoutController>(
+          builder: (dashboardLayoutController) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(
@@ -33,15 +34,20 @@ class DashBoardLayout extends StatelessWidget {
               VerticalSpace(),
 
               VerticalSpace(),
-              GetBuilder<SellerDashboardController>(builder: (sellerController) {
+              GetBuilder<SellerDashboardController>(
+                  builder: (sellerController) {
                 return AllSellersSalesBoard(controller: sellerController);
               }),
               VerticalSpace(20),
-              GetBuilder<BillProfitDashboardController>(builder: (billProfitDashboardController) {
-                return BillProfitBord(billProfitDashboardController: billProfitDashboardController);
+              GetBuilder<BillProfitDashboardController>(
+                  builder: (billProfitDashboardController) {
+                return BillProfitBord(
+                    billProfitDashboardController:
+                        billProfitDashboardController);
               }),
               VerticalSpace(20),
-              GetBuilder<ChequesTimelineController>(builder: (chequesTimelineController) {
+              GetBuilder<ChequesTimelineController>(
+                  builder: (chequesTimelineController) {
                 return ChequesTimelineBoard(
                   chequesTimelineController: chequesTimelineController,
                 );
@@ -63,7 +69,8 @@ class DashBoardLayout extends StatelessWidget {
                           FontAwesomeIcons.refresh,
                           color: AppColors.lightBlueColor,
                         ),
-                        onPressed: dashboardLayoutController.refreshDashBoardUser,
+                        onPressed:
+                            dashboardLayoutController.refreshDashBoardUser,
                       ),
                       HorizontalSpace(10),
                     ],

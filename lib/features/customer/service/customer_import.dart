@@ -50,11 +50,14 @@ class CustomerImport extends ImportServiceBase<CustomerModel> {
         telex: customer.getElement('Telex')?.text,
         note: customer.getElement('Note')?.text,
         accountGuid: customer.getElement('AcGuid')?.text ?? '',
-        checkDate: dateFormat.tryParse(customer.getElement('CustCheckDate')?.text ?? ''),
+        checkDate: dateFormat
+            .tryParse(customer.getElement('CustCheckDate')?.text ?? ''),
         security: int.parse(customer.getElement('Security')?.text ?? '0'),
         type: int.parse(customer.getElement('CustType')?.text ?? '0'),
-        discountRatio: double.parse(customer.getElement('DiscountRatio')?.text ?? '0'),
-        defaultPrice: int.parse(customer.getElement('DefaultPrice')?.text ?? '0'),
+        discountRatio:
+            double.parse(customer.getElement('DiscountRatio')?.text ?? '0'),
+        defaultPrice:
+            int.parse(customer.getElement('DefaultPrice')?.text ?? '0'),
         state: int.parse(customer.getElement('CustState')?.text ?? '0'),
         email: customer.getElement('CustEmail')?.text,
         homePage: customer.getElement('CustHomePage')?.text,
@@ -64,7 +67,8 @@ class CustomerImport extends ImportServiceBase<CustomerModel> {
         hobbies: customer.getElement('CustHoppies')?.text,
         gender: customer.getElement('CustGender')?.text,
         certificate: customer.getElement('CustCertificate')?.text,
-        defaultAddressGuid: customer.getElement('CustDefaultAddressGuid')?.text ?? '',
+        defaultAddressGuid:
+            customer.getElement('CustDefaultAddressGuid')?.text ?? '',
       );
     }).toList();
 
@@ -96,20 +100,24 @@ class GccCusTax {
   }
 }
 
-void updateCustomersVat(List<CustomerModel> customers, List<GccCusTax> gccList) {
+void updateCustomersVat(
+    List<CustomerModel> customers, List<GccCusTax> gccList) {
   for (var i = 0; i < customers.length; i++) {
     var customer = customers[i];
 
     // Find the corresponding VAT value for the material
     final gcc = gccList.firstWhere(
       (gccItem) => gccItem.guid == customer.id,
-      orElse: () => GccCusTax(vat: '4.00', guid: ''), // Default object with 0.00 VAT
+      orElse: () =>
+          GccCusTax(vat: '4.00', guid: ''), // Default object with 0.00 VAT
     );
-    CustomerModel updatedMaterial = customer; // Initialize with original material
+    CustomerModel updatedMaterial =
+        customer; // Initialize with original material
 
     // Check if gcc is found and update the matVatGuid
     if (gcc.vat.isNotEmpty && gcc.guid.isNotEmpty) {
-      double vatValue = double.tryParse(gcc.vat) ?? 0.00; // Parse vat to double safely
+      double vatValue =
+          double.tryParse(gcc.vat) ?? 0.00; // Parse vat to double safely
 
       if (vatValue == 1.00) {
         updatedMaterial = customer.copyWith(cusVatGuid: 'xtc33mNeCZYR98i96pd8');

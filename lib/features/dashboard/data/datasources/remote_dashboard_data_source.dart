@@ -3,17 +3,20 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 
-class RemoteDashboardDataSource extends BulkSavableDatasource<DashAccountModel> {
+class RemoteDashboardDataSource
+    extends BulkSavableDatasource<DashAccountModel> {
   RemoteDashboardDataSource({required super.databaseService});
 
   @override
-  String get path => ApiConstants.dashBoardAccounts; // Collection name in Firestore
+  String get path =>
+      ApiConstants.dashBoardAccounts; // Collection name in Firestore
 
   @override
   Future<List<DashAccountModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final entryBonds = data.map((item) => DashAccountModel.fromJson(item)).toList();
+    final entryBonds =
+        data.map((item) => DashAccountModel.fromJson(item)).toList();
 
     return entryBonds;
   }
@@ -31,7 +34,8 @@ class RemoteDashboardDataSource extends BulkSavableDatasource<DashAccountModel> 
 
   @override
   Future<DashAccountModel> save(DashAccountModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.id, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.id, data: item.toJson());
 
     return DashAccountModel.fromJson(data);
   }

@@ -59,12 +59,17 @@ class BondSearchController extends GetxController {
   /// Creates a placeholder Bond for missing entries.bond
   BondModel _createPlaceholderBond(BondModel referenceBond) {
     return BondModel(
-        payAccountGuid: '', payItems: PayItems(itemList: []), payTypeGuid: referenceBond.payTypeGuid, payDate: DateTime.now().toIso8601String());
+        payAccountGuid: '',
+        payItems: PayItems(itemList: []),
+        payTypeGuid: referenceBond.payTypeGuid,
+        payDate: DateTime.now().toIso8601String());
   }
 
   /// Validates the Bond number range.
   bool _isValidBondNumber(int? bondNumber) {
-    return bondNumber != null && bondNumber >= 1 && bondNumber <= bonds.last.payNumber!;
+    return bondNumber != null &&
+        bondNumber >= 1 &&
+        bondNumber <= bonds.last.payNumber!;
   }
 
   /// Displays an error message for invalid Bond numbers.
@@ -113,28 +118,36 @@ class BondSearchController extends GetxController {
   }
 
   /// Navigates to a Bond by its number.
-  Future<void> goToBondByNumber(int? bondNumber) async => await _navigateToBond(bondNumber!, NavigationDirection.specific);
+  Future<void> goToBondByNumber(int? bondNumber) async =>
+      await _navigateToBond(bondNumber!, NavigationDirection.specific);
 
   /// Moves to the next Bond if possible.
-  Future<void> next() async => await _navigateToBond(currentBond.payNumber! + 1, NavigationDirection.next);
+  Future<void> next() async => await _navigateToBond(
+      currentBond.payNumber! + 1, NavigationDirection.next);
 
   /// Moves to the previous Bond if possible.
-  Future<void> previous() async => await _navigateToBond(currentBond.payNumber! - 1, NavigationDirection.previous);
+  Future<void> previous() async => await _navigateToBond(
+      currentBond.payNumber! - 1, NavigationDirection.previous);
 
   /// Moves to the next Bond if possible.
-  Future<void> jumpTenForward() async => await _navigateToBond(currentBond.payNumber! + 10, NavigationDirection.next);
+  Future<void> jumpTenForward() async => await _navigateToBond(
+      currentBond.payNumber! + 10, NavigationDirection.next);
 
   /// Moves to the previous Bond if possible.
-  Future<void> jumpTenBackward() async => await _navigateToBond(currentBond.payNumber! - 10, NavigationDirection.previous);
+  Future<void> jumpTenBackward() async => await _navigateToBond(
+      currentBond.payNumber! - 10, NavigationDirection.previous);
 
   /// Moves to the next Bond if possible.
-  Future<void> first() async => await _navigateToBond(1, NavigationDirection.next);
+  Future<void> first() async =>
+      await _navigateToBond(1, NavigationDirection.next);
 
   /// Moves to the previous Bond if possible.
-  Future<void> last() async => await _navigateToBond(bonds.last.payNumber!, NavigationDirection.previous);
+  Future<void> last() async => await _navigateToBond(
+      bonds.last.payNumber!, NavigationDirection.previous);
 
   /// Helper method to fetch or navigate to a specific Bond.
-  Future<void> _navigateToBond(int bondNumber, NavigationDirection source) async {
+  Future<void> _navigateToBond(
+      int bondNumber, NavigationDirection source) async {
     if (!_validateAndHandleBondNumber(bondNumber)) return;
 
     if (_checkExistingBond(bondNumber)) return;
@@ -161,10 +174,12 @@ class BondSearchController extends GetxController {
   }
 
   /// Checks if the Bond number exists in the list and returns its index, or null if not found.
-  BondModel? _findExistingBond(int bondNumber) => bonds.firstWhereOrNull((bond) => bond.payNumber == bondNumber);
+  BondModel? _findExistingBond(int bondNumber) =>
+      bonds.firstWhereOrNull((bond) => bond.payNumber == bondNumber);
 
   /// Fetches the Bond by number and handles success or failure.
-  Future<void> _fetchAndNavigateToBond(int bondNumber, NavigationDirection source) async {
+  Future<void> _fetchAndNavigateToBond(
+      int bondNumber, NavigationDirection source) async {
     final result = await read<AllBondsController>().fetchBondByNumber(
       bondType: BondType.byTypeGuide(currentBond.payTypeGuid!),
       bondNumber: bondNumber,
@@ -177,7 +192,8 @@ class BondSearchController extends GetxController {
   }
 
   /// Handles a failed Bond fetch and triggers navigation for adjacent bonds if necessary.
-  void _handleFetchFailure(Failure failure, int bondNumber, NavigationDirection source) {
+  void _handleFetchFailure(
+      Failure failure, int bondNumber, NavigationDirection source) {
     log('Fetching Bond from source: $source');
 
     if (source == NavigationDirection.next) {

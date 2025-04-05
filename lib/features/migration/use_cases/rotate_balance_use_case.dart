@@ -30,27 +30,38 @@ class RotateBalancesUseCase {
     // Temporarily switch to default version to fetch accountStatements
     setCurrentVersion(AppConstants.defaultVersion);
 
-    final accountEntities = read<AccountsController>().accounts.map(AccountEntity.fromAccountModel).toList();
+    final accountEntities = read<AccountsController>()
+        .accounts
+        .map(AccountEntity.fromAccountModel)
+        .toList();
     final accountStatementController = read<AccountStatementController>();
 
-    log("${accountEntities.length} عدد الحسابات", name: "RotateBalancesUseCase");
+    log("${accountEntities.length} عدد الحسابات",
+        name: "RotateBalancesUseCase");
 
-    final allAccountsStatement = await accountStatementController.fetchAccountsStatement(accountEntities);
+    final allAccountsStatement = await accountStatementController
+        .fetchAccountsStatement(accountEntities);
 
-    final entryBondItems = await accountStatementController.processEntryBondItemsInIsolateUseCase
+    final entryBondItems = await accountStatementController
+        .processEntryBondItemsInIsolateUseCase
         .execute(allAccountsStatement.values.expand((list) => list).toList());
 
     final totalDebit = entryBondItems.fold(
       0.0,
-      (previousValue, element) => previousValue + (element.bondItemType == BondItemType.debtor ? element.amount! : 0),
+      (previousValue, element) =>
+          previousValue +
+          (element.bondItemType == BondItemType.debtor ? element.amount! : 0),
     );
 
     final totalCredit = entryBondItems.fold(
       0.0,
-      (previousValue, element) => previousValue + (element.bondItemType == BondItemType.creditor ? element.amount! : 0),
+      (previousValue, element) =>
+          previousValue +
+          (element.bondItemType == BondItemType.creditor ? element.amount! : 0),
     );
 
-    log('totalDebit: $totalDebit - totalCredit: $totalCredit', name: 'Debit & Credit');
+    log('totalDebit: $totalDebit - totalCredit: $totalCredit',
+        name: 'Debit & Credit');
 
     final isDebitCreditEquals = checkDebitCreditEquals(totalDebit, totalCredit);
 
@@ -81,8 +92,10 @@ class RotateBalancesUseCase {
     return entryBondItems
         .map(
           (EntryBondItemModel item) => PayItem(
-            entryCredit: item.bondItemType == BondItemType.creditor ? item.amount : 0,
-            entryDebit: item.bondItemType == BondItemType.debtor ? item.amount : 0,
+            entryCredit:
+                item.bondItemType == BondItemType.creditor ? item.amount : 0,
+            entryDebit:
+                item.bondItemType == BondItemType.debtor ? item.amount : 0,
             entryAccountGuid: item.account.id,
             entryAccountName: item.account.name,
             entryDate: item.date,

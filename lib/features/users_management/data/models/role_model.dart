@@ -16,7 +16,8 @@ class RoleModel {
       'roleName': roleName,
       'roles': roles.map((roleItemType, roleItems) {
         // Convert RoleItemType to its string value, and map RoleItem list to their string values
-        return MapEntry(roleItemType.value, roleItems.map((roleItem) => roleItem.value).toList());
+        return MapEntry(roleItemType.value,
+            roleItems.map((roleItem) => roleItem.value).toList());
       }),
     };
   }
@@ -29,7 +30,8 @@ class RoleModel {
       roles: (json['roles'] as Map<String, dynamic>?)?.map((key, value) {
             // Convert the string key to RoleItemType and map each RoleItem string back to the enum
             return MapEntry(
-              RoleItemType.byValue(key), // Convert string key back to RoleItemType
+              RoleItemType.byValue(
+                  key), // Convert string key back to RoleItemType
               (value as List)
                   .map((item) => RoleItem.byValue(item))
                   .toList(), // Convert string values back to RoleItem enums
@@ -86,7 +88,8 @@ enum RoleItemType {
   factory RoleItemType.byValue(String value) {
     return RoleItemType.values.firstWhere(
       (type) => type.value == value,
-      orElse: () => throw ArgumentError('No matching RoleItemType for value: $value'),
+      orElse: () =>
+          throw ArgumentError('No matching RoleItemType for value: $value'),
     );
   }
 }
@@ -108,7 +111,8 @@ enum RoleItem {
   factory RoleItem.byValue(String value) {
     return RoleItem.values.firstWhere(
       (item) => item.value == value,
-      orElse: () => throw ArgumentError('No matching RoleItem for value: $value'),
+      orElse: () =>
+          throw ArgumentError('No matching RoleItem for value: $value'),
     );
   }
 }

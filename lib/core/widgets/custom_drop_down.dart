@@ -24,29 +24,31 @@ class CustomDropDown extends StatelessWidget {
         color: Colors.white,
         child: DropdownButtonFormField<String>(
           decoration: InputDecoration(
-            hintStyle: AppTextStyles.headLineStyle3.copyWith(overflow: TextOverflow.ellipsis),
+            hintStyle: AppTextStyles.headLineStyle3
+                .copyWith(overflow: TextOverflow.ellipsis),
             hintText: label,
             // labelText: label,
             enabled: enable ?? true,
-            labelStyle: AppTextStyles.headLineStyle3.copyWith(overflow: TextOverflow.ellipsis),
+            labelStyle: AppTextStyles.headLineStyle3
+                .copyWith(overflow: TextOverflow.ellipsis),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: AppColors.grayColor, width: 1),
             ),
             disabledBorder: UnderlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-
               borderSide: BorderSide(color: AppColors.grayColor, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-
               borderSide: BorderSide(color: AppColors.blueColor, width: 1),
             ),
           ),
           value: value == '' ? null : value,
           iconEnabledColor: Colors.blue,
-          hint: Text(label, style: AppTextStyles.headLineStyle4, overflow: TextOverflow.ellipsis),
+          hint: Text(label,
+              style: AppTextStyles.headLineStyle4,
+              overflow: TextOverflow.ellipsis),
           onChanged: onChange,
           items: listValue.map((e) {
             return DropdownMenuItem(

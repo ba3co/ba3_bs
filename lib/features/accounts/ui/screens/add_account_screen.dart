@@ -21,14 +21,19 @@ class AddAccountScreen extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                controller.isEditAccount ? controller.selectedAccount!.accName! : AppStrings.accountCard.tr,
+                controller.isEditAccount
+                    ? controller.selectedAccount!.accName!
+                    : AppStrings.accountCard.tr,
               ),
               Spacer(),
               SizedBox(
                   width: 400,
                   child: CustomTextFieldWithoutIcon(
                       enabled: true,
-                      textEditingController: TextEditingController()..text = controller.isEditAccount ? controller.selectedAccount!.id! : '')),
+                      textEditingController: TextEditingController()
+                        ..text = controller.isEditAccount
+                            ? controller.selectedAccount!.id!
+                            : '')),
               Spacer(),
             ],
           ),
@@ -39,7 +44,8 @@ class AddAccountScreen extends StatelessWidget {
             spacing: 20,
             children: [
               AddAccountFormWidget(controller: controller),
-              AccountTypeDropdown(accountSelectionHandler: controller.accountFromHandler),
+              AccountTypeDropdown(
+                  accountSelectionHandler: controller.accountFromHandler),
 
               // Button to add a new customer
               AddCustomersWidget(),

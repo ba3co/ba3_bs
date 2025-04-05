@@ -37,7 +37,8 @@ class BillDetailsCalculations extends StatelessWidget {
               height: 40.h,
               width: 40.0.w,
               color: Colors.blueGrey.shade400,
-              value: billDetailsPlutoController.computeTotalVat.toStringAsFixed(2),
+              value:
+                  billDetailsPlutoController.computeTotalVat.toStringAsFixed(2),
               label: AppStrings.addedValue.tr,
             ),
             CalculationCard(
@@ -45,7 +46,8 @@ class BillDetailsCalculations extends StatelessWidget {
               height: 40.h,
               width: 40.0.w,
               color: Colors.blueGrey.shade400,
-              value: billDetailsPlutoController.computeBeforeVatTotal.toStringAsFixed(2),
+              value: billDetailsPlutoController.computeBeforeVatTotal
+                  .toStringAsFixed(2),
               label: AppStrings.totalBeforeTax.tr,
             ),
             CalculationCard(
@@ -53,14 +55,16 @@ class BillDetailsCalculations extends StatelessWidget {
               height: 40.h,
               width: 40.0.w,
               color: Colors.grey.shade600,
-              value: billDetailsPlutoController.computeWithVatTotal.toStringAsFixed(2),
+              value: billDetailsPlutoController.computeWithVatTotal
+                  .toStringAsFixed(2),
               label: AppStrings.subtotal.tr,
             ),
             CalculationCard(
               width: 40.0.w,
               height: 40.h,
               color: Colors.blue,
-              value: billDetailsPlutoController.calculateFinalTotal.toStringAsFixed(2),
+              value: billDetailsPlutoController.calculateFinalTotal
+                  .toStringAsFixed(2),
               label: AppStrings.total.tr,
             ),
           ],

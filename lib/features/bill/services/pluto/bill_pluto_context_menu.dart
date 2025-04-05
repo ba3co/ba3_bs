@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -45,12 +44,12 @@ class BillPlutoContextMenu {
         final int quantity = AppServiceUtils.getItemQuantity(selectedRow);
 
         gridService.updateInvoiceValuesBySubTotal(
-          selectedRow: selectedRow,
-          subTotal: invoiceUtils.getPrice(type: type, materialModel: materialModel),
-          quantity: quantity,
-          billTypeModel: billTypeModel,
-            isPurchaseWithOutVat:isPurchaseWithOutVat
-        );
+            selectedRow: selectedRow,
+            subTotal:
+                invoiceUtils.getPrice(type: type, materialModel: materialModel),
+            quantity: quantity,
+            billTypeModel: billTypeModel,
+            isPurchaseWithOutVat: isPurchaseWithOutVat);
         plutoController.update();
       },
       onCloseCallback: () {
@@ -77,12 +76,15 @@ class BillPlutoContextMenu {
       itemLabelBuilder: (item) => item,
       onSelected: (String selectedMenuItem) {
         if (selectedMenuItem == 'حركة المادة') {
-          read<MaterialsStatementController>().fetchMatStatements(materialModel, context: context);
+          read<MaterialsStatementController>()
+              .fetchMatStatements(materialModel, context: context);
         }
 
         if (selectedMenuItem == 'إضافة serial') {
-          final PlutoRow selectedRow = plutoController.recordsTableStateManager.rows[index];
-          final String matQuantity = AppServiceUtils.getCellValue(selectedRow, AppConstants.invRecQuantity);
+          final PlutoRow selectedRow =
+              plutoController.recordsTableStateManager.rows[index];
+          final String matQuantity = AppServiceUtils.getCellValue(
+              selectedRow, AppConstants.invRecQuantity);
           debugPrint('matQuantity $matQuantity');
           OverlayService.showDialog(
             context: context,
@@ -94,12 +96,17 @@ class BillPlutoContextMenu {
             ),
             onCloseCallback: () {
               final List<TextEditingController> serialsControllers =
-                  plutoController.buyMaterialsSerialsControllers[materialModel] ?? [];
+                  plutoController
+                          .buyMaterialsSerialsControllers[materialModel] ??
+                      [];
 
-              if (serialsControllers.isNotEmpty && !AppConstants.hideInvRecProductSerialNumbers) {
+              if (serialsControllers.isNotEmpty &&
+                  !AppConstants.hideInvRecProductSerialNumbers) {
                 // Extract serial numbers from controllers
-                final List<String> serialNumbers =
-                    serialsControllers.map((controller) => controller.text.trim()).where((text) => text.isNotEmpty).toList();
+                final List<String> serialNumbers = serialsControllers
+                    .map((controller) => controller.text.trim())
+                    .where((text) => text.isNotEmpty)
+                    .toList();
 
                 // Update the cell value with the extracted serial numbers
                 gridService.updateSelectedRowCellValue(
@@ -110,7 +117,8 @@ class BillPlutoContextMenu {
                 );
               }
 
-              debugPrint('Material serial dialog closed. Serial Numbers: ${serialsControllers.map((c) => c.text).toList()}');
+              debugPrint(
+                  'Material serial dialog closed. Serial Numbers: ${serialsControllers.map((c) => c.text).toList()}');
             },
           );
         }

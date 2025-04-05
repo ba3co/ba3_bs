@@ -8,12 +8,19 @@ class DateRangePicker extends StatelessWidget {
   final PickerDateRange? pickedDateRange;
   final Function(DateRangePickerSelectionChangedArgs)? onSelectionChanged;
 
-  const DateRangePicker({super.key, required this.onSubmit, required this.onSelectionChanged, this.pickedDateRange});
+  const DateRangePicker(
+      {super.key,
+      required this.onSubmit,
+      required this.onSelectionChanged,
+      this.pickedDateRange});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8), border: Border.all()),
+      decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all()),
       width: 250,
       height: 40,
       child: InkWell(
@@ -29,10 +36,13 @@ class DateRangePicker extends StatelessWidget {
                     headerStyle: const DateRangePickerHeaderStyle(
                       backgroundColor: Colors.transparent,
                     ),
-                    navigationDirection: DateRangePickerNavigationDirection.vertical,
+                    navigationDirection:
+                        DateRangePickerNavigationDirection.vertical,
                     selectionMode: DateRangePickerSelectionMode.range,
                     monthViewSettings: const DateRangePickerMonthViewSettings(
-                        enableSwipeSelection: false, viewHeaderStyle: DateRangePickerViewHeaderStyle(backgroundColor: Colors.transparent)),
+                        enableSwipeSelection: false,
+                        viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                            backgroundColor: Colors.transparent)),
                     showNavigationArrow: true,
                     navigationMode: DateRangePickerNavigationMode.scroll,
                     onSelectionChanged: onSelectionChanged,
@@ -57,7 +67,9 @@ class DateRangePicker extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  pickedDateRange == null ? AppStrings.selectATimePeriod.tr : date,
+                  pickedDateRange == null
+                      ? AppStrings.selectATimePeriod.tr
+                      : date,
                 ),
                 const Spacer(),
                 const Icon(Icons.date_range)
@@ -67,5 +79,6 @@ class DateRangePicker extends StatelessWidget {
     );
   }
 
-  String get date => '${pickedDateRange?.startDate.toString().split(' ').first}  -->  ${pickedDateRange?.endDate.toString().split(' ').first}';
+  String get date =>
+      '${pickedDateRange?.startDate.toString().split(' ').first}  -->  ${pickedDateRange?.endDate.toString().split(' ').first}';
 }

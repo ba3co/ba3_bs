@@ -5,16 +5,19 @@ import '../../sellers/data/models/seller_model.dart';
 import '../data/models/cheques_model.dart';
 
 class ChequesUtils {
-  ChequesModel appendEmptyChequesModel(List<ChequesModel> cheques, ChequesType bondTyp) {
-    final int lastBillNumber = cheques.isNotEmpty? cheques.last.chequesNumber! : 0;
+  ChequesModel appendEmptyChequesModel(
+      List<ChequesModel> cheques, ChequesType bondTyp) {
+    final int lastBillNumber =
+        cheques.isNotEmpty ? cheques.last.chequesNumber! : 0;
 
-    final emptyBillModel = ChequesModel.empty( chequesType: bondTyp,lastChequesNumber: lastBillNumber,);
+    final emptyBillModel = ChequesModel.empty(
+      chequesType: bondTyp,
+      lastChequesNumber: lastBillNumber,
+    );
 
     cheques.add(emptyBillModel);
     return emptyBillModel;
   }
-
-
 
   bool validateCustomerAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {

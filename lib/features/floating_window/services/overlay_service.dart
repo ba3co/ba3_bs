@@ -7,7 +7,8 @@ import '../ui/custom_dropdown_overly.dart';
 import '../ui/custom_popup_menu_overly.dart';
 
 class OverlayService {
-  static final _entryWithPriorityInstance = OverlayEntryWithPriorityManager.instance;
+  static final _entryWithPriorityInstance =
+      OverlayEntryWithPriorityManager.instance;
 
   static void back() {
     _entryWithPriorityInstance.dispose();

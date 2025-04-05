@@ -39,7 +39,10 @@ class WhatsappService {
 
   String get dataBaseYear {
     final currentVersion = read<MigrationController>().currentVersion;
-    return currentVersion == AppConstants.defaultVersion || currentVersion.isEmpty ? '' : currentVersion;
+    return currentVersion == AppConstants.defaultVersion ||
+            currentVersion.isEmpty
+        ? ''
+        : currentVersion;
   }
 
   String generateInvoiceUrl({
@@ -96,7 +99,8 @@ class WhatsappService {
       log('✅ تم إرسال رابط الفاتورة بنجاح!', name: 'SendWhatsAppInvoiceLink');
       AppUIUtils.onSuccess('✅ تم إرسال رابط الفاتورة بنجاح إلى الواتساب!');
     } else {
-      log('⚠️ فشل في إرسال الرابط: ${response.body}', name: 'SendWhatsAppInvoiceLink');
+      log('⚠️ فشل في إرسال الرابط: ${response.body}',
+          name: 'SendWhatsAppInvoiceLink');
     }
   }
 }

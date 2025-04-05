@@ -7,28 +7,30 @@ import '../../../features/car_store/data/model/store_product.dart';
 
 extension StoreProductConversion on StoreProduct {
   BillItem toBillItem() {
-
-    MaterialModel? materialModel=read<MaterialController>().searchOfProductByText(barcode??'xxxxx').lastOrNull;
-    if(materialModel!=null&&barcode!='0'&&barcode!='00'){
-    return BillItem(
-      itemGuid: materialModel.id!,
-      itemName: materialModel.matName,
-      itemQuantity: amount!,
-      itemTotalPrice: (price!*amount!).toString(),
-      itemSubTotalPrice: (price! ) / 1.05,
-      itemVatPrice: ((price! ) / 1.05)*0.05,
-      itemGiftsNumber: 0,
-      itemGiftsPrice: 0,
-      soldSerialNumber: null,
-      itemSerialNumbers: null,
-    );}
+    MaterialModel? materialModel = read<MaterialController>()
+        .searchOfProductByText(barcode ?? 'xxxxx')
+        .lastOrNull;
+    if (materialModel != null && barcode != '0' && barcode != '00') {
+      return BillItem(
+        itemGuid: materialModel.id!,
+        itemName: materialModel.matName,
+        itemQuantity: amount!,
+        itemTotalPrice: (price! * amount!).toString(),
+        itemSubTotalPrice: (price!) / 1.05,
+        itemVatPrice: ((price!) / 1.05) * 0.05,
+        itemGiftsNumber: 0,
+        itemGiftsPrice: 0,
+        soldSerialNumber: null,
+        itemSerialNumbers: null,
+      );
+    }
     return BillItem(
       itemGuid: "الباركود خطأ",
-      itemName:"الباركود خطأ",
+      itemName: "الباركود خطأ",
       itemQuantity: amount!,
-      itemTotalPrice: (price!*amount!).toString(),
-      itemSubTotalPrice: (price! ) / 1.05,
-      itemVatPrice: ((price!) / 1.05)*0.05,
+      itemTotalPrice: (price! * amount!).toString(),
+      itemSubTotalPrice: (price!) / 1.05,
+      itemVatPrice: ((price!) / 1.05) * 0.05,
       itemGiftsNumber: 0,
       itemGiftsPrice: 0,
       soldSerialNumber: null,

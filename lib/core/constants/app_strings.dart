@@ -91,7 +91,8 @@ class AppStrings {
   static const String panel = 'لوحة';
 
   static const String controlPanel = 'لوحة التحكم';
-  static const String areYouSureYouWantToCloseTheProgram = 'هل انت متأكد انك تريد إغلاق البرنامج';
+  static const String areYouSureYouWantToCloseTheProgram =
+      'هل انت متأكد انك تريد إغلاق البرنامج';
   static const String exit = 'خروج';
   static const String cancel = 'الغاء';
   static const String user = 'المستخدم';
@@ -389,24 +390,24 @@ class AppStrings {
 
   static String usersManagement = 'ادارة المستخدمين';
 
-
   static const String whatsApp = 'WhatsApp';
 
-  static var choseDay='اختر اليوم';
+  static var choseDay = 'اختر اليوم';
 
-  static var error='خطأ';
+  static var error = 'خطأ';
 
-  static var warning  ='تنبيه';
+  static var warning = 'تنبيه';
 
-  static var info='معلومة';
+  static var info = 'معلومة';
 
-  static var loading='جاري التحميل';
+  static var loading = 'جاري التحميل';
 
-  static var enterPhone='ادخل رقم الهاتف';
+  static var enterPhone = 'ادخل رقم الهاتف';
 
-  static var invalidPhone='رقم الهاتف غير صحيح';
+  static var invalidPhone = 'رقم الهاتف غير صحيح';
 
-  static var savedNumber='تم حفظ رقم الهاتف';
+  static var savedNumber = 'تم حفظ رقم الهاتف';
 
-  static var areYouSureContinueWithoutSeller='هل تريد المتابعة بدون تحديد البائع؟';
+  static var areYouSureContinueWithoutSeller =
+      'هل تريد المتابعة بدون تحديد البائع؟';
 }

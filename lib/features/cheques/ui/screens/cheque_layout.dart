@@ -31,7 +31,8 @@ class _ChequeLayoutState extends State<ChequeLayout> {
               titleWidget: Align(
                 child: Text(
                   AppStrings.cheques.tr,
-                  style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
+                  style: AppTextStyles.headLineStyle2
+                      .copyWith(color: AppColors.blueColor),
                 ),
               ),
               bodyWidget: Column(
@@ -40,7 +41,9 @@ class _ChequeLayoutState extends State<ChequeLayout> {
                   ChequesTypeItemWidget(
                       text: AppStrings.addCheques.tr,
                       onPressed: () {
-                        controller.openFloatingChequesDetails(context, ChequesType.paidChecks,withFetched: true);
+                        controller.openFloatingChequesDetails(
+                            context, ChequesType.paidChecks,
+                            withFetched: true);
                         // Get.to(() => const ChequesDetailsScreen());
                       }),
                   ChequesTypeItemWidget(
@@ -48,14 +51,16 @@ class _ChequeLayoutState extends State<ChequeLayout> {
                       onPressed: () {
                         controller
                           ..fetchAllChequesByType(ChequesType.paidChecks)
-                          ..navigateToChequesScreen(onlyDues: true,context: context);
+                          ..navigateToChequesScreen(
+                              onlyDues: true, context: context);
                       }),
                   ChequesTypeItemWidget(
-                      text:AppStrings.viewCheques.tr,
+                      text: AppStrings.viewCheques.tr,
                       onPressed: () {
                         controller
                           ..fetchAllChequesByType(ChequesType.paidChecks)
-                          ..navigateToChequesScreen(onlyDues: false,context: context);
+                          ..navigateToChequesScreen(
+                              onlyDues: false, context: context);
                       }),
                 ],
               ),

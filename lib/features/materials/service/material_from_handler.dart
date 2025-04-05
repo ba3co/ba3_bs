@@ -33,16 +33,24 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     if (material != null) {
       materialController.selectedMaterial = material;
       nameController.text = materialController.selectedMaterial!.matName!;
-      codeController.text = materialController.selectedMaterial!.matCode!.toFixedString();
-      customerPriceController.text = materialController.selectedMaterial!.endUserPrice!;
-      wholePriceController.text = materialController.selectedMaterial!.wholesalePrice!;
-      retailPriceController.text = materialController.selectedMaterial!.retailPrice!;
-      minPriceController.text = materialController.selectedMaterial!.matLastPriceCurVal!.toFixedString();
+      codeController.text =
+          materialController.selectedMaterial!.matCode!.toFixedString();
+      customerPriceController.text =
+          materialController.selectedMaterial!.endUserPrice!;
+      wholePriceController.text =
+          materialController.selectedMaterial!.wholesalePrice!;
+      retailPriceController.text =
+          materialController.selectedMaterial!.retailPrice!;
+      minPriceController.text = materialController
+          .selectedMaterial!.matLastPriceCurVal!
+          .toFixedString();
       barcodeController.text = materialController.selectedMaterial!.matBarCode!;
-      latinNameController.text = materialController.selectedMaterial!.matCompositionLatinName ?? '';
-      parentModel =
-          read<MaterialGroupController>().getMaterialGroupById(materialController.selectedMaterial!.matGroupGuid);
-      parentController.text = parentModel?.groupName??materialController.selectedMaterial!.matGroupGuid!;
+      latinNameController.text =
+          materialController.selectedMaterial!.matCompositionLatinName ?? '';
+      parentModel = read<MaterialGroupController>().getMaterialGroupById(
+          materialController.selectedMaterial!.matGroupGuid);
+      parentController.text = parentModel?.groupName ??
+          materialController.selectedMaterial!.matGroupGuid!;
     } else {
       materialController.selectedMaterial = null;
       parentModel = null;
@@ -77,7 +85,8 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     parentController.dispose();
   }
 
-  String? defaultValidator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? defaultValidator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
   @override
   void onSelectedTaxChanged(VatEnums? newTax) {

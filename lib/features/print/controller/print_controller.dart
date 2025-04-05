@@ -329,7 +329,6 @@
 //   }
 // }
 
-
 import 'dart:async';
 import 'dart:developer';
 
@@ -377,8 +376,10 @@ class PrintingController extends GetxController {
   }
 
   void _startLoadingDotsAnimation() {
-    _loadingAnimationTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      loadingDots.value = loadingDots.value.length < 3 ? '${loadingDots.value}.' : '';
+    _loadingAnimationTimer =
+        Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      loadingDots.value =
+          loadingDots.value.length < 3 ? '${loadingDots.value}.' : '';
     });
   }
 
@@ -389,7 +390,8 @@ class PrintingController extends GetxController {
       required String invDate}) async {
     _showLoadingDialog(context);
 
-    await _printBill(billNumber: billNumber, invRecords: invRecords, invDate: invDate);
+    await _printBill(
+        billNumber: billNumber, invRecords: invRecords, invDate: invDate);
 
     _dismissLoadingDialog();
   }
@@ -413,13 +415,18 @@ class PrintingController extends GetxController {
 
   void _dismissLoadingDialog() => OverlayService.back();
 
-  Future<void> _printBill({required int billNumber, required List<InvoiceRecordModel> invRecords, required String invDate}) async {
+  Future<void> _printBill(
+      {required int billNumber,
+      required List<InvoiceRecordModel> invRecords,
+      required String invDate}) async {
     List<BluetoothInfo> bluetoothDevices = await _fetchPairedBluetoothDevices();
 
     const String targetPrinterMacAddress = PrinterConstants.printerMacAddress;
 
 // Check if the specified printer is among the paired devices
-    bool isPrinterAvailable = bluetoothDevices.any((device) => device.macAdress.toLowerCase() == targetPrinterMacAddress.toLowerCase());
+    bool isPrinterAvailable = bluetoothDevices.any((device) =>
+        device.macAdress.toLowerCase() ==
+        targetPrinterMacAddress.toLowerCase());
 
     if (isPrinterAvailable) {
       if (!isPrinterConnected) await _connectToPrinter(targetPrinterMacAddress);
@@ -433,13 +440,15 @@ class PrintingController extends GetxController {
 // Retrieves a list of paired Bluetooth devices
   Future<List<BluetoothInfo>> _fetchPairedBluetoothDevices() async {
     bluetoothDevices = await PrintBluetoothThermal.pairedBluetooths;
-    debugPrint('isPermissionBluetoothGranted ${await PrintBluetoothThermal.isPermissionBluetoothGranted}');
+    debugPrint(
+        'isPermissionBluetoothGranted ${await PrintBluetoothThermal.isPermissionBluetoothGranted}');
     return bluetoothDevices;
   }
 
 // Connects to the printer using its MAC address
   Future<void> _connectToPrinter(String mac) async {
-    isPrinterConnected = await PrintBluetoothThermal.connect(macPrinterAddress: mac);
+    isPrinterConnected =
+        await PrintBluetoothThermal.connect(macPrinterAddress: mac);
     debugPrint('Connection status: $isPrinterConnected');
   }
 
@@ -450,9 +459,11 @@ class PrintingController extends GetxController {
   }
 
 // Sends the print data to the printer if connected
-  Future<void> _sendBillToPrinter(List<InvoiceRecordModel> invRecords, String invDate, int billNumber) async {
+  Future<void> _sendBillToPrinter(List<InvoiceRecordModel> invRecords,
+      String invDate, int billNumber) async {
     if (await PrintBluetoothThermal.connectionStatus) {
-      List<int> ticket = await _generateBillPrintData(invRecords, invDate, billNumber);
+      List<int> ticket =
+          await _generateBillPrintData(invRecords, invDate, billNumber);
 
 // Write bytes to the printer
       await PrintBluetoothThermal.writeBytes(ticket);
@@ -463,22 +474,28 @@ class PrintingController extends GetxController {
   }
 
 // Generates the print data for the invoice
-  Future<List<int>> _generateBillPrintData(List<InvoiceRecordModel> invoiceRecords, String invoiceDate, int billNumber) async {
+  Future<List<int>> _generateBillPrintData(
+      List<InvoiceRecordModel> invoiceRecords,
+      String invoiceDate,
+      int billNumber) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = generator.reset();
 
 // Header
-    bytes += generator.text(PrinterConstants.invoiceTitle, styles: PrinterTextStyles.centered, linesAfter: 1);
+    bytes += generator.text(PrinterConstants.invoiceTitle,
+        styles: PrinterTextStyles.centered, linesAfter: 1);
     bytes += await _generateLogo(generator);
     bytes += _createHeaderSection(generator, invoiceDate, billNumber);
 
 // Process Items
-    final result = await _generateItemsDetailsAndTotals(generator, invoiceRecords);
+    final result =
+        await _generateItemsDetailsAndTotals(generator, invoiceRecords);
     bytes += result.bytes;
 
 // Totals Summary
-    bytes += _generateTotalSummary(generator, result.totals['netAmount']!, result.totals['vatAmount']!);
+    bytes += _generateTotalSummary(
+        generator, result.totals['netAmount']!, result.totals['vatAmount']!);
 
 // Footer
     bytes += _createFooterSection(generator);
@@ -487,8 +504,9 @@ class PrintingController extends GetxController {
   }
 
 // Processes each invoice record, calculates totals, and adds item details to the print data
-  Future<({List<int> bytes, Map<String, double> totals})> _generateItemsDetailsAndTotals(
-      Generator generator, List<InvoiceRecordModel> invoiceRecords) async {
+  Future<({List<int> bytes, Map<String, double> totals})>
+      _generateItemsDetailsAndTotals(
+          Generator generator, List<InvoiceRecordModel> invoiceRecords) async {
     double netAmount = 0;
     double vatAmount = 0;
     List<int> itemBytes = [];
@@ -504,10 +522,14 @@ class PrintingController extends GetxController {
       vatAmount += recordTotals['vatTotal']!;
 
 // Generate item details
-      itemBytes += await _generateItemDetails(generator, material, record, recordTotals);
+      itemBytes +=
+          await _generateItemDetails(generator, material, record, recordTotals);
     }
 
-    return (bytes: itemBytes, totals: {'netAmount': netAmount, 'vatAmount': vatAmount});
+    return (
+      bytes: itemBytes,
+      totals: {'netAmount': netAmount, 'vatAmount': vatAmount}
+    );
   }
 
 // Calculates totals for an invoice record
@@ -528,17 +550,22 @@ class PrintingController extends GetxController {
 
 // Generates the item details for each invoice record
   Future<List<int>> _generateItemDetails(
-      Generator generator, MaterialModel material, InvoiceRecordModel record, Map<String, double> totals) async {
-    final itemName =
-        (material.matName?.decodeProblematic() ?? '').substring(0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
+      Generator generator,
+      MaterialModel material,
+      InvoiceRecordModel record,
+      Map<String, double> totals) async {
+    final itemName = (material.matName?.decodeProblematic() ?? '').substring(
+        0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
     log('itemName is s $itemName');
     log('itemName is ${itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' ')}');
-    final translatedName =
-        await _translationRepository.translateText(itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' '));
+    final translatedName = await _translationRepository.translateText(itemName
+        .replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '')
+        .replaceAll('ـ', ' '));
 
     return [
       ...generator.text(translatedName, styles: PrinterTextStyles.left),
-      ...generator.text(material.matBarCode ?? '', styles: PrinterTextStyles.left),
+      ...generator.text(material.matBarCode ?? '',
+          styles: PrinterTextStyles.left),
       ...generator.text(
         '${record.invRecQuantity} x ${totals['unitPriceWithVat']!.toStringAsFixed(2)} -> '
         '${PrinterConstants.totalLabel}${totals['lineTotal']!.toStringAsFixed(2)}',
@@ -567,24 +594,37 @@ class PrintingController extends GetxController {
     return [];
   }
 
-  List<int> _createHeaderSection(Generator generator, String date, int billNumber) {
+  List<int> _createHeaderSection(
+      Generator generator, String date, int billNumber) {
     return [
       ...generator.emptyLines(2),
-      ...generator.text(PrinterConstants.storeName, styles: PrinterTextStyles.boldCentered),
+      ...generator.text(PrinterConstants.storeName,
+          styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(1),
-      ...generator.text('${PrinterConstants.dateLabel}$date', styles: PrinterTextStyles.left),
-      ...generator.text('${PrinterConstants.billNumberLabel}$billNumber', styles: PrinterTextStyles.left),
-      ...generator.text(PrinterConstants.trnNumber, styles: PrinterTextStyles.left, linesAfter: 1),
+      ...generator.text('${PrinterConstants.dateLabel}$date',
+          styles: PrinterTextStyles.left),
+      ...generator.text('${PrinterConstants.billNumberLabel}$billNumber',
+          styles: PrinterTextStyles.left),
+      ...generator.text(PrinterConstants.trnNumber,
+          styles: PrinterTextStyles.left, linesAfter: 1),
     ];
   }
 
-  List<int> _generateTotalSummary(Generator generator, double netTotal, double vatTotal) {
+  List<int> _generateTotalSummary(
+      Generator generator, double netTotal, double vatTotal) {
     return [
-      ...generator.text('${PrinterConstants.totalVatLabel}${vatTotal.toStringAsFixed(2)}', styles: PrinterTextStyles.centered),
+      ...generator.text(
+          '${PrinterConstants.totalVatLabel}${vatTotal.toStringAsFixed(2)}',
+          styles: PrinterTextStyles.centered),
       ...generator.text('-' * 30, styles: PrinterTextStyles.right),
-      ...generator.text('${PrinterConstants.subTotalLabel}${netTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
-      ...generator.text('${PrinterConstants.vatLabel}${vatTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
-      ...generator.text('${PrinterConstants.totalLabel}${(netTotal + vatTotal).toStringAsFixed(2)} AED',
+      ...generator.text(
+          '${PrinterConstants.subTotalLabel}${netTotal.toStringAsFixed(2)} AED',
+          styles: PrinterTextStyles.rightBold),
+      ...generator.text(
+          '${PrinterConstants.vatLabel}${vatTotal.toStringAsFixed(2)} AED',
+          styles: PrinterTextStyles.rightBold),
+      ...generator.text(
+          '${PrinterConstants.totalLabel}${(netTotal + vatTotal).toStringAsFixed(2)} AED',
           styles: PrinterTextStyles.rightBold),
       ...generator.emptyLines(1),
     ];
@@ -592,9 +632,12 @@ class PrintingController extends GetxController {
 
   List<int> _createFooterSection(Generator generator) {
     return [
-      ...generator.text(PrinterConstants.storeLocation, styles: PrinterTextStyles.centered),
-      ...generator.text(PrinterConstants.contactNumber, styles: PrinterTextStyles.centered),
-      ...generator.text(PrinterConstants.thankYouMessage, styles: PrinterTextStyles.boldCentered),
+      ...generator.text(PrinterConstants.storeLocation,
+          styles: PrinterTextStyles.centered),
+      ...generator.text(PrinterConstants.contactNumber,
+          styles: PrinterTextStyles.centered),
+      ...generator.text(PrinterConstants.thankYouMessage,
+          styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(2),
     ];
   }

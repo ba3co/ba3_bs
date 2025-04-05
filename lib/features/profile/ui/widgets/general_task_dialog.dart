@@ -21,21 +21,26 @@ class GeneralTaskDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<UserManagementController>(builder: (userManagementController) {
+    return GetBuilder<UserManagementController>(
+        builder: (userManagementController) {
       return Column(
         children: [
           Container(
             height: 370,
             color: Colors.white,
             alignment: Alignment.center,
-            child: userManagementController.image == null && (!task.status.isFinished)
-                ? Text(AppStrings.uploadImage.tr, style: AppTextStyles.headLineStyle3)
+            child: userManagementController.image == null &&
+                    (!task.status.isFinished)
+                ? Text(AppStrings.uploadImage.tr,
+                    style: AppTextStyles.headLineStyle3)
                 : GestureDetector(
                     onTap: () {
                       if (task.status.isFinished) {
-                        AppUIUtils.showFullScreenNetworkImage(context, task.taskImage!);
+                        AppUIUtils.showFullScreenNetworkImage(
+                            context, task.taskImage!);
                       } else {
-                        AppUIUtils.showFullScreenFileImage(context, userManagementController.image!.path);
+                        AppUIUtils.showFullScreenFileImage(
+                            context, userManagementController.image!.path);
                       }
                     },
                     child: task.status.isFinished
@@ -48,7 +53,9 @@ class GeneralTaskDialog extends StatelessWidget {
 
                             height: 370,
                             imageErrorBuilder: (context, error, stackTrace) {
-                              return Icon(Icons.broken_image, size: 50, color: Colors.grey); // أيقونة عند فشل التحميل
+                              return Icon(Icons.broken_image,
+                                  size: 50,
+                                  color: Colors.grey); // أيقونة عند فشل التحميل
                             },
                           )
                         : Image.file(

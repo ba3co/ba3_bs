@@ -22,7 +22,7 @@ class UserDailyTimeWidget extends StatelessWidget {
     return OrganizedWidget(
         titleWidget: Center(
             child: Text(
-              AppStrings.workingHours.tr,
+          AppStrings.workingHours.tr,
           style: AppTextStyles.headLineStyle2,
         )),
         bodyWidget: Column(
@@ -31,7 +31,7 @@ class UserDailyTimeWidget extends StatelessWidget {
               separatorBuilder: (context, index) => VerticalSpace(),
               shrinkWrap: true,
               physics: ClampingScrollPhysics(),
-              itemCount: userModel.userWorkingHours?.length??0,
+              itemCount: userModel.userWorkingHours?.length ?? 0,
               padding: EdgeInsets.zero,
               itemBuilder: (context, index) => Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,7 +39,9 @@ class UserDailyTimeWidget extends StatelessWidget {
                   SizedBox(
                       width: 30.w,
                       child: Text(
-                        userModel.userWorkingHours?[index.toString()]?.enterTime ?? '',
+                        userModel.userWorkingHours?[index.toString()]
+                                ?.enterTime ??
+                            '',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.headLineStyle4,
                       )),
@@ -57,14 +59,15 @@ class UserDailyTimeWidget extends StatelessWidget {
                           size: 14,
                           color: AppColors.grayColor,
                         )
-
                       ],
                     ),
                   ),
                   SizedBox(
                       width: 30.w,
                       child: Text(
-                        userModel.userWorkingHours![index.toString()]?.outTime ?? '',
+                        userModel
+                                .userWorkingHours![index.toString()]?.outTime ??
+                            '',
                         textAlign: TextAlign.center,
                         style: AppTextStyles.headLineStyle4,
                       )),

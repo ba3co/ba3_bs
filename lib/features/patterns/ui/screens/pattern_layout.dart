@@ -18,56 +18,62 @@ class PatternLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(),
-    body: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: OrganizedWidget(
-        titleWidget: Align(
-          child: Text(
-            AppStrings.billsPatterns.tr,
-            style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
-          ),
-        ),
-        bodyWidget: GetBuilder<PatternController>(
-            builder: (patternController) => SizedBox(
-                  width: 1.sw,
-                  child: Column(
-                    spacing: 10,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Wrap(
-                        spacing: 20,
-                        runSpacing: 20,
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+        appBar: AppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: OrganizedWidget(
+            titleWidget: Align(
+              child: Text(
+                AppStrings.billsPatterns.tr,
+                style: AppTextStyles.headLineStyle2
+                    .copyWith(color: AppColors.blueColor),
+              ),
+            ),
+            bodyWidget: GetBuilder<PatternController>(
+                builder: (patternController) => SizedBox(
+                      width: 1.sw,
+                      child: Column(
+                        spacing: 10,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ...patternController.billsTypes.map((billTypeModel) => PatternTypeItemWidget(
-                                billTypeModel: billTypeModel,
-                                color: Color(billTypeModel.color!),
-                                onTap: () {
-                                  patternController.navigateToAddPatternScreen(billType: billTypeModel,context: context);
-                                },
-                              )),
+                          Wrap(
+                            spacing: 20,
+                            runSpacing: 20,
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              ...patternController.billsTypes
+                                  .map((billTypeModel) => PatternTypeItemWidget(
+                                        billTypeModel: billTypeModel,
+                                        color: Color(billTypeModel.color!),
+                                        onTap: () {
+                                          patternController
+                                              .navigateToAddPatternScreen(
+                                                  billType: billTypeModel,
+                                                  context: context);
+                                        },
+                                      )),
+                            ],
+                          ),
+                          VerticalSpace(),
+                          Center(
+                            child: AppButton(
+                              title: AppStrings.addPattern.tr,
+                              fontSize: 13.sp,
+                              color: AppColors.grayColor,
+                              onPressed: () {
+                                patternController.navigateToAddPatternScreen(
+                                    context: context);
+                              },
+                              iconData: Icons.view_list_outlined,
+                              width: max(45.w, 140),
+                              // width: 40.w,
+                            ),
+                          ),
                         ],
                       ),
-                      VerticalSpace(),
-                      Center(
-                        child: AppButton(
-                          title: AppStrings.addPattern.tr,
-                          fontSize: 13.sp,
-                          color: AppColors.grayColor,
-                          onPressed: () {
-                            patternController.navigateToAddPatternScreen(context: context);
-                          },
-                          iconData: Icons.view_list_outlined,
-                          width: max(45.w, 140),
-                          // width: 40.w,
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-      ),
-    ),
-  );
+                    )),
+          ),
+        ),
+      );
 }

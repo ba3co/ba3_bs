@@ -33,7 +33,8 @@ class AddPatternScreen extends StatelessWidget {
                         const VerticalSpace(40),
                         ColorsPicker(patternController: patternController),
                         const VerticalSpace(40),
-                        AddPatternBottomButtons(patternController: patternController),
+                        AddPatternBottomButtons(
+                            patternController: patternController),
                       ],
                     ),
                   );

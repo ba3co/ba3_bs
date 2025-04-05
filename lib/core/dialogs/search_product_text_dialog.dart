@@ -10,11 +10,13 @@ import '../widgets/custom_text_field_with_icon.dart';
 import '../widgets/pluto_grid_with_app_bar_.dart';
 
 Future<MaterialModel?> searchProductTextDialog(String productText) async {
-  TextEditingController productTextController = TextEditingController()..text = productText;
+  TextEditingController productTextController = TextEditingController()
+    ..text = productText;
 
   List<MaterialModel> searchedMaterials;
 
-  searchedMaterials = read<MaterialController>().searchOfProductByText(productTextController.text);
+  searchedMaterials = read<MaterialController>()
+      .searchOfProductByText(productTextController.text);
 
   MaterialModel? selectedMaterial;
 
@@ -26,7 +28,8 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
     await showDialog<String>(
         context: Get.context!,
         builder: (BuildContext context) => Dialog(
-              child: GetBuilder<MaterialController>(builder: (materialController) {
+              child:
+                  GetBuilder<MaterialController>(builder: (materialController) {
                 return Directionality(
                   textDirection: TextDirection.rtl,
                   child: Column(
@@ -42,11 +45,15 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
                             child: PlutoGridWithAppBar(
                               title: 'اختيار مادة',
                               tableSourceModels: searchedMaterials,
-                              onLoaded: (PlutoGridOnLoadedEvent onLoadedEvent) {},
-                              onSelected: (PlutoGridOnSelectedEvent onSelectedEvent) {
-                                final materialId = onSelectedEvent.row?.cells['الرقم التعريفي']?.value;
+                              onLoaded:
+                                  (PlutoGridOnLoadedEvent onLoadedEvent) {},
+                              onSelected:
+                                  (PlutoGridOnSelectedEvent onSelectedEvent) {
+                                final materialId = onSelectedEvent
+                                    .row?.cells['الرقم التعريفي']?.value;
                                 if (materialId != null) {
-                                  selectedMaterial = materialController.getMaterialById(materialId);
+                                  selectedMaterial = materialController
+                                      .getMaterialById(materialId);
                                   Get.back();
                                 }
                               },
@@ -57,7 +64,9 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
                         child: CustomTextFieldWithIcon(
                             textEditingController: productTextController,
                             onSubmitted: (_) async {
-                              searchedMaterials =  materialController.searchOfProductByText(productTextController.text);
+                              searchedMaterials =
+                                  materialController.searchOfProductByText(
+                                      productTextController.text);
                               materialController.update();
                             },
                             onIconPressed: () {}),

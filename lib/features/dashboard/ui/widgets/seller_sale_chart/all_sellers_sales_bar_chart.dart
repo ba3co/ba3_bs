@@ -55,16 +55,16 @@ class AllSellersSalesBarChart extends StatelessWidget {
                       touchCallback: (p0, p1) {
                         if (p0 is FlPanDownEvent) {
                           if (p1?.spot?.spot.x != null) {
-
-                            controller.lunchSellerScree(context,(p1?.spot?.spot.x)!.toInt());
-
+                            controller.lunchSellerScree(
+                                context, (p1?.spot?.spot.x)!.toInt());
                           }
                         }
                         // log(p1.toString());
                       },
                       touchTooltipData: BarTouchTooltipData(
                         getTooltipColor: (group) => Colors.black,
-                        tooltipBorder: BorderSide(color: AppColors.backGroundColor),
+                        tooltipBorder:
+                            BorderSide(color: AppColors.backGroundColor),
                         getTooltipItem: (group, groupIndex, rod, rodIndex) {
                           return BarTooltipItem(
                             '${rod.toY.toStringAsFixed(2)} ${AppStrings.aed.tr}',
@@ -79,7 +79,8 @@ class AllSellersSalesBarChart extends StatelessWidget {
                     gridData: FlGridData(show: true),
                     titlesData: FlTitlesData(
                       leftTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                        sideTitles:
+                            SideTitles(showTitles: true, reservedSize: 40),
                       ),
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
@@ -87,7 +88,8 @@ class AllSellersSalesBarChart extends StatelessWidget {
                           showTitles: true,
                           getTitlesWidget: (double value, TitleMeta meta) {
                             int index = value.toInt();
-                            if (index < 0 || index >= controller.sellerChartData.length) {
+                            if (index < 0 ||
+                                index >= controller.sellerChartData.length) {
                               return Container();
                             }
                             return SideTitleWidget(
@@ -98,12 +100,15 @@ class AllSellersSalesBarChart extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    controller.sellerChartData[index].sellerName,
+                                    controller
+                                        .sellerChartData[index].sellerName,
                                     style: AppTextStyles.headLineStyle3,
                                   ),
                                   Text(
-                                    (controller.sellerChartData[index].totalAccessorySales +
-                                            controller.sellerChartData[index].totalMobileSales)
+                                    (controller.sellerChartData[index]
+                                                .totalAccessorySales +
+                                            controller.sellerChartData[index]
+                                                .totalMobileSales)
                                         .toString()
                                         .formatNumber(),
                                     style: AppTextStyles.headLineStyle3,

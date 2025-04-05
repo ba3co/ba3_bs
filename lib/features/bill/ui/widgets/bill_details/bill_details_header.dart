@@ -42,10 +42,13 @@ class BillDetailsHeader extends StatelessWidget {
           children: [
             SearchableAccountField(
               label: AppStrings.account.tr,
-              textEditingController: billDetailsController.billAccountController,
-              validator: (value) => billDetailsController.validator(value, AppStrings.account.tr),
+              textEditingController:
+                  billDetailsController.billAccountController,
+              validator: (value) =>
+                  billDetailsController.validator(value, AppStrings.account.tr),
               onSubmitted: (text) async {
-                AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
+                AccountModel? accountModel =
+                    await read<AccountsController>().openAccountSelectionDialog(
                   query: text,
                   context: context,
                 );
@@ -63,7 +66,9 @@ class BillDetailsHeader extends StatelessWidget {
                     items: InvPayType.values,
                     itemLabelBuilder: (type) => type.label.tr,
                     onChanged: (selectedType) {
-                      if (billModel.billTypeModel.billPatternType?.hasCashesAccount ?? true) {
+                      if (billModel.billTypeModel.billPatternType
+                              ?.hasCashesAccount ??
+                          true) {
                         billDetailsController.onPayTypeChanged(selectedType);
                       }
                     },
@@ -78,7 +83,8 @@ class BillDetailsHeader extends StatelessWidget {
                   );
                 }),
               ),
-              secondItem: StoreDropdown(storeSelectionHandler: billDetailsController),
+              secondItem:
+                  StoreDropdown(storeSelectionHandler: billDetailsController),
             ),
             FormFieldRow(
               firstItem: TextAndExpandedChildField(
@@ -94,16 +100,20 @@ class BillDetailsHeader extends StatelessWidget {
               ),
               secondItem: SearchableAccountField(
                 label: AppStrings.customerAccount.tr,
-                textEditingController: billDetailsController.customerAccountController,
+                textEditingController:
+                    billDetailsController.customerAccountController,
                 // validator: (value) => billDetailsController.validator(value, AppStrings.customerAccount.tr),
                 onSubmitted: (text) async {
-                  CustomerModel? customerModel = await read<AccountsController>().openCustomerSelectionDialog(
+                  CustomerModel? customerModel =
+                      await read<AccountsController>()
+                          .openCustomerSelectionDialog(
                     accountId: billDetailsController.selectedBillAccount?.id!,
                     query: text,
                     context: context,
                   );
                   if (customerModel != null) {
-                    billDetailsController.updateCustomerAccount(customerModel, billModel.billTypeModel);
+                    billDetailsController.updateCustomerAccount(
+                        customerModel, billModel.billTypeModel);
                   }
                 },
               ),
@@ -112,12 +122,13 @@ class BillDetailsHeader extends StatelessWidget {
               firstItem: SearchableAccountField(
                 label: AppStrings.seller.tr,
                 readOnly: false,
-                textEditingController: billDetailsController.sellerAccountController,
-                onSubmitted: (text)async {
-                  SellerModel? sellerModel = await read<SellersController>().openSellerSelectionDialog(
+                textEditingController:
+                    billDetailsController.sellerAccountController,
+                onSubmitted: (text) async {
+                  SellerModel? sellerModel =
+                      await read<SellersController>().openSellerSelectionDialog(
                     query: text,
                     context: context,
-
                   );
                   if (sellerModel != null) {
                     billDetailsController.updateSellerAccount(sellerModel);
@@ -136,14 +147,16 @@ class BillDetailsHeader extends StatelessWidget {
               firstItem: TextAndExpandedChildField(
                 label: AppStrings.phoneNumber.tr,
                 child: CustomTextFieldWithoutIcon(
-                  textEditingController: billDetailsController.customerPhoneController,
+                  textEditingController:
+                      billDetailsController.customerPhoneController,
                   suffixIcon: const SizedBox.shrink(),
                 ),
               ),
               secondItem: TextAndExpandedChildField(
                 label: AppStrings.orderNumber.tr,
                 child: CustomTextFieldWithoutIcon(
-                  textEditingController: billDetailsController.orderNumberController,
+                  textEditingController:
+                      billDetailsController.orderNumberController,
                   suffixIcon: const SizedBox.shrink(),
                 ),
               ),

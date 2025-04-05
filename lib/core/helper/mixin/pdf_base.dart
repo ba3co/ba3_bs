@@ -42,7 +42,8 @@ mixin PdfBase {
   }
 
   /// Handles the failure scenario during email sending
-  void _onEmailSendFailure(String errorMessage) => AppUIUtils.onFailure(errorMessage);
+  void _onEmailSendFailure(String errorMessage) =>
+      AppUIUtils.onFailure(errorMessage);
 
   /// Handles the success scenario during email sending
   void _onEmailSendSuccess(List<String>? attachments) {
@@ -77,13 +78,18 @@ mixin PdfBase {
     String? subject,
     String? body,
   }) async {
-    final pdfFilePath = await _generatePdf(itemModel: itemModel, fileName: fileName, logoSrc: logoSrc, fontSrc: fontSrc);
+    final pdfFilePath = await _generatePdf(
+        itemModel: itemModel,
+        fileName: fileName,
+        logoSrc: logoSrc,
+        fontSrc: fontSrc);
 
     String? invoiceUrl = url;
 
     if (itemModel is BillModel && invoiceUrl == null) {
-      invoiceUrl = WhatsappService.instance
-          .generateInvoiceUrl(documentId: itemModel.billId!, type: itemModel.billTypeModel.billTypeLabel!);
+      invoiceUrl = WhatsappService.instance.generateInvoiceUrl(
+          documentId: itemModel.billId!,
+          type: itemModel.billTypeModel.billTypeLabel!);
     }
 
     await sendToEmail(
@@ -102,11 +108,13 @@ mixin PdfBase {
     String? logoSrc,
     String? fontSrc,
   }) async {
-    final IPdfGenerator pdfGenerator = PdfGeneratorFactory.resolveGenerator(itemModel);
+    final IPdfGenerator pdfGenerator =
+        PdfGeneratorFactory.resolveGenerator(itemModel);
 
     final pdfGeneratorRepo = PdfGeneratorRepository(pdfGenerator: pdfGenerator);
 
-    return await pdfGeneratorRepo.savePdf(itemModel, fileName, logoSrc: logoSrc, fontSrc: fontSrc);
+    return await pdfGeneratorRepo.savePdf(itemModel, fileName,
+        logoSrc: logoSrc, fontSrc: fontSrc);
   }
 
   bool hasModelItems(List items) {

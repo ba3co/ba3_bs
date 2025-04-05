@@ -1,5 +1,3 @@
-
-
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 
 import '../../../core/helper/enums/enums.dart';
@@ -12,8 +10,10 @@ class MergeEntryBondItemsUseCase {
 
   MergeEntryBondItemsUseCase(this._accountStatementService);
 
-  EntryBondItemModel? mergeTradingItems(Map<AccountEntity, List<EntryBondItems>> tradingAccountResult) {
-    final allTradingItems = tradingAccountResult.values.expand((list) => list).toList();
+  EntryBondItemModel? mergeTradingItems(
+      Map<AccountEntity, List<EntryBondItems>> tradingAccountResult) {
+    final allTradingItems =
+        tradingAccountResult.values.expand((list) => list).toList();
     if (allTradingItems.isEmpty) return null;
 
     double totalDebit = 0.0;
@@ -33,7 +33,8 @@ class MergeEntryBondItemsUseCase {
     final finalAmount = totalDebit - totalCredit;
     return EntryBondItemModel(
       amount: finalAmount.abs(),
-      bondItemType: finalAmount >= 0 ? BondItemType.debtor : BondItemType.creditor,
+      bondItemType:
+          finalAmount >= 0 ? BondItemType.debtor : BondItemType.creditor,
       date: DateTime.now().dayMonthYear,
       note: 'إجمالي حساب المتاجرة',
       account: AccountEntity(
@@ -44,8 +45,12 @@ class MergeEntryBondItemsUseCase {
   }
 
   EntryBondItemModel? mergeProfitLossItems(
-      Map<AccountEntity, List<EntryBondItems>> tradingAccountResult, Map<AccountEntity, List<EntryBondItems>> profitAndLossAccountResult) {
-    final allItems = [...tradingAccountResult.values.expand((list) => list), ...profitAndLossAccountResult.values.expand((list) => list)];
+      Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
+      Map<AccountEntity, List<EntryBondItems>> profitAndLossAccountResult) {
+    final allItems = [
+      ...tradingAccountResult.values.expand((list) => list),
+      ...profitAndLossAccountResult.values.expand((list) => list)
+    ];
     if (allItems.isEmpty) return null;
 
     double totalDebit = 0.0;
@@ -65,7 +70,8 @@ class MergeEntryBondItemsUseCase {
     final finalAmount = totalDebit - totalCredit;
     return EntryBondItemModel(
       amount: finalAmount.abs(),
-      bondItemType: finalAmount >= 0 ? BondItemType.debtor : BondItemType.creditor,
+      bondItemType:
+          finalAmount >= 0 ? BondItemType.debtor : BondItemType.creditor,
       date: _accountStatementService.formattedToday,
       note: 'إجمالي حساب الأرباح والخسائر',
       account: AccountEntity(

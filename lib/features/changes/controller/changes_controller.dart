@@ -48,7 +48,8 @@ class ChangesController extends GetxController {
     final result = await _repository.save(changesModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('فشل في حفظ التغيير: ${failure.message}'),
+      (failure) =>
+          AppUIUtils.onFailure('فشل في حفظ التغيير: ${failure.message}'),
       (success) => AppUIUtils.onSuccess('تم حفظ التغيير بنجاح'),
     );
   }
@@ -56,7 +57,8 @@ class ChangesController extends GetxController {
   /// Starts listening to changes for the logged-in user.
   void listenToChanges() {
     final userManagementController = read<UserManagementController>();
-    final UserModel? loggedInUserModel = userManagementController.loggedInUserModel;
+    final UserModel? loggedInUserModel =
+        userManagementController.loggedInUserModel;
 
     if (loggedInUserModel?.userId == null) {
       log("Error: Logged-in user or user ID is null.");
@@ -92,7 +94,8 @@ class ChangesController extends GetxController {
       // Iterate over the changeItems and classify each one
       change.changeItems.forEach((collection, changes) {
         for (final changeItem in changes) {
-          _handleChangeItem(changeItem, materialsToSave, materialsToDelete, materialsToUpdate); // Collect items for update or delete
+          _handleChangeItem(changeItem, materialsToSave, materialsToDelete,
+              materialsToUpdate); // Collect items for update or delete
         }
       });
 
@@ -111,37 +114,46 @@ class ChangesController extends GetxController {
     final result = await _repository.delete(change.targetUserId);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('فشل في حذف التغييرات: ${failure.message}'),
+      (failure) =>
+          AppUIUtils.onFailure('فشل في حذف التغييرات: ${failure.message}'),
       (success) => {},
     );
   }
 
   /// Determines how to process a specific change item based on its type and collection.
   void _handleChangeItem(
-      ChangeItem changeItem, List<MaterialModel> materialsToSave, List<MaterialModel> materialsToDelete, List<MaterialModel> materialsToUpdate) {
+      ChangeItem changeItem,
+      List<MaterialModel> materialsToSave,
+      List<MaterialModel> materialsToDelete,
+      List<MaterialModel> materialsToUpdate) {
     final targetCollection = changeItem.target.targetCollection;
     final changeType = changeItem.target.changeType;
 
     if (targetCollection == ChangeCollection.materials) {
       if (changeType == ChangeType.add) {
-        _handleAddMaterial(changeItem, materialsToSave); // Add/Update goes to materialsToSave
+        _handleAddMaterial(
+            changeItem, materialsToSave); // Add/Update goes to materialsToSave
       } else if (changeType == ChangeType.remove) {
-        _handleDelete(changeItem, materialsToDelete); // Delete goes to materialsToDelete
+        _handleDelete(
+            changeItem, materialsToDelete); // Delete goes to materialsToDelete
       } else if (changeType == ChangeType.update) {
-        _handleUpdateMaterial(changeItem, materialsToUpdate); // Delete goes to materialsToDelete
+        _handleUpdateMaterial(
+            changeItem, materialsToUpdate); // Delete goes to materialsToDelete
       }
     }
   }
 
   /// Handles an add or update operation for a specific change item.
-  void _handleAddMaterial(ChangeItem changeItem, List<MaterialModel> materialsToSave) {
+  void _handleAddMaterial(
+      ChangeItem changeItem, List<MaterialModel> materialsToSave) {
     // Assuming changeItem contains the required material data for saving
     MaterialModel material = _extractMaterialsFromChangeItem(changeItem);
     materialsToSave.add(material); // Add to the materials list for saving
     log("Add/Update operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
   }
 
-  void _handleUpdateMaterial(ChangeItem changeItem, List<MaterialModel> materialsToUpdate) {
+  void _handleUpdateMaterial(
+      ChangeItem changeItem, List<MaterialModel> materialsToUpdate) {
     // Assuming changeItem contains the required material data for saving
     MaterialModel material = _extractMaterialsFromChangeItem(changeItem);
     materialsToUpdate.add(material); // Update to the materials list for saving
@@ -149,13 +161,15 @@ class ChangesController extends GetxController {
   }
 
   /// Extract and transform changeItem to a MaterialModel instance
-  MaterialModel _extractMaterialsFromChangeItem(ChangeItem changeItem) => MaterialModel.fromJson(changeItem.change);
+  MaterialModel _extractMaterialsFromChangeItem(ChangeItem changeItem) =>
+      MaterialModel.fromJson(changeItem.change);
 
   /// Saves the materials after all change items have been processed.
   void saveMaterials(List<MaterialModel> materialsToSave) {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
-      materialController.saveAllMaterialOnLocal(materialsToSave); // Save all materials at once
+      materialController.saveAllMaterialOnLocal(
+          materialsToSave); // Save all materials at once
     }
   }
 
@@ -163,16 +177,19 @@ class ChangesController extends GetxController {
   void updateMaterials(List<MaterialModel> materialsToUpdate) {
     if (materialsToUpdate.isNotEmpty) {
       final materialController = read<MaterialController>();
-      materialController.updateAllMaterial(materialsToUpdate); // Save all materials at once
+      materialController
+          .updateAllMaterial(materialsToUpdate); // Save all materials at once
     }
   }
 
   /// Handles a delete operation for a specific change item.
-  void _handleDelete(ChangeItem changeItem, List<MaterialModel> materialsToDelete) {
+  void _handleDelete(
+      ChangeItem changeItem, List<MaterialModel> materialsToDelete) {
     // Assuming we need to handle deletions separately
     // We can add the material to the materialsToDelete list
     log("Delete operation for item(${changeItem.target.targetCollection}): ${changeItem.change}");
-    MaterialModel materialToDelete = _extractMaterialsFromChangeItem(changeItem);
+    MaterialModel materialToDelete =
+        _extractMaterialsFromChangeItem(changeItem);
     materialsToDelete.add(materialToDelete); // Add to materialsToDelete
   }
 
@@ -181,7 +198,8 @@ class ChangesController extends GetxController {
     if (materialsToDelete.isNotEmpty) {
       // Handle delete logic here
       final materialController = read<MaterialController>();
-      materialController.deleteAllMaterial(materialsToDelete); // Save/delete all materials at once
+      materialController.deleteAllMaterial(
+          materialsToDelete); // Save/delete all materials at once
     }
   }
 

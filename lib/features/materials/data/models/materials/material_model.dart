@@ -259,7 +259,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matPictureGuid: json['MatPictureGuid']?.toString(),
       matType: json['MatType'],
       matFreeQuantity: json['matFreeQuantity'],
-       matLocalQuantity: json['matLocalQuantity'],
+      matLocalQuantity: json['matLocalQuantity'],
       matSecurity: json['MatSecurity'],
       matFlag: json['MatFlag'],
       matExpireFlag: json['MatExpireFlag'],
@@ -278,15 +278,18 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matCalPriceFromDetail: json['MatCalPriceFromDetail'],
       matForceInExpire: json['MatForceInExpire'],
       matForceOutExpire: json['MatForceOutExpire'],
-      matCreateDate: DateTime.tryParse(json['MatCreateDate'] ?? '') ?? DateTime.now(),
+      matCreateDate:
+          DateTime.tryParse(json['MatCreateDate'] ?? '') ?? DateTime.now(),
       matIsIntegerQuantity: json['MatIsIntegerQuantity'],
       matClassFlag: json['MatClassFlag'],
       matForceInClass: json['MatForceInClass'],
       matForceOutClass: json['MatForceOutClass'],
       matDisableLastPrice: json['MatDisableLastPrice'],
-      matLastPriceCurVal: double.tryParse(json['MatLastPriceCurVal'].toString()) ?? 0.0,
+      matLastPriceCurVal:
+          double.tryParse(json['MatLastPriceCurVal'].toString()) ?? 0.0,
       matPrevQty: json['MatPrevQty']?.toString(),
-      matFirstCostDate: DateTime.now().copyWith(year: 1980, day: 1, month: 1, minute: 0, hour: 0, second: 0),
+      matFirstCostDate: DateTime.now().copyWith(
+          year: 1980, day: 1, month: 1, minute: 0, hour: 0, second: 0),
       matHasSegments: json['MatHasSegments'],
       matParent: json['MatParent']?.toString(),
       matIsCompositionUpdated: json['MatIsCompositionUpdated'],
@@ -301,7 +304,9 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matExtraBarcode: List.from(json['matExtraBarcode'] ?? []),
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice: json['calcMinPrice'] ?? 0.0,
-      serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
+      serialNumbers: (json['serialNumbers'] is Map)
+          ? Map<String, bool>.from(json['serialNumbers'] as Map)
+          : {},
     );
   }
 
@@ -369,10 +374,17 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: AppStrings.identificationNumber.tr, field: AppConstants.materialIdFiled, type: PlutoColumnType.text(), hide: true):
-          id,
+      PlutoColumn(
+          title: AppStrings.identificationNumber.tr,
+          field: AppConstants.materialIdFiled,
+          type: PlutoColumnType.text(),
+          hide: true): id,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: AppStrings.materialName, field: 'اسم المادة', type: PlutoColumnType.text(), width: 400): matName,
+      PlutoColumn(
+          title: AppStrings.materialName,
+          field: 'اسم المادة',
+          type: PlutoColumnType.text(),
+          width: 400): matName,
       PlutoColumn(
           title: AppStrings.quantity.tr,
           field: 'الكمية',
@@ -439,8 +451,13 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           type: PlutoColumnType.text(),
           width: 120,
           textAlign: PlutoColumnTextAlign.center): matLocalQuantity,
-      PlutoColumn(title: AppStrings.group.tr, field: 'المجموعة', type: PlutoColumnType.text()):
-          read<MaterialGroupController>().getMaterialGroupById(matGroupGuid!)?.groupName ?? '',
+      PlutoColumn(
+          title: AppStrings.group.tr,
+          field: 'المجموعة',
+          type: PlutoColumnType.text()): read<MaterialGroupController>()
+              .getMaterialGroupById(matGroupGuid!)
+              ?.groupName ??
+          '',
     };
   }
 
@@ -532,7 +549,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matAss: matAss ?? this.matAss,
       matOldGUID: matOldGUID ?? this.matOldGUID,
       matNewGUID: matNewGUID ?? this.matNewGUID,
-      matCalPriceFromDetail: matCalPriceFromDetail ?? this.matCalPriceFromDetail,
+      matCalPriceFromDetail:
+          matCalPriceFromDetail ?? this.matCalPriceFromDetail,
       matForceInExpire: matForceInExpire ?? this.matForceInExpire,
       matForceOutExpire: matForceOutExpire ?? this.matForceOutExpire,
       matCreateDate: matCreateDate ?? this.matCreateDate,
@@ -546,10 +564,13 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matFirstCostDate: matFirstCostDate ?? this.matFirstCostDate,
       matHasSegments: matHasSegments ?? this.matHasSegments,
       matParent: matParent ?? this.matParent,
-      matIsCompositionUpdated: matIsCompositionUpdated ?? this.matIsCompositionUpdated,
-      matInheritsParentSpecs: matInheritsParentSpecs ?? this.matInheritsParentSpecs,
+      matIsCompositionUpdated:
+          matIsCompositionUpdated ?? this.matIsCompositionUpdated,
+      matInheritsParentSpecs:
+          matInheritsParentSpecs ?? this.matInheritsParentSpecs,
       matCompositionName: matCompositionName ?? this.matCompositionName,
-      matCompositionLatinName: matCompositionLatinName ?? this.matCompositionLatinName,
+      matCompositionLatinName:
+          matCompositionLatinName ?? this.matCompositionLatinName,
       movedComposite: movedComposite ?? this.movedComposite,
       wholesalePrice: wholesalePrice ?? this.wholesalePrice,
       retailPrice: retailPrice ?? this.retailPrice,
@@ -610,7 +631,10 @@ class SerialNumberModel {
       matId: json.containsKey('matId') ? json['matId'] as String? : null,
       matName: json.containsKey('matName') ? json['matName'] as String? : null,
       transactions: json.containsKey('transactions')
-          ? (json['transactions'] as List<dynamic>?)?.map((e) => SerialTransactionModel.fromJson(e)).toList() ?? []
+          ? (json['transactions'] as List<dynamic>?)
+                  ?.map((e) => SerialTransactionModel.fromJson(e))
+                  .toList() ??
+              []
           : [],
     );
   }
@@ -669,16 +693,30 @@ class SerialTransactionModel implements PlutoAdaptable {
   /// Factory constructor to create a SerialTransactionModel from JSON safely.
   factory SerialTransactionModel.fromJson(Map<String, dynamic> json) {
     return SerialTransactionModel(
-      buyBillId: json.containsKey('buyBillId') ? json['buyBillId'] as String? : null,
-      buyBillNumber: json.containsKey('buyBillNumber') ? json['buyBillNumber'] as int? : null,
-      buyBillTypeId: json.containsKey('buyBillTypeId') ? json['buyBillTypeId'] as String? : null,
-      sellBillId: json.containsKey('sellBillId') ? json['sellBillId'] as String? : null,
-      sellBillNumber: json.containsKey('sellBillNumber') ? json['sellBillNumber'] as int? : null,
-      sellBillTypeId: json.containsKey('sellBillTypeId') ? json['sellBillTypeId'] as String? : null,
-      entryDate: json.containsKey('entryDate') && json['entryDate'] != null ? DateTime.tryParse(json['entryDate'] as String) : null,
+      buyBillId:
+          json.containsKey('buyBillId') ? json['buyBillId'] as String? : null,
+      buyBillNumber: json.containsKey('buyBillNumber')
+          ? json['buyBillNumber'] as int?
+          : null,
+      buyBillTypeId: json.containsKey('buyBillTypeId')
+          ? json['buyBillTypeId'] as String?
+          : null,
+      sellBillId:
+          json.containsKey('sellBillId') ? json['sellBillId'] as String? : null,
+      sellBillNumber: json.containsKey('sellBillNumber')
+          ? json['sellBillNumber'] as int?
+          : null,
+      sellBillTypeId: json.containsKey('sellBillTypeId')
+          ? json['sellBillTypeId'] as String?
+          : null,
+      entryDate: json.containsKey('entryDate') && json['entryDate'] != null
+          ? DateTime.tryParse(json['entryDate'] as String)
+          : null,
       sold: json.containsKey('sold') ? json['sold'] as bool? : null,
-      transactionOrigin: json.containsKey('transactionOrigin') && json['transactionOrigin'] != null
-          ? SerialTransactionOrigin.fromJson(json['transactionOrigin'] as Map<String, dynamic>)
+      transactionOrigin: json.containsKey('transactionOrigin') &&
+              json['transactionOrigin'] != null
+          ? SerialTransactionOrigin.fromJson(
+              json['transactionOrigin'] as Map<String, dynamic>)
           : null,
     );
   }
@@ -694,7 +732,8 @@ class SerialTransactionModel implements PlutoAdaptable {
       if (sellBillTypeId != null) 'sellBillTypeId': sellBillTypeId,
       if (entryDate != null) 'entryDate': entryDate!.toIso8601String(),
       if (sold != null) 'sold': sold,
-      if (transactionOrigin != null) 'transactionOrigin': transactionOrigin?.toJson(),
+      if (transactionOrigin != null)
+        'transactionOrigin': transactionOrigin?.toJson(),
     };
   }
 
@@ -727,38 +766,76 @@ class SerialTransactionModel implements PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([_]) {
     return {
       // Visible column for the serial number.
-      PlutoColumn(title: AppStrings.serialNumber.tr, field: 'serialNumber', type: PlutoColumnType.text()):
-          transactionOrigin?.serialNumber ?? '',
+      PlutoColumn(
+          title: AppStrings.serialNumber.tr,
+          field: 'serialNumber',
+          type: PlutoColumnType.text()): transactionOrigin?.serialNumber ?? '',
 
       // Hidden column for the material ID.
-      PlutoColumn(hide: true, title: 'معرف المادة', field: 'matId', type: PlutoColumnType.text()): transactionOrigin?.matId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: 'معرف المادة',
+          field: 'matId',
+          type: PlutoColumnType.text()): transactionOrigin?.matId ?? '',
 
       // Hidden column for the material ID.
-      PlutoColumn(title: AppStrings.materialName.tr, field: 'matName', type: PlutoColumnType.text()): transactionOrigin?.matName ?? '',
+      PlutoColumn(
+          title: AppStrings.materialName.tr,
+          field: 'matName',
+          type: PlutoColumnType.text()): transactionOrigin?.matName ?? '',
 
       // Column for the buy bill ID.
-      PlutoColumn(hide: true, title: 'buyBillId', field: 'buyBillId', type: PlutoColumnType.text()): buyBillId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: 'buyBillId',
+          field: 'buyBillId',
+          type: PlutoColumnType.text()): buyBillId ?? '',
 
       // Column for the buy bill ID.
-      PlutoColumn(hide: true, title: 'buyBillTypeId', field: 'buyBillTypeId', type: PlutoColumnType.text()): buyBillTypeId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: 'buyBillTypeId',
+          field: 'buyBillTypeId',
+          type: PlutoColumnType.text()): buyBillTypeId ?? '',
 
-      PlutoColumn(title: AppStrings.purchaseBill.tr, field: AppStrings.purchaseBill.tr, type: PlutoColumnType.text()):
+      PlutoColumn(
+              title: AppStrings.purchaseBill.tr,
+              field: AppStrings.purchaseBill.tr,
+              type: PlutoColumnType.text()):
           AppServiceUtils.billNameAndNumberFormat(buyBillTypeId, buyBillNumber),
 
       // Column for the sell bill ID.
-      PlutoColumn(hide: true, title: 'sellBillId', field: 'sellBillId', type: PlutoColumnType.text()): sellBillId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: 'sellBillId',
+          field: 'sellBillId',
+          type: PlutoColumnType.text()): sellBillId ?? '',
 
       // Column for the buy bill ID.
-      PlutoColumn(hide: true, title: 'sellBillTypeId', field: 'sellBillTypeId', type: PlutoColumnType.text()): sellBillTypeId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: 'sellBillTypeId',
+          field: 'sellBillTypeId',
+          type: PlutoColumnType.text()): sellBillTypeId ?? '',
 
-      PlutoColumn(title: AppStrings.salesBill.tr, field: AppStrings.salesBill.tr, type: PlutoColumnType.text()):
-          AppServiceUtils.billNameAndNumberFormat(sellBillTypeId, sellBillNumber),
+      PlutoColumn(
+              title: AppStrings.salesBill.tr,
+              field: AppStrings.salesBill.tr,
+              type: PlutoColumnType.text()):
+          AppServiceUtils.billNameAndNumberFormat(
+              sellBillTypeId, sellBillNumber),
 
       // Column for the entry date.
-      PlutoColumn(title: AppStrings.entryDate.tr, field: 'entryDate', type: PlutoColumnType.date()): entryDate,
+      PlutoColumn(
+          title: AppStrings.entryDate.tr,
+          field: 'entryDate',
+          type: PlutoColumnType.date()): entryDate,
 
       // Column for the sold status (displaying a simple "Yes/No").
-      PlutoColumn(title: AppStrings.sold.tr, field: 'sold', type: PlutoColumnType.text()):
+      PlutoColumn(
+              title: AppStrings.sold.tr,
+              field: 'sold',
+              type: PlutoColumnType.text()):
           sold == true ? AppStrings.yes.tr : AppStrings.no.tr,
     };
   }

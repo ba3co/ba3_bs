@@ -9,13 +9,14 @@ class BillItems extends Equatable {
 
   factory BillItems.fromJson(Map<String, dynamic> json) {
     var itemsJson = json['Item'] as List<dynamic>;
-    List<BillItem> itemList = itemsJson.map((item) => BillItem.fromJson(item)).toList();
+    List<BillItem> itemList =
+        itemsJson.map((item) => BillItem.fromJson(item)).toList();
     return BillItems(itemList: itemList);
   }
 
   factory BillItems.fromBillRecords(List<InvoiceRecordModel> invoiceRecords) {
     final itemList = invoiceRecords.map(
-          (invoiceRecord) {
+      (invoiceRecord) {
         return BillItem(
           itemGuid: invoiceRecord.invRecId!,
           itemName: invoiceRecord.invRecProduct!,
@@ -34,13 +35,11 @@ class BillItems extends Equatable {
     return BillItems(itemList: itemList);
   }
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'Item': itemList.map((item) => item.toJson()).toList(),
       };
 
-  BillItems copyWith({List<BillItem>? itemList}) =>
-      BillItems(
+  BillItems copyWith({List<BillItem>? itemList}) => BillItems(
         itemList: itemList ?? this.itemList,
       );
 
@@ -52,7 +51,8 @@ class BillItems extends Equatable {
     }
   }
 
-  List<InvoiceRecordModel> get _materialRecords => itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
+  List<InvoiceRecordModel> get _materialRecords =>
+      itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
 
   @override
   List<Object?> get props => [itemList];
@@ -99,8 +99,7 @@ class BillItem extends Equatable {
     );
   }
 
-  factory BillItem.fromJson(Map<String, dynamic> json) =>
-      BillItem(
+  factory BillItem.fromJson(Map<String, dynamic> json) => BillItem(
         itemGuid: json['ItemGuid'],
         itemName: json['ItemName'],
         itemQuantity: json['ItemQuantity'],
@@ -109,12 +108,15 @@ class BillItem extends Equatable {
         itemVatPrice: json['itemVatPrice'],
         itemGiftsNumber: json['itemGiftsNumber'],
         itemGiftsPrice: json['itemGiftsPrice'],
-        soldSerialNumber: json.containsKey('soldSerialNumber') ? json['soldSerialNumber'] as String? : null,
-        itemSerialNumbers: (json['itemSerialNumbers'] is List) ? List<String>.from(json['itemSerialNumbers'] as List) : null,
+        soldSerialNumber: json.containsKey('soldSerialNumber')
+            ? json['soldSerialNumber'] as String?
+            : null,
+        itemSerialNumbers: (json['itemSerialNumbers'] is List)
+            ? List<String>.from(json['itemSerialNumbers'] as List)
+            : null,
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'ItemGuid': itemGuid,
         if (itemName != null) 'ItemName': itemName,
         'ItemQuantity': itemQuantity,
@@ -123,8 +125,10 @@ class BillItem extends Equatable {
         if (itemVatPrice != null) 'itemVatPrice': itemVatPrice,
         if (itemGiftsNumber != null) 'itemGiftsNumber': itemGiftsNumber,
         if (itemGiftsPrice != null) 'itemGiftsPrice': itemGiftsPrice,
-        if (soldSerialNumber != null && soldSerialNumber!.isNotEmpty) 'soldSerialNumber': soldSerialNumber,
-        if (itemSerialNumbers != null && itemSerialNumbers!.isNotEmpty) 'itemSerialNumbers': itemSerialNumbers,
+        if (soldSerialNumber != null && soldSerialNumber!.isNotEmpty)
+          'soldSerialNumber': soldSerialNumber,
+        if (itemSerialNumbers != null && itemSerialNumbers!.isNotEmpty)
+          'itemSerialNumbers': itemSerialNumbers,
       };
 
   BillItem copyWith({
@@ -153,8 +157,7 @@ class BillItem extends Equatable {
       );
 
   @override
-  List<Object?> get props =>
-      [
+  List<Object?> get props => [
         itemGuid,
         itemName,
         itemQuantity,

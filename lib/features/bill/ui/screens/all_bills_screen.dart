@@ -25,10 +25,15 @@ class AllBillsScreen extends StatelessWidget {
         onSelected: (event) {
           String billId = event.row?.cells[AppConstants.billIdFiled]?.value;
           log('billId : $billId');
-          controller.openFloatingBillDetailsById(billId: billId, context: context,bilTypeModel:  BillType.sales.billTypeModel);
+          controller.openFloatingBillDetailsById(
+              billId: billId,
+              context: context,
+              bilTypeModel: BillType.sales.billTypeModel);
         },
         isLoading: controller.isBillsLoading,
-        tableSourceModels: controller.pendingBills.isEmpty?controller.bills:controller.pendingBills,
+        tableSourceModels: controller.pendingBills.isEmpty
+            ? controller.bills
+            : controller.pendingBills,
         bottomChild: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -41,22 +46,27 @@ class AllBillsScreen extends StatelessWidget {
                 children: [
                   Text(
                     AppStrings.totalSales.tr,
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w300, fontSize: 24),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 24),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    AppUIUtils.formatDecimalNumberWithCommas(controller.totalBillsSum),
-                    style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w600, fontSize: 32),
+                    AppUIUtils.formatDecimalNumberWithCommas(
+                        controller.totalBillsSum),
+                    style: TextStyle(
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 32),
                   ),
                 ],
               ),
-
             ],
           ),
         ),
-
       );
     });
   }

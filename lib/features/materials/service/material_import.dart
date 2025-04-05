@@ -10,7 +10,10 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
   List<MaterialModel> fromImportJson(Map<String, dynamic> jsonContent) {
     final List<dynamic> materialsJson = jsonContent['Materials']['M'] ?? [];
 
-    return materialsJson.map((materialJson) => MaterialModel.fromJson(materialJson as Map<String, dynamic>)).toList();
+    return materialsJson
+        .map((materialJson) =>
+            MaterialModel.fromJson(materialJson as Map<String, dynamic>))
+        .toList();
   }
 
   @override
@@ -25,7 +28,9 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
           return elements.isEmpty ? '' : elements.first.text;
         }
 
-        return GccMatTax(vat: getText('GCCMaterialTaxRatio'), guid: getText('GCCMaterialTaxMatGUID'));
+        return GccMatTax(
+            vat: getText('GCCMaterialTaxRatio'),
+            guid: getText('GCCMaterialTaxMatGUID'));
       },
     ).toList();
 
@@ -145,14 +150,17 @@ void updateMaterialVat(List<MaterialModel> materials, List<GccMatTax> gccList) {
     // Find the corresponding VAT value for the material
     final gcc = gccList.firstWhere(
       (gccItem) => gccItem.guid == material.id,
-      orElse: () => GccMatTax(vat: '0.00', guid: ''), // Default object with 0.00 VAT
+      orElse: () =>
+          GccMatTax(vat: '0.00', guid: ''), // Default object with 0.00 VAT
     );
 
-    MaterialModel updatedMaterial = material; // Initialize with original material
+    MaterialModel updatedMaterial =
+        material; // Initialize with original material
 
     // Check if gcc is found and update the matVatGuid
     if (gcc.vat.isNotEmpty && gcc.guid.isNotEmpty) {
-      double vatValue = double.tryParse(gcc.vat) ?? 0.00; // Parse vat to double safely
+      double vatValue =
+          double.tryParse(gcc.vat) ?? 0.00; // Parse vat to double safely
 
       if (vatValue == 5.00) {
         updatedMaterial = material.copyWith(matVatGuid: 'xtc33mNeCZYR98i96pd8');

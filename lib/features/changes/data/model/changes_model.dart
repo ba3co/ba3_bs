@@ -44,10 +44,11 @@ class ChangesModel {
   Map<String, dynamic> toJson() {
     return {
       'docId': targetUserId,
-      'changeItems': changeItems.map((ChangeCollection key, List<ChangeItem> value) => MapEntry(
-            key.name,
-            value.map((item) => item.toJson()).toList(),
-          )),
+      'changeItems': changeItems
+          .map((ChangeCollection key, List<ChangeItem> value) => MapEntry(
+                key.name,
+                value.map((item) => item.toJson()).toList(),
+              )),
     };
   }
 
@@ -59,7 +60,8 @@ class ChangesModel {
             (key, value) => MapEntry(
               ChangeCollection.values.byName(key),
               List<ChangeItem>.from(
-                (value as List<dynamic>).map((item) => ChangeItem.fromJson(item)),
+                (value as List<dynamic>)
+                    .map((item) => ChangeItem.fromJson(item)),
               ),
             ),
           ) ??
@@ -125,7 +127,8 @@ class ChangeTarget {
   /// Creates a `ChangeTarget` instance from a JSON-compatible map.
   factory ChangeTarget.fromJson(Map<String, dynamic> json) {
     return ChangeTarget(
-      targetCollection: ChangeCollection.values.byName(json['changeCollection']),
+      targetCollection:
+          ChangeCollection.values.byName(json['changeCollection']),
       changeType: ChangeType.values.byName(json['changeType']),
     );
   }
@@ -135,4 +138,4 @@ class ChangeTarget {
 enum ChangeCollection { bills, accounts, bonds, cheques, users, materials }
 
 /// Enum to represent the types of changes that can occur in a collection.
-enum ChangeType { add, remove,update }
+enum ChangeType { add, remove, update }

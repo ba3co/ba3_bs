@@ -4,17 +4,20 @@ import '../../../../../core/network/api_constants.dart';
 import '../../../../../core/services/firebase/interfaces/queryable_savable_datasource.dart';
 import '../../models/materials/material_model.dart';
 
-class MaterialsSerialsDataSource extends QueryableSavableDatasource<SerialNumberModel> {
+class MaterialsSerialsDataSource
+    extends QueryableSavableDatasource<SerialNumberModel> {
   MaterialsSerialsDataSource({required super.databaseService});
 
   @override
-  String get path => ApiConstants.materialsSerialNumbers; // Collection name in Firestore
+  String get path =>
+      ApiConstants.materialsSerialNumbers; // Collection name in Firestore
 
   @override
   Future<List<SerialNumberModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final serialNumbers = data.map((item) => SerialNumberModel.fromJson(item)).toList();
+    final serialNumbers =
+        data.map((item) => SerialNumberModel.fromJson(item)).toList();
 
     return serialNumbers;
   }
@@ -32,7 +35,8 @@ class MaterialsSerialsDataSource extends QueryableSavableDatasource<SerialNumber
 
   @override
   Future<SerialNumberModel> save(SerialNumberModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.serialNumber, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.serialNumber, data: item.toJson());
 
     return SerialNumberModel.fromJson(data);
   }
@@ -40,15 +44,19 @@ class MaterialsSerialsDataSource extends QueryableSavableDatasource<SerialNumber
   @override
   Future<List<SerialNumberModel>> saveAll(List<SerialNumberModel> items) async {
     final itemsToUpdate = items.map((item) {
-      final docId = item.serialNumber; // Assuming `serialNumber` is the document ID
+      final docId =
+          item.serialNumber; // Assuming `serialNumber` is the document ID
 
       // Convert all properties dynamically
-      final itemData = item.toJson(); // Ensure toJson() includes all relevant fields
+      final itemData =
+          item.toJson(); // Ensure toJson() includes all relevant fields
 
       return {
         'docId': docId,
         ...itemData, // Spread all dynamic fields
-        'transactions': item.transactions.map((transaction) => transaction.toJson()).toList(),
+        'transactions': item.transactions
+            .map((transaction) => transaction.toJson())
+            .toList(),
       };
     }).toList();
 
@@ -57,7 +65,8 @@ class MaterialsSerialsDataSource extends QueryableSavableDatasource<SerialNumber
       path: path,
       items: itemsToUpdate,
       docIdField: 'docId', // The field that identifies the document
-      nestedFieldPath: 'transactions', // The nested field to apply arrayUnion on
+      nestedFieldPath:
+          'transactions', // The nested field to apply arrayUnion on
     );
 
     // Convert the updated items back into SerialNumberModel objects
@@ -65,10 +74,14 @@ class MaterialsSerialsDataSource extends QueryableSavableDatasource<SerialNumber
   }
 
   @override
-  Future<List<SerialNumberModel>> fetchWhere({required List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters, dateFilter: dateFilter);
+  Future<List<SerialNumberModel>> fetchWhere(
+      {required List<QueryFilter>? queryFilters,
+      DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(
+        path: path, queryFilters: queryFilters, dateFilter: dateFilter);
 
-    final serialNumbers = data.map((item) => SerialNumberModel.fromJson(item)).toList();
+    final serialNumbers =
+        data.map((item) => SerialNumberModel.fromJson(item)).toList();
 
     return serialNumbers;
   }

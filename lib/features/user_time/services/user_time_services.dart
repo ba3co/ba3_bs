@@ -46,7 +46,8 @@ class UserTimeServices {
         logInDateList: [currentTime],
         totalLogInDelay: calculateTotalDelay(
           workingHours: userModel.userWorkingHours!.values.toList(),
-          timeModel: UserTimeModel(dayName: currentDay, logInDateList: [currentTime]),
+          timeModel:
+              UserTimeModel(dayName: currentDay, logInDateList: [currentTime]),
           isLogin: true,
         ),
       );
@@ -55,6 +56,7 @@ class UserTimeServices {
 
     return userModel.copyWith(userWorkStatus: UserWorkStatus.online);
   }
+
   UserModel addLogOutTimeToUserModel({required UserModel userModel}) {
     final currentDay = getCurrentDayName();
     final currentTime = getCurrentTime();
@@ -89,7 +91,8 @@ class UserTimeServices {
         logOutDateList: [currentTime],
         totalOutEarlier: calculateTotalDelay(
           workingHours: userModel.userWorkingHours!.values.toList(),
-          timeModel: UserTimeModel(dayName: currentDay, logOutDateList: [currentTime]),
+          timeModel:
+              UserTimeModel(dayName: currentDay, logOutDateList: [currentTime]),
           isLogin: false,
         ),
       );
@@ -99,7 +102,6 @@ class UserTimeServices {
     return userModel.copyWith(userWorkStatus: UserWorkStatus.away);
   }
 
-
   List<DateTime>? getEnterTimes(UserModel? userModel) {
     return userModel?.userTimeModel![getCurrentDayName()]?.logInDateList;
   }
@@ -108,7 +110,8 @@ class UserTimeServices {
     return userModel?.userTimeModel![getCurrentDayName()]?.logOutDateList;
   }
 
-  bool isWithinRegion(Position location, double targetLatitude, double targetLongitude, double radiusInMeters) {
+  bool isWithinRegion(Position location, double targetLatitude,
+      double targetLongitude, double radiusInMeters) {
     double distanceInMeters = Geolocator.distanceBetween(
       location.latitude,
       location.longitude,
@@ -124,7 +127,8 @@ class UserTimeServices {
     required UserTimeModel? timeModel,
     required bool isLogin,
   }) {
-    final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
+    final dateList =
+        isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
     if (dateList == null) {
       return 0;
     }
@@ -135,14 +139,17 @@ class UserTimeServices {
     int totalMinutes = 0;
 
     for (int i = 0; i < dateList.length; i++) {
-      final workingTime = isLogin ? workingHours.elementAtOrNull(i)?.enterTime : workingHours.elementAtOrNull(i)?.outTime;
+      final workingTime = isLogin
+          ? workingHours.elementAtOrNull(i)?.enterTime
+          : workingHours.elementAtOrNull(i)?.outTime;
 
       if (workingTime == null) {
         continue;
       }
 
       // تحويل الوقت المحدد (الدخول أو الخروج) إلى كائن DateTime
-      final workingDateTime = DateFormat("hh:mm a").tryParse(workingTime) ?? DateFormat("a hh:mm").parse(workingTime);
+      final workingDateTime = DateFormat("hh:mm a").tryParse(workingTime) ??
+          DateFormat("a hh:mm").parse(workingTime);
 
       final userDateTime = dateList.elementAt(i);
 
@@ -172,5 +179,4 @@ class UserTimeServices {
     // إرجاع النتيجة المنسقة إذا كان هناك تأخير
     return totalMinutes > 0 ? totalMinutes : 0;
   }
-
 }

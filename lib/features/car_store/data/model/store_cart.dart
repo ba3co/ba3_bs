@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/features/car_store/data/model/store_product.dart';
 
 class StoreCartModel {

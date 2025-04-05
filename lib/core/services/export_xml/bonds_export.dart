@@ -56,19 +56,22 @@ class BondsExport {
           // Debit amount (defaults to '0' if null).
           XmlHelpers.element('EntryDebit', item.entryDebit?.toString() ?? '0'),
           // Credit amount (defaults to '0' if null).
-          XmlHelpers.element('EntryCredit', item.entryCredit?.toString() ?? '0'),
+          XmlHelpers.element(
+              'EntryCredit', item.entryCredit?.toString() ?? '0'),
           // Note for the entry.
           XmlHelpers.element('EntryNote', item.entryNote),
           // Currency GUID for the entry.
           XmlHelpers.element('EntryCurrencyGuid', item.entryCurrencyGuid),
           // Currency value (defaults to '1' if null).
-          XmlHelpers.element('EntryCurrencyVal', item.entryCurrencyVal?.toString() ?? '1'),
+          XmlHelpers.element(
+              'EntryCurrencyVal', item.entryCurrencyVal?.toString() ?? '1'),
           // Cost GUID for the entry.
           XmlHelpers.element('EntryCostGuid', item.entryCostGuid),
           // Class information for the entry.
           XmlHelpers.element('EntryClass', item.entryClass),
           // Entry number (defaults to '0' if null).
-          XmlHelpers.element('EntryNumber', item.entryNumber?.toString() ?? '0'),
+          XmlHelpers.element(
+              'EntryNumber', item.entryNumber?.toString() ?? '0'),
           // Customer GUID for the entry.
           XmlHelpers.element('EntryCustomerGuid', item.entryCustomerGuid),
           // Entry type (defaults to '0' if null).
@@ -107,7 +110,8 @@ class BondsExport {
         // Payment skip flag (defaults to '0' if null).
         XmlHelpers.element('PaySkip', bond.paySkip?.toString() ?? '0'),
         // Parent type for the entry (defaults to '4' if null).
-        XmlHelpers.element('ErParentType', bond.erParentType?.toString() ?? '4'),
+        XmlHelpers.element(
+            'ErParentType', bond.erParentType?.toString() ?? '4'),
         // Build the pay items section containing all 'N' elements.
         xml.XmlElement(xml.XmlName('PayItems'), [], items),
         // An extra element 'E' with a default value of 'E=2' if null.

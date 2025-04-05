@@ -7,15 +7,16 @@ import 'bill_profit_chart.dart';
 class BillProfitBord extends StatelessWidget {
   final BillProfitDashboardController billProfitDashboardController;
 
-  const BillProfitBord({super.key, required this.billProfitDashboardController});
+  const BillProfitBord(
+      {super.key, required this.billProfitDashboardController});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ProfitDateFilterHeader(controller: billProfitDashboardController),
-        BillProfitChart(billProfitDashboardController: billProfitDashboardController),
-
+        BillProfitChart(
+            billProfitDashboardController: billProfitDashboardController),
         MonthlyChartSummarySection(controller: billProfitDashboardController),
       ],
     );

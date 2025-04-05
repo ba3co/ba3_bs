@@ -20,8 +20,10 @@ class AllMaterialsGroupScreen extends StatelessWidget {
         tableSourceModels: controller.materialGroups,
         onLoaded: (event) {},
         onSelected: (selectedRow) {
-          String? groupGuid = selectedRow.row?.cells[AppConstants.materialGroupIdFiled]?.value;
-          read<MaterialController>().navigateToAllMaterialScreen(groupGuid:groupGuid , context: context);
+          String? groupGuid =
+              selectedRow.row?.cells[AppConstants.materialGroupIdFiled]?.value;
+          read<MaterialController>().navigateToAllMaterialScreen(
+              groupGuid: groupGuid, context: context);
         },
       );
     });

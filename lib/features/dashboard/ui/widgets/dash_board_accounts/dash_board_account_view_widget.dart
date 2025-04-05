@@ -27,7 +27,8 @@ class DashBoardAccountViewWidget extends StatelessWidget {
           Row(
             children: [
               Spacer(),
-              Text(AppStrings.mainUsers.tr, style: AppTextStyles.headLineStyle3),
+              Text(AppStrings.mainUsers.tr,
+                  style: AppTextStyles.headLineStyle3),
               Spacer(),
               CustomIconButton(
                 disabled: false,
@@ -42,10 +43,13 @@ class DashBoardAccountViewWidget extends StatelessWidget {
               CustomIconButton(
                 disabled: false,
                 onPressed: () {
-                  showDialog<String>(context: Get.context!, builder: (BuildContext context) => showDashboardAccountDialog(context));
+                  showDialog<String>(
+                      context: Get.context!,
+                      builder: (BuildContext context) =>
+                          showDashboardAccountDialog(context));
                 },
                 icon: LanguageSwitchFaIcon(
-                  iconData:FontAwesomeIcons.add,
+                  iconData: FontAwesomeIcons.add,
                 ),
               ),
             ],

@@ -33,7 +33,7 @@ class UserDetailsForm extends StatelessWidget {
       child: OrganizedWidget(
         titleWidget: Center(
             child: Text(
-              AppStrings.userInformation.tr,
+          AppStrings.userInformation.tr,
           style: AppTextStyles.headLineStyle2,
         )),
         bodyWidget: Form(
@@ -49,8 +49,10 @@ class UserDetailsForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userDetailsController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
-                    textEditingController: userDetailsController.userFormHandler.userNameController,
+                    validator: (value) => userDetailsController.userFormHandler
+                        .defaultValidator(value, 'اسم الحساب'),
+                    textEditingController: userDetailsController
+                        .userFormHandler.userNameController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
@@ -60,8 +62,10 @@ class UserDetailsForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userDetailsController.userFormHandler.passwordValidator(value, 'كلمة السر'),
-                    textEditingController: userDetailsController.userFormHandler.passController,
+                    validator: (value) => userDetailsController.userFormHandler
+                        .passwordValidator(value, 'كلمة السر'),
+                    textEditingController:
+                        userDetailsController.userFormHandler.passController,
                     suffixIcon: const SizedBox.shrink(),
                     maxLength: 6,
                     inputFormatters: [
@@ -71,7 +75,6 @@ class UserDetailsForm extends StatelessWidget {
                 ),
               ),
               FormFieldRow(
-
                   firstItem: TextAndExpandedChildField(
                     label: AppStrings.roles.tr,
                     height: 50,
@@ -83,11 +86,13 @@ class UserDetailsForm extends StatelessWidget {
                           color: AppColors.backGroundColor,
                         ),
                         child: DropdownButton<String>(
-                          hint:  Text(AppStrings.roles.tr),
+                          hint: Text(AppStrings.roles.tr),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          value: userDetailsController.userFormHandler.selectedRoleId.value,
-                          items: read<UserManagementController>().allRoles
+                          value: userDetailsController
+                              .userFormHandler.selectedRoleId.value,
+                          items: read<UserManagementController>()
+                              .allRoles
                               .map(
                                 (role) => DropdownMenuItem(
                                   value: role.roleId,
@@ -97,7 +102,8 @@ class UserDetailsForm extends StatelessWidget {
                               .toList(),
                           onChanged: (role) {
                             log('selectedRoleId $role');
-                            userDetailsController.userFormHandler.setRoleId = role;
+                            userDetailsController.userFormHandler.setRoleId =
+                                role;
                           },
                         ),
                       );
@@ -117,29 +123,35 @@ class UserDetailsForm extends StatelessWidget {
                           hint: const Text('البائع'),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          value: sellerController.sellers.map((element) => element.costGuid,).contains(userDetailsController.userFormHandler.selectedSellerId.value)?userDetailsController.userFormHandler.selectedSellerId.value:null ,
-                          items: sellerController.sellers
-                              .map(
-                                (seller) {
-                                  return DropdownMenuItem(
-                                  value: seller.costGuid,
-                                  child: Text(seller.costName ?? ''),
-                                );
-                                },
-                              )
-                              .toList(),
+                          value: sellerController.sellers
+                                  .map(
+                                    (element) => element.costGuid,
+                                  )
+                                  .contains(userDetailsController
+                                      .userFormHandler.selectedSellerId.value)
+                              ? userDetailsController
+                                  .userFormHandler.selectedSellerId.value
+                              : null,
+                          items: sellerController.sellers.map(
+                            (seller) {
+                              return DropdownMenuItem(
+                                value: seller.costGuid,
+                                child: Text(seller.costName ?? ''),
+                              );
+                            },
+                          ).toList(),
                           onChanged: (sellerId) {
                             log('selectedSellerId $sellerId');
-                            userDetailsController.userFormHandler.setSellerId = sellerId;
+                            userDetailsController.userFormHandler.setSellerId =
+                                sellerId;
                           },
                         ),
                       );
                     }),
                   )),
               InkWell(
-                onTap: (){
+                onTap: () {
                   userDetailsController.userFormHandler.changeUserState();
-
                 },
                 child: AnimatedContainer(
                   duration: Durations.medium2,
@@ -148,12 +160,17 @@ class UserDetailsForm extends StatelessWidget {
                   padding: EdgeInsets.all(5),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: userDetailsController.userFormHandler.isUserActive.value ? Colors.green : AppColors.grayColor,
+                    color:
+                        userDetailsController.userFormHandler.isUserActive.value
+                            ? Colors.green
+                            : AppColors.grayColor,
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child:   Text(
-                    userDetailsController.userFormHandler.userActiveStatus.value.label,
-                    style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  child: Text(
+                    userDetailsController
+                        .userFormHandler.userActiveStatus.value.label,
+                    style: AppTextStyles.headLineStyle3
+                        .copyWith(color: Colors.white),
                   ),
                 ),
               )

@@ -26,10 +26,20 @@ class UserDetails extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Spacer(),
-            Text('${AppStrings.userName.tr}: ',style: AppTextStyles.headLineStyle1,),
-            Text(userModel.userName!,style: AppTextStyles.headLineStyle1,),
+            Text(
+              '${AppStrings.userName.tr}: ',
+              style: AppTextStyles.headLineStyle1,
+            ),
+            Text(
+              userModel.userName!,
+              style: AppTextStyles.headLineStyle1,
+            ),
             Spacer(),
-            AppButton(title: AppStrings.clearDelay,iconData: FontAwesomeIcons.refresh, onPressed: read<UserDetailsController>().resetDelay,)
+            AppButton(
+              title: AppStrings.clearDelay,
+              iconData: FontAwesomeIcons.refresh,
+              onPressed: read<UserDetailsController>().resetDelay,
+            )
           ],
         ),
         centerTitle: true,
@@ -43,12 +53,16 @@ class UserDetails extends StatelessWidget {
               spacing: 10,
               children: [
                 CustomDropDown(
-                  value: userDetailsController.userFormHandler.userListSelectedMonth.toString().tr,
+                  value: userDetailsController
+                      .userFormHandler.userListSelectedMonth
+                      .toString()
+                      .tr,
                   listValue: (AppConstants.months.keys.toList()),
                   label: "اختر الشهر".tr,
                   onChange: (value) {
                     if (value != null) {
-                      userDetailsController.userFormHandler.updateSelectedMonth(value);
+                      userDetailsController.userFormHandler
+                          .updateSelectedMonth(value);
                     }
                   },
                   isFullBorder: true,
@@ -62,10 +76,12 @@ class UserDetails extends StatelessWidget {
                 TimeWidget(
                   userDetailsController: userDetailsController,
                 ),
-                if(userDetailsController.userFormHandler.userTimeModelWithTotalDelayAndEarlierAtMonth!=null)
-                UserTotalDelay(
-                  userDetailsController: userDetailsController,
-                )
+                if (userDetailsController.userFormHandler
+                        .userTimeModelWithTotalDelayAndEarlierAtMonth !=
+                    null)
+                  UserTotalDelay(
+                    userDetailsController: userDetailsController,
+                  )
               ],
             ),
           ),

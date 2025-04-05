@@ -6,7 +6,8 @@ import 'package:ba3_bs/features/materials/data/models/materials/material_group.d
 import '../../../../../core/models/query_filter.dart';
 import '../../../../../core/services/firebase/interfaces/queryable_savable_datasource.dart';
 
-class MaterialsGroupsDataSource extends QueryableSavableDatasource<MaterialGroupModel> {
+class MaterialsGroupsDataSource
+    extends QueryableSavableDatasource<MaterialGroupModel> {
   MaterialsGroupsDataSource({required super.databaseService});
 
   @override
@@ -16,7 +17,8 @@ class MaterialsGroupsDataSource extends QueryableSavableDatasource<MaterialGroup
   Future<List<MaterialGroupModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final sellers = data.map((item) => MaterialGroupModel.fromJson(item)).toList();
+    final sellers =
+        data.map((item) => MaterialGroupModel.fromJson(item)).toList();
 
     return sellers;
   }
@@ -34,26 +36,34 @@ class MaterialsGroupsDataSource extends QueryableSavableDatasource<MaterialGroup
 
   @override
   Future<MaterialGroupModel> save(MaterialGroupModel item) async {
-    final data = await databaseService.add(path: path, documentId: item.matGroupGuid, data: item.toJson());
+    final data = await databaseService.add(
+        path: path, documentId: item.matGroupGuid, data: item.toJson());
 
     return MaterialGroupModel.fromJson(data);
   }
 
   @override
-  Future<List<MaterialGroupModel>> saveAll(List<MaterialGroupModel> items) async {
+  Future<List<MaterialGroupModel>> saveAll(
+      List<MaterialGroupModel> items) async {
     final savedData = await databaseService.addAll(
       path: path,
-      data: items.map((item) => {...item.toJson(), 'docId': item.matGroupGuid}).toList(),
+      data: items
+          .map((item) => {...item.toJson(), 'docId': item.matGroupGuid})
+          .toList(),
     );
 
     return savedData.map(MaterialGroupModel.fromJson).toList();
   }
 
   @override
-  Future<List<MaterialGroupModel>> fetchWhere({required List<QueryFilter>? queryFilters, DateFilter? dateFilter}) async {
-    final data = await databaseService.fetchWhere(path: path, queryFilters: queryFilters, dateFilter: dateFilter);
+  Future<List<MaterialGroupModel>> fetchWhere(
+      {required List<QueryFilter>? queryFilters,
+      DateFilter? dateFilter}) async {
+    final data = await databaseService.fetchWhere(
+        path: path, queryFilters: queryFilters, dateFilter: dateFilter);
 
-    final materials = data.map((item) => MaterialGroupModel.fromJson(item)).toList();
+    final materials =
+        data.map((item) => MaterialGroupModel.fromJson(item)).toList();
 
     return materials;
   }

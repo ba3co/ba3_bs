@@ -69,7 +69,8 @@ class SellerModel {
       costRes1: costRes1 ?? this.costRes1,
       costRes2: costRes2 ?? this.costRes2,
       costBranchMask: costBranchMask ?? this.costBranchMask,
-      costIsChangeableRatio: costIsChangeableRatio ?? this.costIsChangeableRatio,
+      costIsChangeableRatio:
+          costIsChangeableRatio ?? this.costIsChangeableRatio,
     );
   }
 

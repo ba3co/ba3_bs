@@ -60,8 +60,12 @@ class BillDetails with EquatableMixin {
         next: json['next'],
         billDate: (json['billDate'] as Timestamp).toDate(),
         billNote: json['billNote'],
-        orderNumber: json.containsKey('orderNumber') ? json['orderNumber'] as String? : null,
-        customerPhone: json.containsKey('customerPhone') ? json['customerPhone'] as String? : null,
+        orderNumber: json.containsKey('orderNumber')
+            ? json['orderNumber'] as String?
+            : null,
+        customerPhone: json.containsKey('customerPhone')
+            ? json['customerPhone'] as String?
+            : null,
         billCustomerId: json['billCustomerId'],
         billAccountId: json['billAccountId'],
         billSellerId: json['billSellerId'],
@@ -79,7 +83,7 @@ class BillDetails with EquatableMixin {
     String? billNote,
     String? orderNumber,
     String? customerPhone,
-     String? billCustomerId,
+    String? billCustomerId,
     required String billAccountId,
     required String billSellerId,
     required int billPayType,
@@ -160,26 +164,58 @@ class BillDetails with EquatableMixin {
     Object? billFirstPay = _CopyWithSentinel,
   }) {
     return BillDetails(
-      billGuid: billGuid == _CopyWithSentinel ? this.billGuid : billGuid as String?,
-      billPayType: billPayType == _CopyWithSentinel ? this.billPayType : billPayType as int?,
-      billNumber: billNumber == _CopyWithSentinel ? this.billNumber : billNumber as int?,
-      previous: previous == _CopyWithSentinel ? this.previous : previous as int?,
+      billGuid:
+          billGuid == _CopyWithSentinel ? this.billGuid : billGuid as String?,
+      billPayType: billPayType == _CopyWithSentinel
+          ? this.billPayType
+          : billPayType as int?,
+      billNumber: billNumber == _CopyWithSentinel
+          ? this.billNumber
+          : billNumber as int?,
+      previous:
+          previous == _CopyWithSentinel ? this.previous : previous as int?,
       next: next == _CopyWithSentinel ? this.next : next as int?,
       // Now if next is passed as null, it will become null
-      billDate: billDate == _CopyWithSentinel ? this.billDate : billDate as DateTime?,
-      billNote: billNote == _CopyWithSentinel ? this.billNote : billNote as String?,
-      orderNumber: orderNumber == _CopyWithSentinel ? this.orderNumber : orderNumber as String?,
-      customerPhone: customerPhone == _CopyWithSentinel ? this.customerPhone : customerPhone as String?,
-      billSellerId: billSellerId == _CopyWithSentinel ? this.billSellerId : billSellerId as String?,
-      billCustomerId: billCustomerId == _CopyWithSentinel ? this.billCustomerId : billCustomerId as String?,
-      billAccountId: billAccountId == _CopyWithSentinel ? this.billAccountId : billAccountId as String?,
-      billTotal: billTotal == _CopyWithSentinel ? this.billTotal : billTotal as double?,
-      billVatTotal: billVatTotal == _CopyWithSentinel ? this.billVatTotal : billVatTotal as double?,
-      billBeforeVatTotal: billBeforeVatTotal == _CopyWithSentinel ? this.billBeforeVatTotal : billBeforeVatTotal as double?,
-      billGiftsTotal: billGiftsTotal == _CopyWithSentinel ? this.billGiftsTotal : billGiftsTotal as double?,
-      billDiscountsTotal: billDiscountsTotal == _CopyWithSentinel ? this.billDiscountsTotal : billDiscountsTotal as double?,
-      billAdditionsTotal: billAdditionsTotal == _CopyWithSentinel ? this.billAdditionsTotal : billAdditionsTotal as double?,
-      billFirstPay: billFirstPay == _CopyWithSentinel ? this.billFirstPay : billFirstPay as double?,
+      billDate:
+          billDate == _CopyWithSentinel ? this.billDate : billDate as DateTime?,
+      billNote:
+          billNote == _CopyWithSentinel ? this.billNote : billNote as String?,
+      orderNumber: orderNumber == _CopyWithSentinel
+          ? this.orderNumber
+          : orderNumber as String?,
+      customerPhone: customerPhone == _CopyWithSentinel
+          ? this.customerPhone
+          : customerPhone as String?,
+      billSellerId: billSellerId == _CopyWithSentinel
+          ? this.billSellerId
+          : billSellerId as String?,
+      billCustomerId: billCustomerId == _CopyWithSentinel
+          ? this.billCustomerId
+          : billCustomerId as String?,
+      billAccountId: billAccountId == _CopyWithSentinel
+          ? this.billAccountId
+          : billAccountId as String?,
+      billTotal: billTotal == _CopyWithSentinel
+          ? this.billTotal
+          : billTotal as double?,
+      billVatTotal: billVatTotal == _CopyWithSentinel
+          ? this.billVatTotal
+          : billVatTotal as double?,
+      billBeforeVatTotal: billBeforeVatTotal == _CopyWithSentinel
+          ? this.billBeforeVatTotal
+          : billBeforeVatTotal as double?,
+      billGiftsTotal: billGiftsTotal == _CopyWithSentinel
+          ? this.billGiftsTotal
+          : billGiftsTotal as double?,
+      billDiscountsTotal: billDiscountsTotal == _CopyWithSentinel
+          ? this.billDiscountsTotal
+          : billDiscountsTotal as double?,
+      billAdditionsTotal: billAdditionsTotal == _CopyWithSentinel
+          ? this.billAdditionsTotal
+          : billAdditionsTotal as double?,
+      billFirstPay: billFirstPay == _CopyWithSentinel
+          ? this.billFirstPay
+          : billFirstPay as double?,
     );
   }
 

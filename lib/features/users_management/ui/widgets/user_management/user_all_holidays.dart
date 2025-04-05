@@ -36,7 +36,8 @@ class UserAllHolidays extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) => HolidayItemWidget(
                   holiday: controller.holidays.elementAt(index),
-                  onDelete: () => controller.deleteHoliday( element: controller.holidays.elementAt(index)),
+                  onDelete: () => controller.deleteHoliday(
+                      element: controller.holidays.elementAt(index)),
                 ),
                 separatorBuilder: (context, index) => HorizontalSpace(),
                 itemCount: controller.holidaysLength,
@@ -58,9 +59,9 @@ class UserAllHolidays extends StatelessWidget {
                       ),
                       HorizontalSpace(),
                       Text(
-                        AppStrings.add
-                        .tr,
-                        style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
+                        AppStrings.add.tr,
+                        style: AppTextStyles.headLineStyle4
+                            .copyWith(fontSize: 12, color: AppColors.blueColor),
                       )
                     ],
                   )),

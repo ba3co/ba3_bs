@@ -13,7 +13,7 @@ class UserService {
     String? userSellerId,
     Map<String, UserWorkingHours>? workingHour,
     List<String>? holidays,
-    required  UserActiveStatus userActiveState,
+    required UserActiveStatus userActiveState,
   }) {
     if (userRoleId == null || userSellerId == null) {
       return null;
@@ -28,9 +28,8 @@ class UserService {
           userRoleId: userRoleId,
           userSellerId: userSellerId,
           userWorkingHours: workingHour,
-      userHolidays: holidays,
-        userActiveStatus: userActiveState
-      );
+          userHolidays: holidays,
+          userActiveStatus: userActiveState);
     } else {
       newUserModel = userModel.copyWith(
           userName: userName,
@@ -38,9 +37,8 @@ class UserService {
           userRoleId: userRoleId,
           userSellerId: userSellerId,
           userWorkingHours: workingHour,
-          userHolidays:holidays,
-        userActiveStatus: userActiveState
-      );
+          userHolidays: holidays,
+          userActiveStatus: userActiveState);
     }
     return newUserModel;
   }
@@ -50,11 +48,12 @@ class UserService {
     required UserTimeModel? timeModel,
     required bool isLogin,
   }) {
-    final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
-    if (dateList == null ) {
+    final dateList =
+        isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
+    if (dateList == null) {
       return AppStrings.notLoggedToday.tr;
     }
-    if(workingHours.isEmpty){
+    if (workingHours.isEmpty) {
       return 'لم يتم تسجيل الدوام له';
     }
 
@@ -78,19 +77,19 @@ class UserService {
       // حساب الفرق بناءً على نوع العملية (دخول أو خروج)
       final delay = isLogin
           ? userDateTime.difference(DateTime(
-        userDateTime.year,
-        userDateTime.month,
-        userDateTime.day,
-        workingDateTime.hour,
-        workingDateTime.minute+4,
-      ))
+              userDateTime.year,
+              userDateTime.month,
+              userDateTime.day,
+              workingDateTime.hour,
+              workingDateTime.minute + 4,
+            ))
           : DateTime(
-        userDateTime.year,
-        userDateTime.month,
-        userDateTime.day,
-        workingDateTime.hour,
-        workingDateTime.minute-4,
-      ).difference(userDateTime);
+              userDateTime.year,
+              userDateTime.month,
+              userDateTime.day,
+              workingDateTime.hour,
+              workingDateTime.minute - 4,
+            ).difference(userDateTime);
 
       // إضافة الفرق إذا لم يكن سالبًا
       if (!delay.isNegative) {
@@ -117,5 +116,4 @@ class UserService {
   bool getIfHaveHoliday(String dayName, List<String> userHolidays) {
     return userHolidays.contains(dayName);
   }
-
 }

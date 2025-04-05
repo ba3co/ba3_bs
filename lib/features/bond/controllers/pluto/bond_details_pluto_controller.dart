@@ -13,7 +13,8 @@ import '../../data/models/pay_item_model.dart';
 
 class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
   // Columns and rows
-  late List<PlutoColumn> recordsTableColumns = PayItem().toPlutoGridFormat(bondType).keys.toList();
+  late List<PlutoColumn> recordsTableColumns =
+      PayItem().toPlutoGridFormat(bondType).keys.toList();
 
   List<PlutoRow> recordsTableRows = [];
 
@@ -39,11 +40,13 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   void _handleColumnUpdate(String columnField) {
     if (columnField == AppConstants.entryCredit) {
-      String correctedText = AppServiceUtils.extractNumbersAndCalculate(recordsTableStateManager.currentRow?.cells[columnField]?.value);
+      String correctedText = AppServiceUtils.extractNumbersAndCalculate(
+          recordsTableStateManager.currentRow?.cells[columnField]?.value);
       clearFiledInRow(AppConstants.entryDebit);
       updateCellValue(columnField, correctedText);
     } else if (columnField == AppConstants.entryDebit) {
-      String correctedText = AppServiceUtils.extractNumbersAndCalculate(recordsTableStateManager.currentRow?.cells[columnField]?.value);
+      String correctedText = AppServiceUtils.extractNumbersAndCalculate(
+          recordsTableStateManager.currentRow?.cells[columnField]?.value);
       clearFiledInRow(AppConstants.entryCredit);
       updateCellValue(columnField, correctedText);
     } else if (columnField == AppConstants.entryAccountGuid) {
@@ -72,7 +75,9 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     }
   }
 
-  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then((value) {
+  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized()
+          .waitUntilFirstFrameRasterized
+          .then((value) {
         update();
       });
 
@@ -83,8 +88,12 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     }
 
     for (var element in recordsTableStateManager.rows) {
-      if (read<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
-        total += double.tryParse(element.toJson()[AppConstants.entryCredit] ?? "") ?? 0;
+      if (read<AccountsController>().getAccountIdByName(
+              element.toJson()[AppConstants.entryAccountGuid]) !=
+          '') {
+        total +=
+            double.tryParse(element.toJson()[AppConstants.entryCredit] ?? "") ??
+                0;
       }
     }
 
@@ -97,8 +106,12 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
       return calcCreditTotal();
     }
     for (var element in recordsTableStateManager.rows) {
-      if (read<AccountsController>().getAccountIdByName(element.toJson()[AppConstants.entryAccountGuid]) != '') {
-        total += double.tryParse(element.toJson()[AppConstants.entryDebit] ?? "") ?? 0;
+      if (read<AccountsController>().getAccountIdByName(
+              element.toJson()[AppConstants.entryAccountGuid]) !=
+          '') {
+        total +=
+            double.tryParse(element.toJson()[AppConstants.entryDebit] ?? "") ??
+                0;
       }
     }
 
@@ -110,12 +123,14 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
   @override
   List<PayItem> get generateRecords {
     recordsTableStateManager.setShowLoading(true);
-    final accountName = read<AccountsController>().getAccountNameById(accountGuid);
+    final accountName =
+        read<AccountsController>().getAccountNameById(accountGuid);
     String accountId = '';
 
     final payItems = recordsTableStateManager.rows
         .where((row) {
-          accountId = read<AccountsController>().getAccountIdByName(row.cells[AppConstants.entryAccountGuid]?.value ?? '');
+          accountId = read<AccountsController>().getAccountIdByName(
+              row.cells[AppConstants.entryAccountGuid]?.value ?? '');
 
           return accountId.isNotEmpty;
         })
@@ -123,7 +138,8 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
         .whereType<PayItem>()
         .toList();
 
-    final oppositeItems = (bondType == BondType.paymentVoucher || bondType == BondType.receiptVoucher)
+    final oppositeItems = (bondType == BondType.paymentVoucher ||
+            bondType == BondType.receiptVoucher)
         ? payItems
             .map((item) {
               return _generateOppositeItem(item, accountName);
@@ -158,12 +174,15 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     throw Exception('Unsupported bond type');
   }
 
-  PayItem? _processBondRow({required Map<String, dynamic> row, required String accId}) {
+  PayItem? _processBondRow(
+      {required Map<String, dynamic> row, required String accId}) {
     return _createBondRecord(row: row, accId: accId);
   }
 
   // Helper method to create an BondItemModel from a row
-  PayItem _createBondRecord({required Map<String, dynamic> row, required String accId}) => PayItem.fromJsonPluto(row: row, accId: accId);
+  PayItem _createBondRecord(
+          {required Map<String, dynamic> row, required String accId}) =>
+      PayItem.fromJsonPluto(row: row, accId: accId);
 
   void updateCellValue(String field, dynamic value) {
     if (recordsTableStateManager.currentRow!.cells[field] != null) {
@@ -199,8 +218,11 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   // State managers
   @override
-  PlutoGridStateManager recordsTableStateManager =
-      PlutoGridStateManager(columns: [], rows: [], gridFocusNode: FocusNode(), scroll: PlutoGridScrollController());
+  PlutoGridStateManager recordsTableStateManager = PlutoGridStateManager(
+      columns: [],
+      rows: [],
+      gridFocusNode: FocusNode(),
+      scroll: PlutoGridScrollController());
 
   Color color = Colors.red;
 
@@ -211,8 +233,10 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     final newRows = recordsTableStateManager.getNewRows(count: 30);
     recordsTableStateManager.appendRows(newRows);
 
-    if (recordsTableStateManager.rows.isNotEmpty && recordsTableStateManager.rows.first.cells.length > 1) {
-      final secondCell = recordsTableStateManager.rows.first.cells.entries.elementAt(1).value;
+    if (recordsTableStateManager.rows.isNotEmpty &&
+        recordsTableStateManager.rows.first.cells.length > 1) {
+      final secondCell =
+          recordsTableStateManager.rows.first.cells.entries.elementAt(1).value;
       recordsTableStateManager.setCurrentCell(secondCell, 0);
       event.stateManager.setKeepFocus(true);
 
@@ -220,7 +244,8 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     }
   }
 
-  void onRowSecondaryTap(PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {}
+  void onRowSecondaryTap(
+      PlutoGridOnRowSecondaryTapEvent event, BuildContext context) {}
 
   prepareBondRows(List<PayItem> itemList) {
     recordsTableStateManager.removeAllRows();
@@ -246,9 +271,11 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
     }
   }
 
-  List<PlutoRow> convertRecordsToRows(List<PayItem> records) => records.map((record) {
+  List<PlutoRow> convertRecordsToRows(List<PayItem> records) =>
+      records.map((record) {
         final rowData = record.toPlutoGridFormat(bondType);
-        final cells = rowData.map((key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
+        final cells = rowData.map((key, value) =>
+            MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);
       }).toList();
 }

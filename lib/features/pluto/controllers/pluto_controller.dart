@@ -12,16 +12,19 @@ class PlutoController extends GetxController {
   }
 
   /// Generates a list of PlutoColumns based on the first model in the provided list.
-  List<PlutoColumn> generateColumns<T>(List<PlutoAdaptable> adaptableModels, [T? type]) {
+  List<PlutoColumn> generateColumns<T>(List<PlutoAdaptable> adaptableModels,
+      [T? type]) {
     if (adaptableModels.isEmpty) return [];
 
     final firstModelData = adaptableModels.first.toPlutoGridFormat(type);
 
-    return firstModelData.keys.toList(); // Extracts PlutoColumn objects directly
+    return firstModelData.keys
+        .toList(); // Extracts PlutoColumn objects directly
   }
 
   /// Generates a list of PlutoRows by mapping each model to its respective cells.
-  List<PlutoRow> generateRows<T>(List<PlutoAdaptable> adaptableModels, [T? type]) {
+  List<PlutoRow> generateRows<T>(List<PlutoAdaptable> adaptableModels,
+      [T? type]) {
     if (adaptableModels.isEmpty) return [];
 
     updatePlutoKey();
@@ -31,7 +34,8 @@ class PlutoController extends GetxController {
   /// Converts a PlutoAdaptable model to a PlutoRow.
   static PlutoRow _mapModelToRow(PlutoAdaptable model) {
     final cells = model.toPlutoGridFormat().map<String, PlutoCell>(
-          (key, value) => MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')),
+          (key, value) =>
+              MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')),
         );
     return PlutoRow(cells: cells);
   }

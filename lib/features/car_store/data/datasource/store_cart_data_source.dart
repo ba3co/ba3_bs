@@ -2,7 +2,6 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/listen_datasource.dart';
 import 'package:ba3_bs/features/car_store/data/model/store_cart.dart';
 
-
 class StoreCartDataSource extends ListenableDatasource<StoreCartModel> {
   StoreCartDataSource({required super.databaseService});
 
@@ -13,7 +12,8 @@ class StoreCartDataSource extends ListenableDatasource<StoreCartModel> {
   Future<List<StoreCartModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final List<StoreCartModel> bonds = data.map((item) => StoreCartModel.fromJson(item)).toList();
+    final List<StoreCartModel> bonds =
+        data.map((item) => StoreCartModel.fromJson(item)).toList();
 
     // Sort the list by `bondNumber` in ascending order
     bonds.sort((a, b) => a.id!.compareTo(b.id!));
@@ -39,7 +39,8 @@ class StoreCartDataSource extends ListenableDatasource<StoreCartModel> {
     return StoreCartModel.fromJson(savedData);
   }
 
-  Future<Map<String, dynamic>> _saveStoreCartData(String? bondId, Map<String, dynamic> data) async =>
+  Future<Map<String, dynamic>> _saveStoreCartData(
+          String? bondId, Map<String, dynamic> data) async =>
       databaseService.add(path: path, documentId: bondId, data: data);
 
   @override

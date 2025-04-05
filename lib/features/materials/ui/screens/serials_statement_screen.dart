@@ -15,7 +15,8 @@ class SerialsStatementScreenScreen extends StatelessWidget {
         return PlutoGridWithAppBar(
           title: controller.serialNumbersStatementScreenTitle,
           onLoaded: (e) {},
-          onSelected: (PlutoGridOnSelectedEvent event) => controller.onSerialSelected(event, context),
+          onSelected: (PlutoGridOnSelectedEvent event) =>
+              controller.onSerialSelected(event, context),
           isLoading: controller.isLoadingPlutoGrid,
           tableSourceModels: controller.serialNumberStatements,
         );

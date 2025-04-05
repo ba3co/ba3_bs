@@ -14,7 +14,7 @@ class MonthlyChartSummarySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
@@ -31,14 +31,13 @@ class MonthlyChartSummarySection extends StatelessWidget {
                 total: controller.totalMonthSales.toStringAsFixed(2),
               ),
               ChartItem(
-                onTap:controller.changeProfitVisibility ,
+                onTap: controller.changeProfitVisibility,
                 color: AppColors.feesSaleColor,
                 text: AppStrings.totalFees.tr,
                 total: controller.totalMonthFees.toStringAsFixed(2),
               ),
             ],
           ),
-
         ],
       ),
     );

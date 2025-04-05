@@ -6,7 +6,8 @@ class ConvertBillsToLinkedListUseCase {
   /// 🔹 Converts a list of bills into a **linked list structure** by assigning **previous** and **next** references.
   List<BillModel> execute(List<BillModel> bills) {
     // 1️⃣ Group bills by type (BillType ID)
-    final groupedBills = bills.groupBy((bill) => bill.billTypeModel.billTypeId!);
+    final groupedBills =
+        bills.groupBy((bill) => bill.billTypeModel.billTypeId!);
 
     // 2️⃣ For each group, sort by billNumber and link previous/next bills
     final updatedGroups = groupedBills.values.map(
@@ -17,8 +18,12 @@ class ConvertBillsToLinkedListUseCase {
             .mapIndexed(
               (index, bill) => bill.copyWith(
                 billDetails: bill.billDetails.copyWith(
-                  previous: index == 0 ? null : group[index - 1].billDetails.billNumber,
-                  next: index == group.length - 1 ? null : group[index + 1].billDetails.billNumber,
+                  previous: index == 0
+                      ? null
+                      : group[index - 1].billDetails.billNumber,
+                  next: index == group.length - 1
+                      ? null
+                      : group[index + 1].billDetails.billNumber,
                 ),
               ),
             )

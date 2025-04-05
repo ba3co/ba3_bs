@@ -36,7 +36,8 @@ class FinalAccountScreen extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        read<AccountStatementController>().navigateToFinalAccountDetails(account);
+        read<AccountStatementController>()
+            .navigateToFinalAccountDetails(account);
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(
@@ -133,7 +134,8 @@ class FinalAccountDetailsScreen extends StatefulWidget {
   final FinalAccounts account;
 
   @override
-  State<FinalAccountDetailsScreen> createState() => _FinalAccountDetailsScreenState();
+  State<FinalAccountDetailsScreen> createState() =>
+      _FinalAccountDetailsScreenState();
 }
 
 class _FinalAccountDetailsScreenState extends State<FinalAccountDetailsScreen> {
@@ -149,7 +151,8 @@ class _FinalAccountDetailsScreenState extends State<FinalAccountDetailsScreen> {
     final controller = read<AccountStatementController>();
     await controller.fetchFinalAccountsStatements(widget.account);
 
-    read<PlutoDualTableController>().setData(controller.finalAccountsEntryBondItems);
+    read<PlutoDualTableController>()
+        .setData(controller.finalAccountsEntryBondItems);
   }
 
   @override
@@ -174,9 +177,12 @@ class _FinalAccountDetailsScreenState extends State<FinalAccountDetailsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildSummaryItem('مدين (Debit)', controller.debitFinalAccountValue, Colors.blue),
-          _buildSummaryItem('دائن (Credit)', controller.creditFinalAccountValue, Colors.red),
-          _buildSummaryItem('الرصيد (Balance)', controller.totalFinalAccountValue, Colors.green),
+          _buildSummaryItem(
+              'مدين (Debit)', controller.debitFinalAccountValue, Colors.blue),
+          _buildSummaryItem(
+              'دائن (Credit)', controller.creditFinalAccountValue, Colors.red),
+          _buildSummaryItem('الرصيد (Balance)',
+              controller.totalFinalAccountValue, Colors.green),
         ],
       ),
     );
@@ -186,11 +192,16 @@ class _FinalAccountDetailsScreenState extends State<FinalAccountDetailsScreen> {
   Widget _buildSummaryItem(String label, double value, Color color) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
+        Text(label,
+            style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20)),
         const SizedBox(height: 5),
         Text(
           AppUIUtils.formatDecimalNumberWithCommas(value),
-          style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 24),
+          style: TextStyle(
+              color: color, fontWeight: FontWeight.w600, fontSize: 24),
         ),
       ],
     );

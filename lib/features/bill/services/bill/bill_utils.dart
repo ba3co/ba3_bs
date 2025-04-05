@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/features/customer/data/models/customer_model.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
@@ -8,16 +7,20 @@ import '../../../sellers/data/models/seller_model.dart';
 import '../../data/models/bill_model.dart';
 
 class BillUtils {
-  BillModel appendEmptyBillModel(List<BillModel> bills, BillTypeModel billTypeModel) {
-    final int lastBillNumber = bills.isNotEmpty ? bills.last.billDetails.billNumber! : 0;
+  BillModel appendEmptyBillModel(
+      List<BillModel> bills, BillTypeModel billTypeModel) {
+    final int lastBillNumber =
+        bills.isNotEmpty ? bills.last.billDetails.billNumber! : 0;
 
-    final emptyBillModel = BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
+    final emptyBillModel = BillModel.empty(
+        billTypeModel: billTypeModel, lastBillNumber: lastBillNumber);
 
     bills.add(emptyBillModel);
     return emptyBillModel;
   }
 
-  List<BillModel> appendEmptyBillModelNew(BillTypeModel billTypeModel, int lastBillNumber) {
+  List<BillModel> appendEmptyBillModelNew(
+      BillTypeModel billTypeModel, int lastBillNumber) {
     final List<BillModel> bills = [];
     final emptyBillModel = BillModel.empty(
       billTypeModel: billTypeModel,
@@ -35,6 +38,7 @@ class BillUtils {
     }
     return true;
   }
+
   bool validateBillAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');

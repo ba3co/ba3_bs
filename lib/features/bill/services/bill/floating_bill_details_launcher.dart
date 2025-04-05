@@ -12,24 +12,35 @@ import '../../controllers/pluto/bill_details_pluto_controller.dart';
 import '../../data/models/bill_model.dart';
 
 /// Manages and initializes controllers for the Bill Details screen with floating window capabilities.
-class FloatingBillDetailsLauncher extends GetxController with FloatingLauncher, ControllerInitializer {
+class FloatingBillDetailsLauncher extends GetxController
+    with FloatingLauncher, ControllerInitializer {
   /// Initializes all required controllers for the Bill Details screen.
-  Map<String, GetxController> setupControllers({required Map<String, dynamic> params}) {
+  Map<String, GetxController> setupControllers(
+      {required Map<String, dynamic> params}) {
     final tag = requireParam<String>(params, key: 'tag');
 
-    final billTypeModel = requireParam<BillTypeModel>(params, key: 'billTypeModel');
+    final billTypeModel =
+        requireParam<BillTypeModel>(params, key: 'billTypeModel');
 
     final billsFirebaseRepo =
-        requireParam<CompoundDatasourceRepository<BillModel, BillTypeModel>>(params, key: 'billsFirebaseRepo');
+        requireParam<CompoundDatasourceRepository<BillModel, BillTypeModel>>(
+            params,
+            key: 'billsFirebaseRepo');
 
-    final serialNumbersRepo = requireParam<QueryableSavableRepository<SerialNumberModel>>(params, key: 'serialNumbersRepo');
+    final serialNumbersRepo =
+        requireParam<QueryableSavableRepository<SerialNumberModel>>(params,
+            key: 'serialNumbersRepo');
 
-    final billSearchControllerWithTag = createController<BillSearchController>(tag, controller: BillSearchController());
+    final billSearchControllerWithTag = createController<BillSearchController>(
+        tag,
+        controller: BillSearchController());
 
     final billDetailsPlutoControllerWithTag =
-        createController<BillDetailsPlutoController>(tag, controller: BillDetailsPlutoController(billTypeModel));
+        createController<BillDetailsPlutoController>(tag,
+            controller: BillDetailsPlutoController(billTypeModel));
 
-    final billDetailsControllerWithTag = createController<BillDetailsController>(
+    final billDetailsControllerWithTag =
+        createController<BillDetailsController>(
       tag,
       controller: BillDetailsController(
         billsFirebaseRepo,

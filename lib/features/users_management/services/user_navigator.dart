@@ -17,9 +17,11 @@ class UserNavigator with AppNavigator, FloatingLauncher {
   final RoleFormHandler _roleFormHandler;
   final SharedPreferencesService _sharedPreferencesService;
 
-  UserManagementController get _userController => read<UserManagementController>();
+  UserManagementController get _userController =>
+      read<UserManagementController>();
 
-  UserDetailsController get _userDetailsController => read<UserDetailsController>();
+  UserDetailsController get _userDetailsController =>
+      read<UserDetailsController>();
 
   UserNavigator(this._roleFormHandler, this._sharedPreferencesService);
 
@@ -60,7 +62,8 @@ class UserNavigator with AppNavigator, FloatingLauncher {
     if (_sharedPreferencesService.getString(AppConstants.userIdKey) == null) {
       offAll(AppRoutes.loginScreen);
     } else {
-      _userController.fetchAndHandleUser(_sharedPreferencesService.getString(AppConstants.userIdKey)!);
+      _userController.fetchAndHandleUser(
+          _sharedPreferencesService.getString(AppConstants.userIdKey)!);
     }
   }
 }

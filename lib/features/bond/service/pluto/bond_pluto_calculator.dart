@@ -6,5 +6,6 @@ class BillPlutoCalculator {
 
   BillPlutoCalculator(this.controller);
 
-  PlutoGridStateManager get mainTableStateManager => controller.recordsTableStateManager;
+  PlutoGridStateManager get mainTableStateManager =>
+      controller.recordsTableStateManager;
 }

@@ -37,7 +37,8 @@ class CustomDropdownOverly<T> extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdownOverly<T>> createState() => _CustomDropdownOverlyState<T>();
+  State<CustomDropdownOverly<T>> createState() =>
+      _CustomDropdownOverlyState<T>();
 }
 
 class _CustomDropdownOverlyState<T> extends State<CustomDropdownOverly<T>> {

@@ -46,11 +46,14 @@ class AllSellersScreen extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               final seller = controller.sellers[index];
-              final initials = (seller.costName ?? '؟').isNotEmpty ? seller.costName![0].toUpperCase() : '?';
+              final initials = (seller.costName ?? '؟').isNotEmpty
+                  ? seller.costName![0].toUpperCase()
+                  : '?';
 
               return InkWell(
                 overlayColor: MaterialStateProperty.all(Colors.transparent),
-                onTap: () => read<SellerSalesController>().navigateToSellerSalesScreen(seller, context),
+                onTap: () => read<SellerSalesController>()
+                    .navigateToSellerSalesScreen(seller, context),
                 child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -58,7 +61,8 @@ class AllSellersScreen extends StatelessWidget {
                   color: const Color(0xFFFDFDFD),
                   elevation: 3,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 16),
                     child: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -89,7 +93,8 @@ class AllSellersScreen extends StatelessWidget {
                           ),
                           Text(
                             'كود: ${seller.costCode ?? '---'}',
-                            style: TextStyle(fontSize: 13.sp, color: Colors.grey),
+                            style:
+                                TextStyle(fontSize: 13.sp, color: Colors.grey),
                           ),
                           const SizedBox(height: 12),
                           FittedBox(
@@ -99,14 +104,22 @@ class AllSellersScreen extends StatelessWidget {
                                 Obx(() {
                                   return IconButton(
                                     icon: Icon(Icons.delete,
-                                        color: controller.deleteSellerRequestState.value == RequestState.loading
+                                        color: controller
+                                                    .deleteSellerRequestState
+                                                    .value ==
+                                                RequestState.loading
                                             ? Colors.grey
                                             : Colors.red.shade400),
-                                    onPressed: controller.deleteSellerRequestState.value == RequestState.loading
+                                    onPressed: controller
+                                                .deleteSellerRequestState
+                                                .value ==
+                                            RequestState.loading
                                         ? () {}
                                         : () async {
-                                            if (await AppUIUtils.confirmOverlay(context)) {
-                                              controller.deleteSeller(seller.costGuid!);
+                                            if (await AppUIUtils.confirmOverlay(
+                                                context)) {
+                                              controller.deleteSeller(
+                                                  seller.costGuid!);
                                             }
                                           },
                                   );
@@ -118,7 +131,8 @@ class AllSellersScreen extends StatelessWidget {
                                     color: AppColors.lightBlueColor,
                                   ),
                                   onPressed: () {
-                                    read<SellerSalesController>().navigateToAddSellerScreen(
+                                    read<SellerSalesController>()
+                                        .navigateToAddSellerScreen(
                                       seller: seller,
                                       context: context,
                                     );
@@ -140,5 +154,7 @@ class AllSellersScreen extends StatelessWidget {
     );
   }
 
-  int calculateResponsiveCrossAxisCount(double screenWidth, {double minItemWidth = 280}) => screenWidth ~/ minItemWidth;
+  int calculateResponsiveCrossAxisCount(double screenWidth,
+          {double minItemWidth = 280}) =>
+      screenWidth ~/ minItemWidth;
 }

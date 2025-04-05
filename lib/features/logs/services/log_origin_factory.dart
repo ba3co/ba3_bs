@@ -10,18 +10,24 @@ class LogOriginFactory {
     final sourceType = log.sourceType;
     final note = log.note;
 
-    if (sourceType.contains('فاتورة') || sourceType.contains('تسوية') || note.contains('بضاعة أول المدة')) {
+    if (sourceType.contains('فاتورة') ||
+        sourceType.contains('تسوية') ||
+        note.contains('بضاعة أول المدة')) {
       return LogOrigin.bill;
     } else if (sourceType.contains('شيكات')) {
       return LogOrigin.cheque;
-    } else if (sourceType.contains('سند') || sourceType.contains('القيد الافتتاحي')) {
+    } else if (sourceType.contains('سند') ||
+        sourceType.contains('القيد الافتتاحي')) {
       return LogOrigin.bond;
-    } else if (sourceType.contains('مادة') || note.contains('مادة') || note.contains('الباركود')) {
+    } else if (sourceType.contains('مادة') ||
+        note.contains('مادة') ||
+        note.contains('الباركود')) {
       return LogOrigin.material;
     } else if (sourceType.contains('حساب') || note.contains('حساب')) {
       return LogOrigin.account;
     } else {
-      throw UnimplementedError("No LogOrigin registered for source type ${log.sourceType}");
+      throw UnimplementedError(
+          "No LogOrigin registered for source type ${log.sourceType}");
     }
   }
 }

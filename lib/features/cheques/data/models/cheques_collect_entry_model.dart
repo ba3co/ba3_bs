@@ -34,7 +34,6 @@ class ChequesCollectEntryModel {
   }
 }
 
-
 class ChequesEntry {
   // final int cEntryType;
   final String cEntryTypeGuid;

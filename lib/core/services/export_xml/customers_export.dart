@@ -58,7 +58,8 @@ class CustomersExport {
         XmlHelpers.element('Note', customer.note),
         XmlHelpers.element('AcGuid', customer.accountGuid),
         // Converts the customer's check date to ISO8601 format.
-        XmlHelpers.element('CustCheckDate', customer.checkDate?.toIso8601String()),
+        XmlHelpers.element(
+            'CustCheckDate', customer.checkDate?.toIso8601String()),
         XmlHelpers.element('Security', customer.security?.toString()),
         XmlHelpers.element('CustType', customer.type?.toString()),
         XmlHelpers.element('DiscountRatio', customer.discountRatio?.toString()),
@@ -73,7 +74,10 @@ class CustomersExport {
         XmlHelpers.element('CustGender', customer.gender),
         XmlHelpers.element('CustCertificate', customer.certificate),
         // Uses a default GUID if the customer's defaultAddressGuid is null.
-        XmlHelpers.element('CustDefaultAddressGuid', customer.defaultAddressGuid ?? '00000000-0000-0000-0000-000000000000'),
+        XmlHelpers.element(
+            'CustDefaultAddressGuid',
+            customer.defaultAddressGuid ??
+                '00000000-0000-0000-0000-000000000000'),
       ],
     );
   }

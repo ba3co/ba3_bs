@@ -5,7 +5,8 @@ import '../../../../core/services/firebase/implementations/services/firestore_se
 import '../../../../core/services/firebase/interfaces/remote_datasource_base.dart';
 import '../models/bond_model.dart';
 
-class BondsDataSource extends RemoteDatasourceBase<BondModel> with FirestoreSequentialNumbers {
+class BondsDataSource extends RemoteDatasourceBase<BondModel>
+    with FirestoreSequentialNumbers {
   BondsDataSource({required super.databaseService});
 
   @override
@@ -15,7 +16,8 @@ class BondsDataSource extends RemoteDatasourceBase<BondModel> with FirestoreSequ
   Future<List<BondModel>> fetchAll() async {
     final data = await databaseService.fetchAll(path: path);
 
-    final List<BondModel> bonds = data.map((item) => BondModel.fromJson(item)).toList();
+    final List<BondModel> bonds =
+        data.map((item) => BondModel.fromJson(item)).toList();
 
     // Sort the list by `bondNumber` in ascending order
     bonds.sort((a, b) => a.payNumber!.compareTo(b.payNumber!));
@@ -36,18 +38,22 @@ class BondsDataSource extends RemoteDatasourceBase<BondModel> with FirestoreSequ
 
   @override
   Future<BondModel> save(BondModel item) async {
-    final updatedBond = item.payGuid == null ? await _assignBondNumber(item) : item;
+    final updatedBond =
+        item.payGuid == null ? await _assignBondNumber(item) : item;
 
-    final savedData = await _saveBondData(updatedBond.payGuid, updatedBond.toJson());
+    final savedData =
+        await _saveBondData(updatedBond.payGuid, updatedBond.toJson());
 
     return item.payGuid == null ? BondModel.fromJson(savedData) : updatedBond;
   }
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
-    final newBondNumber = await fetchAndIncrementEntityNumber(path, BondType.byTypeGuide(bond.payTypeGuid!).value);
+    final newBondNumber = await fetchAndIncrementEntityNumber(
+        path, BondType.byTypeGuide(bond.payTypeGuid!).value);
     return bond.copyWith(payNumber: newBondNumber.nextNumber);
   }
 
-  Future<Map<String, dynamic>> _saveBondData(String? bondId, Map<String, dynamic> data) async =>
+  Future<Map<String, dynamic>> _saveBondData(
+          String? bondId, Map<String, dynamic> data) async =>
       databaseService.add(path: path, documentId: bondId, data: data);
 }

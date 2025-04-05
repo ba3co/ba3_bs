@@ -313,7 +313,8 @@ class ChequesModel implements PlutoAdaptable {
     );
   }
 
-  factory ChequesModel.empty({required ChequesType chequesType, int lastChequesNumber = 0}) {
+  factory ChequesModel.empty(
+      {required ChequesType chequesType, int lastChequesNumber = 0}) {
     return ChequesModel(
       chequesNumber: lastChequesNumber + 1,
       chequesTypeGuid: chequesType.typeGuide,
@@ -381,10 +382,20 @@ class ChequesModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
-      PlutoColumn(title: "رقم القيد", field: AppConstants.chequesGuid, type: PlutoColumnType.text(), hide: true): chequesGuid,
+      PlutoColumn(
+          title: "رقم القيد",
+          field: AppConstants.chequesGuid,
+          type: PlutoColumnType.text(),
+          hide: true): chequesGuid,
       createAutoIdColumn(): '#',
-      PlutoColumn(title: "الرقم التسلسلي", field: AppConstants.chequesNumber, type: PlutoColumnType.number()): chequesNumber,
-      PlutoColumn(title: "رقم الشيك", field: AppConstants.chequesNum, type: PlutoColumnType.number()): chequesNumber,
+      PlutoColumn(
+          title: "الرقم التسلسلي",
+          field: AppConstants.chequesNumber,
+          type: PlutoColumnType.number()): chequesNumber,
+      PlutoColumn(
+          title: "رقم الشيك",
+          field: AppConstants.chequesNum,
+          type: PlutoColumnType.number()): chequesNumber,
       PlutoColumn(
           title: "قيمة الشيك",
           field: AppConstants.chequesVal,
@@ -393,12 +404,30 @@ class ChequesModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): chequesVal,
-      PlutoColumn(title: "الحساب", field: AppConstants.chequesAccount2Guid, type: PlutoColumnType.text()): chequesAccount2Name,
-      PlutoColumn(title: "دفع الى", field: AppConstants.accPtr, type: PlutoColumnType.text()): accPtrName,
-      PlutoColumn(title: "تاريخ التحرير", field: AppConstants.chequesDate, type: PlutoColumnType.date()): chequesDate.toDate,
-      PlutoColumn(title: "تاريخ الاستحقاق", field: AppConstants.chequesDueDate, type: PlutoColumnType.date()): chequesDueDate.toDate,
-      PlutoColumn(title: "البيان", field: AppConstants.chequesNote, type: PlutoColumnType.text()): chequesNote,
-      PlutoColumn(title: "نوع الشيك", field: AppConstants.chequesTypeGuid, type: PlutoColumnType.text()):
+      PlutoColumn(
+          title: "الحساب",
+          field: AppConstants.chequesAccount2Guid,
+          type: PlutoColumnType.text()): chequesAccount2Name,
+      PlutoColumn(
+          title: "دفع الى",
+          field: AppConstants.accPtr,
+          type: PlutoColumnType.text()): accPtrName,
+      PlutoColumn(
+          title: "تاريخ التحرير",
+          field: AppConstants.chequesDate,
+          type: PlutoColumnType.date()): chequesDate.toDate,
+      PlutoColumn(
+          title: "تاريخ الاستحقاق",
+          field: AppConstants.chequesDueDate,
+          type: PlutoColumnType.date()): chequesDueDate.toDate,
+      PlutoColumn(
+          title: "البيان",
+          field: AppConstants.chequesNote,
+          type: PlutoColumnType.text()): chequesNote,
+      PlutoColumn(
+              title: "نوع الشيك",
+              field: AppConstants.chequesTypeGuid,
+              type: PlutoColumnType.text()):
           ChequesType.byTypeGuide(chequesTypeGuid!).value,
       PlutoColumn(
         title: "الحالة",

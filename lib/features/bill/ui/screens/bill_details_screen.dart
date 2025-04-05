@@ -46,30 +46,35 @@ class BillDetailsScreen extends StatelessWidget {
                     billSearchController: billSearchController,
                   ),
                   body: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                    BillDetailsHeader(billDetailsController: billDetailsController, billModel: currentBill),
-                    VerticalSpace(5),
-                    BillDetailsBody(
-                      billTypeModel: currentBill.billTypeModel,
-                      billDetailsController: billDetailsController,
-                      billDetailsPlutoController: billDetailsPlutoController,
-                      tag: tag,
-                    ),
-                    const VerticalSpace(10),
-                    BillDetailsCalculations(
-                      billTypeModel: currentBill.billTypeModel,
-                      billDetailsPlutoController: billDetailsPlutoController,
-                      tag: tag,
-                    ),
-                    const Divider(height: 10),
-                    BillDetailsButtons(
-                      billDetailsController: billDetailsController,
-                      billDetailsPlutoController: billDetailsPlutoController,
-                      billSearchController: billSearchController,
-                      billModel: currentBill,
-                    ),
-                  ]),
+                        BillDetailsHeader(
+                            billDetailsController: billDetailsController,
+                            billModel: currentBill),
+                        VerticalSpace(5),
+                        BillDetailsBody(
+                          billTypeModel: currentBill.billTypeModel,
+                          billDetailsController: billDetailsController,
+                          billDetailsPlutoController:
+                              billDetailsPlutoController,
+                          tag: tag,
+                        ),
+                        const VerticalSpace(10),
+                        BillDetailsCalculations(
+                          billTypeModel: currentBill.billTypeModel,
+                          billDetailsPlutoController:
+                              billDetailsPlutoController,
+                          tag: tag,
+                        ),
+                        const Divider(height: 10),
+                        BillDetailsButtons(
+                          billDetailsController: billDetailsController,
+                          billDetailsPlutoController:
+                              billDetailsPlutoController,
+                          billSearchController: billSearchController,
+                          billModel: currentBill,
+                        ),
+                      ]),
                 );
               });
         });

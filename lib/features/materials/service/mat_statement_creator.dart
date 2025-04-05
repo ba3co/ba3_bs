@@ -14,13 +14,16 @@ import '../../bill/services/bill/quantity_strategy_factory.dart';
 import 'mat_statement_creator_factory.dart';
 
 abstract class MatStatementCreator<T> {
-  List<MatStatementModel> createMatStatement({required T model, List<BillItem> updatedMaterials = const []});
+  List<MatStatementModel> createMatStatement(
+      {required T model, List<BillItem> updatedMaterials = const []});
 }
 
 class BillMatStatementCreator implements MatStatementCreator<BillModel> {
   @override
-  List<MatStatementModel> createMatStatement({required BillModel model, List<BillItem> updatedMaterials = const []}) {
-    final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(model);
+  List<MatStatementModel> createMatStatement(
+      {required BillModel model, List<BillItem> updatedMaterials = const []}) {
+    final QuantityStrategy quantityStrategy =
+        QuantityStrategyFactory.getStrategy(model);
 
     final mergedItems = model.items.itemList.merge();
 
@@ -36,7 +39,8 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
         date: model.billDetails.billDate!,
         price: _getStatementPrice(model, matItem),
         note: model.billTypeModel.fullName,
-        defQuantity: _getStatementDefQuantity(matItem, updatedMaterials, quantityStrategy),
+        defQuantity: _getStatementDefQuantity(
+            matItem, updatedMaterials, quantityStrategy),
       );
     }).toList();
   }
@@ -46,7 +50,10 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
   /// we must to add it at main price to return without edit in main price
   double _getStatementPrice(BillModel model, BillItem matItem) {
     if (model.billTypeModel.isSalesReturn) {
-      return read<MaterialController>().getMaterialById(matItem.itemGuid).calcMinPrice ?? 0;
+      return read<MaterialController>()
+              .getMaterialById(matItem.itemGuid)
+              .calcMinPrice ??
+          0;
     } else {
       return matItem.itemSubTotalPrice!;
     }
@@ -59,7 +66,8 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
         return model.copyWith(freeBill: AppConstants.forceFree);
       }
 
-      final currentMaterial = read<MaterialController>().getMaterialById(matItem.itemGuid);
+      final currentMaterial =
+          read<MaterialController>().getMaterialById(matItem.itemGuid);
 
       if ((currentMaterial.matLocalQuantity ?? 0) <= 0) {
         return model.copyWith(freeBill: true);
@@ -73,7 +81,8 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
   /// The specified quantity is different when we update invoices
   /// other cases the quantity is the same as the quantity entered by the user.
   ///  in all cases we need to dirname quantity of material is it positive or negative
-  int _getStatementDefQuantity(BillItem matItem, List<BillItem> updatedMaterials, QuantityStrategy quantityStrategy) =>
+  int _getStatementDefQuantity(BillItem matItem,
+          List<BillItem> updatedMaterials, QuantityStrategy quantityStrategy) =>
       quantityStrategy.calculateQuantity(updatedMaterials
               .firstWhereOrNull(
                 (mat) => mat.itemGuid == matItem.itemGuid,

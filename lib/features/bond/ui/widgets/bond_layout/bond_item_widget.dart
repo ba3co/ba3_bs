@@ -13,7 +13,11 @@ import 'package:get/get.dart';
 import '../../../../../core/helper/enums/enums.dart';
 
 class BondItemWidget extends StatelessWidget {
-  const BondItemWidget({super.key, required this.onTap, required this.bondType, required this.bondsController});
+  const BondItemWidget(
+      {super.key,
+      required this.onTap,
+      required this.bondType,
+      required this.bondsController});
 
   final VoidCallback onTap;
   final BondType bondType;
@@ -57,16 +61,19 @@ class BondItemWidget extends StatelessWidget {
             Spacer(),
 
             Obx(() {
-              return bondsController.allBondsRequestState.value == RequestState.loading
+              return bondsController.allBondsRequestState.value ==
+                      RequestState.loading
                   ? BodyBondLayoutShimmerWidget()
                   : GestureDetector(
-                onTap: (){
-                  read<AllBondsController>().fetchAllBondByType(bondType, context);
-                },
-                    child: BodyBondLayoutWidget(
-                        firstText: "${AppStrings.from.tr}  ${bondType.from}",
-                        secondText: "${AppStrings.to.tr}  ${bondsController.allBondsCounts(bondType)}"),
-                  );
+                      onTap: () {
+                        read<AllBondsController>()
+                            .fetchAllBondByType(bondType, context);
+                      },
+                      child: BodyBondLayoutWidget(
+                          firstText: "${AppStrings.from.tr}  ${bondType.from}",
+                          secondText:
+                              "${AppStrings.to.tr}  ${bondsController.allBondsCounts(bondType)}"),
+                    );
             }),
 
             // BodyBondLayoutWidget(firstText: "العدد الكلي :", secondText: ((bondType.to-bondType.from)+1).toString()),

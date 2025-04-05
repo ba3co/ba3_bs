@@ -41,7 +41,9 @@ class AddTaskScreen extends StatelessWidget {
                 ),
                 Divider(),
                 VerticalSpace(),
-                AddTaskButtons(controller: controller,)
+                AddTaskButtons(
+                  controller: controller,
+                )
               ],
             ),
           ),

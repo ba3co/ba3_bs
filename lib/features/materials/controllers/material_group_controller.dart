@@ -16,7 +16,8 @@ import '../../../core/services/firebase/implementations/services/firestore_uploa
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 
-class MaterialGroupController extends GetxController with AppNavigator,FloatingLauncher {
+class MaterialGroupController extends GetxController
+    with AppNavigator, FloatingLauncher {
   final IImportRepository<MaterialGroupModel> _importRepository;
 
   final RemoteDataSourceRepository<MaterialGroupModel> _dataSourceRepository;
@@ -32,12 +33,10 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedMaterialGroupGroup) => materialGroups.assignAll(fetchedMaterialGroupGroup),
+      (fetchedMaterialGroupGroup) =>
+          materialGroups.assignAll(fetchedMaterialGroupGroup),
     );
   }
-
-
-
 
   // Map<String, List<MaterialModel>> get groupMapping => {
   //       for (var group in materialGroups)
@@ -54,7 +53,10 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
   }
 
   void navigateToAllMaterialScreen({required BuildContext context}) {
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsGroupScreen());
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: ApiConstants.materials.tr,
+        floatingScreen: AllMaterialsGroupScreen());
 
     // to(AppRoutes.showAllMaterialsGroupScreen);
   }
@@ -68,7 +70,9 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedMaterialGroupGroup) => _handelFetchAllMaterialGroupGroupFromLocalSuccess(fetchedMaterialGroupGroup),
+        (fetchedMaterialGroupGroup) =>
+            _handelFetchAllMaterialGroupGroupFromLocalSuccess(
+                fetchedMaterialGroupGroup),
       );
     }
   }
@@ -84,8 +88,9 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
     List<String> searchParts = lowerQuery.split(RegExp(r'\s+'));
 
     // Check for exact match first
-    var exactMatch =
-        materialGroups.where((item) => item.groupName.toLowerCase() == lowerQuery || item.groupCode.toString().toLowerCase() == lowerQuery);
+    var exactMatch = materialGroups.where((item) =>
+        item.groupName.toLowerCase() == lowerQuery ||
+        item.groupCode.toString().toLowerCase() == lowerQuery);
 
     if (exactMatch.length == 1) {
       return [exactMatch.first];
@@ -97,8 +102,10 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
     var startsWithMatches = materialGroups
         .where(
           (item) =>
-              searchParts.every((part) => item.groupName.toLowerCase().startsWith(part)) ||
-              searchParts.every((part) => item.groupCode.toString().toLowerCase().startsWith(part)),
+              searchParts.every(
+                  (part) => item.groupName.toLowerCase().startsWith(part)) ||
+              searchParts.every((part) =>
+                  item.groupCode.toString().toLowerCase().startsWith(part)),
         )
         .toList();
 
@@ -109,12 +116,15 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
     // Check for matches where name, code, barcode, or serial numbers contain the query
     return materialGroups
         .where((item) =>
-            searchParts.every((part) => item.groupName.toString().toLowerCase().contains(part)) ||
-            searchParts.every((part) => item.groupCode.toString().toLowerCase().contains(part)))
+            searchParts.every((part) =>
+                item.groupName.toString().toLowerCase().contains(part)) ||
+            searchParts.every((part) =>
+                item.groupCode.toString().toLowerCase().contains(part)))
         .toList();
   }
 
-  void _handelFetchAllMaterialGroupGroupFromLocalSuccess(List<MaterialGroupModel> fetchedMaterialGroupGroupFromNetwork) async {
+  void _handelFetchAllMaterialGroupGroupFromLocalSuccess(
+      List<MaterialGroupModel> fetchedMaterialGroupGroupFromNetwork) async {
     final fetchedMaterialGroup = fetchedMaterialGroupGroupFromNetwork;
     log('fetchedMaterialGroup length ${fetchedMaterialGroup.length}');
 
@@ -123,7 +133,9 @@ class MaterialGroupController extends GetxController with AppNavigator,FloatingL
     // Show progress in the UI
     FirestoreUploader firestoreUploader = FirestoreUploader();
     await firestoreUploader.sequentially(
-      data: materialGroups.map((item) => {...item.toJson(), 'docId': item.matGroupGuid}).toList(),
+      data: materialGroups
+          .map((item) => {...item.toJson(), 'docId': item.matGroupGuid})
+          .toList(),
       collectionPath: ApiConstants.materialGroup,
       onProgress: (progress) {
         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');

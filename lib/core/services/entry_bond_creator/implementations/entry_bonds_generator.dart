@@ -68,8 +68,10 @@ mixin EntryBondsGenerator {
         .toList();
   }
 
-  EntryBondModel createChequeEntryBondByStrategy(ChequesModel model, {required ChequesStrategyType chequesStrategyType}) {
-    final creators = ChequesStrategyBondFactory.determineStrategy(model, type: chequesStrategyType);
+  EntryBondModel createChequeEntryBondByStrategy(ChequesModel model,
+      {required ChequesStrategyType chequesStrategyType}) {
+    final creators = ChequesStrategyBondFactory.determineStrategy(model,
+        type: chequesStrategyType);
     return creators.first.createEntryBond(
       model: model,
       originType: EntryBondCreatorFactory.resolveOriginType(model),
@@ -82,7 +84,8 @@ mixin EntryBondsGenerator {
     required int sourceNumber,
     required bool isSave,
   }) async {
-    final entryBondModel = createChequeEntryBondByStrategy(model, chequesStrategyType: chequesStrategyType);
+    final entryBondModel = createChequeEntryBondByStrategy(model,
+        chequesStrategyType: chequesStrategyType);
     await read<EntryBondController>().saveEntryBondModel(
       entryBondModel: entryBondModel,
       sourceNumber: sourceNumber,
@@ -90,12 +93,14 @@ mixin EntryBondsGenerator {
     );
   }
 
-  EntryBondModel createSimulatedVatEntryBond<T>(T model) => _createEntryBondInstance(model, isSimulatedVat: true);
+  EntryBondModel createSimulatedVatEntryBond<T>(T model) =>
+      _createEntryBondInstance(model, isSimulatedVat: true);
 
   EntryBondModel createEntryBond<T>(T model) => _createEntryBondInstance(model);
 
   EntryBondModel _createEntryBondInstance<T>(T model, {bool? isSimulatedVat}) {
-    return EntryBondCreatorFactory.resolveEntryBondCreator(model).createEntryBond(
+    return EntryBondCreatorFactory.resolveEntryBondCreator(model)
+        .createEntryBond(
       isSimulatedVat: isSimulatedVat,
       originType: EntryBondCreatorFactory.resolveOriginType(model),
       model: model,

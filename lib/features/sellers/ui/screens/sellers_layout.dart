@@ -15,7 +15,8 @@ class SellersLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SellerSalesController sellerSalesController = read<SellerSalesController>();
+    final SellerSalesController sellerSalesController =
+        read<SellerSalesController>();
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -29,7 +30,8 @@ class SellersLayout extends StatelessWidget {
                 child: AppButton(
                   title: AppStrings.downloadSellers.tr,
                   width: 140,
-                  onPressed: () => read<SellersController>().fetchAllSellersFromLocal(),
+                  onPressed: () =>
+                      read<SellersController>().fetchAllSellersFromLocal(),
                 ),
               ),
           ],
@@ -42,7 +44,8 @@ class SellersLayout extends StatelessWidget {
                 icon: Icons.person_add,
                 title: AppStrings.addSellers.tr,
                 onTap: () {
-                  sellerSalesController.navigateToAddSellerScreen(context: context);
+                  sellerSalesController.navigateToAddSellerScreen(
+                      context: context);
                 },
               ),
               buildAppMenuItem(

@@ -37,7 +37,9 @@ class PlutoWithEdite extends StatelessWidget {
         style: buildGridStyleConfig(
           evenRowColor: evenRowColor,
         ),
-        localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
+        localeText: Get.locale == Locale('ar', 'AR')
+            ? PlutoGridLocaleText.arabic()
+            : PlutoGridLocaleText(),
       ),
       onLoaded: onLoaded,
     );

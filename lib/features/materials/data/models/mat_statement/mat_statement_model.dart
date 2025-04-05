@@ -10,7 +10,6 @@ class MatStatementModel implements PlutoAdaptable {
   final int? quantity;
   final int? defQuantity;
 
-
   final double? price;
   final DateTime? date;
   final String? note;
@@ -94,20 +93,44 @@ class MatStatementModel implements PlutoAdaptable {
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void _]) {
     return {
-      PlutoColumn(hide: true, title: 'originId', field: 'originId', type: PlutoColumnType.text()): matOrigin?.originId ?? '',
+      PlutoColumn(
+          hide: true,
+          title: 'originId',
+          field: 'originId',
+          type: PlutoColumnType.text()): matOrigin?.originId ?? '',
       createAutoIdColumn(): '#',
-      PlutoColumn(title: 'التاريخ', field: 'التاريخ', type: PlutoColumnType.date()): date,
-      PlutoColumn(title: 'نوع الحركة', field: 'فاتورة', type: PlutoColumnType.text()):
-          AppServiceUtils.billNameAndNumberFormat(matOrigin!.originTypeId!, matOrigin!.originNumber!),
-      PlutoColumn(title: 'الكمية', field: 'الكمية', type: PlutoColumnType.number()): quantity,
-      PlutoColumn(title: 'اسم المادة', field: 'اسم المادة', type: PlutoColumnType.text()): matName,
-      PlutoColumn(title: 'السعر', field: 'السعر', type: PlutoColumnType.currency(name: 'AED')): price,
-      PlutoColumn(title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
-      PlutoColumn(title: 'billTypeId', field: 'billTypeId', type: PlutoColumnType.text(), hide: true): matOrigin!.originTypeId!,
+      PlutoColumn(
+          title: 'التاريخ',
+          field: 'التاريخ',
+          type: PlutoColumnType.date()): date,
+      PlutoColumn(
+              title: 'نوع الحركة',
+              field: 'فاتورة',
+              type: PlutoColumnType.text()):
+          AppServiceUtils.billNameAndNumberFormat(
+              matOrigin!.originTypeId!, matOrigin!.originNumber!),
+      PlutoColumn(
+          title: 'الكمية',
+          field: 'الكمية',
+          type: PlutoColumnType.number()): quantity,
+      PlutoColumn(
+          title: 'اسم المادة',
+          field: 'اسم المادة',
+          type: PlutoColumnType.text()): matName,
+      PlutoColumn(
+          title: 'السعر',
+          field: 'السعر',
+          type: PlutoColumnType.currency(name: 'AED')): price,
+      PlutoColumn(
+          title: 'البيان', field: 'البيان', type: PlutoColumnType.text()): note,
+      PlutoColumn(
+          title: 'billTypeId',
+          field: 'billTypeId',
+          type: PlutoColumnType.text(),
+          hide: true): matOrigin!.originTypeId!,
     };
   }
 }
-
 
 class MatOrigin {
   /// Unique identifier for the bond entry, which is the same as the origin ID (e.g., billId).
@@ -121,7 +144,6 @@ class MatOrigin {
 
   /// Refers to the number of origin of mat (billNumber).
   final int? originNumber;
-
 
   final bool? fromBill;
 

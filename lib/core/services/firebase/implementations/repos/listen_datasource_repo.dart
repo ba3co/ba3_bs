@@ -10,14 +10,17 @@ import 'remote_datasource_repo.dart';
 class ListenDataSourceRepository<T> extends RemoteDataSourceRepository<T> {
   final ListenableDatasource<T> _listenableDatasource;
 
-  ListenDataSourceRepository(this._listenableDatasource) : super(_listenableDatasource);
+  ListenDataSourceRepository(this._listenableDatasource)
+      : super(_listenableDatasource);
 
   Either<Failure, Stream<T>> listenDoc(String userId) {
     try {
-      final documentStream = _listenableDatasource.subscribeToDoc(documentId: userId);
+      final documentStream =
+          _listenableDatasource.subscribeToDoc(documentId: userId);
       return Right(documentStream);
     } catch (e, stackTrace) {
-      log('Error in listenDoc: $e', stackTrace: stackTrace, name: 'ListenDataSourceRepository listenDoc');
+      log('Error in listenDoc: $e',
+          stackTrace: stackTrace, name: 'ListenDataSourceRepository listenDoc');
       return Left(ErrorHandler(e).failure);
     }
   }
@@ -27,7 +30,8 @@ class ListenDataSourceRepository<T> extends RemoteDataSourceRepository<T> {
       final savedItems = await _listenableDatasource.saveAll(items);
       return Right(savedItems); // Return the list of saved items
     } catch (e, stackTrace) {
-      log('Error in saveAll: $e', stackTrace: stackTrace, name: 'ListenDataSourceRepository saveAll');
+      log('Error in saveAll: $e',
+          stackTrace: stackTrace, name: 'ListenDataSourceRepository saveAll');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }

@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +10,17 @@ import '../../../../../core/constants/app_strings.dart';
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../controller/bill_profit_dashboard_controller.dart';
 
-
 class BillProfitChart extends StatelessWidget {
   final BillProfitDashboardController billProfitDashboardController;
 
-  const BillProfitChart({super.key, required this.billProfitDashboardController});
+  const BillProfitChart(
+      {super.key, required this.billProfitDashboardController});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return billProfitDashboardController.profitsBillsRequest.value == RequestState.loading
+      return billProfitDashboardController.profitsBillsRequest.value ==
+              RequestState.loading
           ? Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -51,7 +51,10 @@ class BillProfitChart extends StatelessWidget {
                         touchCallback: (p0, p1) {
                           if (p0 is FlPanDownEvent) {
                             if (p1?.lineBarSpots?.first.spotIndex != null) {
-                              billProfitDashboardController.lunchBillScreen(index:  p1?.lineBarSpots?.first.spotIndex.toInt(), context: context);
+                              billProfitDashboardController.lunchBillScreen(
+                                  index:
+                                      p1?.lineBarSpots?.first.spotIndex.toInt(),
+                                  context: context);
                             }
                           }
                         },
@@ -61,7 +64,9 @@ class BillProfitChart extends StatelessWidget {
                               return LineTooltipItem(
                                 '${spot.y.toStringAsFixed(2)} ${AppStrings.aed.tr}',
                                 TextStyle(
-                                  color: spot.barIndex == 0 ? spot.bar.color : Colors.white,
+                                  color: spot.barIndex == 0
+                                      ? spot.bar.color
+                                      : Colors.white,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12,
                                 ),
@@ -86,7 +91,9 @@ class BillProfitChart extends StatelessWidget {
                             getTitlesWidget: (value, meta) {
                               return Text(
                                 DateFormat('MMM dd').format(
-                                  DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true),
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      value.toInt(),
+                                      isUtc: true),
                                 ),
                                 style: TextStyle(fontSize: 10),
                               );
@@ -99,10 +106,13 @@ class BillProfitChart extends StatelessWidget {
                         LineChartBarData(
                           spots: billProfitDashboardController.profitSpots,
                           isCurved: true,
-                          show: billProfitDashboardController.isProfitVisible.value,
+                          show: billProfitDashboardController
+                              .isProfitVisible.value,
                           color: AppColors.feesSaleColor,
                           barWidth: 3,
-                          belowBarData: BarAreaData(show: true, color: AppColors.feesSaleColor.withOpacity(0.9)),
+                          belowBarData: BarAreaData(
+                              show: true,
+                              color: AppColors.feesSaleColor.withOpacity(0.9)),
                           dotData: FlDotData(show: true),
                         ),
                         // if (dashboardLayoutController.isTotalSalesVisible.value)
@@ -111,8 +121,11 @@ class BillProfitChart extends StatelessWidget {
                           isCurved: true,
                           color: AppColors.totalSaleColor,
                           barWidth: 3,
-                          show: billProfitDashboardController.isTotalSalesVisible.value,
-                          belowBarData: BarAreaData(show: true, color: AppColors.totalSaleColor.withOpacity(0.3)),
+                          show: billProfitDashboardController
+                              .isTotalSalesVisible.value,
+                          belowBarData: BarAreaData(
+                              show: true,
+                              color: AppColors.totalSaleColor.withOpacity(0.3)),
                           dotData: FlDotData(show: true),
                         ),
                       ],

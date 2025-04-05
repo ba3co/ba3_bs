@@ -19,14 +19,15 @@ class DashboardAccountsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.fetchDashBoardAccountsRequest.value == RequestState.loading) {
+      if (controller.fetchDashBoardAccountsRequest.value ==
+          RequestState.loading) {
         return SingleChildScrollView(
           child: Wrap(
             spacing: 2.w,
             runSpacing: 6.h,
             children: List.generate(
               10,
-                  (index) => const DashBoardAccountShimmerWidget(),
+              (index) => const DashBoardAccountShimmerWidget(),
             ),
           ),
         );
@@ -37,12 +38,14 @@ class DashboardAccountsList extends StatelessWidget {
             runSpacing: 6.h,
             children: List.generate(
               controller.dashBoardAccounts.length,
-                  (index) => GestureDetector(
-                onSecondaryTap: () => controller.deleteDashboardAccount(index, context),
+              (index) => GestureDetector(
+                onSecondaryTap: () =>
+                    controller.deleteDashboardAccount(index, context),
                 child: DashBoardAccountWidget(
                   name: controller.dashboardAccount(index).name.toString(),
                   balance: AppUIUtils.formatDecimalNumberWithCommas(
-                    double.parse(controller.dashboardAccount(index).balance.toString()),
+                    double.parse(
+                        controller.dashboardAccount(index).balance.toString()),
                   ),
                 ),
               ),

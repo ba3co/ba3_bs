@@ -4,7 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class CustomDatePickerDialog extends StatelessWidget {
-  const CustomDatePickerDialog({super.key, this.onTimeSelect, required this.onClose});
+  const CustomDatePickerDialog(
+      {super.key, this.onTimeSelect, required this.onClose});
 
   final Function(DateRangePickerSelectionChangedArgs)? onTimeSelect;
 
@@ -22,10 +23,13 @@ class CustomDatePickerDialog extends StatelessWidget {
                 initialDisplayDate: DateTime.now(),
                 enableMultiView: false,
                 backgroundColor: Colors.transparent,
-                headerStyle: const DateRangePickerHeaderStyle(backgroundColor: Colors.transparent),
-                navigationDirection: DateRangePickerNavigationDirection.vertical,
+                headerStyle: const DateRangePickerHeaderStyle(
+                    backgroundColor: Colors.transparent),
+                navigationDirection:
+                    DateRangePickerNavigationDirection.vertical,
                 selectionMode: DateRangePickerSelectionMode.multiple,
-                monthViewSettings: const DateRangePickerMonthViewSettings(enableSwipeSelection: false),
+                monthViewSettings: const DateRangePickerMonthViewSettings(
+                    enableSwipeSelection: false),
                 showNavigationArrow: true,
                 navigationMode: DateRangePickerNavigationMode.scroll,
                 onSelectionChanged: onTimeSelect),

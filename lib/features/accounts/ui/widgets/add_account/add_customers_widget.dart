@@ -47,14 +47,19 @@ class AddCustomersWidget extends StatelessWidget {
                       icon: Row(
                         children: [
                           Icon(
-                            controller.showAddCustomerForm.value ? Icons.close : Icons.add,
+                            controller.showAddCustomerForm.value
+                                ? Icons.close
+                                : Icons.add,
                             size: 12,
                             color: AppColors.blueColor,
                           ),
                           HorizontalSpace(),
                           Text(
-                            controller.showAddCustomerForm.value ? AppStrings.hide.tr : AppStrings.add.tr,
-                            style: AppTextStyles.headLineStyle4.copyWith(fontSize: 12, color: AppColors.blueColor),
+                            controller.showAddCustomerForm.value
+                                ? AppStrings.hide.tr
+                                : AppStrings.add.tr,
+                            style: AppTextStyles.headLineStyle4.copyWith(
+                                fontSize: 12, color: AppColors.blueColor),
                           )
                         ],
                       ),
@@ -71,7 +76,8 @@ class AddCustomersWidget extends StatelessWidget {
                             child: CustomTextFieldWithoutIcon(
                               filedColor: AppColors.backGroundColor,
                               suffixIcon: const SizedBox(),
-                              textEditingController: controller.newCustomerNameController,
+                              textEditingController:
+                                  controller.newCustomerNameController,
                               // validator: (value) => controller.defaultValidator(value, "اسم العميل"),
                             ),
                           ),
@@ -81,8 +87,11 @@ class AddCustomersWidget extends StatelessWidget {
                               filedColor: AppColors.backGroundColor,
 
                               suffixIcon: const SizedBox(),
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              textEditingController: controller.newCustomerPhoneController,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              textEditingController:
+                                  controller.newCustomerPhoneController,
                               //    validator: (value) => controller.defaultValidator(value, "رقم العميل"),
                             ),
                           ),
@@ -92,27 +101,24 @@ class AddCustomersWidget extends StatelessWidget {
                           label: AppStrings.taxType.tr,
                           height: 40,
                           child: Container(
-                            color: AppColors.backGroundColor,
-                            child:DropdownButtonFormField<VatEnums>(
-                              value: controller.selectedVat.value,
-                              alignment: Alignment.center,
-
-                              isExpanded: true,
-                              items: VatEnums.values.map((vat) {
-                                return DropdownMenuItem<VatEnums>(
-                                  value: vat,
-                                  child: Center(
-                                    child: Text(
-                                      vat.taxName!,
-                                      textAlign: TextAlign.center,
+                              color: AppColors.backGroundColor,
+                              child: DropdownButtonFormField<VatEnums>(
+                                value: controller.selectedVat.value,
+                                alignment: Alignment.center,
+                                isExpanded: true,
+                                items: VatEnums.values.map((vat) {
+                                  return DropdownMenuItem<VatEnums>(
+                                    value: vat,
+                                    child: Center(
+                                      child: Text(
+                                        vat.taxName!,
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: controller.onSelectedVatChanged,
-                            )
-
-                          ),
+                                  );
+                                }).toList(),
+                                onChanged: controller.onSelectedVatChanged,
+                              )),
                         ),
                         VerticalSpace(20),
                         OutlinedButton(
@@ -129,12 +135,14 @@ class AddCustomersWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                  if (controller.addedCustomers.isNotEmpty && !controller.showAddCustomerForm.value)
+                  if (controller.addedCustomers.isNotEmpty &&
+                      !controller.showAddCustomerForm.value)
                     ListView.separated(
                       shrinkWrap: true,
                       itemBuilder: (context, index) => CustomerItemWidget(
                         customerModel: controller.addedCustomers[index],
-                        onDelete: () => controller.deleteCustomer(customer: controller.addedCustomers[index]),
+                        onDelete: () => controller.deleteCustomer(
+                            customer: controller.addedCustomers[index]),
                       ),
                       separatorBuilder: (context, index) => VerticalSpace(),
                       itemCount: controller.addedCustomers.length,

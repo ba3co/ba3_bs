@@ -6,10 +6,6 @@ class AccountExport extends ExportServiceBase<AccountModel> {
   /// Converts the list of `BillModel` to the exportable JSON structure
   @override
   Map<String, dynamic> toExportJson(List<AccountModel> itemsModels) {
-    return {
-
-    };
+    return {};
   }
-
-
 }

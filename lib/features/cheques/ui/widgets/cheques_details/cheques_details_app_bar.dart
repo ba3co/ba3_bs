@@ -8,7 +8,8 @@ import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../controllers/cheques/cheques_details_controller.dart';
 import '../../../controllers/cheques/cheques_search_controller.dart';
 
-class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
+class ChequesDetailsAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   const ChequesDetailsAppBar({
     super.key,
     required this.chequesDetailsController,
@@ -34,13 +35,15 @@ class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             onPressed: () {
               chequesSearchController.previous();
             },
-            icon: const LanguageSwitchFaIcon(iconData:  Icons.keyboard_double_arrow_right)),
+            icon: const LanguageSwitchFaIcon(
+                iconData: Icons.keyboard_double_arrow_right)),
         SizedBox(
           width: Get.width * 0.10,
           child: CustomTextFieldWithoutIcon(
             isNumeric: true,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            textEditingController: chequesDetailsController.chequesNumberController,
+            textEditingController:
+                chequesDetailsController.chequesNumberController,
             onSubmitted: (chequesNumber) {
               chequesSearchController.goToChequesByNumber(chequesNumber.toInt);
             },
@@ -50,7 +53,8 @@ class ChequesDetailsAppBar extends StatelessWidget implements PreferredSizeWidge
             onPressed: () {
               chequesSearchController.next();
             },
-            icon: const LanguageSwitchFaIcon(iconData:Icons.keyboard_double_arrow_left)),
+            icon: const LanguageSwitchFaIcon(
+                iconData: Icons.keyboard_double_arrow_left)),
       ],
     );
   }

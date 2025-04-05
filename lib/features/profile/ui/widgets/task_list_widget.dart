@@ -35,15 +35,20 @@ class TaskListWidget extends StatelessWidget {
               color: Colors.black26,
               borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2),
             child: Row(
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                  style: AppTextStyles.headLineStyle3
+                      .copyWith(color: Colors.white),
                 ),
                 Spacer(),
-                Text(taskList.length.toString(),style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),)
+                Text(
+                  taskList.length.toString(),
+                  style: AppTextStyles.headLineStyle3
+                      .copyWith(color: Colors.white),
+                )
               ],
             ),
           ),

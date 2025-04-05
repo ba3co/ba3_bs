@@ -42,7 +42,6 @@ class DashboardAppBar extends StatelessWidget {
             ],
           ),
         ),
-
         BoxOrganizeWidget(
           primaryColor: Color(0xFF4196DB),
           secondaryColor: Color(0xFF1CECe5),

@@ -25,8 +25,10 @@ class BillsExport {
         [],
         [
           _buildBillElement(bill), // Main bill data inside the <B> element.
-          xml.XmlElement(xml.XmlName('Disc'), [], []), // Discount element (empty in this case).
-          xml.XmlElement(xml.XmlName('Items'), [], _buildItems(bill)), // Bill items.
+          xml.XmlElement(xml.XmlName('Disc'), [],
+              []), // Discount element (empty in this case).
+          xml.XmlElement(
+              xml.XmlName('Items'), [], _buildItems(bill)), // Bill items.
         ],
       );
     }).toList();
@@ -54,23 +56,29 @@ class BillsExport {
         // Bill branch (currently null).
         XmlHelpers.element('BillBranch', null),
         // Payment type, defaulting to '0' if null.
-        XmlHelpers.element('BillPayType', bill.billDetails.billPayType?.toString() ?? '0'),
+        XmlHelpers.element(
+            'BillPayType', bill.billDetails.billPayType?.toString() ?? '0'),
         // Check type GUID (currently null).
         XmlHelpers.element('BillCheckTypeGuid', null),
         // Bill number, defaulting to '0' if null.
-        XmlHelpers.element('BillNumber', bill.billDetails.billNumber?.toString() ?? '0'),
+        XmlHelpers.element(
+            'BillNumber', bill.billDetails.billNumber?.toString() ?? '0'),
         // Customer pointer.
         XmlHelpers.element('BillCustPtr', bill.billDetails.billCustomerId),
         // Customer name from the caches account.
-        XmlHelpers.element('BillCustName', bill.billTypeModel.accounts![BillAccounts.caches]?.accName),
+        XmlHelpers.element('BillCustName',
+            bill.billTypeModel.accounts![BillAccounts.caches]?.accName),
         // Currency GUID with a default constant value.
-        XmlHelpers.element('BillCurrencyGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
+        XmlHelpers.element(
+            'BillCurrencyGuid', '884edcde-c172-490d-a2f2-f10a0b90326a'),
         // Currency value (typically '1').
         XmlHelpers.element('BillCurrencyVal', '1'),
         // Bill date in ISO8601 format.
-        XmlHelpers.element('BillDate', bill.billDetails.billDate?.toIso8601String()),
+        XmlHelpers.element(
+            'BillDate', bill.billDetails.billDate?.toIso8601String()),
         // Store GUID from the store account.
-        XmlHelpers.element('BillStoreGuid', bill.billTypeModel.accounts?[BillAccounts.store]?.id),
+        XmlHelpers.element('BillStoreGuid',
+            bill.billTypeModel.accounts?[BillAccounts.store]?.id),
         // Bill note.
         XmlHelpers.element('Note', bill.billDetails.billNote),
         // Customer account GUID set to default.
@@ -78,17 +86,21 @@ class BillsExport {
         // Material account GUID (currently null).
         XmlHelpers.element('BillMatAccGuid', null),
         // Cost GUID set to default.
-        XmlHelpers.element('BillCostGuid', '00000000-0000-0000-0000-000000000000'),
+        XmlHelpers.element(
+            'BillCostGuid', '00000000-0000-0000-0000-000000000000'),
         // Vendor salesman details (default '0,0').
         XmlHelpers.element('BillVendorSalesMan', '0,0'),
         // First payment amount, defaulting to '0' if null.
-        XmlHelpers.element('BillFirstPay', bill.billDetails.billFirstPay?.toString() ?? '0'),
+        XmlHelpers.element(
+            'BillFirstPay', bill.billDetails.billFirstPay?.toString() ?? '0'),
         // First payment account GUID set to default.
-        XmlHelpers.element('BillFPayAccGuid', '00000000-0000-0000-0000-000000000000'),
+        XmlHelpers.element(
+            'BillFPayAccGuid', '00000000-0000-0000-0000-000000000000'),
         // Security level for the bill.
         XmlHelpers.element('BillSecurity', '3'),
         // Transfer GUID set to default.
-        XmlHelpers.element('BillTransferGuid', '00000000-0000-0000-0000-000000000000'),
+        XmlHelpers.element(
+            'BillTransferGuid', '00000000-0000-0000-0000-000000000000'),
         // Additional fields (currently null).
         XmlHelpers.element('BillFld1', null),
         XmlHelpers.element('BillFld2', null),
@@ -111,7 +123,8 @@ class BillsExport {
         // Discount card (currently null).
         XmlHelpers.element('DIscCard', null),
         // Bill address GUID set to default.
-        XmlHelpers.element('BillAddressGUID', '00000000-0000-0000-0000-000000000000'),
+        XmlHelpers.element(
+            'BillAddressGUID', '00000000-0000-0000-0000-000000000000'),
       ],
     );
   }
@@ -137,19 +150,22 @@ class BillsExport {
           // Material pointer (item unique identifier).
           XmlHelpers.element('MatPtr', item.itemGuid),
           // Quantity and bonus quantity, separated by a comma.
-          XmlHelpers.element('QtyBonus', '${item.itemQuantity},${item.itemGiftsNumber ?? 0}'),
+          XmlHelpers.element(
+              'QtyBonus', '${item.itemQuantity},${item.itemGiftsNumber ?? 0}'),
           // Unit, set to '1' by default.
           XmlHelpers.element('Unit', '1'),
           // Price description and extra details.
           XmlHelpers.element('PriceDescExtra', '${item.itemTotalPrice},0,0'),
           // Store pointer obtained from the bill's store account.
-          XmlHelpers.element('StorePtr', bill.billTypeModel.accounts?[BillAccounts.store]?.id),
+          XmlHelpers.element(
+              'StorePtr', bill.billTypeModel.accounts?[BillAccounts.store]?.id),
           // Item name as a note.
           XmlHelpers.element('Note', item.itemName),
           // Bonus discount (default '0').
           XmlHelpers.element('BonusDisc', '0'),
           // Quantity details repeated.
-          XmlHelpers.element('UlQty', '${item.itemQuantity},${item.itemQuantity}'),
+          XmlHelpers.element(
+              'UlQty', '${item.itemQuantity},${item.itemQuantity}'),
           // Cost pointer (currently null).
           XmlHelpers.element('CostPtr', null),
           // Class pointer (currently null).
@@ -190,10 +206,10 @@ class BillsExport {
       bills
           .where((b) => b.billDetails.billGuid != null)
           .map((b) => xml.XmlElement(
-        xml.XmlName('BillGuid'),
-        [],
-        [xml.XmlText(b.billDetails.billGuid!)],
-      ))
+                xml.XmlName('BillGuid'),
+                [],
+                [xml.XmlText(b.billDetails.billGuid!)],
+              ))
           .toList(),
     );
   }

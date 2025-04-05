@@ -38,7 +38,6 @@ class BillLayout extends StatelessWidget {
                     child: AppButton(
                       title: AppStrings.downloadBills.tr,
                       onPressed: () {
-
                         allBillsController.fetchAllBillsFromLocal();
                       },
                     ),
@@ -58,7 +57,8 @@ class BillLayout extends StatelessWidget {
                           children: [
                             Text(
                               AppStrings.bills.tr,
-                              style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
+                              style: AppTextStyles.headLineStyle2
+                                  .copyWith(color: AppColors.blueColor),
                             ),
                             Spacer(),
                             IconButton(
@@ -72,22 +72,31 @@ class BillLayout extends StatelessWidget {
                             PopupMenuButton<String>(
                               tooltip: AppStrings.options.tr,
                               onSelected: (value) {
-                                if (value == AppConstants.serialNumbersStatement) {
-                                  _showSerialNumberDialog(context, allBillsController);
-                                } else if (value == AppConstants.searchByPhone) {
-                                  _showSearchDialog(context, allBillsController, searchType: 'phone');
-                                } else if (value == AppConstants.searchByOrderNumber) {
-                                  _showSearchDialog(context, allBillsController, searchType: 'order');
+                                if (value ==
+                                    AppConstants.serialNumbersStatement) {
+                                  _showSerialNumberDialog(
+                                      context, allBillsController);
+                                } else if (value ==
+                                    AppConstants.searchByPhone) {
+                                  _showSearchDialog(context, allBillsController,
+                                      searchType: 'phone');
+                                } else if (value ==
+                                    AppConstants.searchByOrderNumber) {
+                                  _showSearchDialog(context, allBillsController,
+                                      searchType: 'order');
                                 }
                               },
-                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                              itemBuilder: (BuildContext context) =>
+                                  <PopupMenuEntry<String>>[
                                 PopupMenuItem<String>(
                                   value: AppConstants.serialNumbersStatement,
                                   child: Row(
                                     children: [
-                                      Icon(FontAwesomeIcons.file, color: Colors.black54),
+                                      Icon(FontAwesomeIcons.file,
+                                          color: Colors.black54),
                                       SizedBox(width: 8),
-                                      Text(AppStrings.serialNumbersStatement.tr),
+                                      Text(
+                                          AppStrings.serialNumbersStatement.tr),
                                     ],
                                   ),
                                 ),
@@ -95,7 +104,8 @@ class BillLayout extends StatelessWidget {
                                   child: PopupMenuButton<String>(
                                     child: Row(
                                       children: [
-                                        Icon(FontAwesomeIcons.search, color: Colors.black54),
+                                        Icon(FontAwesomeIcons.search,
+                                            color: Colors.black54),
                                         SizedBox(width: 8),
                                         Text(AppStrings.searchBill.tr),
                                       ],
@@ -104,17 +114,24 @@ class BillLayout extends StatelessWidget {
                                       Navigator.pop(context);
 
                                       if (value == AppConstants.searchByPhone) {
-                                        _showSearchDialog(context, allBillsController, searchType: 'phone');
-                                      } else if (value == AppConstants.searchByOrderNumber) {
-                                        _showSearchDialog(context, allBillsController, searchType: 'order');
+                                        _showSearchDialog(
+                                            context, allBillsController,
+                                            searchType: 'phone');
+                                      } else if (value ==
+                                          AppConstants.searchByOrderNumber) {
+                                        _showSearchDialog(
+                                            context, allBillsController,
+                                            searchType: 'order');
                                       }
                                     },
-                                    itemBuilder: (context) => <PopupMenuEntry<String>>[
+                                    itemBuilder: (context) =>
+                                        <PopupMenuEntry<String>>[
                                       PopupMenuItem<String>(
                                         value: AppConstants.searchByPhone,
                                         child: Row(
                                           children: [
-                                            Icon(Icons.phone, color: Colors.black54),
+                                            Icon(Icons.phone,
+                                                color: Colors.black54),
                                             SizedBox(width: 8),
                                             Text(AppStrings.searchByPhone.tr),
                                           ],
@@ -124,9 +141,11 @@ class BillLayout extends StatelessWidget {
                                         value: AppConstants.searchByOrderNumber,
                                         child: Row(
                                           children: [
-                                            Icon(Icons.confirmation_number, color: Colors.black54),
+                                            Icon(Icons.confirmation_number,
+                                                color: Colors.black54),
                                             SizedBox(width: 8),
-                                            Text(AppStrings.searchByOrderNumber.tr),
+                                            Text(AppStrings
+                                                .searchByOrderNumber.tr),
                                           ],
                                         ),
                                       ),
@@ -175,13 +194,17 @@ class BillLayout extends StatelessWidget {
                 : null,
           ),
           LoadingDialog(
-            isLoading: allBillsController.saveAllBillsRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bills.tr}',
+            isLoading: allBillsController.saveAllBillsRequestState.value ==
+                RequestState.loading,
+            message:
+                '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bills.tr}',
             fontSize: 14.sp,
           ),
           LoadingDialog(
-            isLoading: allBillsController.saveAllBillsBondRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr} ${AppStrings.bills.tr}',
+            isLoading: allBillsController.saveAllBillsBondRequestState.value ==
+                RequestState.loading,
+            message:
+                '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr} ${AppStrings.bills.tr}',
             fontSize: 14.sp,
           ),
         ],
@@ -191,7 +214,8 @@ class BillLayout extends StatelessWidget {
 }
 
 // Function to show serial number dialog
-void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsController) {
+void _showSerialNumberDialog(
+    BuildContext context, AllBillsController allBillsController) {
   String serialNumberInput = '';
   Get.dialog(
     AlertDialog(
@@ -220,7 +244,8 @@ void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsCo
           onPressed: () {
             Get.back();
             if (serialNumberInput.isEmpty) return;
-            allBillsController.getSerialNumberStatement(serialNumberInput, context: context);
+            allBillsController.getSerialNumberStatement(serialNumberInput,
+                context: context);
           },
         ),
       ],
@@ -229,17 +254,25 @@ void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsCo
 }
 
 // Function to show search input dialog
-void _showSearchDialog(BuildContext context, AllBillsController allBillsController, {required String searchType}) {
+void _showSearchDialog(
+    BuildContext context, AllBillsController allBillsController,
+    {required String searchType}) {
   String searchInput = '';
   Get.dialog(
     AlertDialog(
-      title: Text(searchType == 'phone' ? AppStrings.enterPhoneNumber.tr : AppStrings.enterOrderNumber.tr),
+      title: Text(searchType == 'phone'
+          ? AppStrings.enterPhoneNumber.tr
+          : AppStrings.enterOrderNumber.tr),
       content: StatefulBuilder(
         builder: (context, setState) {
           return TextField(
-            keyboardType: searchType == 'phone' ? TextInputType.phone : TextInputType.number,
+            keyboardType: searchType == 'phone'
+                ? TextInputType.phone
+                : TextInputType.number,
             decoration: InputDecoration(
-              labelText: searchType == 'phone' ? AppStrings.phoneNumber.tr : AppStrings.orderNumber.tr,
+              labelText: searchType == 'phone'
+                  ? AppStrings.phoneNumber.tr
+                  : AppStrings.orderNumber.tr,
             ),
             onChanged: (value) {
               searchInput = value;
@@ -259,7 +292,10 @@ void _showSearchDialog(BuildContext context, AllBillsController allBillsControll
           onPressed: () {
             Get.back();
             if (searchInput.isEmpty) return;
-            allBillsController.searchBill(searchInput: searchInput, searchType: searchType, context: context);
+            allBillsController.searchBill(
+                searchInput: searchInput,
+                searchType: searchType,
+                context: context);
           },
         ),
       ],
