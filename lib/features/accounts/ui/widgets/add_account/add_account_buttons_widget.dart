@@ -24,7 +24,7 @@ class AddAccountButtonsWidget extends StatelessWidget {
                 ? AppStrings.edit.tr
                 : AppStrings.add.tr,
             onPressed: () {
-              controller.saveOrUpdateAccount();
+              controller.saveOrUpdateAccount(context);
             },
           );
         }),
@@ -35,7 +35,7 @@ class AddAccountButtonsWidget extends StatelessWidget {
                   RequestState.loading,
               title: AppStrings.delete.tr,
               onPressed: () {
-                controller.deleteAccount();
+                controller.deleteAccount(context);
               },
             );
           }),

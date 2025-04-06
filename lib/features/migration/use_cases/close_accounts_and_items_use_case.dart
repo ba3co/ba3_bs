@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
+
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../accounts/controllers/accounts_controller.dart';
 import '../../customer/controllers/customers_controller.dart';
@@ -12,13 +14,13 @@ class CloseAccountsAndItemsUseCase {
     required this.migrationGuard,
   });
 
-  Future<void> execute(String currentYear) async {
+  Future<void> execute(String currentYear, BuildContext context) async {
     if (migrationGuard(currentYear)) return;
 
     final accountsController = read<AccountsController>();
     final fetchedAccounts = accountsController.accounts;
 
-    await accountsController.addAccounts(fetchedAccounts);
+    await accountsController.addAccounts(fetchedAccounts, context);
 
     final customersController = read<CustomersController>();
     final fetchedCustomers = customersController.customers;

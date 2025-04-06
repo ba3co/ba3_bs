@@ -22,7 +22,7 @@ class AddPatternBottomButtons extends StatelessWidget {
               ? AppStrings.add.tr
               : AppStrings.edit.tr,
           onPressed: () {
-            patternController.addNewPattern();
+            patternController.addNewPattern(context);
           },
           iconData: Icons.add,
         ),

@@ -26,7 +26,7 @@ class AddPatternForm extends StatelessWidget {
       child: Wrap(
         spacing: 20,
         alignment: WrapAlignment.spaceBetween,
-        // runSpacing: 10,
+        runSpacing: 10,
         children: [
           FormFieldRow(
             firstItem: TextFieldWithLabel(

@@ -26,7 +26,7 @@ class BondLayout extends StatelessWidget {
         children: [
           GetBuilder<AllBondsController>(builder: (controller) {
             return Scaffold(
-              appBar: bondLayoutAppBar(controller),
+              appBar: bondLayoutAppBar(controller,context),
               body: Container(
                 padding: EdgeInsets.all(8),
                 width: 1.sw,

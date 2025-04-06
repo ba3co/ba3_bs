@@ -54,7 +54,7 @@ class AddSellerScreen extends StatelessWidget {
                           ? AppStrings.add.tr
                           : AppStrings.edit.tr,
                       onPressed: () {
-                        controller.saveOrUpdateSeller();
+                        controller.saveOrUpdateSeller(context);
                       },
                       iconData: controller.selectedSellerModel?.costGuid == null
                           ? Icons.add

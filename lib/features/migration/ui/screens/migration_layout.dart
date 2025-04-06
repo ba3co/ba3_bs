@@ -68,9 +68,10 @@ class MigrationLayout extends StatelessWidget {
                 () => SizedBox(
                   width: 180,
                   child: ElevatedButton(
-                    onPressed: controller.isMigrating.value
-                        ? null
-                        : controller.startMigration,
+                    onPressed: (){
+                      if(controller.isMigrating.value) return;
+                      controller.startMigration(context);
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           vertical: 14, horizontal: 30),

@@ -110,17 +110,18 @@ class BillDetailsService
   /// decrementedBillNumber = 2
   Future<void> handleDeleteSuccess(
       {required BillModel billToDelete,
-      required BillSearchController billSearchController}) async {
+      required BillSearchController billSearchController,
+      required BuildContext context}) async {
     /*log('billSearchController.isTail: ${billSearchController.isTail}');
     log('currentBillIndex: ${billSearchController.currentBillIndex}');
     log('billSearchController.bills.length: ${billSearchController.bills.length}');
     log('isLastValidBill(billToDelete): ${billSearchController.isLastValidBill(billToDelete)}');*/
 
     if (billToDelete.isSellRelated) {
-      await _updateSoldSerialNumbers(billToDelete);
+      await _updateSoldSerialNumbers(billToDelete,context);
       await billDetailsController.deleteSellSerialTransactions(billToDelete);
     } else if (billToDelete.isPurchaseRelated) {
-      await billDetailsController.deleteBuySerialTransactions(billToDelete);
+      await billDetailsController.deleteBuySerialTransactions(billToDelete,context);
     }
 
     if (billSearchController.isLastValidBill(billToDelete)) {
@@ -145,17 +146,18 @@ class BillDetailsService
     // 2. Remove the bill locally from the search controller
     billSearchController.removeBill(billToDelete);
 
+    if(!context.mounted) return;
     // 3. Show success message.
-    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!');
+    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!',context);
 
     // 4. Clean up bonds/mats statements if this is an approved bill with materials
     if (billToDelete.status == Status.approved) {
-      _handleApprovedBillDeletions(billToDelete);
+      _handleApprovedBillDeletions(billToDelete,context);
     }
   }
 
   /// Updates the sold serial numbers by setting their `sold` status to false.
-  Future<void> _updateSoldSerialNumbers(BillModel billToDelete) async {
+  Future<void> _updateSoldSerialNumbers(BillModel billToDelete,BuildContext context) async {
     final materialController = read<MaterialController>();
 
     for (final billItem in billToDelete.items.itemList) {
@@ -176,7 +178,7 @@ class BillDetailsService
 
         // Apply the update to the material model
         materialController.updateMaterialWithChanges(
-          materialModel.copyWith(serialNumbers: updatedSerialNumbers),
+          materialModel.copyWith(serialNumbers: updatedSerialNumbers),context
         );
 
         log('✅ Serial number [$soldSerialNumber] of material (${materialModel.matName}) marked as unsold.');
@@ -320,7 +322,7 @@ class BillDetailsService
 
   /// Removes the related bond and statements if the bill is approved
   /// and the pattern type requires a material account.
-  void _handleApprovedBillDeletions(BillModel billModel) {
+  void _handleApprovedBillDeletions(BillModel billModel, BuildContext context) {
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       read<EntryBondController>().deleteEntryBondModel(
           entryId: billModel.billId!,
@@ -330,14 +332,15 @@ class BillDetailsService
           .addLog(item: billModel, eventType: LogEventType.delete);
     }
 
-    deleteMatsStatementsModels(billModel);
+    deleteMatsStatementsModels(billModel,context);
   }
 
   Future<void> handleUpdateBillStatusSuccess({
     required BillModel updatedBillModel,
     required BillSearchController billSearchController,
+    required BuildContext context,
   }) async {
-    AppUIUtils.onSuccess('تم القبول بنجاح');
+    AppUIUtils.onSuccess('تم القبول بنجاح',context);
     billSearchController.updateBill(
         updatedBillModel, 'handleUpdateBillStatusSuccess');
 
@@ -440,7 +443,7 @@ class BillDetailsService
   }
 
   Map<String, AccountModel> _handelModifiedAccountsUpdate(
-      {required BillModel previousBill, required BillModel currentBill}) {
+      {required BillModel previousBill, required BillModel currentBill,required BuildContext context}) {
     final Map<String, AccountModel> modifiedAccounts =
         findModifiedBillTypeAccounts(
             previousBill: previousBill, currentBill: currentBill);
@@ -452,6 +455,7 @@ class BillDetailsService
       generatePdfAndSendToEmail(
         fileName: AppStrings.updatedBill.tr,
         itemModel: [previousBill, currentBill],
+        context: context,
       );
     }
     return modifiedAccounts;
@@ -467,7 +471,7 @@ class BillDetailsService
     required BuildContext context,
   }) async {
     // 1. Display the success message.
-    _showSuccessMessage(isSave);
+    _showSuccessMessage(isSave,context);
 
     // 2. Prepare containers for modified accounts and deleted materials.
     Map<String, AccountModel> modifiedBillTypeAccounts =
@@ -482,11 +486,11 @@ class BillDetailsService
     // 3. Process the bill: add if new, update if modifying.
     if (isSave) {
       _handleAdd(
-          savedBill: currentBill, billSearchController: billSearchController);
+          savedBill: currentBill, billSearchController: billSearchController,context: context);
     } else {
       // Update the bill (PDF generation etc.) and collect modifications.
       modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(
-          previousBill: previousBill!, currentBill: currentBill);
+          previousBill: previousBill!, currentBill: currentBill,context: context);
 
       // Process update and compute the differences between bill items.
       itemChanges =
@@ -552,14 +556,15 @@ class BillDetailsService
         model: currentBill,
         deletedMaterials: deletedMaterials,
         updatedMaterials: updatedMaterials,
+        context: context
       );
     }
 
     // 8. Save material serials.
-    saveMaterialsSerials(currentBill);
+    saveMaterialsSerials(currentBill,context);
   }
 
-  Future<void> saveMaterialsSerials(BillModel savedBill) async {
+  Future<void> saveMaterialsSerials(BillModel savedBill,BuildContext context) async {
     final Map<MaterialModel, List<TextEditingController>>
         buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
     final Map<MaterialModel, List<TextEditingController>>
@@ -574,15 +579,15 @@ class BillDetailsService
             : sellSerialsControllers;
 
     if (serialControllers.isNotEmpty) {
-      billDetailsController.saveSerialNumbers(savedBill, serialControllers);
+      billDetailsController.saveSerialNumbers(savedBill, serialControllers, context);
     }
   }
 
   /// Displays a success message based on the operation type.
-  void _showSuccessMessage(bool isSave) {
+  void _showSuccessMessage(bool isSave,BuildContext context) {
     final message =
         isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
-    AppUIUtils.onSuccess(message);
+    AppUIUtils.onSuccess(message, context);
   }
 
   /// Updates the bill search controller with the current bill.
@@ -631,6 +636,7 @@ class BillDetailsService
   Future<void> _handleAdd({
     required BillModel savedBill,
     required BillSearchController billSearchController,
+    required BuildContext context,
   }) async {
     // 1. Mark the bill as saved
     billDetailsController.updateIsBillSaved = true;
@@ -640,6 +646,7 @@ class BillDetailsService
       generatePdfAndSendToEmail(
         fileName: AppStrings.newBill.tr,
         itemModel: savedBill,
+        context: context,
       );
     }
 

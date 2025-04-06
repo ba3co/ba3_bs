@@ -67,7 +67,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
   }
 
   Future<void> handleDeleteSuccess(
-      BondModel bondModel, BondSearchController bondSearchController,
+      BondModel bondModel, BondSearchController bondSearchController,BuildContext context,
       [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
@@ -78,8 +78,8 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     } else {
       bondSearchController.removeBond(bondModel);
     }
-
-    AppUIUtils.onSuccess('تم حذف السند بنجاح!');
+    if(!context.mounted) return;
+    AppUIUtils.onSuccess('تم حذف السند بنجاح!', context);
 
     read<EntryBondController>().deleteEntryBondModel(
         entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!);
@@ -91,12 +91,13 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     required BondDetailsController bondDetailsController,
     required BondSearchController bondSearchController,
     required bool isSave,
+    required BuildContext context,
   }) async {
     log("save handleSaveOrUpdateSuccess");
     final successMessage =
         isSave ? 'تم حفظ السند بنجاح!' : 'تم تعديل السند بنجاح!';
 
-    AppUIUtils.onSuccess(successMessage);
+    AppUIUtils.onSuccess(successMessage, context);
 
     Map<String, AccountModel> modifiedBondTypeAccounts = {};
     if (isSave) {
@@ -107,6 +108,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         generatePdfAndSendToEmail(
           fileName: AppStrings.newBond.tr,
           itemModel: currentBond,
+          context: context,
         );
       }
     } else {
@@ -121,6 +123,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         generatePdfAndSendToEmail(
           fileName: AppStrings.updatedBond.tr,
           itemModel: [previousBond, currentBond],
+          context: context,
         );
       }
     }

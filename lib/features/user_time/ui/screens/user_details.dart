@@ -38,7 +38,7 @@ class UserDetails extends StatelessWidget {
             AppButton(
               title: AppStrings.clearDelay,
               iconData: FontAwesomeIcons.refresh,
-              onPressed: read<UserDetailsController>().resetDelay,
+              onPressed: ()=>read<UserDetailsController>().resetDelay(context),
             )
           ],
         ),

@@ -58,6 +58,7 @@ class MaterialsStatementController extends GetxController
 
   Future<void> onSaveAllMatsStatementsModelsSuccess({
     required Map<String, List<MatStatementModel>> mapOfStatements,
+    required BuildContext context,
     void Function(double progress)? onProgress,
   }) async {
     final allSavedStatements = mapOfStatements.values
@@ -66,13 +67,13 @@ class MaterialsStatementController extends GetxController
 
     // If we have none, exit early
     if (allSavedStatements.isEmpty) {
-      AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
+      AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)', context);
       return;
     }
 
     int completed = 0;
     final total = allSavedStatements.length;
-    AppUIUtils.onSuccess('تم الحفظ بنجاح'); // from the nested save
+    AppUIUtils.onSuccess('تم الحفظ بنجاح', context); // from the nested save
 
     // 3. Update each material's quantity in parallel
 
@@ -134,12 +135,12 @@ class MaterialsStatementController extends GetxController
   }
 
   Future<void> deleteMatStatementModel(
-      MatStatementModel matStatementModel) async {
+      MatStatementModel matStatementModel,BuildContext context) async {
     final result = await _matStatementsRepo.delete(matStatementModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح'),
+      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح', context),
     );
 
     final materialStatementList =
@@ -166,13 +167,13 @@ class MaterialsStatementController extends GetxController
   }
 
   Future<void> deleteAllMatStatementModel(
-      List<MatStatementModel> matStatementsModels) async {
+      List<MatStatementModel> matStatementsModels,BuildContext context) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[];
 
     for (final matStatementModel in matStatementsModels) {
       deletedTasks.add(
-        deleteMatStatementModel(matStatementModel),
+        deleteMatStatementModel(matStatementModel,context),
       );
     }
 

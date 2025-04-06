@@ -29,7 +29,6 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/data/models/bill_model.dart';
 import '../../materials/controllers/material_controller.dart';
 import '../../patterns/data/models/bill_type_model.dart';
-import '../ui/widgets/target_pointer_widget.dart';
 
 class SellerSalesController extends GetxController
     with AppNavigator, FloatingLauncher {
@@ -48,12 +47,9 @@ class SellerSalesController extends GetxController
 
   PickerDateRange? dateRange;
 
-  Rx<RequestState> profileScreenState = RequestState.initial.obs;
+  RequestState profileScreenState = RequestState.initial;
 
-  final GlobalKey<TargetPointerWidgetState> accessoriesKey =
-      GlobalKey<TargetPointerWidgetState>();
-  final GlobalKey<TargetPointerWidgetState> mobilesKey =
-      GlobalKey<TargetPointerWidgetState>();
+
 
   bool inFilterMode = false;
 
@@ -149,7 +145,8 @@ class SellerSalesController extends GetxController
   Future<void> onSelectSeller(
       {SellerModel? sellerModel, String? sellerId}) async {
     if (sellerModel == null && sellerId == null) return;
-    profileScreenState.value = RequestState.loading;
+    profileScreenState = RequestState.loading;
+    safeUpdateUI();
     sellerModel ??= read<SellersController>().getSellerById(sellerId!);
     setDateRange = defaultDateRange;
 
@@ -273,7 +270,7 @@ class SellerSalesController extends GetxController
         }
       }
     }
-    profileScreenState.value = RequestState.success;
+    profileScreenState = RequestState.success;
 
     safeUpdateUI();
   }

@@ -217,7 +217,7 @@ class MigrationController extends FloatingBondDetailsLauncher
     );
   }
 
-  Future<void> startMigration() async {
+  Future<void> startMigration( BuildContext context) async {
     // 🔹 Show confirmation dialog before proceeding
     bool shouldProceed = await _showMigrationConfirmationDialog();
     if (!shouldProceed) return;
@@ -242,9 +242,10 @@ class MigrationController extends FloatingBondDetailsLauncher
 
       // التحقق من الإدخالات غير المصروفة
       await _copyUnpaidChequesUseCase.execute(currentYear);
+      if(!context.mounted) return;
 
       // إغلاق الحساب والمواد
-      await _closeAccountsAndItemsUseCase.execute(currentYear);
+      await _closeAccountsAndItemsUseCase.execute(currentYear, context);
 
       migrationStatus.value = "✅ تم الترحيل بنجاح!";
     } catch (e, stackTrace) {

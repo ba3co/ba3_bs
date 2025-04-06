@@ -33,7 +33,7 @@ class AddSellerController extends GetxController with AppNavigator {
     }
   }
 
-  Future<void> saveOrUpdateSeller() async {
+  Future<void> saveOrUpdateSeller(BuildContext context) async {
     // Get values from controllers
     final name = nameController.text.trim();
     final code = int.tryParse(codeController.text.trim());
@@ -49,18 +49,18 @@ class AddSellerController extends GetxController with AppNavigator {
         costName: name,
         costCode: code,
       );
-      await addSeller(newSeller, isNew: true);
+      await addSeller(newSeller,context, isNew: true);
     } else {
       // Updating existing seller
       final updatedSeller = selectedSellerModel!.copyWith(
         costName: name,
         costCode: code,
       );
-      await addSeller(updatedSeller, isNew: false);
+      await addSeller(updatedSeller, context, isNew: false);
     }
   }
 
-  Future<void> addSeller(SellerModel seller, {required bool isNew}) async {
+  Future<void> addSeller(SellerModel seller,BuildContext context, {required bool isNew}) async {
     saveSellerRequestState.value = RequestState.loading;
 
     final result = await _sellersFirebaseRepo.save(seller);
@@ -72,16 +72,16 @@ class AddSellerController extends GetxController with AppNavigator {
       },
       (savedSeller) {
         saveSellerRequestState.value = RequestState.success;
-        onSuccess(savedSeller, isNew: isNew);
+        onSuccess(savedSeller, context, isNew: isNew);
       },
     );
   }
 
-  void onSuccess(SellerModel savedSeller, {required bool isNew}) {
+  void onSuccess(SellerModel savedSeller, BuildContext context,{required bool isNew}) {
     final sellersController =
         Get.find<SellersController>(); // Ensure Get.find is used correctly
 
-    AppUIUtils.onSuccess('تم حفظ البائع بنجاح!');
+    AppUIUtils.onSuccess('تم حفظ البائع بنجاح!',context);
 
     if (isNew) {
       sellersController.sellers.add(savedSeller);

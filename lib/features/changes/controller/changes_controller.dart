@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -32,13 +33,15 @@ class ChangesController extends GetxController {
     listenToChanges();
   }
 
+
+
   @override
   void onClose() {
     _subscription.cancel();
     super.onClose();
   }
 
-  Future<void> createChangeDocument(String userId) async {
+  Future<void> createChangeDocument(String userId,BuildContext context) async {
     final changesModel = ChangesModel(
       targetUserId: userId,
       changeItems: {},
@@ -50,7 +53,7 @@ class ChangesController extends GetxController {
     result.fold(
       (failure) =>
           AppUIUtils.onFailure('فشل في حفظ التغيير: ${failure.message}'),
-      (success) => AppUIUtils.onSuccess('تم حفظ التغيير بنجاح'),
+      (success) => AppUIUtils.onSuccess('تم حفظ التغيير بنجاح', context),
     );
   }
 
@@ -73,7 +76,10 @@ class ChangesController extends GetxController {
         _subscription = documentStream
             .distinct() // Avoid duplicate events.
             .listen(
-              _processChange,
+              (change) {
+                _processChange(change);
+              },
+
               onError: (error) => log("Error in stream subscription: $error"),
             );
       },
@@ -100,9 +106,9 @@ class ChangesController extends GetxController {
       });
 
       // After processing all items, call saveMaterials and deleteMaterials to handle both
-      saveMaterials(materialsToSave);
+      saveMaterials(materialsToSave,Get.context);
       deleteMaterials(materialsToDelete);
-      updateMaterials(materialsToUpdate);
+      updateMaterials(materialsToUpdate,Get.context);
 
       deleteChanges(change);
     } catch (e, stack) {
@@ -165,20 +171,20 @@ class ChangesController extends GetxController {
       MaterialModel.fromJson(changeItem.change);
 
   /// Saves the materials after all change items have been processed.
-  void saveMaterials(List<MaterialModel> materialsToSave) {
+  void saveMaterials(List<MaterialModel> materialsToSave,BuildContext? context) {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController.saveAllMaterialOnLocal(
-          materialsToSave); // Save all materials at once
+          materialsToSave,context); // Save all materials at once
     }
   }
 
   /// Saves the materials after all change items have been processed.
-  void updateMaterials(List<MaterialModel> materialsToUpdate) {
+  void updateMaterials(List<MaterialModel> materialsToUpdate,BuildContext? context) {
     if (materialsToUpdate.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController
-          .updateAllMaterial(materialsToUpdate); // Save all materials at once
+          .updateAllMaterial(materialsToUpdate,context); // Save all materials at once
     }
   }
 

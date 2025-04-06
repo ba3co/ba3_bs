@@ -105,26 +105,26 @@ class MaterialController extends GetxController
   }
 
   Future<void> saveAllMaterialOnLocal(
-      List<MaterialModel> materialsToSave) async {
+      List<MaterialModel> materialsToSave,BuildContext? context) async {
     final result = await _materialsHiveRepo.saveAll(materialsToSave);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message),
         (savedMaterials) {
       log('materials length before add item: ${materials.length}');
 
-      AppUIUtils.onSuccess('تم الحفظ بنجاح');
+      if(context != null)   AppUIUtils.onSuccess('تم الحفظ بنجاح', context);
       reloadMaterials();
 
       log('materials length after add item: ${materials.length}');
     });
   }
 
-  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave) async {
+  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave,BuildContext? context) async {
     final result = await _materialsHiveRepo.updateAll(materialsToSave);
     result.fold((failure) => AppUIUtils.onFailure(failure.message),
         (savedMaterials) {
       log('materials length before update item: ${materials.length}');
-      AppUIUtils.onSuccess('تم الحفظ بنجاح');
+      if(context != null) AppUIUtils.onSuccess('تم الحفظ بنجاح', context);
       reloadMaterials();
       log('materials length update add item: ${materials.length}');
     });
@@ -145,7 +145,7 @@ class MaterialController extends GetxController
     );
   }
 
-  Future<void> fetchAllMaterialFromLocal() async {
+  Future<void> fetchAllMaterialFromLocal(BuildContext context) async {
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
@@ -155,17 +155,17 @@ class MaterialController extends GetxController
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedMaterial) =>
-            _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
+            _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial,context),
       );
     }
   }
 
-  Future<void> deleteAllMaterialFromLocal() async {
+  Future<void> deleteAllMaterialFromLocal(BuildContext context) async {
     final result = await _materialsHiveRepo.clear();
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess('تم حذف المواد بنجاح'),
+      (_) => AppUIUtils.onSuccess('تم حذف المواد بنجاح', context),
     );
   }
 
@@ -173,7 +173,7 @@ class MaterialController extends GetxController
   RxDouble uploadProgress = 0.0.obs;
 
   void _handelFetchAllMaterialFromLocalSuccess(
-      List<MaterialModel> fetchedMaterial) async {
+      List<MaterialModel> fetchedMaterial,BuildContext context) async {
     saveAllMaterialsRequestState.value = RequestState.loading;
 
     log("fetchedMaterial length ${fetchedMaterial.length}");
@@ -186,7 +186,7 @@ class MaterialController extends GetxController
     if (newMaterials.isNotEmpty) {
       for (var mat in newMaterials) {
         materialFromHandler.init(mat);
-        await saveOrUpdateMaterial();
+        await saveOrUpdateMaterial(context);
       }
 
       /*   // Show progress in the UI
@@ -393,7 +393,7 @@ class MaterialController extends GetxController
     );
   }
 
-  Future<void> saveOrUpdateMaterial() async {
+  Future<void> saveOrUpdateMaterial(BuildContext context) async {
     // Validate the input before proceeding
 
     if (!materialFromHandler.validate()) return;
@@ -417,14 +417,14 @@ class MaterialController extends GetxController
       },
       (savedMaterial) {
         saveMaterialRequestState.value = RequestState.success;
-        _onSaveSuccess(savedMaterial,
+        _onSaveSuccess(savedMaterial,context,
             changeType:
                 selectedMaterial != null ? ChangeType.update : ChangeType.add);
       },
     );
   }
 
-  void deleteMaterial() async {
+  void deleteMaterial(BuildContext context) async {
     if (selectedMaterial == null) return;
 
     // Prepare user change queue for delete
@@ -444,7 +444,7 @@ class MaterialController extends GetxController
       },
       (_) {
         deleteMaterialRequestState.value = RequestState.success;
-        _onDeleteSuccess();
+        _onDeleteSuccess(context);
       },
     );
   }
@@ -484,13 +484,13 @@ class MaterialController extends GetxController
           .toList();
 
   Future<void> updateMaterialWithChanges(
-      MaterialModel updatedMaterialModel) async {
+      MaterialModel updatedMaterialModel,BuildContext context) async {
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedMaterial) =>
-          _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
+          _onSaveSuccess(updatedMaterialModel,context, changeType: ChangeType.update),
     );
   }
 
@@ -504,7 +504,7 @@ class MaterialController extends GetxController
     );
   }
 
-  void _onSaveSuccess(MaterialModel materialModel,
+  void _onSaveSuccess(MaterialModel materialModel,BuildContext context,
       {required ChangeType changeType, bool withReloadMaterial = true}) async {
     if (withReloadMaterial) reloadMaterials();
 
@@ -520,7 +520,7 @@ class MaterialController extends GetxController
       (_) {
         AppUIUtils.onSuccess(selectedMaterial?.id == null
             ? 'تم الحفظ بنجاح'
-            : 'تم التعديل بنجاح');
+            : 'تم التعديل بنجاح', context);
         read<LogController>().addLog(
             item: materialModel,
             eventType: selectedMaterial?.id == null
@@ -530,7 +530,7 @@ class MaterialController extends GetxController
     );
   }
 
-  void _onDeleteSuccess() async {
+  void _onDeleteSuccess(BuildContext context) async {
     final MaterialModel materialModel = selectedMaterial!;
 
     // Persist the data in Hive upon successful save
@@ -545,7 +545,7 @@ class MaterialController extends GetxController
 
         log('materials length before add item: ${materials.length}');
 
-        AppUIUtils.onSuccess('تم الحذف بنجاح');
+        AppUIUtils.onSuccess('تم الحذف بنجاح', context);
 
         reloadMaterials();
 
@@ -725,13 +725,13 @@ class MaterialController extends GetxController
         : 0.0;
   }
 
-  Future<void> updateAllMaterialWithDecodeProblematic() async {
+  Future<void> updateAllMaterialWithDecodeProblematic(BuildContext context) async {
     int i = 0;
     log('material length ${materials.length}');
     for (var mat in materials) {
       materialFromHandler
           .init(mat.copyWith(matName: mat.matName!.encodeProblematic()));
-      await saveOrUpdateMaterial();
+      await saveOrUpdateMaterial(context);
       log('mat number ${++i}');
     }
   }

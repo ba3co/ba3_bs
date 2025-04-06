@@ -31,7 +31,7 @@ Dialog showDashboardAccountDialog(BuildContext context) {
                 title: 'موافق',
                 iconData: Icons.check,
                 onPressed: () {
-                  controller.addDashBoardAccount();
+                  controller.addDashBoardAccount(context);
                   // Get.back();
                   // controller
                   //   ..fetchAccountEntryBondItems()

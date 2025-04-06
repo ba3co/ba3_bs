@@ -21,7 +21,7 @@ class AccountLayout extends StatelessWidget {
           title: Text(AppStrings.accounts.tr),
           actions: [
             _buildAppBarButton(AppStrings.downloadAccounts.tr, () {
-              read<AccountsController>().fetchAllAccountsFromLocal();
+              read<AccountsController>().fetchAllAccountsFromLocal(context);
             }),
             _buildAppBarButton(AppStrings.downloadCustomers.tr, () {
               read<CustomersController>().fetchAllCustomersFromLocal();

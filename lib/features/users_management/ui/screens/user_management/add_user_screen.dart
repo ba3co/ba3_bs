@@ -42,7 +42,7 @@ class AddUserScreen extends StatelessWidget {
                         ? AppStrings.add.tr
                         : AppStrings.edit.tr,
                     onPressed: () {
-                      controller.saveOrUpdateUser();
+                      controller.saveOrUpdateUser(context);
                     },
                     iconData: controller.selectedUserModel?.userId == null
                         ? Icons.add

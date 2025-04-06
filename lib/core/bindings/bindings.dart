@@ -333,6 +333,7 @@ class AppBindings extends Bindings {
     lazyPut(PlutoController());
 
     lazyPut(PlutoDualTableController());
+    // lazyPut(TargetPointerController());
 
     lazyPut(EntryBondController(
         repositories.entryBondsRepo, repositories.accountsStatementsRepo));

@@ -53,7 +53,7 @@ class AddMaterialScreen extends StatelessWidget {
                       ? AppStrings.add.tr
                       : AppStrings.edit.tr,
                   onPressed: () {
-                    controller.saveOrUpdateMaterial();
+                    controller.saveOrUpdateMaterial(context);
                   },
                   iconData: controller.selectedMaterial?.id == null
                       ? Icons.add
@@ -69,7 +69,7 @@ class AddMaterialScreen extends StatelessWidget {
                       RequestState.loading,
                   title: AppStrings.delete.tr,
                   onPressed: () {
-                    controller.deleteMaterial();
+                    controller.deleteMaterial(context);
                   },
                   iconData: Icons.delete,
                   color: Colors.red,

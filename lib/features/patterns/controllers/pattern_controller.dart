@@ -162,7 +162,7 @@ class PatternController extends GetxController
     return billsTypes;
   }
 
-  Future<void> addNewPattern() async {
+  Future<void> addNewPattern(BuildContext context) async {
     if (!patternFormHandler.validate()) return;
 
     if (patternFormHandler.selectedBillPatternType.value == null) {
@@ -176,7 +176,7 @@ class PatternController extends GetxController
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => AppUIUtils.onSuccess('تم حفظ النموذج بنجاح!'),
+      (success) => AppUIUtils.onSuccess('تم حفظ النموذج بنجاح!',context),
     );
   }
 

@@ -95,7 +95,7 @@ class BondDetailsController extends GetxController with AppValidator {
     update();
   }
 
-  Future<void> deleteBond(BondModel bondModel,
+  Future<void> deleteBond(BondModel bondModel,BuildContext context,
       {bool fromBondById = false}) async {
     deleteBondRequestState.value = RequestState.loading;
 
@@ -108,23 +108,23 @@ class BondDetailsController extends GetxController with AppValidator {
       },
       (success) async {
         await _bondService.handleDeleteSuccess(
-            bondModel, bondSearchController, fromBondById);
+            bondModel, bondSearchController, context,fromBondById);
         deleteBondRequestState.value = RequestState.success;
       },
     );
   }
 
-  Future<void> saveBond(BondType bondType) async {
-    await _saveOrUpdateBond(bondType: bondType);
+  Future<void> saveBond(BondType bondType,BuildContext context) async {
+    await _saveOrUpdateBond(bondType: bondType,context: context);
   }
 
   Future<void> updateBond(
-      {required BondType bondType, required BondModel bondModel}) async {
-    await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel);
+      {required BondType bondType, required BondModel bondModel,required BuildContext context}) async {
+    await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel,context: context);
   }
 
   Future<void> _saveOrUpdateBond(
-      {required BondType bondType, BondModel? existingBondModel}) async {
+      {required BondType bondType, BondModel? existingBondModel,required BuildContext context}) async {
     // Validate the form first
     if (!validateForm()) return;
 
@@ -166,6 +166,7 @@ class BondDetailsController extends GetxController with AppValidator {
           bondSearchController: bondSearchController,
           isSave: existingBondModel == null,
           bondDetailsController: this,
+          context: context,
         );
 
         saveBondRequestState.value = RequestState.success;
@@ -237,7 +238,7 @@ class BondDetailsController extends GetxController with AppValidator {
     bondPlutoController.update();
   }
 
-  generateAndSendBondPdf(BondModel bondModel) {
+  generateAndSendBondPdf(BondModel bondModel,BuildContext context) {
     if (!_bondService.hasModelId(bondModel.payGuid)) return;
 
     if (!_bondService.hasModelItems(bondModel.payItems.itemList)) return;
@@ -245,6 +246,7 @@ class BondDetailsController extends GetxController with AppValidator {
     _bondService.generatePdfAndSendToEmail(
       fileName: AppStrings.bond.tr,
       itemModel: bondModel,
+      context: context,
     );
   }
 

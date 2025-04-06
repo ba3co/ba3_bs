@@ -55,7 +55,7 @@ class SellersController extends GetxController
     );
   }
 
-  Future<void> fetchAllSellersFromLocal() async {
+  Future<void> fetchAllSellersFromLocal(BuildContext context) async {
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
@@ -68,13 +68,13 @@ class SellersController extends GetxController
           AppUIUtils.onFailure(failure.message);
         },
         (fetchedSellers) =>
-            _handelFetchAllSellersFromLocalSuccess(fetchedSellers),
+            _handelFetchAllSellersFromLocalSuccess(fetchedSellers,context),
       );
     }
   }
 
   void _handelFetchAllSellersFromLocalSuccess(
-      List<SellerModel> fetchedSellers) async {
+      List<SellerModel> fetchedSellers,BuildContext context) async {
     log("fetchedSellers length ${fetchedSellers.length}");
     log('current sellers length is ${sellers.length}');
 
@@ -88,7 +88,7 @@ class SellersController extends GetxController
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (fetchedSellers) {
-          AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}');
+          AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}', context);
 
           sellers.addAll(newSellers);
         },
@@ -96,7 +96,7 @@ class SellersController extends GetxController
     }
   }
 
-  Future<void> addSellers() async {
+  Future<void> addSellers(BuildContext context) async {
     final result = await _sellersFirebaseRepo.saveAll(sellers);
 
     result.fold(
@@ -104,12 +104,12 @@ class SellersController extends GetxController
         AppUIUtils.onFailure(failure.message);
       },
       (addedSellers) {
-        AppUIUtils.onSuccess('Add ${addedSellers.length} sellers');
+        AppUIUtils.onSuccess('Add ${addedSellers.length} sellers',context);
       },
     );
   }
 
-  Future<void> deleteSeller(String sellerId) async {
+  Future<void> deleteSeller(String sellerId,BuildContext context) async {
     deleteSellerRequestState.value = RequestState.loading;
 
     final result = await _sellersFirebaseRepo.delete(sellerId);
@@ -121,7 +121,7 @@ class SellersController extends GetxController
       },
       (success) {
         deleteSellerRequestState.value = RequestState.success;
-        AppUIUtils.onSuccess('تم الحذف البائع بنجاح!');
+        AppUIUtils.onSuccess('تم الحذف البائع بنجاح!', context);
         sellers.removeWhere((seller) => seller.costGuid == sellerId);
       },
     );

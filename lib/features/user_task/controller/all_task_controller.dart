@@ -210,7 +210,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     update();
   }
 
-  saveOrUpdateTask() async {
+  saveOrUpdateTask(BuildContext context) async {
     if (!taskFormHandler.validate()) return;
     if (taskFormHandler.selectedUsers.isEmpty) {
       AppUIUtils.onFailure(AppStrings.pleaseAddUsers.tr);
@@ -261,7 +261,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
         read<UserManagementController>().addTaskToUser(task, differentUser);
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
-        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح');
+        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح', context);
       },
     );
   }
@@ -305,7 +305,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     // taskFormHandler.init(userTaskModel: userTaskModel);
   }
 
-  void deleteTask() async {
+  void deleteTask(BuildContext context) async {
     final result = await _userTaskRepo.delete(selectedTask!.docId!);
 
     result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
@@ -316,7 +316,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
       setSelectedTask(null);
       update();
-      AppUIUtils.onSuccess('تم حذف المهمة بنجاح');
+      AppUIUtils.onSuccess('تم حذف المهمة بنجاح', context);
     });
   }
 
@@ -335,7 +335,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     });
   }
 
-  updateTask(UserTaskModel task) async {
+  updateTask(UserTaskModel task,BuildContext context) async {
     final result = await _userTaskRepo.save(task);
 
     result.fold(
@@ -343,7 +343,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
       (task) {
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
-        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح');
+        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح', context);
       },
     );
   }
@@ -362,10 +362,10 @@ class AllTaskController extends GetxController with FloatingLauncher {
   void uploadDateTask(
       {required UserTaskModel task,
       required DateTime date,
-      required TaskStatus status}) async {
+      required TaskStatus status,required BuildContext context}) async {
     final updatedTask = status.isFinished
         ? task.copyWith(status: status, endedAt: date)
         : task.copyWith(status: status, updatedAt: date);
-    await updateTask(updatedTask);
+    await updateTask(updatedTask,context);
   }
 }

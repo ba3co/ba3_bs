@@ -335,7 +335,7 @@ class UserManagementController extends GetxController
     loginPasswordController.clear();
   }
 
-  Future<void> saveOrUpdateRole({RoleModel? existingRoleModel}) async {
+  Future<void> saveOrUpdateRole({RoleModel? existingRoleModel, required BuildContext context}) async {
     // Validate the form first
     if (!roleFormHandler.validate()) return;
 
@@ -357,7 +357,7 @@ class UserManagementController extends GetxController
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (success) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح');
+        AppUIUtils.onSuccess('تم الحفظ بنجاح',context);
         getAllRoles();
       },
     );

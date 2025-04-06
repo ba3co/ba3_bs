@@ -23,6 +23,7 @@ class AddTaskHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 10,
       children: [
         TextAndExpandedChildField(
           label: AppStrings.taskTitle.tr,
@@ -81,7 +82,6 @@ class AddTaskHeader extends StatelessWidget {
             );
           }),
         ),
-        VerticalSpace(15),
         FormFieldRow(
           firstItem: TextAndExpandedChildField(
             label: AppStrings.lastDateTodo.tr,
@@ -107,6 +107,8 @@ class AddTaskHeader extends StatelessWidget {
             }),
           ),
         ),
+        VerticalSpace(15),
+
       ],
     );
   }

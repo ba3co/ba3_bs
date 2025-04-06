@@ -255,7 +255,7 @@ class CustomersController extends GetxController with AppNavigator {
 //     result.fold(
 //       (failure) => AppUIUtils.onFailure(failure.message),
 //       (_) {
-//         AppUIUtils.onSuccess("تم حذف الحساب بنجاح");
+//         AppUIUtils.onSuccess("تم حذف الحساب بنجاح", context);
 //       },
 //     );
 //   }

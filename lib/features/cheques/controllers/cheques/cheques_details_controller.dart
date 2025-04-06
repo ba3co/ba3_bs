@@ -17,8 +17,7 @@ import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../service/cheques_details_service.dart';
 import 'cheques_search_controller.dart';
 
-class ChequesDetailsController extends GetxController
-    with AppValidator, EntryBondsGenerator {
+class ChequesDetailsController extends GetxController with AppValidator, EntryBondsGenerator {
   ChequesDetailsController(
     this._chequesFirebaseRepo, {
     required this.chequesSearchController,
@@ -27,8 +26,7 @@ class ChequesDetailsController extends GetxController
 
   // Repositories
 
-  final CompoundDatasourceRepository<ChequesModel, ChequesType>
-      _chequesFirebaseRepo;
+  final CompoundDatasourceRepository<ChequesModel, ChequesType> _chequesFirebaseRepo;
   final ChequesSearchController chequesSearchController;
 
   // Services
@@ -45,8 +43,7 @@ class ChequesDetailsController extends GetxController
 
   final TextEditingController chequesAccPtrController = TextEditingController();
 
-  final TextEditingController chequesToAccountController =
-      TextEditingController();
+  final TextEditingController chequesToAccountController = TextEditingController();
 
   final TextEditingController chequesNoteController = TextEditingController();
 
@@ -60,8 +57,7 @@ class ChequesDetailsController extends GetxController
 
   EntryBondController get bondController => read<EntryBondController>();
 
-  RxString chequesDate = DateTime.now().dayMonthYear.obs,
-      chequesDueDate = DateTime.now().dayMonthYear.obs;
+  RxString chequesDate = DateTime.now().dayMonthYear.obs, chequesDueDate = DateTime.now().dayMonthYear.obs;
   bool isLoading = true;
   RxBool isChequesSaved = false.obs;
 
@@ -98,8 +94,7 @@ class ChequesDetailsController extends GetxController
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) =>
-      isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
   void setChequesDate(DateTime newDate) {
     chequesDate.value = newDate.dayMonthYear;
@@ -111,8 +106,7 @@ class ChequesDetailsController extends GetxController
     update();
   }
 
-  Future<void> deleteCheques(ChequesModel chequesModel,
-      {bool fromChequesById = false}) async {
+  Future<void> deleteCheques(ChequesModel chequesModel,BuildContext context, {bool fromChequesById = false}) async {
     deleteChequesRequestState.value = RequestState.loading;
 
     final result = await _chequesFirebaseRepo.delete(chequesModel);
@@ -124,32 +118,25 @@ class ChequesDetailsController extends GetxController
       },
       (success) {
         deleteChequesRequestState.value = RequestState.success;
-        _chequesService.handleDeleteSuccess(
-            chequesModel, chequesSearchController, fromChequesById);
+        _chequesService.handleDeleteSuccess(chequesModel, chequesSearchController, context,fromChequesById);
       },
     );
   }
 
-  Future<void> saveCheques(ChequesType chequesType) async {
-    await _saveOrUpdateCheques(chequesType: chequesType);
+  Future<void> saveCheques(ChequesType chequesType, BuildContext context) async {
+    await _saveOrUpdateCheques(chequesType: chequesType,context: context);
   }
 
-  Future<void> updateCheques(
-      {required ChequesType chequesType,
-      required ChequesModel chequesModel}) async {
-    await _saveOrUpdateCheques(
-        chequesType: chequesType, existingChequesModel: chequesModel);
+  Future<void> updateCheques({required ChequesType chequesType, required ChequesModel chequesModel,required BuildContext context}) async {
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: chequesModel,context: context);
   }
 
-  Future<void> _saveOrUpdateCheques(
-      {required ChequesType chequesType,
-      ChequesModel? existingChequesModel}) async {
+  Future<void> _saveOrUpdateCheques({required ChequesType chequesType, ChequesModel? existingChequesModel,required BuildContext context}) async {
     // Validate the form first
     if (!validateForm()) return;
 
     // Create the cheques model from the provided data
-    final updatedChequesModel =
-        _createChequesModelFromChequesData(chequesType, existingChequesModel);
+    final updatedChequesModel = _createChequesModelFromChequesData(chequesType, existingChequesModel);
 
     // Handle null cheques model
     if (updatedChequesModel == null) {
@@ -176,6 +163,7 @@ class ChequesDetailsController extends GetxController
           chequesSearchController: chequesSearchController,
           isSave: existingChequesModel == null,
           chequesDetailsController: this,
+          context: context,
         );
       },
     );
@@ -185,41 +173,31 @@ class ChequesDetailsController extends GetxController
     if (!validateForm()) return;
 
     _chequesService.launchChequesEntryBondScreen(
-        chequesModel: chequesModel,
-        context: context,
-        chequesStrategyType: ChequesStrategyType.chequesStrategy);
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.chequesStrategy);
   }
 
-  void launchPayEntryBondWindow(
-      ChequesModel chequesModel, BuildContext context) {
+  void launchPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
     _chequesService.launchChequesEntryBondScreen(
-        chequesModel: chequesModel,
-        context: context,
-        chequesStrategyType: ChequesStrategyType.payStrategy);
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.payStrategy);
   }
 
-  void launchRefundPayEntryBondWindow(
-      ChequesModel chequesModel, BuildContext context) {
+  void launchRefundPayEntryBondWindow(ChequesModel chequesModel, BuildContext context) {
     if (!validateForm()) return;
 
     _chequesService.launchChequesEntryBondScreen(
-        chequesModel: chequesModel,
-        context: context,
-        chequesStrategyType: ChequesStrategyType.refundStrategy);
+        chequesModel: chequesModel, context: context, chequesStrategyType: ChequesStrategyType.refundStrategy);
   }
 
   updateIsChequesSaved(bool newValue) {
     isChequesSaved.value = newValue;
   }
 
-  ChequesModel? _createChequesModelFromChequesData(ChequesType chequesType,
-      [ChequesModel? chequesModel]) {
+  ChequesModel? _createChequesModelFromChequesData(ChequesType chequesType, [ChequesModel? chequesModel]) {
     // Validate customer accounts
 
-    if (!_chequesService.validateAccount(chequesAccPtr) ||
-        !_chequesService.validateAccount(chequesToAccountModel)) {
+    if (!_chequesService.validateAccount(chequesAccPtr) || !_chequesService.validateAccount(chequesToAccountModel)) {
       return null;
     }
 
@@ -257,11 +235,8 @@ class ChequesDetailsController extends GetxController
     setChequesDueDate(cheques.chequesDueDate!.toDate);
     setIsPayed(cheques.isPayed ?? false);
     setIsRefundPay(cheques.isRefund ?? false);
-    setTowAccount(read<AccountsController>()
-        .getAccountModelById(cheques.chequesAccount2Guid)!);
-    setFirstAccount(
-        read<AccountsController>().getAccountModelById(cheques.accPtr) ??
-            AccountModel());
+    setTowAccount(read<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
+    setFirstAccount(read<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
     stChequesFormDate(cheques);
     initChequesNumberController(cheques.chequesNumber);
   }
@@ -272,19 +247,17 @@ class ChequesDetailsController extends GetxController
     chequesAmountController.text = (cheques.chequesVal ?? '').toString();
   }
 
-  void savePayCheques(ChequesModel chequesModel) async {
+  void savePayCheques(ChequesModel chequesModel, BuildContext context) async {
     setIsPayed(true);
 
-    final updatedModel =
-        chequesModel.copyWith(chequesPayGuid: generateId(RecordType.entryBond));
+    final updatedModel = chequesModel.copyWith(chequesPayGuid: generateId(RecordType.entryBond));
 
     // final creator =
     //     ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.payStrategy).first;
     //
     // EntryBondModel entryBondModel = creator.createEntryBond(originType: EntryBondType.cheque, model: updatedModel);
 
-    await _saveOrUpdateCheques(
-        chequesType: chequesType, existingChequesModel: updatedModel);
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
 
     // read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
 
@@ -296,29 +269,25 @@ class ChequesDetailsController extends GetxController
     );
   }
 
-  void clearPayCheques(ChequesModel chequesModel) async {
+  void clearPayCheques(ChequesModel chequesModel, BuildContext context) async {
     setIsPayed(false);
     final updatedModel = chequesModel.copyWithNullPayGuid();
-    await _saveOrUpdateCheques(
-        chequesType: chequesType, existingChequesModel: updatedModel);
-    read<EntryBondController>().deleteEntryBondModel(
-        entryId: chequesModel.chequesPayGuid!,
-        sourceNumber: chequesModel.chequesNumber!);
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
+    read<EntryBondController>()
+        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!);
   }
 
-  void refundPayCheques(ChequesModel chequesModel) async {
+  void refundPayCheques(ChequesModel chequesModel, BuildContext context) async {
     setIsRefundPay(true);
 
-    final updatedModel = chequesModel.copyWith(
-        chequesRefundPayGuid: generateId(RecordType.entryBond));
+    final updatedModel = chequesModel.copyWith(chequesRefundPayGuid: generateId(RecordType.entryBond));
 
     // final creator =
     //     ChequesStrategyBondFactory.determineStrategy(updatedModel, type: ChequesStrategyType.refundStrategy).first;
     //
     // EntryBondModel entryBondModel = creator.createEntryBond(originType: EntryBondType.cheque, model: updatedModel);
 
-    await _saveOrUpdateCheques(
-        chequesType: chequesType, existingChequesModel: updatedModel);
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
 
     // log(entryBondModel.origin!.toJson().toString());
 
@@ -332,13 +301,11 @@ class ChequesDetailsController extends GetxController
     );
   }
 
-  void deleteRefundPayCheques(ChequesModel chequesModel) async {
+  void deleteRefundPayCheques(ChequesModel chequesModel, BuildContext context) async {
     setIsRefundPay(false);
     final updatedModel = chequesModel.copyWithNullRefundPayGuid();
-    await _saveOrUpdateCheques(
-        chequesType: chequesType, existingChequesModel: updatedModel);
-    read<EntryBondController>().deleteEntryBondModel(
-        entryId: chequesModel.chequesRefundPayGuid!,
-        sourceNumber: chequesModel.chequesNumber!);
+    await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
+    read<EntryBondController>()
+        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!);
   }
 }

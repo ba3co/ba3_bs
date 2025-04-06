@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/mat_statement/mat_statement_model.dart';
 import 'package:ba3_bs/features/materials/service/mat_statement_creator_factory.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../bill/data/models/bill_items.dart';
@@ -13,24 +14,22 @@ import '../../bill/services/bill/quantity_strategy_factory.dart';
 import 'mat_statement_creator.dart';
 
 mixin MatsStatementsGenerator {
-  final MaterialsStatementController _materialsStatementController =
-      read<MaterialsStatementController>();
+  final MaterialsStatementController _materialsStatementController = read<MaterialsStatementController>();
   int j = 0;
   Future<void> createAndStoreMatsStatements({
     required List sourceModels,
     void Function(double progress)? onProgress,
   }) async {
+
     final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
-    await _materialsStatementController.saveAllMatsStatementsModels(
-        matsStatements: matsStatementsModels, onProgress: onProgress);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress);
     log("j is  ${j++}");
   }
 
   List<MatStatementModel> _generateMatsStatementsModels(List sourceModels) {
     return sourceModels.expand<MatStatementModel>(
       (model) {
-        final MatStatementCreator creator =
-            MatStatementCreatorFactory.resolveMatStatementCreator(model);
+        final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
         return creator.createMatStatement(model: model);
       },
     ).toList();
@@ -40,14 +39,12 @@ mixin MatsStatementsGenerator {
     required T model,
     List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
+    required  BuildContext context
   }) async {
-    final MatStatementCreator creator =
-        MatStatementCreatorFactory.resolveMatStatementCreator(model);
-    final matsStatementsModels = creator.createMatStatement(
-        model: model, updatedMaterials: updatedMaterials);
+    final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
+    final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(
-        matsStatements: matsStatementsModels);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
 
     if (deletedMaterials.isNotEmpty) {
       final originId = matsStatementsModels.first.originId;
@@ -62,16 +59,15 @@ mixin MatsStatementsGenerator {
           );
         },
       ).toList();
+      if(!context.mounted) return;
 
-      await _materialsStatementController
-          .deleteAllMatStatementModel(matStatementsToDelete);
+      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  context);
     }
   }
 
-  Future<void> deleteMatsStatementsModels(BillModel billModel) async {
+  Future<void> deleteMatsStatementsModels(BillModel billModel, BuildContext context) async {
     final String originId = billModel.billId!;
-    final QuantityStrategy quantityStrategy =
-        QuantityStrategyFactory.getStrategy(billModel);
+    final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(billModel);
 
     final mergedBillItems = billModel.items.itemList.merge();
 
@@ -85,7 +81,6 @@ mixin MatsStatementsGenerator {
         )
         .toList();
 
-    await _materialsStatementController
-        .deleteAllMatStatementModel(matStatementsModels);
+    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,context);
   }
 }

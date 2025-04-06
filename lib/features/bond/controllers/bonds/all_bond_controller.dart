@@ -108,7 +108,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
     update();
   }
 
-  Future<void> fetchAllBondsLocal() async {
+  Future<void> fetchAllBondsLocal(BuildContext context) async {
     log('fetchAllBondsLocal');
 
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
@@ -139,7 +139,9 @@ class AllBondsController extends FloatingBondDetailsLauncher
             );
           }
           saveAllBondsRequestState.value = RequestState.success;
-          AppUIUtils.onSuccess('تم تحميل السندات بنجاح');
+          if(!context.mounted) return;
+
+          AppUIUtils.onSuccess('تم تحميل السندات بنجاح',context);
         },
       );
     }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/dialogs/custom_alert_dialog/helper_alert.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
@@ -18,8 +19,7 @@ import '../widgets/app_button.dart';
 import '../widgets/app_spacer.dart';
 
 class AppUIUtils {
-  static void showToast(String text,
-      {bool isSuccess = false, bool isInfo = false, bool long = false}) {
+  static void showToast(String text, {bool isSuccess = false, bool isInfo = false, bool long = false}) {
     Color color = Colors.red;
     if (isInfo) {
       color = Colors.orangeAccent;
@@ -27,16 +27,12 @@ class AppUIUtils {
       color = Colors.green;
     }
     Fluttertoast.showToast(
-        msg: text,
-        backgroundColor: color,
-        fontSize: 16.sp,
-        toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String convertArabicNumbers(String input) {
     // Check if the input contains any non-Arabic characters
-    final nonArabicRegex = RegExp(
-        r'[^٠-٩]'); // Matches any character that is not an Arabic numeral
+    final nonArabicRegex = RegExp(r'[^٠-٩]'); // Matches any character that is not an Arabic numeral
 
     // If the input contains any non-Arabic characters, return it unchanged
     if (nonArabicRegex.hasMatch(input)) {
@@ -59,8 +55,7 @@ class AppUIUtils {
 
     // Process the input and replace only Arabic numerals
     return input.split('').map((char) {
-      return arabicToWestern[char] ??
-          char; // Replace Arabic numerals, keep others unchanged
+      return arabicToWestern[char] ?? char; // Replace Arabic numerals, keep others unchanged
     }).join('');
   }
 
@@ -104,8 +99,7 @@ class AppUIUtils {
     List<String> dates = [];
     DateTime currentDate = startDate;
 
-    while (currentDate.isBefore(endDate) ||
-        currentDate.isAtSameMomentAs(endDate)) {
+    while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
       dates.add(currentDate.dayMonthYear);
       currentDate = currentDate.add(const Duration(days: 1));
     }
@@ -113,9 +107,8 @@ class AppUIUtils {
     return dates;
   }
 
-  static void showExportSuccessDialog(
-      String filePath, String successMessage, String title) {
-    AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!');
+  static void showExportSuccessDialog(String filePath, String successMessage, String title,BuildContext context) {
+    AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!',context);
     Get.defaultDialog(
       title: 'تم تصدير الملف إلى:',
       radius: 8,
@@ -129,7 +122,7 @@ class AppUIUtils {
             label: const Text('نسخ المسار'),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: filePath));
-              AppUIUtils.onSuccess('تم نسخ المسار إلى الحافظة');
+              AppUIUtils.onSuccess('تم نسخ المسار إلى الحافظة',context);
             },
           ),
         ],
@@ -242,16 +235,10 @@ class AppUIUtils {
     Color? color = Colors.white,
   }) =>
       Center(
-        child: SizedBox(
-            width: width,
-            height: height,
-            child: CircularProgressIndicator(color: color)),
+        child: SizedBox(width: width, height: height, child: CircularProgressIndicator(color: color)),
       );
 
-  static showErrorSnackBar(
-      {String? title,
-      required String message,
-      NotificationStatus status = NotificationStatus.error}) {
+  static showErrorSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.error}) {
     // Close any existing SnackBar
     if (Get.isSnackbarOpen) {
       Get.closeCurrentSnackbar();
@@ -274,10 +261,7 @@ class AppUIUtils {
     );
   }
 
-  static showSuccessSnackBar(
-      {String? title,
-      required String message,
-      NotificationStatus status = NotificationStatus.success}) {
+  static showSuccessSnackBar({String? title, required String message, NotificationStatus status = NotificationStatus.success}) {
     // Close any existing SnackBar
     if (Get.isSnackbarOpen) {
       Get.closeCurrentSnackbar();
@@ -363,7 +347,7 @@ class AppUIUtils {
         message: message,
       );
 
-  static onSuccess(String message) => showSuccessSnackBar(message: message);
+  static onSuccess(String message,BuildContext context) =>HelperAlert.showSuccess(context: context, text: message);
 
   static onInfo(String message) => showInfoSnackBar(message: message);
 
@@ -390,9 +374,7 @@ class AppUIUtils {
         canPop: true,
         onPopInvokedWithResult: onPopInvokedWithResult,
         child: AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: BorderSide(color: Colors.red)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.red)),
           alignment: Alignment.center,
           backgroundColor: AppColors.backGroundColor,
           title: title == null
@@ -523,8 +505,7 @@ class AppUIUtils {
     );
   }
 
-  static void showFullScreenNetworkImage(
-      BuildContext context, String imagePath) {
+  static void showFullScreenNetworkImage(BuildContext context, String imagePath) {
     OverlayService.showDialog(
       context: context,
       width: 1.sw,

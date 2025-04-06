@@ -39,6 +39,7 @@ class BillDetailsHeader extends StatelessWidget {
       child: Form(
         key: billDetailsController.formKey,
         child: Column(
+          spacing: 5,
           children: [
             SearchableAccountField(
               label: AppStrings.account.tr,

@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/profile/ui/widgets/profile_info_row_shimmer_widget.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../../../core/widgets/user_target.dart';
+import '../../../../core/widgets/user_target/user_target.dart';
 import '../../../floating_window/services/overlay_service.dart';
 import '../widgets/profile_footer.dart';
 import '../../controller/user_time_controller.dart';
@@ -24,120 +25,104 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final salesController = read<SellerSalesController>();
-    salesController
-        .onSelectSeller(
-            sellerId: read<UserManagementController>()
-                .loggedInUserModel
-                ?.userSellerId)
-        .then(
-          (value) => salesController.calculateTotalAccessoriesMobiles(),
-        );
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(child: Obx(() {
-              return salesController.profileScreenState.value ==
-                      RequestState.loading
-                  ? ListView(
-                      children: List.generate(
-                        10,
-                        (index) => Column(
-                          children: [
-                            ProfileInfoRowShimmerWidget(),
-                            VerticalSpace(),
-                          ],
-                        ),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: GetBuilder<UserManagementController>(
-                          builder: (controller) {
-                        return Column(
-                          spacing: 10,
-                          children: [
-                            ProfileInfoRowWidget(
-                              label: AppStrings.userName.tr,
-                              value: controller.loggedInUserModel!.userName
-                                  .toString(),
-                            ),
-                            ProfileInfoRowWidget(
-                              label: AppStrings.password.tr,
-                              value: controller.loggedInUserModel!.userPassword
-                                  .toString(),
-                            ),
-                            ProfileInfoRowWidget(
-                              label: AppStrings.totalSales.tr,
-                              value: (salesController.totalAccessoriesSales +
-                                      salesController.totalMobilesSales)
-                                  .toString(),
-                            ),
-                            AddTimeWidget(
-                              userTimeController: read<UserTimeController>(),
-                            ),
-                            HolidaysWidget(
-                              userTimeController: read<UserTimeController>(),
-                            ),
-                            UserDailyTimeWidget(
-                              userModel:
-                                  read<UserTimeController>().getUserById()!,
-                            ),
-                            Row(
-                              spacing: 10,
+        child: GetBuilder<SellerSalesController>(
+
+            initState: (state) async {
+          await    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized;
+          final salesController = read<SellerSalesController>();
+          await salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel!.userSellerId);
+        }, builder: (salesController) {
+          return Row(
+            children: [
+              Expanded(
+                  child: salesController.profileScreenState == RequestState.loading
+                      ? ListView(
+                          children: List.generate(
+                            10,
+                            (index) => Column(
                               children: [
-                                Expanded(
-                                  child: TaskListWidget(
-                                    taskList: controller.allTaskList,
-                                    onTap: (task) {
-                                      OverlayService.showDialog(
-                                        height: 460,
-                                        context: context,
-                                        content: TaskDialogFactory.getStrategy(
-                                                task.taskType!)
-                                            .buildDialog(task),
-                                      );
-                                    },
-                                    title: AppStrings.tasksTodo.tr,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: TaskListWidget(
-                                    taskList: controller.allTaskListDone,
-                                    onTap: (task) {
-                                      OverlayService.showDialog(
-                                        height: 460,
-                                        context: context,
-                                        content: TaskDialogFactory.getStrategy(
-                                                task.taskType!)
-                                            .buildDialog(task),
-                                      );
-                                    },
-                                    title: AppStrings.tasksEnded.tr,
-                                  ),
-                                ),
+                                ProfileInfoRowShimmerWidget(),
+                                VerticalSpace(),
                               ],
                             ),
-                            const ProfileFooter(),
-                          ],
-                        );
-                      }),
-                    );
-            })),
-            SizedBox(
-                width: 700,
-                child: Obx(() {
-                  return salesController.profileScreenState.value ==
-                          RequestState.loading
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: GetBuilder<UserManagementController>(builder: (controller) {
+                            return Column(
+                              spacing: 10,
+                              children: [
+                                ProfileInfoRowWidget(
+                                  label: AppStrings.userName.tr,
+                                  value: controller.loggedInUserModel!.userName.toString(),
+                                ),
+                                ProfileInfoRowWidget(
+                                  label: AppStrings.password.tr,
+                                  value: controller.loggedInUserModel!.userPassword.toString(),
+                                ),
+                                ProfileInfoRowWidget(
+                                  label: AppStrings.totalSales.tr,
+                                  value: (salesController.totalAccessoriesSales + salesController.totalMobilesSales).toString(),
+                                ),
+                                AddTimeWidget(
+                                  userTimeController: read<UserTimeController>(),
+                                ),
+                                HolidaysWidget(
+                                  userTimeController: read<UserTimeController>(),
+                                ),
+                                UserDailyTimeWidget(
+                                  userModel: read<UserTimeController>().getUserById()!,
+                                ),
+                                Row(
+                                  spacing: 10,
+                                  children: [
+                                    Expanded(
+                                      child: TaskListWidget(
+                                        taskList: controller.allTaskList,
+                                        onTap: (task) {
+                                          OverlayService.showDialog(
+                                            height: 460,
+                                            context: context,
+                                            content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
+                                          );
+                                        },
+                                        title: AppStrings.tasksTodo.tr,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TaskListWidget(
+                                        taskList: controller.allTaskListDone,
+                                        onTap: (task) {
+                                          OverlayService.showDialog(
+                                            height: 460,
+                                            context: context,
+                                            content: TaskDialogFactory.getStrategy(task.taskType!).buildDialog(task),
+                                          );
+                                        },
+                                        title: AppStrings.tasksEnded.tr,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const ProfileFooter(),
+                              ],
+                            );
+                          }),
+                        )),
+              SizedBox(
+                  width: 700,
+                  child: salesController.profileScreenState == RequestState.loading
                       ? UserTargetShimmerWidget()
                       : UserTargets(
                           salesController: salesController,
                           height: 500,
-                        );
-                })),
-          ],
-        ),
+                        )),
+            ],
+          );
+        }),
       ),
     );
   }

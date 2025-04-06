@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
-import '../../../../core/widgets/user_target.dart';
+import '../../../../core/widgets/user_target/user_target.dart';
 import '../../../bill/controllers/bill/all_bills_controller.dart';
 import '../widgets/date_range_picker.dart';
 

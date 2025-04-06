@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../features/bill/data/models/bill_model.dart';
@@ -25,6 +26,7 @@ class WhatsappService {
   Future<void> sendBillToWhatsApp({
     required BillModel itemModel,
     required String recipientPhoneNumber,
+    required BuildContext context
   }) async {
     final invoiceUrl = generateInvoiceUrl(
       documentId: itemModel.billId!,
@@ -34,6 +36,7 @@ class WhatsappService {
     await sendWhatsAppInvoiceLink(
       clientPhoneNumber: recipientPhoneNumber,
       invoiceUrl: invoiceUrl,
+      context: context
     );
   }
 
@@ -63,6 +66,7 @@ class WhatsappService {
   Future<void> sendWhatsAppInvoiceLink({
     required String clientPhoneNumber,
     required String invoiceUrl,
+    required BuildContext context
   }) async {
     final url = Uri.parse(
       'https://graph.facebook.com/v22.0/${ApiConstants.whatsappPhoneNumberID}/messages',
@@ -96,8 +100,11 @@ class WhatsappService {
     final response = await http.post(url, headers: headers, body: body);
 
     if (response.statusCode == 200) {
+
       log('✅ تم إرسال رابط الفاتورة بنجاح!', name: 'SendWhatsAppInvoiceLink');
-      AppUIUtils.onSuccess('✅ تم إرسال رابط الفاتورة بنجاح إلى الواتساب!');
+      if(!context.mounted) return;
+
+      AppUIUtils.onSuccess('✅ تم إرسال رابط الفاتورة بنجاح إلى الواتساب!', context);
     } else {
       log('⚠️ فشل في إرسال الرابط: ${response.body}',
           name: 'SendWhatsAppInvoiceLink');

@@ -38,7 +38,7 @@ class BillLayout extends StatelessWidget {
                     child: AppButton(
                       title: AppStrings.downloadBills.tr,
                       onPressed: () {
-                        allBillsController.fetchAllBillsFromLocal();
+                        allBillsController.fetchAllBillsFromLocal(context);
                       },
                     ),
                   ),

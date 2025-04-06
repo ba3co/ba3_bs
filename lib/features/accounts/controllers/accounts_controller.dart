@@ -28,8 +28,7 @@ import '../../logs/controllers/log_controller.dart';
 import '../data/models/account_model.dart';
 import '../service/account_service.dart';
 
-class AccountsController extends GetxController
-    with AppNavigator, FloatingLauncher {
+class AccountsController extends GetxController with AppNavigator, FloatingLauncher {
   final BulkSavableDatasourceRepository<AccountModel> _accountsFirebaseRepo;
 
   final ImportExportRepository<AccountModel> _jsonImportExportRepo;
@@ -83,20 +82,20 @@ class AccountsController extends GetxController
     );
   }
 
-  Future<void> addAccounts(List<AccountModel> accounts) async {
+  Future<void> addAccounts(List<AccountModel> accounts, BuildContext context) async {
     final result = await _accountsFirebaseRepo.saveAll(accounts);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
       (savedAccounts) {
         if (savedAccounts.isNotEmpty) {
-          AppUIUtils.onSuccess('تم رفع ${savedAccounts.length} حساب بنجاح');
+          AppUIUtils.onSuccess('تم رفع ${savedAccounts.length} حساب بنجاح', context);
         }
       },
     );
   }
 
-  Future<void> fetchAllAccountsFromLocal() async {
+  Future<void> fetchAllAccountsFromLocal(BuildContext context) async {
     log('fetchAllAccountsFromLocal');
 
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
@@ -107,25 +106,22 @@ class AccountsController extends GetxController
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedAccounts) =>
-            _handelFetchAllAccountsFromLocalSuccess(fetchedAccounts),
+        (fetchedAccounts) => _handelFetchAllAccountsFromLocalSuccess(fetchedAccounts,context),
       );
     }
 
     update();
   }
 
-  void _handelFetchAllAccountsFromLocalSuccess(
-      List<AccountModel> fetchedAccounts) async {
+  void _handelFetchAllAccountsFromLocalSuccess(List<AccountModel> fetchedAccounts, BuildContext context) async {
     log("fetchedAccounts length ${fetchedAccounts.length}");
     log('current accounts length is ${accounts.length}');
 
-    final newAccounts =
-        fetchedAccounts.subtract(accounts, (account) => account.accName);
+    final newAccounts = fetchedAccounts.subtract(accounts, (account) => account.accName);
     log('newAccounts length is ${newAccounts.length}');
 
     if (newAccounts.isNotEmpty) {
-      await addAccounts(newAccounts);
+      await addAccounts(newAccounts,context);
       accounts.assignAll(newAccounts);
     }
   }
@@ -143,17 +139,13 @@ class AccountsController extends GetxController
   }
 
   void navigateToAllAccountsScreen(BuildContext context) =>
-      launchFloatingWindow(
-          context: context,
-          minimizedTitle: ApiConstants.accounts.tr,
-          floatingScreen: AllAccountScreen());
+      launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: AllAccountScreen());
 
   void navigateToFinalAccountsScreen(BuildContext context) {
     to(AppRoutes.finalAccountsScreen);
   }
 
-  void navigateToAddOrUpdateAccountScreen(
-      {String? accountId, required BuildContext context}) {
+  void navigateToAddOrUpdateAccountScreen({String? accountId, required BuildContext context}) {
     if (accountId != null) {
       selectedAccount = getAccountModelById(accountId);
     } else {
@@ -163,10 +155,7 @@ class AccountsController extends GetxController
 
     accountFromHandler.init(accountModel: selectedAccount);
 
-    launchFloatingWindow(
-        context: context,
-        minimizedTitle: ApiConstants.accounts.tr,
-        floatingScreen: AddAccountScreen());
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: AddAccountScreen());
 
     // to(AppRoutes.addAccountScreen);
   }
@@ -181,9 +170,7 @@ class AccountsController extends GetxController
 
     // البحث عن تطابق كامل أولاً
     var exactMatch = accounts.firstWhereOrNull(
-      (item) =>
-          item.accName?.toLowerCase() == text.toLowerCase() ||
-          item.accCode == text,
+      (item) => item.accName?.toLowerCase() == text.toLowerCase() || item.accCode == text,
     );
 
     if (exactMatch != null) {
@@ -193,8 +180,7 @@ class AccountsController extends GetxController
     var partialMatch = accounts.where(
       (acc) {
         String accName = acc.accName!.toLowerCase();
-        return searchParts.every((part) => accName.contains(
-            part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
+        return searchParts.every((part) => accName.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
       },
     );
 
@@ -205,18 +191,13 @@ class AccountsController extends GetxController
     }
 
     return accounts
-        .where((item) =>
-            item.accName!.toLowerCase().startsWith(text.toLowerCase()) ||
-            item.accCode!.startsWith(text))
+        .where((item) => item.accName!.toLowerCase().startsWith(text.toLowerCase()) || item.accCode!.startsWith(text))
         .toList();
   }
 
-  List<CustomerModel> searchAccountsCustomerByName(
-      String text, List<String>? customerIds) {
-    List<CustomerModel> customerAccounts = read<CustomersController>()
-        .customers
-        .where((cu) => customerIds?.contains(cu.id) ?? false)
-        .toList();
+  List<CustomerModel> searchAccountsCustomerByName(String text, List<String>? customerIds) {
+    List<CustomerModel> customerAccounts =
+        read<CustomersController>().customers.where((cu) => customerIds?.contains(cu.id) ?? false).toList();
     if (customerAccounts.isEmpty) {
       log('customerAccounts isEmpty');
     }
@@ -236,8 +217,7 @@ class AccountsController extends GetxController
     var partialMatch = customerAccounts.where(
       (acc) {
         String accName = acc.name!.toLowerCase();
-        return searchParts.every((part) => accName.contains(
-            part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
+        return searchParts.every((part) => accName.contains(part)); // التحقق من أن جميع أجزاء النص المدخل موجودة في الاسم
       },
     );
 
@@ -247,17 +227,13 @@ class AccountsController extends GetxController
       return partialMatch.toList();
     }
 
-    return customerAccounts
-        .where(
-            (item) => item.name!.toLowerCase().startsWith(text.toLowerCase()))
-        .toList();
+    return customerAccounts.where((item) => item.name!.toLowerCase().startsWith(text.toLowerCase())).toList();
   }
 
   Map<String, AccountModel> mapAccountsByName(String query) {
     final resultMap = <String, AccountModel>{};
     for (var account in searchAccountsByNameOrCode(query)) {
-      resultMap[account.accName!] =
-          AccountModel(id: account.id, accName: account.accName);
+      resultMap[account.accName!] = AccountModel(id: account.id, accName: account.accName);
     }
     return resultMap;
   }
@@ -265,39 +241,24 @@ class AccountsController extends GetxController
   String getAccountNameById(String? accountId) {
     if (accountId == null || accountId.isEmpty) return '';
     if (accountId == '00000000-0000-0000-0000-000000000000') return '';
-    return accounts
-            .where((account) => account.id == accountId)
-            .firstOrNull
-            ?.accName ??
-        '00000000-0000-0000-0000-000000000000';
+    return accounts.where((account) => account.id == accountId).firstOrNull?.accName ?? '00000000-0000-0000-0000-000000000000';
   }
 
   String getAccountIdByName(String? accountName) {
     String? accountID;
-    if (accountName == null || accountName.isEmpty || accountName == '')
-      return '';
-    if (accounts
-            .where((account) => account.accName == accountName)
-            .firstOrNull
-            ?.id ==
-        null) {
+    if (accountName == null || accountName.isEmpty || accountName == '') return '';
+    if (accounts.where((account) => account.accName == accountName).firstOrNull?.id == null) {
       log(accountName.toString(), name: 'getAccountIdByName');
     }
-    accountID = accounts
-            .where((account) => account.accName == accountName)
-            .firstOrNull
-            ?.id ??
-        '';
+    accountID = accounts.where((account) => account.accName == accountName).firstOrNull?.id ?? '';
     // if (accountID == '') log('getAccountIdByName with $accountName is null');
     return accountID;
   }
 
   AccountModel? getAccountModelByName(String text) {
     if (text != '') {
-      final AccountModel accountModel = accounts.firstWhere(
-          (item) =>
-              item.accName!.toLowerCase() == text.toLowerCase() ||
-              item.accCode == text, orElse: () {
+      final AccountModel accountModel =
+          accounts.firstWhere((item) => item.accName!.toLowerCase() == text.toLowerCase() || item.accCode == text, orElse: () {
         log('getAccountModelByName is null with  $text');
         return AccountModel(accName: null);
       });
@@ -316,8 +277,7 @@ class AccountsController extends GetxController
 
   AccountModel? getAccountModelById(id) {
     if (!(id == null || id == '')) {
-      final AccountModel accountModel =
-          accounts.firstWhere((item) => item.id == id, orElse: () {
+      final AccountModel accountModel = accounts.firstWhere((item) => item.id == id, orElse: () {
         return AccountModel(accName: null);
       });
       if (accountModel.accName == null) {
@@ -329,28 +289,21 @@ class AccountsController extends GetxController
     return null;
   }
 
-  List<AccountModel> getAccounts(String query) =>
-      searchAccountsByNameOrCode(query);
+  List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);
 
-  List<CustomerModel> getCustomersAccounts(
-          String query, List<String>? customerIds) =>
+  List<CustomerModel> getCustomersAccounts(String query, List<String>? customerIds) =>
       searchAccountsCustomerByName(query, customerIds);
 
   List<String> getAccountChildrenNames(String? accountId) {
     if (accountId == null || accountId.isEmpty) return [];
 
-    return accounts
-        .where((account) => account.accParentGuid == accountId)
-        .map((child) => child.accName ?? '')
-        .toList();
+    return accounts.where((account) => account.accParentGuid == accountId).map((child) => child.accName ?? '').toList();
   }
 
   List<AccountModel> getAccountChildren(String? accountId) {
     if (accountId == null || accountId.isEmpty) return [];
 
-    return accounts
-        .where((account) => account.accParentGuid == accountId)
-        .toList();
+    return accounts.where((account) => account.accParentGuid == accountId).toList();
   }
 
   Future<AccountModel?> openAccountSelectionDialog({
@@ -379,8 +332,7 @@ class AccountsController extends GetxController
         },
       );
     } else {
-      AppUIUtils.showErrorSnackBar(
-          title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
+      AppUIUtils.showErrorSnackBar(title: 'فحص الحسابات', message: 'هذا الحساب غير موجود');
     }
 
     return selectedAccountModel;
@@ -393,8 +345,7 @@ class AccountsController extends GetxController
   }) async {
     if (accountId == null) return null;
     AccountModel? accountModel = getAccountModelById(accountId);
-    List<CustomerModel> searchedCustomers =
-        getCustomersAccounts(query, accountModel?.accCustomer);
+    List<CustomerModel> searchedCustomers = getCustomersAccounts(query, accountModel?.accCustomer);
     CustomerModel? selectedCustomerModel;
 
     if (searchedCustomers.length == 1) {
@@ -416,14 +367,13 @@ class AccountsController extends GetxController
         },
       );
     } else {
-      AppUIUtils.showErrorSnackBar(
-          title: 'فحص الزبائن', message: 'هذا الزبون غير موجود');
+      AppUIUtils.showErrorSnackBar(title: 'فحص الزبائن', message: 'هذا الزبون غير موجود');
     }
 
     return selectedCustomerModel;
   }
 
-  void saveOrUpdateAccount() async {
+  void saveOrUpdateAccount(BuildContext context) async {
     if (!_validateInput()) return;
 
     final updatedAccountModel = _createUpdatedAccountModel();
@@ -434,13 +384,12 @@ class AccountsController extends GetxController
     }
 
     saveAccountRequestState.value = RequestState.loading;
-    await _saveAccountWithCustomers(updatedAccountModel);
+    await _saveAccountWithCustomers(updatedAccountModel,context );
   }
 
   bool _validateInput() => accountFromHandler.validate();
 
-  AccountModel? _createUpdatedAccountModel() =>
-      accountService.createAccountModel(
+  AccountModel? _createUpdatedAccountModel() => accountService.createAccountModel(
         accountModel: selectedAccount,
         accName: accountFromHandler.nameController.text,
         accCode: accountFromHandler.codeController.text,
@@ -451,30 +400,29 @@ class AccountsController extends GetxController
         accCheckDate: Timestamp.now().toDate(),
       );
 
-  Future<void> _saveAccountWithCustomers(
-      AccountModel updatedAccountModel) async {
+  Future<void> _saveAccountWithCustomers(AccountModel updatedAccountModel,BuildContext context) async {
     if (addedCustomers.isNotEmpty) {
-      final result =
-          await read<CustomersController>().addCustomers(addedCustomers);
+      final result = await read<CustomersController>().addCustomers(addedCustomers);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (savedCustomers) => _onSaveCustomersSuccess(
           updatedAccountModel: updatedAccountModel,
           savedCustomers: savedCustomers,
+          context: context
         ),
       );
     } else {
-      await _onSaveCustomersSuccess(updatedAccountModel: updatedAccountModel);
+      await _onSaveCustomersSuccess(updatedAccountModel: updatedAccountModel,context: context);
     }
   }
 
   Future<void> _onSaveCustomersSuccess({
     required AccountModel updatedAccountModel,
     List<CustomerModel>? savedCustomers,
+    required BuildContext context
   }) async {
-    final accountWithCustomers =
-        _attachSavedCustomers(updatedAccountModel, savedCustomers);
+    final accountWithCustomers = _attachSavedCustomers(updatedAccountModel, savedCustomers);
 
     final result = await _accountsFirebaseRepo.save(accountWithCustomers);
 
@@ -485,28 +433,25 @@ class AccountsController extends GetxController
       },
       (_) {
         saveAccountRequestState.value = RequestState.success;
-        AppUIUtils.onSuccess('تم اضافة الحساب بنجاح');
+        AppUIUtils.onSuccess('تم اضافة الحساب بنجاح',context);
 
-        read<LogController>().addLog(
-            item: updatedAccountModel,
-            eventType: isEditAccount ? LogEventType.update : LogEventType.add);
+        read<LogController>()
+            .addLog(item: updatedAccountModel, eventType: isEditAccount ? LogEventType.update : LogEventType.add);
       },
     );
   }
 
-  AccountModel _attachSavedCustomers(
-      AccountModel updatedAccountModel, List<CustomerModel>? savedCustomers) {
+  AccountModel _attachSavedCustomers(AccountModel updatedAccountModel, List<CustomerModel>? savedCustomers) {
     if (savedCustomers == null) return updatedAccountModel;
 
     for (final c in savedCustomers) {
       log('customer id ${c.id}');
     }
-    final savedCustomerIds =
-        savedCustomers.map((customer) => customer.id!).toList();
+    final savedCustomerIds = savedCustomers.map((customer) => customer.id!).toList();
     return updatedAccountModel.copyWith(accCustomer: savedCustomerIds);
   }
 
-  void deleteAccount() async {
+  void deleteAccount(BuildContext context) async {
     deleteAccountRequestState.value = RequestState.loading;
 
     if (isEditAccount) {
@@ -518,9 +463,8 @@ class AccountsController extends GetxController
         },
         (_) {
           deleteAccountRequestState.value = RequestState.success;
-          AppUIUtils.onSuccess('تم حذف الحساب بنجاح');
-          read<LogController>()
-              .addLog(item: selectedAccount, eventType: LogEventType.delete);
+          AppUIUtils.onSuccess('تم حذف الحساب بنجاح',context);
+          read<LogController>().addLog(item: selectedAccount, eventType: LogEventType.delete);
         },
       );
     }
@@ -533,8 +477,7 @@ class AccountsController extends GetxController
   }
 
   void addNewCustomer() {
-    if (newCustomerNameController.text.isNotEmpty &&
-        newCustomerPhoneController.text.isNotEmpty) {
+    if (newCustomerNameController.text.isNotEmpty && newCustomerPhoneController.text.isNotEmpty) {
       addedCustomers.add(
         CustomerModel(
           name: newCustomerNameController.text,

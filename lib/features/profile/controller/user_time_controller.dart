@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/constants/app_constants.dart';
@@ -37,9 +38,7 @@ class UserTimeController extends GetxController {
       ?.userHolidays
       ?.toList()
       .where(
-        (element) =>
-            element.split("-")[1] ==
-            Timestamp.now().toDate().month.toString().padLeft(2, "0"),
+        (element) => element.split("-")[1] == Timestamp.now().toDate().month.toString().padLeft(2, "0"),
       )
       .toList();
 
@@ -59,16 +58,10 @@ class UserTimeController extends GetxController {
         return AppUIUtils.onFailure(failure.message);
       },
       (location) {
-        return isWithinRegion = _userTimeServices.isWithinRegion(
-                location,
-                AppConstants.targetLatitude,
-                AppConstants.targetLongitude,
-                AppConstants.radiusInMeters) ||
-            _userTimeServices.isWithinRegion(
-                location,
-                AppConstants.secondTargetLatitude,
-                AppConstants.secondTargetLongitude,
-                AppConstants.secondRadiusInMeters);
+        return isWithinRegion =
+            _userTimeServices.isWithinRegion(location, AppConstants.targetLatitude, AppConstants.targetLongitude, AppConstants.radiusInMeters) ||
+                _userTimeServices.isWithinRegion(
+                    location, AppConstants.secondTargetLatitude, AppConstants.secondTargetLongitude, AppConstants.secondRadiusInMeters);
       },
     );
 
@@ -81,10 +74,7 @@ class UserTimeController extends GetxController {
     getLastOutTime();
   }
 
-  Future<void> checkUserLog(
-      {required UserWorkStatus logStatus,
-      required Function(UserModel) onChecked,
-      required String errorMessage}) async {
+  Future<void> checkUserLog({required UserWorkStatus logStatus, required Function(UserModel) onChecked, required String errorMessage,required BuildContext context}) async {
     if (logStatus == UserWorkStatus.online) {
       logInState.value = RequestState.loading;
     } else {
@@ -104,30 +94,27 @@ class UserTimeController extends GetxController {
     /// check if user want to login again before logout
     /// or
     /// check if user want to logout again before login
-    if (userModel!.userWorkStatus != logStatus ||
-        userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] ==
-            null) {
+    if (userModel!.userWorkStatus != logStatus || userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] == null) {
       final updatedUserModel = onChecked(userModel);
-
+if(!context.mounted) return;
       /// check if user want to log in
       if (logStatus == UserWorkStatus.online) {
-        _saveLogInTime(updatedUserModel);
+        _saveLogInTime(updatedUserModel,context);
       } else {
-        _saveLogOutTime(updatedUserModel);
+        _saveLogOutTime(updatedUserModel,context);
       }
     } else {
       handleError(errorMessage, logStatus);
     }
   }
 
-  UserModel? getUserById() =>
-      read<UserManagementController>().loggedInUserModel!;
+  UserModel? getUserById() => read<UserManagementController>().loggedInUserModel!;
 
-  Future<void> checkLogInAndSave() async {
+  Future<void> checkLogInAndSave(BuildContext context) async {
     await checkUserLog(
       /// This is the user's status after the operation
       logStatus: UserWorkStatus.online,
-
+context: context,
       /// After confirming the possibility of lo
       onChecked: (userModel) => _userTimeServices.addLoginTimeToUserModel(
         userModel: userModel,
@@ -136,11 +123,11 @@ class UserTimeController extends GetxController {
     );
   }
 
-  Future<void> checkLogOutAndSave() async {
+  Future<void> checkLogOutAndSave(BuildContext context) async {
     await checkUserLog(
       /// This is the user's status after the operation
       logStatus: UserWorkStatus.away,
-
+context: context,
       /// After confirming the possibility of lo
       onChecked: (userModel) => _userTimeServices.addLogOutTimeToUserModel(
         userModel: userModel,
@@ -149,21 +136,20 @@ class UserTimeController extends GetxController {
     );
   }
 
-  void _saveLogOutTime(UserModel updatedUserModel) async {
+  void _saveLogOutTime(UserModel updatedUserModel,BuildContext context) async {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
     result.fold(
       (failure) {
         handleError(failure.message, UserWorkStatus.away);
       },
       (fetchedUser) {
-        handleSuccess('تم تسجيل الخروج بنجاح', UserWorkStatus.away);
-        setLastOutTime =
-            AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
+        handleSuccess('تم تسجيل الخروج بنجاح', UserWorkStatus.away,context);
+        setLastOutTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
     );
   }
 
-  void _saveLogInTime(UserModel updatedUserModel) async {
+  void _saveLogInTime(UserModel updatedUserModel,BuildContext context) async {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
@@ -171,25 +157,22 @@ class UserTimeController extends GetxController {
         handleError(failure.message, UserWorkStatus.online);
       },
       (fetchedUser) {
-        handleSuccess('تم تسجيل الدخول بنجاح', UserWorkStatus.online);
+        handleSuccess('تم تسجيل الدخول بنجاح', UserWorkStatus.online,context);
 
-        setLastEnterTime =
-            AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
+        setLastEnterTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
     );
   }
 
   getLastEnterTime() async {
-    List<DateTime> enterTimeList =
-        _userTimeServices.getEnterTimes(getUserById()) ?? [];
+    List<DateTime> enterTimeList = _userTimeServices.getEnterTimes(getUserById()) ?? [];
     if (enterTimeList.isNotEmpty) {
       setLastEnterTime = AppServiceUtils.formatDateTime(enterTimeList.last);
     }
   }
 
   getLastOutTime() async {
-    List<DateTime> outTimeList =
-        _userTimeServices.getOutTimes(getUserById()) ?? [];
+    List<DateTime> outTimeList = _userTimeServices.getOutTimes(getUserById()) ?? [];
     if (outTimeList.isNotEmpty) {
       setLastOutTime = AppServiceUtils.formatDateTime(outTimeList.last);
     }
@@ -204,13 +187,13 @@ class UserTimeController extends GetxController {
     AppUIUtils.onFailure(errorMessage);
   }
 
-  void handleSuccess(String successMessage, UserWorkStatus status) {
+  void handleSuccess(String successMessage, UserWorkStatus status,BuildContext context) {
     if (status == UserWorkStatus.online) {
       logInState.value = RequestState.success;
     } else {
       logOutState.value = RequestState.success;
     }
-    AppUIUtils.onSuccess(successMessage);
+    AppUIUtils.onSuccess(successMessage,context);
   }
 
   set setLastEnterTime(String time) {

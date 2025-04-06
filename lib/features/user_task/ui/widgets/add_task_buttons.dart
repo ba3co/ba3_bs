@@ -25,7 +25,7 @@ class AddTaskButtons extends StatelessWidget {
             title: AppStrings.delete.tr,
             color: Colors.red,
             onPressed: () {
-              controller.deleteTask();
+              controller.deleteTask(context);
             },
             iconData: FontAwesomeIcons.deleteLeft,
           ),
@@ -33,7 +33,7 @@ class AddTaskButtons extends StatelessWidget {
           title: controller.isNewTask ? AppStrings.save.tr : AppStrings.edit.tr,
           color: controller.isNewTask ? null : Colors.green,
           onPressed: () {
-            controller.saveOrUpdateTask();
+            controller.saveOrUpdateTask(context);
           },
           iconData: controller.isNewTask
               ? FontAwesomeIcons.plusSquare

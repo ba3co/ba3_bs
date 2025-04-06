@@ -48,8 +48,7 @@ class BillDetailsController extends IBillController
     implements IStoreSelectionHandler {
   // Repositories
 
-  final CompoundDatasourceRepository<BillModel, BillTypeModel>
-      _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
 
   final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
@@ -71,8 +70,7 @@ class BillDetailsController extends IBillController
   final TextEditingController billNumberController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
-  final TextEditingController customerAccountController =
-      TextEditingController();
+  final TextEditingController customerAccountController = TextEditingController();
   final TextEditingController billAccountController = TextEditingController();
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
@@ -115,13 +113,11 @@ class BillDetailsController extends IBillController
   }
 
   // @override
-  void updateCustomerAccount(
-      CustomerModel? newAccount, BillTypeModel billTypeModel) {
+  void updateCustomerAccount(CustomerModel? newAccount, BillTypeModel billTypeModel) {
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
       customerAccountController.text = newAccount.name!;
-      if (billTypeModel.isPurchaseRelated &&
-          newAccount.customerHasVat != true) {
+      if (billTypeModel.isPurchaseRelated && newAccount.customerHasVat != true) {
         billDetailsPlutoController.clearVat();
       } else {
         billDetailsPlutoController.returnVat();
@@ -138,17 +134,8 @@ class BillDetailsController extends IBillController
 
   @override
   Future<void> sendToEmail(
-      {required String recipientEmail,
-      String? url,
-      String? subject,
-      String? body,
-      List<String>? attachments}) async {
-    _billService.sendToEmail(
-        recipientEmail: recipientEmail,
-        url: url,
-        subject: subject,
-        body: body,
-        attachments: attachments);
+      {required String recipientEmail, String? url, String? subject, String? body, List<String>? attachments,required BuildContext context}) async {
+    _billService.sendToEmail(recipientEmail: recipientEmail, url: url, subject: subject, body: body, attachments: attachments,context: context);
   }
 
   @override
@@ -183,11 +170,9 @@ class BillDetailsController extends IBillController
     return validate;
   }
 
-  String? validator(String? value, String fieldName) =>
-      isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
-  void updateBillType(String billTypeLabel) =>
-      billType = BillType.byLabel(billTypeLabel);
+  void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
 
   set setBillDate(DateTime newDate) {
     billDate.value = newDate;
@@ -202,9 +187,7 @@ class BillDetailsController extends IBillController
   }
 
   Future<void> printBill(
-      {required BuildContext context,
-      required BillModel billModel,
-      required List<InvoiceRecordModel> invRecords}) async {
+      {required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     await read<PrintingController>().startPrinting(
@@ -224,27 +207,25 @@ class BillDetailsController extends IBillController
     );
   }
 
-  void updateBillStatus(BillModel billModel, newStatus) async {
-    if (billModel.items.itemList
-        .map((e) => e.itemName)
-        .contains('الباركود خطأ')) {
+  void updateBillStatus(BillModel billModel, newStatus,BuildContext context) async {
+    if (billModel.items.itemList.map((e) => e.itemName).contains('الباركود خطأ')) {
       AppUIUtils.onFailure('لا يمكن تغيير حالة الفاتورة بسبب وجود باركود خطأ');
       return;
     } else {
-      final result =
-          await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
+      final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
         (updatedBillModel) => _billService.handleUpdateBillStatusSuccess(
           updatedBillModel: updatedBillModel,
           billSearchController: billSearchController,
+          context: context,
         ),
       );
     }
   }
 
-  Future<void> deleteBill(BillModel billModel) async {
+  Future<void> deleteBill(BillModel billModel,BuildContext context) async {
     if (billModel.isPurchaseRelated) {
       if (await _hasSoldSerialNumbers(billModel)) return;
     }
@@ -262,6 +243,7 @@ class BillDetailsController extends IBillController
         await _billService.handleDeleteSuccess(
           billToDelete: billModel,
           billSearchController: billSearchController,
+          context: context,
         );
         deleteBillRequestState.value = RequestState.success;
       },
@@ -304,10 +286,7 @@ class BillDetailsController extends IBillController
     return result.fold(
       (failure) => null, // Return null on failure
       (SerialNumberModel serialsModel) => serialsModel.transactions.isNotEmpty
-          ? serialsModel.transactions
-              .where((transaction) => transaction.sold ?? false)
-              .last
-              .sellBillNumber
+          ? serialsModel.transactions.where((transaction) => transaction.sold ?? false).last.sellBillNumber
           : null,
     );
   }
@@ -329,10 +308,8 @@ class BillDetailsController extends IBillController
         },
         (SerialNumberModel serialsModel) async {
           // Filter out transactions related to the deleted bill
-          final updatedTransactions = serialsModel.transactions
-              .where((transaction) =>
-                  transaction.sellBillId != billToDelete.billId)
-              .toList();
+          final updatedTransactions =
+              serialsModel.transactions.where((transaction) => transaction.sellBillId != billToDelete.billId).toList();
 
           if (updatedTransactions.length == serialsModel.transactions.length) {
             log('🔍 No transactions to delete for serial [$soldSerialNumber].');
@@ -340,16 +317,13 @@ class BillDetailsController extends IBillController
           }
 
           // Update the serial number model with filtered transactions
-          final updatedSerialModel =
-              serialsModel.copyWith(transactions: updatedTransactions);
+          final updatedSerialModel = serialsModel.copyWith(transactions: updatedTransactions);
 
           // Update Firestore or local database with new transaction list
-          final updateResult =
-              await _serialNumbersRepo.save(updatedSerialModel);
+          final updateResult = await _serialNumbersRepo.save(updatedSerialModel);
 
           updateResult.fold(
-            (failure) => log(
-                '❌ Failed to update transactions for serial [$soldSerialNumber]: ${failure.message}'),
+            (failure) => log('❌ Failed to update transactions for serial [$soldSerialNumber]: ${failure.message}'),
             (success) => log(
                 '✅ Successfully removed transactions linked to bill [${billToDelete.billId}] for serial [$soldSerialNumber].'),
           );
@@ -358,29 +332,25 @@ class BillDetailsController extends IBillController
     }
   }
 
-  Future<void> deleteBuySerialTransactions(BillModel billToDelete) async {
+  Future<void> deleteBuySerialTransactions(BillModel billToDelete, BuildContext context) async {
     final materialController = read<MaterialController>();
 
     for (final billItem in billToDelete.items.itemList) {
-      final materialModel =
-          materialController.getMaterialById(billItem.itemGuid);
+      final materialModel = materialController.getMaterialById(billItem.itemGuid);
       final purchaseSerialNumbers = billItem.itemSerialNumbers ?? [];
 
       if (materialModel.serialNumbers == null) {
         continue; // Skip if material or serial numbers are missing
       }
 
-      final updatedSerialNumbers =
-          Map<String, bool>.from(materialModel.serialNumbers!);
+      final updatedSerialNumbers = Map<String, bool>.from(materialModel.serialNumbers!);
 
       for (final serialNumber in purchaseSerialNumbers) {
-        await _processSerialTransaction(
-            billToDelete, materialModel, serialNumber, updatedSerialNumbers);
+        await _processSerialTransaction(billToDelete, materialModel, serialNumber, updatedSerialNumbers);
       }
-
+if(!context.mounted) return;
       // Apply the updated serial numbers to the material model
-      materialController.updateMaterialWithChanges(
-          materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+      materialController.updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers),  context);
     }
   }
 
@@ -399,10 +369,8 @@ class BillDetailsController extends IBillController
         log('❌ Failed to retrieve serial number [$serialNumber]: ${failure.message}');
       },
       (SerialNumberModel serialsModel) async {
-        final updatedTransactions = serialsModel.transactions
-            .where(
-                (transaction) => transaction.buyBillId != billToDelete.billId)
-            .toList();
+        final updatedTransactions =
+            serialsModel.transactions.where((transaction) => transaction.buyBillId != billToDelete.billId).toList();
 
         if (updatedTransactions.length == serialsModel.transactions.length) {
           log('🔍 No purchase transactions to delete for serial [$serialNumber].');
@@ -411,14 +379,11 @@ class BillDetailsController extends IBillController
 
         if (updatedTransactions.isEmpty) {
           // No transactions remain, so delete the serial document
-          await _deleteSerialDocument(
-              serialNumber, materialModel, updatedSerialNumbers);
+          await _deleteSerialDocument(serialNumber, materialModel, updatedSerialNumbers);
         } else {
           // Update Firestore with filtered transactions
-          final updatedSerialModel =
-              serialsModel.copyWith(transactions: updatedTransactions);
-          final updateResult =
-              await _serialNumbersRepo.save(updatedSerialModel);
+          final updatedSerialModel = serialsModel.copyWith(transactions: updatedTransactions);
+          final updateResult = await _serialNumbersRepo.save(updatedSerialModel);
 
           await updateResult.fold(
             (failure) async {
@@ -426,8 +391,7 @@ class BillDetailsController extends IBillController
             },
             (success) async {
               log('✅ Successfully removed purchase transactions linked to bill [${billToDelete.billId}] for serial [$serialNumber].');
-              _updateSerialNumberStatus(materialModel, serialNumber,
-                  updatedSerialNumbers, updatedTransactions);
+              _updateSerialNumberStatus(materialModel, serialNumber, updatedSerialNumbers, updatedTransactions);
             },
           );
         }
@@ -470,10 +434,8 @@ class BillDetailsController extends IBillController
     }
   }
 
-  Future<void> saveBill(BillTypeModel billTypeModel,
-      {required BuildContext context, required bool withPrint}) async {
-    await _saveOrUpdateBill(
-        billTypeModel: billTypeModel, context: context, withPrint: withPrint);
+  Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context, required bool withPrint}) async {
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context, withPrint: withPrint);
   }
 
   Future<void> updateBill(
@@ -481,11 +443,7 @@ class BillDetailsController extends IBillController
       required BillModel billModel,
       required BuildContext context,
       required withPrint}) async {
-    await _saveOrUpdateBill(
-        billTypeModel: billTypeModel,
-        existingBill: billModel,
-        context: context,
-        withPrint: withPrint);
+    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
   }
 
   Future<void> _saveOrUpdateBill(
@@ -498,8 +456,7 @@ class BillDetailsController extends IBillController
     if (!await validateForm(context)) return;
 
     // 2. Create the bill model or handle failure and exit
-    final updatedBillModel =
-        _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
+    final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
     if (updatedBillModel == null) return;
 
     log('updatedBillModel itemList length ${updatedBillModel.items.itemList.length}');
@@ -511,8 +468,7 @@ class BillDetailsController extends IBillController
 
     if (!context.mounted) return;
 
-    await _saveBillAndHandleResult(
-        context, updatedBillModel, existingBill, withPrint);
+    await _saveBillAndHandleResult(context, updatedBillModel, existingBill, withPrint);
   }
 
   /// Checks if there's actually no change from the existing bill.
@@ -524,8 +480,8 @@ class BillDetailsController extends IBillController
   }
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
-  Future<void> _saveBillAndHandleResult(BuildContext context,
-      BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
+  Future<void> _saveBillAndHandleResult(
+      BuildContext context, BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
     saveBillRequestState.value = RequestState.loading;
 
     final result = await _billsFirebaseRepo.save(updatedBill);
@@ -550,8 +506,7 @@ class BillDetailsController extends IBillController
     );
   }
 
-  Future<void> saveSerialNumbers(BillModel billModel,
-      Map<MaterialModel, List<TextEditingController>> serialControllers) async {
+  Future<void> saveSerialNumbers(BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers, BuildContext context) async {
     log('saveSerialNumbers $serialControllers');
 
     // Create a list to collect the serial number models.
@@ -567,8 +522,7 @@ class BillDetailsController extends IBillController
           // If the text is not empty, create a SerialNumberModel.
           if (serialText.isNotEmpty) {
             final SerialNumberModel serialNumberModel =
-                SerialNumberModelFactory.getModel(serialText,
-                    billModel: billModel, material: material);
+                SerialNumberModelFactory.getModel(serialText, billModel: billModel, material: material);
             items.add(serialNumberModel);
           }
         }
@@ -581,18 +535,14 @@ class BillDetailsController extends IBillController
     // Handle the result of the save operation.
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (List<SerialNumberModel> savedSerialsModels) =>
-          onSaveSerialsSuccess(serialControllers, savedSerialsModels),
+      (List<SerialNumberModel> savedSerialsModels) => onSaveSerialsSuccess(serialControllers, savedSerialsModels,  context),
     );
   }
 
   void onSaveSerialsSuccess(
-      Map<MaterialModel, List<TextEditingController>> serialControllers,
-      List<SerialNumberModel> savedSerialsModels) {
-    serialControllers
-        .forEach((MaterialModel material, List<TextEditingController> serials) {
-      final materialModel =
-          read<MaterialController>().getMaterialById(material.id!);
+      Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels, BuildContext context) {
+    serialControllers.forEach((MaterialModel material, List<TextEditingController> serials) {
+      final materialModel = read<MaterialController>().getMaterialById(material.id!);
 
       for (final serial in savedSerialsModels) {
         log('onSaveSerialsSuccess serial: ${serial.toJson()}');
@@ -601,16 +551,13 @@ class BillDetailsController extends IBillController
       // Ensure non-null keys and values
       final Map<String, bool> updatedSerialNumbers = {
         ...?materialModel.serialNumbers, // Preserve existing serials
-        for (final serial
-            in savedSerialsModels.where((s) => s.matId == material.id))
-          if (serial.serialNumber != null &&
-              serial.transactions.last.sold != null)
+        for (final serial in savedSerialsModels.where((s) => s.matId == material.id))
+          if (serial.serialNumber != null && serial.transactions.last.sold != null)
             serial.serialNumber!: serial.transactions.last.sold!,
       };
 
       // Update the material model with new serial numbers
-      read<MaterialController>().updateMaterialWithChanges(
-          materialModel.copyWith(serialNumbers: updatedSerialNumbers));
+      read<MaterialController>().updateMaterialWithChanges(materialModel.copyWith(serialNumbers: updatedSerialNumbers), context);
     });
   }
 
@@ -620,26 +567,19 @@ class BillDetailsController extends IBillController
     return result;
   }
 
-  appendNewBill(
-      {required BillTypeModel billTypeModel,
-      required int lastBillNumber,
-      int? previousBillNumber}) {
-    BillModel newBill = BillModel.empty(
-        billTypeModel: billTypeModel,
-        lastBillNumber: lastBillNumber,
-        previousBillNumber: previousBillNumber);
+  appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber, int? previousBillNumber}) {
+    BillModel newBill =
+        BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber, previousBillNumber: previousBillNumber);
 
     billSearchController.insertLastAndUpdate(newBill);
   }
 
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
-  BillModel? _buildBillModelOrNotifyFailure(
-      BillTypeModel billTypeModel, BillModel? existingBill) {
+  BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
     log('existingBill itemList length ${existingBill?.items.itemList.length}');
 
-    final updatedBillModel =
-        _createBillModelFromBillData(billTypeModel, existingBill);
+    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
     if (updatedBillModel == null) {
       AppUIUtils.onFailure('من فضلك أدخل اسم العميل واسم البائع!');
@@ -649,11 +589,9 @@ class BillDetailsController extends IBillController
     return updatedBillModel;
   }
 
-  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel,
-      [BillModel? billModel]) {
+  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
     // Validate customer and seller accounts
-    if (billTypeModel.billPatternType!.hasCashesAccount ||
-        billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
       if (/*!_billUtils.validateCustomerAccount(selectedCustomerAccount)&&*/ !_billUtils
           .validateBillAccount(selectedBillAccount)) {
         return null;
@@ -682,10 +620,8 @@ class BillDetailsController extends IBillController
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
       billFirstPay: firstPayController.text.toDouble,
-      billCustomerId: selectedCustomerAccount?.id! ??
-          "00000000-0000-0000-0000-000000000000",
-      billAccountId:
-          selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      billAccountId: selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billSellerId: selectedSellerAccount?.costGuid ?? '',
       billPayType: selectedPayType.value.index,
     );
@@ -700,16 +636,13 @@ class BillDetailsController extends IBillController
     return billsCountByType;
   }
 
-  prepareBillRecords(BillItems billItems,
-          BillDetailsPlutoController billDetailsPlutoController) =>
+  prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
       billDetailsPlutoController.prepareBillMaterialsRows(
         billItems.getMaterialRecords,
       );
 
-  prepareAdditionsDiscountsRecords(BillModel billModel,
-          BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareAdditionsDiscountsRows(
-          billModel.getAdditionsDiscountsRecords);
+  prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
+      billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);
 
   initCustomerAccount(CustomerModel? account) {
     if (account != null) {
@@ -733,8 +666,7 @@ class BillDetailsController extends IBillController
     }
   }
 
-  void updateBillDetailsOnScreen(
-      BillModel bill, BillDetailsPlutoController billPlutoController) {
+  void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate = bill.billDetails.billDate!;
@@ -745,8 +677,7 @@ class BillDetailsController extends IBillController
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
     initBillNumberController(bill.billDetails.billNumber);
-    initCustomerAccount(read<CustomersController>()
-        .getCustomerById(bill.billDetails.billCustomerId));
+    initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
     initBillAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
     initFreeLocalSwitcher(bill.freeBill);
 
@@ -761,16 +692,14 @@ class BillDetailsController extends IBillController
   void initSellerAccount({
     required String? sellerId,
   }) {
-    final String? billSellerId = sellerId ??
-        read<UserManagementController>().loggedInUserModel?.userSellerId;
+    final String? billSellerId = sellerId ?? read<UserManagementController>().loggedInUserModel?.userSellerId;
 
     if (billSellerId == null) {
       selectedSellerAccount = null;
 
       sellerAccountController.text = '';
     } else {
-      final SellerModel sellerAccount =
-          read<SellersController>().getSellerById(billSellerId);
+      final SellerModel sellerAccount = read<SellersController>().getSellerById(billSellerId);
 
       updateSellerAccount(sellerAccount);
 
@@ -781,38 +710,32 @@ class BillDetailsController extends IBillController
   updateSellerAccount(SellerModel? newAccount) {
     if (newAccount != null) {
       selectedSellerAccount = newAccount;
+      sellerAccountController.text= newAccount.costName!;
     }
   }
 
-  void generateAndSendBillPdfToEmail(BillModel billModel,
-      {String? recipientEmail}) {
+  void generateAndSendBillPdfToEmail(BillModel billModel, BuildContext context,{String? recipientEmail}) {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
     _billService.generatePdfAndSendToEmail(
-        fileName: AppStrings.existedBill.tr,
-        itemModel: billModel,
-        recipientEmail: recipientEmail);
+        fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail,context: context);
   }
 
-  void sendBillToWhatsapp(BillModel billModel) {
+  void sendBillToWhatsapp(BillModel billModel,BuildContext context) {
     if (!_billService.hasClientPhoneNumber()) return;
 
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
-    WhatsappService.instance.sendBillToWhatsApp(
-        itemModel: billModel,
-        recipientPhoneNumber: customerPhoneController.text);
+    WhatsappService.instance.sendBillToWhatsApp(itemModel: billModel, recipientPhoneNumber: customerPhoneController.text,context: context);
   }
 
-  showEInvoiceDialog(BillModel billModel, BuildContext context) =>
-      _billService.showEInvoiceDialog(billModel, context);
+  showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);
 
-  void openFirstPayDialog(BuildContext context) =>
-      _billService.showFirstPayDialog(context, firstPayController);
+  void openFirstPayDialog(BuildContext context) => _billService.showFirstPayDialog(context, firstPayController);
 
   // Initialize the AdvancedSwitchController with a default value.
   final advancedSwitchController = ValueNotifier(false);

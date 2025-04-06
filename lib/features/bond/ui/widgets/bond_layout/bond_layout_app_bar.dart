@@ -7,14 +7,14 @@ import 'package:get/get.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../users_management/data/models/role_model.dart';
 
-AppBar bondLayoutAppBar(AllBondsController controller) {
+AppBar bondLayoutAppBar(AllBondsController controller,BuildContext context) {
   return AppBar(actions: [
     if (RoleItemType.administrator.hasAdminPermission)
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: AppButton(
           title: AppStrings.downloadBonds.tr,
-          onPressed: () => controller.fetchAllBondsLocal(),
+          onPressed: () => controller.fetchAllBondsLocal(context),
         ),
       ),
   ]);

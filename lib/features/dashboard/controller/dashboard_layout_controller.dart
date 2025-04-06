@@ -45,8 +45,7 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
   int get usersMustWorkingNowLength => allUsers
       .where((user) {
         return user.userWorkingHours!.values.any((interval) {
-          return now.isAfter(interval.enterTime!.toWorkingTime()) &&
-              now.isBefore(interval.outTime!.toWorkingTime());
+          return now.isAfter(interval.enterTime!.toWorkingTime()) && now.isBefore(interval.outTime!.toWorkingTime());
         });
       })
       .toList()
@@ -68,11 +67,9 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
   refreshDashBoardAccounts() async {
     fetchDashBoardAccountsRequest.value = RequestState.loading;
     for (final account in dashBoardAccounts) {
-      final AccountModel? accountModel =
-          read<AccountsController>().getAccountModelById(account.id);
+      final AccountModel? accountModel = read<AccountsController>().getAccountModelById(account.id);
 
-      final balance = await read<AccountStatementController>()
-          .getAccountBalance(accountModel!);
+      final balance = await read<AccountStatementController>().getAccountBalance(accountModel!);
       account.balance = balance.toString();
       await _datasourceRepository.update(account);
     }
@@ -84,16 +81,14 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
     return dashBoardAccounts[index];
   }
 
-  addDashBoardAccount() async {
-    final AccountModel? accountModel = read<AccountsController>()
-        .getAccountModelByName(accountNameController.text);
+  addDashBoardAccount( BuildContext context) async {
+    final AccountModel? accountModel = read<AccountsController>().getAccountModelByName(accountNameController.text);
     if (accountModel == null) {
       AppUIUtils.onFailure("يرجى إدخال اسم الحساب");
       return;
     }
 
-    final balance = await read<AccountStatementController>()
-        .getAccountBalance(accountModel);
+    final balance = await read<AccountStatementController>().getAccountBalance(accountModel);
     final DashAccountModel dashAccountModel = DashAccountModel(
       id: accountModel.id,
       name: accountModel.accName,
@@ -103,7 +98,7 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حفظ الحساب بنجاح'),
+      (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حفظ الحساب بنجاح',context),
     );
     getAllDashBoardAccounts();
     accountNameController.clear();
@@ -113,8 +108,7 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
   void onAccountNameSubmitted(String text, BuildContext context) async {
     final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
 
-    AccountModel? accountModel =
-        await read<AccountsController>().openAccountSelectionDialog(
+    AccountModel? accountModel = await read<AccountsController>().openAccountSelectionDialog(
       query: convertArabicNumbers,
       context: context,
     );
@@ -129,16 +123,16 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
       title: 'هل تريد حذف الحساب؟',
     )) {
       final DashAccountModel dashAccountModel = dashBoardAccounts[index];
-      final result = await _datasourceRepository.delete(
-          dashAccountModel, dashAccountModel.id!);
+      final result = await _datasourceRepository.delete(dashAccountModel, dashAccountModel.id!);
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedDashBoardAccounts) =>
-            AppUIUtils.onSuccess('تم حذف الحساب بنجاح'),
+        (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حذف الحساب بنجاح',context),
       );
       getAllDashBoardAccounts();
       update();
     }
   }
+
+
 }

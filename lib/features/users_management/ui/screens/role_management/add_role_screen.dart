@@ -15,19 +15,14 @@ class AddRoleScreen extends StatelessWidget {
     return GetBuilder<UserManagementController>(builder: (controller) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(controller.roleModel?.roleName ??
-              '${AppStrings.role.tr} ${AppStrings.newS.tr}'),
+          title: Text(controller.roleModel?.roleName ?? '${AppStrings.role.tr} ${AppStrings.newS.tr}'),
           actions: [
             AppButton(
-              title: controller.roleModel?.roleId == null
-                  ? AppStrings.add.tr
-                  : AppStrings.edit.tr,
+              title: controller.roleModel?.roleId == null ? AppStrings.add.tr : AppStrings.edit.tr,
               onPressed: () {
-                controller.saveOrUpdateRole(
-                    existingRoleModel: controller.roleModel);
+                controller.saveOrUpdateRole(existingRoleModel: controller.roleModel,context: context);
               },
-              iconData:
-                  controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
+              iconData: controller.roleModel?.roleId == null ? Icons.add : Icons.edit,
             ),
             const HorizontalSpace(),
           ],
@@ -36,15 +31,14 @@ class AddRoleScreen extends StatelessWidget {
           padding: const EdgeInsets.all(30.0),
           child: ListView(
             children: [
-              Text(AutofillHints.name.tr, style: TextStyle(fontSize: 16)),
+               Text(AutofillHints.name.tr, style: TextStyle(fontSize: 16)),
               Form(
                 key: controller.roleFormHandler.formKey,
                 child: Container(
                   color: Colors.grey.shade200,
                   child: TextFormField(
                     controller: controller.roleFormHandler.roleNameController,
-                    validator: (value) => controller.roleFormHandler
-                        .defaultValidator(value, 'أسم الصلاحية'),
+                    validator: (value) => controller.roleFormHandler.defaultValidator(value, 'أسم الصلاحية'),
                   ),
                 ),
               ),
@@ -54,15 +48,12 @@ class AddRoleScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      AppStrings.selectAll.tr,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                     Text(
+                     AppStrings.selectAll.tr,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     IconButton(
-                      icon: Icon(controller.areAllRolesSelected()
-                          ? Icons.clear_all
-                          : Icons.select_all),
+                      icon: Icon(controller.areAllRolesSelected() ? Icons.clear_all : Icons.select_all),
                       onPressed: () {
                         // Toggle select/deselect all roles
                         if (controller.areAllRolesSelected()) {
@@ -86,8 +77,7 @@ class AddRoleScreen extends StatelessWidget {
                         children: [
                           Text(
                             roleType.value,
-                            style: const TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                           ),
                           IconButton(
                             icon: Icon(
@@ -97,8 +87,7 @@ class AddRoleScreen extends StatelessWidget {
                             ),
                             onPressed: () {
                               // Toggle select/deselect all roles under this RoleItemType
-                              if (controller
-                                  .areAllRolesSelectedForType(roleType)) {
+                              if (controller.areAllRolesSelectedForType(roleType)) {
                                 controller.deselectAllRolesForType(roleType);
                               } else {
                                 controller.selectAllRolesForType(roleType);
@@ -111,8 +100,7 @@ class AddRoleScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 50),
                         child: Column(
                           children: [
-                            for (final roleItem in RoleItem.values)
-                              checkBoxWidget(roleType, roleItem, controller),
+                            for (final roleItem in RoleItem.values) checkBoxWidget(roleType, roleItem, controller),
                           ],
                         ),
                       ),
@@ -126,8 +114,7 @@ class AddRoleScreen extends StatelessWidget {
     });
   }
 
-  Widget checkBoxWidget(RoleItemType key, RoleItem roleItem,
-      UserManagementController controller) {
+  Widget checkBoxWidget(RoleItemType key, RoleItem roleItem, UserManagementController controller) {
     return Row(
       children: [
         StatefulBuilder(builder: (context, setState) {
@@ -140,9 +127,7 @@ class AddRoleScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
               side: const BorderSide(color: Colors.white),
             ),
-            value:
-                (controller.roleFormHandler.rolesMap[key]?.contains(roleItem) ??
-                    false),
+            value: (controller.roleFormHandler.rolesMap[key]?.contains(roleItem) ?? false),
             onChanged: (newValue) {
               if (newValue!) {
                 if (controller.roleFormHandler.rolesMap[key] == null) {

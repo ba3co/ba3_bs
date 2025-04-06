@@ -8,7 +8,7 @@ import '../../../../../core/widgets/app_button.dart';
 import '../../../../users_management/data/models/role_model.dart';
 import '../../../controllers/bill/all_bills_controller.dart';
 
-AppBar billLayoutAppBar() {
+AppBar billLayoutAppBar(BuildContext context) {
   return AppBar(
     actions: [
       if (RoleItemType.administrator.hasReadPermission)
@@ -16,8 +16,7 @@ AppBar billLayoutAppBar() {
           padding: const EdgeInsets.all(8.0),
           child: AppButton(
             title: AppStrings.downloadBills.tr,
-            onPressed: () =>
-                read<AllBillsController>().fetchAllBillsFromLocal(),
+            onPressed: () => read<AllBillsController>().fetchAllBillsFromLocal(context),
           ),
         ),
     ],

@@ -36,23 +36,16 @@ class BondDetailsButtons extends StatelessWidget {
         children: [
           Obx(() {
             return AppButton(
-                isLoading: bondDetailsController.saveBondRequestState.value ==
-                    RequestState.loading,
-                title: bondDetailsController.isBondSaved.value
-                    ? AppStrings.newS.tr
-                    : AppStrings.add.tr,
+                isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
+                title: bondDetailsController.isBondSaved.value ? AppStrings.newS.tr : AppStrings.add.tr,
                 height: 20,
-                color: bondDetailsController.isBondSaved.value
-                    ? Colors.green
-                    : Colors.blue.shade700,
+                color: bondDetailsController.isBondSaved.value ? Colors.green : Colors.blue.shade700,
                 onPressed: bondDetailsController.isBondSaved.value
                     ? () => bondDetailsController.appendNewBill(
                         bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
-                        lastBondNumber:
-                            bondSearchController.bonds.last.payNumber!)
+                        lastBondNumber: bondSearchController.bonds.last.payNumber!)
                     : () async {
-                        await bondDetailsController.saveBond(
-                            BondType.byTypeGuide(bondModel.payTypeGuid!));
+                        await bondDetailsController.saveBond(BondType.byTypeGuide(bondModel.payTypeGuid!),context);
                       },
                 iconData: Icons.add_chart_outlined);
           }),
@@ -67,14 +60,14 @@ class BondDetailsButtons extends StatelessWidget {
             ),
             Obx(() {
               return AppButton(
-                isLoading: bondDetailsController.saveBondRequestState.value ==
-                    RequestState.loading,
+                isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
                 title: AppStrings.edit.tr,
                 height: 20,
                 onPressed: () async {
                   bondDetailsController.updateBond(
                     bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
                     bondModel: bondModel,
+                    context: context
                   );
                 },
                 iconData: Icons.edit_outlined,
@@ -85,21 +78,19 @@ class BondDetailsButtons extends StatelessWidget {
                 title: AppStrings.pdfEmail.tr,
                 height: 20,
                 onPressed: () {
-                  bondDetailsController.generateAndSendBondPdf(bondModel);
+                  bondDetailsController.generateAndSendBondPdf(bondModel,context);
                 },
                 iconData: Icons.link,
               ),
             Obx(() {
               return AppButton(
-                isLoading: bondDetailsController.deleteBondRequestState.value ==
-                    RequestState.loading,
+                isLoading: bondDetailsController.deleteBondRequestState.value == RequestState.loading,
                 iconData: Icons.delete_outline,
                 height: 20,
                 color: Colors.red,
                 title: AppStrings.delete.tr,
                 onPressed: () async {
-                  bondDetailsController.deleteBond(bondModel,
-                      fromBondById: fromBondById);
+                  bondDetailsController.deleteBond(bondModel,context, fromBondById: fromBondById);
                 },
               );
             }),

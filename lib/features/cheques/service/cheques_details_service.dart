@@ -16,8 +16,7 @@ import '../controllers/cheques/cheques_details_controller.dart';
 import '../controllers/cheques/cheques_search_controller.dart';
 import '../data/models/cheques_model.dart';
 
-class ChequesDetailsService
-    with PdfBase, EntryBondsGenerator, FloatingLauncher {
+class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
   void launchChequesEntryBondScreen({
     required BuildContext context,
     required ChequesModel chequesModel,
@@ -28,13 +27,11 @@ class ChequesDetailsService
     // final EntryBondModel entryBondModel =
     //     creators.first.createEntryBond(model: chequesModel, originType: EntryBondType.cheque);
 
-    final entryBondModel = createChequeEntryBondByStrategy(chequesModel,
-        chequesStrategyType: chequesStrategyType);
+    final entryBondModel = createChequeEntryBondByStrategy(chequesModel, chequesStrategyType: chequesStrategyType);
 
     launchFloatingWindow(
       context: context,
-      minimizedTitle:
-          'سند خاص ب ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value}',
+      minimizedTitle: 'سند خاص ب ${ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!).value}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
@@ -73,33 +70,27 @@ class ChequesDetailsService
     );
   }
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel,
-      ChequesSearchController chequesSearchController,
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,BuildContext context,
       [fromChequesById]) async {
     final entryBondController = read<EntryBondController>();
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
-      await read<AllChequesController>().fetchAllChequesByType(
-          ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
+      await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
       Get.back();
     } else {
       chequesSearchController.removeCheques(chequesModel);
     }
-    entryBondController.deleteEntryBondModel(
-        entryId: chequesModel.chequesGuid!,
-        sourceNumber: chequesModel.chequesNumber!);
+    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, sourceNumber: chequesModel.chequesNumber!);
     if (chequesModel.chequesPayGuid != null) {
-      entryBondController.deleteEntryBondModel(
-          entryId: chequesModel.chequesPayGuid!,
-          sourceNumber: chequesModel.chequesNumber!);
+      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!);
     }
     if (chequesModel.chequesRefundPayGuid != null) {
       entryBondController.deleteEntryBondModel(
-          entryId: chequesModel.chequesRefundPayGuid!,
-          sourceNumber: chequesModel.chequesNumber!);
+          entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!);
     }
+    if(!context.mounted) return;
 
-    AppUIUtils.onSuccess('تم حذف الشيك بنجاح!');
+    AppUIUtils.onSuccess('تم حذف الشيك بنجاح!',context);
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -108,23 +99,25 @@ class ChequesDetailsService
     required ChequesDetailsController chequesDetailsController,
     required ChequesSearchController chequesSearchController,
     required bool isSave,
+    required BuildContext context
   }) async {
-    final successMessage =
-        isSave ? 'تم حفظ الشيك بنجاح!' : 'تم تعديل الشيك بنجاح!';
+    final successMessage = isSave ? 'تم حفظ الشيك بنجاح!' : 'تم تعديل الشيك بنجاح!';
 
-    AppUIUtils.onSuccess(successMessage);
+    AppUIUtils.onSuccess(successMessage,context);
 
     if (isSave) {
       chequesDetailsController.updateIsChequesSaved(true);
       generatePdfAndSendToEmail(
         fileName: AppStrings.newBond.tr,
         itemModel: currentChequesModel,
+        context: context
       );
     } else {
       chequesSearchController.updateCheques(currentChequesModel);
       generatePdfAndSendToEmail(
         fileName: AppStrings.newBond.tr,
         itemModel: [prevChequesModel!, currentChequesModel],
+        context: context
       );
     }
 

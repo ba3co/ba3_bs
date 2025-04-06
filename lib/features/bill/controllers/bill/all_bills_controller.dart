@@ -237,7 +237,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     getAllNestedBillsRequestState.value = RequestState.success;
   }
 
-  Future<void> fetchAllBillsFromLocal() async {
+  Future<void> fetchAllBillsFromLocal(BuildContext context) async {
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
@@ -247,12 +247,12 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills),
+        (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills,context),
       );
     }
   }
 
-  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills) async {
+  void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills,BuildContext context) async {
     log("fetchedBills length ${fetchedBills.length}");
 
     bills.assignAll(fetchedBills);
@@ -290,8 +290,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
       );
     }
     saveAllBillsRequestState.value = RequestState.success;
-
-    AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح");
+    if(!context.mounted) return;
+    AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح", context);
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
@@ -510,7 +510,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       (failure) =>
           AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
       (filePath) => AppUIUtils.showExportSuccessDialog(
-          filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:'),
+          filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:',Get.context!),
     );
   }
 
