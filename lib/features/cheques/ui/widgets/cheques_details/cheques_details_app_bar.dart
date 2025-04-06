@@ -33,7 +33,7 @@ class ChequesDetailsAppBar extends StatelessWidget
       actions: [
         IconButton(
             onPressed: () {
-              chequesSearchController.previous();
+              chequesSearchController.previous(context);
             },
             icon: const LanguageSwitchFaIcon(
                 iconData: Icons.keyboard_double_arrow_right)),
@@ -45,7 +45,7 @@ class ChequesDetailsAppBar extends StatelessWidget
             textEditingController:
                 chequesDetailsController.chequesNumberController,
             onSubmitted: (chequesNumber) {
-              chequesSearchController.goToChequesByNumber(chequesNumber.toInt);
+              chequesSearchController.goToChequesByNumber(chequesNumber.toInt,);
             },
           ),
         ),

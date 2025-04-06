@@ -19,7 +19,7 @@ class _LogLayoutState extends State<LogLayout> {
   void initState() {
     final controller = read<LogController>();
     controller.logDateRange.value = controller.defaultDateRange;
-    controller.loadLogs();
+    controller.loadLogs(context);
     super.initState();
   }
 
@@ -43,7 +43,7 @@ class _LogLayoutState extends State<LogLayout> {
               initialSelectedRange: controller.logDateRange.value,
               onSelectionChanged: controller.onDateRangeSelectionChanged,
               onSubmit: (value) {
-                controller.onDateRangeSubmit();
+                controller.onDateRangeSubmit(context);
                 Navigator.pop(context);
               },
               onCancel: () {

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_details_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
@@ -49,7 +50,7 @@ class ChequesSearchController extends GetxController {
   }
 
   /// Deletes the cheques in the search results if it exists
-  void removeCheques(ChequesModel chequesToDelete) {
+  void removeCheques(ChequesModel chequesToDelete, ) {
     final chequesIndex =
         _getChequesIndexByNumber(chequesToDelete.chequesNumber);
 
@@ -68,7 +69,7 @@ class ChequesSearchController extends GetxController {
       chequesNumber <= chequesList.last.chequesNumber!;
 
   /// Handles invalid cheques number cases by showing appropriate error messages
-  void _showInvalidChequesNumberError(int? chequesNumber) {
+  void _showInvalidChequesNumberError(int? chequesNumber, ) {
     final firstChequesNumber = chequesList.first.chequesNumber!;
     final lastChequesNumber = chequesList.last.chequesNumber!;
 
@@ -78,13 +79,13 @@ class ChequesSearchController extends GetxController {
             ? 'رقم السند غير متوفر. رقم أول سند هو $firstChequesNumber'
             : 'رقم السند غير متوفر. رقم أخر سند هو $lastChequesNumber';
 
-    _displayErrorMessage(message);
+    _displayErrorMessage(message,);
   }
 
   /// Navigates to the cheques by its number
-  void goToChequesByNumber(int? chequesNumber) {
+  void goToChequesByNumber(int? chequesNumber, ) {
     if (!_isValidChequesNumber(chequesNumber)) {
-      _showInvalidChequesNumberError(chequesNumber);
+      _showInvalidChequesNumberError(chequesNumber,);
       return;
     }
 
@@ -93,44 +94,44 @@ class ChequesSearchController extends GetxController {
     if (chequesIndex != -1) {
       _setCurrentCheques(chequesIndex);
     } else {
-      _displayErrorMessage('السند غير موجودة');
+      _displayErrorMessage('السند غير موجودة',);
     }
   }
 
   /// Moves to the current cheques if possible
-  void reloadCurrentCheques() {
+  void reloadCurrentCheques( ) {
     log('Navigating to current cheques, current index: $currentChequesIndex');
     if (currentChequesIndex <= chequesList.length - 1) {
       _setCurrentCheques(currentChequesIndex);
     } else {
-      _displayErrorMessage('لا يوجد سند أخر');
+      _displayErrorMessage('لا يوجد سند أخر',);
     }
   }
 
   /// Moves to the next cheques if possible
-  void next() {
+  void next( ) {
     log('Navigating to next cheques, current index: $currentChequesIndex');
     if (currentChequesIndex < chequesList.length - 1) {
       _setCurrentCheques(currentChequesIndex + 1);
     } else {
-      _displayErrorMessage('لا يوجد سند أخرى');
+      _displayErrorMessage('لا يوجد سند أخرى',);
     }
   }
 
   /// Moves to the previous cheques if possible
-  void previous() {
+  void previous(BuildContext context) {
     log('Navigating to previous cheques, current index: $currentChequesIndex');
     if (currentChequesIndex > 0) {
       _setCurrentCheques(currentChequesIndex - 1);
     } else {
-      _displayErrorMessage('لا يوجد سند سابقة');
+      _displayErrorMessage('لا يوجد سند سابقة',);
     }
   }
 
   /// Moves to the last cheques in the list
-  void last() {
+  void last( ) {
     if (chequesList.isEmpty) {
-      _displayErrorMessage('لا توجد فواتير متوفرة');
+      _displayErrorMessage('لا توجد فواتير متوفرة',);
       return;
     }
     _setCurrentCheques(chequesList.length - 1);
@@ -157,5 +158,5 @@ class ChequesSearchController extends GetxController {
   bool get isNew => currentCheques.chequesGuid == null;
 
   /// Displays an error message
-  void _displayErrorMessage(String message) => AppUIUtils.onFailure(message);
+  void _displayErrorMessage(String message, ) => AppUIUtils.onFailure(message, );
 }

@@ -24,7 +24,7 @@ class AccountLayout extends StatelessWidget {
               read<AccountsController>().fetchAllAccountsFromLocal(context);
             }),
             _buildAppBarButton(AppStrings.downloadCustomers.tr, () {
-              read<CustomersController>().fetchAllCustomersFromLocal();
+              read<CustomersController>().fetchAllCustomersFromLocal(context);
             }),
           ],
         ),
@@ -46,7 +46,7 @@ class AccountLayout extends StatelessWidget {
                 title: AppStrings.accountStatement.tr,
                 onTap: () {
                   showDialog<String>(
-                    context: Get.context!,
+                    context:context ,
                     builder: (BuildContext context) =>
                         showAccountFilterDialog(context),
                   );

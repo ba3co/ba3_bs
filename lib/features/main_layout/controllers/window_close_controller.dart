@@ -33,7 +33,7 @@ class WindowCloseController extends GetxController with WindowListener {
 
   Future<bool> _showMacOSExitConfirmationDialog() async {
     return await showDialog<bool>(
-          context: Get.context!,
+          context: ,
           builder: (BuildContext context) {
             return Dialog(
               backgroundColor: const Color(0xFF2C2C2E),

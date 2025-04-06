@@ -134,7 +134,7 @@ class MigrationLayout extends StatelessWidget {
                     : () {
                         controller.migrationController.text =
                             versionController.text.trim();
-                        controller.addMigrationVersion();
+                        controller.addMigrationVersion(context);
                       },
                 child: controller.addMigrationVersionsRequestState.value ==
                         RequestState.loading

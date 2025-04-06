@@ -107,8 +107,8 @@ class AppUIUtils {
     return dates;
   }
 
-  static void showExportSuccessDialog(String filePath, String successMessage, String title,BuildContext context) {
-    AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!',context);
+  static void showExportSuccessDialog(String filePath, String successMessage, String title) {
+    AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!',);
     Get.defaultDialog(
       title: 'تم تصدير الملف إلى:',
       radius: 8,
@@ -122,7 +122,7 @@ class AppUIUtils {
             label: const Text('نسخ المسار'),
             onPressed: () {
               Clipboard.setData(ClipboardData(text: filePath));
-              AppUIUtils.onSuccess('تم نسخ المسار إلى الحافظة',context);
+              AppUIUtils.onSuccess('تم نسخ المسار إلى الحافظة');
             },
           ),
         ],
@@ -343,11 +343,9 @@ class AppUIUtils {
     }
   }
 
-  static onFailure(String message) => showErrorSnackBar(
-        message: message,
-      );
+  static onFailure(String message) => HelperAlert.showError( text: message);
 
-  static onSuccess(String message,BuildContext context) =>HelperAlert.showSuccess(context: context, text: message);
+  static onSuccess(String message) =>HelperAlert.showSuccess( text: message);
 
   static onInfo(String message) => showInfoSnackBar(message: message);
 

@@ -82,7 +82,7 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
     barGroups = [];
     groupedData.clear();
     allCheques = await read<AllChequesController>()
-        .fetchChequesByType(ChequesType.paidChecks);
+        .fetchChequesByType(ChequesType.paidChecks,);
     List<DateTime> dueDates = allCheques
         .where((cheque) =>
             cheque.isPayed != true &&

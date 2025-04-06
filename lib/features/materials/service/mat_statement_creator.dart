@@ -51,7 +51,7 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
   double _getStatementPrice(BillModel model, BillItem matItem) {
     if (model.billTypeModel.isSalesReturn) {
       return read<MaterialController>()
-              .getMaterialById(matItem.itemGuid)
+              .getMaterialById(matItem.itemGuid,)
               .calcMinPrice ??
           0;
     } else {
@@ -67,7 +67,7 @@ class BillMatStatementCreator implements MatStatementCreator<BillModel> {
       }
 
       final currentMaterial =
-          read<MaterialController>().getMaterialById(matItem.itemGuid);
+          read<MaterialController>().getMaterialById(matItem.itemGuid,);
 
       if ((currentMaterial.matLocalQuantity ?? 0) <= 0) {
         return model.copyWith(freeBill: true);

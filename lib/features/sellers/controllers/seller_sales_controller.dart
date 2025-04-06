@@ -101,7 +101,7 @@ class SellerSalesController extends GetxController
     return true;
   }
 
-  Future<void> onSubmitDateRangePicker() async {
+  Future<void> onSubmitDateRangePicker(BuildContext context) async {
     if (!isValidDateRange()) return;
 
     log('onSubmitDateRangePicker ${dateRange!.startDate}, ${dateRange!.endDate}');
@@ -111,6 +111,8 @@ class SellerSalesController extends GetxController
     setInFilterMode = true;
 
     await fetchSellerBillsByDate(
+      context: context
+,
       sellerModel: selectedSeller!,
       dateTimeRange:
           DateTimeRange(start: dateRange!.startDate!, end: dateRange!.endDate!),
@@ -143,7 +145,7 @@ class SellerSalesController extends GetxController
 
   // Sets the selected seller and fetches their bills
   Future<void> onSelectSeller(
-      {SellerModel? sellerModel, String? sellerId}) async {
+      {SellerModel? sellerModel, String? sellerId ,required BuildContext context}) async {
     if (sellerModel == null && sellerId == null) return;
     profileScreenState = RequestState.loading;
     safeUpdateUI();
@@ -153,6 +155,8 @@ class SellerSalesController extends GetxController
     setSelectedSeller = sellerModel;
 
     await fetchSellerBillsByDate(
+      context: context
+,
       sellerModel: sellerModel,
       dateTimeRange: DateTimeRange(
           start: defaultDateRange.startDate!, end: defaultDateRange.endDate!),
@@ -186,7 +190,7 @@ class SellerSalesController extends GetxController
 
   Future<void> fetchSellerBillsByDate(
       {required SellerModel sellerModel,
-      required DateTimeRange dateTimeRange}) async {
+      required DateTimeRange dateTimeRange,required BuildContext context}) async {
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
@@ -200,8 +204,7 @@ class SellerSalesController extends GetxController
     result.fold(
       (failure) {
         if (inFilterMode) {
-          AppUIUtils.onFailure(
-              ' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
+          AppUIUtils.onFailure(' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ', );
           totalAccessoriesSales = 0;
           totalMobilesSales = 0;
           clearFilter();
@@ -307,14 +310,13 @@ class SellerSalesController extends GetxController
   void navigateToSellerSalesScreen(
       SellerModel sellerModel, BuildContext context) async {
     sellerBills.clear();
-    await onSelectSeller(sellerModel: sellerModel);
+    await onSelectSeller(sellerModel: sellerModel,context: context);
     if (!context.mounted) return;
     if (sellerBills.isNotEmpty) {
       launchFloatingWindow(
           context: context, floatingScreen: SellerSalesScreen());
     } else {
-      AppUIUtils.onFailure(
-          ' لا توجد فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ');
+      AppUIUtils.onFailure(' لا توجد فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ', );
     }
   }
 

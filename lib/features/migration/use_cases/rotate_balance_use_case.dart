@@ -8,6 +8,7 @@ import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 
+
 import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../accounts/data/models/account_model.dart';
@@ -40,7 +41,7 @@ class RotateBalancesUseCase {
         name: "RotateBalancesUseCase");
 
     final allAccountsStatement = await accountStatementController
-        .fetchAccountsStatement(accountEntities);
+        .fetchAccountsStatement(accountEntities,);
 
     final entryBondItems = await accountStatementController
         .processEntryBondItemsInIsolateUseCase
@@ -66,7 +67,7 @@ class RotateBalancesUseCase {
     final isDebitCreditEquals = checkDebitCreditEquals(totalDebit, totalCredit);
 
     if (!isDebitCreditEquals) {
-      AppUIUtils.onFailure('الحسابات ليست متساوية');
+      AppUIUtils.onFailure('الحسابات ليست متساوية', );
       log("❌ الحسابات ليست متساوية", name: "RotateBalancesUseCase");
       return;
     }

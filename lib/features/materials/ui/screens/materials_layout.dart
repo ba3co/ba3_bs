@@ -34,11 +34,11 @@ class MaterialLayout extends StatelessWidget {
                     ? [
                         _buildAdminButton(AppStrings.downloadMaterials.tr, () {
                           read<MaterialController>()
-                              .fetchAllMaterialFromLocal(context);
+                              .fetchAllMaterialFromLocal();
                         }),
                         _buildAdminButton(AppStrings.deletedMaterials.tr, () {
                           read<MaterialController>()
-                              .deleteAllMaterialFromLocal(context);
+                              .deleteAllMaterialFromLocal();
                         }),
                         _buildAdminButton(AppStrings.downloadGroups.tr, () {
                           read<MaterialGroupController>()

@@ -73,7 +73,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     initializer();
   }
 
-  Future<void> addAccount(AccountModel account) async {
+  Future<void> addAccount(AccountModel account,) async {
     final result = await _accountsFirebaseRepo.save(account);
 
     result.fold(
@@ -82,14 +82,14 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  Future<void> addAccounts(List<AccountModel> accounts, BuildContext context) async {
+  Future<void> addAccounts(List<AccountModel> accounts, ) async {
     final result = await _accountsFirebaseRepo.saveAll(accounts);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message,),
       (savedAccounts) {
         if (savedAccounts.isNotEmpty) {
-          AppUIUtils.onSuccess('تم رفع ${savedAccounts.length} حساب بنجاح', context);
+          AppUIUtils.onSuccess('تم رفع ${savedAccounts.length} حساب بنجاح');
         }
       },
     );
@@ -105,7 +105,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
       final result = await _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedAccounts) => _handelFetchAllAccountsFromLocalSuccess(fetchedAccounts,context),
       );
     }
@@ -121,7 +121,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     log('newAccounts length is ${newAccounts.length}');
 
     if (newAccounts.isNotEmpty) {
-      await addAccounts(newAccounts,context);
+      await addAccounts(newAccounts,);
       accounts.assignAll(newAccounts);
     }
   }
@@ -130,7 +130,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     final result = await _accountsFirebaseRepo.getAll();
 
     result.fold(
-      (error) => AppUIUtils.onFailure(error.message),
+      (error) => AppUIUtils.onFailure(error.message, ),
       (fetchedAccount) => accounts = fetchedAccount,
     );
 
@@ -379,7 +379,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     final updatedAccountModel = _createUpdatedAccountModel();
 
     if (updatedAccountModel == null) {
-      AppUIUtils.onFailure('من فضلك أدخل ');
+      AppUIUtils.onFailure('من فضلك أدخل ', );
       return;
     }
 
@@ -402,10 +402,10 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
 
   Future<void> _saveAccountWithCustomers(AccountModel updatedAccountModel,BuildContext context) async {
     if (addedCustomers.isNotEmpty) {
-      final result = await read<CustomersController>().addCustomers(addedCustomers);
+      final result = await read<CustomersController>().addCustomers(addedCustomers,context);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (savedCustomers) => _onSaveCustomersSuccess(
           updatedAccountModel: updatedAccountModel,
           savedCustomers: savedCustomers,
@@ -429,14 +429,15 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     result.fold(
       (failure) {
         saveAccountRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (_) {
         saveAccountRequestState.value = RequestState.success;
-        AppUIUtils.onSuccess('تم اضافة الحساب بنجاح',context);
+        AppUIUtils.onSuccess('تم اضافة الحساب بنجاح',);
 
         read<LogController>()
-            .addLog(item: updatedAccountModel, eventType: isEditAccount ? LogEventType.update : LogEventType.add);
+            .addLog(
+            item: updatedAccountModel, eventType: isEditAccount ? LogEventType.update : LogEventType.add);
       },
     );
   }
@@ -459,12 +460,12 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
       result.fold(
         (failure) {
           deleteAccountRequestState.value = RequestState.error;
-          AppUIUtils.onFailure(failure.message);
+          AppUIUtils.onFailure(failure.message, );
         },
         (_) {
           deleteAccountRequestState.value = RequestState.success;
-          AppUIUtils.onSuccess('تم حذف الحساب بنجاح',context);
-          read<LogController>().addLog(item: selectedAccount, eventType: LogEventType.delete);
+          AppUIUtils.onSuccess('تم حذف الحساب بنجاح',);
+          read<LogController>().addLog(          item: selectedAccount, eventType: LogEventType.delete);
         },
       );
     }
@@ -476,7 +477,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     showAddCustomerForm.value = !showAddCustomerForm.value;
   }
 
-  void addNewCustomer() {
+  void addNewCustomer(BuildContext context) {
     if (newCustomerNameController.text.isNotEmpty && newCustomerPhoneController.text.isNotEmpty) {
       addedCustomers.add(
         CustomerModel(
@@ -489,7 +490,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
       newCustomerPhoneController.clear();
       showAddCustomerForm.value = false;
     } else {
-      AppUIUtils.onFailure('يرجى تعبئة جميع الحقول');
+      AppUIUtils.onFailure('يرجى تعبئة جميع الحقول', );
     }
   }
 

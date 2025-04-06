@@ -49,7 +49,7 @@ class AllBillsTypesList extends StatelessWidget {
                           allBillsCounts:
                               allBillsController.allBillsCounts(billTypeModel),
                           onPendingBillsPressed: () => allBillsController
-                              .fetchPendingBills(billTypeModel),
+                              .fetchPendingBills(billTypeModel,),
                         ),
                       )
                       .toList()
@@ -71,7 +71,7 @@ class AllBillsTypesList extends StatelessWidget {
                             .allBillsCounts(patternController.billsTypeSales),
                         onPendingBillsPressed: () =>
                             allBillsController.fetchPendingBills(
-                                patternController.billsTypeSales),
+                                patternController.billsTypeSales,),
                       )
                     ],
         );

@@ -60,13 +60,13 @@ class AllBondsController extends FloatingBondDetailsLauncher
     await fetchAllBondsCountsByTypes(BondType.values);
   }
 
-  Future<void> fetchAllNestedBonds() async {
+  Future<void> fetchAllNestedBonds(BuildContext context) async {
     // getAllNestedBondsRequestState.value = RequestState.loading;
 
     final result = await _bondsFirebaseRepo.fetchAllNested(BondType.values);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedNestedBonds) => nestedBonds.assignAll(fetchedNestedBonds),
     );
     bondsByTypeGuid.assignAll(nestedBonds.map(
@@ -95,12 +95,12 @@ class AllBondsController extends FloatingBondDetailsLauncher
   BondModel getBondById(String bondId) =>
       bonds.firstWhere((bond) => bond.payGuid == bondId);
 
-  Future<void> fetchAllBondsByType(BondType itemTypeModel) async {
+  Future<void> fetchAllBondsByType(BondType itemTypeModel, ) async {
     log('fetchAllBondsByType');
     final result = await _bondsFirebaseRepo.getAll(itemTypeModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedBonds) => bonds.assignAll(fetchedBonds),
     );
 
@@ -118,7 +118,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
       final result = await _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedBonds) async {
           log('bonds.length ${fetchedBonds.length}');
           bonds.assignAll(fetchedBonds);
@@ -129,8 +129,11 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
             await _bondsFirebaseRepo.saveAllNested(
                 items: bonds, itemIdentifiers: BondType.values);
+            if(!context.mounted)return;
+
             await createAndStoreEntryBonds(
               sourceModels: bonds,
+              context: context,
               sourceNumbers: bonds.select((bond) => bond.payNumber).toList(),
               onProgress: (progress) {
                 uploadProgress.value = progress; // Update progress
@@ -141,7 +144,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
           saveAllBondsRequestState.value = RequestState.success;
           if(!context.mounted) return;
 
-          AppUIUtils.onSuccess('تم تحميل السندات بنجاح',context);
+          AppUIUtils.onSuccess('تم تحميل السندات بنجاح',);
         },
       );
     }
@@ -176,7 +179,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
   void openBondDetailsById(
       String bondId, BuildContext context, BondType itemTypeModel) async {
-    final BondModel bondModel = await fetchBondsById(bondId, itemTypeModel);
+    final BondModel bondModel = await fetchBondsById(bondId, itemTypeModel,);
     if (!context.mounted) return;
 
     openFloatingBondDetails(
@@ -192,7 +195,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
         id: bondId, itemIdentifier: itemTypeModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedBonds) => bondModel = fetchedBonds,
     );
     return bondModel;
@@ -306,7 +309,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
     update();
     // Handle errors if any.
     if (errors.isNotEmpty) {
-      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}',);
     }
   }
 
@@ -321,7 +324,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
     final result = await _bondsFirebaseRepo.getAll(bondType);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure('لا يوجد سندات  في ${bondType.value}'),
+      (failure) => AppUIUtils.onFailure('لا يوجد سندات  في ${bondType.value}', ),
       (fetchedPendingBonds) {
         bonds.assignAll(fetchedPendingBonds);
       },

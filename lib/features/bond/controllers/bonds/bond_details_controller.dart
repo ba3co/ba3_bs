@@ -104,7 +104,7 @@ class BondDetailsController extends GetxController with AppValidator {
     await result.fold(
       (failure) {
         deleteBondRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (success) async {
         await _bondService.handleDeleteSuccess(
@@ -129,7 +129,7 @@ class BondDetailsController extends GetxController with AppValidator {
     if (!validateForm()) return;
 
     if (!bondDetailsPlutoController.checkIfBalancedBond()) {
-      AppUIUtils.onFailure('يجب موازنة السند من فضلك!');
+      AppUIUtils.onFailure('يجب موازنة السند من فضلك!', );
       return;
     }
     // Create the bond model from the provided data
@@ -138,13 +138,13 @@ class BondDetailsController extends GetxController with AppValidator {
 
     // Handle null bond model
     if (updatedBondModel == null) {
-      AppUIUtils.onFailure('من فضلك يرجى اضافة الحساب!');
+      AppUIUtils.onFailure('من فضلك يرجى اضافة الحساب!', );
       return;
     }
 
     // Ensure there are bond items
     if (updatedBondModel.payItems.itemList.isEmpty) {
-      AppUIUtils.onFailure('من فضلك يرجى اضافة حقول للسند');
+      AppUIUtils.onFailure('من فضلك يرجى اضافة حقول للسند', );
       return;
     }
 
@@ -157,7 +157,7 @@ class BondDetailsController extends GetxController with AppValidator {
     await result.fold(
       (failure) {
         saveBondRequestState.value = RequestState.error;
-        return AppUIUtils.onFailure(failure.message);
+        return AppUIUtils.onFailure(failure.message, );
       },
       (bondModel) async {
         await _bondService.handleSaveOrUpdateSuccess(
@@ -191,7 +191,7 @@ class BondDetailsController extends GetxController with AppValidator {
       [BondModel? bondModel]) {
     // Validate customer accounts
     if (bondSearchController.bondDetailsController.isDebitOrCredit) {
-      if (!_bondService.validateAccount(selectedAccount)) {
+      if (!_bondService.validateAccount(selectedAccount,)) {
         return null;
       }
     }
@@ -224,6 +224,7 @@ class BondDetailsController extends GetxController with AppValidator {
     setBondDate(bond.payDate!.toDate);
     isBondSaved.value = bond.payGuid != null;
     initBondNumberController(bond.payNumber);
+    initBondNote(bond.payNote);
 
     if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid) != null) {
       setAccount(
@@ -239,9 +240,9 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   generateAndSendBondPdf(BondModel bondModel,BuildContext context) {
-    if (!_bondService.hasModelId(bondModel.payGuid)) return;
+    if (!_bondService.hasModelId(bondModel.payGuid,)) return;
 
-    if (!_bondService.hasModelItems(bondModel.payItems.itemList)) return;
+    if (!_bondService.hasModelItems(bondModel.payItems.itemList,)) return;
 
     _bondService.generatePdfAndSendToEmail(
       fileName: AppStrings.bond.tr,
@@ -255,5 +256,9 @@ class BondDetailsController extends GetxController with AppValidator {
         BondModel.empty(bondType: bondType, lastBondNumber: lastBondNumber);
 
     bondSearchController.insertLastAndUpdate(newBond);
+  }
+
+  void initBondNote(String? payNote) {
+    noteController.text = payNote ?? '';
   }
 }

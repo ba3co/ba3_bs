@@ -114,7 +114,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     result.fold(
       (failure) {
         deleteChequesRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (success) {
         deleteChequesRequestState.value = RequestState.success;
@@ -140,7 +140,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
 
     // Handle null cheques model
     if (updatedChequesModel == null) {
-      AppUIUtils.onFailure('من فضلك يرجى اضافة الحساب!');
+      AppUIUtils.onFailure('من فضلك يرجى اضافة الحساب!', );
       return;
     }
 
@@ -153,7 +153,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     result.fold(
       (failure) {
         saveChequesRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (currentChequesModel) {
         saveChequesRequestState.value = RequestState.success;
@@ -197,7 +197,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
   ChequesModel? _createChequesModelFromChequesData(ChequesType chequesType, [ChequesModel? chequesModel]) {
     // Validate customer accounts
 
-    if (!_chequesService.validateAccount(chequesAccPtr) || !_chequesService.validateAccount(chequesToAccountModel)) {
+    if (!_chequesService.validateAccount(chequesAccPtr,) || !_chequesService.validateAccount(chequesToAccountModel,)) {
       return null;
     }
 
@@ -260,12 +260,14 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
 
     // read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
+    if(!context.mounted)return;
 
     createAndStoreChequeEntryBondByStrategy(
       updatedModel,
       chequesStrategyType: ChequesStrategyType.payStrategy,
       sourceNumber: updatedModel.chequesNumber!,
-      isSave: false,
+      isSave: false,          context: context
+
     );
   }
 
@@ -273,8 +275,11 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     setIsPayed(false);
     final updatedModel = chequesModel.copyWithNullPayGuid();
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
+    if(!context.mounted)return;
+
     read<EntryBondController>()
-        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!);
+        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,          context: context
+    );
   }
 
   void refundPayCheques(ChequesModel chequesModel, BuildContext context) async {
@@ -292,12 +297,15 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     // log(entryBondModel.origin!.toJson().toString());
 
     // read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
+    if(!context.mounted)return;
 
     createAndStoreChequeEntryBondByStrategy(
       updatedModel,
       chequesStrategyType: ChequesStrategyType.refundStrategy,
       sourceNumber: updatedModel.chequesNumber!,
       isSave: false,
+        context: context
+
     );
   }
 
@@ -305,7 +313,11 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     setIsRefundPay(false);
     final updatedModel = chequesModel.copyWithNullRefundPayGuid();
     await _saveOrUpdateCheques(chequesType: chequesType, existingChequesModel: updatedModel,context: context);
+    if(!context.mounted)return;
+
     read<EntryBondController>()
-        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!);
+
+        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,          context: context
+    );
   }
 }

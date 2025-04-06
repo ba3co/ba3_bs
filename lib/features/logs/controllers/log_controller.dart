@@ -52,14 +52,14 @@ class LogController extends GetxController with FloatingLauncher {
     logDateRange.value = args.value;
   }
 
-  void onDateRangeSubmit() {
+  void onDateRangeSubmit(BuildContext context) {
     if (logDateRange.value?.startDate != null &&
         logDateRange.value?.endDate != null) {
-      loadLogs();
+      loadLogs(context);
     }
   }
 
-  Future<void> loadLogs() async {
+  Future<void> loadLogs(BuildContext context) async {
     isLoading.value = true;
     final result = await _repository.fetchWhere(
         dateFilter: DateFilter(
@@ -70,7 +70,7 @@ class LogController extends GetxController with FloatingLauncher {
       ),
     ));
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (logList) {
         logs.value = logList;
         applyFilters();
@@ -100,6 +100,7 @@ class LogController extends GetxController with FloatingLauncher {
   Future<void> addLog<T>(
       {required T item,
       required LogEventType eventType,
+
       int? sourceNumber}) async {
     final LogModel logModel = LogModelFactory.create(
         item: item, eventType: eventType, sourceNumber: sourceNumber);
@@ -107,7 +108,7 @@ class LogController extends GetxController with FloatingLauncher {
     final result = await _repository.save(logModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (savedLog) {
         logs.add(savedLog);
         applyFilters();
@@ -115,10 +116,10 @@ class LogController extends GetxController with FloatingLauncher {
     );
   }
 
-  Future<void> deleteLog(String id) async {
+  Future<void> deleteLog(String id,BuildContext context) async {
     final result = await _repository.delete(id);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (_) {
         logs.removeWhere((log) => log.sourceId == id);
         applyFilters();

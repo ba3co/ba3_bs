@@ -514,7 +514,7 @@ class PrintingController extends GetxController {
     final materialController = read<MaterialController>();
 
     for (var record in invoiceRecords) {
-      final material = materialController.getMaterialById(record.invRecId!);
+      final material = materialController.getMaterialById(record.invRecId!,);
       final recordTotals = _computeRecordTotals(record);
 
 // Update totals

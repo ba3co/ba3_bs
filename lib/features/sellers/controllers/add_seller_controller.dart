@@ -39,7 +39,7 @@ class AddSellerController extends GetxController with AppNavigator {
     final code = int.tryParse(codeController.text.trim());
 
     if (name.isEmpty || code == null) {
-      AppUIUtils.onFailure("يرجى إدخال اسم ورمز صالحين.");
+      AppUIUtils.onFailure("يرجى إدخال اسم ورمز صالحين.", );
       return;
     }
 
@@ -68,7 +68,7 @@ class AddSellerController extends GetxController with AppNavigator {
     result.fold(
       (failure) {
         saveSellerRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (savedSeller) {
         saveSellerRequestState.value = RequestState.success;
@@ -81,7 +81,7 @@ class AddSellerController extends GetxController with AppNavigator {
     final sellersController =
         Get.find<SellersController>(); // Ensure Get.find is used correctly
 
-    AppUIUtils.onSuccess('تم حفظ البائع بنجاح!',context);
+    AppUIUtils.onSuccess('تم حفظ البائع بنجاح!',);
 
     if (isNew) {
       sellersController.sellers.add(savedSeller);

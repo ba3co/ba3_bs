@@ -63,7 +63,7 @@ class UserNavigator with AppNavigator, FloatingLauncher {
       offAll(AppRoutes.loginScreen);
     } else {
       _userController.fetchAndHandleUser(
-          _sharedPreferencesService.getString(AppConstants.userIdKey)!);
+          _sharedPreferencesService.getString(AppConstants.userIdKey)!,);
     }
   }
 }

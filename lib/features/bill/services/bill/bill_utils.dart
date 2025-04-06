@@ -33,15 +33,15 @@ class BillUtils {
 
   bool validateCustomerAccount(CustomerModel? customerAccount) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!', );
       return false;
     }
     return true;
   }
 
-  bool validateBillAccount(AccountModel? customerAccount) {
+  bool validateBillAccount(AccountModel? customerAccount,) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!', );
       return false;
     }
     return true;
@@ -49,7 +49,7 @@ class BillUtils {
 
   bool validateSellerAccount(SellerModel? sellerAccount) {
     if (sellerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم البائع!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم البائع!', );
       return false;
     }
     return true;

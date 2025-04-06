@@ -72,17 +72,17 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
       await read<AllBondsController>()
-          .fetchAllBondsByType(BondType.byTypeGuide(bondModel.payTypeGuid!));
+          .fetchAllBondsByType(BondType.byTypeGuide(bondModel.payTypeGuid!),);
       // await read<AllBondsController>().fetchAllBondsLocal();
       Get.back();
     } else {
       bondSearchController.removeBond(bondModel);
     }
     if(!context.mounted) return;
-    AppUIUtils.onSuccess('تم حذف السند بنجاح!', context);
+    AppUIUtils.onSuccess('تم حذف السند بنجاح!', );
 
     read<EntryBondController>().deleteEntryBondModel(
-        entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!);
+        entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!,context: context);
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -97,14 +97,14 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     final successMessage =
         isSave ? 'تم حفظ السند بنجاح!' : 'تم تعديل السند بنجاح!';
 
-    AppUIUtils.onSuccess(successMessage, context);
+    AppUIUtils.onSuccess(successMessage, );
 
     Map<String, AccountModel> modifiedBondTypeAccounts = {};
     if (isSave) {
       bondDetailsController.updateIsBondSaved(true);
 
-      if (hasModelId(currentBond.payGuid) &&
-          hasModelItems(currentBond.payItems.itemList)) {
+      if (hasModelId(currentBond.payGuid,) &&
+          hasModelItems(currentBond.payItems.itemList,)) {
         generatePdfAndSendToEmail(
           fileName: AppStrings.newBond.tr,
           itemModel: currentBond,
@@ -116,10 +116,10 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         previousBond: previousBond!,
         currentBond: currentBond,
       );
-      if (hasModelId(currentBond.payGuid) &&
-          hasModelItems(currentBond.payItems.itemList) &&
-          hasModelId(previousBond.payGuid) &&
-          hasModelItems(previousBond.payItems.itemList)) {
+      if (hasModelId(currentBond.payGuid,) &&
+          hasModelItems(currentBond.payItems.itemList,) &&
+          hasModelId(previousBond.payGuid,) &&
+          hasModelItems(previousBond.payItems.itemList,)) {
         generatePdfAndSendToEmail(
           fileName: AppStrings.updatedBond.tr,
           itemModel: [previousBond, currentBond],
@@ -134,6 +134,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
       sourceNumbers: [currentBond.payNumber!],
       modifiedAccounts: modifiedBondTypeAccounts,
       isSave: isSave,
+
     );
 
     // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBond);
@@ -149,7 +150,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
 
   bool validateAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!', );
       return false;
     }
     return true;

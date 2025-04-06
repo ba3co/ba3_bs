@@ -17,16 +17,14 @@ import '../../utils/app_ui_utils.dart';
 
 mixin PdfBase {
   /// Sends the bill email with optional attachments
-  Future<void> sendToEmail({
-    required String recipientEmail,
-    String? documentId,
-    String? type,
-    String? url,
-    String? subject,
-    String? body,
-    List<String>? attachments
-  ,required BuildContext context
-  }) async {
+  Future<void> sendToEmail(
+      {required String recipientEmail,
+      String? documentId,
+      String? type,
+      String? url,
+      String? subject,
+      String? body,
+      List<String>? attachments}) async {
     final mailerRepo = MailerMessagingRepository(GmailMessagingService());
 
     final result = await mailerRepo.sendMail(
@@ -39,7 +37,7 @@ mixin PdfBase {
 
     result.fold(
       (failure) => _onEmailSendFailure(failure.message),
-      (_) => _onEmailSendSuccess(attachments,context),
+      (_) => _onEmailSendSuccess(attachments),
     );
   }
 
@@ -48,8 +46,8 @@ mixin PdfBase {
       AppUIUtils.onFailure(errorMessage);
 
   /// Handles the success scenario during email sending
-  void _onEmailSendSuccess(List<String>? attachments,BuildContext context) {
-    AppUIUtils.onSuccess('تم إرسال البريد الإلكتروني بنجاح',context);
+  void _onEmailSendSuccess(List<String>? attachments) {
+    AppUIUtils.onSuccess('تم إرسال البريد الإلكتروني بنجاح');
     if (attachments != null) {
       log('Attachments sent: ${attachments.first}');
       _deleteAttachments(attachments); // Optionally delete after sending
@@ -70,17 +68,16 @@ mixin PdfBase {
   }
 
   /// Generates a PDF and sends it via Email
-  Future<void> generatePdfAndSendToEmail<T>({
-    required T itemModel,
-    required String fileName,
-    String? recipientEmail,
-    String logoSrc = AppAssets.ba3Logo,
-    String fontSrc = AppAssets.notoSansArabicRegular,
-    String? url,
-    String? subject,
-    String? body,
-    required BuildContext context
-  }) async {
+  Future<void> generatePdfAndSendToEmail<T>(
+      {required T itemModel,
+      required String fileName,
+      String? recipientEmail,
+      String logoSrc = AppAssets.ba3Logo,
+      String fontSrc = AppAssets.notoSansArabicRegular,
+      String? url,
+      String? subject,
+      String? body,
+      required BuildContext context}) async {
     final pdfFilePath = await _generatePdf(
         itemModel: itemModel,
         fileName: fileName,
@@ -94,7 +91,7 @@ mixin PdfBase {
           documentId: itemModel.billId!,
           type: itemModel.billTypeModel.billTypeLabel!);
     }
-    if(!context.mounted) return;
+    if (!context.mounted) return;
 
     await sendToEmail(
       recipientEmail: recipientEmail ?? AppConstants.recipientEmail,
@@ -102,7 +99,6 @@ mixin PdfBase {
       subject: subject,
       body: body,
       attachments: [pdfFilePath],
-      context: context,
     );
   }
 
@@ -124,7 +120,9 @@ mixin PdfBase {
 
   bool hasModelItems(List items) {
     if (items.isEmpty) {
-      AppUIUtils.onFailure('يرجى إضافة عنصر واحد على الأقل إلى الفاتورة!');
+      AppUIUtils.onFailure(
+        'يرجى إضافة عنصر واحد على الأقل إلى الفاتورة!',
+      );
       return false;
     }
     return true;

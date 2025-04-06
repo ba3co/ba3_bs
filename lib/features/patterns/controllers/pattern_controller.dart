@@ -155,7 +155,7 @@ class PatternController extends GetxController
     final result = await _repository.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedBillTypes) => billsTypes.assignAll(fetchedBillTypes),
     );
 
@@ -166,7 +166,7 @@ class PatternController extends GetxController
     if (!patternFormHandler.validate()) return;
 
     if (patternFormHandler.selectedBillPatternType.value == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال نوع النمط!');
+      AppUIUtils.onFailure('من فضلك قم بادخال نوع النمط!', );
       return;
     }
 
@@ -175,8 +175,8 @@ class PatternController extends GetxController
     final result = await _repository.save(billTypeModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (success) => AppUIUtils.onSuccess('تم حفظ النموذج بنجاح!',context),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (success) => AppUIUtils.onSuccess('تم حفظ النموذج بنجاح!',),
     );
   }
 

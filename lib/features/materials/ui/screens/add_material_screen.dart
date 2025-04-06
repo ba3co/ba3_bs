@@ -53,7 +53,7 @@ class AddMaterialScreen extends StatelessWidget {
                       ? AppStrings.add.tr
                       : AppStrings.edit.tr,
                   onPressed: () {
-                    controller.saveOrUpdateMaterial(context);
+                    controller.saveOrUpdateMaterial();
                   },
                   iconData: controller.selectedMaterial?.id == null
                       ? Icons.add

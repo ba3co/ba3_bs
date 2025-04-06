@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
@@ -28,17 +29,17 @@ class BondUtils {
     return bonds;
   }
 
-  bool validateCustomerAccount(AccountModel? customerAccount) {
+  bool validateCustomerAccount(AccountModel? customerAccount,BuildContext context) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم العميل!', );
       return false;
     }
     return true;
   }
 
-  bool validateSellerAccount(SellerModel? sellerAccount) {
+  bool validateSellerAccount(SellerModel? sellerAccount,BuildContext context) {
     if (sellerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم البائع!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم البائع!', );
       return false;
     }
     return true;

@@ -46,14 +46,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher
     super.onInit();
     _initializeServices();
 
-    fetchAllChequesByType(ChequesType.paidChecks);
+    fetchAllChequesByType(ChequesType.paidChecks,);
     // getAllChequesTypes();
   }
 
   ChequesModel getChequesById(String chequesId) =>
       chequesList.firstWhere((cheques) => cheques.chequesGuid == chequesId);
 
-  Future<void> fetchAllChequesLocal() async {
+  Future<void> fetchAllChequesLocal(BuildContext context) async {
     log('fetchAllChequesLocal');
 
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
@@ -63,7 +63,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher
       final result = await _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedChequesFromNetwork) async {
           final fetchedCheques = fetchedChequesFromNetwork;
 
@@ -74,9 +74,11 @@ class AllChequesController extends FloatingChequesDetailsLauncher
           if (chequesList.isNotEmpty) {
             await _chequesFirebaseRepo.saveAllNested(
                 items: chequesList, itemIdentifiers: ChequesType.values);
+            if(!context.mounted)return;
 
             await createAndStoreEntryBonds(
               sourceModels: chequesList,
+              context: context,
               sourceNumbers:
                   chequesList.select((cheque) => cheque.chequesNumber).toList(),
             );
@@ -89,12 +91,12 @@ class AllChequesController extends FloatingChequesDetailsLauncher
     update();
   }
 
-  Future<void> fetchAllChequesByType(ChequesType itemTypeModel) async {
+  Future<void> fetchAllChequesByType(ChequesType itemTypeModel,) async {
     log('fetchCheques');
     final result = await _chequesFirebaseRepo.getAll(itemTypeModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedCheques) => chequesList = fetchedCheques,
     );
 
@@ -103,14 +105,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher
   }
 
   Future<List<ChequesModel>> fetchChequesByType(
-      ChequesType itemTypeModel) async {
+      ChequesType itemTypeModel, ) async {
     log('fetchCheques');
 
     List<ChequesModel> fetchedChequesList = [];
     final result = await _chequesFirebaseRepo.getAll(itemTypeModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedCheques) => fetchedChequesList = fetchedCheques,
     );
 
@@ -122,7 +124,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher
   Future<void> openFloatingChequesDetails(
       BuildContext context, ChequesType chequesTypeModel,
       {ChequesModel? chequesModel, required bool withFetched}) async {
-    if (withFetched) await fetchAllChequesByType(chequesTypeModel);
+    if (withFetched) await fetchAllChequesByType(chequesTypeModel,);
 
     if (!context.mounted) return;
 
@@ -214,7 +216,7 @@ class AllChequesController extends FloatingChequesDetailsLauncher
   void openChequesDetailsById(
       String chequesId, BuildContext context, ChequesType itemTypeModel) async {
     final ChequesModel chequesModel =
-        await fetchChequesById(chequesId, itemTypeModel);
+        await fetchChequesById(chequesId, itemTypeModel,);
     if (!context.mounted) return;
 
     openFloatingChequesDetails(
@@ -223,14 +225,14 @@ class AllChequesController extends FloatingChequesDetailsLauncher
   }
 
   Future<ChequesModel> fetchChequesById(
-      String chequesId, ChequesType itemTypeModel) async {
+      String chequesId, ChequesType itemTypeModel, ) async {
     late ChequesModel chequesModel;
 
     final result = await _chequesFirebaseRepo.getById(
         id: chequesId, itemIdentifier: itemTypeModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedCheques) => chequesModel = fetchedCheques,
     );
     return chequesModel;

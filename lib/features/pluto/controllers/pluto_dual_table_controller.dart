@@ -50,8 +50,7 @@ class PlutoDualTableController extends GetxController {
     for (var item in items) {
       log('item account: ${item.account.name}, amount: ${item.amount}',
           name: 'generateRows');
-      if (item.amount == null || item.amount == 0.0 || (item.amount ?? 0) < .01)
-        continue; // ✅ Skip invalid amounts
+      if (item.amount == null || item.amount == 0.0 || (item.amount ?? 0) < .01) continue; // ✅ Skip invalid amounts
 
       rows.add(
         PlutoRow(

@@ -20,17 +20,19 @@ class CloseAccountsAndItemsUseCase {
     final accountsController = read<AccountsController>();
     final fetchedAccounts = accountsController.accounts;
 
-    await accountsController.addAccounts(fetchedAccounts, context);
+    await accountsController.addAccounts(fetchedAccounts, );
 
     final customersController = read<CustomersController>();
     final fetchedCustomers = customersController.customers;
+    if(!context.mounted)return;
 
-    await customersController.addCustomers(fetchedCustomers);
+    await customersController.addCustomers(fetchedCustomers,context);
 
     final materialAccentColor = read<MaterialController>();
     final materials = materialAccentColor.materials;
+    if(!context.mounted)return;
 
-    await materialAccentColor.saveMaterialsOnRemote(materials);
+    await materialAccentColor.saveMaterialsOnRemote(materials,context);
 
     log("\uD83D\uDCCC تم إغلاق الحسابات والمواد.");
   }

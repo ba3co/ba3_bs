@@ -171,7 +171,7 @@ class UserManagementController extends GetxController
     final result = await _rolesFirebaseRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedRoles) {
         allRoles = fetchedRoles;
       },
@@ -184,7 +184,7 @@ class UserManagementController extends GetxController
     final result = await _usersFirebaseRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedUsers) => _onGetAllUsersSuccess(fetchedUsers),
     );
   }
@@ -205,15 +205,15 @@ class UserManagementController extends GetxController
     final result = await _usersFirebaseRepo.getById(userId);
 
     result.fold(
-      (failure) => _handleUserFetchFailure(failure),
-      (user) => _handleUserFetchSuccess(user),
+      (failure) => _handleUserFetchFailure(failure,),
+      (user) => _handleUserFetchSuccess(user  ,),
     );
   }
 
 // Handle failure when fetching the user
   void _handleUserFetchFailure(Failure failure) {
     offAll(AppRoutes.loginScreen);
-    AppUIUtils.onFailure(failure.message);
+    AppUIUtils.onFailure(failure.message, );
   }
 
   void updatePasswordVisibility() {
@@ -229,7 +229,7 @@ class UserManagementController extends GetxController
 // Check if the user is active
   bool _isUserActive(UserModel userModel) {
     if (userModel.userActiveStatus == UserActiveStatus.inactive) {
-      AppUIUtils.onFailure('حسابك غير نشط الان من فضلك حاول حقا!');
+      AppUIUtils.onFailure('حسابك غير نشط الان من فضلك حاول حقا!', );
       return false;
     }
     return true;
@@ -246,13 +246,12 @@ class UserManagementController extends GetxController
     final loginPassword = loginPasswordController.text.trim();
 
     if (loginName.isEmpty || loginPassword.isEmpty) {
-      AppUIUtils.onFailure('من فضلك قم بادخال اسم الحساب و الرقم السري!');
+      AppUIUtils.onFailure('من فضلك قم بادخال اسم الحساب و الرقم السري!', );
       return;
     }
 
     if (loginPassword.length < 6) {
-      AppUIUtils.onFailure(
-          'من فضلك أدخل كلمة مرور مكونة من 6 أرقام على الأقل!');
+      AppUIUtils.onFailure('من فضلك أدخل كلمة مرور مكونة من 6 أرقام على الأقل!', );
       return;
     }
 
@@ -268,8 +267,8 @@ class UserManagementController extends GetxController
       ],
     );
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers,),
     );
   }
 
@@ -283,7 +282,7 @@ class UserManagementController extends GetxController
     );
 
     if (firstFetchedUser == null) {
-      AppUIUtils.onFailure('أسم المستخدم غير صحيح!');
+      AppUIUtils.onFailure('أسم المستخدم غير صحيح!', );
       return;
     }
 
@@ -328,7 +327,7 @@ class UserManagementController extends GetxController
     if (!isCurrentRoute(AppRoutes.loginScreen)) {
       userNavigator.navigateToLogin();
     } else {
-      AppUIUtils.onFailure('لا يوجد تطابق!');
+      AppUIUtils.onFailure('لا يوجد تطابق!', );
     }
 
     loginNameController.clear();
@@ -348,16 +347,16 @@ class UserManagementController extends GetxController
 
     // Handle null role model
     if (updatedRoleModel == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات!');
+      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات!', );
       return;
     }
 
     final result = await _rolesFirebaseRepo.save(updatedRoleModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (success) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح',context);
+        AppUIUtils.onSuccess('تم الحفظ بنجاح',);
         getAllRoles();
       },
     );
@@ -375,10 +374,10 @@ class UserManagementController extends GetxController
     super.onClose();
   }
 
-  refreshLoggedInUser() async {
+  refreshLoggedInUser(BuildContext context) async {
     final result = await _usersFirebaseRepo.getById(loggedInUserModel!.userId!);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedUser) => loggedInUserModel = fetchedUser,
     );
   }

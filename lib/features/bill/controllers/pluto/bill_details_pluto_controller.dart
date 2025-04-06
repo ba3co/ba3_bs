@@ -311,17 +311,17 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   double _getSubTotal() {
     final subTotalStr = _extractCellValueAsNumber(AppConstants.invRecSubTotal);
-    return _plutoUtils.parseExpression(subTotalStr);
+    return _plutoUtils.parseExpression(subTotalStr,);
   }
 
   double _getTotal() {
     final totalStr = _extractCellValueAsNumber(AppConstants.invRecTotal);
-    return _plutoUtils.parseExpression(totalStr);
+    return _plutoUtils.parseExpression(totalStr,);
   }
 
   int _getQuantity() {
     final quantityStr = _extractCellValueAsNumber(AppConstants.invRecQuantity);
-    return _plutoUtils.parseExpression(quantityStr).toInt();
+    return _plutoUtils.parseExpression(quantityStr,).toInt();
   }
 
   double _getVat() {

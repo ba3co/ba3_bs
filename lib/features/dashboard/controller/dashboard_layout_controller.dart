@@ -53,10 +53,10 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
 
   void refreshDashBoardUser() {}
 
-  getAllDashBoardAccounts() async {
+  getAllDashBoardAccounts( ) async {
     final result = await _datasourceRepository.getAll();
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedDashBoardAccounts) {
         dashBoardAccounts.assignAll(fetchedDashBoardAccounts);
         update();
@@ -69,7 +69,7 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
     for (final account in dashBoardAccounts) {
       final AccountModel? accountModel = read<AccountsController>().getAccountModelById(account.id);
 
-      final balance = await read<AccountStatementController>().getAccountBalance(accountModel!);
+      final balance = await read<AccountStatementController>().getAccountBalance(accountModel!,);
       account.balance = balance.toString();
       await _datasourceRepository.update(account);
     }
@@ -84,11 +84,11 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
   addDashBoardAccount( BuildContext context) async {
     final AccountModel? accountModel = read<AccountsController>().getAccountModelByName(accountNameController.text);
     if (accountModel == null) {
-      AppUIUtils.onFailure("يرجى إدخال اسم الحساب");
+      AppUIUtils.onFailure("يرجى إدخال اسم الحساب", );
       return;
     }
 
-    final balance = await read<AccountStatementController>().getAccountBalance(accountModel);
+    final balance = await read<AccountStatementController>().getAccountBalance(accountModel,);
     final DashAccountModel dashAccountModel = DashAccountModel(
       id: accountModel.id,
       name: accountModel.accName,
@@ -97,9 +97,11 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
     final result = await _datasourceRepository.save(dashAccountModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حفظ الحساب بنجاح',context),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حفظ الحساب بنجاح',),
     );
+    if(!context.mounted)return;
+
     getAllDashBoardAccounts();
     accountNameController.clear();
     update();
@@ -126,9 +128,11 @@ class DashboardLayoutController extends GetxController with FloatingLauncher {
       final result = await _datasourceRepository.delete(dashAccountModel, dashAccountModel.id!);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حذف الحساب بنجاح',context),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
+        (fetchedDashBoardAccounts) => AppUIUtils.onSuccess('تم حذف الحساب بنجاح',),
       );
+      if(!context.mounted)return;
+
       getAllDashBoardAccounts();
       update();
     }

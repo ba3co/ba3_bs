@@ -83,7 +83,7 @@ class MaterialController extends GetxController
     final result = await _materialsHiveRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedMaterial) {
         materials.assignAll(fetchedMaterial);
         productsGrouped =
@@ -105,32 +105,35 @@ class MaterialController extends GetxController
   }
 
   Future<void> saveAllMaterialOnLocal(
-      List<MaterialModel> materialsToSave,BuildContext? context) async {
+      List<MaterialModel> materialsToSave) async {
     final result = await _materialsHiveRepo.saveAll(materialsToSave);
 
-    result.fold((failure) => AppUIUtils.onFailure(failure.message),
+    result.fold((failure) => AppUIUtils.onFailure(failure.message, ),
         (savedMaterials) {
       log('materials length before add item: ${materials.length}');
 
-      if(context != null)   AppUIUtils.onSuccess('تم الحفظ بنجاح', context);
+
+      AppUIUtils.onSuccess('تم الحفظ بنجاح', );
       reloadMaterials();
 
       log('materials length after add item: ${materials.length}');
     });
   }
 
-  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave,BuildContext? context) async {
+  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave,) async {
     final result = await _materialsHiveRepo.updateAll(materialsToSave);
-    result.fold((failure) => AppUIUtils.onFailure(failure.message),
+
+      result.fold((failure) => AppUIUtils.onFailure(failure.message, ),
         (savedMaterials) {
       log('materials length before update item: ${materials.length}');
-      if(context != null) AppUIUtils.onSuccess('تم الحفظ بنجاح', context);
+      AppUIUtils.onSuccess('تم الحفظ بنجاح', );
       reloadMaterials();
       log('materials length update add item: ${materials.length}');
     });
+
   }
 
-  Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete) async {
+  Future<void> deleteAllMaterial(List<MaterialModel> materialsToDelete, ) async {
     // Filter materials that match the IDs in materialsToDelete
     final copiedMaterials = materials
         .where((material) => materialsToDelete.any((e) => e.id == material.id))
@@ -145,7 +148,7 @@ class MaterialController extends GetxController
     );
   }
 
-  Future<void> fetchAllMaterialFromLocal(BuildContext context) async {
+  Future<void> fetchAllMaterialFromLocal() async {
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
 
     if (resultFile != null) {
@@ -153,19 +156,19 @@ class MaterialController extends GetxController
       final result = await _jsonImportExportRepo.importXmlFile(file);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedMaterial) =>
-            _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial,context),
+            _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
       );
     }
   }
 
-  Future<void> deleteAllMaterialFromLocal(BuildContext context) async {
+  Future<void> deleteAllMaterialFromLocal() async {
     final result = await _materialsHiveRepo.clear();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (_) => AppUIUtils.onSuccess('تم حذف المواد بنجاح', context),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (_) => AppUIUtils.onSuccess('تم حذف المواد بنجاح', ),
     );
   }
 
@@ -173,7 +176,7 @@ class MaterialController extends GetxController
   RxDouble uploadProgress = 0.0.obs;
 
   void _handelFetchAllMaterialFromLocalSuccess(
-      List<MaterialModel> fetchedMaterial,BuildContext context) async {
+      List<MaterialModel> fetchedMaterial,) async {
     saveAllMaterialsRequestState.value = RequestState.loading;
 
     log("fetchedMaterial length ${fetchedMaterial.length}");
@@ -186,7 +189,7 @@ class MaterialController extends GetxController
     if (newMaterials.isNotEmpty) {
       for (var mat in newMaterials) {
         materialFromHandler.init(mat);
-        await saveOrUpdateMaterial(context);
+        await saveOrUpdateMaterial();
       }
 
       /*   // Show progress in the UI
@@ -326,15 +329,12 @@ class MaterialController extends GetxController
     return matBarCode;
   }
 
-  MaterialModel getMaterialById(String id) {
+  MaterialModel getMaterialById(String id, ) {
     reloadMaterials();
     return materials.firstWhere((material) => material.id == id);
   }
 
-  Future<MaterialModel?> getMaterialByIdXX(String id) async {
-    await reloadMaterials();
-    return materials.firstWhereOrNull((material) => material.id == id);
-  }
+
 
   double getMaterialMinPriceById(String id) {
     double price = materials
@@ -384,16 +384,16 @@ class MaterialController extends GetxController
     return null;
   }
 
-  Future<void> saveMaterialsOnRemote(List<MaterialModel> materials) async {
+  Future<void> saveMaterialsOnRemote(List<MaterialModel> materials,BuildContext context) async {
     final result = await _materialRemoteRepo.saveAll(materials);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (savedMaterial) {},
     );
   }
 
-  Future<void> saveOrUpdateMaterial(BuildContext context) async {
+  Future<void> saveOrUpdateMaterial() async {
     // Validate the input before proceeding
 
     if (!materialFromHandler.validate()) return;
@@ -401,7 +401,7 @@ class MaterialController extends GetxController
     final materialModel = _createMaterialModel();
     // Handle null material model
     if (materialModel == null) {
-      AppUIUtils.onFailure('من فضلك قم!');
+      AppUIUtils.onFailure('من فضلك قم!', );
       return;
     }
     saveMaterialRequestState.value = RequestState.loading;
@@ -413,11 +413,11 @@ class MaterialController extends GetxController
     hiveResult.fold(
       (failure) {
         saveMaterialRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (savedMaterial) {
         saveMaterialRequestState.value = RequestState.success;
-        _onSaveSuccess(savedMaterial,context,
+        _onSaveSuccess(savedMaterial,
             changeType:
                 selectedMaterial != null ? ChangeType.update : ChangeType.add);
       },
@@ -440,7 +440,7 @@ class MaterialController extends GetxController
     changesResult.fold(
       (failure) {
         deleteMaterialRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (_) {
         deleteMaterialRequestState.value = RequestState.success;
@@ -484,27 +484,27 @@ class MaterialController extends GetxController
           .toList();
 
   Future<void> updateMaterialWithChanges(
-      MaterialModel updatedMaterialModel,BuildContext context) async {
+      MaterialModel updatedMaterialModel,) async {
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (savedMaterial) =>
-          _onSaveSuccess(updatedMaterialModel,context, changeType: ChangeType.update),
+          _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
     );
   }
 
-  Future<void> updateMaterial(MaterialModel updatedMaterialModel) async {
+  Future<void> updateMaterial(MaterialModel updatedMaterialModel, ) async {
     log('mat model is ${updatedMaterialModel.toJson().toString()}');
     final hiveResult = await _materialsHiveRepo.update(updatedMaterialModel);
 
     hiveResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (savedMaterial) => {},
     );
   }
 
-  void _onSaveSuccess(MaterialModel materialModel,BuildContext context,
+  void _onSaveSuccess(MaterialModel materialModel,
       {required ChangeType changeType, bool withReloadMaterial = true}) async {
     if (withReloadMaterial) reloadMaterials();
 
@@ -516,12 +516,13 @@ class MaterialController extends GetxController
         await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (_) {
         AppUIUtils.onSuccess(selectedMaterial?.id == null
             ? 'تم الحفظ بنجاح'
-            : 'تم التعديل بنجاح', context);
+            : 'تم التعديل بنجاح', );
         read<LogController>().addLog(
+
             item: materialModel,
             eventType: selectedMaterial?.id == null
                 ? LogEventType.add
@@ -538,14 +539,14 @@ class MaterialController extends GetxController
         await _materialsHiveRepo.delete(materialModel, materialModel.id!);
 
     hiveResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (_) {
         read<LogController>()
-            .addLog(item: materialModel, eventType: LogEventType.delete);
+            .addLog(          item: materialModel, eventType: LogEventType.delete);
 
         log('materials length before add item: ${materials.length}');
 
-        AppUIUtils.onSuccess('تم الحذف بنجاح', context);
+        AppUIUtils.onSuccess('تم الحذف بنجاح', );
 
         reloadMaterials();
 
@@ -557,7 +558,7 @@ class MaterialController extends GetxController
   void navigateToAddOrUpdateMaterialScreen(
       {String? matId, required BuildContext context}) {
     selectedMaterial = null;
-    if (matId != null) selectedMaterial = getMaterialById(matId);
+    if (matId != null) selectedMaterial = getMaterialById(matId,);
 
     materialFromHandler.init(selectedMaterial);
     launchFloatingWindow(
@@ -579,7 +580,9 @@ class MaterialController extends GetxController
       materialFromHandler.parentController.text =
           searchedMaterial.groupName.toString();
     } else {
-      AppUIUtils.onFailure('لم يتم العثور على المجموعة');
+      if(!context.mounted)return;
+
+      AppUIUtils.onFailure('لم يتم العثور على المجموعة', );
     }
     update();
   }
@@ -592,13 +595,13 @@ class MaterialController extends GetxController
     final materialModel =
         materials.firstWhere((material) => material.id == matId);
     // materialFromHandler.init();
-    await updateMaterial(updateFn(materialModel));
+    await updateMaterial(updateFn(materialModel),);
     // await saveOrUpdateMaterial();
   }
 
   Future<void> updateMaterialByModel(MaterialModel materialModel,
       MaterialModel Function(MaterialModel) updateFn) async {
-    await updateMaterial(updateFn(materialModel));
+    await updateMaterial(updateFn(materialModel),);
   }
 
   resetMaterialQuantityAndPrice() async {
@@ -731,7 +734,7 @@ class MaterialController extends GetxController
     for (var mat in materials) {
       materialFromHandler
           .init(mat.copyWith(matName: mat.matName!.encodeProblematic()));
-      await saveOrUpdateMaterial(context);
+      await saveOrUpdateMaterial();
       log('mat number ${++i}');
     }
   }

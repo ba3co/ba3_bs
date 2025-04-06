@@ -50,12 +50,12 @@ class UserTimeController extends GetxController {
 
   int get userHolidaysLength => userHolidays?.length ?? 0;
 
-  Future<bool> isWithinRegion() async {
+  Future<bool> isWithinRegion(BuildContext context) async {
     final result = await _userTimeRepo.getCurrentLocation();
     bool isWithinRegion = false;
     result.fold(
       (failure) {
-        return AppUIUtils.onFailure(failure.message);
+        return AppUIUtils.onFailure(failure.message, );
       },
       (location) {
         return isWithinRegion =
@@ -80,7 +80,7 @@ class UserTimeController extends GetxController {
     } else {
       logOutState.value = RequestState.loading;
     }
-    await read<UserManagementController>().refreshLoggedInUser();
+    await read<UserManagementController>().refreshLoggedInUser(context);
 
     UserModel? userModel = getUserById();
 
@@ -104,7 +104,7 @@ if(!context.mounted) return;
         _saveLogOutTime(updatedUserModel,context);
       }
     } else {
-      handleError(errorMessage, logStatus);
+      handleError(errorMessage, logStatus,);
     }
   }
 
@@ -140,7 +140,7 @@ context: context,
     final result = await _usersFirebaseRepo.save(updatedUserModel);
     result.fold(
       (failure) {
-        handleError(failure.message, UserWorkStatus.away);
+        handleError(failure.message, UserWorkStatus.away,);
       },
       (fetchedUser) {
         handleSuccess('تم تسجيل الخروج بنجاح', UserWorkStatus.away,context);
@@ -154,7 +154,7 @@ context: context,
 
     result.fold(
       (failure) {
-        handleError(failure.message, UserWorkStatus.online);
+        handleError(failure.message, UserWorkStatus.online,);
       },
       (fetchedUser) {
         handleSuccess('تم تسجيل الدخول بنجاح', UserWorkStatus.online,context);
@@ -178,13 +178,13 @@ context: context,
     }
   }
 
-  void handleError(String errorMessage, UserWorkStatus status) {
+  void handleError(String errorMessage, UserWorkStatus status, ) {
     if (status == UserWorkStatus.online) {
       logInState.value = RequestState.error;
     } else {
       logOutState.value = RequestState.error;
     }
-    AppUIUtils.onFailure(errorMessage);
+    AppUIUtils.onFailure(errorMessage, );
   }
 
   void handleSuccess(String successMessage, UserWorkStatus status,BuildContext context) {
@@ -193,7 +193,7 @@ context: context,
     } else {
       logOutState.value = RequestState.success;
     }
-    AppUIUtils.onSuccess(successMessage,context);
+    AppUIUtils.onSuccess(successMessage,);
   }
 
   set setLastEnterTime(String time) {

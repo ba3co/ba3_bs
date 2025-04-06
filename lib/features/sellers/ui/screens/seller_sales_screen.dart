@@ -61,7 +61,7 @@ class SellerSalesScreen extends StatelessWidget {
         const HorizontalSpace(20),
         DateRangePicker(
           onSubmit: () {
-            controller.onSubmitDateRangePicker();
+            controller.onSubmitDateRangePicker(context);
           },
           pickedDateRange: controller.dateRange,
           onSelectionChanged: controller.onSelectionChanged,

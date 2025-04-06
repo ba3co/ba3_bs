@@ -137,7 +137,7 @@ class AccountStatementController extends GetxController
         tradingAccounts.map(AccountEntity.fromAccountModel).toList();
 
     // Fetch trading account statements first (used in multiple cases)
-    final tradingAccountResult = await fetchAccountsStatement(tradingEntities);
+    final tradingAccountResult = await fetchAccountsStatement(tradingEntities,);
     Map<AccountEntity, List<EntryBondItems>> result = {};
 
     if (selectedFinalAccount == FinalAccounts.tradingAccount) {
@@ -182,7 +182,7 @@ class AccountStatementController extends GetxController
     final profitLossEntities =
         profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
     final profitAndLossAccountResult =
-        await fetchAccountsStatement(profitLossEntities);
+        await fetchAccountsStatement(profitLossEntities,);
     result.addAll(profitAndLossAccountResult);
 
     return result;
@@ -200,8 +200,8 @@ class AccountStatementController extends GetxController
         balanceSheetAccounts.map(AccountEntity.fromAccountModel).toList();
 
     final results = await Future.wait([
-      fetchAccountsStatement(profitLossEntities),
-      fetchAccountsStatement(balanceSheetEntities),
+      fetchAccountsStatement(profitLossEntities,),
+      fetchAccountsStatement(balanceSheetEntities,),
     ]);
     final profitAndLossAccountResult = results[0];
     final balanceSheetAccountResult = results[1];
@@ -271,7 +271,7 @@ class AccountStatementController extends GetxController
     final accountModel =
         _accountsController.getAccountModelByName(accountNameController.text);
     if (accountModel == null) {
-      AppUIUtils.onFailure("يرجى إدخال اسم الحساب");
+      AppUIUtils.onFailure("يرجى إدخال اسم الحساب", );
       return;
     }
 
@@ -336,7 +336,7 @@ class AccountStatementController extends GetxController
 
       final result = await _accountsStatementsRepo.getAll(account);
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedItems) {
           entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
         },
@@ -349,7 +349,7 @@ class AccountStatementController extends GetxController
   }
 
   Future<List<EntryBondItemModel>> fetchAccountStatement(
-      AccountEntity accountEntity) async {
+      AccountEntity accountEntity,BuildContext context) async {
     final result = await _accountsStatementsRepo.getAll(accountEntity);
 
     return result.fold(
@@ -364,13 +364,14 @@ class AccountStatementController extends GetxController
   }
 
   Future<Map<AccountEntity, List<EntryBondItems>>> fetchAccountsStatement(
+
       List<AccountEntity> accountEntities) async {
     final result =
         await _accountsStatementsRepo.fetchAllNested(accountEntities);
 
     return result.fold(
       (failure) {
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
         return {};
       },
       (Map<AccountEntity, List<EntryBondItems>> fetchedItems) => fetchedItems,
@@ -432,7 +433,7 @@ class AccountStatementController extends GetxController
   void launchBondEntryBondScreen(
       {required BuildContext context, required String originId}) async {
     EntryBondModel entryBondModel =
-        await read<EntryBondController>().getEntryBondById(entryId: originId);
+        await read<EntryBondController>().getEntryBondById(entryId: originId,context: context );
 
     if (!context.mounted) return;
     launchFloatingWindow(

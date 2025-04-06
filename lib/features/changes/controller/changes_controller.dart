@@ -52,8 +52,8 @@ class ChangesController extends GetxController {
 
     result.fold(
       (failure) =>
-          AppUIUtils.onFailure('فشل في حفظ التغيير: ${failure.message}'),
-      (success) => AppUIUtils.onSuccess('تم حفظ التغيير بنجاح', context),
+          AppUIUtils.onFailure('فشل في حفظ التغيير: ${failure.message}', ),
+      (success) => AppUIUtils.onSuccess('تم حفظ التغيير بنجاح', ),
     );
   }
 
@@ -107,21 +107,21 @@ class ChangesController extends GetxController {
 
       // After processing all items, call saveMaterials and deleteMaterials to handle both
       saveMaterials(materialsToSave,Get.context);
-      deleteMaterials(materialsToDelete);
+      deleteMaterials(materialsToDelete,);
       updateMaterials(materialsToUpdate,Get.context);
 
-      deleteChanges(change);
+      deleteChanges(change,);
     } catch (e, stack) {
       log("Error processing change: $e\n$stack");
     }
   }
 
-  Future<void> deleteChanges(ChangesModel change) async {
+  Future<void> deleteChanges(ChangesModel change, ) async {
     final result = await _repository.delete(change.targetUserId);
 
     result.fold(
       (failure) =>
-          AppUIUtils.onFailure('فشل في حذف التغييرات: ${failure.message}'),
+          AppUIUtils.onFailure('فشل في حذف التغييرات: ${failure.message}', ),
       (success) => {},
     );
   }
@@ -175,7 +175,7 @@ class ChangesController extends GetxController {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController.saveAllMaterialOnLocal(
-          materialsToSave,context); // Save all materials at once
+          materialsToSave,); // Save all materials at once
     }
   }
 
@@ -184,7 +184,7 @@ class ChangesController extends GetxController {
     if (materialsToUpdate.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController
-          .updateAllMaterial(materialsToUpdate,context); // Save all materials at once
+          .updateAllMaterial(materialsToUpdate,); // Save all materials at once
     }
   }
 
@@ -200,12 +200,12 @@ class ChangesController extends GetxController {
   }
 
   /// Deletes materials after all deletions have been processed.
-  void deleteMaterials(List<MaterialModel> materialsToDelete) {
+  void deleteMaterials(List<MaterialModel> materialsToDelete, ) {
     if (materialsToDelete.isNotEmpty) {
       // Handle delete logic here
       final materialController = read<MaterialController>();
       materialController.deleteAllMaterial(
-          materialsToDelete); // Save/delete all materials at once
+          materialsToDelete,); // Save/delete all materials at once
     }
   }
 

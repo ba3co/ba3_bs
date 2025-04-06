@@ -125,22 +125,22 @@ class UserDetailsController extends GetxController {
 
     // Handle null user model
     if (updatedUserModel == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!');
+      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!', );
       return;
     }
 
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
-      (failure) => _handleFailure(failure),
+      (failure) => _handleFailure(failure,context),
       (userModel) => _onUserSaved(userModel,context),
     );
   }
 
-  void _handleFailure(Failure failure) => AppUIUtils.onFailure(failure.message);
+  void _handleFailure(Failure failure,BuildContext context) => AppUIUtils.onFailure(failure.message, );
 
   void _onUserSaved(UserModel userModel,BuildContext context) {
-    AppUIUtils.onSuccess('تم الحفظ بنجاح', context);
+    AppUIUtils.onSuccess('تم الحفظ بنجاح', );
     allUserController.getAllUsers();
 
     // Check if the user was newly saved
@@ -183,7 +183,7 @@ class UserDetailsController extends GetxController {
     if (selectedUserModel != null) {
       final result = await _usersFirebaseRepo.save(selectedUserModel!);
       result.fold(
-        (failure) => _handleFailure(failure),
+        (failure) => _handleFailure(failure,context),
         (userModel) => _onUserSaved(userModel,context),
       );
     }

@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import/import_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
@@ -46,20 +47,20 @@ class CustomersController extends GetxController with AppNavigator {
   //   final result = await _accountsFirebaseRepo.save(seller);
   //
   //   result.fold(
-  //     (failure) => AppUIUtils.onFailure(failure.message),
+  //     (failure) => AppUIUtils.onFailure(failure.message, context),
   //     (fetchedAccounts) {},
   //   );
   // }
   //
 
   Future<Either<Failure, List<CustomerModel>>> addCustomers(
-          List<CustomerModel> customers) async =>
+          List<CustomerModel> customers,BuildContext context) async =>
       await _customersFirestoreRepo.saveAll(customers);
 
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
 
-  Future<void> fetchAllCustomersFromLocal() async {
+  Future<void> fetchAllCustomersFromLocal(BuildContext context) async {
     log('fetchAllCustomersFromLocal');
 
     FilePickerResult? resultFile = await FilePicker.platform.pickFiles();
@@ -68,7 +69,7 @@ class CustomersController extends GetxController with AppNavigator {
       File file = File(resultFile.files.single.path!);
       final result = await _customerImportRepo.importXmlFile(file);
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (customersFromLocal) {
           customers.assignAll(customersFromLocal);
           log('customersFromLocal length: ${customersFromLocal.length}');
@@ -94,7 +95,7 @@ class CustomersController extends GetxController with AppNavigator {
     final result = await _customersFirestoreRepo.getAll();
 
     result.fold(
-      (error) => AppUIUtils.onFailure(error.message),
+      (error) => AppUIUtils.onFailure(error.message, ),
       (fetchedCustomers) => customers = fetchedCustomers,
     );
   }
@@ -235,14 +236,14 @@ class CustomersController extends GetxController with AppNavigator {
 //
 //   // Handle null material model
 //   if (updatedAccountModel == null) {
-//     AppUIUtils.onFailure('');
+//     AppUIUtils.onFailure('', context);
 //     return;
 //   }
 //   // Save changes and handle results
 //   final result = await _accountsFirebaseRepo.save(updatedAccountModel);
 //
 //   result.fold(
-//     (failure) => AppUIUtils.onFailure(failure.message),
+//     (failure) => AppUIUtils.onFailure(failure.message, context),
 //     (_) => AppUIUtils.onSuccess('تم اضافة الحساب بنجاح'),
 //   );
 //
@@ -253,7 +254,7 @@ class CustomersController extends GetxController with AppNavigator {
 //   if (isFromHandler) {
 //     final result = await _accountsFirebaseRepo.delete(selectedAccount!.id!);
 //     result.fold(
-//       (failure) => AppUIUtils.onFailure(failure.message),
+//       (failure) => AppUIUtils.onFailure(failure.message, context),
 //       (_) {
 //         AppUIUtils.onSuccess("تم حذف الحساب بنجاح", context);
 //       },

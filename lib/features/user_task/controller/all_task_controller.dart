@@ -41,7 +41,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   }
 
   initPage() {
-    fetchTasks();
+    fetchTasks(null);
     taskFormHandler = TaskFormHandler();
     taskFormHandler.init();
   }
@@ -54,11 +54,11 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
   List<UserTaskModel> userTaskList = [];
 
-  Future<void> fetchTasks() async {
+  Future<void> fetchTasks(BuildContext? context) async {
     final result = await _userTaskRepo.getAll();
     log('fetchTasks');
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (tasks) {
         log('tasks ${tasks.length}');
         userTaskList.assignAll(tasks);
@@ -104,7 +104,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
     // Show failure message if no materials found
     if (searchedMaterials.isEmpty) {
-      AppUIUtils.onFailure('لا يوجد مواد بهذا الاسم');
+      AppUIUtils.onFailure('لا يوجد مواد بهذا الاسم', );
       return;
     }
 
@@ -112,14 +112,18 @@ class AllTaskController extends GetxController with FloatingLauncher {
     final selectedMaterial =
         await _handleMultipleMaterialsSelection(context, searchedMaterials);
     if (selectedMaterial == null) {
-      AppUIUtils.onFailure('يرجى اختيار مادة');
+      if(!context.mounted)return;
+
+      AppUIUtils.onFailure('يرجى اختيار مادة', );
       return;
     }
     if (!context.mounted) return;
     // Prompt the user for material quantity
     final quantity = await _getMaterialQuantity(context, selectedMaterial);
     if (quantity == null || quantity == 0) {
-      AppUIUtils.onFailure('يرجى ادخال الكمية');
+      if(!context.mounted)return;
+
+      AppUIUtils.onFailure('يرجى ادخال الكمية', );
       return;
     }
 
@@ -148,7 +152,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
           final materialId =
               onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
           selectedMaterial =
-              read<MaterialController>().getMaterialById(materialId);
+              read<MaterialController>().getMaterialById(materialId,);
           OverlayService.back();
         },
         onSubmitted: (_) async {},
@@ -213,7 +217,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   saveOrUpdateTask(BuildContext context) async {
     if (!taskFormHandler.validate()) return;
     if (taskFormHandler.selectedUsers.isEmpty) {
-      AppUIUtils.onFailure(AppStrings.pleaseAddUsers.tr);
+      AppUIUtils.onFailure(AppStrings.pleaseAddUsers.tr, );
       return;
     }
 
@@ -256,12 +260,12 @@ class AllTaskController extends GetxController with FloatingLauncher {
     final result = await _userTaskRepo.save(userTaskModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (task) {
         read<UserManagementController>().addTaskToUser(task, differentUser);
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
-        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح', context);
+        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح', );
       },
     );
   }
@@ -295,11 +299,11 @@ class AllTaskController extends GetxController with FloatingLauncher {
     ));
 
     launchFloatingWindow(context: context, floatingScreen: AddTaskScreen());
-    fetchTasks();
+    fetchTasks(context);
   }
 
   void lunchAllTaskScreen({required BuildContext context, String? userTaskId}) {
-    fetchTasks();
+    fetchTasks(context);
     launchFloatingWindow(context: context, floatingScreen: AllTaskScreen());
 
     // taskFormHandler.init(userTaskModel: userTaskModel);
@@ -308,7 +312,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
   void deleteTask(BuildContext context) async {
     final result = await _userTaskRepo.delete(selectedTask!.docId!);
 
-    result.fold((failure) => AppUIUtils.onFailure(failure.message), (_) {
+    result.fold((failure) => AppUIUtils.onFailure(failure.message, ), (_) {
       userTaskList
           .removeWhere((userTask) => userTask.docId == selectedTask?.docId);
       read<UserManagementController>()
@@ -316,13 +320,13 @@ class AllTaskController extends GetxController with FloatingLauncher {
 
       setSelectedTask(null);
       update();
-      AppUIUtils.onSuccess('تم حذف المهمة بنجاح', context);
+      AppUIUtils.onSuccess('تم حذف المهمة بنجاح', );
     });
   }
 
-  Future<UserTaskModel> getTaskById(String id) async {
+  Future<UserTaskModel> getTaskById(String id, BuildContext context) async {
     if (userTaskList.isEmpty) {
-      await fetchTasks();
+      await fetchTasks(context);
     }
     return userTaskList.firstWhere((element) {
       return element.docId == id;
@@ -339,11 +343,11 @@ class AllTaskController extends GetxController with FloatingLauncher {
     final result = await _userTaskRepo.save(task);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (task) {
         setSelectedTask(task);
         addOrUpdateTaskToList(task);
-        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح', context);
+        return AppUIUtils.onSuccess('تم حفظ المهمة بنجاح', );
       },
     );
   }
@@ -351,8 +355,8 @@ class AllTaskController extends GetxController with FloatingLauncher {
   Future<String> uploadImageTask(String imagePath) async {
     String imgUrl = '';
     final result = await _userTaskRepo.uploadImage(imagePath);
-
-    result.fold((failure) => AppUIUtils.onFailure(failure.message),
+  
+    result.fold((failure) => AppUIUtils.onFailure(failure.message, ),
         (imageUrl) async {
       imgUrl = imageUrl;
     });

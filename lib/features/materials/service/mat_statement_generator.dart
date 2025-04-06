@@ -19,10 +19,11 @@ mixin MatsStatementsGenerator {
   Future<void> createAndStoreMatsStatements({
     required List sourceModels,
     void Function(double progress)? onProgress,
+    required BuildContext context
   }) async {
 
     final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress,context: context);
     log("j is  ${j++}");
   }
 
@@ -44,7 +45,7 @@ mixin MatsStatementsGenerator {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels,context: context);
 
     if (deletedMaterials.isNotEmpty) {
       final originId = matsStatementsModels.first.originId;

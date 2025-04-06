@@ -26,7 +26,7 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
     return null;
   } else {
     await showDialog<String>(
-        context: Get.context!,
+        context:Get.context! ,
         builder: (BuildContext context) => Dialog(
               child:
                   GetBuilder<MaterialController>(builder: (materialController) {
@@ -53,7 +53,7 @@ Future<MaterialModel?> searchProductTextDialog(String productText) async {
                                     .row?.cells['الرقم التعريفي']?.value;
                                 if (materialId != null) {
                                   selectedMaterial = materialController
-                                      .getMaterialById(materialId);
+                                      .getMaterialById(materialId,);
                                   Get.back();
                                 }
                               },

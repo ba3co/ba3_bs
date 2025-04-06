@@ -33,7 +33,9 @@ class ProfileScreen extends StatelessWidget {
             initState: (state) async {
           await    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized;
           final salesController = read<SellerSalesController>();
-          await salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel!.userSellerId);
+          if(!context.mounted)return;
+
+          await salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel!.userSellerId,context: context);
         }, builder: (salesController) {
           return Row(
             children: [

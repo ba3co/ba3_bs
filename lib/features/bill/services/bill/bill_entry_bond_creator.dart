@@ -9,6 +9,7 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 
+
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/entry_bond_creator/implementations/base_entry_bond_creator.dart';
@@ -124,7 +125,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         _createVatBond(
             billId: billId,
             vat: vat,
-            item: read<MaterialController>().getMaterialById(item.itemGuid),
+            item: read<MaterialController>().getMaterialById(item.itemGuid,),
             quantity: item.itemQuantity,
             date: date,
             billTypeModel: billTypeModel,
@@ -222,7 +223,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         : BondItemType.debtor;
 
     MaterialModel materialModel =
-        read<MaterialController>().getMaterialById(item.id!);
+        read<MaterialController>().getMaterialById(item.id!,);
     final accountId = item.matVatGuid == null
         ? VatEnums.withVat.taxAccountGuid
         : billTypeModel.isPurchaseRelated

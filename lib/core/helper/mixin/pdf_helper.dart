@@ -21,7 +21,7 @@ mixin PdfHelperMixin {
   Widget buildBarcode(String itemGuid) {
     return BarcodeWidget(
       barcode: Barcode.code128(),
-      data: _materialController.getMaterialBarcodeById(itemGuid),
+      data: _materialController.getMaterialBarcodeById(itemGuid,),
       width: 100,
       height: 40,
     );

@@ -32,7 +32,7 @@ class MaterialGroupController extends GetxController
     final result = await _dataSourceRepository.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedMaterialGroupGroup) =>
           materialGroups.assignAll(fetchedMaterialGroupGroup),
     );
@@ -69,7 +69,7 @@ class MaterialGroupController extends GetxController
       final result = await _importRepository.importXmlFile(file);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedMaterialGroupGroup) =>
             _handelFetchAllMaterialGroupGroupFromLocalSuccess(
                 fetchedMaterialGroupGroup),

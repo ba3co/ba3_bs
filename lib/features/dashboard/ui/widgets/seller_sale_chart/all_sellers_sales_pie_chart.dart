@@ -47,11 +47,15 @@ class AllSellersSalesPieChart extends StatelessWidget {
                   pieTouchData: PieTouchData(
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
                       if (!event.isInterestedForInteractions ||
-                          pieTouchResponse == null) return;
+                          pieTouchResponse == null) {
+                        return;
+                      }
                       final touchedSection = pieTouchResponse.touchedSection;
                       if (event is FlPanDownEvent) {
                         if (touchedSection?.touchedSectionIndex == null ||
-                            touchedSection?.touchedSectionIndex == -1) return;
+                            touchedSection?.touchedSectionIndex == -1) {
+                          return;
+                        }
                         controller.lunchSellerScree(
                             context, touchedSection!.touchedSectionIndex);
                       }

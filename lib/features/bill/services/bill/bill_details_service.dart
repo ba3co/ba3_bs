@@ -93,7 +93,7 @@ class BillDetailsService
 
   void launchFloatingEntryBondDetailsScreen(
       {required BuildContext context, required BillModel billModel}) {
-    if (!hasModelId(billModel.billId)) return;
+    if (!hasModelId(billModel.billId,)) return;
 
     final entryBondModel = createSimulatedVatEntryBond(billModel);
 
@@ -137,18 +137,20 @@ class BillDetailsService
         number: decrementedBillNumber,
       );
     }
+    if(!context.mounted)return;
 
     // 1. Update previous and next bill references.
-    await _updatePreviousBillLink(billToDelete, billSearchController);
+    await _updatePreviousBillLink(billToDelete, billSearchController,context);
+    if(!context.mounted)return;
 
-    await _updateNextBillLink(billToDelete, billSearchController);
+    await _updateNextBillLink(billToDelete, billSearchController,context);
 
     // 2. Remove the bill locally from the search controller
     billSearchController.removeBill(billToDelete);
 
     if(!context.mounted) return;
     // 3. Show success message.
-    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!',context);
+    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!',);
 
     // 4. Clean up bonds/mats statements if this is an approved bill with materials
     if (billToDelete.status == Status.approved) {
@@ -162,7 +164,7 @@ class BillDetailsService
 
     for (final billItem in billToDelete.items.itemList) {
       final materialModel =
-          materialController.getMaterialById(billItem.itemGuid);
+          materialController.getMaterialById(billItem.itemGuid,);
       final soldSerialNumber = billItem.soldSerialNumber;
 
       if (materialModel.serialNumbers == null) {
@@ -178,7 +180,7 @@ class BillDetailsService
 
         // Apply the update to the material model
         materialController.updateMaterialWithChanges(
-          materialModel.copyWith(serialNumbers: updatedSerialNumbers),context
+          materialModel.copyWith(serialNumbers: updatedSerialNumbers),
         );
 
         log('✅ Serial number [$soldSerialNumber] of material (${materialModel.matName}) marked as unsold.');
@@ -188,7 +190,7 @@ class BillDetailsService
 
   /// Updates the reference of the previous bill to maintain correct linkage.
   Future<void> _updatePreviousBillLink(
-      BillModel billToDelete, BillSearchController billSearchController) async {
+      BillModel billToDelete, BillSearchController billSearchController,BuildContext context) async {
     final previousNumber = billToDelete.billDetails.previous;
     if (previousNumber == null) return;
 
@@ -199,8 +201,7 @@ class BillDetailsService
     );
 
     await previousBillResult.fold(
-      (failure) => AppUIUtils.onFailure(
-          'فشل في جلب الفاتورة السابقة: ${failure.message}'),
+      (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة السابقة: ${failure.message}', ),
       (previousBills) async {
         if (previousBills.isEmpty) return;
 
@@ -237,7 +238,7 @@ class BillDetailsService
           final updateResult =
               await billDetailsController.updateOnly(updatedPrevBill);
           updateResult.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
+            (failure) => AppUIUtils.onFailure(failure.message, ),
             (_) => _updateBillSearchController(billSearchController,
                 updatedPrevBillLocal, '_updatePreviousBillLink'),
           );
@@ -249,7 +250,7 @@ class BillDetailsService
 
   /// Updates the reference of the next bill to maintain correct linkage.
   Future<void> _updateNextBillLink(
-      BillModel billToDelete, BillSearchController billSearchController) async {
+      BillModel billToDelete, BillSearchController billSearchController,BuildContext context) async {
     final nextNumber = billToDelete.billDetails.next;
 
     if (nextNumber == null) return;
@@ -273,8 +274,7 @@ class BillDetailsService
     );
 
     await nextBillResult.fold(
-      (failure) => AppUIUtils.onFailure(
-          'فشل في جلب الفاتورة اللاحقة: ${failure.message}'),
+      (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة اللاحقة: ${failure.message}', ),
       (nextBills) async {
         if (nextBills.isEmpty) return;
 
@@ -298,7 +298,7 @@ class BillDetailsService
           final updateResult =
               await billDetailsController.updateOnly(updatedNextBill);
           updateResult.fold(
-            (failure) => AppUIUtils.onFailure(failure.message),
+            (failure) => AppUIUtils.onFailure(failure.message, ),
             (_) => _updateBillSearchController(billSearchController,
                 updatedNextBillLocal, '_updateNextBillLink'),
           );
@@ -312,9 +312,10 @@ class BillDetailsService
   /// Updates a bill in the database and refreshes the search controller.
   Future<void> _updateAndNotifyBillSearch(BillModel updatedBill,
       BillSearchController billSearchController, String from) async {
+
     final updateResult = await billDetailsController.updateOnly(updatedBill);
     updateResult.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (_) =>
           _updateBillSearchController(billSearchController, updatedBill, from),
     );
@@ -326,10 +327,10 @@ class BillDetailsService
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       read<EntryBondController>().deleteEntryBondModel(
           entryId: billModel.billId!,
-          sourceNumber: billModel.billDetails.billNumber!);
+          sourceNumber: billModel.billDetails.billNumber!,context: context);
     } else {
       read<LogController>()
-          .addLog(item: billModel, eventType: LogEventType.delete);
+          .addLog(item: billModel, eventType: LogEventType.delete,);
     }
 
     deleteMatsStatementsModels(billModel,context);
@@ -340,7 +341,7 @@ class BillDetailsService
     required BillSearchController billSearchController,
     required BuildContext context,
   }) async {
-    AppUIUtils.onSuccess('تم القبول بنجاح',context);
+    AppUIUtils.onSuccess('تم القبول بنجاح',);
     billSearchController.updateBill(
         updatedBillModel, 'handleUpdateBillStatusSuccess');
 
@@ -348,13 +349,15 @@ class BillDetailsService
         updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       createAndStoreEntryBond(
           model: updatedBillModel,
+
           sourceNumbers: [updatedBillModel.billDetails.billNumber!],
           isSave: false);
     }
 
     if (updatedBillModel.status == Status.approved) {
       createAndStoreMatsStatements(
-        sourceModels: [updatedBillModel],
+        sourceModels: [updatedBillModel],context: context,
+
         onProgress: (progress) {
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
         },
@@ -448,10 +451,10 @@ class BillDetailsService
         findModifiedBillTypeAccounts(
             previousBill: previousBill, currentBill: currentBill);
 
-    if (hasModelId(currentBill.billId) &&
-        hasModelItems(currentBill.items.itemList) &&
-        hasModelId(previousBill.billId) &&
-        hasModelItems(previousBill.items.itemList)) {
+    if (hasModelId(currentBill.billId,) &&
+        hasModelItems(currentBill.items.itemList,) &&
+        hasModelId(previousBill.billId,) &&
+        hasModelItems(previousBill.items.itemList,)) {
       generatePdfAndSendToEmail(
         fileName: AppStrings.updatedBill.tr,
         itemModel: [previousBill, currentBill],
@@ -531,12 +534,13 @@ class BillDetailsService
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
         isSave: isSave,
+
         sourceNumbers: [currentBill.billDetails.billNumber!],
       );
     } else {
       read<LogController>().addLog(
           item: currentBill,
-          eventType: isSave ? LogEventType.add : LogEventType.update);
+          eventType: isSave ? LogEventType.add : LogEventType.update,);
     }
 
     // 6. Determine whether to generate a material statement.
@@ -587,7 +591,7 @@ class BillDetailsService
   void _showSuccessMessage(bool isSave,BuildContext context) {
     final message =
         isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
-    AppUIUtils.onSuccess(message, context);
+    AppUIUtils.onSuccess(message, );
   }
 
   /// Updates the bill search controller with the current bill.
@@ -664,7 +668,7 @@ class BillDetailsService
 
     // 5. Handle the fetch result
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedBills) => _updatePreviousBill(
         fetchedBills: fetchedBills,
         billSearchController: billSearchController,
@@ -676,12 +680,12 @@ class BillDetailsService
   /// Returns true if [bill] has an ID and at least one item in its item list.
   /// This helps us decide whether to generate/send a PDF.
   bool _isValidBillForPdf(BillModel bill) {
-    return hasModelId(bill.billId) && hasModelItems(bill.items.itemList);
+    return hasModelId(bill.billId,) && hasModelItems(bill.items.itemList,);
   }
 
-  bool hasClientPhoneNumber() {
+  bool hasClientPhoneNumber(BuildContext context) {
     if (billDetailsController.customerPhoneController.text.isEmpty) {
-      AppUIUtils.onFailure('يرجى إضافة رقم هاتف العميل!');
+      AppUIUtils.onFailure('يرجى إضافة رقم هاتف العميل!', );
       return false;
     }
     return true;
@@ -715,7 +719,7 @@ class BillDetailsService
       bill.billTypeModel.billPatternType!.hasMaterialAccount;
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
-    if (!hasModelId(billModel.billId)) return;
+    if (!hasModelId(billModel.billId,)) return;
 
     OverlayService.showDialog(
       context: context,

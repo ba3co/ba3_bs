@@ -75,22 +75,23 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     final entryBondController = read<EntryBondController>();
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
-      await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!));
+      await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),);
       Get.back();
     } else {
-      chequesSearchController.removeCheques(chequesModel);
-    }
-    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, sourceNumber: chequesModel.chequesNumber!);
+      chequesSearchController.removeCheques(chequesModel,);
+    }if(!context.mounted)return;
+
+    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, context: context,sourceNumber: chequesModel.chequesNumber!);
     if (chequesModel.chequesPayGuid != null) {
-      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!);
+      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,context: context);
     }
     if (chequesModel.chequesRefundPayGuid != null) {
       entryBondController.deleteEntryBondModel(
-          entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!);
+          entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,context: context);
     }
     if(!context.mounted) return;
 
-    AppUIUtils.onSuccess('تم حذف الشيك بنجاح!',context);
+    AppUIUtils.onSuccess('تم حذف الشيك بنجاح!',);
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -103,7 +104,7 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
   }) async {
     final successMessage = isSave ? 'تم حفظ الشيك بنجاح!' : 'تم تعديل الشيك بنجاح!';
 
-    AppUIUtils.onSuccess(successMessage,context);
+    AppUIUtils.onSuccess(successMessage,);
 
     if (isSave) {
       chequesDetailsController.updateIsChequesSaved(true);
@@ -139,9 +140,9 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     // }
   }
 
-  bool validateAccount(AccountModel? customerAccount) {
+  bool validateAccount(AccountModel? customerAccount, ) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!');
+      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!', );
       return false;
     }
     return true;

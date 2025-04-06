@@ -24,7 +24,7 @@ class AllMaterialsScreen extends StatelessWidget {
         onLoaded: (event) {},
         onRowSecondaryTap: (selectedRow) {
           MaterialModel materialModel = controller.getMaterialById(
-              selectedRow.row.cells[AppConstants.materialIdFiled]?.value);
+              selectedRow.row.cells[AppConstants.materialIdFiled]?.value,);
 
           read<MaterialsStatementController>()
               .fetchMatStatements(materialModel, context: context);

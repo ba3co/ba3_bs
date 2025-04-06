@@ -181,7 +181,7 @@ class BillLayout extends StatelessWidget {
                     backgroundColor: Colors.blue,
                     onPressed: () {
                       // allBillsController.fetchAllNestedBills();
-                      allBillsController.saveXmlToFile();
+                      allBillsController.saveXmlToFile(context);
                       // read<MaterialsStatementController>().setupAllMaterials();
                       // read<MaterialsStatementController>().setupOneMaterials("e7103aec-14c5-4123-893d-9a4851d0d478");
                       // read<MaterialController>().updateAllMaterialWithDecodeProblematic();

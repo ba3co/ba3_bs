@@ -100,7 +100,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       );
     } else if (searchedMaterials.isEmpty) {
       // No matches
-      AppUIUtils.onFailure('هذه المادة غير موجودة');
+      AppUIUtils.onFailure('هذه المادة غير موجودة', );
 
       updateWithSelectedMaterial(
           inputSearch: productText,
@@ -138,7 +138,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           final materialId =
               onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
           final selectedMaterial = materialId != null
-              ? materialController.getMaterialById(materialId)
+              ? materialController.getMaterialById(materialId,)
               : null;
           updateWithSelectedMaterial(
               inputSearch: inputSearch,

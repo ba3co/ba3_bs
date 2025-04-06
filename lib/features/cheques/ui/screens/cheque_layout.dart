@@ -24,7 +24,7 @@ class _ChequeLayoutState extends State<ChequeLayout> {
       textDirection: TextDirection.rtl,
       child: GetBuilder<AllChequesController>(builder: (controller) {
         return Scaffold(
-          appBar: chequesLayoutAppBar(),
+          appBar: chequesLayoutAppBar(context),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: OrganizedWidget(
@@ -50,7 +50,7 @@ class _ChequeLayoutState extends State<ChequeLayout> {
                       text: AppStrings.chequesDues.tr,
                       onPressed: () {
                         controller
-                          ..fetchAllChequesByType(ChequesType.paidChecks)
+                          ..fetchAllChequesByType(ChequesType.paidChecks,)
                           ..navigateToChequesScreen(
                               onlyDues: true, context: context);
                       }),
@@ -58,7 +58,7 @@ class _ChequeLayoutState extends State<ChequeLayout> {
                       text: AppStrings.viewCheques.tr,
                       onPressed: () {
                         controller
-                          ..fetchAllChequesByType(ChequesType.paidChecks)
+                          ..fetchAllChequesByType(ChequesType.paidChecks,)
                           ..navigateToChequesScreen(
                               onlyDues: false, context: context);
                       }),

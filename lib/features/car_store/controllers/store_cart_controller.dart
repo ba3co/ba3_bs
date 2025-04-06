@@ -26,15 +26,15 @@ class StoreCartController extends GetxController {
   void fetchAllStoreCart() async {
     final result = await _dataSourceRepository.getAll();
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedStoreCard) => onStoreCartFetched(fetchedStoreCard),
     );
   }
 
-  void onStoreCartFetched(List<StoreCartModel> fetchedStoreCard) {
+  void onStoreCartFetched(List<StoreCartModel> fetchedStoreCard,    ) {
     storeCartModels.assignAll(fetchedStoreCard);
 
-    convertStoreCartToBills(storeCartModels);
+    convertStoreCartToBills(storeCartModels,);
   }
 
   void convertStoreCartToBills(List<StoreCartModel> storeCartModels) {
@@ -64,6 +64,7 @@ class StoreCartController extends GetxController {
             billNote: '',
           ),
           status: Status.pending,
+
         ),
       );
     }
@@ -74,17 +75,17 @@ class StoreCartController extends GetxController {
     for (var storeCard in storeCartModels) {
       final result = await _dataSourceRepository.delete(storeCard.id!);
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (_) {},
       );
     }
   }
 
-  Future<void> saveBillFromStoreCardAndHandleResult(BillModel billModel) async {
+  Future<void> saveBillFromStoreCardAndHandleResult(BillModel billModel, ) async {
     final result = await _billsFirebaseRepo.save(billModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (_) {},
     );
   }

@@ -44,7 +44,7 @@ class DashBoardAccountViewWidget extends StatelessWidget {
                 disabled: false,
                 onPressed: () {
                   showDialog<String>(
-                      context: Get.context!,
+                      context: context,
                       builder: (BuildContext context) =>
                           showDashboardAccountDialog(context));
                 },

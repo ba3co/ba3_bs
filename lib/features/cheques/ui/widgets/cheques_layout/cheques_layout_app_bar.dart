@@ -8,7 +8,7 @@ import '../../../../../core/widgets/app_button.dart';
 import '../../../../users_management/data/models/role_model.dart';
 import '../../../controllers/cheques/all_cheques_controller.dart';
 
-AppBar chequesLayoutAppBar() {
+AppBar chequesLayoutAppBar(BuildContext context) {
   return AppBar(
     actions: [
       if (RoleItemType.administrator.hasReadPermission)
@@ -17,7 +17,7 @@ AppBar chequesLayoutAppBar() {
           child: AppButton(
             title: AppStrings.downloadCheques.tr,
             onPressed: () =>
-                read<AllChequesController>().fetchAllChequesLocal(),
+                read<AllChequesController>().fetchAllChequesLocal(context),
           ),
         ),
     ],

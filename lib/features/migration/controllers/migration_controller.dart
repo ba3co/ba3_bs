@@ -123,7 +123,7 @@ class MigrationController extends FloatingBondDetailsLauncher
   void setMigrationVersion(String version) {
     selectedVersion.value = version;
 
-    updateCurrentMigrationVersion(version);
+    updateCurrentMigrationVersion(version,);
   }
 
   Future<void> fetchMigrationVersions() async {
@@ -134,7 +134,7 @@ class MigrationController extends FloatingBondDetailsLauncher
       (failure) {
         getMigrationVersionsRequestState.value = RequestState.error;
 
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (fetchedMigrationVersions) {
         getMigrationVersionsRequestState.value = RequestState.success;
@@ -149,7 +149,7 @@ class MigrationController extends FloatingBondDetailsLauncher
     );
   }
 
-  Future<void> updateCurrentMigrationVersion(String currentVersion) async {
+  Future<void> updateCurrentMigrationVersion(String currentVersion, ) async {
     updateMigrationVersionsRequestState.value = RequestState.loading;
 
     // 🔹 Save to Firebase before adding locally
@@ -165,7 +165,7 @@ class MigrationController extends FloatingBondDetailsLauncher
     result.fold(
       (failure) {
         updateMigrationVersionsRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (_) {
         updateMigrationVersionsRequestState.value = RequestState.success;
@@ -174,17 +174,17 @@ class MigrationController extends FloatingBondDetailsLauncher
     );
   }
 
-  Future<void> addMigrationVersion() async {
+  Future<void> addMigrationVersion(BuildContext context) async {
     final newVersion = migrationController.text.trim();
 
     // 🔹 Validate input
     if (newVersion.isEmpty) {
-      AppUIUtils.onFailure('يرجى كتابة سنة الترحيل');
+      AppUIUtils.onFailure('يرجى كتابة سنة الترحيل', );
       return;
     }
 
     if (migrationVersions.contains(newVersion)) {
-      AppUIUtils.onFailure('سنة الترحيل موجودة بالفعل');
+      AppUIUtils.onFailure('سنة الترحيل موجودة بالفعل', );
       return;
     }
 
@@ -206,7 +206,7 @@ class MigrationController extends FloatingBondDetailsLauncher
     result.fold(
       (failure) {
         addMigrationVersionsRequestState.value = RequestState.error;
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (_) {
         addMigrationVersionsRequestState.value = RequestState.success;
@@ -318,12 +318,12 @@ class MigrationController extends FloatingBondDetailsLauncher
     final result = await _bondsFirebaseRepo.save(bondModel);
 
     await result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
-      (savedBond) async => await handleSaveBondSuccess(savedBond),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (savedBond) async => await handleSaveBondSuccess(savedBond,),
     );
   }
 
-  Future<void> handleSaveBondSuccess(BondModel bond) async {
+  Future<void> handleSaveBondSuccess(BondModel bond, ) async {
     await createAndStoreEntryBond(
       model: bond,
       sourceNumbers: [bond.payNumber!],
@@ -376,7 +376,7 @@ class MigrationController extends FloatingBondDetailsLauncher
     final result = await _billsFirebaseRepo.save(billModel);
 
     await result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message,),
       (savedBill) async => await handleSaveBillSuccess(savedBill),
     );
   }
@@ -390,7 +390,7 @@ class MigrationController extends FloatingBondDetailsLauncher
 
     return result.fold(
       (failure) {
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message,);
         return [];
       },
       (fetchedCheques) => fetchedCheques,
@@ -404,7 +404,7 @@ class MigrationController extends FloatingBondDetailsLauncher
 
     // Handle the result (success or failure)
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message,),
       (currentChequesModel) {},
     );
   }

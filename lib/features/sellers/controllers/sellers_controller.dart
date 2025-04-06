@@ -48,7 +48,7 @@ class SellersController extends GetxController
     final result = await _sellersFirebaseRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedSellers) {
         sellers.assignAll(fetchedSellers);
       },
@@ -65,7 +65,7 @@ class SellersController extends GetxController
       result.fold(
         (failure) {
           logger.e("Error log", error: failure.message);
-          AppUIUtils.onFailure(failure.message);
+          AppUIUtils.onFailure(failure.message, );
         },
         (fetchedSellers) =>
             _handelFetchAllSellersFromLocalSuccess(fetchedSellers,context),
@@ -86,9 +86,9 @@ class SellersController extends GetxController
       final result = await _sellersFirebaseRepo.saveAll(newSellers);
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedSellers) {
-          AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}', context);
+          AppUIUtils.onSuccess('تم اضافة  ${newSellers.length}', );
 
           sellers.addAll(newSellers);
         },
@@ -101,10 +101,10 @@ class SellersController extends GetxController
 
     result.fold(
       (failure) {
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
       },
       (addedSellers) {
-        AppUIUtils.onSuccess('Add ${addedSellers.length} sellers',context);
+        AppUIUtils.onSuccess('Add ${addedSellers.length} sellers',);
       },
     );
   }
@@ -117,11 +117,11 @@ class SellersController extends GetxController
     result.fold(
       (failure) {
         deleteSellerRequestState.value = RequestState.error;
-        AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}');
+        AppUIUtils.onFailure('فشل في حذف البائع: ${failure.message}', );
       },
       (success) {
         deleteSellerRequestState.value = RequestState.success;
-        AppUIUtils.onSuccess('تم الحذف البائع بنجاح!', context);
+        AppUIUtils.onSuccess('تم الحذف البائع بنجاح!', );
         sellers.removeWhere((seller) => seller.costGuid == sellerId);
       },
     );
@@ -182,11 +182,11 @@ class SellersController extends GetxController
     });
   }
 
-  fetchLoginSellers() async {
+  fetchLoginSellers(BuildContext context) async {
     UserModel userModel = read<UserManagementController>().loggedInUserModel!;
     final result = await _sellersFirebaseRepo.getById(userModel.userSellerId!);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedSeller) => sellers.assignAll([fetchedSeller]),
     );
   }

@@ -122,12 +122,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
   BillModel getBillById(String billId) =>
       bills.firstWhere((bill) => bill.billId == billId);
 
-  Future<void> saveXmlToFile() async {
+  Future<void> saveXmlToFile(BuildContext context) async {
     final xmlService = ExportXmlService();
 
     await fetchAllNestedBills();
     final allBills = nestedBills.values.expand((bills) => bills).toList();
-    await read<AllBondsController>().fetchAllNestedBonds();
+    if(!context.mounted)return;
+
+    await read<AllBondsController>().fetchAllNestedBonds(context);
 
     // billsByTypeGuid
     final usedMaterialIds = allBills
@@ -203,7 +205,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         .fetchAllNested(read<PatternController>().billsTypes);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message),
+      (failure) => AppUIUtils.onFailure(failure.message, ),
       (fetchedNestedBills) {
         nestedBills.assignAll(fetchedNestedBills);
       },
@@ -246,7 +248,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
           .importXmlFile(File(resultFile.files.single.path!));
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(failure.message, ),
         (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills,context),
       );
     }
@@ -278,9 +280,11 @@ class AllBillsController extends FloatingBillDetailsLauncher
       //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
       //   },
       // );
+      if(!context.mounted)return;
 
       await createAndStoreEntryBonds(
         sourceModels: fetchedBills,
+        context: context,
         onProgress: (progress) {
           uploadProgress.value = progress; // Update progress
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
@@ -291,7 +295,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     }
     saveAllBillsRequestState.value = RequestState.success;
     if(!context.mounted) return;
-    AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح", context);
+    AppUIUtils.onSuccess("تم تحميل الفواتير بنجاح", );
   }
 
   Future<void> fetchPendingBills(BillTypeModel billTypeModel) async {
@@ -301,8 +305,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         value: Status.pending.value);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(
-          'لا يوجد فواتير معلقة في ${billTypeModel.fullName}'),
+      (failure) => AppUIUtils.onFailure('لا يوجد فواتير معلقة في ${billTypeModel.fullName}', ),
       (fetchedPendingBills) {
         pendingBills.assignAll(fetchedPendingBills);
         navigateToPendingBillsScreen();
@@ -327,7 +330,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     result.fold(
       (failure) =>
-          AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}'),
+          AppUIUtils.onFailure('لا يوجد فواتير  في ${billTypeModel.fullName}', ),
       (fetchedPendingBills) {
         bills.assignAll(fetchedPendingBills);
       },
@@ -345,25 +348,24 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<List<BillModel>> fetchBillsByDate(
-      BillTypeModel billTypeModel, DateFilter dateFilter) async {
+      BillTypeModel billTypeModel, DateFilter dateFilter, ) async {
     final result = await _billsFirebaseRepo.fetchWhere(
         itemIdentifier: billTypeModel, dateFilter: dateFilter);
     List<BillModel> allBills = [];
     result.fold(
-      (failure) => AppUIUtils.onFailure(
-          'لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}'),
+      (failure) => AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}', ),
       (fetchedBills) => allBills = fetchedBills,
     );
 
     return allBills;
   }
 
-  Future<List<BillModel>> fetchBills(BillTypeModel billTypeModel) async {
+  Future<List<BillModel>> fetchBills(BillTypeModel billTypeModel,BuildContext context) async {
     final result = await _billsFirebaseRepo.getAll(billTypeModel);
     List<BillModel> allBills = [];
     result.fold(
       (failure) =>
-          AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} '),
+          AppUIUtils.onFailure('لا يوجد فواتير في ${billTypeModel.fullName} ', ),
       (fetchedBills) {
         bills.assignAll(fetchedBills);
         allBills = fetchedBills;
@@ -407,7 +409,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     if (searchResults.isEmpty) {
       // Show a message if no results found
-      AppUIUtils.onFailure('لا يوجد نتائج للبحث');
+      if(!context.mounted)return;
+
+      AppUIUtils.onFailure('لا يوجد نتائج للبحث', );
     } else {
       if (!context.mounted) return;
 
@@ -424,7 +428,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     final List<BillTypeModel> fetchedBillTypes =
         await read<PatternController>().getAllBillTypes();
-    _handleFetchBillTypesSuccess(fetchedBillTypes);
+
+    _handleFetchBillTypesSuccess(fetchedBillTypes,);
     read<StoreCartController>().fetchAllStoreCart();
   }
 
@@ -437,7 +442,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchPendingBillsCountsByTypes(
-      List<BillTypeModel> fetchedBillTypes) async {
+      List<BillTypeModel> fetchedBillTypes, ) async {
     // Clear the existing counts to avoid accumulation
     pendingBillsCountsByType.clear();
 
@@ -466,7 +471,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     await Future.wait(fetchTasks);
 
     if (errors.isNotEmpty) {
-      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}',);
     }
   }
 
@@ -494,13 +500,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
     await Future.wait(fetchTasks);
 
     if (errors.isNotEmpty) {
-      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}',);
     }
   }
 
-  Future<void> exportBillsJsonFile() async {
+  Future<void> exportBillsJsonFile(BuildContext context) async {
     if (bills.isEmpty) {
-      AppUIUtils.onFailure('لا توجد فواتير للتصدير');
+      AppUIUtils.onFailure('لا توجد فواتير للتصدير', );
       return;
     }
 
@@ -508,9 +514,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     result.fold(
       (failure) =>
-          AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]'),
+          AppUIUtils.onFailure('فشل في تصدير الملف [${failure.message}]', ),
       (filePath) => AppUIUtils.showExportSuccessDialog(
-          filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:',Get.context!),
+          filePath, 'تم تصدير الفواتير بنجاح!', 'تم تصدير الملف إلى:',),
     );
   }
 
@@ -518,7 +524,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
 
-  List<BillModel> getBillsByType(String billTypeId) {
+  List<BillModel> getBillsByType(String billTypeId, BuildContext context) {
     if (bills.isEmpty) return [];
     fetchAllNestedBills();
     return bills
@@ -530,7 +536,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       {required String billId,
       required BuildContext context,
       required BillTypeModel bilTypeModel}) async {
-    final BillModel? billModel = await fetchBillById(billId, bilTypeModel);
+    final BillModel? billModel = await fetchBillById(billId, bilTypeModel,context);
 
     if (billModel == null) return;
 
@@ -620,13 +626,13 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<BillModel?> fetchBillById(
-      String billId, BillTypeModel billTypeModel) async {
+      String billId, BillTypeModel billTypeModel,BuildContext context) async {
     final result = await _billsFirebaseRepo.getById(
         id: billId, itemIdentifier: billTypeModel);
 
     return result.fold(
       (failure) {
-        AppUIUtils.onFailure(failure.message);
+        AppUIUtils.onFailure(failure.message, );
         return null;
       },
       (fetchedBill) => fetchedBill,
@@ -659,33 +665,17 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     // Handle errors if any.
     if (errors.isNotEmpty) {
-      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}');
+      AppUIUtils.onFailure('Some counts failed to fetch: ${errors.join(', ')}',);
     }
   }
 
-  Future<void> fetchXXXXXX() async {
-    _billsFirebaseRepo
-        .getMetaData(
-            id: BillType.transferOut.typeGuide,
-            itemIdentifier: BillType.transferOut.billTypeModel)
-        .then((result) {
-      result.fold(
-        (failure) => AppUIUtils.onFailure(
-            'Failed to fetch count for ${BillType.transferOut.label}: ${failure.message}'),
-        (double? count) {
-          log(count.toString());
-        },
-      );
-    });
-  }
 
   Future<void> getSerialNumberStatement(String serialNumberInput,
       {required BuildContext context}) async {
     final result = await _serialNumbersRepo.getById(serialNumberInput);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(
-          '⚠️ لم يتم العثور على أي فواتير  تم ذكر فيها هذا الرقم التسلسلي [$serialNumberInput] ❌'),
+      (failure) => AppUIUtils.onFailure('⚠️ لم يتم العثور على أي فواتير  تم ذكر فيها هذا الرقم التسلسلي [$serialNumberInput] ❌', ),
       (SerialNumberModel fetchedSerialNumberModel) {
         // Clear previous statements before adding new ones.
         serialNumberStatements.clear();
@@ -749,7 +739,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
           context: context,
           bilTypeModel: BillType.byTypeGuide(billTypeId).billTypeModel);
     } else {
-      AppUIUtils.onFailure('⚠️ Missing Bill ID or Bill Type ID');
+      AppUIUtils.onFailure('⚠️ Missing Bill ID or Bill Type ID', );
     }
   }
 

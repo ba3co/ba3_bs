@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
+
 import '../../../../features/accounts/data/models/account_model.dart';
 import '../../../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../../../features/bond/data/models/entry_bond_model.dart';
@@ -14,6 +16,7 @@ mixin EntryBondsGenerator {
     required List<T> sourceModels,
     required List<int> sourceNumbers,
     void Function(double progress)? onProgress,
+    required BuildContext context
   }) async {
     final entryBondModels = _mapModelsToEntryBonds(sourceModels);
     await read<EntryBondController>().saveAllEntryBondModels(
@@ -41,6 +44,7 @@ mixin EntryBondsGenerator {
         entryBondModel: entryBondModels.first,
         sourceNumber: sourceNumbers.first,
         isSave: isSave,
+
         modifiedAccounts: modifiedAccounts,
       );
     } else {
@@ -49,6 +53,7 @@ mixin EntryBondsGenerator {
         sourceNumbers: sourceNumbers,
         isSave: isSave,
         onProgress: onProgress,
+
       );
     }
   }
@@ -83,6 +88,7 @@ mixin EntryBondsGenerator {
     required ChequesStrategyType chequesStrategyType,
     required int sourceNumber,
     required bool isSave,
+        required BuildContext context
   }) async {
     final entryBondModel = createChequeEntryBondByStrategy(model,
         chequesStrategyType: chequesStrategyType);
@@ -90,6 +96,7 @@ mixin EntryBondsGenerator {
       entryBondModel: entryBondModel,
       sourceNumber: sourceNumber,
       isSave: isSave,
+
     );
   }
 
