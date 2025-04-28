@@ -17,8 +17,7 @@ class BillTypeModel with EquatableMixin {
 
   // Using a map to store accounts with Account as the key and AccountModel as the value
   final Map<Account, AccountModel>? accounts;
-  final Map<Account, List<DiscountAdditionAccountModel>>?
-      discountAdditionAccounts;
+  final Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts;
 
   BillTypeModel({
     this.id,
@@ -46,30 +45,24 @@ class BillTypeModel with EquatableMixin {
       color: json['color'],
       billPatternType: BillPatternType.byValue(json['billType']),
       // Deserialize accounts map
-      accounts: (json['accounts'] as Map<String, dynamic>?)
-          ?.map((billAccountLabel, accountModelJson) {
+      accounts: (json['accounts'] as Map<String, dynamic>?)?.map((billAccountLabel, accountModelJson) {
         Account billAccount = getBillAccountFromLabel(billAccountLabel);
         AccountModel accountModel = AccountModel.fromMap(accountModelJson);
         return MapEntry(billAccount, accountModel);
       }),
-      discountAdditionAccounts: _deserializeDiscountAdditionAccounts(
-          json['discountAdditionAccounts']),
+      discountAdditionAccounts: _deserializeDiscountAdditionAccounts(json['discountAdditionAccounts']),
     );
   }
 
-  static Map<Account, List<DiscountAdditionAccountModel>>?
-      _deserializeDiscountAdditionAccounts(
-          Map<String, dynamic>? discountAdditionAccountsJson) {
+  static Map<Account, List<DiscountAdditionAccountModel>>? _deserializeDiscountAdditionAccounts(
+      Map<String, dynamic>? discountAdditionAccountsJson) {
     if (discountAdditionAccountsJson == null) return null;
 
-    return discountAdditionAccountsJson
-        .map((billAccountLabel, discountListJson) {
+    return discountAdditionAccountsJson.map((billAccountLabel, discountListJson) {
       Account billAccount = getBillAccountFromLabel(billAccountLabel);
-      List<DiscountAdditionAccountModel> discountList =
-          (discountListJson as List)
-              .map((discountJson) =>
-                  DiscountAdditionAccountModel.fromJson(discountJson))
-              .toList();
+      List<DiscountAdditionAccountModel> discountList = (discountListJson as List)
+          .map((discountJson) => DiscountAdditionAccountModel.fromJson(discountJson))
+          .toList();
       return MapEntry(billAccount, discountList);
     });
   }
@@ -84,21 +77,17 @@ class BillTypeModel with EquatableMixin {
         'billType': billTypeLabel,
         'color': color,
         // Serialize accounts map
-        'accounts': accounts?.map((billAccounts, accountModel) =>
-            MapEntry(billAccounts.label, accountModel.toMap())),
+        'accounts': accounts?.map((billAccounts, accountModel) => MapEntry(billAccounts.label, accountModel.toMap())),
 
-        'discountAdditionAccounts':
-            _serializeDiscountAdditionAccounts(discountAdditionAccounts),
+        'discountAdditionAccounts': _serializeDiscountAdditionAccounts(discountAdditionAccounts),
       };
 
   Map<String, dynamic>? _serializeDiscountAdditionAccounts(
-      Map<Account, List<DiscountAdditionAccountModel>>?
-          discountAdditionAccounts) {
+      Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts) {
     if (discountAdditionAccounts == null) return null;
 
     return discountAdditionAccounts.map((billAccount, discountList) {
-      return MapEntry(billAccount.label,
-          discountList.map((discount) => discount.toJson()).toList());
+      return MapEntry(billAccount.label, discountList.map((discount) => discount.toJson()).toList());
     });
   }
 
@@ -126,8 +115,7 @@ class BillTypeModel with EquatableMixin {
           billTypeLabel: billTypeLabel ?? this.billTypeLabel,
           color: color ?? this.color,
           accounts: accounts ?? this.accounts,
-          discountAdditionAccounts:
-              discountAdditionAccounts ?? this.discountAdditionAccounts,
+          discountAdditionAccounts: discountAdditionAccounts ?? this.discountAdditionAccounts,
           billPatternType: billPatternType ?? this.billPatternType);
 
   @override

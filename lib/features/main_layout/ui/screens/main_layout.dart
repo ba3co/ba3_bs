@@ -18,8 +18,7 @@ class MainLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     // put(WindowCloseController());
     put(MainLayoutController());
-    put(ChangesController(read<ListenDataSourceRepository<ChangesModel>>()),
-        permanent: true);
+    put(ChangesController(read<ListenDataSourceRepository<ChangesModel>>()), permanent: true);
 
     return GetBuilder<MainLayoutController>(builder: (mainController) {
       return Directionality(
@@ -28,14 +27,8 @@ class MainLayout extends StatelessWidget {
           backgroundColor: AppColors.whiteColor,
           body: Row(
             children: Get.find<TranslationController>().currentLocaleIsRtl
-                ? [
-                    RightMainWidget(mainController: mainController),
-                    LeftMainWidget(mainController: mainController)
-                  ]
-                : [
-                    LeftMainWidget(mainController: mainController),
-                    RightMainWidget(mainController: mainController)
-                  ],
+                ? [RightMainWidget(mainController: mainController), LeftMainWidget(mainController: mainController)]
+                : [LeftMainWidget(mainController: mainController), RightMainWidget(mainController: mainController)],
           ),
         ),
       );

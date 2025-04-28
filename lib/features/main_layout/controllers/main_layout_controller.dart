@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/helper/init_app/app_initializer.dart';
 import 'package:ba3_bs/features/profile/ui/screens/profile_screen.dart';
 import 'package:ba3_bs/features/sellers/ui/screens/sellers_layout.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -20,7 +21,7 @@ import '../data/model/app_layout_item_model.dart';
 
 class MainLayoutController extends GetxController {
   RxList<AppLayoutItemModel> appLayouts = [
-    if (RoleItemType.administrator.hasReadPermission)
+    if (RoleItemType.administrator.hasReadPermission && isConnected)
       AppLayoutItemModel(
         name: 'لوحة التحكم',
         layout: const DashBoardLayout(),
