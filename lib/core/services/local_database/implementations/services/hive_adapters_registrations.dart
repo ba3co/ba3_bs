@@ -1,4 +1,6 @@
 import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/dashboard/data/model/dash_account_model.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 
@@ -25,5 +27,14 @@ class HiveAdaptersRegistrations {
     DiscountAdditionAccountModelAdapter().registerAdapter();
     BillAccountsAdapter().registerAdapter();
     StatusAdapter().registerAdapter();
+    BondTypeAdapter().registerAdapter();
+    BondModelAdapter().registerAdapter();
+    PayItemAdapter().registerAdapter();
+    PayItemsAdapter().registerAdapter();
+
+
+
+
+    /// last typeId = 15
   }
 }

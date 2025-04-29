@@ -21,7 +21,9 @@ import '../../../../core/services/firebase/implementations/services/firestore_se
 import '../../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../bill/services/bill/bills_count_service.dart';
 import '../../data/models/bond_model.dart';
+import '../../service/bond/bond_local_storage_service.dart';
 import '../../service/bond/bond_utils.dart';
 import '../pluto/bond_details_pluto_controller.dart';
 import 'bond_details_controller.dart';
@@ -46,6 +48,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
   Rx<RequestState> saveAllBondsRequestState = RequestState.initial.obs;
   Rx<RequestState> allBondsRequestState = RequestState.initial.obs;
 
+
   // Initialize a progress observable
   RxDouble uploadProgress = 0.0.obs;
 
@@ -53,14 +56,17 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
   // Services
   late final BondUtils _bondUtils;
+  late final BondLocalStorageService _bondLocalStorageService;
+
 
   // Initializer
   void _initializeServices() async {
     _bondUtils = BondUtils();
+    _bondLocalStorageService = BondLocalStorageService();
     await fetchAllBondsCountsByTypes(BondType.values);
   }
 
-  Future<void> fetchAllNestedBonds(BuildContext context) async {
+  Future<void> fetchAllNestedBonds() async {
     // getAllNestedBondsRequestState.value = RequestState.loading;
 
     final result = await _bondsFirebaseRepo.fetchAllNested(BondType.values);
@@ -87,6 +93,7 @@ class AllBondsController extends FloatingBondDetailsLauncher
   void onInit() {
     super.onInit();
     _initializeServices();
+    saveAllBondIfConnected();
   }
 
   Future<void> refreshBondsTypes() async =>
@@ -333,4 +340,26 @@ class AllBondsController extends FloatingBondDetailsLauncher
     isBondsLoading = false;
     update();
   }
+  Future<void> saveAllBondIfConnected() async {
+    final hasData = await _bondLocalStorageService.hasData();
+log('hasData $hasData');
+    if (hasData) return;
+
+    // Check if the device is connected to the internet
+    final hasConnection = await hasInternetConnection();
+
+    // If connected, proceed to save the bond to Firebase
+    if (hasConnection) {
+      try {
+        await fetchAllNestedBonds();
+        // Save bond locally
+        await _bondLocalStorageService.saveNestedBonds(nestedBonds);
+
+        AppUIUtils.onSuccess('Bonds saved locally.');
+      } catch (e) {
+        AppUIUtils.onFailure('An error occurred while saving bond locally: $e');
+      }
+    }
+  }
+
 }

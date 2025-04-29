@@ -129,6 +129,55 @@ class StatusAdapter extends TypeAdapter<Status> {
           typeId == other.typeId;
 }
 
+class BondTypeAdapter extends TypeAdapter<BondType> {
+  @override
+  final int typeId = 16;
+
+  @override
+  BondType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return BondType.openingEntry;
+      case 1:
+        return BondType.receiptVoucher;
+      case 2:
+        return BondType.paymentVoucher;
+      case 3:
+        return BondType.journalVoucher;
+      default:
+        return BondType.openingEntry;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, BondType obj) {
+    switch (obj) {
+      case BondType.openingEntry:
+        writer.writeByte(0);
+        break;
+      case BondType.receiptVoucher:
+        writer.writeByte(1);
+        break;
+      case BondType.paymentVoucher:
+        writer.writeByte(2);
+        break;
+      case BondType.journalVoucher:
+        writer.writeByte(3);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BondTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class BillAccountsAdapter extends TypeAdapter<BillAccounts> {
   @override
   final int typeId = 12;

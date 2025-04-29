@@ -282,7 +282,11 @@ enum Status {
   }
 }
 
-enum BondType {
+
+@HiveType(typeId: 16)
+enum BondType  {
+
+  @HiveField(0)
   openingEntry(
     label: "OpeningEntry",
     value: "القيد الافتتاحي",
@@ -294,6 +298,7 @@ enum BondType {
     // color: 15132399,
     color: "E6E6EF",
   ),
+  @HiveField(1)
   receiptVoucher(
     label: "ReceiptVoucher",
     value: "سند قبض",
@@ -305,6 +310,7 @@ enum BondType {
     // color: 7193225,
     color: "6DC289",
   ),
+  @HiveField(2)
   paymentVoucher(
     label: "PaymentVoucher",
     value: "سند دفع",
@@ -316,6 +322,7 @@ enum BondType {
     // color: 12741997,
     color: "C26D6D",
   ),
+  @HiveField(3)
   journalVoucher(
     label: "JournalVoucher",
     value: "سند يومية",

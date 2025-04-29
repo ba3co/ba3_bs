@@ -124,7 +124,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final allBills = nestedBills.values.expand((bills) => bills).toList();
     if (!context.mounted) return;
 
-    await read<AllBondsController>().fetchAllNestedBonds(context);
+    await read<AllBondsController>().fetchAllNestedBonds();
 
     // billsByTypeGuid
     final usedMaterialIds = allBills.expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();

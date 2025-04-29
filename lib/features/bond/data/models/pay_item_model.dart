@@ -4,13 +4,17 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
-class PayItems {
+part 'pay_item_model.g.dart';
+@HiveType(typeId: 14)
+class PayItems extends HiveObject{
+  @HiveField(0)
   final List<PayItem> itemList;
 
   PayItems({required this.itemList});
@@ -47,20 +51,33 @@ class PayItems {
     return PayItems(itemList: itemList);
   }
 }
-
+@HiveType(typeId: 15)
 class PayItem extends PlutoAdaptable<BondType> {
+  @HiveField(0)
   final String? entryAccountGuid;
+  @HiveField(1)
   final String? entryAccountName;
+  @HiveField(2)
   final String? entryDate;
+  @HiveField(3)
   final double? entryDebit;
+  @HiveField(4)
   final double? entryCredit;
+  @HiveField(5)
   final String? entryNote;
+  @HiveField(6)
   final String? entryCurrencyGuid;
+  @HiveField(7)
   final double? entryCurrencyVal;
+  @HiveField(8)
   final String? entryCostGuid;
+  @HiveField(9)
   final String? entryClass;
+  @HiveField(10)
   final int? entryNumber;
+  @HiveField(11)
   final String? entryCustomerGuid;
+  @HiveField(12)
   final int? entryType;
 
   PayItem({

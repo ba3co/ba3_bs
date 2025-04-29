@@ -5,27 +5,46 @@ import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 
-class BondModel extends PlutoAdaptable {
+part 'bond_model.g.dart';
+
+@HiveType(typeId: 13)
+class BondModel  extends HiveObject implements PlutoAdaptable {
+  @HiveField(0)
   final String? payTypeGuid;
+  @HiveField(1)
   final int? payNumber;
+  @HiveField(2)
   final String? payGuid;
+  @HiveField(3)
   final String? payBranchGuid;
+  @HiveField(4)
   final String? payDate;
+  @HiveField(5)
   final String? entryPostDate;
+  @HiveField(6)
   final String? payNote;
+  @HiveField(7)
   final String? payCurrencyGuid;
+  @HiveField(8)
   final double? payCurVal;
+  @HiveField(9)
   final String? payAccountGuid;
+  @HiveField(10)
   final int? paySecurity;
+  @HiveField(11)
   final int? paySkip;
+  @HiveField(12)
   final int? erParentType;
+  @HiveField(13)
   final PayItems payItems;
+  @HiveField(14)
   final String? e;
 
   BondModel({
