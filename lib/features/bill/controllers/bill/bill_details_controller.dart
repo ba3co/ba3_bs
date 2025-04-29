@@ -11,6 +11,7 @@ import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+import 'package:ba3_bs/features/bill/services/bill/bill_local_storage_service.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -511,6 +512,8 @@ class BillDetailsController extends IBillController
     saveBillRequestState.value = RequestState.loading;
 
     final result = await _billsFirebaseRepo.save(updatedBill);
+
+    BillLocalStorageService().saveSingleBill(updatedBill);
 
     await result.fold(
       (failure) {

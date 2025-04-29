@@ -1,22 +1,45 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 
-class BillTypeModel with EquatableMixin {
+part 'bill_type_model.g.dart';
+
+@HiveType(typeId: 4)
+class BillTypeModel extends HiveObject with EquatableMixin {
+  @HiveField(0)
   final String? id;
+
+  @HiveField(1)
   final String? billTypeId;
+
+  @HiveField(2)
   final String? shortName;
+
+  @HiveField(3)
   final String? fullName;
+
+  @HiveField(4)
   final String? latinShortName;
+
+  @HiveField(5)
   final String? latinFullName;
+
+  @HiveField(6)
   final String? billTypeLabel;
+
+  @HiveField(7)
   final int? color;
+
+  @HiveField(8)
   final BillPatternType? billPatternType;
 
-  // Using a map to store accounts with Account as the key and AccountModel as the value
+  @HiveField(9)
   final Map<Account, AccountModel>? accounts;
+
+  @HiveField(10)
   final Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts;
 
   BillTypeModel({

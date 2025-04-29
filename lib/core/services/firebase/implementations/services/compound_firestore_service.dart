@@ -19,11 +19,11 @@ class CompoundFireStoreService extends ICompoundDatabaseService<Map<String, dyna
   Future<List<Map<String, dynamic>>> fetchAll(
       {required String rootCollectionPath, required String rootDocumentId, required String subCollectionPath}) async {
     final querySnapshot =
-        _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).get();
+        await _firestoreInstance.collection(rootCollectionPath).doc(rootDocumentId).collection(subCollectionPath).get();
 
     // log('rootCollectionPath $rootCollectionPath, rootDocumentId $rootDocumentId, subcollectionPath $subCollectionPath',
     //     name: 'fetchAll CompoundFirestoreService');
-    return (await querySnapshot).docs.map((doc) => doc.data()).toList();
+    return querySnapshot.docs.map((doc) => doc.data()).toList();
   }
 
   @override

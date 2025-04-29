@@ -10,6 +10,7 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -22,14 +23,26 @@ import 'bill_details.dart';
 import 'bill_items.dart';
 import 'invoice_record_model.dart';
 
-class BillModel extends PlutoAdaptable with EquatableMixin {
+part 'bill_model.g.dart';
+
+@HiveType(typeId: 3)
+class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable {
+  @HiveField(0)
   final String? billId;
+
+  @HiveField(1)
   final BillTypeModel billTypeModel;
 
+  @HiveField(2)
   final BillItems items;
+
+  @HiveField(3)
   final BillDetails billDetails;
+
+  @HiveField(4)
   final bool? freeBill;
 
+  @HiveField(5)
   final Status status;
 
   BillModel({
@@ -50,20 +63,16 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         status: Status.byValue(json['status']),
       );
 
-  factory BillModel.empty(
-          {required BillTypeModel billTypeModel,
-          int lastBillNumber = 0,
-          int? previousBillNumber}) =>
+  factory BillModel.empty({required BillTypeModel billTypeModel, int lastBillNumber = 0, int? previousBillNumber}) =>
       BillModel(
         billTypeModel: billTypeModel,
         status: Status.pending,
         freeBill: false,
-        items: const BillItems(itemList: []),
+        items: BillItems(itemList: []),
         billDetails: BillDetails(
           billPayType: InvPayType.cash.index,
           billDate: DateTime.now(),
-          previous: previousBillNumber ??
-              (lastBillNumber == 0 ? null : lastBillNumber),
+          previous: previousBillNumber ?? (lastBillNumber == 0 ? null : lastBillNumber),
           billNumber: lastBillNumber + 1,
         ),
       );
@@ -128,8 +137,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
           );
   }
 
-  factory BillModel.fromImportedJsonFile(
-      Map<String, dynamic> billData, bool freeBill) {
+  factory BillModel.fromImportedJsonFile(Map<String, dynamic> billData, bool freeBill) {
     DateFormat dateFormat = DateFormat('yyyy-M-d');
     double billTotal = 0;
     double billVatTotal = 0;
@@ -145,8 +153,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                 /*       int vatRatio =  5;
                 double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first)/ 1.05;*/
                 int vatRatio = int.parse(item['VatRatio']);
-                double itemSubTotal =
-                    double.parse(item['PriceDescExtra'].split(',').first);
+                double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first);
 
                 int itemQuantity = int.parse(item['QtyBonus'].split(',').first);
                 int itemGiftsNumber = int.parse(item['QtyBonus'].split(',')[1]);
@@ -200,13 +207,10 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                   /*            int vatRatio =  5;
                   double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first)/ 1.05;*/
                   int vatRatio = int.parse(item['VatRatio']);
-                  double itemSubTotal =
-                      double.parse(item['PriceDescExtra'].split(',').first);
+                  double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first);
 
-                  int itemQuantity =
-                      int.parse(item['QtyBonus'].split(',').first);
-                  int itemGiftsNumber =
-                      int.parse(item['QtyBonus'].split(',')[1]);
+                  int itemQuantity = int.parse(item['QtyBonus'].split(',').first);
+                  int itemGiftsNumber = int.parse(item['QtyBonus'].split(',')[1]);
                   billTotal += AppServiceUtils.calcTotal(
                     itemQuantity,
                     itemSubTotal,
@@ -241,8 +245,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
                       itemSubTotal,
                     ),
                     itemGiftsNumber: itemGiftsNumber,
-                    itemName: read<MaterialController>()
-                        .getMaterialNameById(item['MatPtr'].toString()),
+                    itemName: read<MaterialController>().getMaterialNameById(item['MatPtr'].toString()),
                     itemVatPrice: AppServiceUtils.calcVat(
                       vatRatio,
                       itemSubTotal,
@@ -256,8 +259,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         billGuid: billData['B']['BillGuid'],
         billPayType: int.parse(billData['B']['BillPayType']),
         billNumber: (billData['B']['BillNumber']),
-        billDate: dateFormat
-            .parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
+        billDate: dateFormat.parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
         billCustomerId: billData['B']['BillCustPtr'],
         billAccountId: billData['B']['BillCustAcc'],
         billSellerId: billData['B']['BillCostGuid'],
@@ -274,34 +276,22 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
       billTypeModel: BillTypeModel(
           billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
           discountAdditionAccounts: {
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasDiscountsAccount)
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasDiscountsAccount)
               BillAccounts.discounts: [
                 DiscountAdditionAccountModel(
-                  accName: _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.discounts]!
-                      .accName!,
+                  accName: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!.accName!,
                   percentage: 0,
                   amount: 0,
-                  id: _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.discounts]!
-                      .id!,
+                  id: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!.id!,
                 ),
               ],
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasAdditionsAccount)
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
               BillAccounts.additions: [
                 DiscountAdditionAccountModel(
-                  accName: _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.additions]!
-                      .accName!,
+                  accName: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!.accName!,
                   percentage: 0,
                   amount: 0,
-                  id: _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.additions]!
-                      .id!,
+                  id: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!.id!,
                 ),
               ],
           },
@@ -310,38 +300,18 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
               id: billData['B']['BillCustAccId'],
               accName: billData['B']['BillCustAccName'],
             ),
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasMaterialAccount)
-              BillAccounts.materials:
-                  _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.materials]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasGiftsAccount)
-              BillAccounts.gifts: _billTypeByGuid(billData['B']['BillTypeGuid'])
-                  .accounts[BillAccounts.gifts]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasGiftsAccount)
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasMaterialAccount)
+              BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
+              BillAccounts.gifts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.gifts]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
               BillAccounts.exchangeForGifts:
-                  _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.exchangeForGifts]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasDiscountsAccount)
-              BillAccounts.discounts:
-                  _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.discounts]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
-                .billPatternType
-                .hasAdditionsAccount)
-              BillAccounts.additions:
-                  _billTypeByGuid(billData['B']['BillTypeGuid'])
-                      .accounts[BillAccounts.additions]!,
-            BillAccounts.store: AccountModel(
-                accName: "المستودع الرئيسي",
-                id: '6d9836d1-fccd-4006-804f-81709eecde57')
+                  _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.exchangeForGifts]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasDiscountsAccount)
+              BillAccounts.discounts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
+              BillAccounts.additions: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!,
+            BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57')
             /*AccountModel(
                 id: billData['B']['BillStoreGuid'], accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),*/
           },
@@ -352,8 +322,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
           shortName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
           billTypeId: billData['B']['BillTypeGuid'],
           color: _billTypeByGuid(billData['B']['BillTypeGuid']).color,
-          billPatternType:
-              _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),
+          billPatternType: _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),
     );
   }
 
@@ -385,98 +354,54 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void type]) => {
-        PlutoColumn(
-            title: 'billId',
-            field: AppConstants.billIdFiled,
-            type: PlutoColumnType.text(),
-            hide: true): billId ?? '',
+        PlutoColumn(title: 'billId', field: AppConstants.billIdFiled, type: PlutoColumnType.text(), hide: true):
+            billId ?? '',
         createAutoIdColumn(): '#',
-        PlutoColumn(
-            title: AppStrings.billStatus.tr,
-            field: 'حالة الفاتورة',
-            type: PlutoColumnType.text()): status.value,
-        PlutoColumn(
-            title: AppStrings.billNumber.tr,
-            field: 'رقم الفاتورة',
-            type: PlutoColumnType.number()): billDetails.billNumber ?? 0,
-        PlutoColumn(
-                title: AppStrings.date.tr,
-                field: 'التاريخ',
-                type: PlutoColumnType.date()):
+        PlutoColumn(title: AppStrings.billStatus.tr, field: 'حالة الفاتورة', type: PlutoColumnType.text()):
+            status.value,
+        PlutoColumn(title: AppStrings.billNumber.tr, field: 'رقم الفاتورة', type: PlutoColumnType.number()):
+            billDetails.billNumber ?? 0,
+        PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()):
             billDetails.billDate?.dayMonthYear ?? '',
-        PlutoColumn(
-                title: AppStrings.taxTotal.tr,
-                field: 'مجموع الضريبة',
-                type: PlutoColumnType.number()):
+        PlutoColumn(title: AppStrings.taxTotal.tr, field: 'مجموع الضريبة', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billVatTotal),
-        PlutoColumn(
-                title: AppStrings.totalBeforeTax.tr,
-                field: 'المجموع قبل الضريبة',
-                type: PlutoColumnType.number()):
+        PlutoColumn(title: AppStrings.totalBeforeTax.tr, field: 'المجموع قبل الضريبة', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billBeforeVatTotal),
-        PlutoColumn(
-                title: AppStrings.total.tr,
-                field: 'المجموع الكلي',
-                type: PlutoColumnType.number()):
+        PlutoColumn(title: AppStrings.total.tr, field: 'المجموع الكلي', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billTotal),
-        PlutoColumn(
-                title: AppStrings.discountTotal.tr,
-                field: 'مجموع الحسم',
-                type: PlutoColumnType.number()):
+        PlutoColumn(title: AppStrings.discountTotal.tr, field: 'مجموع الحسم', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
-        PlutoColumn(
-                title: AppStrings.additionsTotal.tr,
-                field: 'مجموع الاضافات',
-                type: PlutoColumnType.number()):
+        PlutoColumn(title: AppStrings.additionsTotal.tr, field: 'مجموع الاضافات', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
-        PlutoColumn(
-            title: AppStrings.giftsTotal.tr,
-            field: 'مجموع الهدايا',
-            type: PlutoColumnType.number()): billDetails.billGiftsTotal ?? 0,
-        PlutoColumn(
-                title: AppStrings.payType.tr,
-                field: 'نوع الدفع',
-                type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.giftsTotal.tr, field: 'مجموع الهدايا', type: PlutoColumnType.number()):
+            billDetails.billGiftsTotal ?? 0,
+        PlutoColumn(title: AppStrings.payType.tr, field: 'نوع الدفع', type: PlutoColumnType.text()):
             InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
-        PlutoColumn(
-                title: AppStrings.customerAccount.tr,
-                field: 'حساب العميل',
-                type: PlutoColumnType.text()):
+        PlutoColumn(title: AppStrings.customerAccount.tr, field: 'حساب العميل', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         PlutoColumn(
-                title: '${AppStrings.account.tr} ${AppStrings.seller.tr}',
-                field: 'حساب البائع',
-                type: PlutoColumnType.text()):
-            read<SellersController>()
-                .getSellerNameById(billDetails.billSellerId),
-        PlutoColumn(
-                title: AppStrings.store.tr,
-                field: 'المستودع',
-                type: PlutoColumnType.text()):
+            title: '${AppStrings.account.tr} ${AppStrings.seller.tr}',
+            field: 'حساب البائع',
+            type: PlutoColumnType.text()): read<SellersController>().getSellerNameById(billDetails.billSellerId),
+        PlutoColumn(title: AppStrings.store.tr, field: 'المستودع', type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
-        PlutoColumn(
-            title: AppStrings.illustration.tr,
-            field: 'وصف',
-            type: PlutoColumnType.text()): billDetails.billNote ?? '',
+        PlutoColumn(title: AppStrings.illustration.tr, field: 'وصف', type: PlutoColumnType.text()):
+            billDetails.billNote ?? '',
       };
 
-  List<Map<String, String>> get getAdditionsDiscountsRecords =>
-      _additionsDiscountsRecords;
+  List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;
 
   List<Map<String, String>> get _additionsDiscountsRecords {
     final partialTotal = _partialTotal;
 
-    final discountTotal =
-        AppServiceUtils.zeroToEmpty(billDetails.billDiscountsTotal);
-    final additionTotal =
-        AppServiceUtils.zeroToEmpty(billDetails.billAdditionsTotal);
+    final discountTotal = AppServiceUtils.zeroToEmpty(billDetails.billDiscountsTotal);
+    final additionTotal = AppServiceUtils.zeroToEmpty(billDetails.billAdditionsTotal);
 
     return [
       _createRecordRow(
         account: billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
         discountValue: discountTotal,
-        discountRatio:
-            _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
+        discountRatio: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
         additionValue: '',
         additionRatio: '',
       ),
@@ -485,14 +410,12 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
         discountValue: '',
         discountRatio: '',
         additionValue: additionTotal,
-        additionRatio:
-            _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
+        additionRatio: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
       ),
     ];
   }
 
-  static BillType _billTypeByGuid(String typeGuide) =>
-      BillType.byTypeGuide(typeGuide);
+  static BillType _billTypeByGuid(String typeGuide) => BillType.byTypeGuide(typeGuide);
 
   Map<String, String> _createRecordRow({
     required String account,
@@ -512,8 +435,7 @@ class BillModel extends PlutoAdaptable with EquatableMixin {
   String _calculateRatio(double value, double total) =>
       total > 0 && value > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
 
-  double get _partialTotal =>
-      (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
+  double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 
   @override
   List<Object?> get props => [

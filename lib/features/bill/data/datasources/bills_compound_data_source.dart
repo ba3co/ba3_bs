@@ -8,43 +8,36 @@ import '../../../../core/models/query_filter.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../models/bill_model.dart';
 
-class BillCompoundDatasource
-    extends CompoundDatasourceBase<BillModel, BillTypeModel> {
+class BillCompoundDatasource extends CompoundDatasourceBase<BillModel, BillTypeModel> {
   BillCompoundDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bills", "bonds")
   @override
   // String get rootCollectionPath => '${read<MigrationController>().currentVersion}${ApiConstants.bills}'; // Collection name in Firestore
 
-  String get rootCollectionPath =>
-      ApiConstants.bills; // Collection name in Firestore
+  String get rootCollectionPath => ApiConstants.bills; // Collection name in Firestore
 
   @override
-  Future<List<BillModel>> fetchAll(
-      {required BillTypeModel itemIdentifier}) async {
+  Future<List<BillModel>> fetchAll({required BillTypeModel itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
-    final subcollectionPath = getSubCollectionPath(itemIdentifier);
+    final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
-      subCollectionPath: subcollectionPath,
+      subCollectionPath: subCollectionPath,
     );
 
     final bills = data.map((item) => BillModel.fromJson(item)).toList();
 
-    bills.sort((a, b) =>
-        a.billDetails.billNumber!.compareTo(b.billDetails.billNumber!));
+    bills.sort((a, b) => a.billDetails.billNumber!.compareTo(b.billDetails.billNumber!));
 
     return bills;
   }
 
   @override
   Future<List<BillModel>> fetchWhere<V>(
-      {required BillTypeModel itemIdentifier,
-      String? field,
-      V? value,
-      DateFilter? dateFilter}) async {
+      {required BillTypeModel itemIdentifier, String? field, V? value, DateFilter? dateFilter}) async {
     final data = await compoundDatabaseService.fetchWhere(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: getRootDocumentId(itemIdentifier),
@@ -60,8 +53,7 @@ class BillCompoundDatasource
   }
 
   @override
-  Future<BillModel> fetchById(
-      {required String id, required BillTypeModel itemIdentifier}) async {
+  Future<BillModel> fetchById({required String id, required BillTypeModel itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subcollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -93,8 +85,7 @@ class BillCompoundDatasource
     final rootDocumentId = getRootDocumentId(item.billTypeModel);
     final subCollectionPath = getSubCollectionPath(item.billTypeModel);
 
-    final updatedBill =
-        item.billId == null ? await _assignBillNumber(item) : item;
+    final updatedBill = item.billId == null ? await _assignBillNumber(item) : item;
 
     final savedData = await _saveBillData(
       rootDocumentId,
@@ -107,8 +98,8 @@ class BillCompoundDatasource
   }
 
   Future<BillModel> _assignBillNumber(BillModel bill) async {
-    final billEntitySequence = await fetchAndIncrementEntityNumber(
-        rootCollectionPath, bill.billTypeModel.billTypeLabel!);
+    final billEntitySequence =
+        await fetchAndIncrementEntityNumber(rootCollectionPath, bill.billTypeModel.billTypeLabel!);
     return bill.copyWith(
       billDetails: bill.billDetails.copyWith(
         billNumber: billEntitySequence.nextNumber,
@@ -118,10 +109,7 @@ class BillCompoundDatasource
   }
 
   Future<Map<String, dynamic>> _saveBillData(
-      String rootDocumentId,
-      String subCollectionPath,
-      String? billId,
-      Map<String, dynamic> data) async {
+      String rootDocumentId, String subCollectionPath, String? billId, Map<String, dynamic> data) async {
     return compoundDatabaseService.add(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
@@ -133,9 +121,7 @@ class BillCompoundDatasource
   }
 
   @override
-  Future<int> countDocuments(
-      {required BillTypeModel itemIdentifier,
-      QueryFilter? countQueryFilter}) async {
+  Future<int> countDocuments({required BillTypeModel itemIdentifier, QueryFilter? countQueryFilter}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -150,8 +136,7 @@ class BillCompoundDatasource
   }
 
   @override
-  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested(
-      {required List<BillTypeModel> itemIdentifiers}) async {
+  Future<Map<BillTypeModel, List<BillModel>>> fetchAllNested({required List<BillTypeModel> itemIdentifiers}) async {
     final billsByType = <BillTypeModel, List<BillModel>>{};
 
     final List<Future<void>> fetchTasks = [];
@@ -188,10 +173,7 @@ class BillCompoundDatasource
       fetchTasks.add(
         saveAll(
           itemIdentifier: billTypeModel,
-          items: items
-              .where((element) =>
-                  element.billTypeModel.billTypeId == billTypeModel.billTypeId)
-              .toList(),
+          items: items.where((element) => element.billTypeModel.billTypeId == billTypeModel.billTypeId).toList(),
         ).then((result) {
           billsByType[billTypeModel] = result;
 
@@ -218,9 +200,7 @@ class BillCompoundDatasource
   }
 
   @override
-  Future<List<BillModel>> saveAll(
-      {required List<BillModel> items,
-      required BillTypeModel itemIdentifier}) async {
+  Future<List<BillModel>> saveAll({required List<BillModel> items, required BillTypeModel itemIdentifier}) async {
     log('Save bills of type [${itemIdentifier.billTypeLabel}] length: ${items.length}');
 
     final rootDocumentId = getRootDocumentId(itemIdentifier);
@@ -243,8 +223,7 @@ class BillCompoundDatasource
   }
 
   @override
-  Future<double?> fetchMetaData(
-      {required String id, required BillTypeModel itemIdentifier}) async {
+  Future<double?> fetchMetaData({required String id, required BillTypeModel itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subcollectionPath = getSubCollectionPath(itemIdentifier);
 

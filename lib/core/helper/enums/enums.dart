@@ -1,7 +1,10 @@
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
+import 'package:hive/hive.dart';
 
 import '../../constants/app_assets.dart';
+
+part 'enums.g.dart';
 
 enum EnvType { debug, release }
 
@@ -188,50 +191,52 @@ enum BillType {
 
 List<BillTypeModel> get allBillTypeModels => BillType.values.map((billType) => billType.billTypeModel).toList();
 
+@HiveType(typeId: 8) // Use a unique typeId
 enum BillPatternType {
+  @HiveField(0)
   purchase(label: 'شراء', value: 'purchase'),
+
+  @HiveField(1)
   sales(label: 'مبيع', value: 'sales'),
+
+  @HiveField(2)
   buyReturn(label: 'مرتجع شراء', value: 'purchaseReturn'),
+
+  @HiveField(3)
   salesReturn(label: 'مرتجع بيع', value: 'salesReturn'),
+
+  @HiveField(4)
   add(label: 'تسوية إدخال', value: 'adjustmentEntry'),
+
+  @HiveField(5)
   remove(label: 'تسوية إخراج', value: 'outputAdjustment'),
+
+  @HiveField(6)
   firstPeriodInventory(label: 'بضاعة اول مدة', value: 'firstPeriodInventory'),
-  transferOut(
-    value: 'transferOut',
-    label: 'تسوية النقص',
-  ),
-  salesService(
-    value: 'sales service',
-    label: 'مبيع خدمة',
-  ),
-  transferIn(
-    value: 'transferIn',
-    label: 'تسوية الزيادة',
-  );
+
+  @HiveField(7)
+  transferOut(label: 'تسوية النقص', value: 'transferOut'),
+
+  @HiveField(8)
+  salesService(label: 'مبيع خدمة', value: 'sales service'),
+
+  @HiveField(9)
+  transferIn(label: 'تسوية الزيادة', value: 'transferIn');
 
   final String label;
   final String value;
 
-  const BillPatternType({
-    required this.label,
-    required this.value,
-  });
+  const BillPatternType({required this.label, required this.value});
 
-  // Factory constructor with error handling for unmatched labels
-  factory BillPatternType.byValue(String value) {
-    return BillPatternType.values.firstWhere(
-      (type) => type.value == value,
-      orElse: () => throw ArgumentError('No matching BillPatternType for value: $value'),
-    );
-  }
+  factory BillPatternType.byValue(String value) => BillPatternType.values.firstWhere(
+        (e) => e.value == value,
+        orElse: () => throw ArgumentError('No matching value: $value'),
+      );
 
-  // Factory constructor with error handling for unmatched labels
-  factory BillPatternType.byLabel(String label) {
-    return BillPatternType.values.firstWhere(
-      (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching BillPatternType for label: $label'),
-    );
-  }
+  factory BillPatternType.byLabel(String label) => BillPatternType.values.firstWhere(
+        (e) => e.label == label,
+        orElse: () => throw ArgumentError('No matching label: $label'),
+      );
 }
 
 enum RequestState { initial, loading, error, success }
@@ -255,9 +260,13 @@ enum InvPayType {
   }
 }
 
+@HiveType(typeId: 9)
 enum Status {
+  @HiveField(0)
   approved('approved'),
+  @HiveField(1)
   canceled('canceled'),
+  @HiveField(2)
   pending('pending');
 
   final String value;
@@ -489,13 +498,21 @@ abstract class Account {
   String get label;
 }
 
+@HiveType(typeId: 12)
 enum BillAccounts implements Account {
+  @HiveField(0)
   materials('المواد'),
+  @HiveField(1)
   discounts('الحسميات'),
+  @HiveField(2)
   additions('الاضافات'),
+  @HiveField(3)
   caches('النقديات'),
+  @HiveField(4)
   gifts('الهدايا'),
+  @HiveField(5)
   exchangeForGifts('مقابل الهدايا'),
+  @HiveField(6)
   store('المستودع');
 
   @override

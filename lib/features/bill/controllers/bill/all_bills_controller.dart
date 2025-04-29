@@ -44,6 +44,7 @@ import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/controllers/pattern_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../data/models/bill_model.dart';
+import '../../services/bill/bill_local_storage_service.dart';
 import '../../services/bill/bill_utils.dart';
 import '../../services/bill/bills_count_service.dart';
 import '../../services/bill/floating_bill_details_launcher.dart';
@@ -62,6 +63,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   // Services
   late final BillUtils _billUtils;
   late final BillsCountsService _billsCountsService;
+  late final BillLocalStorageService _billLocalStorageService;
 
   final List<BillModel> bills = [];
   final Map<BillTypeModel, List<BillModel>> nestedBills = {};
@@ -93,6 +95,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   Future<void> _initializeServices() async {
     _billUtils = BillUtils();
     _billsCountsService = await BillsCountsService.create();
+    _billLocalStorageService = BillLocalStorageService();
   }
 
   fetchStoreCard() async {}
@@ -174,6 +177,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> fetchAllNestedBills() async {
+    log('fetchAllNestedBills');
     getAllNestedBillsRequestState.value = RequestState.loading;
 
     final result = await _billsFirebaseRepo.fetchAllNested(read<PatternController>().billsTypes);
@@ -210,6 +214,28 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     );*/
     getAllNestedBillsRequestState.value = RequestState.success;
+  }
+
+  Future<void> saveAllBillsIfConnected() async {
+    final hasData = await _billLocalStorageService.hasData();
+
+    if (hasData) return;
+
+    // Check if the device is connected to the internet
+    final hasConnection = await hasInternetConnection();
+
+    // If connected, proceed to save the bills to Firebase
+    if (hasConnection) {
+      try {
+        await fetchAllNestedBills();
+        // Save bills locally
+        await _billLocalStorageService.saveNestedBills(nestedBills);
+
+        AppUIUtils.onSuccess('Bills saved locally.');
+      } catch (e) {
+        AppUIUtils.onFailure('An error occurred while saving bills locally: $e');
+      }
+    }
   }
 
   Future<void> fetchAllBillsFromLocal(BuildContext context) async {
@@ -404,6 +430,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     await fetchPendingBillsCountsByTypes(fetchedBillTypes);
     await fetchAllBillsCountsByTypes(fetchedBillTypes);
 
+    saveAllBillsIfConnected();
     getBillsTypesRequestState.value = RequestState.success;
   }
 
