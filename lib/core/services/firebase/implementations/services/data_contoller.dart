@@ -12,7 +12,7 @@ class DataController {
   Future<List<DocumentSnapshot>> getData() async {
     var connectivityResult = await Connectivity().checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.none) {
+    if (connectivityResult.first == ConnectivityResult.none) {
       // لو مفيش نت، استخدم البيانات المخزنة محليًا
       return await dataRef.get(GetOptions(source: Source.cache)).then((snapshot) {
         return snapshot.docs;

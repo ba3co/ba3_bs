@@ -77,7 +77,7 @@ class LocalDatasourceRepository<T, I> {
 
   Future<Either<Failure, List<T>>> saveAll(List<T> data, I itemIdentifier) async {
     try {
-      final savedItems = await remoteDatasource.saveAll(items: data, itemIdentifier: itemIdentifier);
+      await remoteDatasource.saveAll(items: data, itemIdentifier: itemIdentifier);
 
       await localDatasource.saveAllData(data);
 

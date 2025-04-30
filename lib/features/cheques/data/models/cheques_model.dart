@@ -2,32 +2,53 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/widgets/pluto_auto_id_column.dart';
+part 'cheques_model.g.dart';
 
-class ChequesModel implements PlutoAdaptable {
+@HiveType(typeId: 17)
+class ChequesModel extends HiveObject implements PlutoAdaptable {
+  @HiveField(0)
   final String? chequesTypeGuid;
+  @HiveField(1)
   final int? chequesNumber;
+  @HiveField(2)
   final int? chequesNum;
+  @HiveField(3)
   final String? chequesGuid;
+  @HiveField(4)
   final String? chequesDate;
+  @HiveField(5)
   final String? chequesDueDate;
+  @HiveField(6)
   final String? chequesNote;
+  @HiveField(7)
   final double? chequesVal;
+  @HiveField(8)
   final String? chequesAccount2Guid;
+  @HiveField(9)
   final String? accPtr;
+  @HiveField(10)
   final String? accPtrName;
+  @HiveField(11)
   final String? chequesAccount2Name;
+  @HiveField(12)
   final String? chequesPayGuid;
+  @HiveField(13)
   final String? chequesRefundPayGuid;
+  @HiveField(14)
   final String? chequesPayDate;
+  @HiveField(15)
   final String? chequesRefundPayDate;
 
   // final ChequesCollectEntryModel? chequesCollectEntry;
   // final ChequesEntryRelationModel? chequesEntryRelation;
+  @HiveField(16)
 
   final bool? isPayed;
+  @HiveField(17)
   final bool? isRefund;
 
   // final String? chequesCustomerGuid;
@@ -50,7 +71,7 @@ class ChequesModel implements PlutoAdaptable {
   // final int chequesDir;
   // final String chequesParentGuid;
 
-  const ChequesModel({
+   ChequesModel({
     this.chequesTypeGuid,
     this.chequesNumber,
     this.chequesNum,

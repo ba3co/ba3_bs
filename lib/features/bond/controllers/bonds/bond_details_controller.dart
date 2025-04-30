@@ -239,13 +239,9 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   generateAndSendBondPdf(BondModel bondModel, BuildContext context) {
-    if (!_bondService.hasModelId(
-      bondModel.payGuid,
-    )) return;
+    if (!_bondService.hasModelId(bondModel.payGuid)) return;
 
-    if (!_bondService.hasModelItems(
-      bondModel.payItems.itemList,
-    )) return;
+    if (!_bondService.hasModelItems(bondModel.payItems.itemList)) return;
 
     _bondService.generatePdfAndSendToEmail(
       fileName: AppStrings.bond.tr,

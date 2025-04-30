@@ -157,8 +157,7 @@ class BillSearchController extends GetxController {
   bool get isNotLastBill => currentBillIndex < bills.length;
 
   /// Validates the bill number range.
-  bool _isValidBillNumber(int? billNumber) =>
-      billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
+  bool _isValidBillNumber(int? billNumber) => billNumber != null && billNumber >= 1 && billNumber <= bills.last.billDetails.billNumber!;
 
   /// Navigates to a bill by its number.
   Future<void> goToBillByNumber(int? billNumber) async => await _navigateToBill(
@@ -204,9 +203,7 @@ class BillSearchController extends GetxController {
 
   /// Helper method to fetch or navigate to a specific bill.
   Future<void> _navigateToBill(int billNumber, NavigationDirection direction) async {
-    if (!_validateAndHandleBillNumber(
-      billNumber,
-    )) return;
+    if (!_validateAndHandleBillNumber(billNumber)) return;
 
     if (_checkExistingBill(billNumber)) return;
 
@@ -246,8 +243,7 @@ class BillSearchController extends GetxController {
   }
 
   /// Checks if the bill number exists in the list and returns its index, or null if not found.
-  BillModel? _findExistingBill(int billNumber) =>
-      bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
+  BillModel? _findExistingBill(int billNumber) => bills.firstWhereOrNull((bill) => bill.billDetails.billNumber == billNumber);
 
   /// Fetches the bill by number and handles success or failure.
   Future<void> _fetchAndNavigateToBill(int billNumber, NavigationDirection direction) async {

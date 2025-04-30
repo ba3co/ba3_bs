@@ -754,13 +754,9 @@ class BillDetailsController extends IBillController
   void sendBillToWhatsapp(BillModel billModel, BuildContext context) {
     if (!_billService.hasClientPhoneNumber(context)) return;
 
-    if (!_billService.hasModelId(
-      billModel.billId,
-    )) return;
+    if (!_billService.hasModelId(billModel.billId)) return;
 
-    if (!_billService.hasModelItems(
-      billModel.items.itemList,
-    )) return;
+    if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
     WhatsappService.instance.sendBillToWhatsApp(itemModel: billModel, recipientPhoneNumber: customerPhoneController.text, context: context);
   }
