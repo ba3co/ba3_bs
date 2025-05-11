@@ -9,33 +9,40 @@ class BillLocalStorageService {
   static const String _nestedBoxName = 'nestedBillsBox';
 
   Future<bool> hasData() async {
-    final box = await Hive.openBox<List<BillModel>>(_nestedBoxName);
+
+    final box = await Hive.openBox<List>(_nestedBoxName);
+    log('BillLocalStorageService hasData ${box.isNotEmpty}');
     return box.isNotEmpty;
   }
 
   Future<void> saveNestedBills(Map<BillTypeModel, List<BillModel>> nestedBills) async {
-    log('BillLocalStorageService');
-    nestedBills.forEach((k, v) => log('bill Type: ${k.billTypeLabel} has ${v.length} bills', name: 'saveNestedBills'));
+    final box = Hive.isBoxOpen(_nestedBoxName) ? Hive.box<List>(_nestedBoxName) : await Hive.openBox<List>(_nestedBoxName);
 
-    final box = await Hive.openBox<List<BillModel>>(_nestedBoxName);
     for (var entry in nestedBills.entries) {
       await box.put(entry.key.billTypeId, entry.value);
     }
   }
 
   Future<Map<String, List<BillModel>>> getNestedBills() async {
-    final box = await Hive.openBox<List<BillModel>>(_nestedBoxName);
-    return box.toMap().map((key, value) => MapEntry(key.toString(), List<BillModel>.from(value)));
+    final box = Hive.isBoxOpen(_nestedBoxName) ? Hive.box<List>(_nestedBoxName) : await Hive.openBox<List>(_nestedBoxName);
+
+    final Map<String, List<BillModel>> result = {};
+
+    box.toMap().forEach((key, value) {
+      result[key.toString()] = value.cast<BillModel>(); // ✅ التحويل الآمن
+    });
+
+    return result;
   }
 
   Future<void> clearAllBills() async {
-    final box = await Hive.openBox<List<BillModel>>(_nestedBoxName);
+    final box = await Hive.openBox<List>(_nestedBoxName);
     await box.clear();
   }
 
   Future<void> saveSingleBill(BillModel bill) async {
     final billTypeId = bill.billTypeModel.billTypeId!;
-    final box = await Hive.openBox<List<BillModel>>(BillLocalStorageService._nestedBoxName);
+    final box = await Hive.openBox<List>(BillLocalStorageService._nestedBoxName);
 
     final currentList = List<BillModel>.from(box.get(billTypeId, defaultValue: []) ?? []);
 

@@ -26,7 +26,6 @@ class MaterialsStatementController extends GetxController
   Future<void> saveAllMatsStatementsModels({
     required List<MatStatementModel> matsStatements,
     void Function(double progress)? onProgress,
-    required BuildContext context,
   }) async {
     /// 1. We call `saveAllNested`, which returns a Map<String, List<MatStatementModel>>
     int i = 0;
@@ -49,10 +48,10 @@ class MaterialsStatementController extends GetxController
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message, ),
       (savedStatements) {
-        /*  onSaveAllMatsStatementsModelsSuccess(
+          onSaveAllMatsStatementsModelsSuccess(
           mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
           onProgress: onProgress,
-        );*/
+        );
       },
     );
   }
