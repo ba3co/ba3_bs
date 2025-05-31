@@ -120,7 +120,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   Future<void> saveXmlToFile() async {
     final xmlService = ExportXmlService();
 
-    await fetchAllNestedBills();
+    // await fetchAllNestedBills();
     final allBills = [nestedBills.values.expand((bills) => bills).toList().last];
 
     // await read<AllBondsController>().fetchAllNestedBonds();
@@ -219,7 +219,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     // If connected, proceed to save the bills to Firebase
     if (hasConnection) {
       try {
-        await fetchAllNestedBills();
+        // await fetchAllNestedBills();
         // Save bills locally
         await _billLocalStorageService.saveNestedBills(nestedBills);
 
@@ -539,13 +539,18 @@ class AllBillsController extends FloatingBillDetailsLauncher
   void navigateToAllBillsScreen() => to(AppRoutes.showAllBillsScreen);
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
+  //
+  // List<BillModel> getBillsByType(String billTypeId, BuildContext context) {
+  //   if (bills.isEmpty) return [];
+  //   fetchAllNestedBills();
+  //   return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  // }
 
-  List<BillModel> getBillsByType(String billTypeId, BuildContext context) {
-    if (bills.isEmpty) return [];
-    fetchAllNestedBills();
-    return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
-  }
-
+  // List<BillModel> getBillsByType(String billTypeId, BuildContext context) {
+  //   if (bills.isEmpty) return [];
+  //   fetchAllNestedBills();
+  //   return bills.where((bill) => bill.billTypeModel.billTypeId == billTypeId).toList();
+  // }
   void openFloatingBillDetailsById({required String billId, required BuildContext context, required BillTypeModel bilTypeModel}) async {
     final BillModel? billModel = await fetchBillById(billId, bilTypeModel, context);
 
