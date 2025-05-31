@@ -13,6 +13,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../materials/controllers/material_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import 'bill_pluto_grid_service.dart';
 import 'bill_pluto_utils.dart';
@@ -78,6 +79,10 @@ class BillPlutoContextMenu {
         if (selectedMenuItem == 'حركة المادة') {
           read<MaterialsStatementController>()
               .fetchMatStatements(materialModel, context: context);
+        }
+        if (selectedMenuItem == 'بطاقة المادة') {
+          read<MaterialController>()
+              .navigateToAddOrUpdateMaterialScreen(matId:  materialModel.id, context: context);
         }
 
         if (selectedMenuItem == 'إضافة serial') {

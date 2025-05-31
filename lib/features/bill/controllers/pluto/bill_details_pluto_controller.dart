@@ -392,6 +392,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
 
   List<String> get materialMenu => [
         'حركة المادة',
+        'بطاقة المادة',
         if (billTypeModel.isPurchaseRelated) 'إضافة serial',
       ];
 
