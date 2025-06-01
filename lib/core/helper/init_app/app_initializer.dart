@@ -51,10 +51,7 @@ Future<void> initializeAppServices() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: AppConstants.getDatabaseAppName);
 
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-  );
+
 
   await Hive.initializeApp();
 

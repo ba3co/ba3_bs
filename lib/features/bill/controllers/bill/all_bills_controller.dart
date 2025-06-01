@@ -100,7 +100,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     _billLocalStorageService = BillLocalStorageService();
   }
 
-  fetchStoreCard() async {}
+
 
   @override
   Future<void> onInit() async {
