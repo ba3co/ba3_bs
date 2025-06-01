@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
+import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
 import 'package:dartz/dartz.dart';
@@ -362,5 +363,44 @@ class AllBondsController extends FloatingBondDetailsLauncher
         AppUIUtils.onFailure('An error occurred while saving bond locally: $e');
       }
     }
+  }
+
+  Future<List<BondModel>> fetchBondsByDate(BondType bondType, DateFilter dateFilter) async {
+    List<BondModel> allBonds = [];
+    //
+    // allBills.addAll(
+    //   localBills[billTypeModel.billTypeId.toString()]!.where(
+    //         (element) {
+    //       final date = element.billDetails.billDate!;
+    //       return date.isAfter(dateFilter.range.start) && date.isBefore(dateFilter.range.end);
+    //     },
+    //   ),
+    // );
+    final result = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-28');
+    final result2 = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-29');
+    final result3 = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-30');
+    final result4 = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-31');
+
+    result.fold(
+      // (failure) => AppUIUtils.onFailure(
+      //   'لا يوجد فواتير في ${bondType.label} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}',
+      // ),
+          (failure) => (),
+      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+    );
+    result4.fold(
+          (failure) => (),
+      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+    );
+    result3.fold(
+          (failure) => (),
+      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+    );
+    result2.fold(
+      (failure) => (),
+      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+    );
+
+    return allBonds;
   }
 }

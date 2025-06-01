@@ -23,6 +23,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -39,6 +40,7 @@ import '../../../../core/services/firebase/implementations/repos/compound_dataso
 import '../../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/bonds/all_bond_controller.dart';
+import '../../../bond/data/models/bond_model.dart';
 import '../../../floating_window/controllers/floating_window_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/controllers/pattern_controller.dart';
@@ -121,16 +123,49 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final xmlService = ExportXmlService();
 
     // await fetchAllNestedBills();
-    final allBills = [nestedBills.values.expand((bills) => bills).toList().last];
+    final List<BillModel> allBills = [];
+    final List<BondModel> allBonds = [];
+
+    // انتظار كل Bonds
+    for (final element in BondType.values) {
+      final bonds = await read<AllBondsController>().fetchBondsByDate(
+        element,
+        DateFilter(
+          dateFieldName: ApiConstants.bondDate,
+          range: DateTimeRange(
+            start: DateTime(2025, 5, 28, 0, 0, 0),
+            end: DateTime(2025, 6, 1, 23, 59, 59),
+          ),
+        ),
+      );
+      allBonds.addAll(bonds);
+    }
+
+// انتظار كل Bills
+    for (final element in read<PatternController>().billsTypes) {
+      final bills = await fetchBillsByDate(
+        element,
+        DateFilter(
+          dateFieldName: ApiConstants.billDate,
+          range: DateTimeRange(
+            start: DateTime(2025, 5, 28, 0, 0, 0),
+            end: DateTime(2025, 6, 1, 23, 59, 59),
+          ),
+        ),
+      );
+      allBills.addAll(bills);
+    }
+
+    // final allBills = [nestedBills.values.expand((bills) => bills).toList().last];
 
     // await read<AllBondsController>().fetchAllNestedBonds();
 
     // billsByTypeGuid
-    final usedMaterialIds = allBills.expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();
+    final usedMaterialIds = allBills.where((bill) => bill.freeBill == true).toList().expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();
 
     final usedMaterials = read<MaterialController>().materials.where((mat) => usedMaterialIds.contains(mat.id)).toList();
 
-    final usedAccountIds = allBills
+    final usedAccountIds = allBills.where((bill) => bill.freeBill == true).toList()
         .map((bill) => bill.billTypeModel.accounts?.values.map((acc) => acc.id))
         .where((ids) => ids != null)
         .expand((ids) => ids!)
@@ -148,12 +183,19 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final usedGroups = read<MaterialGroupController>().materialGroups.where((group) => usedGroupIds.contains(group.matGroupGuid)).toList();
 
     // 🔹 4. البائعون المستخدمون في الفواتير
-    final usedSellerIds = allBills.map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
-
+    final usedSellerIds = allBills.where((bill) => bill.freeBill == true).toList().map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
+    log(allBonds.length.toString(), name: 'allBonds');
+    log(usedGroups.length.toString(), name: 'usedGroups');
+    log(usedCustomers.length.toString(), name: 'usedCustomers');
+    log(usedAccounts.length.toString(), name: 'usedAccounts');
+    log(usedAccountIds.length.toString(), name: 'usedAccountIds');
+    log(usedMaterialIds.length.toString(), name: 'usedMaterialIds');
+    log(usedMaterials.length.toString(), name: 'usedMaterials');
+    log(allBills.where((bill) => bill.freeBill == true).toList().length.toString(), name: 'allBills');
     final usedSellers = read<SellersController>().sellers.where((seller) => usedSellerIds.contains(seller.costGuid)).toList();
     final xmlString = xmlService.generateFullXml(
-      bills: nestedBills,
-      bonds: read<AllBondsController>().nestedBonds,
+      bills: allBills.where((bill) => bill.freeBill == true).toList().groupBy((p0) => p0.billTypeModel),
+      bonds: {},
       materials: usedMaterials,
       cheques: [] /* read<AllChequesController>().chequesList*/,
       customers: usedCustomers /*read<CustomersController>().customers*/,
@@ -539,6 +581,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   void navigateToAllBillsScreen() => to(AppRoutes.showAllBillsScreen);
 
   void navigateToPendingBillsScreen() => to(AppRoutes.showPendingBillsScreen);
+
   //
   // List<BillModel> getBillsByType(String billTypeId, BuildContext context) {
   //   if (bills.isEmpty) return [];

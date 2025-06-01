@@ -116,9 +116,10 @@ class LocalDatasourceRepository<T> {
 
   Future<Either<Failure, Unit>> delete(T item, String itemId) async {
     try {
-      await remoteDatasource.delete(itemId);
-
       await localDatasource.removeData(item);
+      await  remoteDatasource.delete(itemId);
+
+
 
       return Right(unit);
     } catch (e, stackTrace) {

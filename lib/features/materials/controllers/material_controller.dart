@@ -376,7 +376,7 @@ class MaterialController extends GetxController
           .where((element) => (element.matName! ==
                   name.encodeProblematic().encodeProblematic() ||
               element.matName! == name ||
-              element.matName!.decodeProblematic().decodeProblematic() ==
+              element.matName!.encodeProblematic().decodeProblematic() ==
                   name ||
               element.matName!.removeAllWhitespace == name.removeAllWhitespace))
           .firstOrNull;
