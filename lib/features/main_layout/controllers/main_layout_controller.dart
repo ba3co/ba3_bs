@@ -42,7 +42,7 @@ class MainLayoutController extends GetxController {
         icon: AppAssets.patternsIcon,
         unSelectedIcon: AppAssets.patternsUnselectedIcon,
       ),
-    if (RoleItemType.viewProduct.hasAdminPermission)
+    if (RoleItemType.viewProduct.hasReadPermission)
       AppLayoutItemModel(
         name: 'المواد',
         layout: const MaterialLayout(),
