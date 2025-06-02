@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
@@ -38,6 +39,7 @@ import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
 import '../../../sellers/data/models/seller_model.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
+import '../../../users_management/data/models/role_model.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
 import '../../services/bill/account_handler.dart';
@@ -242,6 +244,12 @@ class BillDetailsController extends IBillController
   }
 
   Future<void> deleteBill(BillModel billModel, BuildContext context) async {
+    if(!RoleItemType.viewBill.hasDeletePermission) {
+      AppUIUtils.onFailure('You do not have permission to delete this bill.');
+      return;
+
+    }
+
     if (billModel.isPurchaseRelated) {
       if (await _hasSoldSerialNumbers(billModel, context)) return;
     }
@@ -462,7 +470,12 @@ class BillDetailsController extends IBillController
 
   Future<void> updateBill(
       {required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context, required withPrint}) async {
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
+
+    if(RoleItemType.viewBill.hasUpdatePermission) {
+      await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
+    }else{
+      AppUIUtils.onFailure('You do not have permission to update this bill.');
+    }
   }
 
   Future<void> _saveOrUpdateBill(

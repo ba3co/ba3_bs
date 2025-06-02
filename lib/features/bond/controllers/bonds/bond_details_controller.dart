@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_local_storage_service.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -95,6 +97,12 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> deleteBond(BondModel bondModel, BuildContext context, {bool fromBondById = false}) async {
+
+    if(RoleItemType.viewBond.hasDeletePermission)
+      {
+        AppUIUtils.showErrorSnackBar(message: "no permissions");
+        return;
+      }
     deleteBondRequestState.value = RequestState.loading;
 
     final result = await _bondsFirebaseRepo.delete(bondModel);
@@ -118,7 +126,12 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> updateBond({required BondType bondType, required BondModel bondModel, required BuildContext context}) async {
-    await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel, context: context);
+    if(RoleItemType.viewBond.hasUpdatePermission) {
+      await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel, context: context);
+    }
+    else{
+      AppUIUtils.showErrorSnackBar(message: 'no permeisons');
+    }
   }
 
   Future<void> _saveOrUpdateBond({required BondType bondType, BondModel? existingBondModel, required BuildContext context}) async {
