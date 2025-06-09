@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,11 +15,13 @@ class BillDetailsCalculations extends StatelessWidget {
     required this.tag,
     required this.billDetailsPlutoController,
     required this.billTypeModel,
+    required this.currentBill,
   });
 
   final String tag;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillTypeModel billTypeModel;
+  final BillModel currentBill ;
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +54,13 @@ class BillDetailsCalculations extends StatelessWidget {
               label: AppStrings.totalBeforeTax.tr,
             ),
             CalculationCard(
-              visible: billTypeModel.billPatternType!.hasVat,
+              visible:(currentBill.billDetails.billFirstPay??0)>0,
               height: 40.h,
               width: 40.0.w,
               color: Colors.grey.shade600,
-              value: billDetailsPlutoController.computeWithVatTotal
+              value: currentBill.billDetails.billFirstPay!
                   .toStringAsFixed(2),
-              label: AppStrings.subtotal.tr,
+              label: AppStrings.firstPay.tr,
             ),
             CalculationCard(
               width: 40.0.w,

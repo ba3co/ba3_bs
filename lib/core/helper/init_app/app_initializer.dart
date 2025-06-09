@@ -47,9 +47,8 @@ Future<void> initializeAppServices() async {
     FlutterError.presentError(details);
   };
   //   await initializeWindowSettings();
-  WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: AppConstants.getDatabaseAppName);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
 
 
 
@@ -96,9 +95,9 @@ void setupDatabaseServices() {
 
   FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
       app: Firebase.app(AppConstants.getDatabaseAppName),
-      databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+     /* databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
           ? null
-          : AppConstants.getDatabaseAppName);
+          : AppConstants.getDatabaseAppName*/);
 
 /*  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
     app: Firebase.app(),

@@ -9,6 +9,7 @@ class PlutoWithEdite extends StatelessWidget {
     super.key,
     this.shortCut,
     this.onChanged,
+    this.rowColorCallback,
     required this.onRowSecondaryTap,
     this.evenRowColor = Colors.blueAccent,
     required this.columns,
@@ -22,6 +23,7 @@ class PlutoWithEdite extends StatelessWidget {
   final Function(PlutoGridOnChangedEvent)? onChanged;
   final Function(PlutoGridOnRowSecondaryTapEvent) onRowSecondaryTap;
   final void Function(PlutoGridOnLoadedEvent)? onLoaded;
+  final PlutoRowColorCallback? rowColorCallback;
   final Color evenRowColor;
 
   @override
@@ -31,6 +33,7 @@ class PlutoWithEdite extends StatelessWidget {
       rows: rows,
       onRowSecondaryTap: onRowSecondaryTap,
       onChanged: onChanged,
+      rowColorCallback: rowColorCallback,
       columnMenuDelegate: PlutoColumnMenuDelegateDefault(),
       configuration: PlutoGridConfiguration(
         shortcut: shortCut ?? const PlutoGridShortcut(),

@@ -407,7 +407,11 @@ class AppStrings {
   static var invalidPhone = 'رقم الهاتف غير صحيح';
 
   static var savedNumber = 'تم حفظ رقم الهاتف';
+  static var viewProducts = 'عرض المنتجات';
+  static var billProductView = 'عرض منتجات الفاتورة';
 
   static var areYouSureContinueWithoutSeller =
       'هل تريد المتابعة بدون تحديد البائع؟';
+
+  static var firstPay='الدفعة الاولى';
 }

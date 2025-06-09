@@ -5,8 +5,8 @@ import 'package:hive/hive.dart';
 part 'bill_details.g.dart'; // Generated file from Hive
 
 class _CopyWithSentinel {}
-
 @HiveType(typeId: 7)
+// ignore: must_be_immutable
 class BillDetails extends HiveObject with EquatableMixin {
   @HiveField(0)
   final String? billGuid;

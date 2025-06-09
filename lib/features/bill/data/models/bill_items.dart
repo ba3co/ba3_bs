@@ -6,6 +6,7 @@ import 'invoice_record_model.dart';
 part 'bill_items.g.dart';
 
 @HiveType(typeId: 5)
+// ignore: must_be_immutable
 class BillItems extends HiveObject with EquatableMixin {
   @HiveField(0)
   final List<BillItem> itemList;

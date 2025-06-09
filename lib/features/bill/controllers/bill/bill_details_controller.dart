@@ -42,6 +42,7 @@ import '../../../users_management/controllers/user_management_controller.dart';
 import '../../../users_management/data/models/role_model.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/invoice_record_model.dart';
+import '../../data/models/product_with_tax_model.dart';
 import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
 import '../pluto/bill_details_pluto_controller.dart';
@@ -56,6 +57,8 @@ class BillDetailsController extends IBillController
   final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
+  final List<ProductWithTaxModel> productsWithTax = [];
+  bool viewBillItemWithTax = false;
 
   BillDetailsController(
     this._billsFirebaseRepo,
@@ -212,7 +215,7 @@ class BillDetailsController extends IBillController
     );
   }
 
-  void createEntryBond(BillModel billModel, BuildContext context) async {
+  void launchFloatingEntryBondDetailsScreen(BillModel billModel, BuildContext context) async {
     if (!await validateForm(context)) return;
     if (!context.mounted) return;
     _billService.launchFloatingEntryBondDetailsScreen(
@@ -244,10 +247,9 @@ class BillDetailsController extends IBillController
   }
 
   Future<void> deleteBill(BillModel billModel, BuildContext context) async {
-    if(!RoleItemType.viewBill.hasDeletePermission) {
+    if (!RoleItemType.viewBill.hasDeletePermission) {
       AppUIUtils.onFailure('You do not have permission to delete this bill.');
       return;
-
     }
 
     if (billModel.isPurchaseRelated) {
@@ -470,10 +472,9 @@ class BillDetailsController extends IBillController
 
   Future<void> updateBill(
       {required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context, required withPrint}) async {
-
-    if(RoleItemType.viewBill.hasUpdatePermission) {
+    if (RoleItemType.viewBill.hasUpdatePermission) {
       await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
-    }else{
+    } else {
       AppUIUtils.onFailure('You do not have permission to update this bill.');
     }
   }
@@ -618,6 +619,15 @@ class BillDetailsController extends IBillController
     log('existingBill itemList length ${existingBill?.items.itemList.length}');
 
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
+    log('updatedBillModel itemList length ${updatedBillModel?.items.itemList.length}');
+    for (BillItem item in updatedBillModel?.items.itemList ?? []) {
+      if ((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0) != item.itemTotalPrice.toDouble) {
+        AppUIUtils.onFailure(
+          'يجب التأكد من قيم الجدول',
+        );
+        return null;
+      }
+    }
 
     if (updatedBillModel == null) {
       AppUIUtils.onFailure(
@@ -707,7 +717,7 @@ class BillDetailsController extends IBillController
     }
   }
 
-  void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) {
+  void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) async {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate = bill.billDetails.billDate!;
@@ -726,6 +736,7 @@ class BillDetailsController extends IBillController
 
     prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);
+    productsWithTax.assignAll(await _billService.getMaterialsWithTax(billModel: bill));
 
     billPlutoController.update();
   }
@@ -775,6 +786,17 @@ class BillDetailsController extends IBillController
   }
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);
+
+  changeBillPlutoView(BillModel billModel, BuildContext context) async {
+    if (!await validateForm(context)) return;
+    if (!viewBillItemWithTax) {
+      productsWithTax.assignAll(await _billService.getMaterialsWithTax(
+        billModel: billModel,
+      ));
+    }
+    viewBillItemWithTax = !viewBillItemWithTax;
+    update();
+  }
 
   void openFirstPayDialog(BuildContext context) => _billService.showFirstPayDialog(context, firstPayController);
 

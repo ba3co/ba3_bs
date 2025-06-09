@@ -212,7 +212,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }).toList();
   }
 
-  Future<EntryBondModel> getEntryBondById({required String entryId, required BuildContext context}) async {
+  Future<EntryBondModel> getEntryBondById({required String entryId,}) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     return result.fold(

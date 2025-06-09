@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/account_entity_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
@@ -28,6 +29,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bond/controllers/entry_bond/entry_bond_controller.dart';
+import '../../../bond/data/models/entry_bond_model.dart';
 import '../../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../../../floating_window/services/overlay_service.dart';
 import '../../../logs/controllers/log_controller.dart';
@@ -37,14 +39,10 @@ import '../../controllers/bill/all_bills_controller.dart';
 import '../../data/models/bill_items.dart';
 import '../../data/models/bill_model.dart';
 import '../../data/models/invoice_record_model.dart';
+import '../../data/models/product_with_tax_model.dart';
 import '../../ui/widgets/bill_shared/bill_header_field.dart';
 
-class BillDetailsService
-    with
-        PdfBase,
-        EntryBondsGenerator,
-        MatsStatementsGenerator,
-        FloatingLauncher {
+class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenerator, FloatingLauncher {
   final IPlutoController<InvoiceRecordModel> plutoController;
 
   final BillDetailsController billDetailsController;
@@ -91,42 +89,82 @@ class BillDetailsService
         freeBill: freeBill,
       );
 
-  void launchFloatingEntryBondDetailsScreen(
-      {required BuildContext context, required BillModel billModel}) {
-    if (!hasModelId(billModel.billId,)) return;
-
-    final entryBondModel = createSimulatedVatEntryBond(billModel);
-
+  void launchFloatingEntryBondDetailsScreen({required BuildContext context, required BillModel billModel}) async {
+    if (!hasModelId(
+      billModel.billId,
+    )) {
+      return;
+    }
+    EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
+      entryId: billModel.billId!,
+    );
+    // final entryBondModel = createSimulatedVatEntryBond(billModel);
+    if (!context.mounted) return;
     launchFloatingWindow(
       context: context,
-      minimizedTitle:
-      'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
+      minimizedTitle: 'سند خاص ب ${BillType.byLabel(billModel.billTypeModel.billTypeLabel!).value}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
+  }
+
+  Future<List<ProductWithTaxModel>> getMaterialsWithTax({ required BillModel billModel}) async {
+    if ( billModel.billId==null) {
+      return [];
+    }
+    EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
+      entryId: billModel.billId!,
+    );
+    List<ProductWithTaxModel> products = [];
+    for (final item in entryBondModel.items!.itemList) {
+      if (item.account.isFreeTaxAccount || item.account.isLocalTaxAccount) {
+        final isFreeTax = item.account.isFreeTaxAccount;
+        products.addAll(_addMatchingProducts(item, billModel, isFreeTax));
+      }
+    }
+
+    return products;
+  }
+
+  List<ProductWithTaxModel> _addMatchingProducts(EntryBondItemModel item, BillModel billModel, bool isFreeTax) {
+    List<ProductWithTaxModel> productsWithTax = [];
+
+    final matchingItems = billModel.items.itemList.where(
+      (product) => item.note?.contains(product.itemName ?? '') ?? false,
+    );
+
+    for (final billItem in matchingItems) {
+      productsWithTax.add(
+        ProductWithTaxModel(
+          isFreeTax: isFreeTax,
+          materialName: billItem.itemName ?? '',
+          materialCode: read<MaterialController>().getMaterialById(billItem.itemGuid).matCode.toString(),
+          materialQuantity: billItem.itemQuantity.toString(),
+          materialTotalPrice: billItem.itemTotalPrice,
+        ),
+      );
+    }
+    return productsWithTax;
   }
 
   /// bill delete number = 5
   /// lastBillNumber = 3
   /// decrementedBillNumber = 2
   Future<void> handleDeleteSuccess(
-      {required BillModel billToDelete,
-        required BillSearchController billSearchController,
-        required BuildContext context}) async {
+      {required BillModel billToDelete, required BillSearchController billSearchController, required BuildContext context}) async {
     /*log('billSearchController.isTail: ${billSearchController.isTail}');
     log('currentBillIndex: ${billSearchController.currentBillIndex}');
     log('billSearchController.bills.length: ${billSearchController.bills.length}');
     log('isLastValidBill(billToDelete): ${billSearchController.isLastValidBill(billToDelete)}');*/
 
     if (billToDelete.isSellRelated) {
-      await _updateSoldSerialNumbers(billToDelete,context);
+      await _updateSoldSerialNumbers(billToDelete, context);
       await billDetailsController.deleteSellSerialTransactions(billToDelete);
     } else if (billToDelete.isPurchaseRelated) {
-      await billDetailsController.deleteBuySerialTransactions(billToDelete,context);
+      await billDetailsController.deleteBuySerialTransactions(billToDelete, context);
     }
 
     if (billSearchController.isLastValidBill(billToDelete)) {
-      final decrementedBillNumber = (billToDelete.billDetails.previous ?? 0) -
-          billToDelete.billDetails.billNumber!;
+      final decrementedBillNumber = (billToDelete.billDetails.previous ?? 0) - billToDelete.billDetails.billNumber!;
 /*
       log('decrementedBillNumber: $decrementedBillNumber');
 */
@@ -137,45 +175,46 @@ class BillDetailsService
         number: decrementedBillNumber,
       );
     }
-    if(!context.mounted)return;
+    if (!context.mounted) return;
 
     // 1. Update previous and next bill references.
-    await _updatePreviousBillLink(billToDelete, billSearchController,context);
-    if(!context.mounted)return;
+    await _updatePreviousBillLink(billToDelete, billSearchController, context);
+    if (!context.mounted) return;
 
-    await _updateNextBillLink(billToDelete, billSearchController,context);
+    await _updateNextBillLink(billToDelete, billSearchController, context);
 
     // 2. Remove the bill locally from the search controller
     billSearchController.removeBill(billToDelete);
 
-    if(!context.mounted) return;
+    if (!context.mounted) return;
     // 3. Show success message.
-    AppUIUtils.onSuccess('تم حذف الفاتورة بنجاح!',);
+    AppUIUtils.onSuccess(
+      'تم حذف الفاتورة بنجاح!',
+    );
 
     // 4. Clean up bonds/mats statements if this is an approved bill with materials
     if (billToDelete.status == Status.approved) {
-      _handleApprovedBillDeletions(billToDelete,context);
+      _handleApprovedBillDeletions(billToDelete, context);
     }
   }
 
   /// Updates the sold serial numbers by setting their `sold` status to false.
-  Future<void> _updateSoldSerialNumbers(BillModel billToDelete,BuildContext context) async {
+  Future<void> _updateSoldSerialNumbers(BillModel billToDelete, BuildContext context) async {
     final materialController = read<MaterialController>();
 
     for (final billItem in billToDelete.items.itemList) {
-      final materialModel =
-      materialController.getMaterialById(billItem.itemGuid,);
+      final materialModel = materialController.getMaterialById(
+        billItem.itemGuid,
+      );
       final soldSerialNumber = billItem.soldSerialNumber;
 
       if (materialModel.serialNumbers == null) {
         continue; // Skip if the material is not found or has no serial numbers
       }
 
-      final updatedSerialNumbers =
-      Map<String, bool>.from(materialModel.serialNumbers!);
+      final updatedSerialNumbers = Map<String, bool>.from(materialModel.serialNumbers!);
 
-      if (soldSerialNumber != null &&
-          updatedSerialNumbers.containsKey(soldSerialNumber)) {
+      if (soldSerialNumber != null && updatedSerialNumbers.containsKey(soldSerialNumber)) {
         updatedSerialNumbers[soldSerialNumber] = false; // Mark as unsold
 
         // Apply the update to the material model
@@ -189,26 +228,25 @@ class BillDetailsService
   }
 
   /// Updates the reference of the previous bill to maintain correct linkage.
-  Future<void> _updatePreviousBillLink(
-      BillModel billToDelete, BillSearchController billSearchController,BuildContext context) async {
+  Future<void> _updatePreviousBillLink(BillModel billToDelete, BillSearchController billSearchController, BuildContext context) async {
     final previousNumber = billToDelete.billDetails.previous;
     if (previousNumber == null) return;
 
-    final previousBillResult =
-    await read<AllBillsController>().fetchBillByNumber(
+    final previousBillResult = await read<AllBillsController>().fetchBillByNumber(
       billTypeModel: billToDelete.billTypeModel,
       billNumber: previousNumber,
     );
 
     await previousBillResult.fold(
-          (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة السابقة: ${failure.message}', ),
-          (previousBills) async {
+      (failure) => AppUIUtils.onFailure(
+        'فشل في جلب الفاتورة السابقة: ${failure.message}',
+      ),
+      (previousBills) async {
         if (previousBills.isEmpty) return;
 
         final oldPrevBill = previousBills.first;
 
-        if (oldPrevBill.billDetails.next ==
-            billToDelete.billDetails.billNumber) {
+        if (oldPrevBill.billDetails.next == billToDelete.billDetails.billNumber) {
           final BillModel updatedPrevBill;
 
           if (billSearchController.isLastValidBill(billToDelete)) {
@@ -221,26 +259,23 @@ class BillDetailsService
             // log('_updatePreviousBillLink isLastValidBill(billToDelete): false');
 
             updatedPrevBill = oldPrevBill.copyWith(
-              billDetails: oldPrevBill.billDetails
-                  .copyWith(next: billToDelete.billDetails.next),
+              billDetails: oldPrevBill.billDetails.copyWith(next: billToDelete.billDetails.next),
             );
           }
 
           final updatedPrevBillLocal = oldPrevBill.copyWith(
-            billDetails: oldPrevBill.billDetails.copyWith(
-                next: billToDelete.billDetails.next ??
-                    billToDelete.billDetails.billNumber! + 1),
+            billDetails: oldPrevBill.billDetails.copyWith(next: billToDelete.billDetails.next ?? billToDelete.billDetails.billNumber! + 1),
           );
 
           // log('updatedPrevBill: ${updatedPrevBill.billDetails.next}');
           // log('updatedPrevBillLocal: ${updatedPrevBillLocal.billDetails.next}');
 
-          final updateResult =
-          await billDetailsController.updateOnly(updatedPrevBill);
+          final updateResult = await billDetailsController.updateOnly(updatedPrevBill);
           updateResult.fold(
-                (failure) => AppUIUtils.onFailure(failure.message, ),
-                (_) => _updateBillSearchController(billSearchController,
-                updatedPrevBillLocal, '_updatePreviousBillLink'),
+            (failure) => AppUIUtils.onFailure(
+              failure.message,
+            ),
+            (_) => _updateBillSearchController(billSearchController, updatedPrevBillLocal, '_updatePreviousBillLink'),
           );
           // await _updateAndNotifyBillSearch(updatedPrevBill, billSearchController, '_updateAndNotifyBillSearch _updatePreviousBillLink');
         }
@@ -249,8 +284,7 @@ class BillDetailsService
   }
 
   /// Updates the reference of the next bill to maintain correct linkage.
-  Future<void> _updateNextBillLink(
-      BillModel billToDelete, BillSearchController billSearchController,BuildContext context) async {
+  Future<void> _updateNextBillLink(BillModel billToDelete, BillSearchController billSearchController, BuildContext context) async {
     final nextNumber = billToDelete.billDetails.next;
 
     if (nextNumber == null) return;
@@ -259,11 +293,9 @@ class BillDetailsService
       final oldNextBill = billSearchController.getBillByNumber(nextNumber);
 
       final updatedNextBill = oldNextBill.copyWith(
-        billDetails: oldNextBill.billDetails
-            .copyWith(previous: billToDelete.billDetails.previous),
+        billDetails: oldNextBill.billDetails.copyWith(previous: billToDelete.billDetails.previous),
       );
-      _updateBillSearchController(billSearchController, updatedNextBill,
-          '_updateNextBillLink isLastValidBill');
+      _updateBillSearchController(billSearchController, updatedNextBill, '_updateNextBillLink isLastValidBill');
 
       return;
     }
@@ -274,33 +306,32 @@ class BillDetailsService
     );
 
     await nextBillResult.fold(
-          (failure) => AppUIUtils.onFailure('فشل في جلب الفاتورة اللاحقة: ${failure.message}', ),
-          (nextBills) async {
+      (failure) => AppUIUtils.onFailure(
+        'فشل في جلب الفاتورة اللاحقة: ${failure.message}',
+      ),
+      (nextBills) async {
         if (nextBills.isEmpty) return;
 
         final oldNextBill = nextBills.first;
 
-        if (oldNextBill.billDetails.previous ==
-            billToDelete.billDetails.billNumber) {
+        if (oldNextBill.billDetails.previous == billToDelete.billDetails.billNumber) {
           final updatedNextBillLocal = oldNextBill.copyWith(
             billDetails: oldNextBill.billDetails.copyWith(
               previous: billToDelete.billDetails.previous,
-              next: oldNextBill.billDetails.next ??
-                  billSearchController.getTail.billDetails.billNumber,
+              next: oldNextBill.billDetails.next ?? billSearchController.getTail.billDetails.billNumber,
             ),
           );
 
           final updatedNextBill = oldNextBill.copyWith(
-            billDetails: oldNextBill.billDetails
-                .copyWith(previous: billToDelete.billDetails.previous),
+            billDetails: oldNextBill.billDetails.copyWith(previous: billToDelete.billDetails.previous),
           );
 
-          final updateResult =
-          await billDetailsController.updateOnly(updatedNextBill);
+          final updateResult = await billDetailsController.updateOnly(updatedNextBill);
           updateResult.fold(
-                (failure) => AppUIUtils.onFailure(failure.message, ),
-                (_) => _updateBillSearchController(billSearchController,
-                updatedNextBillLocal, '_updateNextBillLink'),
+            (failure) => AppUIUtils.onFailure(
+              failure.message,
+            ),
+            (_) => _updateBillSearchController(billSearchController, updatedNextBillLocal, '_updateNextBillLink'),
           );
 
           //  await _updateAndNotifyBillSearch(updatedNextBill, billSearchController, '_updateAndNotifyBillSearch _updateNextBillLink');
@@ -310,14 +341,13 @@ class BillDetailsService
   }
 
   /// Updates a bill in the database and refreshes the search controller.
-  Future<void> _updateAndNotifyBillSearch(BillModel updatedBill,
-      BillSearchController billSearchController, String from) async {
-
+  Future<void> _updateAndNotifyBillSearch(BillModel updatedBill, BillSearchController billSearchController, String from) async {
     final updateResult = await billDetailsController.updateOnly(updatedBill);
     updateResult.fold(
-          (failure) => AppUIUtils.onFailure(failure.message, ),
-          (_) =>
-          _updateBillSearchController(billSearchController, updatedBill, from),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
+      (_) => _updateBillSearchController(billSearchController, updatedBill, from),
     );
   }
 
@@ -325,15 +355,16 @@ class BillDetailsService
   /// and the pattern type requires a material account.
   void _handleApprovedBillDeletions(BillModel billModel, BuildContext context) {
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      read<EntryBondController>().deleteEntryBondModel(
-          entryId: billModel.billId!,
-          sourceNumber: billModel.billDetails.billNumber!,context: context);
+      read<EntryBondController>()
+          .deleteEntryBondModel(entryId: billModel.billId!, sourceNumber: billModel.billDetails.billNumber!, context: context);
     } else {
-      read<LogController>()
-          .addLog(item: billModel, eventType: LogEventType.delete,);
+      read<LogController>().addLog(
+        item: billModel,
+        eventType: LogEventType.delete,
+      );
     }
 
-    deleteMatsStatementsModels(billModel,context);
+    deleteMatsStatementsModels(billModel, context);
   }
 
   Future<void> handleUpdateBillStatusSuccess({
@@ -341,23 +372,18 @@ class BillDetailsService
     required BillSearchController billSearchController,
     required BuildContext context,
   }) async {
-    AppUIUtils.onSuccess('تم القبول بنجاح',);
-    billSearchController.updateBill(
-        updatedBillModel, 'handleUpdateBillStatusSuccess');
+    AppUIUtils.onSuccess(
+      'تم القبول بنجاح',
+    );
+    billSearchController.updateBill(updatedBillModel, 'handleUpdateBillStatusSuccess');
 
-    if (updatedBillModel.status == Status.approved &&
-        updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      createAndStoreEntryBond(
-          model: updatedBillModel,
-
-          sourceNumbers: [updatedBillModel.billDetails.billNumber!],
-          isSave: false);
+    if (updatedBillModel.status == Status.approved && updatedBillModel.billTypeModel.billPatternType!.hasMaterialAccount) {
+      createAndStoreEntryBond(model: updatedBillModel, sourceNumbers: [updatedBillModel.billDetails.billNumber!], isSave: false);
     }
 
     if (updatedBillModel.status == Status.approved) {
       createAndStoreMatsStatements(
         sourceModels: [updatedBillModel],
-
         onProgress: (progress) {
           log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
         },
@@ -365,10 +391,8 @@ class BillDetailsService
     }
   }
 
-  Map<String, AccountModel> findModifiedBillTypeAccounts(
-      {required BillModel previousBill, required BillModel currentBill}) {
-    log('currentBill ${currentBill.billId}',
-        name: 'findModifiedBillTypeAccounts');
+  Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
+    log('currentBill ${currentBill.billId}', name: 'findModifiedBillTypeAccounts');
 
     // Extract accounts from the bill type models or default to empty maps
     final previousAccounts = previousBill.billTypeModel.accounts ?? {};
@@ -377,42 +401,32 @@ class BillDetailsService
     // Identify accounts that are present in both bills but have changed
     final modifiedBillTypeAccounts = Map.fromEntries(
       previousAccounts.entries.where(
-            (MapEntry<Account, AccountModel> previousAccount) {
+        (MapEntry<Account, AccountModel> previousAccount) {
           final currentAccountModel = currentAccounts[previousAccount.key];
-          return currentAccountModel != null &&
-              currentAccountModel != previousAccount.value;
+          return currentAccountModel != null && currentAccountModel != previousAccount.value;
         }, // Use the account key's label for the map
       ).map(
-            (entry) => MapEntry(entry.key.label, entry.value),
+        (entry) => MapEntry(entry.key.label, entry.value),
       ),
     );
 
     // Log modified accounts
     log('Modified accounts count: ${modifiedBillTypeAccounts.length}');
     modifiedBillTypeAccounts.forEach(
-          (key, account) =>
-          log('Account Key: $key, Account Model: ${account.toJson()}'),
+      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
     );
 
     return modifiedBillTypeAccounts;
   }
 
-  Map<String, List<BillItem>> findDeletedMaterials(
-      {required BillModel previousBill, required BillModel currentBill}) {
-    final previousGroupedItems =
-    previousBill.items.itemList.groupBy((item) => item.itemGuid);
-    final currentGroupedItems =
-    currentBill.items.itemList.groupBy((item) => item.itemGuid);
+  Map<String, List<BillItem>> findDeletedMaterials({required BillModel previousBill, required BillModel currentBill}) {
+    final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
+    final currentGroupedItems = currentBill.items.itemList.groupBy((item) => item.itemGuid);
 
-    return Map.fromEntries(previousGroupedItems.entries
-        .where((entry) => !currentGroupedItems.containsKey(entry.key)));
+    return Map.fromEntries(previousGroupedItems.entries.where((entry) => !currentGroupedItems.containsKey(entry.key)));
   }
 
-  ({
-  List<BillItem> newItems,
-  List<BillItem> deletedItems,
-  List<BillItem> updatedItems
-  })? findBillItemChanges({
+  ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? findBillItemChanges({
     required List<BillItem> previousItems,
     required List<BillItem> currentItems,
   }) {
@@ -423,38 +437,37 @@ class BillDetailsService
     final mergedCurrent = currentItems.merge();
 
     // Use extension methods to determine differences between the merged lists.
-    final newItems =
-    mergedCurrent.subtract(mergedPrevious, (item) => item.itemGuid);
-    final deletedItems =
-    mergedPrevious.subtract(mergedCurrent, (item) => item.itemGuid);
+    final newItems = mergedCurrent.subtract(mergedPrevious, (item) => item.itemGuid);
+    final deletedItems = mergedPrevious.subtract(mergedCurrent, (item) => item.itemGuid);
 
     // Find updated items among common items.
     // Identify updated items with adjusted quantities.
     final updatedItems = mergedCurrent.quantityDiff(
       mergedPrevious,
-          (item) => item.itemGuid, // Key selector
-          (item) => item.itemQuantity, // Quantity selector
-          (item, difference) =>
-          item.copyWith(itemQuantity: difference), // Update quantity
+      (item) => item.itemGuid, // Key selector
+      (item) => item.itemQuantity, // Quantity selector
+      (item, difference) => item.copyWith(itemQuantity: difference), // Update quantity
     );
 
-    return (
-    newItems: newItems,
-    deletedItems: deletedItems,
-    updatedItems: updatedItems
-    );
+    return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
   }
 
   Map<String, AccountModel> _handelModifiedAccountsUpdate(
-      {required BillModel previousBill, required BillModel currentBill,required BuildContext context}) {
-    final Map<String, AccountModel> modifiedAccounts =
-    findModifiedBillTypeAccounts(
-        previousBill: previousBill, currentBill: currentBill);
+      {required BillModel previousBill, required BillModel currentBill, required BuildContext context}) {
+    final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
-    if (hasModelId(currentBill.billId,) &&
-        hasModelItems(currentBill.items.itemList,) &&
-        hasModelId(previousBill.billId,) &&
-        hasModelItems(previousBill.items.itemList,)) {
+    if (hasModelId(
+          currentBill.billId,
+        ) &&
+        hasModelItems(
+          currentBill.items.itemList,
+        ) &&
+        hasModelId(
+          previousBill.billId,
+        ) &&
+        hasModelItems(
+          previousBill.items.itemList,
+        )) {
       generatePdfAndSendToEmail(
         fileName: AppStrings.updatedBill.tr,
         itemModel: [previousBill, currentBill],
@@ -474,30 +487,22 @@ class BillDetailsService
     required BuildContext context,
   }) async {
     // 1. Display the success message.
-    _showSuccessMessage(isSave,context);
+    _showSuccessMessage(isSave, context);
 
     // 2. Prepare containers for modified accounts and deleted materials.
-    Map<String, AccountModel> modifiedBillTypeAccounts =
-    <String, AccountModel>{};
+    Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
 
-    ({
-    List<BillItem> newItems,
-    List<BillItem> deletedItems,
-    List<BillItem> updatedItems
-    })? itemChanges;
+    ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges;
 
     // 3. Process the bill: add if new, update if modifying.
     if (isSave) {
-      _handleAdd(
-          savedBill: currentBill, billSearchController: billSearchController,context: context);
+      _handleAdd(savedBill: currentBill, billSearchController: billSearchController, context: context);
     } else {
       // Update the bill (PDF generation etc.) and collect modifications.
-      modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(
-          previousBill: previousBill!, currentBill: currentBill,context: context);
+      modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill!, currentBill: currentBill, context: context);
 
       // Process update and compute the differences between bill items.
-      itemChanges =
-          _processUpdate(previousBill: previousBill, currentBill: currentBill);
+      itemChanges = _processUpdate(previousBill: previousBill, currentBill: currentBill);
     }
 
     // 4. Update the bill search controller.
@@ -534,53 +539,41 @@ class BillDetailsService
         modifiedAccounts: modifiedBillTypeAccounts,
         model: currentBill,
         isSave: isSave,
-
         sourceNumbers: [currentBill.billDetails.billNumber!],
       );
     } else {
       read<LogController>().addLog(
         item: currentBill,
-        eventType: isSave ? LogEventType.add : LogEventType.update,);
+        eventType: isSave ? LogEventType.add : LogEventType.update,
+      );
     }
 
     // 6. Determine whether to generate a material statement.
-    final shouldGenerateMatStatement = _determineIfShouldGenerateMatStatement(
-        isSave, currentBill, itemChanges);
+    final shouldGenerateMatStatement = _determineIfShouldGenerateMatStatement(isSave, currentBill, itemChanges);
 
     // For updates, extract the list of updated materials (or an empty list for a new bill).
-    final updatedMaterials =
-    isSave ? <BillItem>[] : (itemChanges?.updatedItems ?? []);
+    final updatedMaterials = isSave ? <BillItem>[] : (itemChanges?.updatedItems ?? []);
 
-    final deletedMaterials =
-    isSave ? <BillItem>[] : (itemChanges?.deletedItems ?? []);
+    final deletedMaterials = isSave ? <BillItem>[] : (itemChanges?.deletedItems ?? []);
 
     // 7. Generate and save the material statement if the bill is approved and changes exist.
     if (currentBill.status == Status.approved && shouldGenerateMatStatement) {
       createAndStoreMatStatement(
-          model: currentBill,
-          deletedMaterials: deletedMaterials,
-          updatedMaterials: updatedMaterials,
-          context: context
-      );
+          model: currentBill, deletedMaterials: deletedMaterials, updatedMaterials: updatedMaterials, context: context);
     }
 
     // 8. Save material serials.
-    saveMaterialsSerials(currentBill,context);
+    saveMaterialsSerials(currentBill, context);
   }
 
-  Future<void> saveMaterialsSerials(BillModel savedBill,BuildContext context) async {
-    final Map<MaterialModel, List<TextEditingController>>
-    buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
-    final Map<MaterialModel, List<TextEditingController>>
-    sellSerialsControllers =
-        plutoController.sellMaterialsSerialsControllers;
+  Future<void> saveMaterialsSerials(BillModel savedBill, BuildContext context) async {
+    final Map<MaterialModel, List<TextEditingController>> buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
+    final Map<MaterialModel, List<TextEditingController>> sellSerialsControllers = plutoController.sellMaterialsSerialsControllers;
 
     log('BillTypeUtils.isPurchaseRelated(savedBill) ${savedBill.isPurchaseRelated}');
 
     final Map<MaterialModel, List<TextEditingController>> serialControllers =
-    savedBill.isPurchaseRelated
-        ? buySerialsControllers
-        : sellSerialsControllers;
+        savedBill.isPurchaseRelated ? buySerialsControllers : sellSerialsControllers;
 
     if (serialControllers.isNotEmpty) {
       billDetailsController.saveSerialNumbers(savedBill, serialControllers, context);
@@ -588,29 +581,23 @@ class BillDetailsService
   }
 
   /// Displays a success message based on the operation type.
-  void _showSuccessMessage(bool isSave,BuildContext context) {
-    final message =
-    isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
-    AppUIUtils.onSuccess(message, );
+  void _showSuccessMessage(bool isSave, BuildContext context) {
+    final message = isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
+    AppUIUtils.onSuccess(
+      message,
+    );
   }
 
   /// Updates the bill search controller with the current bill.
-  void _updateBillSearchController(
-      BillSearchController controller, BillModel bill, String from) {
+  void _updateBillSearchController(BillSearchController controller, BillModel bill, String from) {
     controller.updateBill(bill, from);
   }
 
   /// Processes an update by calling the update handler and computing item changes.
-  ({
-  List<BillItem> newItems,
-  List<BillItem> deletedItems,
-  List<BillItem> updatedItems
-  })? _processUpdate(
+  ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? _processUpdate(
       {required BillModel previousBill, required BillModel currentBill}) {
     // Compute the differences between the previous and current bill items.
-    final changes = findBillItemChanges(
-        previousItems: previousBill.items.itemList,
-        currentItems: currentBill.items.itemList);
+    final changes = findBillItemChanges(previousItems: previousBill.items.itemList, currentItems: currentBill.items.itemList);
 
     return changes;
   }
@@ -619,14 +606,10 @@ class BillDetailsService
   /// For new bills, a statement is generated if there is at least one item.
   /// For updates, the statement is generated only if there are new, deleted, or updated items.
   bool _determineIfShouldGenerateMatStatement(
-      bool isSave,
-      BillModel currentBill,
-      ({
-      List<BillItem> newItems,
-      List<BillItem> deletedItems,
-      List<BillItem> updatedItems
-      })? itemChanges,
-      ) {
+    bool isSave,
+    BillModel currentBill,
+    ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges,
+  ) {
     if (isSave) {
       return currentBill.items.itemList.isNotEmpty;
     } else {
@@ -668,8 +651,10 @@ class BillDetailsService
 
     // 5. Handle the fetch result
     result.fold(
-          (failure) => AppUIUtils.onFailure(failure.message, ),
-          (fetchedBills) => _updatePreviousBill(
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
+      (fetchedBills) => _updatePreviousBill(
         fetchedBills: fetchedBills,
         billSearchController: billSearchController,
         newBillNumber: savedBill.billDetails.billNumber,
@@ -680,12 +665,19 @@ class BillDetailsService
   /// Returns true if [bill] has an ID and at least one item in its item list.
   /// This helps us decide whether to generate/send a PDF.
   bool _isValidBillForPdf(BillModel bill) {
-    return hasModelId(bill.billId,) && hasModelItems(bill.items.itemList,);
+    return hasModelId(
+          bill.billId,
+        ) &&
+        hasModelItems(
+          bill.items.itemList,
+        );
   }
 
   bool hasClientPhoneNumber(BuildContext context) {
     if (billDetailsController.customerPhoneController.text.isEmpty) {
-      AppUIUtils.onFailure('يرجى إضافة رقم هاتف العميل!', );
+      AppUIUtils.onFailure(
+        'يرجى إضافة رقم هاتف العميل!',
+      );
       return false;
     }
     return true;
@@ -709,17 +701,18 @@ class BillDetailsService
       billDetails: previousBill.billDetails.copyWith(next: newBillNumber),
     );
 
-    await _updateAndNotifyBillSearch(updatedPreviousBill, billSearchController,
-        '_updateAndNotifyBillSearch _updatePreviousBill');
+    await _updateAndNotifyBillSearch(updatedPreviousBill, billSearchController, '_updateAndNotifyBillSearch _updatePreviousBill');
   }
 
   /// Returns `true` if the bill is approved and its pattern requires a material account.
-  bool _shouldCreateEntryBond(BillModel bill) =>
-      bill.status == Status.approved &&
-          bill.billTypeModel.billPatternType!.hasMaterialAccount;
+  bool _shouldCreateEntryBond(BillModel bill) => bill.status == Status.approved && bill.billTypeModel.billPatternType!.hasMaterialAccount;
 
   showEInvoiceDialog(BillModel billModel, BuildContext context) {
-    if (!hasModelId(billModel.billId,)) return;
+    if (!hasModelId(
+      billModel.billId,
+    )) {
+      return;
+    }
 
     OverlayService.showDialog(
       context: context,
@@ -735,8 +728,7 @@ class BillDetailsService
     );
   }
 
-  showFirstPayDialog(
-      BuildContext context, TextEditingController firstPayController) {
+  showFirstPayDialog(BuildContext context, TextEditingController firstPayController) {
     OverlayService.showDialog(
       color: AppColors.backGroundColor,
       context: context,
@@ -760,7 +752,7 @@ class BillDetailsService
     );
   }
 
-///  this only in mobile app
+  ///  this only in mobile app
 /*   Future<void> showBarCodeScanner({
     required BuildContext context,
     required PlutoGridStateManager stateManager,

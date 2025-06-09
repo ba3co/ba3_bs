@@ -8,6 +8,7 @@ import '../../../bill/data/models/discount_addition_account_model.dart';
 part 'bill_type_model.g.dart';
 
 @HiveType(typeId: 4)
+// ignore: must_be_immutable
 class BillTypeModel extends HiveObject with EquatableMixin {
   @HiveField(0)
   final String? id;

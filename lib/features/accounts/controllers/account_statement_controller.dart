@@ -433,7 +433,7 @@ class AccountStatementController extends GetxController
   void launchBondEntryBondScreen(
       {required BuildContext context, required String originId}) async {
     EntryBondModel entryBondModel =
-        await read<EntryBondController>().getEntryBondById(entryId: originId,context: context );
+        await read<EntryBondController>().getEntryBondById(entryId: originId, );
 
     if (!context.mounted) return;
     launchFloatingWindow(

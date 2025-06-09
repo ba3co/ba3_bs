@@ -63,6 +63,18 @@ class BillDetailsButtons extends StatelessWidget {
                 onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
               ),
             if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(context),
+            Visibility(
+              visible: RoleItemType.administrator.hasReadPermission,
+              child: _buildActionButton(
+                title: AppStrings.viewProducts.tr,
+                icon: FontAwesomeIcons.streetView,
+                width: 120,
+                onPressed: () => billDetailsController.changeBillPlutoView(billModel, context),
+              ),
+            ),
+            Visibility(
+                visible: billModel.billTypeModel.isPurchaseRelated,
+                child: freeLocalSwitcher(billDetailsController: billDetailsController)),
             Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
@@ -71,10 +83,8 @@ class BillDetailsButtons extends StatelessWidget {
                     onPressed: () {
                       billDetailsController.openFirstPayDialog(context);
                     })
-                : SizedBox()),
-            Visibility(
-                visible: billModel.billTypeModel.isPurchaseRelated,
-                child: freeLocalSwitcher(billDetailsController: billDetailsController)),
+                : SizedBox.shrink()),
+
           ],
         ),
       ),
@@ -123,7 +133,7 @@ class BillDetailsButtons extends StatelessWidget {
       color: isPending ? Colors.orange : null,
       onPressed: isPending
           ? () => billDetailsController.updateBillStatus(billModel, Status.approved, context)
-          : () => billDetailsController.createEntryBond(billModel, context),
+          : () => billDetailsController.launchFloatingEntryBondDetailsScreen(billModel, context),
     );
   }
 

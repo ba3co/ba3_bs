@@ -26,6 +26,7 @@ import 'invoice_record_model.dart';
 part 'bill_model.g.dart';
 
 @HiveType(typeId: 3)
+// ignore: must_be_immutable
 class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable {
   @HiveField(0)
   final String? billId;
