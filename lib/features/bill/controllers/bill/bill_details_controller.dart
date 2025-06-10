@@ -634,7 +634,8 @@ class BillDetailsController extends IBillController
 
 
     for (BillItem item in updatedBillModel?.items.itemList ?? []) {
-      if ((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0) != item.itemTotalPrice.toDouble) {
+      log(( ).toString());
+      if ((item.itemQuantity*((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0))).floor() != item.itemTotalPrice.toDouble.floor()) {
         AppUIUtils.onFailure(
           'يجب التأكد من قيم الجدول',
         );
