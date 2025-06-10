@@ -58,7 +58,7 @@ class BillDetailsCalculations extends StatelessWidget {
               height: 40.h,
               width: 40.0.w,
               color: Colors.grey.shade600,
-              value: currentBill.billDetails.billFirstPay!
+              value:( currentBill.billDetails.billFirstPay??0)
                   .toStringAsFixed(2),
               label: AppStrings.firstPay.tr,
             ),

@@ -98,9 +98,9 @@ class BondDetailsController extends GetxController with AppValidator {
 
   Future<void> deleteBond(BondModel bondModel, BuildContext context, {bool fromBondById = false}) async {
 
-    if(RoleItemType.viewBond.hasDeletePermission)
+    if(!RoleItemType.viewBond.hasDeletePermission)
       {
-        AppUIUtils.showErrorSnackBar(message: "no permissions");
+        AppUIUtils.onFailure( "no permissions");
         return;
       }
     deleteBondRequestState.value = RequestState.loading;
@@ -130,7 +130,7 @@ class BondDetailsController extends GetxController with AppValidator {
       await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel, context: context);
     }
     else{
-      AppUIUtils.showErrorSnackBar(message: 'no permeisons');
+      AppUIUtils.onFailure( 'no permissions');
     }
   }
 

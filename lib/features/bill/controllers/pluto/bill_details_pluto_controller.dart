@@ -153,7 +153,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   /// or disposes and removes any excess controllers.
   List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount, BillItem billItem) {
     final int currentCount = controllers.length;
-
+    log(billItem.itemSerialNumbers.toString());
     if (currentCount < requiredCount) {
       // Add missing controllers and maintain existing values
       final int needed = requiredCount - currentCount;
@@ -172,6 +172,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   /// Creates a list of [TextEditingController] with [count] items,
   /// optionally starting from a specific index to ensure sequential serials.
   List<TextEditingController> _createControllers(int count, BillItem billItem, {int startIndex = 0}) {
+
     return List.generate(
       count,
       (index) {
@@ -350,10 +351,11 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final materialController = read<MaterialController>();
 
     final InvoiceRecordModel? invoiceRecordModel = _processBillRow(row, materialController);
-
+log((invoiceRecordModel?.toJson()).toString(), name: 'InvoiceRecordModel');
     if (invoiceRecordModel == null) return;
 
     final billItem = BillItem.fromBillRecord(invoiceRecordModel);
+    log(billItem.toJson().toString(), name: 'BillItem');
 
     _contextMenu.showMaterialMenu(
       materialMenu: materialMenu,
@@ -434,7 +436,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   // Helper method to create an InvoiceRecordModel from a row
-  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) => InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
+  InvoiceRecordModel _createInvoiceRecord(PlutoRow row, String matId) {
+    return InvoiceRecordModel.fromJsonPluto(matId, row.toJson());
+  }
 
   void prepareBillMaterialsRows(List<InvoiceRecordModel> invRecords) {
     recordsTableStateManager.removeAllRows();

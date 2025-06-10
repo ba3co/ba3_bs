@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
@@ -109,6 +111,7 @@ class BillItem extends Equatable {
   });
 
   factory BillItem.fromBillRecord(InvoiceRecordModel invoiceRecord) {
+    log(invoiceRecord.toJson().toString(), name: 'BillItem.fromBillRecord');
     return BillItem(
       itemGuid: invoiceRecord.invRecId!,
       itemName: invoiceRecord.invRecProduct!,

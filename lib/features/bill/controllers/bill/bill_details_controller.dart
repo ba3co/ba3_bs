@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
@@ -10,6 +11,7 @@ import 'package:ba3_bs/core/helper/validators/app_validator.dart';
 import 'package:ba3_bs/core/i_controllers/i_bill_controller.dart';
 import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
+import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_local_storage_service.dart';
@@ -93,6 +95,9 @@ class BillDetailsController extends IBillController
   AccountModel? selectedBillAccount;
   SellerModel? selectedSellerAccount;
 
+
+  Rx<bool> get isAccountReadOnly=>(selectedPayType.value==InvPayType.cash).obs;
+
   Rx<DateTime> billDate = DateTime.now().obs;
 
   Rx<InvPayType> selectedPayType = InvPayType.cash.obs;
@@ -135,6 +140,9 @@ class BillDetailsController extends IBillController
     if (newAccount != null) {
       selectedBillAccount = newAccount;
       billAccountController.text = newAccount.accName!;
+    }else{
+      selectedBillAccount = null;
+      billAccountController.text = '';
     }
   }
 
@@ -199,6 +207,10 @@ class BillDetailsController extends IBillController
   void onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
       selectedPayType.value = payType;
+      if (payType == InvPayType.cash) {
+        final primaryCashAccount = read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId);
+        updateBillAccount(primaryCashAccount);
+      }
       log('onPayTypeChanged');
     }
   }
@@ -616,10 +628,11 @@ class BillDetailsController extends IBillController
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
   BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
-    log('existingBill itemList length ${existingBill?.items.itemList.length}');
 
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
-    log('updatedBillModel itemList length ${updatedBillModel?.items.itemList.length}');
+
+
+
     for (BillItem item in updatedBillModel?.items.itemList ?? []) {
       if ((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0) != item.itemTotalPrice.toDouble) {
         AppUIUtils.onFailure(
@@ -630,11 +643,11 @@ class BillDetailsController extends IBillController
     }
 
     if (updatedBillModel == null) {
-      AppUIUtils.onFailure(
-        'من فضلك أدخل اسم العميل واسم البائع!',
-      );
+
       return null;
     }
+
+
 
     return updatedBillModel;
   }
@@ -642,14 +655,25 @@ class BillDetailsController extends IBillController
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
-      if (/*!_billUtils.validateCustomerAccount(selectedCustomerAccount)&&*/ !_billUtils.validateBillAccount(
+      if ( !_billUtils.validateBillAccount(
         selectedBillAccount,
       )) {
+        AppUIUtils.onFailure(
+          'من فضلك أدخل اسم العميل !',
+        );
         return null;
       }
     }
+    if(selectedBillAccount!.id==AppConstants.primaryCashAccountId&&selectedPayType.value==InvPayType.due){
+      AppUIUtils.onFailure('لايمكن البيع الاجل للصندوق');
+      return null;
+
+    }
 
     if (!_billUtils.validateSellerAccount(selectedSellerAccount)) {
+      AppUIUtils.onFailure(
+        'من فضلك أدخل اسم البائع!',
+      );
       return null;
     }
 

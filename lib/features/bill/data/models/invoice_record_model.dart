@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -94,12 +98,25 @@ class InvoiceRecordModel {
     final String? prodName = map[AppConstants.invRecProduct];
 
     final String? productSoldSerial = map[AppConstants.invRecProductSoldSerial];
-    final List<String>? productSerialNumbers =
-        (map[AppConstants.invRecProductSerialNumbers] is List)
-            ? List<String>.from(
-                map[AppConstants.invRecProductSerialNumbers] as List)
-            : null;
 
+    List<String>? productSerialNumbers;
+    final raw = map[AppConstants.invRecProductSerialNumbers];
+
+    if (raw is String && raw.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is List) {
+          productSerialNumbers = decoded.map((e) => e.toString()).toList();
+        }
+      } catch (e) {
+        productSerialNumbers = null;
+      }
+    }
+/*    final List<String>? productSerialNumbers =
+        (map[AppConstants.invRecProductSerialNumbers] != null)
+            ? List<String>.from(
+                map[AppConstants.invRecProductSerialNumbers] as List<String>)
+            : null;*/
     // Calculate gift total
     final double effectiveVat = vat;
     final double effectiveSubTotal = subTotal;
@@ -302,7 +319,7 @@ class InvoiceRecordModel {
         width: 110,
         isEditable: false,
         hasContextMenu: false,
-        isUIHidden: true,
+        isUIHidden: !RoleItemType.administrator.hasReadPermission,
         isFullyHidden: AppConstants.hideInvRecProductSerialNumbers,
       ): invRecProductSerialNumbers,
 

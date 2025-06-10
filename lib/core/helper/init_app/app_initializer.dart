@@ -48,7 +48,7 @@ Future<void> initializeAppServices() async {
   };
   //   await initializeWindowSettings();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,name: AppConstants.getDatabaseAppName);
 
 
 
@@ -95,9 +95,9 @@ void setupDatabaseServices() {
 
   FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
       app: Firebase.app(AppConstants.getDatabaseAppName),
-     /* databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+      databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
           ? null
-          : AppConstants.getDatabaseAppName*/);
+          : AppConstants.getDatabaseAppName);
 
 /*  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
     app: Firebase.app(),
