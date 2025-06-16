@@ -68,6 +68,7 @@ import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/customer/service/customer_import.dart';
 import '../../features/dashboard/controller/bill_profit_dashboard_controller.dart';
+import '../../features/dashboard/controller/bill_report_controller.dart';
 import '../../features/dashboard/controller/cheques_timeline_controller.dart';
 import '../../features/dashboard/controller/seller_dashboard_controller.dart';
 import '../../features/logs/data/datasources/log_data_source.dart';
@@ -348,6 +349,7 @@ class AppBindings extends Bindings {
     lazyPut(StoreCartController(repositories.storeCartRepo, repositories.billsRepo));
 
     lazyPut(LogController(repositories.logsRepo));
+    lazyPut(BillReportController());
   }
 }
 

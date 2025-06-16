@@ -1,7 +1,10 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/services/export_excl/excel_export.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -68,8 +71,14 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                     child: PlutoGrid(
                       key: controller.plutoKey,
                       onLoaded: (event) {
-                        event.stateManager.activateColumnsAutoSize();
+                        controller.stateManager = event.stateManager;
+                        // event.stateManager.activateColumnsAutoSize();
+                        for (var column in event.stateManager.refColumns) {
+                          event.stateManager.autoFitColumn(context,
+                            column,
 
+                          );
+                        }
                         event.stateManager.setShowColumnFilter(true);
 
                         onLoaded(event);
@@ -137,6 +146,16 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
             color: Colors.blue,
             icon: Icon(icon),
           ),
+        IconButton(
+          onPressed: () {
+            List<Map<String, dynamic>> jsonList = read<PlutoController>().stateManager.rows.map((row) {
+              return row.cells.map((key, cell) => MapEntry(key, cell.value));
+            }).toList();
+            exportJsonToExcel(jsonList);
+          },
+          color: Colors.blue,
+          icon: Icon(FontAwesomeIcons.fileExport),
+        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
           child: Text(

@@ -6,6 +6,8 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoController extends GetxController {
   UniqueKey plutoKey = UniqueKey();
 
+  late PlutoGridStateManager stateManager;
+
   /// Updates the `plutoKey` to a new unique value.
   void updatePlutoKey() {
     plutoKey = UniqueKey();

@@ -45,7 +45,7 @@ class AllBillsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    AppStrings.totalSales.tr,
+                    AppStrings.total.tr,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w300,

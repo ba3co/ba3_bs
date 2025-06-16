@@ -201,6 +201,8 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required BillTypeModel billTypeModel,
     required bool isFree,
   }) {
+
+
     final bondType = billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor;
 
     MaterialModel materialModel = read<MaterialController>().getMaterialById(

@@ -414,4 +414,14 @@ class AppStrings {
       'هل تريد المتابعة بدون تحديد البائع؟';
 
   static var firstPay='الدفعة الاولى';
+
+  static const String vatName='الضريبة';
+
+
+  static const String dailySales='المبيعات اليومية';
+
+  static const String dailiesReports='التقارير اليومية';
+
+  static const String monthlyReports='التقارير الشهرية';
+  static const String billsReports='تقارير الفواتير';
 }

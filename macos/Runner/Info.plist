@@ -36,6 +36,8 @@
     <string>Access to Documents folder is needed to read files</string>
     <key>NSDownloadsFolderUsageDescription</key>
     <string>Access to Downloads folder is needed to read files</string>
+     <key>com.apple.security.files.user-selected.read-write</key>
+      <true/>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>

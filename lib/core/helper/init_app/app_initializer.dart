@@ -48,7 +48,7 @@ Future<void> initializeAppServices() async {
   };
   //   await initializeWindowSettings();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,name: AppConstants.getDatabaseAppName);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: AppConstants.getDatabaseAppName);
 
 
 
@@ -93,16 +93,13 @@ Future<void> initializeAppLocalization({required String boxName}) async {
 void setupDatabaseServices() {
   // final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
-  FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
+   FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
       app: Firebase.app(AppConstants.getDatabaseAppName),
-      databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+     databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
           ? null
           : AppConstants.getDatabaseAppName);
 
-/*  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
-    app: Firebase.app(),
-    databaseId: 'test',
-  );*/
+  // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);

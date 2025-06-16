@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
@@ -40,6 +41,7 @@ import '../../../../core/services/firebase/implementations/repos/queryable_savab
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/bonds/all_bond_controller.dart';
 import '../../../bond/data/models/bond_model.dart';
+import '../../../dashboard/controller/bill_report_controller.dart';
 import '../../../floating_window/controllers/floating_window_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/controllers/pattern_controller.dart';
@@ -98,8 +100,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
     _billsCountsService = await BillsCountsService.create();
     _billLocalStorageService = BillLocalStorageService();
   }
-
-
 
   @override
   Future<void> onInit() async {
@@ -160,11 +160,14 @@ class AllBillsController extends FloatingBillDetailsLauncher
     // await read<AllBondsController>().fetchAllNestedBonds();
 
     // billsByTypeGuid
-    final usedMaterialIds = allBills.where((bill) => bill.freeBill == true).toList().expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();
+    final usedMaterialIds =
+        allBills.where((bill) => bill.freeBill == true).toList().expand((bill) => bill.items.itemList.map((item) => item.itemGuid)).toSet();
 
     final usedMaterials = read<MaterialController>().materials.where((mat) => usedMaterialIds.contains(mat.id)).toList();
 
-    final usedAccountIds = allBills.where((bill) => bill.freeBill == true).toList()
+    final usedAccountIds = allBills
+        .where((bill) => bill.freeBill == true)
+        .toList()
         .map((bill) => bill.billTypeModel.accounts?.values.map((acc) => acc.id))
         .where((ids) => ids != null)
         .expand((ids) => ids!)
@@ -182,7 +185,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
     final usedGroups = read<MaterialGroupController>().materialGroups.where((group) => usedGroupIds.contains(group.matGroupGuid)).toList();
 
     // 🔹 4. البائعون المستخدمون في الفواتير
-    final usedSellerIds = allBills.where((bill) => bill.freeBill == true).toList().map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
+    final usedSellerIds =
+        allBills.where((bill) => bill.freeBill == true).toList().map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
     log(allBonds.length.toString(), name: 'allBonds');
     log(usedGroups.length.toString(), name: 'usedGroups');
     log(usedCustomers.length.toString(), name: 'usedCustomers');
@@ -474,6 +478,15 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     saveAllBillsIfConnected();
     getBillsTypesRequestState.value = RequestState.success;
+  read<BillReportController>().  datesRanges = List.generate(
+        fetchedBillTypes.length,
+        (index) => PickerDateRange(
+            DateTime(
+              DateTime.now().year,
+              DateTime.now().month,
+              DateTime.now().day,
+            ),
+            DateTime.now()));
   }
 
   Future<void> fetchPendingBillsCountsByTypes(
@@ -799,6 +812,10 @@ class AllBillsController extends FloatingBillDetailsLauncher
         0.0,
         (previousValue, element) => previousValue + (element.billDetails.billTotal ?? 1),
       );
+
+
+
+
 }
 
 // 30 - 22 -> 52
