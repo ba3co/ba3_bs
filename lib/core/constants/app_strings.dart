@@ -424,4 +424,8 @@ class AppStrings {
 
   static const String monthlyReports='التقارير الشهرية';
   static const String billsReports='تقارير الفواتير';
+
+  static const String  originName='اصل السند';
+
+  static const String balanceAfter='الرصيد بعد العملية';
 }

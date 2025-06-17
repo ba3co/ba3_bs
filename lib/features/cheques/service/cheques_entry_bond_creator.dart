@@ -55,6 +55,7 @@ abstract class BaseChequesBondStrategy
     String? docId,
     required double amount,
     required String date,
+    required String originName,
     required AccountEntity creditAccount,
     required AccountEntity debitAccount,
   }) {
@@ -62,6 +63,7 @@ abstract class BaseChequesBondStrategy
       EntryBondItemModel(
         note: note,
         amount: amount,
+        originName: originName,
         bondItemType: BondItemType.creditor,
         account: creditAccount,
         date: date,
@@ -71,6 +73,7 @@ abstract class BaseChequesBondStrategy
       EntryBondItemModel(
         note: note,
         amount: amount,
+        originName: originName,
         bondItemType: BondItemType.debtor,
         account: debitAccount,
         date: date,
@@ -94,6 +97,7 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
       final amount = model.chequesVal!;
       final originId = model.chequesGuid!;
       return createBondItems(
+        originName:"${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} : ${model.chequesNumber}" ,
         note: note,
         originId: originId,
         amount: amount,
@@ -129,6 +133,8 @@ class PayBondStrategy extends BaseChequesBondStrategy {
     final amount = model.chequesVal!;
     final originId = model.chequesPayGuid!;
     return createBondItems(
+      originName:"${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} : ${model.chequesNumber}" ,
+
       note: note,
       originId: originId,
       amount: amount,
@@ -165,6 +171,8 @@ class RefundBondStrategy extends BaseChequesBondStrategy {
     final amount = model.chequesVal!;
     final originId = model.chequesGuid!;
     return createBondItems(
+      originName:"${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} : ${model.chequesNumber}" ,
+
       note: note,
       originId: originId,
       docId: model.chequesRefundPayGuid,

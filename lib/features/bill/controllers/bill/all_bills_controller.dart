@@ -426,6 +426,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return result;
   }
 
+
   Future<void> searchBill({
     required String searchInput,
     required String searchType,

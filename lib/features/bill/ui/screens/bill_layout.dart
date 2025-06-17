@@ -231,7 +231,7 @@ class BillReportWidget extends StatelessWidget {
                 alignment: WrapAlignment.start,
                 crossAxisAlignment: WrapCrossAlignment.start,
                 children: allBillsController.getBillsTypesRequestState.value == RequestState.loading
-                    ? List.generate(10, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
+                    ? List.generate(2, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
                     : read<PatternController>().billsTypes.map(
                       (billTypeModel) {
                     int index = read<PatternController>().billsTypes.indexOf(billTypeModel);

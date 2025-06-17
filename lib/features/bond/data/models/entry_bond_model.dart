@@ -100,6 +100,8 @@ class EntryBondItemModel implements PlutoAdaptable {
 
   /// The monetary amount associated with this bond item.
   final double? amount;
+  final double? amountAfterOperation;
+  final String? originName;
 
   /// The account related to this bond item.
   final AccountEntity account;
@@ -120,6 +122,8 @@ class EntryBondItemModel implements PlutoAdaptable {
     this.originId,
     this.date,
     this.docId,
+    this.amountAfterOperation,
+     this.originName,
     required this.account,
   });
 
@@ -132,6 +136,7 @@ class EntryBondItemModel implements PlutoAdaptable {
       originId: json['docId'] as String?,
       date: json['date'] as String?,
       docId: json['docId'] as String?,
+      originName: json['originName'] ??'',
       account: AccountEntity.fromJson(json['account']),
     );
   }
@@ -145,6 +150,7 @@ class EntryBondItemModel implements PlutoAdaptable {
       'originId': originId,
       'date': date,
       'docId': docId,
+      'originName': originName,
       'account': account.toJson(),
     };
   }
@@ -153,10 +159,12 @@ class EntryBondItemModel implements PlutoAdaptable {
   EntryBondItemModel copyWith({
     final BondItemType? bondItemType,
     final double? amount,
+    final double? amountAfterOperation,
     final String? note,
     final String? originId,
     final String? docId,
     final String? date,
+    final String? originName,
     final AccountEntity? account,
   }) {
     return EntryBondItemModel(
@@ -167,6 +175,8 @@ class EntryBondItemModel implements PlutoAdaptable {
       date: date ?? this.date,
       docId: docId ?? this.docId,
       account: account ?? this.account,
+      amountAfterOperation: amountAfterOperation ?? this.amountAfterOperation,
+      originName: originName ?? this.originName,
     );
   }
 
@@ -186,8 +196,14 @@ class EntryBondItemModel implements PlutoAdaptable {
           type: PlutoColumnType.text()): originId ?? '',
       createAutoIdColumn(): '#',
       PlutoColumn(
+          title: AppStrings.date.tr,
+          field: 'التاريخ',
+          width: 100,
+          type: PlutoColumnType.date()): date,
+      PlutoColumn(
           title: AppStrings.debtor.tr,
           field: 'مدين',
+          width: 125,
           type: PlutoColumnType.currency(
             format: '#,##0.00 AED',
             locale: 'en_AE',
@@ -196,19 +212,32 @@ class EntryBondItemModel implements PlutoAdaptable {
       PlutoColumn(
           title: AppStrings.creditor.tr,
           field: 'دائن',
+          width: 125,
           type: PlutoColumnType.currency(
             format: '#,##0.00 AED',
             locale: 'en_AE',
             symbol: 'AED',
           )): bondItemType == BondItemType.creditor ? amount : 0,
       PlutoColumn(
+          width: 125,
+          title: AppStrings.originName.tr,
+          field: 'اصل السند',
+          type: PlutoColumnType.text()): originName??'',
+      PlutoColumn(
+          width: 124,
+          title: AppStrings.balanceAfter.tr,
+          field: 'الرصيد',
+          type: PlutoColumnType.currency(
+            format: '#,##0.00 AED',
+            locale: 'en_AE',
+            symbol: 'AED',
+          )): amountAfterOperation,
+      PlutoColumn(
           title: AppStrings.account.tr.tr,
           field: 'الحساب',
+          width: 125,
           type: PlutoColumnType.text()): account.name,
-      PlutoColumn(
-          title: AppStrings.date.tr,
-          field: 'التاريخ',
-          type: PlutoColumnType.date()): date,
+
       PlutoColumn(
           title: AppStrings.illustration.tr,
           field: 'البيان',

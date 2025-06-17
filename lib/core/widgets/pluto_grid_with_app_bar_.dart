@@ -73,12 +73,12 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                       onLoaded: (event) {
                         controller.stateManager = event.stateManager;
                         // event.stateManager.activateColumnsAutoSize();
-                        for (var column in event.stateManager.refColumns) {
-                          event.stateManager.autoFitColumn(context,
-                            column,
-
-                          );
-                        }
+                        // for (var column in event.stateManager.refColumns) {
+                        //   event.stateManager.autoFitColumn(context,
+                        //     column,
+                        //
+                        //   );
+                        // }
                         event.stateManager.setShowColumnFilter(true);
 
                         onLoaded(event);

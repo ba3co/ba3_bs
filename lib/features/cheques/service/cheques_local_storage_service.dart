@@ -34,7 +34,7 @@ class ChequesLocalStorageService {
   }
 
   Future<void> saveSingleCheques(ChequesModel cheques) async {
-    final chequesTypeId = cheques.chequesPayGuid!;
+    final chequesTypeId = cheques.chequesPayGuid??'';
     final box = await Hive.openBox<List<ChequesModel>>(ChequesLocalStorageService._nestedBoxName);
 
     final currentList = List<ChequesModel>.from(box.get(chequesTypeId, defaultValue: []) ?? []);
