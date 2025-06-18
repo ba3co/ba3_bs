@@ -10,11 +10,13 @@ import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
+import '../../../patterns/data/models/bill_type_model.dart';
 
 class AllBillsScreen extends StatelessWidget {
-  const AllBillsScreen({super.key, required this.bills});
+  const AllBillsScreen({super.key, required this.bills, required this.billTypeModel});
 
   final List<BillModel> bills;
+  final BillTypeModel billTypeModel ;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +27,11 @@ class AllBillsScreen extends StatelessWidget {
         onSelected: (event) {
           String billId = event.row?.cells[AppConstants.billIdFiled]?.value;
           log('billId : $billId');
+
           controller.openFloatingBillDetailsById(
               billId: billId,
               context: context,
-              bilTypeModel: BillType.sales.billTypeModel);
+              bilTypeModel:billTypeModel);
         },
         isLoading: controller.isBillsLoading,
         tableSourceModels: controller.pendingBills.isEmpty

@@ -378,8 +378,9 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
   lunchBillsScreen(List<BillModel> billsList, BuildContext context) {
     bills.assignAll(billsList);
+
     isBillsLoading = false;
-    launchFloatingWindow(context: context, floatingScreen: AllBillsScreen(bills: bills));
+    launchFloatingWindow(context: context, floatingScreen: AllBillsScreen(bills: bills,billTypeModel: billsList.first.billTypeModel));
   }
 
   Future<List<BillModel>> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
@@ -459,6 +460,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
           context: context,
           floatingScreen: AllBillsScreen(
             bills: searchResults,
+            billTypeModel: searchResults.first.billTypeModel,
           ));
     }
   }
