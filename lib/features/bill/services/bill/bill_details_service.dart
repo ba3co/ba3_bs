@@ -107,8 +107,8 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     );
   }
 
-  Future<List<ProductWithTaxModel>> getMaterialsWithTax({ required BillModel billModel}) async {
-    if ( billModel.billId==null) {
+  Future<List<ProductWithTaxModel>> getMaterialsWithTax({required BillModel billModel}) async {
+    if (billModel.billId == null) {
       return [];
     }
     EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
@@ -355,8 +355,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   /// and the pattern type requires a material account.
   void _handleApprovedBillDeletions(BillModel billModel, BuildContext context) {
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
-      read<EntryBondController>()
-          .deleteEntryBondModel(entryId: billModel.billId!, sourceNumber: billModel.billDetails.billNumber!,);
+      read<EntryBondController>().deleteEntryBondModel(
+        entryId: billModel.billId!,
+        sourceNumber: billModel.billDetails.billNumber!,
+      );
     } else {
       read<LogController>().addLog(
         item: billModel,
@@ -391,7 +393,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
   }
 
-
   Map<String, AccountModel> findNewModifiedAccounts({
     required BillModel previousBill,
     required BillModel currentBill,
@@ -406,7 +407,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       }).map((entry) => MapEntry(entry.key.label, entry.value)),
     );
   }
-
 
   Map<String, List<BillItem>> findDeletedMaterials({required BillModel previousBill, required BillModel currentBill}) {
     final previousGroupedItems = previousBill.items.itemList.groupBy((item) => item.itemGuid);
@@ -441,11 +441,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
   }
 
-
-
-
-  Map<String, AccountModel> _handelNewAccountsUpdate(
-      {required BillModel previousBill, required BillModel currentBill}) {
+  Map<String, AccountModel> _handelNewAccountsUpdate({required BillModel previousBill, required BillModel currentBill}) {
     final Map<String, AccountModel> modifiedAccounts = findNewModifiedAccounts(previousBill: previousBill, currentBill: currentBill);
 
     if (hasModelId(
@@ -463,7 +459,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       generatePdfAndSendToEmail(
         fileName: AppStrings.updatedBill.tr,
         itemModel: [previousBill, currentBill],
-
       );
     }
     return modifiedAccounts;
@@ -492,17 +487,24 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     if (isSave) {
       _handleAdd(savedBill: currentBill, billSearchController: billSearchController, context: context);
     } else {
-      // Update the bill (PDF generation etc.) and collect modifications.
-      // modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill!, currentBill: currentBill, context: context);
       // oldBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill, currentBill: currentBill, context: context);
-      newBillTypeAccounts = _handelNewAccountsUpdate(previousBill: previousBill!, currentBill: currentBill,);
+      newBillTypeAccounts = _handelNewAccountsUpdate(
+        previousBill: previousBill!,
+        currentBill: currentBill,
+      );
 
-
+      // Update the bill (PDF generation etc.) and collect modifications.
       modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill, currentBill: currentBill, context: context);
-if(modifiedBillTypeAccounts.isNotEmpty) {
-  await   read<EntryBondController>()
-      .deleteEntryBondModel(entryId: previousBill.billId!, sourceNumber: previousBill.billDetails.billNumber!, );
-}
+      if (modifiedBillTypeAccounts.isNotEmpty) {
+        await read<EntryBondController>().deleteEntryBondModel(
+          entryId: previousBill.billId!,
+          sourceNumber: previousBill.billDetails.billNumber!,
+
+        );
+       await Future.delayed(
+          const Duration(seconds: 1),
+        );
+      }
       // Process update and compute the differences between bill items.
       itemChanges = _processUpdate(previousBill: previousBill, currentBill: currentBill);
     }
@@ -536,14 +538,11 @@ if(modifiedBillTypeAccounts.isNotEmpty) {
     //  log('if Modified accounts count: ${modifiedBillTypeAccounts.length}');
     // 5. Create an entry bond if the bill is approved and its pattern requires a material account.
     if (_shouldCreateEntryBond(currentBill)) {
-
       log('createAndStoreEntryBond', name: '_shouldCreateEntryBond');
 
-
-    await  createAndStoreEntryBond(
-        modifiedAccounts: newBillTypeAccounts,
+      await createAndStoreEntryBond(
         model: currentBill,
-        isSave: isSave,
+        isSave: true,
         sourceNumbers: [currentBill.billDetails.billNumber!],
       );
     } else {
@@ -564,14 +563,19 @@ if(modifiedBillTypeAccounts.isNotEmpty) {
     // 7. Generate and save the material statement if the bill is approved and changes exist.
     if (currentBill.status == Status.approved && shouldGenerateMatStatement) {
       createAndStoreMatStatement(
-          model: currentBill, deletedMaterials: deletedMaterials, updatedMaterials: updatedMaterials, );
+        model: currentBill,
+        deletedMaterials: deletedMaterials,
+        updatedMaterials: updatedMaterials,
+      );
     }
 
     // 8. Save material serials.
     saveMaterialsSerials(currentBill);
   }
 
-  Future<void> saveMaterialsSerials(BillModel savedBill,) async {
+  Future<void> saveMaterialsSerials(
+    BillModel savedBill,
+  ) async {
     final Map<MaterialModel, List<TextEditingController>> buySerialsControllers = plutoController.buyMaterialsSerialsControllers;
     final Map<MaterialModel, List<TextEditingController>> sellSerialsControllers = plutoController.sellMaterialsSerialsControllers;
 
@@ -581,7 +585,10 @@ if(modifiedBillTypeAccounts.isNotEmpty) {
         savedBill.isPurchaseRelated ? buySerialsControllers : sellSerialsControllers;
 
     if (serialControllers.isNotEmpty) {
-      billDetailsController.saveSerialNumbers(savedBill, serialControllers,);
+      billDetailsController.saveSerialNumbers(
+        savedBill,
+        serialControllers,
+      );
     }
   }
 
@@ -638,7 +645,6 @@ if(modifiedBillTypeAccounts.isNotEmpty) {
       generatePdfAndSendToEmail(
         fileName: AppStrings.newBill.tr,
         itemModel: savedBill,
-
       );
     }
 
@@ -756,29 +762,31 @@ if(modifiedBillTypeAccounts.isNotEmpty) {
       ),
     );
   }
-Map<String, AccountModel> _handelModifiedAccountsUpdate(
-    {required BillModel previousBill, required BillModel currentBill, required BuildContext context}) {
-  final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
-  if (hasModelId(
-        currentBill.billId,
-      ) &&
-      hasModelItems(
-        currentBill.items.itemList,
-      ) &&
-      hasModelId(
-        previousBill.billId,
-      ) &&
-      hasModelItems(
-        previousBill.items.itemList,
-      )) {
-    generatePdfAndSendToEmail(
-      fileName: AppStrings.updatedBill.tr,
-      itemModel: [previousBill, currentBill],
-    );
+  Map<String, AccountModel> _handelModifiedAccountsUpdate(
+      {required BillModel previousBill, required BillModel currentBill, required BuildContext context}) {
+    final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
+
+    if (hasModelId(
+          currentBill.billId,
+        ) &&
+        hasModelItems(
+          currentBill.items.itemList,
+        ) &&
+        hasModelId(
+          previousBill.billId,
+        ) &&
+        hasModelItems(
+          previousBill.items.itemList,
+        )) {
+      generatePdfAndSendToEmail(
+        fileName: AppStrings.updatedBill.tr,
+        itemModel: [previousBill, currentBill],
+      );
+    }
+    return modifiedAccounts;
   }
-  return modifiedAccounts;
-}
+
   Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
     log('currentBill ${currentBill.billId}', name: 'findModifiedBillTypeAccounts');
 
@@ -789,23 +797,24 @@ Map<String, AccountModel> _handelModifiedAccountsUpdate(
     // Identify accounts that are present in both bills but have changed
     final modifiedBillTypeAccounts = Map.fromEntries(
       previousAccounts.entries.where(
-            (MapEntry<Account, AccountModel> previousAccount) {
+        (MapEntry<Account, AccountModel> previousAccount) {
           final currentAccountModel = currentAccounts[previousAccount.key];
           return currentAccountModel != null && currentAccountModel != previousAccount.value;
         }, // Use the account key's label for the map
       ).map(
-            (entry) => MapEntry(entry.key.label, entry.value),
+        (entry) => MapEntry(entry.key.label, entry.value),
       ),
     );
 
     // Log modified accounts
     log('Modified accounts count: ${modifiedBillTypeAccounts.length}');
     modifiedBillTypeAccounts.forEach(
-          (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
+      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
     );
 
     return modifiedBillTypeAccounts;
   }
+
   ///  this only in mobile app
 /*   Future<void> showBarCodeScanner({
     required BuildContext context,
@@ -834,6 +843,7 @@ Map<String, AccountModel> _handelModifiedAccountsUpdate(
         stateManager: stateManager, materialModel: selectedMaterial, plutoController: plutoController, billTypeModel: billTypeModel);
   }*/
 }
+
 /// don't use it now
 
 /* Map<String, AccountModel> findOldModifiedAccounts({
