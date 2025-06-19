@@ -289,29 +289,40 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     log(fetchedItems.length.toString(), name: 'fetchedItems');
     final List<EntryBondItemModel> helperList = [];
 
-    entryBondItems.addAll(fetchedItems.mergeBy(
-          (bondItem) => bondItem.originId,
-          (accumulated, current) {
-        return EntryBondItemModel(
+    final grouped = <String, List<EntryBondItemModel>>{};
 
-          account: current.account,
-          amount: (accumulated.amount!) + (current.amount!),
-          bondItemType: current.bondItemType,
-          date: current.date,
-          docId: current.docId,
-          note: "${current.note} + ${accumulated.note}",
-          originId: current.originId,
-          amountAfterOperation: 0,
-          originName: current.originName,
-        );
-      },
-    ));
-    log(entryBondItems.length.toString(), name: 'entryBondItems');
+// اجمع العناصر حسب originId
+    for (final item in helperList) {
+      final key = item.originId;
+      if (key != null) {
+        grouped.putIfAbsent(key, () => []).add(item);
+      }
+    }
 
+// أنشئ العناصر المدموجة
+    final mergedItems = grouped.entries.map((entry) {
+      final items = entry.value;
+
+      final totalAmount = items.fold<double>(0.0, (sum, item) => sum + (item.amount ?? 0));
+      final note = items.map((e) => e.note).where((e) => e != null && e.isNotEmpty).join(" + ");
+
+      return EntryBondItemModel(
+        originId: entry.key,
+        amount: totalAmount,
+        account: items.first.account,
+        bondItemType: items.first.bondItemType,
+        date: items.first.date,
+        docId: items.first.docId,
+        note: note,
+        amountAfterOperation: 0, // سيتم حسابه لاحقًا
+        originName: items.first.originName,
+      );
+    }).toList();
+    log(mergedItems.length.toString(), name: 'entryBondItems');
     double balance = 0.0;
-    entryBondItems.sortBy((bondItem) => bondItem.date!);
+    mergedItems.sortBy((bondItem) => bondItem.date!);
     log(entryBondItems.length.toString(), name: 'entryBondItems after sort');
-    helperList.assignAll(entryBondItems);
+    helperList.assignAll(mergedItems);
 
     entryBondItems.assignAll(helperList.map((e) {
       if (e.bondItemType!.label == BondItemType.debtor.label) {
