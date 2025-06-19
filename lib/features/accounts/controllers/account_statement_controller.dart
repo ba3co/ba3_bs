@@ -295,7 +295,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         return EntryBondItemModel(
 
           account: current.account,
-          amount: (accumulated.amount!) + (current.amount!),
+          amount: (accumulated.amount!).abs() + (current.amount!).abs(),
           bondItemType: current.bondItemType,
           date: current.date,
           docId: current.docId,
