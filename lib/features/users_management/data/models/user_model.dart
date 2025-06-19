@@ -184,6 +184,7 @@ class UserModel implements PlutoAdaptable {
         hide: true,
       ): userId,
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
       PlutoColumn(
         title: AppStrings.employeeName.tr,
         field: 'اسم الموظف',

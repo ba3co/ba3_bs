@@ -134,7 +134,7 @@ class MaterialsStatementController extends GetxController
   }
 
   Future<void> deleteMatStatementModel(
-      MatStatementModel matStatementModel,BuildContext context) async {
+      MatStatementModel matStatementModel) async {
     final result = await _matStatementsRepo.delete(matStatementModel);
 
     result.fold(
@@ -166,13 +166,13 @@ class MaterialsStatementController extends GetxController
   }
 
   Future<void> deleteAllMatStatementModel(
-      List<MatStatementModel> matStatementsModels,BuildContext context) async {
+      List<MatStatementModel> matStatementsModels) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[];
 
     for (final matStatementModel in matStatementsModels) {
       deletedTasks.add(
-        deleteMatStatementModel(matStatementModel,context),
+        deleteMatStatementModel(matStatementModel),
       );
     }
 

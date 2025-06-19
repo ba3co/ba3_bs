@@ -409,6 +409,7 @@ class ChequesModel extends HiveObject implements PlutoAdaptable {
           type: PlutoColumnType.text(),
           hide: true): chequesGuid,
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
       PlutoColumn(
           title: "الرقم التسلسلي",
           field: AppConstants.chequesNumber,

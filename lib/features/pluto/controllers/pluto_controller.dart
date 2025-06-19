@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../core/helper/enums/enums.dart';
+import '../../../core/services/export_excl/excel_export.dart';
+
 class PlutoController extends GetxController {
   UniqueKey plutoKey = UniqueKey();
 
@@ -41,4 +44,26 @@ class PlutoController extends GetxController {
         );
     return PlutoRow(cells: cells);
   }
+  void exportRowsToExcel(ExportFilterOption option) {
+    final rows = stateManager.rows;
+
+    final filteredRows = rows.where((row) {
+      final value = row.cells['extra_notes']?.value?.toString();
+      switch (option) {
+        case ExportFilterOption.checked:
+          return value == 'true';
+        case ExportFilterOption.unchecked:
+          return value != 'true';
+        case ExportFilterOption.all:
+          return true;
+      }
+    });
+
+    final jsonList = filteredRows.map((row) {
+      return row.cells.map((key, cell) => MapEntry(key, cell.value));
+    }).toList();
+
+    exportJsonToExcel(jsonList);
+  }
+
 }

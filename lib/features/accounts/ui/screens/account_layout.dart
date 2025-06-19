@@ -4,7 +4,6 @@ import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/dialogs/account_filter_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_menu_item.dart';
@@ -45,11 +44,14 @@ class AccountLayout extends StatelessWidget {
                 icon: Icons.receipt_long,
                 title: AppStrings.accountStatement.tr,
                 onTap: () {
-                  showDialog<String>(
-                    context:context ,
-                    builder: (BuildContext context) =>
-                        showAccountFilterDialog(context),
-                  );
+                  read<AccountsController>()
+
+                    .showAccountFilterDialog(context: context);
+                  // showDialog<String>(
+                  //   context:context ,
+                  //   builder: (BuildContext context) =>
+                  //       showAccountFilterDialog(context),
+                  // );
                 },
               ),
               buildAppMenuItem(

@@ -552,7 +552,7 @@ class BillDetailsController extends IBillController
   }
 
   Future<void> saveSerialNumbers(
-      BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers, BuildContext context) async {
+      BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers, ) async {
     log('saveSerialNumbers $serialControllers');
 
     // Create a list to collect the serial number models.
@@ -583,12 +583,12 @@ class BillDetailsController extends IBillController
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (List<SerialNumberModel> savedSerialsModels) => onSaveSerialsSuccess(serialControllers, savedSerialsModels, context),
+      (List<SerialNumberModel> savedSerialsModels) => onSaveSerialsSuccess(serialControllers, savedSerialsModels),
     );
   }
 
   void onSaveSerialsSuccess(
-      Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels, BuildContext context) {
+      Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels, ) {
     serialControllers.forEach((MaterialModel material, List<TextEditingController> serials) {
       final materialModel = read<MaterialController>().getMaterialById(
         material.id!,
@@ -796,7 +796,7 @@ class BillDetailsController extends IBillController
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
     _billService.generatePdfAndSendToEmail(
-        fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail, context: context);
+        fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail, );
   }
 
   void sendBillToWhatsapp(BillModel billModel, BuildContext context) {

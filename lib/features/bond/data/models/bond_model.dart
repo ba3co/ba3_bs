@@ -240,6 +240,7 @@ class BondModel  extends HiveObject implements PlutoAdaptable {
         hide: true,
       ): payGuid,
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
       PlutoColumn(
           title: 'رقم السند',
           field: 'رقم السند',

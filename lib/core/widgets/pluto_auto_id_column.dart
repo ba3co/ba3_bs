@@ -24,6 +24,32 @@ PlutoColumn createAutoIdColumn({String title = '', double width = 50}) =>
         );
       },
     );
+PlutoColumn createCheckColumn({String title = '', double width = 54}) =>
+ PlutoColumn(
+  title: '',
+  width: width,
+  field: 'extra_notes',
+
+  // enableRowChecked: true,
+
+   enableContextMenu: false,
+   enableDropToResize: false,
+type: PlutoColumnType.text(),
+   renderer: (rendererContext) {
+     final isChecked = rendererContext.cell.value == 'true';
+     return Checkbox(
+       value: isChecked,
+       onChanged: (value) {
+         rendererContext.stateManager.changeCellValue(
+           rendererContext.row.cells['extra_notes']!,
+           value.toString(),
+           force: true,
+         );
+       },
+     );
+   },
+
+);
 
 int calculateAutoId(int currentPage, int rowIndex) =>
     (currentPage - 1) * 100 + rowIndex + 1;

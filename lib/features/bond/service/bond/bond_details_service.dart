@@ -82,7 +82,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     AppUIUtils.onSuccess('تم حذف السند بنجاح!', );
 
     read<EntryBondController>().deleteEntryBondModel(
-        entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!,context: context);
+        entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!,);
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -108,7 +108,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         generatePdfAndSendToEmail(
           fileName: AppStrings.newBond.tr,
           itemModel: currentBond,
-          context: context,
+
         );
       }
     } else {
@@ -123,7 +123,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         generatePdfAndSendToEmail(
           fileName: AppStrings.updatedBond.tr,
           itemModel: [previousBond, currentBond],
-          context: context,
+
         );
       }
     }

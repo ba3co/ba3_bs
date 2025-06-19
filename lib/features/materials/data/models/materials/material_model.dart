@@ -375,6 +375,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
           type: PlutoColumnType.text(),
           hide: true): id,
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
       PlutoColumn(title: AppStrings.materialName, field: 'اسم المادة', type: PlutoColumnType.text(), width: 400):
           matName,
       PlutoColumn(

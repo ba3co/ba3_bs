@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_assets.dart';
@@ -47,7 +46,9 @@ mixin PdfBase {
 
   /// Handles the success scenario during email sending
   void _onEmailSendSuccess(List<String>? attachments) {
-    AppUIUtils.onSuccess('تم إرسال البريد الإلكتروني بنجاح');
+
+    /// TODO: add success message
+    // AppUIUtils.onSuccess('تم إرسال البريد الإلكتروني بنجاح');
     if (attachments != null) {
       log('Attachments sent: ${attachments.first}');
       _deleteAttachments(attachments); // Optionally delete after sending
@@ -77,7 +78,7 @@ mixin PdfBase {
       String? url,
       String? subject,
       String? body,
-      required BuildContext context}) async {
+    }) async {
     final pdfFilePath = await _generatePdf(
         itemModel: itemModel,
         fileName: fileName,
@@ -91,7 +92,7 @@ mixin PdfBase {
           documentId: itemModel.billId!,
           type: itemModel.billTypeModel.billTypeLabel!);
     }
-    if (!context.mounted) return;
+
 
     await sendToEmail(
       recipientEmail: recipientEmail ?? AppConstants.recipientEmail,

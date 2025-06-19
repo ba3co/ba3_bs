@@ -39,7 +39,7 @@ mixin MatsStatementsGenerator {
     required T model,
     List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
-    required  BuildContext context
+
   }) async {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
@@ -59,9 +59,8 @@ mixin MatsStatementsGenerator {
           );
         },
       ).toList();
-      if(!context.mounted) return;
 
-      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  context);
+      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  );
     }
   }
 
@@ -81,6 +80,6 @@ mixin MatsStatementsGenerator {
         )
         .toList();
 
-    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,context);
+    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,);
   }
 }

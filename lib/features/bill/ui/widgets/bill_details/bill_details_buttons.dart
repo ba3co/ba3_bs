@@ -75,7 +75,7 @@ class BillDetailsButtons extends StatelessWidget {
             Visibility(
                 visible: billModel.billTypeModel.isPurchaseRelated,
                 child: freeLocalSwitcher(billDetailsController: billDetailsController)),
-            Obx(() => !billDetailsController.isCash
+ /*           Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
                     fontSize: 14,
@@ -83,7 +83,7 @@ class BillDetailsButtons extends StatelessWidget {
                     onPressed: () {
                       billDetailsController.openFirstPayDialog(context);
                     })
-                : SizedBox.shrink()),
+                : SizedBox.shrink()),*/
 
           ],
         ),

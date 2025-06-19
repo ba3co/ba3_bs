@@ -1,7 +1,8 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/services/export_excl/excel_export.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/pluto/controllers/pluto_controller.dart';
+import '../helper/enums/enums.dart';
 
 class PlutoGridWithAppBar<T> extends StatelessWidget {
   const PlutoGridWithAppBar({
@@ -70,34 +72,36 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                   Expanded(
                     child: PlutoGrid(
                       key: controller.plutoKey,
+
                       onLoaded: (event) {
                         controller.stateManager = event.stateManager;
-                        // event.stateManager.activateColumnsAutoSize();
-                        // for (var column in event.stateManager.refColumns) {
-                        //   event.stateManager.autoFitColumn(context,
-                        //     column,
-                        //
-                        //   );
-                        // }
                         event.stateManager.setShowColumnFilter(true);
-
                         onLoaded(event);
                       },
                       onRowSecondaryTap: onRowSecondaryTap,
                       onSelected: onSelected,
+                      rowColorCallback: (rowColorContext) {
+                        if (rowColorContext.row.cells['extra_notes']?.value =="true") {
+                          return Colors.greenAccent.shade100;
+                        } else {
+                          return rowColorContext.rowIdx % 2 == 0 ? Colors.white : Colors.blue.shade200;
+                        }
+                      },
                       onRowDoubleTap: onRowDoubleTap,
                       columns: controller.generateColumns<T>(
                           tableSourceModels, type),
                       rows: controller.generateRows<T>(tableSourceModels, type),
                       mode: PlutoGridMode.selectWithOneTap,
                       configuration: PlutoGridConfiguration(
+
                         style: PlutoGridStyleConfig(
+                            checkedColor: Colors.greenAccent,
                             gridBackgroundColor: Colors.white.withAlpha(126),
                             rowHeight: rowHeight ?? 30,
                             evenRowColor: Colors.blue.shade200,
                             borderColor: Colors.blue,
                             gridBorderRadius:
-                                BorderRadius.all(Radius.circular(10)),
+                            BorderRadius.all(Radius.circular(10)),
                             gridBorderColor: AppColors.backGroundColor,
                             // gridBorderRadius: BorderRadius.circular(50),
 
@@ -108,13 +112,13 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                             ? PlutoGridLocaleText.arabic()
                             : PlutoGridLocaleText(),
                       ),
-                      createFooter: (stateManager) {
+                      /*  createFooter: (stateManager) {
                         stateManager.setPageSize(100, notify: false);
                         return Container(
                           color: Colors.white, // حدد اللون المطلوب هنا
                           child: PlutoPagination(stateManager),
                         );
-                      },
+                      },*/
                     ),
                   ),
                   if (rightChild != null) rightChild!
@@ -134,9 +138,9 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
       backgroundColor: Colors.white,
       leading: leadingIcon != null
           ? IconButton(
-              onPressed: onLeadingIconPressed,
-              icon: Icon(leadingIcon),
-            )
+        onPressed: onLeadingIconPressed,
+        icon: Icon(leadingIcon),
+      )
           : null,
       title: Text(title ?? AppStrings.dataTable.tr),
       actions: [
@@ -146,15 +150,26 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
             color: Colors.blue,
             icon: Icon(icon),
           ),
-        IconButton(
-          onPressed: () {
-            List<Map<String, dynamic>> jsonList = read<PlutoController>().stateManager.rows.map((row) {
-              return row.cells.map((key, cell) => MapEntry(key, cell.value));
-            }).toList();
-            exportJsonToExcel(jsonList);
+        PopupMenuButton<ExportFilterOption>(
+          icon: Icon(FontAwesomeIcons.fileExport, color: Colors.blue),
+          onSelected: (option) {
+            read<PlutoController>().exportRowsToExcel(option);
           },
-          color: Colors.blue,
-          icon: Icon(FontAwesomeIcons.fileExport),
+          itemBuilder: (context) =>
+          [
+            PopupMenuItem(
+              value: ExportFilterOption.all,
+              child: Text('📄   الكل',style: AppTextStyles.headLineStyle3,),
+            ),
+            PopupMenuItem(
+              value: ExportFilterOption.checked,
+              child: Text('✅  المفعّل',style: AppTextStyles.headLineStyle3,),
+            ),
+            PopupMenuItem(
+              value: ExportFilterOption.unchecked,
+              child: Text('بدون مطابقة',style: AppTextStyles.headLineStyle3,)
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),

@@ -259,7 +259,7 @@ class BondDetailsController extends GetxController with AppValidator {
     _bondService.generatePdfAndSendToEmail(
       fileName: AppStrings.bond.tr,
       itemModel: bondModel,
-      context: context,
+
     );
   }
 

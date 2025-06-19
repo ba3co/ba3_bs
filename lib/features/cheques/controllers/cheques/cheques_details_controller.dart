@@ -280,8 +280,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     if(!context.mounted)return;
 
     read<EntryBondController>()
-        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,          context: context
-    );
+        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,           );
   }
 
   void refundPayCheques(ChequesModel chequesModel, BuildContext context) async {
@@ -319,7 +318,6 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
 
     read<EntryBondController>()
 
-        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,          context: context
-    );
+        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,            );
   }
 }

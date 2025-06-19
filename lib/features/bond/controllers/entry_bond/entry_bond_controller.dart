@@ -224,7 +224,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   // Method to create a bond based on bill type
-  Future<void> deleteEntryBondModel({required String entryId, required int sourceNumber, required BuildContext context}) async {
+  Future<void> deleteEntryBondModel({required String entryId, required int sourceNumber,}) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     result.fold(
@@ -232,7 +232,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
         failure.message,
       ),
       (entryBondModel) async =>
-          await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId, sourceNumber: sourceNumber, context: context),
+          await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId, sourceNumber: sourceNumber, ),
     );
   }
 
@@ -240,7 +240,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
     required EntryBondModel entryBondModel,
     required String entryId,
     required int sourceNumber,
-    required BuildContext context,
+
   }) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[]; // Collect error messages.

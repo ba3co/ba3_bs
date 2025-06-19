@@ -844,4 +844,10 @@ enum TaskStatus {
       orElse: () => throw ArgumentError('No matching StatusTask for value: $value'),
     );
   }
+
+}
+enum ExportFilterOption {
+  all,
+  checked,
+  unchecked,
 }

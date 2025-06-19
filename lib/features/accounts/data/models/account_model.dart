@@ -265,6 +265,7 @@ class AccountModel implements PlutoAdaptable {
           title: AppStrings.identificationNumber.tr,
           hide: true): id,
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
       PlutoColumn(title: AppStrings.accountNumber.tr, type: PlutoColumnType.text(), field: 'رقم الحساب', width: 180):
           accNumber,
       PlutoColumn(title: AppStrings.accountCode.tr, type: PlutoColumnType.text(), field: 'رمز الحساب', width: 180):

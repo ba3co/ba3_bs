@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
-import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/all_accounts_screen.dart';
 import 'package:ba3_bs/features/bill/ui/screens/pending_bills_screen.dart';
 import 'package:ba3_bs/features/bond/ui/screens/all_bond_screen.dart';
@@ -82,9 +81,9 @@ List<GetPage<dynamic>>? appRouter = [
       );
     },
   ),
-  GetPage(
-      name: AppRoutes.accountStatementScreen,
-      page: () => const AccountStatementScreen()),
+  // GetPage(
+  //     name: AppRoutes.accountStatementScreen,
+  //     page: () => const AccountStatementScreen()),
   GetPage(
       name: AppRoutes.showAllChequesScreen,
       page: () {

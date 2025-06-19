@@ -24,6 +24,7 @@ class ProductWithTaxModel extends PlutoAdaptable {
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     return {
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
       PlutoColumn(title: 'اسم المادة', field: 'materialName', type: PlutoColumnType.text()): '$materialCode - $materialName ',
       PlutoColumn(title: 'الضريبة', field: 'isFreeTax', type: PlutoColumnType.text()): isFreeTax?AppConstants.taxFreeAccountName.replaceAll('ضريبة القيمة المضافة', ''):AppConstants.taxLocalAccountName.replaceAll('ضريبة القيمة المضافة', ''),
       PlutoColumn(title: 'الكمية', field: 'materialQuantity', type: PlutoColumnType.text()): materialQuantity,

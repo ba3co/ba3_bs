@@ -355,6 +355,7 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void type]) => {
         PlutoColumn(title: 'billId', field: AppConstants.billIdFiled, type: PlutoColumnType.text(), hide: true): billId ?? '',
         createAutoIdColumn(): '#',
+    createCheckColumn(): '',
         // PlutoColumn(title: AppStrings.billStatus.tr, field: 'حالة الفاتورة', type: PlutoColumnType.text()):
         //     status.value,
         PlutoColumn(title: AppStrings.billNumber.tr, field: 'رقم الفاتورة', type: PlutoColumnType.number()): billDetails.billNumber ?? 0,

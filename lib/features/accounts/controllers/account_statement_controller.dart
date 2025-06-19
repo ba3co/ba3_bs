@@ -6,6 +6,7 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/use_cases/group_accounts_by_final_category_use_case.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import 'package:flutter/material.dart';
@@ -275,8 +276,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedItems) async{
-        await  processEntryBondItemsAsync(fetchedItems.expand((item) => item.itemList).toList());
+        (fetchedItems) {
+          processEntryBondItemsAsync(fetchedItems.expand((item) => item.itemList).toList());
         },
       );
     }
@@ -285,7 +286,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     _filterAndCalculateValues();
     _setLoadingState(false);
   }
-  Future<void> processEntryBondItemsAsync( List<EntryBondItemModel> fetchedItems) async {
+ processEntryBondItemsAsync( List<EntryBondItemModel> fetchedItems)  {
     log(fetchedItems.length.toString(), name: 'fetchedItems');
     final List<EntryBondItemModel> helperList = [];
 
@@ -305,16 +306,9 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         );
       },
     ));
-    log(entryBondItems.length.toString(), name: 'entryBondItems');
-    final totalBefore = helperList.fold<double>(0.0, (sum, e) => sum + (e.amount ?? 0));
-    final totalAfter = entryBondItems.fold<double>(0.0, (sum, e) => sum + (e.amount ?? 0));
-    log("قبل الدمج: $totalBefore");
-    log("بعد الدمج: $totalAfter");
     double balance = 0.0;
     entryBondItems.sortBy((bondItem) => bondItem.date!);
-    log(entryBondItems.length.toString(), name: 'entryBondItems after sort');
     helperList.assignAll(entryBondItems);
-
     entryBondItems.assignAll(helperList.map((e) {
       if (e.bondItemType!.label == BondItemType.debtor.label) {
         balance += e.amount!;
@@ -323,7 +317,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       }
       return e.copyWith(amountAfterOperation: balance);
     }));
-    log(entryBondItems.length.toString(), name: 'entryBondItems after balance');
 
   }
 
@@ -405,7 +398,10 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   /// Navigation handler
-  void navigateToAccountStatementScreen() => to(AppRoutes.accountStatementScreen);
+  void navigateToAccountStatementScreen(BuildContext context) {
+
+    launchFloatingWindow(context: context, floatingScreen: AccountStatementScreen());
+  }
 
   void navigateToFinalAccountDetails(FinalAccounts account) => to(AppRoutes.finalAccountDetailsScreen, arguments: account);
 
@@ -460,6 +456,10 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       minimizedTitle: 'سند خاص ب ${entryBondModel.origin!.originType!.label}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
+  }
+
+  void onRefresh() {
+    fetchAccountEntryBondItems();
   }
 }
 

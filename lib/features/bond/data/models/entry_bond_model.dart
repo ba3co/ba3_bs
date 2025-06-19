@@ -195,6 +195,12 @@ class EntryBondItemModel implements PlutoAdaptable {
           field: AppConstants.entryBonIdFiled,
           type: PlutoColumnType.text()): originId ?? '',
       createAutoIdColumn(): '#',
+      createCheckColumn(): '',
+      PlutoColumn(
+          width: 125,
+          title: AppStrings.originName.tr,
+          field: 'اصل السند',
+          type: PlutoColumnType.text()): originName??'',
       PlutoColumn(
           title: AppStrings.date.tr,
           field: 'التاريخ',
@@ -218,11 +224,7 @@ class EntryBondItemModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): bondItemType == BondItemType.creditor ? amount : 0,
-      PlutoColumn(
-          width: 125,
-          title: AppStrings.originName.tr,
-          field: 'اصل السند',
-          type: PlutoColumnType.text()): originName??'',
+
       PlutoColumn(
           width: 124,
           title: AppStrings.balanceAfter.tr,
@@ -232,16 +234,18 @@ class EntryBondItemModel implements PlutoAdaptable {
             locale: 'en_AE',
             symbol: 'AED',
           )): amountAfterOperation,
+
+
+      PlutoColumn(
+          title: AppStrings.illustration.tr,
+          field: 'البيان',
+
+          type: PlutoColumnType.text()): note,
       PlutoColumn(
           title: AppStrings.account.tr.tr,
           field: 'الحساب',
           width: 125,
           type: PlutoColumnType.text()): account.name,
-
-      PlutoColumn(
-          title: AppStrings.illustration.tr,
-          field: 'البيان',
-          type: PlutoColumnType.text()): note,
     };
   }
 }
