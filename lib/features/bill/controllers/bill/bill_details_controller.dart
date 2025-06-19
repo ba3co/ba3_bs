@@ -499,9 +499,9 @@ class BillDetailsController extends IBillController
 
     // 2. Create the bill model or handle failure and exit
     final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
+
     if (updatedBillModel == null) return;
 
-    log('updatedBillModel itemList length ${updatedBillModel.items.itemList.length}');
 
     // Ensure there are bill items
     if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
@@ -574,7 +574,7 @@ class BillDetailsController extends IBillController
         }
       },
     );
-
+///matName ipad a16 11 256 pink
     // Save all the serial numbers using your repository.
     final result = await _serialNumbersRepo.saveAll(items);
 

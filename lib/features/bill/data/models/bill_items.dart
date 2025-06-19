@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
@@ -22,6 +21,7 @@ class BillItems extends HiveObject with EquatableMixin {
   }
 
   factory BillItems.fromBillRecords(List<InvoiceRecordModel> invoiceRecords) {
+
     final itemList = invoiceRecords.map(
       (invoiceRecord) {
         return BillItem(
@@ -111,7 +111,6 @@ class BillItem extends Equatable {
   });
 
   factory BillItem.fromBillRecord(InvoiceRecordModel invoiceRecord) {
-    log(invoiceRecord.toJson().toString(), name: 'BillItem.fromBillRecord');
     return BillItem(
       itemGuid: invoiceRecord.invRecId!,
       itemName: invoiceRecord.invRecProduct!,
@@ -126,7 +125,9 @@ class BillItem extends Equatable {
     );
   }
 
-  factory BillItem.fromJson(Map<String, dynamic> json) => BillItem(
+  factory BillItem.fromJson(Map<String, dynamic> json) {
+    return BillItem(
+
         itemGuid: json['ItemGuid'],
         itemName: json['ItemName'],
         itemQuantity: json['ItemQuantity'],
@@ -139,8 +140,10 @@ class BillItem extends Equatable {
         itemSerialNumbers:
             (json['itemSerialNumbers'] is List) ? List<String>.from(json['itemSerialNumbers'] as List) : null,
       );
+  }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() {
+    return {
         'ItemGuid': itemGuid,
         if (itemName != null) 'ItemName': itemName,
         'ItemQuantity': itemQuantity,
@@ -152,6 +155,7 @@ class BillItem extends Equatable {
         if (soldSerialNumber != null && soldSerialNumber!.isNotEmpty) 'soldSerialNumber': soldSerialNumber,
         if (itemSerialNumbers != null && itemSerialNumbers!.isNotEmpty) 'itemSerialNumbers': itemSerialNumbers,
       };
+  }
 
   BillItem copyWith({
     final String? itemGuid,

@@ -100,11 +100,26 @@ class InvoiceRecordModel {
     final String? productSoldSerial = map[AppConstants.invRecProductSoldSerial];
 
     List<String>? productSerialNumbers;
-    final raw = map[AppConstants.invRecProductSerialNumbers];
 
-    if (raw is String && raw.isNotEmpty) {
+    final raw = map[AppConstants.invRecProductSerialNumbers].toString();
+
+    if (raw.isNotEmpty) {
       try {
-        final decoded = jsonDecode(raw);
+        dynamic decoded;
+
+        try {
+          decoded = jsonDecode(raw);
+        } catch (_) {
+          final fixedRaw = raw.replaceAllMapped(
+            RegExp(r'(?<=\[|\s|,)([^,\]\[]+)(?=,|\s|\])'),
+                (match) {
+              final item = match.group(1)!.trim();
+              return RegExp(r'^\d+$').hasMatch(item) ? item : '"$item"';
+            },
+          );
+          decoded = jsonDecode(fixedRaw);
+        }
+
         if (decoded is List) {
           productSerialNumbers = decoded.map((e) => e.toString()).toList();
         }

@@ -482,7 +482,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     _showSuccessMessage(isSave, context);
 
     // 2. Prepare containers for modified accounts and deleted materials.
-    // Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
+    Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
     // Map<String, AccountModel> oldBillTypeAccounts = <String, AccountModel>{};
     Map<String, AccountModel> newBillTypeAccounts = <String, AccountModel>{};
 
@@ -496,8 +496,13 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       // modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill!, currentBill: currentBill, context: context);
       // oldBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill, currentBill: currentBill, context: context);
       newBillTypeAccounts = _handelNewAccountsUpdate(previousBill: previousBill!, currentBill: currentBill,);
-      read<EntryBondController>()
-          .deleteEntryBondModel(entryId: previousBill.billId!, sourceNumber: previousBill.billDetails.billNumber!, );
+
+
+      modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill, currentBill: currentBill, context: context);
+if(modifiedBillTypeAccounts.isNotEmpty) {
+  await   read<EntryBondController>()
+      .deleteEntryBondModel(entryId: previousBill.billId!, sourceNumber: previousBill.billDetails.billNumber!, );
+}
       // Process update and compute the differences between bill items.
       itemChanges = _processUpdate(previousBill: previousBill, currentBill: currentBill);
     }
@@ -751,7 +756,56 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       ),
     );
   }
+Map<String, AccountModel> _handelModifiedAccountsUpdate(
+    {required BillModel previousBill, required BillModel currentBill, required BuildContext context}) {
+  final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
 
+  if (hasModelId(
+        currentBill.billId,
+      ) &&
+      hasModelItems(
+        currentBill.items.itemList,
+      ) &&
+      hasModelId(
+        previousBill.billId,
+      ) &&
+      hasModelItems(
+        previousBill.items.itemList,
+      )) {
+    generatePdfAndSendToEmail(
+      fileName: AppStrings.updatedBill.tr,
+      itemModel: [previousBill, currentBill],
+    );
+  }
+  return modifiedAccounts;
+}
+  Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
+    log('currentBill ${currentBill.billId}', name: 'findModifiedBillTypeAccounts');
+
+    // Extract accounts from the bill type models or default to empty maps
+    final previousAccounts = previousBill.billTypeModel.accounts ?? {};
+    final currentAccounts = currentBill.billTypeModel.accounts ?? {};
+
+    // Identify accounts that are present in both bills but have changed
+    final modifiedBillTypeAccounts = Map.fromEntries(
+      previousAccounts.entries.where(
+            (MapEntry<Account, AccountModel> previousAccount) {
+          final currentAccountModel = currentAccounts[previousAccount.key];
+          return currentAccountModel != null && currentAccountModel != previousAccount.value;
+        }, // Use the account key's label for the map
+      ).map(
+            (entry) => MapEntry(entry.key.label, entry.value),
+      ),
+    );
+
+    // Log modified accounts
+    log('Modified accounts count: ${modifiedBillTypeAccounts.length}');
+    modifiedBillTypeAccounts.forEach(
+          (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
+    );
+
+    return modifiedBillTypeAccounts;
+  }
   ///  this only in mobile app
 /*   Future<void> showBarCodeScanner({
     required BuildContext context,
@@ -781,30 +835,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }*/
 }
 /// don't use it now
-// Map<String, AccountModel> _handelModifiedAccountsUpdate(
-//     {required BillModel previousBill, required BillModel currentBill, required BuildContext context}) {
-//   final Map<String, AccountModel> modifiedAccounts = findModifiedBillTypeAccounts(previousBill: previousBill, currentBill: currentBill);
-//
-//   if (hasModelId(
-//         currentBill.billId,
-//       ) &&
-//       hasModelItems(
-//         currentBill.items.itemList,
-//       ) &&
-//       hasModelId(
-//         previousBill.billId,
-//       ) &&
-//       hasModelItems(
-//         previousBill.items.itemList,
-//       )) {
-//     generatePdfAndSendToEmail(
-//       fileName: AppStrings.updatedBill.tr,
-//       itemModel: [previousBill, currentBill],
-//       context: context,
-//     );
-//   }
-//   return modifiedAccounts;
-// }
+
 /* Map<String, AccountModel> findOldModifiedAccounts({
     required BillModel previousBill,
     required BillModel currentBill,
@@ -819,30 +850,4 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       }).map((entry) => MapEntry(entry.key.label, entry.value)),
     );
   }
-  Map<String, AccountModel> findModifiedBillTypeAccounts({required BillModel previousBill, required BillModel currentBill}) {
-    log('currentBill ${currentBill.billId}', name: 'findModifiedBillTypeAccounts');
-
-    // Extract accounts from the bill type models or default to empty maps
-    final previousAccounts = previousBill.billTypeModel.accounts ?? {};
-    final currentAccounts = currentBill.billTypeModel.accounts ?? {};
-
-    // Identify accounts that are present in both bills but have changed
-    final modifiedBillTypeAccounts = Map.fromEntries(
-      previousAccounts.entries.where(
-        (MapEntry<Account, AccountModel> previousAccount) {
-          final currentAccountModel = currentAccounts[previousAccount.key];
-          return currentAccountModel != null && currentAccountModel != previousAccount.value;
-        }, // Use the account key's label for the map
-      ).map(
-        (entry) => MapEntry(entry.key.label, entry.value),
-      ),
-    );
-
-    // Log modified accounts
-    log('Modified accounts count: ${modifiedBillTypeAccounts.length}');
-    modifiedBillTypeAccounts.forEach(
-      (key, account) => log('Account Key: $key, Account Model: ${account.toJson()}'),
-    );
-
-    return modifiedBillTypeAccounts;
-  }*/
+  */
