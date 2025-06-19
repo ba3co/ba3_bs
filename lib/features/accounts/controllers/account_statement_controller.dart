@@ -289,13 +289,12 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     log(fetchedItems.length.toString(), name: 'fetchedItems');
     final List<EntryBondItemModel> helperList = [];
 
-    entryBondItems.addAll(fetchedItems.mergeBy(
-          (bondItem) => bondItem.docId,
+    entryBondItems.addAll(fetchedItems.mergeBy<BondKey>(
+          (bondItem) => BondKey(bondItem.docId ?? '', bondItem.bondItemType?.label ?? ''),
           (accumulated, current) {
         return EntryBondItemModel(
-
           account: current.account,
-          amount: (accumulated.amount!).abs() + (current.amount!).abs(),
+          amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
           bondItemType: current.bondItemType,
           date: current.date,
           docId: current.docId,
@@ -462,4 +461,22 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
+}
+
+class BondKey {
+  final String docId;
+  final String bondTypeLabel;
+
+  BondKey(this.docId, this.bondTypeLabel);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is BondKey &&
+              runtimeType == other.runtimeType &&
+              docId == other.docId &&
+              bondTypeLabel == other.bondTypeLabel;
+
+  @override
+  int get hashCode => docId.hashCode ^ bondTypeLabel.hashCode;
 }
