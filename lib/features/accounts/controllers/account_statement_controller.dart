@@ -253,7 +253,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   // Fetch bond items for the selected account
   Future<void> fetchAccountEntryBondItems() async {
     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
-    final List<EntryBondItemModel> helperList = [];
+
     if (accountModel == null) {
       AppUIUtils.onFailure(
         "يرجى إدخال اسم الحساب",
@@ -275,15 +275,22 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
       result.fold(
         (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedItems) {
-          helperList.addAll(fetchedItems.expand((item) => item.itemList));
+        (fetchedItems) async{
+        await  processEntryBondItemsAsync(fetchedItems.expand((item) => item.itemList).toList());
         },
       );
     }
 
-    entryBondItems.addAll(helperList.mergeBy(
-      (bondItem) => bondItem.originId,
-      (accumulated, current) {
+
+    _filterAndCalculateValues();
+    _setLoadingState(false);
+  }
+  Future<void> processEntryBondItemsAsync( List<EntryBondItemModel> fetchedItems) async {
+    final List<EntryBondItemModel> helperList = [];
+
+    entryBondItems.addAll(fetchedItems.mergeBy(
+          (bondItem) => bondItem.originId,
+          (accumulated, current) {
         return EntryBondItemModel(
           account: current.account,
           amount: (accumulated.amount!) + (current.amount!),
@@ -297,22 +304,19 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         );
       },
     ));
+
     double balance = 0.0;
     entryBondItems.sortBy((bondItem) => bondItem.date!);
     helperList.assignAll(entryBondItems);
-    entryBondItems.assignAll(helperList.map(
-      (e) {
-        if (e.bondItemType!.label == BondItemType.debtor.label) {
-          balance += e.amount!;
-        } else {
-          balance -= e.amount!;
-        }
-        return e.copyWith(amountAfterOperation: balance);
-      },
-    ));
 
-    _filterAndCalculateValues();
-    _setLoadingState(false);
+    entryBondItems.assignAll(helperList.map((e) {
+      if (e.bondItemType!.label == BondItemType.debtor.label) {
+        balance += e.amount!;
+      } else {
+        balance -= e.amount!;
+      }
+      return e.copyWith(amountAfterOperation: balance);
+    }));
   }
 
   void _setLoadingState(bool state) {
