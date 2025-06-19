@@ -286,12 +286,14 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     _setLoadingState(false);
   }
   Future<void> processEntryBondItemsAsync( List<EntryBondItemModel> fetchedItems) async {
+    log(fetchedItems.length.toString(), name: 'fetchedItems');
     final List<EntryBondItemModel> helperList = [];
 
     entryBondItems.addAll(fetchedItems.mergeBy(
           (bondItem) => bondItem.originId,
           (accumulated, current) {
         return EntryBondItemModel(
+
           account: current.account,
           amount: (accumulated.amount!) + (current.amount!),
           bondItemType: current.bondItemType,
@@ -304,9 +306,11 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         );
       },
     ));
+    log(entryBondItems.length.toString(), name: 'entryBondItems');
 
     double balance = 0.0;
     entryBondItems.sortBy((bondItem) => bondItem.date!);
+    log(entryBondItems.length.toString(), name: 'entryBondItems after sort');
     helperList.assignAll(entryBondItems);
 
     entryBondItems.assignAll(helperList.map((e) {
@@ -317,6 +321,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       }
       return e.copyWith(amountAfterOperation: balance);
     }));
+    log(entryBondItems.length.toString(), name: 'entryBondItems after balance');
+
   }
 
   void _setLoadingState(bool state) {
