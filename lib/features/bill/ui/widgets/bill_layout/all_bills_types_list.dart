@@ -26,52 +26,47 @@ class AllBillsTypesList extends StatelessWidget {
           runSpacing: 10,
           alignment: WrapAlignment.start,
           crossAxisAlignment: WrapCrossAlignment.start,
-          children: allBillsController.getBillsTypesRequestState.value ==
-                  RequestState.loading
-              ? List.generate(
-                  10,
-                  (index) =>
-                      const BillTypeShimmerWidget()) // Show shimmer placeholders
+          children: allBillsController.getBillsTypesRequestState.value == RequestState.loading
+              ? List.generate(10, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
               : RoleItemType.viewBill.hasAdminPermission
                   ? patternController.billsTypes
                       .map(
                         (billTypeModel) => BillTypeItemWidget(
-                          text: read<TranslationController>().currentLocaleIsRtl
-                              ? billTypeModel.fullName!
-                              : billTypeModel.latinFullName!,
+                          text: read<TranslationController>().currentLocaleIsRtl ? billTypeModel.fullName! : billTypeModel.latinFullName!,
                           color: Color(billTypeModel.color!),
-                          onTap: () => allBillsController
-                              .openFloatingBillDetails(context, billTypeModel),
-                          onAllBillsPressed: () => allBillsController
-                              .fetchNunPendingBills(billTypeModel, context),
-                          pendingBillsCounts: allBillsController
-                              .pendingBillsCounts(billTypeModel),
-                          allBillsCounts:
-                              allBillsController.allBillsCounts(billTypeModel),
-                          onPendingBillsPressed: () => allBillsController
-                              .fetchPendingBills(billTypeModel,),
+                          onTap: () => allBillsController.openFloatingBillDetails(context, billTypeModel),
+                          onAllBillsPressed: () => allBillsController.fetchNunPendingBills(billTypeModel, context),
+                          pendingBillsCounts: allBillsController.pendingBillsCounts(billTypeModel),
+                          allBillsCounts: allBillsController.allBillsCounts(billTypeModel),
+                          onPendingBillsPressed: () => allBillsController.fetchPendingBills(
+                            billTypeModel,
+                          ),
+                          showSearchDialog: (searchType) {
+                            allBillsController.showSearchDialog(context, searchType: searchType, billTypeModel: billTypeModel);
+                          },
+                          showDailiesReportsDialog: () => allBillsController.showDailiesReportsDialog(context, billTypeModel),
                         ),
                       )
                       .toList()
                   : [
                       BillTypeItemWidget(
+                        showDailiesReportsDialog: () =>
+                            allBillsController.showDailiesReportsDialog(context, patternController.billsTypeSales),
+                        showSearchDialog: (searchType) {
+                          allBillsController.showSearchDialog(context,
+                              searchType: searchType, billTypeModel: patternController.billsTypeSales);
+                        },
                         text: read<TranslationController>().currentLocaleIsRtl
                             ? patternController.billsTypeSales.fullName!
                             : patternController.billsTypeSales.latinFullName!,
                         color: Color(patternController.billsTypeSales.color!),
-                        onTap: () => allBillsController.openFloatingBillDetails(
-                            context, patternController.billsTypeSales),
-                        onAllBillsPressed: () =>
-                            allBillsController.fetchNunPendingBills(
-                                patternController.billsTypeSales, context),
-                        pendingBillsCounts:
-                            allBillsController.pendingBillsCounts(
-                                patternController.billsTypeSales),
-                        allBillsCounts: allBillsController
-                            .allBillsCounts(patternController.billsTypeSales),
-                        onPendingBillsPressed: () =>
-                            allBillsController.fetchPendingBills(
-                                patternController.billsTypeSales,),
+                        onTap: () => allBillsController.openFloatingBillDetails(context, patternController.billsTypeSales),
+                        onAllBillsPressed: () => allBillsController.fetchNunPendingBills(patternController.billsTypeSales, context),
+                        pendingBillsCounts: allBillsController.pendingBillsCounts(patternController.billsTypeSales),
+                        allBillsCounts: allBillsController.allBillsCounts(patternController.billsTypeSales),
+                        onPendingBillsPressed: () => allBillsController.fetchPendingBills(
+                          patternController.billsTypeSales,
+                        ),
                       )
                     ],
         );

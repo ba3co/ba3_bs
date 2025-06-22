@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
@@ -136,7 +135,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     }
 
     // Log for debugging
-    log('📌 Generated sellMaterialsSerialsControllers: ${sellMaterialsSerialsControllers.map((key, value) => MapEntry(key.toString(), value.map((controller) => controller.text).toList()))}');
+    // log('📌 Generated sellMaterialsSerialsControllers: ${sellMaterialsSerialsControllers.map((key, value) => MapEntry(key.toString(), value.map((controller) => controller.text).toList()))}');
   }
 
   @override
@@ -153,7 +152,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   /// or disposes and removes any excess controllers.
   List<TextEditingController> _matchControllerCount(List<TextEditingController> controllers, int requiredCount, BillItem billItem) {
     final int currentCount = controllers.length;
-    log(billItem.itemSerialNumbers.toString());
+    // log(billItem.itemSerialNumbers.toString());
     if (currentCount < requiredCount) {
       // Add missing controllers and maintain existing values
       final int needed = requiredCount - currentCount;
@@ -224,7 +223,7 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   void onMainTableStateManagerChanged(PlutoGridOnChangedEvent event, CustomerModel? customer) {
-    log('onMainTableStateManagerChanged');
+    // log('onMainTableStateManagerChanged');
 
     if (recordsTableStateManager.currentRow == null) return;
     final String field = event.column.field;
@@ -351,11 +350,9 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     final materialController = read<MaterialController>();
 
     final InvoiceRecordModel? invoiceRecordModel = _processBillRow(row, materialController);
-log((invoiceRecordModel?.toJson()).toString(), name: 'InvoiceRecordModel');
     if (invoiceRecordModel == null) return;
 
     final billItem = BillItem.fromBillRecord(invoiceRecordModel);
-    log(billItem.toJson().toString(), name: 'BillItem');
 
     _contextMenu.showMaterialMenu(
       materialMenu: materialMenu,
@@ -372,7 +369,6 @@ log((invoiceRecordModel?.toJson()).toString(), name: 'InvoiceRecordModel');
   void _showDeleteConfirmationDialog(event, BuildContext context) => _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
 
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
-    log("onAdditionsDiscountsChanged");
     final field = event.column.field;
     final cells = event.row.cells;
     final row = event.row;

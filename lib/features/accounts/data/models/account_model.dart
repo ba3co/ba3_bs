@@ -91,6 +91,9 @@ class AccountModel implements PlutoAdaptable {
 
   @HiveField(25)
   final List<String>? accCustomer;
+  @HiveField(26)
+
+  final bool? requiredRequestNumber;
 
   // final List<String>? billsId;
 
@@ -122,6 +125,7 @@ class AccountModel implements PlutoAdaptable {
     // this.billsId,
     this.accParentName,
     this.accCustomer,
+    this.requiredRequestNumber,
   });
 
   factory AccountModel.fromJson(Map<String, dynamic> json) {
@@ -135,6 +139,7 @@ class AccountModel implements PlutoAdaptable {
       accParentGuid: json['AccParentGuid'] ?? '',
       accFinalGuid: json['AccFinalGuid'] ?? '',
       accAccNSons: json['AccAccNSons'] ?? 0,
+      requiredRequestNumber: json['requiredRequestNumber'] ?? false,
       // accInitDebit: (json['AccInitDebit'] as num?)?.toDouble(),
       // accInitCredit: (json['AccInitCredit'] as num?)?.toDouble(),
       // maxDebit: (json['MaxDebit'] as num?)?.toDouble(),
@@ -184,6 +189,7 @@ class AccountModel implements PlutoAdaptable {
       'AccBranchMask': accBranchMask,
       'accParentName': accParentName,
       'accCustomer': accCustomer,
+      'requiredRequestNumber': requiredRequestNumber,
       // 'billsId': billsId?.toList() ?? [],
     };
   }
@@ -224,6 +230,7 @@ class AccountModel implements PlutoAdaptable {
     String? accParentName,
     int? accNumber,
     int? accBranchMask,
+    bool? requiredRequestNumber,
     List<String>? accCustomer,
   }) {
     return AccountModel(
@@ -253,6 +260,7 @@ class AccountModel implements PlutoAdaptable {
       accBranchMask: accBranchMask ?? this.accBranchMask,
       accParentName: accParentName ?? this.accParentName,
       accCustomer: accCustomer ?? this.accCustomer,
+      requiredRequestNumber: requiredRequestNumber ?? this.requiredRequestNumber,
     );
   }
 

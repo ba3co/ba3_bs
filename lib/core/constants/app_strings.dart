@@ -428,4 +428,6 @@ class AppStrings {
   static const String  originName='اصل السند';
 
   static const String balanceAfter='الرصيد بعد العملية';
+
+  static const String requiredRequestNumber='مطلوب رقم الطلب';
 }

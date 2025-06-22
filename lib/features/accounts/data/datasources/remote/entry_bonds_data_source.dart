@@ -1,5 +1,4 @@
 // EntryBondsDataSource Implementation
-import 'dart:developer';
 
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
@@ -36,7 +35,6 @@ class EntryBondsDatasource extends BulkSavableDatasource<EntryBondModel> {
 
   @override
   Future<EntryBondModel> save(EntryBondModel item) async {
-    log('save', name: 'EntryBondsDatasource');
     final data = await databaseService.add(
       path: path,
       documentId: item.origin?.docId ?? item.origin?.originId,

@@ -8,6 +8,8 @@ import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
+import 'package:ba3_bs/core/widgets/custom_text_field_with_icon.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_details_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
@@ -26,7 +28,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
@@ -38,6 +39,7 @@ import '../../../../core/services/entry_bond_creator/implementations/entry_bonds
 import '../../../../core/services/export_xml/export_xml_service.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
+import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/bonds/all_bond_controller.dart';
 import '../../../bond/data/models/bond_model.dart';
@@ -46,6 +48,7 @@ import '../../../floating_window/controllers/floating_window_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
 import '../../../patterns/controllers/pattern_controller.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
+import '../../../sellers/ui/widgets/date_range_picker.dart';
 import '../../data/models/bill_model.dart';
 import '../../services/bill/bill_local_storage_service.dart';
 import '../../services/bill/bill_utils.dart';
@@ -187,14 +190,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
     // 🔹 4. البائعون المستخدمون في الفواتير
     final usedSellerIds =
         allBills.where((bill) => bill.freeBill == true).toList().map((bill) => bill.billDetails.billSellerId).whereType<String>().toSet();
-    log(allBonds.length.toString(), name: 'allBonds');
-    log(usedGroups.length.toString(), name: 'usedGroups');
-    log(usedCustomers.length.toString(), name: 'usedCustomers');
-    log(usedAccounts.length.toString(), name: 'usedAccounts');
-    log(usedAccountIds.length.toString(), name: 'usedAccountIds');
-    log(usedMaterialIds.length.toString(), name: 'usedMaterialIds');
-    log(usedMaterials.length.toString(), name: 'usedMaterials');
-    log(allBills.where((bill) => bill.freeBill == true).toList().length.toString(), name: 'allBills');
     final usedSellers = read<SellersController>().sellers.where((seller) => usedSellerIds.contains(seller.costGuid)).toList();
     final xmlString = xmlService.generateFullXml(
       bills: allBills.where((bill) => bill.freeBill == true).toList().groupBy((p0) => p0.billTypeModel),
@@ -380,7 +375,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     bills.assignAll(billsList);
 
     isBillsLoading = false;
-    launchFloatingWindow(context: context, floatingScreen: AllBillsScreen(bills: bills,billTypeModel: billsList.first.billTypeModel));
+    launchFloatingWindow(context: context, floatingScreen: AllBillsScreen(bills: bills, billTypeModel: billsList.first.billTypeModel));
   }
 
   Future<List<BillModel>> fetchBillsByDate(BillTypeModel billTypeModel, DateFilter dateFilter) async {
@@ -427,41 +422,34 @@ class AllBillsController extends FloatingBillDetailsLauncher
     return result;
   }
 
-
   Future<void> searchBill({
     required String searchInput,
     required String searchType,
     required BuildContext context,
+    required BillTypeModel billTypeModel,
   }) async {
-    List<BillModel> searchResults = [];
+    BillModel? searchResults;
 
-    for (final billTypeModel in read<PatternController>().billsTypes) {
-      final result = await _billsFirebaseRepo.fetchWhere(
-        itemIdentifier: billTypeModel,
-        field: searchType == 'phone' ? ApiConstants.customerPhone : ApiConstants.orderNumber,
-        value: searchInput,
-      );
+    final result = await _billsFirebaseRepo.fetchWhere(
+      itemIdentifier: billTypeModel,
+      field: searchType == 'phone' ? ApiConstants.customerPhone : ApiConstants.orderNumber,
+      value: searchInput,
+    );
 
-      result.fold(
-        (failure) {},
-        (bills) => searchResults.addAll(bills),
-      );
-    }
+    result.fold(
+      (failure) {},
+      (bills) => searchResults = (bills.firstOrNull),
+    );
 
-    if (searchResults.isEmpty) {
+    if (searchResults == null) {
       // Show a message if no results found
       if (!context.mounted) return;
 
       AppUIUtils.onFailure('لا يوجد نتائج للبحث');
     } else {
       if (!context.mounted) return;
-
-      launchFloatingWindow(
-          context: context,
-          floatingScreen: AllBillsScreen(
-            bills: searchResults,
-            billTypeModel: searchResults.first.billTypeModel,
-          ));
+      openFloatingBillDetails(context, billTypeModel, currentBill: searchResults);
+      isBillsLoading = false;
     }
   }
 
@@ -481,15 +469,6 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     saveAllBillsIfConnected();
     getBillsTypesRequestState.value = RequestState.success;
-  read<BillReportController>().  datesRanges = List.generate(
-        fetchedBillTypes.length,
-        (index) => PickerDateRange(
-            DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day,
-            ),
-            DateTime.now()));
   }
 
   Future<void> fetchPendingBillsCountsByTypes(
@@ -816,9 +795,89 @@ class AllBillsController extends FloatingBillDetailsLauncher
         (previousValue, element) => previousValue + (element.billDetails.billTotal ?? 1),
       );
 
+  void showSearchDialog(BuildContext context, {required String searchType, required BillTypeModel billTypeModel}) {
+    String searchInput = '';
+    Get.dialog(
+      AlertDialog(
+        title: Text(searchType == 'phone' ? AppStrings.enterPhoneNumber.tr : AppStrings.enterOrderNumber.tr),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return CustomTextFieldWithIcon(
+              textEditingController: TextEditingController(),
+              onSubmitted: (value) {
+                searchBill(searchInput: searchInput, searchType: searchType, context: context, billTypeModel: billTypeModel);
+              },
+              keyboardType: searchType == 'phone' ? TextInputType.phone : TextInputType.number,
+              onChanged: (value) {
+                searchInput = value;
+              },
+            );
+          },
+        ),
+        actions: <Widget>[
+          AppButton(
+            title: AppStrings.cancel.tr,
+            onPressed: () {
+              Get.back();
+            },
+          ),
+          AppButton(
+            title: AppStrings.confirm.tr,
+            onPressed: () {
+              Get.back();
+              if (searchInput.isEmpty) return;
+              searchBill(searchInput: searchInput, searchType: searchType, context: context, billTypeModel: billTypeModel);
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
-
-
+  showDailiesReportsDialog(BuildContext context, BillTypeModel billTypeModel) {
+    launchFloatingWindow(
+        context: context,
+        defaultHeight: 100,
+        defaultWidth: 200,
+        floatingScreen: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              margin: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Color(billTypeModel.color!).withOpacity(0.6), width: 2), // Simulated border
+              ),
+              height: 150,
+              child: GetBuilder<BillReportController>(builder: (billReportController) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  // spacing: 10,
+                  children: [
+                    Text(billTypeModel.shortName.toString(), style: AppTextStyles.headLineStyle3),
+                    DateRangePicker(
+                      onSubmit: () => billReportController.onSubmitDateRangePicker(),
+                      pickedDateRange: billReportController.datesRange,
+                      onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                        billReportController.setDateRange(dateRangePickerSelectionChangedArgs.value);
+                      },
+                    ),
+                    Center(
+                      child: AppButton(
+                        title: AppStrings.start,
+                        onPressed: () {
+                          billReportController.getBillsByDate(billTypeModel, billReportController.datesRange, context);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ));
+  }
 }
 
 // 30 - 22 -> 52

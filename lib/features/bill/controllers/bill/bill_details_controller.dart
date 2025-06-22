@@ -95,8 +95,7 @@ class BillDetailsController extends IBillController
   AccountModel? selectedBillAccount;
   SellerModel? selectedSellerAccount;
 
-
-  Rx<bool> get isAccountReadOnly=>(selectedPayType.value==InvPayType.cash).obs;
+  Rx<bool> get isAccountReadOnly => (selectedPayType.value == InvPayType.cash).obs;
 
   Rx<DateTime> billDate = DateTime.now().obs;
 
@@ -140,7 +139,7 @@ class BillDetailsController extends IBillController
     if (newAccount != null) {
       selectedBillAccount = newAccount;
       billAccountController.text = newAccount.accName!;
-    }else{
+    } else {
       selectedBillAccount = null;
       billAccountController.text = '';
     }
@@ -194,6 +193,8 @@ class BillDetailsController extends IBillController
     }
     return validate;
   }
+
+  bool get requiredRequestNumber => selectedBillAccount?.requiredRequestNumber ?? false;
 
   String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
 
@@ -502,7 +503,6 @@ class BillDetailsController extends IBillController
 
     if (updatedBillModel == null) return;
 
-
     // Ensure there are bill items
     if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
 
@@ -552,7 +552,9 @@ class BillDetailsController extends IBillController
   }
 
   Future<void> saveSerialNumbers(
-      BillModel billModel, Map<MaterialModel, List<TextEditingController>> serialControllers, ) async {
+    BillModel billModel,
+    Map<MaterialModel, List<TextEditingController>> serialControllers,
+  ) async {
     log('saveSerialNumbers $serialControllers');
 
     // Create a list to collect the serial number models.
@@ -574,7 +576,8 @@ class BillDetailsController extends IBillController
         }
       },
     );
-///matName ipad a16 11 256 pink
+
+    ///matName ipad a16 11 256 pink
     // Save all the serial numbers using your repository.
     final result = await _serialNumbersRepo.saveAll(items);
 
@@ -588,7 +591,9 @@ class BillDetailsController extends IBillController
   }
 
   void onSaveSerialsSuccess(
-      Map<MaterialModel, List<TextEditingController>> serialControllers, List<SerialNumberModel> savedSerialsModels, ) {
+    Map<MaterialModel, List<TextEditingController>> serialControllers,
+    List<SerialNumberModel> savedSerialsModels,
+  ) {
     serialControllers.forEach((MaterialModel material, List<TextEditingController> serials) {
       final materialModel = read<MaterialController>().getMaterialById(
         material.id!,
@@ -628,13 +633,13 @@ class BillDetailsController extends IBillController
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
   BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
-
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
+    if (updatedBillModel == null) return null;
 
-
-    for (BillItem item in updatedBillModel?.items.itemList ?? []) {
-      if ((item.itemQuantity*((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0))).floor() != item.itemTotalPrice.toDouble.floor()) {
+    for (BillItem item in updatedBillModel.items.itemList) {
+      if ((item.itemQuantity * ((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0))).floor() !=
+          item.itemTotalPrice.toDouble.floor()) {
         AppUIUtils.onFailure(
           'يجب التأكد من قيم الجدول',
         );
@@ -642,12 +647,15 @@ class BillDetailsController extends IBillController
       }
     }
 
-    if (updatedBillModel == null) {
 
+
+    if (requiredRequestNumber &&
+        (updatedBillModel.billDetails.orderNumber == null || updatedBillModel.billDetails.orderNumber!.length < 3)) {
+      AppUIUtils.onFailure(
+        'من فضلك ادخل رقم الطلب',
+      );
       return null;
     }
-
-
 
     return updatedBillModel;
   }
@@ -655,7 +663,7 @@ class BillDetailsController extends IBillController
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
-      if ( !_billUtils.validateBillAccount(
+      if (!_billUtils.validateBillAccount(
         selectedBillAccount,
       )) {
         AppUIUtils.onFailure(
@@ -664,10 +672,9 @@ class BillDetailsController extends IBillController
         return null;
       }
     }
-    if(selectedBillAccount!.id==AppConstants.primaryCashAccountId&&selectedPayType.value==InvPayType.due){
+    if (selectedBillAccount!.id == AppConstants.primaryCashAccountId && selectedPayType.value == InvPayType.due) {
       AppUIUtils.onFailure('لايمكن البيع الاجل للصندوق');
       return null;
-
     }
 
     if (!_billUtils.validateSellerAccount(selectedSellerAccount)) {
@@ -753,7 +760,7 @@ class BillDetailsController extends IBillController
 
     initBillNumberController(bill.billDetails.billNumber);
     initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
-    initBillAccount(bill.billTypeModel.accounts?[BillAccounts.caches]);
+    initBillAccount(read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId));
     initFreeLocalSwitcher(bill.freeBill);
 
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
@@ -796,7 +803,10 @@ class BillDetailsController extends IBillController
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
     _billService.generatePdfAndSendToEmail(
-        fileName: AppStrings.existedBill.tr, itemModel: billModel, recipientEmail: recipientEmail, );
+      fileName: AppStrings.existedBill.tr,
+      itemModel: billModel,
+      recipientEmail: recipientEmail,
+    );
   }
 
   void sendBillToWhatsapp(BillModel billModel, BuildContext context) {

@@ -175,7 +175,7 @@ class ChangesController extends GetxController {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController.saveAllMaterialOnLocal(
-          materialsToSave,); // Save all materials at once
+          materialsToSave,false); // Save all materials at once
     }
   }
 

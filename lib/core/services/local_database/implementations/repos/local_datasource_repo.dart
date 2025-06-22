@@ -20,7 +20,7 @@ class LocalDatasourceRepository<T> {
     try {
       final localData = await localDatasource.getAllData();
       if (localData.isNotEmpty) {
-        log('localData ${localData.length}');
+        // log('localData ${localData.length}');
         return Right(localData);
       }
 
@@ -29,7 +29,7 @@ class LocalDatasourceRepository<T> {
 
       await localDatasource.saveAllData(remoteData);
 
-      log('remoteData ${remoteData.length}');
+      // log('remoteData ${remoteData.length}');
 
       return Right(remoteData);
     } catch (e, stackTrace) {

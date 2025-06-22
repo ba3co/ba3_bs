@@ -22,7 +22,7 @@ init() async {
       FirebaseFirestore.instanceFor(app: Firebase.app("test"));
 
   try {
-    log('message');
+
     final snapshot = await firestore.collection('materials').get();
 
     log('✅ وصلنا استجابة من Firestore: ${snapshot.docs.length}');

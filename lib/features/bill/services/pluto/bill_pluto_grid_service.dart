@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
@@ -156,7 +155,6 @@ class BillPlutoGridService {
   void updateInvoiceValuesBySubTotalWithVat(double subTotalStr, int quantity,
       BillTypeModel billTypeModel, bool isPurchaseWithOutHasVat) {
     // Check if the material exists, otherwise clear all values
-    log('updateInvoiceValuesBySubTotalWithVat');
     if (!isMaterialExisting(mainTableStateManager)) {
       _clearRowValues(mainTableStateManager, billTypeModel);
       return;

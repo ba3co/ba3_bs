@@ -114,8 +114,8 @@ class BillSearchController extends GetxController {
 
     final billIndex = _getBillIndexByNumber(updatedBill.billDetails.billNumber);
     if (billIndex != -1) {
-      log(' billIndex $billIndex');
-      log(' currentBillIndex == billIndex ${currentBillIndex == billIndex}');
+      // log(' billIndex $billIndex');
+      // log(' currentBillIndex == billIndex ${currentBillIndex == billIndex}');
 
       bills[billIndex] = updatedBill;
       if (currentBillIndex == billIndex) currentBill = updatedBill;
@@ -134,16 +134,16 @@ class BillSearchController extends GetxController {
 
   /// Reloads the current bill or shows an error if unavailable.
   void reloadCurrentBill({required BillModel billToDelete}) {
-    log('currentBillIndex $currentBillIndex');
-    log('bills.length ${bills.length}');
+    // log('currentBillIndex $currentBillIndex');
+    // log('bills.length ${bills.length}');
 
     if (isNotLastBill) {
-      log('currentBillIndex < bills.length');
+      // log('currentBillIndex < bills.length');
 
       _setCurrentBill(currentBillIndex);
     } else {
-      log('currentBillIndex !< bills.length');
-      log(' billToDelete.billDetails.previous ${billToDelete.billDetails.previous}');
+      // log('currentBillIndex !< bills.length');
+      // log(' billToDelete.billDetails.previous ${billToDelete.billDetails.previous}');
       //  updateDeletedBillPrevious(billToDelete);
 
       billDetailsController.appendNewBill(
@@ -235,7 +235,7 @@ class BillSearchController extends GetxController {
   bool _checkExistingBill(int billNumber) {
     final existingBill = _findExistingBill(billNumber);
     if (existingBill != null) {
-      log('Bill with number $billNumber already exists in the list.');
+      // log('Bill with number $billNumber already exists in the list.');
       _setCurrentBill(bills.indexOf(existingBill));
       return true;
     }

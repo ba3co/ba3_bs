@@ -15,32 +15,40 @@ class BillReportController extends GetxController {
   Rx<RequestState> sellerBillsRequest = RequestState.initial.obs;
   List<BillModel> billsAtRangTime = [];
 
+  PickerDateRange datesRange = PickerDateRange(
+      DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+      ),
+      DateTime.now());
+
   final allBillsController = Get.find<AllBillsController>();
 
-  late List<PickerDateRange> datesRanges;
 
   final now = DateTime.now();
 
-  Future<void> onSubmitDateRangePicker(int index) async {
+  Future<void> onSubmitDateRangePicker() async {
     /*   if (!isValidDateRange()) return;
 
     getBillsByDate();*/
-    setDateRange(datesRanges[index], index);
-    log('onSubmitDateRangePicker ${datesRanges[index].startDate}, ${datesRanges[index].endDate}');
+    setDateRange(datesRange);
+    log('onSubmitDateRangePicker ${datesRange.startDate}, ${datesRange.endDate}');
   }
 
-  void onSelectionChanged(dateRangePickerSelectionChangedArgs, int index) {
-    setDateRange(dateRangePickerSelectionChangedArgs.value, index);
+  void onSelectionChanged(dateRangePickerSelectionChangedArgs) {
+    setDateRange(dateRangePickerSelectionChangedArgs.value);
     update();
   }
 
-  setDateRange(PickerDateRange newValue, int index) {
-    datesRanges[index] = newValue;
+  setDateRange(PickerDateRange newValue) {
+    datesRange = newValue;
+    update();
   }
 
-  bool isValidDateRange(int index) {
-    final startDate = datesRanges[index].startDate;
-    final endDate = datesRanges[index].endDate;
+  bool isValidDateRange() {
+    final startDate = datesRange.startDate;
+    final endDate = datesRange.endDate;
 
     if (endDate == null && startDate != null) {
       log('dateRange!.endDate == null');
@@ -49,25 +57,25 @@ class BillReportController extends GetxController {
       ///
       /// setting the day to 0 in the DateTime constructor rolls back to the last day of the previous month.
       final lastDayOfMonth = DateTime(startDate.year, startDate.month + 1, 0);
-      setDateRange(PickerDateRange(startDate, lastDayOfMonth), index);
+      setDateRange(PickerDateRange(startDate, lastDayOfMonth),);
       update();
     } else if (startDate == null && endDate != null) {
       log('dateRange!.startDate == null');
       final startDay = DateTime(endDate.year, endDate.month, 1); // First day of the month
-      setDateRange(PickerDateRange(startDay, endDate), index);
+      setDateRange(PickerDateRange(startDay, endDate),);
       update();
     }
 
     return true;
   }
 
-  getBillsByDate(BillTypeModel billTypeModel, int index, BuildContext context) async {
+  getBillsByDate(BillTypeModel billTypeModel,PickerDateRange datesRange, BuildContext context) async {
     sellerBillsRequest.value = RequestState.loading;
     billsAtRangTime.assignAll(await allBillsController.fetchBillsByDate(
       billTypeModel,
       DateFilter(
         dateFieldName: ApiConstants.billDate,
-        range: DateTimeRange(start: datesRanges[index].startDate ?? now, end: datesRanges[index].endDate ?? now),
+        range: DateTimeRange(start: datesRange.startDate ?? now, end: datesRange.endDate ?? now),
       ),
     ));
 

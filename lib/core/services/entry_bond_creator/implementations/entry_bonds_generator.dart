@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 
@@ -39,7 +38,6 @@ mixin EntryBondsGenerator {
     final entryBondModels = _mapModelToEntryBonds(model);
 
     if (entryBondModels.length == 1) {
-      log('entryBondModels.length == 1', name: 'createAndStoreEntryBond');
       await entryBondController.saveEntryBondModel(
         entryBondModel: entryBondModels.first,
         sourceNumber: sourceNumbers.first,

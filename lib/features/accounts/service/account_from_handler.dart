@@ -20,6 +20,7 @@ class AccountFromHandler
   final TextEditingController latinNameController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
   final TextEditingController accParentName = TextEditingController();
+   bool accRequiredRequestNumber = false;
   AccountType accountType = AccountType.normal;
 
   AccountModel? accountParentModel;
@@ -29,6 +30,7 @@ class AccountFromHandler
       nameController.text = accountModel.accName!;
       latinNameController.text = accountModel.accLatinName!;
       codeController.text = accountModel.accCode!;
+      accRequiredRequestNumber = accountModel.requiredRequestNumber!;
       accountParentModel =
           accountController.getAccountModelById(accountModel.accParentGuid!);
       accParentName.text = accountParentModel?.accName ?? '';
@@ -47,6 +49,7 @@ class AccountFromHandler
     accParentName.clear();
     latinNameController.clear();
     accountParentModel = null;
+    accRequiredRequestNumber=false;
   }
 
   bool validate() => formKey.currentState?.validate() ?? false;
@@ -69,4 +72,10 @@ class AccountFromHandler
 
   @override
   Rx<AccountType> get selectedAccountType => accountType.obs;
+
+  changeRequiredRequestNumber(bool? value){
+
+    accRequiredRequestNumber=value??false;
+    accountController.update();
+  }
 }

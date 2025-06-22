@@ -441,6 +441,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     return (newItems: newItems, deletedItems: deletedItems, updatedItems: updatedItems);
   }
 
+/*
   Map<String, AccountModel> _handelNewAccountsUpdate({required BillModel previousBill, required BillModel currentBill}) {
     final Map<String, AccountModel> modifiedAccounts = findNewModifiedAccounts(previousBill: previousBill, currentBill: currentBill);
 
@@ -463,6 +464,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     }
     return modifiedAccounts;
   }
+*/
 
   // Updated handleSaveOrUpdateSuccess method.
   Future<void> handleSaveOrUpdateSuccess({
@@ -479,7 +481,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     // 2. Prepare containers for modified accounts and deleted materials.
     Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
     // Map<String, AccountModel> oldBillTypeAccounts = <String, AccountModel>{};
-    Map<String, AccountModel> newBillTypeAccounts = <String, AccountModel>{};
+    // Map<String, AccountModel> newBillTypeAccounts = <String, AccountModel>{};
 
     ({List<BillItem> newItems, List<BillItem> deletedItems, List<BillItem> updatedItems})? itemChanges;
 
@@ -488,13 +490,13 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       _handleAdd(savedBill: currentBill, billSearchController: billSearchController, context: context);
     } else {
       // oldBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill, currentBill: currentBill, context: context);
-      newBillTypeAccounts = _handelNewAccountsUpdate(
-        previousBill: previousBill!,
-        currentBill: currentBill,
-      );
+      // newBillTypeAccounts = _handelNewAccountsUpdate(
+      //   previousBill: previousBill!,
+      //   currentBill: currentBill,
+      // );
 
       // Update the bill (PDF generation etc.) and collect modifications.
-      modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill, currentBill: currentBill, context: context);
+      modifiedBillTypeAccounts = _handelModifiedAccountsUpdate(previousBill: previousBill!, currentBill: currentBill, context: context);
       if (modifiedBillTypeAccounts.isNotEmpty) {
         await read<EntryBondController>().deleteEntryBondModel(
           entryId: previousBill.billId!,
@@ -528,6 +530,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       );
     }
     if (withPrint) {
+      if (!context.mounted) return;
       billDetailsController.printBill(
         context: context,
         billModel: currentBill,
@@ -538,7 +541,6 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     //  log('if Modified accounts count: ${modifiedBillTypeAccounts.length}');
     // 5. Create an entry bond if the bill is approved and its pattern requires a material account.
     if (_shouldCreateEntryBond(currentBill)) {
-      log('createAndStoreEntryBond', name: '_shouldCreateEntryBond');
 
       await createAndStoreEntryBond(
         model: currentBill,

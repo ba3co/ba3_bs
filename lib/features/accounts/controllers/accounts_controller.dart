@@ -402,15 +402,15 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   bool _validateInput() => accountFromHandler.validate();
 
   AccountModel? _createUpdatedAccountModel() => accountService.createAccountModel(
-        accountModel: selectedAccount,
-        accName: accountFromHandler.nameController.text,
-        accCode: accountFromHandler.codeController.text,
-        accLatinName: accountFromHandler.latinNameController.text,
-        accType: accountFromHandler.accountType,
-        accParentGuid: accountFromHandler.accountParentModel?.id,
-        accParentName: accountFromHandler.accountParentModel?.accName,
-        accCheckDate: Timestamp.now().toDate(),
-      );
+      accountModel: selectedAccount,
+      accName: accountFromHandler.nameController.text,
+      accCode: accountFromHandler.codeController.text,
+      accLatinName: accountFromHandler.latinNameController.text,
+      accType: accountFromHandler.accountType,
+      accParentGuid: accountFromHandler.accountParentModel?.id,
+      accParentName: accountFromHandler.accountParentModel?.accName,
+      accCheckDate: Timestamp.now().toDate(),
+      requiredRequestNumber: accountFromHandler.accRequiredRequestNumber);
 
   Future<void> _saveAccountWithCustomers(AccountModel updatedAccountModel, BuildContext context) async {
     if (addedCustomers.isNotEmpty) {
@@ -538,9 +538,11 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   showAccountFilterDialog({required BuildContext context}) {
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.accounts.tr, floatingScreen: const AccountFilterDialog(),
-    defaultHeight: 100,
-      defaultWidth: 300
-    );
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: ApiConstants.accounts.tr,
+        floatingScreen: const AccountFilterDialog(),
+        defaultHeight: 100,
+        defaultWidth: 300);
   }
 }

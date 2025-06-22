@@ -8,7 +8,6 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
-import 'package:ba3_bs/features/dashboard/controller/bill_report_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,10 +16,7 @@ import 'package:get/get.dart';
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_spacer.dart';
-import '../../../patterns/controllers/pattern_controller.dart';
-import '../../../sellers/ui/widgets/date_range_picker.dart';
 import '../widgets/bill_layout/all_bills_types_list.dart';
-import '../widgets/bill_layout/bill_type_shimmer_widget.dart';
 
 class BillLayout extends StatelessWidget {
   const BillLayout({super.key});
@@ -57,7 +53,7 @@ class BillLayout extends StatelessWidget {
                   children: [
                     BillsInfoWidget(allBillsController: allBillsController),
                     VerticalSpace(),
-                    BillReportWidget(allBillsController: allBillsController),
+                    // BillReportWidget(allBillsController: allBillsController),
                   ],
                 ),
               ),
@@ -128,10 +124,6 @@ class BillsInfoWidget extends StatelessWidget {
               onSelected: (value) {
                 if (value == AppConstants.serialNumbersStatement) {
                   _showSerialNumberDialog(context, allBillsController);
-                } else if (value == AppConstants.searchByPhone) {
-                  _showSearchDialog(context, allBillsController, searchType: 'phone');
-                } else if (value == AppConstants.searchByOrderNumber) {
-                  _showSearchDialog(context, allBillsController, searchType: 'order');
                 }
               },
               itemBuilder: (BuildContext context) =>
@@ -146,49 +138,7 @@ class BillsInfoWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                PopupMenuItem<String>(
-                  child: PopupMenuButton<String>(
-                    child: Row(
-                      children: [
-                        Icon(FontAwesomeIcons.search, color: Colors.black54),
-                        SizedBox(width: 8),
-                        Text(AppStrings.searchBill.tr),
-                      ],
-                    ),
-                    onSelected: (value) {
-                      Navigator.pop(context);
 
-                      if (value == AppConstants.searchByPhone) {
-                        _showSearchDialog(context, allBillsController, searchType: 'phone');
-                      } else if (value == AppConstants.searchByOrderNumber) {
-                        _showSearchDialog(context, allBillsController, searchType: 'order');
-                      }
-                    },
-                    itemBuilder: (context) =>
-                    <PopupMenuEntry<String>>[
-                      PopupMenuItem<String>(
-                        value: AppConstants.searchByPhone,
-                        child: Row(
-                          children: [
-                            Icon(Icons.phone, color: Colors.black54),
-                            SizedBox(width: 8),
-                            Text(AppStrings.searchByPhone.tr),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: AppConstants.searchByOrderNumber,
-                        child: Row(
-                          children: [
-                            Icon(Icons.confirmation_number, color: Colors.black54),
-                            SizedBox(width: 8),
-                            Text(AppStrings.searchByOrderNumber.tr),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
               icon: Icon(
                 FontAwesomeIcons.ellipsisVertical,
@@ -205,6 +155,7 @@ class BillsInfoWidget extends StatelessWidget {
   }
 }
 
+/*
 class BillReportWidget extends StatelessWidget {
   const BillReportWidget({super.key, required this.allBillsController});
 
@@ -274,6 +225,7 @@ class BillReportWidget extends StatelessWidget {
         ));
   }
 }
+*/
 
 // Function to show serial number dialog
 void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsController) {
@@ -306,45 +258,6 @@ void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsCo
             Get.back();
             if (serialNumberInput.isEmpty) return;
             allBillsController.getSerialNumberStatement(serialNumberInput, context: context);
-          },
-        ),
-      ],
-    ),
-  );
-}
-
-// Function to show search input dialog
-void _showSearchDialog(BuildContext context, AllBillsController allBillsController, {required String searchType}) {
-  String searchInput = '';
-  Get.dialog(
-    AlertDialog(
-      title: Text(searchType == 'phone' ? AppStrings.enterPhoneNumber.tr : AppStrings.enterOrderNumber.tr),
-      content: StatefulBuilder(
-        builder: (context, setState) {
-          return TextField(
-            keyboardType: searchType == 'phone' ? TextInputType.phone : TextInputType.number,
-            decoration: InputDecoration(
-              labelText: searchType == 'phone' ? AppStrings.phoneNumber.tr : AppStrings.orderNumber.tr,
-            ),
-            onChanged: (value) {
-              searchInput = value;
-            },
-          );
-        },
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: Text(AppStrings.cancel.tr),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        TextButton(
-          child: Text(AppStrings.confirm.tr),
-          onPressed: () {
-            Get.back();
-            if (searchInput.isEmpty) return;
-            allBillsController.searchBill(searchInput: searchInput, searchType: searchType, context: context);
           },
         ),
       ],

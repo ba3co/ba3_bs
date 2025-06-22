@@ -159,6 +159,7 @@ class BillDetailsHeader extends StatelessWidget {
               secondItem: TextAndExpandedChildField(
                 label: AppStrings.orderNumber.tr,
                 child: CustomTextFieldWithoutIcon(
+
                   textEditingController:
                   billDetailsController.orderNumberController,
                   suffixIcon: const SizedBox.shrink(),

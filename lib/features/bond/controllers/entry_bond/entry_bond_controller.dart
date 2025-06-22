@@ -48,7 +48,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
     required bool isSave,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
-    log('saveEntryBondModel', name: 'saveEntryBondModel');
     final result = await _entryBondsFirebaseRepo.save(entryBondModel);
 
     result.fold(

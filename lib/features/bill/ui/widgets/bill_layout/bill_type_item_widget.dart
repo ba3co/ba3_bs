@@ -4,8 +4,10 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/widgets/app_button.dart';
 
 class BillTypeItemWidget extends StatelessWidget {
@@ -19,6 +21,8 @@ class BillTypeItemWidget extends StatelessWidget {
     required this.pendingBillsCounts,
     required this.allBillsCounts,
     required this.onAllBillsPressed,
+    required this.showSearchDialog,
+    required this.showDailiesReportsDialog,
   });
 
   final VoidCallback onTap;
@@ -30,6 +34,8 @@ class BillTypeItemWidget extends StatelessWidget {
 
   final VoidCallback onPendingBillsPressed;
   final VoidCallback onAllBillsPressed;
+  final Function( String searchType) showSearchDialog;
+  final Function() showDailiesReportsDialog;
 
   @override
   Widget build(BuildContext context) {
@@ -94,23 +100,94 @@ class BillTypeItemWidget extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 0,
+              top: -3,
               right: 0,
-              child: Container(
-                width: 220,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius:
-                      const BorderRadius.only(bottomLeft: Radius.circular(5)),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  text.tr,
-                  style: AppTextStyles.headLineStyle3
-                      .copyWith(color: Colors.white),
-                  textDirection: TextDirection.rtl,
-                ),
+              left: 0,
+              child: Row(
+                children: [
+                  Container(
+                    width: 220,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(5)),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      text.tr,
+                      style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
+                      textDirection: TextDirection.rtl,
+                    ),
+                  ),
+                  Spacer(),
+                  PopupMenuButton<String>(
+                    shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                    tooltip: AppStrings.options.tr,
+                    onSelected: (value) {
+                      if (value == AppStrings.dailiesReports) {
+                        showDailiesReportsDialog();
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        child: PopupMenuButton<String>(
+                          child: Row(
+                            children: [
+                              Icon(FontAwesomeIcons.search, color: Colors.black54),
+                              SizedBox(width: 8),
+                              Text(AppStrings.searchBill.tr),
+                            ],
+                          ),
+                          onSelected: (value) {
+                            Navigator.pop(context);
+
+                            if (value == AppConstants.searchByPhone) {
+                              showSearchDialog( 'phone');
+                            } else if (value == AppConstants.searchByOrderNumber) {
+                              showSearchDialog( 'order');
+                            }
+                          },
+                          itemBuilder: (context) => <PopupMenuEntry<String>>[
+                            PopupMenuItem<String>(
+                              value: AppConstants.searchByPhone,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.phone, color: Colors.black54),
+                                  SizedBox(width: 8),
+                                  Text(AppStrings.searchByPhone.tr),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: AppConstants.searchByOrderNumber,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.confirmation_number, color: Colors.black54),
+                                  SizedBox(width: 8),
+                                  Text(AppStrings.searchByOrderNumber.tr),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: AppStrings.dailiesReports,
+                        child: Row(
+                          children: [
+                            Icon(FontAwesomeIcons.paperPlane, color: Colors.black54),
+                            SizedBox(width: 8),
+                            Text(AppStrings.dailiesReports.tr),
+                          ],
+                        ),
+                      ),
+                    ],
+                    icon: Icon(
+                      FontAwesomeIcons.arrowDownUpAcrossLine,
+                      size: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
             Positioned(
