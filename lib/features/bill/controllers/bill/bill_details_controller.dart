@@ -774,7 +774,9 @@ class BillDetailsController extends IBillController
 
     initBillNumberController(bill.billDetails.billNumber);
     initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
-    initBillAccount(read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId));
+    // initBillAccount(read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId));
+    initBillAccount(bill.billDetails.billAccountId != null
+        ? read<AccountsController>().getAccountModelById(bill.billDetails.billAccountId!): null);
     initFreeLocalSwitcher(bill.freeBill);
 
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
