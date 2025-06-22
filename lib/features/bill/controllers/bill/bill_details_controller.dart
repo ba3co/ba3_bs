@@ -638,6 +638,22 @@ class BillDetailsController extends IBillController
     if (updatedBillModel == null) return null;
 
     for (BillItem item in updatedBillModel.items.itemList) {
+      if (item.itemTotalPrice.toDouble > 99999999) {
+        AppUIUtils.onFailure(
+          'سعر الاجمالي للقطعة يجب ان لا يتجاوز 99999999',
+        );
+        return null;
+      }
+      if (item.itemQuantity > 100) {
+        AppUIUtils.onFailure('اكبر كمية هي 100');
+        return null;
+      }
+      if ((item.itemGiftsNumber ?? 0) > 20) {
+        AppUIUtils.onFailure(
+          'اكبر كمية للهدايا هي 20',
+        );
+        return null;
+      }
       if ((item.itemQuantity * ((item.itemVatPrice ?? 0) + (item.itemSubTotalPrice ?? 0))).floor() !=
           item.itemTotalPrice.toDouble.floor()) {
         AppUIUtils.onFailure(
@@ -646,8 +662,6 @@ class BillDetailsController extends IBillController
         return null;
       }
     }
-
-
 
     if (requiredRequestNumber &&
         (updatedBillModel.billDetails.orderNumber == null || updatedBillModel.billDetails.orderNumber!.length < 3)) {
