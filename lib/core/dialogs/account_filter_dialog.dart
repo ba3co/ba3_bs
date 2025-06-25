@@ -1,7 +1,10 @@
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/accounts/controllers/account_statement_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/app_strings.dart';
 import '../styling/app_colors.dart';
 import '../widgets/app_button.dart';
 import '../widgets/option_text_widget.dart';
@@ -66,14 +69,31 @@ class AccountFilterDialog extends StatelessWidget {
                 ),
                 Spacer(),
                 Center(
-                  child: AppButton(
-                    title: 'موافق',
-                    iconData: Icons.check,
-                    onPressed: () {
-                      controller
-                        ..fetchAccountEntryBondItems()
-                        ..navigateToAccountStatementScreen(context,);
-                    },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 15,
+                    children: [
+                      if(RoleItemType.administrator.hasAdminPermission)
+                        AppButton(
+                          title: '${AppStrings.confirm.tr} old way',
+                          iconData: Icons.check,
+                          onPressed: () {
+                            controller
+                              ..fetchAccountEntryBondItems(true)
+                              ..navigateToAccountStatementScreen(context,);
+                          },
+                        ),
+                      AppButton(
+                        title: AppStrings.confirm.tr,
+                        iconData: Icons.check,
+                        onPressed: () {
+                          controller
+                            ..fetchAccountEntryBondItems(false)
+                            ..navigateToAccountStatementScreen(context,);
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],

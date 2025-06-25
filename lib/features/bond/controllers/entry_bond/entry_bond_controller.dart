@@ -41,6 +41,25 @@ class EntryBondController extends GetxController with FloatingLauncher {
     );
   }
 
+  fetchAllAccountStatementAndAddDateToEntryBondModel()async{
+    final result =await _entryBondsFirebaseRepo.getAll();
+
+    result.fold(
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
+      (fetchedEntryBonds) async{
+log(fetchedEntryBonds.length.toString());
+        for (var element in fetchedEntryBonds)  {
+       await   saveGroupedEntryBondItems(element.items!.itemList);
+
+        }
+      },
+    );
+    log('finish');
+
+  }
+
   /// Method to save an Entry Bond and update related account statements
   Future<void> saveEntryBondModel({
     required EntryBondModel entryBondModel,
@@ -86,7 +105,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
         // 3. For each successfully saved bond, run post-save logic
         int counter = 0;
         for (final savedBond in savedBonds) {
-          await _onEntryBondSaved( entryBondModel: savedBond, sourceNumber: sourceNumbers[counter], isSave: isSave);
+          await _onEntryBondSaved(entryBondModel: savedBond, sourceNumber: sourceNumbers[counter], isSave: isSave);
 
           // Update progress
           onProgress?.call(++counter / savedBonds.length);
@@ -112,17 +131,24 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
     // Run grouped-item saving and item modifications in parallel
     await Future.wait([
-      _saveGroupedEntryBondItems(entryBondItems, ),
-      _handleModifiedEntryBondItems(entryBondModel: entryBondModel, modifiedAccounts: modifiedAccounts, ),
+      saveGroupedEntryBondItems(
+        entryBondItems,
+      ),
+      _handleModifiedEntryBondItems(
+        entryBondModel: entryBondModel,
+        modifiedAccounts: modifiedAccounts,
+      ),
     ]);
-    read<LogController>().addLog(
-         item: entryBondModel, eventType: isSave ? LogEventType.add : LogEventType.update, sourceNumber: sourceNumber);
+    read<LogController>()
+        .addLog(item: entryBondModel, eventType: isSave ? LogEventType.add : LogEventType.update, sourceNumber: sourceNumber);
 
     log('Finish _onEntryBondSaved');
   }
 
   /// Saves grouped Entry Bond items by account, in parallel
-  Future<void> _saveGroupedEntryBondItems(List<EntryBondItemModel> entryBondItems,  ) async {
+  Future<void> saveGroupedEntryBondItems(
+    List<EntryBondItemModel> entryBondItems,
+  ) async {
     log('Start _saveGroupedEntryBondItems', name: entryBondItems.isNotEmpty ? entryBondItems.first.account.id : '');
     final itemsGroupedByAccount = entryBondItems.groupBy((item) => item.account.id);
 
@@ -137,7 +163,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
         docId: groupedItems.first.docId,
         itemList: groupedItems,
       );
-
+      log('_accountsStatementsFirebaseRepo.save (${bondItems.toJson()}');
       futures.add(_accountsStatementsFirebaseRepo.save(bondItems));
     }
 
@@ -211,7 +237,9 @@ class EntryBondController extends GetxController with FloatingLauncher {
     }).toList();
   }
 
-  Future<EntryBondModel> getEntryBondById({required String entryId,}) async {
+  Future<EntryBondModel> getEntryBondById({
+    required String entryId,
+  }) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     return result.fold(
@@ -223,15 +251,21 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }
 
   // Method to create a bond based on bill type
-  Future<void> deleteEntryBondModel({required String entryId, required int sourceNumber,}) async {
+  Future<void> deleteEntryBondModel({
+    required String entryId,
+    required int sourceNumber,
+  }) async {
     final result = await _entryBondsFirebaseRepo.getById(entryId);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (entryBondModel) async =>
-          await onEntryBondDeleted(entryBondModel: entryBondModel, entryId: entryId, sourceNumber: sourceNumber, ),
+      (entryBondModel) async => await onEntryBondDeleted(
+        entryBondModel: entryBondModel,
+        entryId: entryId,
+        sourceNumber: sourceNumber,
+      ),
     );
   }
 
@@ -239,7 +273,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
     required EntryBondModel entryBondModel,
     required String entryId,
     required int sourceNumber,
-
   }) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[]; // Collect error messages.
@@ -251,7 +284,10 @@ class EntryBondController extends GetxController with FloatingLauncher {
 
       deletedTasks.add(
         _accountsStatementsFirebaseRepo
-            .delete(EntryBondItems(docId: entryBondItem.docId, id: entryBondItem.originId!, itemList: itemsGroupedByAccount))
+            .delete(EntryBondItems(
+                docId: entryBondItem.docId,
+                id: entryBondItem.originId!,
+                itemList: itemsGroupedByAccount))
             .then(
           (deleteResult) {
             deleteResult.fold(
@@ -283,7 +319,11 @@ class EntryBondController extends GetxController with FloatingLauncher {
       (_) {
         log('deleteBond Success');
 
-        read<LogController>().addLog(item: entryBondModel, eventType: LogEventType.delete, sourceNumber: sourceNumber, );
+        read<LogController>().addLog(
+          item: entryBondModel,
+          eventType: LogEventType.delete,
+          sourceNumber: sourceNumber,
+        );
       },
     );
   }

@@ -79,6 +79,7 @@ class ApiConstants {
   static const String customerPhone = 'billDetails.customerPhone';
   static const String bondNumber = 'PayNumber';
   static const String metaValue = 'metaValue';
+  static const String entryBondDateField = 'entryBondDate';
 
   static String userTask = 'user_task';
 }

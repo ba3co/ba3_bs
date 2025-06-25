@@ -1,6 +1,8 @@
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -12,15 +14,19 @@ import '../../../pluto/data/models/pluto_adaptable.dart';
 class EntryBondModel {
   /// Contains an identifier and a list of bond items.
   final EntryBondItems? items;
+  final DateTime entryBondDate;
 
   /// Refers to the origin entity of the bond entry (e.g., billTypeId for invoices).
   final EntryBondOrigin? origin;
 
-  EntryBondModel({this.items, this.origin});
+  EntryBondModel({this.items, this.origin, required this.entryBondDate});
 
   /// Creates an instance from a JSON object.
   factory EntryBondModel.fromJson(Map<String, dynamic> json) {
     return EntryBondModel(
+      entryBondDate: json['entryBondDate'] != null
+          ? (json['entryBondDate'] as Timestamp).toDate()
+          : DateTime.now(),
       items:
           json['items'] != null ? EntryBondItems.fromJson(json['items']) : null,
       origin: EntryBondOrigin.fromJson(json['origin']),
@@ -29,9 +35,11 @@ class EntryBondModel {
 
   /// Converts the instance to a JSON object.
   Map<String, dynamic> toJson() {
+
     return {
       'items': items?.toJson(),
       'origin': origin?.toJson(),
+      'entryBondDate': Timestamp.fromDate(entryBondDate),
     };
   }
 
@@ -39,10 +47,12 @@ class EntryBondModel {
   EntryBondModel copyWith({
     EntryBondItems? items,
     EntryBondOrigin? origin,
+    DateTime? entryBondDate,
   }) {
     return EntryBondModel(
       items: items ?? this.items,
       origin: origin ?? this.origin,
+      entryBondDate: entryBondDate ?? this.entryBondDate,
     );
   }
 }
@@ -53,14 +63,17 @@ class EntryBondItems {
   final String id;
   final String? docId;
 
+
+
   /// List of bond items.
   final List<EntryBondItemModel> itemList;
 
-  EntryBondItems({required this.id, required this.itemList, this.docId});
+  EntryBondItems({required this.id, required this.itemList, this.docId,});
 
   /// Creates an instance from a JSON object.
   factory EntryBondItems.fromJson(Map<String, dynamic> json) {
     return EntryBondItems(
+
       id: json['id'] ?? json['docId'],
       docId: json['docId'] as String?,
       itemList: (json['items'] as List<dynamic>)
@@ -72,6 +85,7 @@ class EntryBondItems {
 
   /// Converts the instance to a JSON object.
   Map<String, dynamic> toJson() {
+
     return {
       if (docId != null) 'docId': docId,
       if (docId != null) 'id': id,
@@ -83,6 +97,7 @@ class EntryBondItems {
   EntryBondItems copyWith({
     final String? id,
     final String? docId,
+    final DateTime? entryBondDate,
     final List<EntryBondItemModel>? itemList,
   }) {
     return EntryBondItems(

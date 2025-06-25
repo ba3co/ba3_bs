@@ -1,7 +1,11 @@
+import 'dart:developer';
+
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../../../core/models/query_filter.dart';
 import '../../../../bond/data/models/entry_bond_model.dart';
@@ -93,7 +97,7 @@ class AccountsStatementsDatasource
   @override
   Future<EntryBondItems> save({required EntryBondItems item}) async {
     final account = item.itemList.first.account;
-
+log((item.docId ?? item.id));
     final rootDocumentId = getRootDocumentId(account);
     final subCollectionPath = getSubCollectionPath(account);
     final savedData = await compoundDatabaseService.add(
@@ -101,7 +105,7 @@ class AccountsStatementsDatasource
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
       subDocumentId: item.docId ?? item.id,
-      data: {'items': item.itemList.map((item) => item.toJson()).toList()},
+      data: {'items': item.itemList.map((item) => item.toJson()).toList(),'entryBondDate': Timestamp.fromDate(item.itemList.first.date!.toDate)},
     );
 
     return EntryBondItems.fromJson(savedData);

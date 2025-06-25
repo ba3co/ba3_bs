@@ -2,23 +2,30 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/use_cases/group_accounts_by_final_category_use_case.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
+import '../../../core/network/api_constants.dart';
+import '../../../core/network/error/failure.dart';
 import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../bond/data/models/entry_bond_model.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
 import '../data/models/account_model.dart';
 import '../service/account_statement_service.dart';
+
+// import '../use_cases/filter_entry_bond_items_by_date_use_case.dart';
 import '../use_cases/filter_entry_bond_items_by_date_use_case.dart';
 import '../use_cases/merge_entry_bond_items_use_case.dart';
 import '../use_cases/process_entry_bond_items_in_isolate_use_case.dart';
@@ -35,6 +42,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   late final MergeEntryBondItemsUseCase _mergeEntryBondItemsUseCase;
 
   late final ProcessEntryBondItemsInIsolateUseCase processEntryBondItemsInIsolateUseCase;
+
   late final FilterEntryBondItemsByDateUseCase _filterEntryBondItemsByDateUseCase;
   late final GroupAccountsByFinalCategoryUseCase _filterAccountsUseCase;
 
@@ -147,7 +155,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     finalAccountsEntryBondItems.assignAll(entryBondItems);
 
     _calculateFinalAccountValues();
-    log('finish', name: 'FetchFinalAccountsStatements');
   }
 
   Future<Map<AccountEntity, List<EntryBondItems>>> _fetchAndProcessProfitAndLoss(
@@ -160,7 +167,10 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     final mergedTradingItem = _mergeEntryBondItemsUseCase.mergeTradingItems(tradingAccountResult);
     if (mergedTradingItem != null) {
       result[AccountEntity(id: FinalAccounts.tradingAccount.accPtr, name: FinalAccounts.tradingAccount.accName)] = [
-        EntryBondItems(id: '', itemList: [mergedTradingItem])
+        EntryBondItems(
+          id: '',
+          itemList: [mergedTradingItem],
+        )
       ];
     }
 
@@ -198,7 +208,10 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     if (mergedProfitLossItem != null) {
       return {
         AccountEntity(id: FinalAccounts.tradingAccount.accPtr, name: FinalAccounts.tradingAccount.accName): [
-          EntryBondItems(id: '', itemList: [mergedProfitLossItem])
+          EntryBondItems(
+            id: '',
+            itemList: [mergedProfitLossItem],
+          )
         ]
       }..addAll(balanceSheetAccountResult);
     }
@@ -252,7 +265,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   // }
 
   // Fetch bond items for the selected account
-  Future<void> fetchAccountEntryBondItems() async {
+
+  Future<void> fetchAccountEntryBondItems(bool oldWay) async {
     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
 
     if (accountModel == null) {
@@ -271,28 +285,38 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
     for (var account in accountEntities) {
       log(account.name, name: 'Account name');
-
-      final result = await _accountsStatementsRepo.getAll(account);
+      late Either<Failure, List<EntryBondItems>> result;
+      if (oldWay) {
+        result = await _accountsStatementsRepo.getAll(account);
+      } else {
+        result = await _accountsStatementsRepo.fetchWhere(
+            itemIdentifier: account,
+            dateFilter: DateFilter(
+                dateFieldName: ApiConstants.entryBondDateField,
+                range: DateTimeRange(start: startDateController.text.toDate, end: endDateController.text.toDate)));
+      }
 
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
+        (failure) => AppUIUtils.onFailure(
+          'لا يوجد حركات في ${account.name} خلال الفترة: ${startDateController.text} - ${endDateController.text} ',
+        ),
         (fetchedItems) {
           processEntryBondItemsAsync(fetchedItems.expand((item) => item.itemList).toList());
         },
       );
     }
 
-
-    _filterAndCalculateValues();
+    _filterAndCalculateValues(oldWay);
     _setLoadingState(false);
   }
- processEntryBondItemsAsync( List<EntryBondItemModel> fetchedItems)  {
+
+  processEntryBondItemsAsync(List<EntryBondItemModel> fetchedItems) {
     log(fetchedItems.length.toString(), name: 'fetchedItems');
     final List<EntryBondItemModel> helperList = [];
 
     entryBondItems.addAll(fetchedItems.mergeBy<BondKey>(
-          (bondItem) => BondKey(bondItem.docId ?? '', bondItem.bondItemType?.label ?? ''),
-          (accumulated, current) {
+      (bondItem) => BondKey(bondItem.docId ?? '', bondItem.bondItemType?.label ?? ''),
+      (accumulated, current) {
         return EntryBondItemModel(
           account: current.account,
           amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
@@ -317,7 +341,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       }
       return e.copyWith(amountAfterOperation: balance);
     }));
-
   }
 
   void _setLoadingState(bool state) {
@@ -336,12 +359,18 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     return accountChildren.map(AccountEntity.fromAccountModel).toList();
   }
 
-  void _filterAndCalculateValues() {
-    filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(
-      startDateController.text,
-      endDateController.text,
-      entryBondItems,
-    );
+  void _filterAndCalculateValues(bool oldWay) {
+    if(oldWay){
+      filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(
+        startDateController.text,
+        endDateController.text,
+        entryBondItems,
+      );
+    }else{
+      filteredEntryBondItems = entryBondItems;
+
+    }
+
     _calculateValues();
   }
 
@@ -366,12 +395,12 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       );
     }
 
-    _filterAndCalculateValues();
+    _filterAndCalculateValues(true);
     balance = totalValue;
     return balance;
   }
 
-  Future<List<EntryBondItemModel>> fetchAccountStatement(AccountEntity accountEntity, BuildContext context) async {
+  Future<List<EntryBondItemModel>> fetchAccountStatement(AccountEntity accountEntity) async {
     final result = await _accountsStatementsRepo.getAll(accountEntity);
 
     return result.fold(
@@ -399,7 +428,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   /// Navigation handler
   void navigateToAccountStatementScreen(BuildContext context) {
-
     launchFloatingWindow(context: context, floatingScreen: AccountStatementScreen());
   }
 
@@ -459,7 +487,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   void onRefresh() {
-    fetchAccountEntryBondItems();
+    fetchAccountEntryBondItems(false);
   }
 }
 
@@ -472,10 +500,7 @@ class BondKey {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is BondKey &&
-              runtimeType == other.runtimeType &&
-              docId == other.docId &&
-              bondTypeLabel == other.bondTypeLabel;
+      other is BondKey && runtimeType == other.runtimeType && docId == other.docId && bondTypeLabel == other.bondTypeLabel;
 
   @override
   int get hashCode => docId.hashCode ^ bondTypeLabel.hashCode;

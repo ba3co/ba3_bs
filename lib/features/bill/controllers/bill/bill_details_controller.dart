@@ -705,7 +705,7 @@ class BillDetailsController extends IBillController
           selectedStore.value,
         ) ??
         billTypeModel;
-
+log( billDate.value.toString());
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,

@@ -33,7 +33,7 @@ extension NullableStringExtension on String? {
   DateTime get toDate {
     if (this == null || this!.isEmpty) return DateTime(1970, 1, 1);
     try {
-      return DateTime.parse(this!);
+      return DateTime.parse(this!).copyWith(hour: DateTime.now().hour,minute: DateTime.now().minute,second: DateTime.now().second);
     } catch (e) {
       return DateTime(1970, 1, 1);
     }
