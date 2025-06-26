@@ -48,7 +48,7 @@ Future<void> initializeAppServices() async {
   };
   //   await initializeWindowSettings();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform, name: AppConstants.getDatabaseAppName);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
 
 
 

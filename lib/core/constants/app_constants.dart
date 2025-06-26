@@ -431,5 +431,5 @@ abstract class AppConstants {
   static const String defaultFirebaseAppName = '[DEFAULT]';
 
 
-  static String get getDatabaseAppName => testDataBaseAppName;
+  static String get getDatabaseAppName => defaultFirebaseAppName;
 }

@@ -293,7 +293,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
             itemIdentifier: account,
             dateFilter: DateFilter(
                 dateFieldName: ApiConstants.entryBondDateField,
-                range: DateTimeRange(start: startDateController.text.toDate, end: endDateController.text.toDate)));
+                range: DateTimeRange(start: startDateController.text.toStartDate, end: endDateController.text.toEndDate)));
       }
 
       result.fold(

@@ -1,6 +1,7 @@
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -26,7 +27,7 @@ class EntryBondModel {
     return EntryBondModel(
       entryBondDate: json['entryBondDate'] != null
           ? (json['entryBondDate'] as Timestamp).toDate()
-          : DateTime.now(),
+          :  EntryBondItems.fromJson(json['items']).itemList.first.date.toDate,
       items:
           json['items'] != null ? EntryBondItems.fromJson(json['items']) : null,
       origin: EntryBondOrigin.fromJson(json['origin']),
