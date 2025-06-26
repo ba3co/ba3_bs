@@ -16,15 +16,12 @@ class AccountFilterDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Directionality(
-
         textDirection: TextDirection.rtl,
         child: GetBuilder<AccountStatementController>(builder: (controller) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-
-
               children: [
                 Row(
                   children: [
@@ -48,7 +45,8 @@ class AccountFilterDialog extends StatelessWidget {
                               title: 'اسم الحساب :  ',
                               controller: controller.accountNameController,
                               onSubmitted: (text) {
-                                controller.onAccountNameSubmitted(text, context);
+                                controller.onAccountNameSubmitted(
+                                    text, context);
                               }),
                           OptionTextWidget(
                             title: 'من تاريخ :  ',
@@ -60,8 +58,6 @@ class AccountFilterDialog extends StatelessWidget {
                             controller: controller.endDateController,
                             onSubmitted: controller.onEndDateSubmitted,
                           ),
-
-
                         ],
                       ),
                     ),
@@ -74,30 +70,34 @@ class AccountFilterDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 15,
                     children: [
-                      if(RoleItemType.administrator.hasAdminPermission)
+                      if (RoleItemType.administrator.hasAdminPermission)
                         AppButton(
-                          title: '${AppStrings.confirm.tr} old way',
+                          title: '${AppStrings.confirm.tr}',
                           iconData: Icons.check,
                           onPressed: () {
                             controller
                               ..fetchAccountEntryBondItems(true)
-                              ..navigateToAccountStatementScreen(context,);
+                              ..navigateToAccountStatementScreen(
+                                context,
+                              );
                           },
                         ),
-                      AppButton(
-                        title: AppStrings.confirm.tr,
-                        iconData: Icons.check,
-                        onPressed: () {
-                          controller
-                            ..fetchAccountEntryBondItems(false)
-                            ..navigateToAccountStatementScreen(context,);
-                        },
-                      ),
+                      if (RoleItemType.administrator.hasAdminPermission)
+                        AppButton(
+                          title: "${AppStrings.confirm.tr}  new way",
+                          iconData: Icons.check,
+                          onPressed: () {
+                            controller
+                              ..fetchAccountEntryBondItems(false)
+                              ..navigateToAccountStatementScreen(
+                                context,
+                              );
+                          },
+                        ),
                     ],
                   ),
                 ),
               ],
-
             ),
           );
         }),
