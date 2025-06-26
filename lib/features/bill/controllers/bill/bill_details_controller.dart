@@ -480,11 +480,15 @@ class BillDetailsController extends IBillController
   }
 
   Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context, required bool withPrint}) async {
+    if (saveBillRequestState.value == RequestState.loading) return;
+    saveBillRequestState.value = RequestState.loading;
     await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context, withPrint: withPrint);
   }
 
   Future<void> updateBill(
       {required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context, required withPrint}) async {
+    if (saveBillRequestState.value == RequestState.loading) return;
+    saveBillRequestState.value = RequestState.loading;
     if (RoleItemType.viewBill.hasUpdatePermission) {
       await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
     } else {
@@ -501,13 +505,23 @@ class BillDetailsController extends IBillController
     // 2. Create the bill model or handle failure and exit
     final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
 
-    if (updatedBillModel == null) return;
+    if (updatedBillModel == null) {
+      saveBillRequestState.value = RequestState.error;
+      return;
+    }
 
     // Ensure there are bill items
-    if (!_billService.hasModelItems(updatedBillModel.items.itemList)) return;
+    if (!_billService.hasModelItems(updatedBillModel.items.itemList)) {
+      saveBillRequestState.value = RequestState.error;
 
-    if (_isNoUpdate(existingBill, updatedBillModel)) return;
+      return;
+    }
 
+    if (_isNoUpdate(existingBill, updatedBillModel)) {
+      saveBillRequestState.value = RequestState.error;
+
+      return;
+    }
     if (!context.mounted) return;
 
     await _saveBillAndHandleResult(context, updatedBillModel, existingBill, withPrint);
@@ -523,8 +537,6 @@ class BillDetailsController extends IBillController
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
   Future<void> _saveBillAndHandleResult(BuildContext context, BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
-    saveBillRequestState.value = RequestState.loading;
-
     final result = await _billsFirebaseRepo.save(updatedBill);
 
     BillLocalStorageService().saveSingleBill(updatedBill);
@@ -555,7 +567,6 @@ class BillDetailsController extends IBillController
     BillModel billModel,
     Map<MaterialModel, List<TextEditingController>> serialControllers,
   ) async {
-    log('saveSerialNumbers $serialControllers');
 
     // Create a list to collect the serial number models.
     final List<SerialNumberModel> items = [];
@@ -705,7 +716,7 @@ class BillDetailsController extends IBillController
           selectedStore.value,
         ) ??
         billTypeModel;
-log( billDate.value.toString());
+    log(billDate.value.toString());
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,
@@ -775,8 +786,8 @@ log( billDate.value.toString());
     initBillNumberController(bill.billDetails.billNumber);
     initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
     // initBillAccount(read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId));
-    initBillAccount(bill.billDetails.billAccountId != null
-        ? read<AccountsController>().getAccountModelById(bill.billDetails.billAccountId!): null);
+    initBillAccount(
+        bill.billDetails.billAccountId != null ? read<AccountsController>().getAccountModelById(bill.billDetails.billAccountId!) : null);
     initFreeLocalSwitcher(bill.freeBill);
 
     initSellerAccount(sellerId: bill.billDetails.billSellerId);

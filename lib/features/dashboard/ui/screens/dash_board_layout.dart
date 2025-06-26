@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
@@ -110,6 +111,16 @@ class DashBoardLayout extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           read<EntryBondController>().fetchAllAccountStatementAndAddDateToEntryBondModel();
+
+          /*
+             final window = await DesktopMultiWindow.createWindow(jsonEncode({
+            'screenName': AppRoutes.showAllAccountsScreen,
+          }));
+          window
+            ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+            ..center()
+            ..setTitle('Another window')
+            ..show();*/
         },
         child: const Icon(
           Icons.refresh,
