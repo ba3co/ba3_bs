@@ -69,7 +69,7 @@ class AddMaterialScreen extends StatelessWidget {
                       RequestState.loading,
                   title: AppStrings.delete.tr,
                   onPressed: () {
-                    controller.deleteMaterial(context);
+                    controller.deleteMaterial(context,true);
                   },
                   iconData: Icons.delete,
                   color: Colors.red,

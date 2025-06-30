@@ -554,11 +554,12 @@ class BillDetailsController extends IBillController
           context: context,
           previousBill: existingBill,
           currentBill: savedBill,
+          oldBillNumberFromUi:billNumberController.text,
           billSearchController: billSearchController,
           isSave: existingBill == null,
           withPrint: withPrint,
         );
-
+        billNumberController.text=savedBill.billDetails.billNumber.toString();
         saveBillRequestState.value = RequestState.success;
       },
     );

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/helper/extensions/account_entity_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
@@ -129,7 +130,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     List<ProductWithTaxModel> productsWithTax = [];
 
     final matchingItems = billModel.items.itemList.where(
-      (product) => item.note?.contains(product.itemName ?? '') ?? false,
+      (product) => item.note!.toLowerCase().trim().contains(product.itemName!.toLowerCase().trim()) ,
     );
 
     for (final billItem in matchingItems) {
@@ -189,7 +190,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     if (!context.mounted) return;
     // 3. Show success message.
     AppUIUtils.onSuccess(
-      'تم حذف الفاتورة بنجاح!',
+      'تم حذف الفاتورة رقم ${billToDelete.billDetails.billNumber} بنجاح!',
     );
 
     // 4. Clean up bonds/mats statements if this is an approved bill with materials
@@ -366,7 +367,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
       );
     }
 
-    deleteMatsStatementsModels(billModel, context);
+    deleteMatsStatementsModels(billModel, context,false);
   }
 
   Future<void> handleUpdateBillStatusSuccess({
@@ -375,7 +376,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required BuildContext context,
   }) async {
     AppUIUtils.onSuccess(
-      'تم القبول بنجاح',
+      'تم قبول الفاتورة رقم ${updatedBillModel.billDetails.billNumber} بنجاح',
     );
     billSearchController.updateBill(updatedBillModel, 'handleUpdateBillStatusSuccess');
 
@@ -474,9 +475,14 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     required bool isSave,
     required bool withPrint,
     required BuildContext context,
+    required String oldBillNumberFromUi,
   }) async {
+
+
     // 1. Display the success message.
-    _showSuccessMessage(isSave, context);
+
+
+    _showSuccessMessage(isSave, context,oldBillNumberFromUi,currentBill);
 
     // 2. Prepare containers for modified accounts and deleted materials.
     Map<String, AccountModel> modifiedBillTypeAccounts = <String, AccountModel>{};
@@ -568,6 +574,7 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
         model: currentBill,
         deletedMaterials: deletedMaterials,
         updatedMaterials: updatedMaterials,
+        withPrint: false
       );
     }
 
@@ -595,11 +602,20 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
   }
 
   /// Displays a success message based on the operation type.
-  void _showSuccessMessage(bool isSave, BuildContext context) {
-    final message = isSave ? 'تم حفظ الفاتورة بنجاح!' : 'تم تعديل الفاتورة بنجاح!';
+  void _showSuccessMessage(bool isSave, BuildContext context, String oldBillNumberFromUi, BillModel currentBill) {
+
+    final bool changedBillNumber= oldBillNumberFromUi.toInt != currentBill.billDetails.billNumber;
+    if (changedBillNumber){
+      AppUIUtils.onInfo(
+        '${currentBill.billDetails.billNumber} \nهو الرقم الجديد','تغيير رقم الفاتورة',
+      );
+    }else{ final message = isSave ? 'تم حفظ الفاتورة رقم ${currentBill.billDetails.billNumber} بنجاح!' : 'تم تعديل الفاتورة رقم ${currentBill.billDetails.billNumber} بنجاح!';
     AppUIUtils.onSuccess(
       message,
-    );
+    );}
+    log("changedBillNumber");
+
+
   }
 
   /// Updates the bill search controller with the current bill.

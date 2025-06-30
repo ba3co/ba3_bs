@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/services/entry_bond_creator/implementations/entry_bonds_generator.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
@@ -79,7 +80,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
       bondSearchController.removeBond(bondModel);
     }
     if(!context.mounted) return;
-    AppUIUtils.onSuccess('تم حذف السند بنجاح!', );
+    AppUIUtils.onSuccess('تم حذف السند رقم ${bondModel.payNumber} بنجاح!', );
 
     read<EntryBondController>().deleteEntryBondModel(
         entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!,);
@@ -92,12 +93,10 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     required BondSearchController bondSearchController,
     required bool isSave,
     required BuildContext context,
+    required String oldBillNumberFromUi,
   }) async {
-    log("save handleSaveOrUpdateSuccess");
-    final successMessage =
-        isSave ? 'تم حفظ السند بنجاح!' : 'تم تعديل السند بنجاح!';
+    _showSuccessMessage(isSave, context,oldBillNumberFromUi,currentBond);
 
-    AppUIUtils.onSuccess(successMessage, );
 
     Map<String, AccountModel> modifiedBondTypeAccounts = {};
     if (isSave) {
@@ -146,6 +145,22 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     //     model: currentBond,
     //   ),
     // );
+  }
+  void _showSuccessMessage(bool isSave, BuildContext context, String oldBondNumberFromUi, BondModel currentBond) {
+
+    final bool changedBondNumber= oldBondNumberFromUi.toInt != currentBond.payNumber;
+
+    if (changedBondNumber){
+      AppUIUtils.onInfo(
+        '${currentBond.payNumber} \nهو الرقم الجديد','تغيير رقم السند',
+      );
+    }else{ final message = isSave ? 'تم حفظ الفاتورة رقم ${currentBond.payNumber} بنجاح!' : 'تم تعديل الفاتورة رقم ${currentBond.payNumber} بنجاح!';
+    AppUIUtils.onSuccess(
+      message,
+    );}
+    log("changedBondNumber");
+
+
   }
 
   bool validateAccount(AccountModel? customerAccount) {

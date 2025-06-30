@@ -356,7 +356,7 @@ class UserManagementController extends GetxController
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message, ),
       (success) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح',);
+        AppUIUtils.onSuccess('تم حفظ او تعديل الدور بنجاح',);
         getAllRoles();
       },
     );

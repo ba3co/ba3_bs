@@ -14,11 +14,9 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/mat_statement/mat_statement_model.dart';
 import 'material_controller.dart';
 
-class MaterialsStatementController extends GetxController
-    with FloatingLauncher, AppNavigator {
+class MaterialsStatementController extends GetxController with FloatingLauncher, AppNavigator {
   // Dependencies
-  final CompoundDatasourceRepository<MatStatementModel, String>
-      _matStatementsRepo;
+  final CompoundDatasourceRepository<MatStatementModel, String> _matStatementsRepo;
   final MaterialController _materialsController = read<MaterialController>();
 
   MaterialsStatementController(this._matStatementsRepo);
@@ -31,14 +29,12 @@ class MaterialsStatementController extends GetxController
     int i = 0;
     for (var element in matsStatements) {
       await _matStatementsRepo.save(element);
-      log("i is  ${++i} from ${matsStatements.length}",
-          name: 'saveAllMatsStatementsModels');
+      log("i is  ${++i} from ${matsStatements.length}", name: 'saveAllMatsStatementsModels');
     }
 
     final result = await _matStatementsRepo.saveAllNested(
       items: matsStatements,
-      itemIdentifiers:
-          matsStatements.select((matsStatements) => matsStatements.matId),
+      itemIdentifiers: matsStatements.select((matsStatements) => matsStatements.matId),
       onProgress: onProgress,
     );
 
@@ -46,9 +42,11 @@ class MaterialsStatementController extends GetxController
     ///    mapOfStatements.values is an Iterable<List<MatStatementModel>>
     ///    We expand those lists, then .toList() the result
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (savedStatements) {
-          onSaveAllMatsStatementsModelsSuccess(
+        onSaveAllMatsStatementsModelsSuccess(
           mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
           onProgress: onProgress,
         );
@@ -60,19 +58,24 @@ class MaterialsStatementController extends GetxController
     required Map<String, List<MatStatementModel>> mapOfStatements,
     void Function(double progress)? onProgress,
   }) async {
-    final allSavedStatements = mapOfStatements.values
-        .expand((list) => list)
-        .toList(); // List<MatStatementModel>
+    final allSavedStatements = mapOfStatements.values.expand((list) => list).toList(); // List<MatStatementModel>
 
     // If we have none, exit early
     if (allSavedStatements.isEmpty) {
-      AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)', );
+      log('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
+      // AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)', );
       return;
     }
 
     int completed = 0;
     final total = allSavedStatements.length;
-    AppUIUtils.onSuccess('تم الحفظ بنجاح', ); // from the nested save
+    log(
+      'تم حركات المواد ${allSavedStatements.map(
+            (e) => e.matName,
+          ).toList().join(",\n")} بنجاح',
+    );
+    // AppUIUtils.onSuccess(
+    // 'تم حركات المواد ${allSavedStatements.map((e) => e.matName,).toList().join(",\n")} بنجاح',); // from the nested save
 
     // 3. Update each material's quantity in parallel
 
@@ -106,10 +109,11 @@ class MaterialsStatementController extends GetxController
   setupAllMaterials() async {
     int i = 0;
     for (final material in _materialsController.materials) {
-      final materialStatementList = await fetchMatStatementById(material.id!,);
+      final materialStatementList = await fetchMatStatementById(
+        material.id!,
+      );
       if (materialStatementList != null) {
-        log("mat num  ${++i} of ${_materialsController.materials.length}",
-            name: "setupAllMaterials");
+        log("mat num  ${++i} of ${_materialsController.materials.length}", name: "setupAllMaterials");
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: material.id!,
             quantity: _calculateQuantity(materialStatementList),
@@ -120,8 +124,12 @@ class MaterialsStatementController extends GetxController
   }
 
   setupOneMaterials(String matId) async {
-    MaterialModel material = _materialsController.getMaterialById(matId,);
-    final materialStatementList = await fetchMatStatementById(material.id!,);
+    MaterialModel material = _materialsController.getMaterialById(
+      matId,
+    );
+    final materialStatementList = await fetchMatStatementById(
+      material.id!,
+    );
     if (materialStatementList != null) {
       await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
           matId: material.id!,
@@ -133,17 +141,26 @@ class MaterialsStatementController extends GetxController
     }
   }
 
-  Future<void> deleteMatStatementModel(
-      MatStatementModel matStatementModel) async {
+  Future<void> deleteMatStatementModel(MatStatementModel matStatementModel, bool withPrint) async {
     final result = await _matStatementsRepo.delete(matStatementModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
-      (_) => AppUIUtils.onSuccess('تم الحذف بنجاح', ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
+      (_) {
+        log('تم حذف حركة المادة ${matStatementModel.matName} بنجاح');
+        if (withPrint) {
+          AppUIUtils.onSuccess(
+            'تم حذف حركة المادة ${matStatementModel.matName} بنجاح',
+          );
+        }
+      },
     );
 
-    final materialStatementList =
-        await fetchMatStatementById(matStatementModel.matId!,);
+    final materialStatementList = await fetchMatStatementById(
+      matStatementModel.matId!,
+    );
 
     if (materialStatementList != null) {
       if (matStatementModel.quantity! < 0) {
@@ -165,21 +182,22 @@ class MaterialsStatementController extends GetxController
     }
   }
 
-  Future<void> deleteAllMatStatementModel(
-      List<MatStatementModel> matStatementsModels) async {
+  Future<void> deleteAllMatStatementModel(List<MatStatementModel> matStatementsModels, bool withPrint) async {
     final List<Future<void>> deletedTasks = [];
     final errors = <String>[];
 
     for (final matStatementModel in matStatementsModels) {
       deletedTasks.add(
-        deleteMatStatementModel(matStatementModel),
+        deleteMatStatementModel(matStatementModel, withPrint),
       );
     }
 
     await Future.wait(deletedTasks);
 
     if (errors.isNotEmpty) {
-      AppUIUtils.onFailure('Some deletions failed: ${errors.join(', ')}',);
+      AppUIUtils.onFailure(
+        'Some deletions failed: ${errors.join(', ')}',
+      );
     }
   }
 
@@ -190,9 +208,13 @@ class MaterialsStatementController extends GetxController
 
   int totalQuantity = 0;
 
-  bool isMatValid(MaterialModel? materialByName, ) {
+  bool isMatValid(
+    MaterialModel? materialByName,
+  ) {
     if (materialByName == null || materialByName.id == null) {
-      AppUIUtils.onFailure('فشل في ايجاد الماده!', );
+      AppUIUtils.onFailure(
+        'فشل في إيجاد المادة!',
+      );
       selectedMat = null;
       return false;
     }
@@ -201,18 +223,23 @@ class MaterialsStatementController extends GetxController
     return true;
   }
 
-  Future<void> fetchMatStatements(MaterialModel materialModel,
-      {required BuildContext context}) async {
+  Future<void> fetchMatStatements(MaterialModel materialModel, {required BuildContext context}) async {
     log('name ${materialModel.matName}');
     // final materialByName = _materialsController.getMaterialByName(name);
 
     log('materialByName ${materialModel.id}');
 
-    if (!isMatValid(materialModel,)) return;
+    if (!isMatValid(
+      materialModel,
+    )) {
+      return;
+    }
 
     final result = await _matStatementsRepo.getAll(materialModel.id!);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (fetchedItems) {
         matStatements.assignAll(fetchedItems.map((item) => item).toList());
 
@@ -228,10 +255,14 @@ class MaterialsStatementController extends GetxController
     );
   }
 
-  Future<List<MatStatementModel>?> fetchMatStatementById(String matId,) async {
+  Future<List<MatStatementModel>?> fetchMatStatementById(
+    String matId,
+  ) async {
     final result = await _matStatementsRepo.getAll(matId);
     return result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (fetchedItems) => fetchedItems,
     );
   }
@@ -287,8 +318,7 @@ class MaterialsStatementController extends GetxController
     int helperQuantity = 0;
     for (final matStatementModel in items) {
       if (matStatementModel.quantity! > 0) {
-        currentPrice = ((currentPrice * currentQuantity) +
-                (matStatementModel.price! * matStatementModel.quantity!)) /
+        currentPrice = ((currentPrice * currentQuantity) + (matStatementModel.price! * matStatementModel.quantity!)) /
             (currentQuantity + matStatementModel.quantity!);
         currentQuantity += matStatementModel.quantity! + helperQuantity;
         helperQuantity = 0;
@@ -309,18 +339,14 @@ class MaterialsStatementController extends GetxController
     if (items.isEmpty) return 0.0;
     final sellItem = items
         .where(
-          (item) =>
-              item.matOrigin!.originTypeId ==
-              "eb10653a-a43f-44e5-889d-41ce68c43ec4",
+          (item) => item.matOrigin!.originTypeId == "eb10653a-a43f-44e5-889d-41ce68c43ec4",
         )
         .toList();
     sellItem.sortBy(
       (item) => item.date!,
     );
     log('last pay price is ${sellItem.lastOrNull?.price}');
-    return (sellItem.lastOrNull?.price ?? 0.0).isNaN
-        ? 0
-        : sellItem.lastOrNull?.price ?? 0.0;
+    return (sellItem.lastOrNull?.price ?? 0.0).isNaN ? 0 : sellItem.lastOrNull?.price ?? 0.0;
   }
 
   String get screenTitle => 'حركات ${selectedMat?.matName}';

@@ -45,8 +45,7 @@ class AccountFilterDialog extends StatelessWidget {
                               title: 'اسم الحساب :  ',
                               controller: controller.accountNameController,
                               onSubmitted: (text) {
-                                controller.onAccountNameSubmitted(
-                                    text, context);
+                                controller.onAccountNameSubmitted(text, context);
                               }),
                           OptionTextWidget(
                             title: 'من تاريخ :  ',
@@ -70,18 +69,17 @@ class AccountFilterDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 15,
                     children: [
-                      if (RoleItemType.administrator.hasAdminPermission)
-                        AppButton(
-                          title: '${AppStrings.confirm.tr}',
-                          iconData: Icons.check,
-                          onPressed: () {
-                            controller
-                              ..fetchAccountEntryBondItems(true)
-                              ..navigateToAccountStatementScreen(
-                                context,
-                              );
-                          },
-                        ),
+                      AppButton(
+                        title: AppStrings.confirm.tr,
+                        iconData: Icons.check,
+                        onPressed: () {
+                          controller
+                            ..fetchAccountEntryBondItems(true)
+                            ..navigateToAccountStatementScreen(
+                              context,
+                            );
+                        },
+                      ),
                       if (RoleItemType.administrator.hasAdminPermission)
                         AppButton(
                           title: "${AppStrings.confirm.tr}  new way",

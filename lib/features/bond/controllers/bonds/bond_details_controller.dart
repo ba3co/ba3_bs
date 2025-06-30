@@ -97,12 +97,10 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> deleteBond(BondModel bondModel, BuildContext context, {bool fromBondById = false}) async {
-
-    if(!RoleItemType.viewBond.hasDeletePermission)
-      {
-        AppUIUtils.onFailure( "no permissions");
-        return;
-      }
+    if (!RoleItemType.viewBond.hasDeletePermission) {
+      AppUIUtils.onFailure("no permissions");
+      return;
+    }
     deleteBondRequestState.value = RequestState.loading;
 
     final result = await _bondsFirebaseRepo.delete(bondModel);
@@ -126,11 +124,10 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   Future<void> updateBond({required BondType bondType, required BondModel bondModel, required BuildContext context}) async {
-    if(RoleItemType.viewBond.hasUpdatePermission) {
+    if (RoleItemType.viewBond.hasUpdatePermission) {
       await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel, context: context);
-    }
-    else{
-      AppUIUtils.onFailure( 'no permissions');
+    } else {
+      AppUIUtils.onFailure('no permissions');
     }
   }
 
@@ -176,16 +173,17 @@ class BondDetailsController extends GetxController with AppValidator {
           failure.message,
         );
       },
-      (bondModel) async {
+      (savedBondModel) async {
         await _bondService.handleSaveOrUpdateSuccess(
           previousBond: existingBondModel,
-          currentBond: bondModel,
+          currentBond: savedBondModel,
           bondSearchController: bondSearchController,
+          oldBillNumberFromUi: bondNumberController.text,
           isSave: existingBondModel == null,
           bondDetailsController: this,
           context: context,
         );
-
+        bondNumberController.text = savedBondModel.payNumber.toString();
         saveBondRequestState.value = RequestState.success;
       },
     );
@@ -259,7 +257,6 @@ class BondDetailsController extends GetxController with AppValidator {
     _bondService.generatePdfAndSendToEmail(
       fileName: AppStrings.bond.tr,
       itemModel: bondModel,
-
     );
   }
 

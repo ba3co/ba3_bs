@@ -259,7 +259,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     // If connected, proceed to save the bills to Firebase
     if (hasConnection) {
       try {
-        // await fetchAllNestedBills();
+        await fetchAllNestedBills();
         // Save bills locally
         await _billLocalStorageService.saveNestedBills(nestedBills);
 
@@ -467,7 +467,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     await fetchPendingBillsCountsByTypes(fetchedBillTypes);
     await fetchAllBillsCountsByTypes(fetchedBillTypes);
 
-    saveAllBillsIfConnected();
+    // saveAllBillsIfConnected();
     getBillsTypesRequestState.value = RequestState.success;
   }
 

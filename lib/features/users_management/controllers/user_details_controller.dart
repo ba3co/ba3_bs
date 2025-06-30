@@ -140,7 +140,7 @@ class UserDetailsController extends GetxController {
   void _handleFailure(Failure failure,BuildContext context) => AppUIUtils.onFailure(failure.message, );
 
   void _onUserSaved(UserModel userModel,BuildContext context) {
-    AppUIUtils.onSuccess('تم الحفظ بنجاح', );
+    AppUIUtils.onSuccess('تم حفظ المستخدم بنجاح', );
     allUserController.getAllUsers();
 
     // Check if the user was newly saved

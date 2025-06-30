@@ -114,7 +114,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
       if (isWithDialog) {
         AppUIUtils.onSuccess(
-          'تم الحفظ بنجاح',
+          'تم حفظ المواد بنجاح',
         );
       }
       reloadMaterials();
@@ -123,9 +123,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     });
   }
 
-  Future<void> updateAllMaterial(
-    List<MaterialModel> materialsToSave,
-  ) async {
+  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave, {required bool withPrint}) async {
     final result = await _materialsHiveRepo.updateAll(materialsToSave);
 
     result.fold(
@@ -133,9 +131,12 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
               failure.message,
             ), (savedMaterials) {
       log('materials length before update item: ${materials.length}');
-      AppUIUtils.onSuccess(
-        'تم الحفظ بنجاح',
-      );
+      if (withPrint) {
+
+        AppUIUtils.onSuccess(
+          'تم الحفظ بنجاح',
+        );
+      }
       reloadMaterials();
       log('materials length update add item: ${materials.length}');
     });
@@ -323,6 +324,12 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     reloadMaterials();
     return materials.firstWhere((material) => material.id == id);
   }
+  MaterialModel? getMaterialByIdWithNull(
+      String id,
+      ) {
+    reloadMaterials();
+    return materials.firstWhereOrNull((material) => material.id == id);
+  }
 
   double getMaterialMinPriceById(String id) {
     double price = materials.firstWhereOrNull((material) => material.id == id)?.calcMinPrice ?? 0.0;
@@ -384,7 +391,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     // Handle null material model
     if (materialModel == null) {
       AppUIUtils.onFailure(
-        'من فضلك قم!',
+        'من فضلك تأكد من الحقول!',
       );
       return;
     }
@@ -407,7 +414,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  void deleteMaterial(BuildContext context) async {
+  void deleteMaterial(BuildContext context, bool withPrint) async {
     if (selectedMaterial == null) return;
 
     // Prepare user change queue for delete
@@ -427,7 +434,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       },
       (_) {
         deleteMaterialRequestState.value = RequestState.success;
-        _onDeleteSuccess(context);
+        _onDeleteSuccess(context, withPrint);
       },
     );
   }
@@ -504,7 +511,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         failure.message,
       ),
       (_) {
-        AppUIUtils.onSuccess(
+        log(
           selectedMaterial?.id == null ? 'تم الحفظ بنجاح' : 'تم التعديل بنجاح',
         );
         read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
@@ -512,7 +519,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  void _onDeleteSuccess(BuildContext context) async {
+  void _onDeleteSuccess(BuildContext context, bool withPrint) async {
     final MaterialModel materialModel = selectedMaterial!;
 
     // Persist the data in Hive upon successful save
@@ -526,10 +533,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         read<LogController>().addLog(item: materialModel, eventType: LogEventType.delete);
 
         log('materials length before add item: ${materials.length}');
-
-        AppUIUtils.onSuccess(
-          'تم الحذف بنجاح',
-        );
+        if (withPrint) {
+          AppUIUtils.onSuccess(
+            'تم حذف المادة بنجاح',
+          );
+        }
 
         reloadMaterials();
 

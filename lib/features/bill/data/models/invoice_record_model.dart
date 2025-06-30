@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +23,7 @@ import 'bill_items.dart';
 class InvoiceRecordModel {
   String? invRecId;
   String? invRecProduct;
+  String? invRecProductCode;
   String? prodChoosePriceMethod;
   int? invRecQuantity;
   int? invRecGift;
@@ -43,13 +48,22 @@ class InvoiceRecordModel {
     this.invRecGiftTotal,
     this.invRecProductSoldSerial,
     this.invRecProductSerialNumbers,
+    this.invRecProductCode,
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
-  factory InvoiceRecordModel.fromBillItem(BillItem billItem) =>
-      InvoiceRecordModel(
+  factory InvoiceRecordModel.fromBillItem(BillItem billItem) {
+
+    final MaterialModel? material = read<MaterialController>().getMaterialByIdWithNull(billItem.itemGuid);
+    if(material == null) {
+      AppUIUtils.onFailure('بعض المواد غير موجودة '
+          '\n (${billItem.itemGuid} - ${billItem.itemName})');
+      return InvoiceRecordModel();
+    }
+    return InvoiceRecordModel(
         invRecId: billItem.itemGuid,
-        invRecProduct: billItem.itemName,
+        invRecProduct:material.matName,
+      invRecProductCode:material.matCode.toString() ,
         invRecQuantity: billItem.itemQuantity,
         invRecSubTotal: billItem.itemSubTotalPrice,
         invRecTotal: double.tryParse(billItem.itemTotalPrice),
@@ -59,6 +73,7 @@ class InvoiceRecordModel {
         invRecProductSoldSerial: billItem.soldSerialNumber,
         invRecProductSerialNumbers: billItem.itemSerialNumbers,
       );
+  }
 
   factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) =>
       InvoiceRecordModel(
@@ -247,7 +262,14 @@ class InvoiceRecordModel {
           return const Text("");
         },
       ): invRecId,
-
+      buildPlutoColumn(
+        title: AppStrings.materialCode.tr,
+        field: AppStrings.materialCode,
+        type: PlutoColumnType.text(),
+        width: 100,
+        hasContextMenu: false,
+        // isUIHidden: RoleItemType.viewBill.hasAdminPermission,
+      ): invRecProductCode,
       // Product Name Column
       buildPlutoColumn(
         title: AppStrings.material.tr,

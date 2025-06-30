@@ -39,6 +39,7 @@ mixin MatsStatementsGenerator {
     required T model,
     List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
+    required bool withPrint ,
 
   }) async {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
@@ -60,11 +61,11 @@ mixin MatsStatementsGenerator {
         },
       ).toList();
 
-      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  );
+      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  withPrint);
     }
   }
 
-  Future<void> deleteMatsStatementsModels(BillModel billModel, BuildContext context) async {
+  Future<void> deleteMatsStatementsModels(BillModel billModel, BuildContext context,bool withPrint) async {
     final String originId = billModel.billId!;
     final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(billModel);
 
@@ -80,6 +81,6 @@ mixin MatsStatementsGenerator {
         )
         .toList();
 
-    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,);
+    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,withPrint);
   }
 }
