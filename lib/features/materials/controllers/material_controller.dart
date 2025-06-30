@@ -409,7 +409,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       },
       (savedMaterial) {
         saveMaterialRequestState.value = RequestState.success;
-        _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add);
+        _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add, withPrint: true);
       },
     );
   }
@@ -480,7 +480,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update),
+      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update,withPrint: false),
     );
   }
 
@@ -497,7 +497,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType, bool withReloadMaterial = true}) async {
+  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType, bool withReloadMaterial = true,required bool withPrint }) async {
     if (withReloadMaterial) reloadMaterials();
 
     // Prepare user change queue for saving
@@ -511,9 +511,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         failure.message,
       ),
       (_) {
-        log(
-          selectedMaterial?.id == null ? 'تم الحفظ بنجاح' : 'تم التعديل بنجاح',
+        if(withPrint) {
+          AppUIUtils.onSuccess(
+          selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
         );
+        }
         read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
