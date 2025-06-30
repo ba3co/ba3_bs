@@ -28,7 +28,7 @@ class AllBillsTypesList extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.start,
           children: allBillsController.getBillsTypesRequestState.value == RequestState.loading
               ? List.generate(10, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
-              : RoleItemType.viewBill.hasAdminPermission
+              : RoleItemType.viewBill.hasWritePermission
                   ? patternController.billsTypes
                       .map(
                         (billTypeModel) => BillTypeItemWidget(

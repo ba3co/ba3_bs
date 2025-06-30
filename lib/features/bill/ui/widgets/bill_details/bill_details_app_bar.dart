@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/services/translation/translation_controller.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
@@ -13,7 +12,6 @@ import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
 import '../../../../../core/widgets/language_switch_fa_icon.dart';
-import '../../../../users_management/data/models/role_model.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
 
 class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -44,7 +42,7 @@ class BillDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         Visibility(
-          visible: RoleItemType.viewBill.hasAdminPermission,
+          visible:true,
           child: Row(
             children: [
               HorizontalSpace(15),

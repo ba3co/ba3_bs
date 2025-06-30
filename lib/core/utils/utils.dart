@@ -65,6 +65,7 @@ PlutoColumn buildPlutoColumn({
       title: title,
       field: field,
       type: type,
+
       width: isUIHidden ? 0 : width,
       readOnly: isUIHidden ? true : isReadOnly,
       enableEditingMode: isUIHidden ? false : isEditable,

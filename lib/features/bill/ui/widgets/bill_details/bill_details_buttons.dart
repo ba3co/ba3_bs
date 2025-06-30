@@ -43,7 +43,7 @@ class BillDetailsButtons extends StatelessWidget {
           children: [
             //  if (!billDetailsController.isBillSaved.value) _buildAddAndPrintButton(context),
             _buildAddButton(context),
-            if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
+            if ((!billSearchController.isNew ) &&
                 (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
               _buildApprovalOrBondButton(context),
             if (!billSearchController.isPending)
@@ -149,19 +149,19 @@ class BillDetailsButtons extends StatelessWidget {
                 context: context, billModel: billModel, billTypeModel: billModel.billTypeModel, withPrint: false),
           );
         }),
-      if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
+      if ( !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,
           icon: FontAwesomeIcons.solidEnvelope,
           onPressed: () => billDetailsController.generateAndSendBillPdfToEmail(billModel,context),
         ),
-      if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
+      if ( !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.whatsApp.tr,
           icon: FontAwesomeIcons.whatsapp,
           onPressed: () => billDetailsController.sendBillToWhatsapp(billModel, context),
         ),
-      if (RoleItemType.viewBill.hasAdminPermission)
+
         Obx(() {
           return _buildActionButton(
             isLoading: billDetailsController.deleteBillRequestState.value == RequestState.loading,

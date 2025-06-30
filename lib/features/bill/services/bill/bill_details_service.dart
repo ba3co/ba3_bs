@@ -130,9 +130,23 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     List<ProductWithTaxModel> productsWithTax = [];
 
     final matchingItems = billModel.items.itemList.where(
-      (product) => item.note!.toLowerCase().trim().contains(product.itemName!.toLowerCase().trim()) ,
-    );
+      (product) {
+        String noteText = item.note!
+            .toLowerCase()
+            .replaceAll(RegExp(r'[^\w\u0600-\u06FF]'), ' ') // لأحرف عربية أيضاً
+            .replaceAll(RegExp(r'\s+'), '')
+            .trim();
 
+        String productText = product.itemName!
+            .toLowerCase()
+            .replaceAll(RegExp(r'[^\w\u0600-\u06FF]'), ' ') // لأحرف عربية أيضاً
+            .replaceAll(RegExp(r'\s+'), '')
+            .trim();
+
+        return noteText.contains(productText);
+      } ,
+    );
+log(matchingItems.length.toString());
     for (final billItem in matchingItems) {
       productsWithTax.add(
         ProductWithTaxModel(

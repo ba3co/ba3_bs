@@ -268,7 +268,7 @@ class InvoiceRecordModel {
         type: PlutoColumnType.text(),
         width: 100,
         hasContextMenu: false,
-        // isUIHidden: RoleItemType.viewBill.hasAdminPermission,
+         isFullyHidden: !RoleItemType.viewBill.hasAdminPermission,
       ): invRecProductCode,
       // Product Name Column
       buildPlutoColumn(
