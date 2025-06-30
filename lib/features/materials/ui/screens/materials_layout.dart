@@ -30,7 +30,7 @@ class MaterialLayout extends StatelessWidget {
               backgroundColor: const Color(0xFFEDF3F8),
               appBar: AppBar(
                 title: Text(AppStrings.materials.tr),
-                actions: RoleItemType.administrator.hasAdminPermission
+                actions: RoleItemType.viewProduct.hasAdminPermission
                     ? [
                         _buildAdminButton(AppStrings.downloadMaterials.tr, () {
                           read<MaterialController>()
@@ -47,6 +47,7 @@ class MaterialLayout extends StatelessWidget {
                       ]
                     : [],
               ),
+
               body: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),

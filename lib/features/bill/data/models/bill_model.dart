@@ -386,6 +386,7 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
             ? AppConstants.taxFreeAccountName.replaceAll('ضريبة القيمة المضافة', '')
             : AppConstants.taxLocalAccountName.replaceAll('ضريبة القيمة المضافة', ''),
     PlutoColumn(title: AppStrings.materials.tr, field: 'المواد', type: PlutoColumnType.text()): items.itemList.map((e) =>"(${e.itemName})",).toList().join('\n'),
+    PlutoColumn(title: AppStrings.requiredRequestNumber.tr, field: 'ads', type: PlutoColumnType.text()):billDetails.orderNumber,
 
       };
 
