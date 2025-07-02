@@ -239,6 +239,10 @@ class BillDetailsController extends IBillController
   }
 
   void updateBillStatus(BillModel billModel, newStatus, BuildContext context) async {
+    if (AppConstants.forcePending) {
+      final success = await AppUIUtils.askForPassword(context);
+      if (!success) return;
+    }
     if (billModel.items.itemList.map((e) => e.itemName).contains('الباركود خطأ')) {
       AppUIUtils.onFailure(
         'لا يمكن تغيير حالة الفاتورة بسبب وجود باركود خطأ',
@@ -673,9 +677,6 @@ class BillDetailsController extends IBillController
         (item.itemVatPrice!) + (item.itemSubTotalPrice!),
         (item.itemTotalPrice.toDouble / item.itemQuantity),
       )) {
-        log('\n  item.itemQuantity : ${item.itemQuantity} item.itemVatPrice : ${item.itemVatPrice} item.itemSubTotalPrice : ${item.itemSubTotalPrice} item.itemTotalPrice : ${item.itemTotalPrice}'
-            '\n (((item.itemVatPrice!) + (item.itemSubTotalPrice!) :${((item.itemVatPrice!) + (item.itemSubTotalPrice!))}'
-            '\n (item.itemTotalPrice.toDouble) / item.itemQuantity): ${(item.itemTotalPrice.toDouble) / item.itemQuantity}');
         AppUIUtils.onFailure(
           'يجب التأكد من قيم الجدول'
           '\n item.Name :\n ${item.itemName}'
@@ -729,7 +730,6 @@ class BillDetailsController extends IBillController
           selectedStore.value,
         ) ??
         billTypeModel;
-    log(billDate.value.toString());
     // Create and return the bill model
     return _billService.createBillModel(
       billModel: billModel,

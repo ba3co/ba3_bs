@@ -17,6 +17,7 @@ import '../constants/app_constants.dart';
 import '../helper/enums/enums.dart';
 import '../widgets/app_button.dart';
 import '../widgets/app_spacer.dart';
+import '../widgets/password_dialog_widget.dart';
 
 class AppUIUtils {
   static void showToast(String text, {bool isSuccess = false, bool isInfo = false, bool long = false}) {
@@ -26,8 +27,7 @@ class AppUIUtils {
     } else if (isSuccess) {
       color = Colors.green;
     }
-    Fluttertoast.showToast(
-        msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(msg: text, backgroundColor: color, fontSize: 16.sp, toastLength: long ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
   }
 
   static String convertArabicNumbers(String input) {
@@ -108,7 +108,9 @@ class AppUIUtils {
   }
 
   static void showExportSuccessDialog(String filePath, String successMessage, String title) {
-    AppUIUtils.onSuccess('تم تصدير الفواتير بنجاح!',);
+    AppUIUtils.onSuccess(
+      'تم تصدير الفواتير بنجاح!',
+    );
     Get.defaultDialog(
       title: 'تم تصدير الملف إلى:',
       radius: 8,
@@ -343,11 +345,11 @@ class AppUIUtils {
     }
   }
 
-  static onFailure(String message) => HelperAlert.showError( text: message);
+  static onFailure(String message) => HelperAlert.showError(text: message);
 
-  static onSuccess(String message) =>HelperAlert.showSuccess( text: message);
+  static onSuccess(String message) => HelperAlert.showSuccess(text: message);
 
-  static onInfo(String message,String title) => HelperAlert.showInfo(text: message,title: title);
+  static onInfo(String message, String title) => HelperAlert.showInfo(text: message, title: title);
 
   /// The `title` argument is used to title of alert dialog.
   /// The `content` argument is used to content of alert dialog.
@@ -512,5 +514,35 @@ class AppUIUtils {
         child: Image.network(imagePath, fit: BoxFit.contain),
       ),
     );
+  }
+
+  static Future<bool> askForPassword(BuildContext context, {String title = AppStrings.askForPermission}) async {
+    final completer = Completer<bool>();
+
+    await OverlayService.showDialog(
+      context: context,
+      content: PasswordDialogWidget(
+        title: title,
+        onCancel: () {
+          completer.complete(false);
+          OverlayService.back();
+        },
+        onConfirm: (password) {
+
+
+          if (password == AppConstants.staticAppPassword) {
+            completer.complete(true);
+            OverlayService.back();
+          } else {
+            AppUIUtils.onFailure('كلمة السر غير صحيحة');
+          }
+        },
+      ),
+      borderRadius: BorderRadius.circular(12),
+      width: 300,
+      height: 200,
+    );
+
+    return completer.future;
   }
 }
