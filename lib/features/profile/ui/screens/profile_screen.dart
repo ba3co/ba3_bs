@@ -76,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                                   userTimeController: read<UserTimeController>(),
                                 ),
                                 UserDailyTimeWidget(
-                                  userModel: read<UserTimeController>().getUserById()!,
+                                  userModel: read<UserTimeController>().getUserById,
                                 ),
                                 Row(
                                   spacing: 10,

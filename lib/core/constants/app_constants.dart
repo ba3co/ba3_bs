@@ -430,6 +430,9 @@ abstract class AppConstants {
   static const String testDataBaseAppName = 'test';
   static const String defaultFirebaseAppName = '[DEFAULT]';
 
- // @preserve: ali-dev-only getter
+  static bool forcePending = false;
+  static String staticAppPassword = 'Asd123';
+
+  // @preserve: ali-dev-only getter
   static String get getDatabaseAppName => testDataBaseAppName;
 }

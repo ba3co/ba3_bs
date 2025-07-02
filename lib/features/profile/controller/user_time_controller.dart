@@ -14,7 +14,7 @@ import '../../user_time/services/user_time_services.dart';
 import '../../users_management/controllers/user_management_controller.dart';
 import '../../users_management/data/models/user_model.dart';
 
-class UserTimeController extends GetxController {
+/*class UserTimeController extends GetxController {
   final FilterableDataSourceRepository<UserModel> _usersFirebaseRepo;
   final UserTimeRepository _userTimeRepo;
 
@@ -55,13 +55,15 @@ class UserTimeController extends GetxController {
     bool isWithinRegion = false;
     result.fold(
       (failure) {
-        return AppUIUtils.onFailure(failure.message, );
+        return AppUIUtils.onFailure(
+          failure.message,
+        );
       },
       (location) {
-        return isWithinRegion =
-            _userTimeServices.isWithinRegion(location, AppConstants.targetLatitude, AppConstants.targetLongitude, AppConstants.radiusInMeters) ||
-                _userTimeServices.isWithinRegion(
-                    location, AppConstants.secondTargetLatitude, AppConstants.secondTargetLongitude, AppConstants.secondRadiusInMeters);
+        return isWithinRegion = _userTimeServices.isWithinRegion(
+                location, AppConstants.targetLatitude, AppConstants.targetLongitude, AppConstants.radiusInMeters) ||
+            _userTimeServices.isWithinRegion(
+                location, AppConstants.secondTargetLatitude, AppConstants.secondTargetLongitude, AppConstants.secondRadiusInMeters);
       },
     );
 
@@ -74,37 +76,36 @@ class UserTimeController extends GetxController {
     getLastOutTime();
   }
 
-  Future<void> checkUserLog({required UserWorkStatus logStatus, required Function(UserModel) onChecked, required String errorMessage,required BuildContext context}) async {
-    if (logStatus == UserWorkStatus.online) {
-      logInState.value = RequestState.loading;
-    } else {
-      logOutState.value = RequestState.loading;
-    }
+  Future<void> checkUserLog(
+      {required UserWorkStatus logStatus,
+      required Function(UserModel) onChecked,
+      required String errorMessage,
+      required BuildContext context}) async {
     await read<UserManagementController>().refreshLoggedInUser(context);
 
-    UserModel? userModel = getUserById();
+    UserModel userModel = getUserById()!;
 
-    /// we don't need it in diskTop app
-    /*   /// check if user in regin
-    if (!await isWithinRegion()) {
-      handleError('خطأ في المنطقة الجغرافية', logStatus);
-      return;
-    }*/
+    if (!validateLogInOrOut(userModel: userModel, logStatus: logStatus)) return;
+
+
 
     /// check if user want to login again before logout
     /// or
     /// check if user want to logout again before login
-    if (userModel!.userWorkStatus != logStatus || userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] == null) {
+    if (userModel.userWorkStatus != logStatus || userModel.userTimeModel?[_userTimeServices.getCurrentDayName()] == null) {
       final updatedUserModel = onChecked(userModel);
-if(!context.mounted) return;
+      if (!context.mounted) return;
       /// check if user want to log in
       if (logStatus == UserWorkStatus.online) {
-        _saveLogInTime(updatedUserModel,context);
+        _saveLogInTime(updatedUserModel, );
       } else {
-        _saveLogOutTime(updatedUserModel,context);
+        _saveLogOutTime(updatedUserModel, );
       }
     } else {
-      handleError(errorMessage, logStatus,);
+      handleError(
+        errorMessage,
+        logStatus,
+      );
     }
   }
 
@@ -114,7 +115,8 @@ if(!context.mounted) return;
     await checkUserLog(
       /// This is the user's status after the operation
       logStatus: UserWorkStatus.online,
-context: context,
+      context: context,
+
       /// After confirming the possibility of lo
       onChecked: (userModel) => _userTimeServices.addLoginTimeToUserModel(
         userModel: userModel,
@@ -127,7 +129,8 @@ context: context,
     await checkUserLog(
       /// This is the user's status after the operation
       logStatus: UserWorkStatus.away,
-context: context,
+      context: context,
+
       /// After confirming the possibility of lo
       onChecked: (userModel) => _userTimeServices.addLogOutTimeToUserModel(
         userModel: userModel,
@@ -136,28 +139,34 @@ context: context,
     );
   }
 
-  void _saveLogOutTime(UserModel updatedUserModel,BuildContext context) async {
+  void _saveLogOutTime(UserModel updatedUserModel,) async {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
     result.fold(
       (failure) {
-        handleError(failure.message, UserWorkStatus.away,);
+        handleError(
+          failure.message,
+          UserWorkStatus.away,
+        );
       },
       (fetchedUser) {
-        handleSuccess('تم تسجيل الخروج بنجاح', UserWorkStatus.away,context);
+        handleSuccess('تم تسجيل الخروج بنجاح', UserWorkStatus.away, );
         setLastOutTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
     );
   }
 
-  void _saveLogInTime(UserModel updatedUserModel,BuildContext context) async {
+  void _saveLogInTime(UserModel updatedUserModel, ) async {
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
       (failure) {
-        handleError(failure.message, UserWorkStatus.online,);
+        handleError(
+          failure.message,
+          UserWorkStatus.online,
+        );
       },
       (fetchedUser) {
-        handleSuccess('تم تسجيل الدخول بنجاح', UserWorkStatus.online,context);
+        handleSuccess('تم تسجيل الدخول بنجاح', UserWorkStatus.online, );
 
         setLastEnterTime = AppServiceUtils.formatDateTime(_userTimeServices.getCurrentTime());
       },
@@ -178,22 +187,29 @@ context: context,
     }
   }
 
-  void handleError(String errorMessage, UserWorkStatus status, ) {
+  void handleError(
+    String errorMessage,
+    UserWorkStatus status,
+  ) {
     if (status == UserWorkStatus.online) {
       logInState.value = RequestState.error;
     } else {
       logOutState.value = RequestState.error;
     }
-    AppUIUtils.onFailure(errorMessage, );
+    AppUIUtils.onFailure(
+      errorMessage,
+    );
   }
 
-  void handleSuccess(String successMessage, UserWorkStatus status,BuildContext context) {
+  void handleSuccess(String successMessage, UserWorkStatus status,) {
     if (status == UserWorkStatus.online) {
       logInState.value = RequestState.success;
     } else {
       logOutState.value = RequestState.success;
     }
-    AppUIUtils.onSuccess(successMessage,);
+    AppUIUtils.onSuccess(
+      successMessage,
+    );
   }
 
   set setLastEnterTime(String time) {
@@ -202,5 +218,168 @@ context: context,
 
   set setLastOutTime(String time) {
     lastOutTime.value = time;
+  }
+
+  bool validateLogInOrOut({required UserModel userModel, required UserWorkStatus logStatus}) {
+    int enterTimeLengthForThisDay = userModel.userTimeModel?[_userTimeServices.getCurrentDayName()]?.logInDateList?.length ?? 0;
+    int outTimeLengthForThisDay = userModel.userTimeModel?[_userTimeServices.getCurrentDayName()]?.logInDateList?.length ?? 0;
+    int workingHoursLength = userModel.userWorkingHours?.length ?? 0;
+    if (logStatus == UserWorkStatus.online) {
+      if (enterTimeLengthForThisDay == workingHoursLength) {
+        return false;
+      }
+      logInState.value = RequestState.loading;
+    } else {
+      if (outTimeLengthForThisDay == workingHoursLength) {
+        return false;
+      }
+      logOutState.value = RequestState.loading;
+    }
+    return true;
+  }
+}*/
+class UserTimeController extends GetxController {
+  final FilterableDataSourceRepository<UserModel> _usersRepo;
+  final UserTimeRepository _timeRepo;
+
+  UserTimeController(this._usersRepo, this._timeRepo);
+
+  late final UserTimeServices _userTimeServices;
+
+  Rx<String> lastEnterTime = AppStrings.notLoggedToday.tr.obs;
+  Rx<String> lastOutTime = AppStrings.notLoggedToday.tr.obs;
+
+  Rx<RequestState> logInState = RequestState.initial.obs;
+  Rx<RequestState> logOutState = RequestState.initial.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _userTimeServices = UserTimeServices();
+    _updateLastTimes();
+  }
+
+  List<String>? get userHolidays => getUserById.userHolidays
+      ?.toList()
+      .where(
+        (element) => element.split("-")[1] == Timestamp.now().toDate().month.toString().padLeft(2, "0"),
+      )
+      .toList();
+
+  List<String>? get userHolidaysWithDay => userHolidays
+      ?.map(
+        (date) => AppServiceUtils.getDayNameAndMonthName(date),
+      )
+      .toList();
+
+  int get userHolidaysLength => userHolidays?.length ?? 0;
+
+  UserModel get getUserById => read<UserManagementController>().loggedInUserModel!;
+
+  Future<void> logIn(BuildContext context) async {
+    await _handleLog(
+      context: context,
+      newStatus: UserWorkStatus.online,
+      onUpdate: (u) => _userTimeServices.addLoginTimeToUserModel(userModel: u),
+      errorMsg: "يجب تسجيل الخروج أولاً",
+      state: logInState,
+    );
+  }
+
+  Future<void> logOut(BuildContext context) async {
+    await _handleLog(
+      context: context,
+      newStatus: UserWorkStatus.away,
+      onUpdate: (u) => _userTimeServices.addLogOutTimeToUserModel(userModel: u),
+      errorMsg: "يجب تسجيل الدخول أولاً",
+      state: logOutState,
+    );
+  }
+
+  Future<void> _handleLog({
+    required BuildContext context,
+    required UserWorkStatus newStatus,
+    required UserModel Function(UserModel) onUpdate,
+    required String errorMsg,
+    required Rx<RequestState> state,
+  }) async {
+    await read<UserManagementController>().refreshLoggedInUser(context);
+
+    if (!_validateLog(getUserById, newStatus)) {
+      AppUIUtils.onFailure('تجاوزت حد اوقات الدخول لهذا اليوم');
+      return;
+    }
+
+    /// we don't need it in diskTop app
+    /*   /// check if user in regin
+    if (!await isWithinRegion()) {
+      AppUIUtils.onFailure('خطأ في المنطقة الجغرافية');
+      return;
+    }*/
+
+    state.value = RequestState.loading;
+
+    final updated = onUpdate(getUserById);
+    final result = await _usersRepo.save(updated);
+
+    result.fold(
+      (failure) {
+        state.value = RequestState.error;
+        AppUIUtils.onFailure(failure.message);
+      },
+      (_) {
+        state.value = RequestState.success;
+        // AppUIUtils.onSuccess(newStatus == UserWorkStatus.online ? 'تم تسجيل الدخول بنجاح' : 'تم تسجيل الخروج بنجاح');
+        _updateLastTimes();
+      },
+    );
+  }
+
+  bool _validateLog(UserModel u, UserWorkStatus targetStatus) {
+    final today = _userTimeServices.getCurrentDayName();
+    final model = u.userTimeModel?[today];
+
+    final logInCount = model?.logInDateList?.length ?? 0;
+    final logOutCount = model?.logOutDateList?.length ?? 0;
+    final expected = u.userWorkingHours?.length ?? 0;
+
+    if (logInCount >= expected||u.userWorkStatus== targetStatus) return false;
+    if ( logOutCount >= expected||u.userWorkStatus==targetStatus) return false;
+
+    return true;
+  }
+
+  void _updateLastTimes() {
+    final today = _userTimeServices.getCurrentDayName();
+    final loginList = getUserById.userTimeModel?[today]?.logInDateList ?? [];
+    final logoutList = getUserById.userTimeModel?[today]?.logOutDateList ?? [];
+
+    if (loginList.isNotEmpty) {
+      lastEnterTime.value = AppServiceUtils.formatDateTime(loginList.last);
+    }
+
+    if (logoutList.isNotEmpty) {
+      lastOutTime.value = AppServiceUtils.formatDateTime(logoutList.last);
+    }
+  }
+
+  Future<bool> isWithinRegion(BuildContext context) async {
+    final result = await _timeRepo.getCurrentLocation();
+    bool isWithinRegion = false;
+    result.fold(
+      (failure) {
+        return AppUIUtils.onFailure(
+          failure.message,
+        );
+      },
+      (location) {
+        return isWithinRegion = _userTimeServices.isWithinRegion(
+                location, AppConstants.targetLatitude, AppConstants.targetLongitude, AppConstants.radiusInMeters) ||
+            _userTimeServices.isWithinRegion(
+                location, AppConstants.secondTargetLatitude, AppConstants.secondTargetLongitude, AppConstants.secondRadiusInMeters);
+      },
+    );
+
+    return isWithinRegion;
   }
 }

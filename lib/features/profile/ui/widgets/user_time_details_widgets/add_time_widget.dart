@@ -35,7 +35,7 @@ class AddTimeWidget extends StatelessWidget {
                   title: AppStrings.checkIn.tr,
                   width: 40.w,
                   height: 20,
-                  onPressed: () => userTimeController.checkLogInAndSave(context),
+                  onPressed: () => userTimeController.logIn(context),
                   isLoading: userTimeController.logInState.value ==
                       RequestState.loading,
                 ),
@@ -59,7 +59,7 @@ class AddTimeWidget extends StatelessWidget {
                   title: AppStrings.checkOut.tr,
                   width: 40.w,
                   height: 20,
-                  onPressed: () => userTimeController.checkLogOutAndSave(context),
+                  onPressed: () => userTimeController.logOut(context),
                   isLoading: userTimeController.logOutState.value ==
                       RequestState.loading,
                 ),
