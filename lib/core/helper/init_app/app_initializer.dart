@@ -99,14 +99,12 @@ void setupDatabaseServices() {
           ? null
           : AppConstants.getDatabaseAppName);
 
-  // final FirebaseFirestore firestoreInstance = FirebaseFirestore.instance;
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);
 
   final compoundDatabaseService = createCompoundDatabaseService(firestoreInstance);
 
-  //final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
 
   // Register dependencies using lazyPut
   lazyPut(firestoreInstance);
@@ -115,7 +113,6 @@ void setupDatabaseServices() {
 
   lazyPut(compoundDatabaseService);
 
-  // lazyPut(remoteStorageService);
 }
 
 void setupMigrationDependencies() {
