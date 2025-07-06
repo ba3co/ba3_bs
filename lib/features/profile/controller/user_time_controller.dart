@@ -329,7 +329,7 @@ class UserTimeController extends GetxController {
       },
       (_) {
         state.value = RequestState.success;
-        // AppUIUtils.onSuccess(newStatus == UserWorkStatus.online ? 'تم تسجيل الدخول بنجاح' : 'تم تسجيل الخروج بنجاح');
+        AppUIUtils.onSuccess(newStatus == UserWorkStatus.online ? 'تم تسجيل الدخول بنجاح' : 'تم تسجيل الخروج بنجاح');
         _updateLastTimes();
       },
     );
@@ -343,8 +343,8 @@ class UserTimeController extends GetxController {
     final logOutCount = model?.logOutDateList?.length ?? 0;
     final expected = u.userWorkingHours?.length ?? 0;
 
-    if (logInCount >= expected||u.userWorkStatus== targetStatus) return false;
-    if ( logOutCount >= expected||u.userWorkStatus==targetStatus) return false;
+    if (logInCount >= expected || u.userWorkStatus == targetStatus) return false;
+    if (logOutCount >= expected || u.userWorkStatus == targetStatus) return false;
 
     return true;
   }

@@ -29,12 +29,10 @@ class ProfileScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GetBuilder<SellerSalesController>(
-
             initState: (state) async {
           await    WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized;
           final salesController = read<SellerSalesController>();
           if(!context.mounted)return;
-
           await salesController.onSelectSeller(sellerId: read<UserManagementController>().loggedInUserModel!.userSellerId,context: context);
         }, builder: (salesController) {
           return Row(
@@ -67,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
                                 ),
                                 ProfileInfoRowWidget(
                                   label: AppStrings.totalSales.tr,
-                                  value: (salesController.totalAccessoriesSales + salesController.totalMobilesSales).toString(),
+                                  value: (salesController.totalAccessoriesSales + salesController.totalMobilesSales).toStringAsFixed(2),
                                 ),
                                 AddTimeWidget(
                                   userTimeController: read<UserTimeController>(),

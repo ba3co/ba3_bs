@@ -69,6 +69,8 @@ dependencies:
   syncfusion_flutter_xlsio:
   file_selector: ^1.0.3
   desktop_multi_window: ^0.2.1
+  animated_toggle_switch: ^0.8.5
+#  toggle_switch: ^2.3.0
 #  firebase_remote_config: ^5.4.2
 #  firebase_storage: ^12.4.4
 

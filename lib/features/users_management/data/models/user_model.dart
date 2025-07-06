@@ -27,11 +27,14 @@ class UserModel implements PlutoAdaptable {
   final List<UserTaskModel>? userTaskList;
   final Map<String, UserWorkingHours>? userWorkingHours;
 
+
+
   Map<String, UserTimeModel>? userTimeModel;
 
   /// new attribute
   final MaterialGroupModel? groupForTarget;
   final double? userSalaryRatio;
+  final String? userSalary;
 
   UserModel({
     this.userId,
@@ -50,6 +53,7 @@ class UserModel implements PlutoAdaptable {
     this.userTaskList,
     this.groupForTarget,
     this.userSalaryRatio,
+    this.userSalary,
   });
 
   Map<String, dynamic> toJson() {
@@ -61,6 +65,7 @@ class UserModel implements PlutoAdaptable {
       'userRoleId': userRoleId,
       'groupForTarget': groupForTarget?.toJson(),
       'userSalaryRatio': userSalaryRatio,
+      'userSalary': userSalary,
       'userTaskList': userTaskList
           ?.map(
             (e) => e.toJson(),
@@ -101,6 +106,7 @@ class UserModel implements PlutoAdaptable {
       userPassword: json['userPassword'],
       userRoleId: json['userRoleId'],
       userSalaryRatio: json['userSalaryRatio'],
+      userSalary: json['userSalary'],
       groupForTarget: MaterialGroupModel.fromJson(json['groupForTarget'] ?? {}),
       userHolidays: List<String>.from(json['userHolidays'] ?? []),
       userWorkingHours: userDailyTime,
@@ -118,6 +124,7 @@ class UserModel implements PlutoAdaptable {
     final String? userPassword,
     final String? userRoleId,
     final String? userSellerId,
+    final String? userSalary,
     final UserWorkStatus? userWorkStatus,
     final UserActiveStatus? userActiveStatus,
     final List<String>? userHolidays,
@@ -147,6 +154,7 @@ class UserModel implements PlutoAdaptable {
         userTaskList: userTaskList ?? this.userTaskList,
         groupForTarget: groupForTarget ?? this.groupForTarget,
         userSalaryRatio: userSalaryRatio ?? this.userSalaryRatio,
+        userSalary: userSalary ?? this.userSalary,
       );
 
   @override
@@ -273,6 +281,13 @@ class UserModel implements PlutoAdaptable {
         frozen: PlutoColumnFrozen.start,
         type: PlutoColumnType.text(),
       ): userSalaryRatio,
+      PlutoColumn(
+        title: AppStrings.userSalary.tr,
+        field: 'راتب الموظف',
+        width: 200,
+        frozen: PlutoColumnFrozen.start,
+        type: PlutoColumnType.text(),
+      ): userSalary,
     };
   }
 }

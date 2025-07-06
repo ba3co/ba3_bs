@@ -436,4 +436,6 @@ class AppStrings {
   static const String  groupForTarget='تارغيت الشركة';
 
   static const String userSalaryRatio='تقييم الموظف';
+
+  static const String userSalary='راتب الموظف';
 }
