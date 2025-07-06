@@ -209,7 +209,10 @@ class SellerSalesController extends GetxController
           totalMobilesSales = 0;
           clearFilter();
         }
+        log('failure', name: 'fetchSellerBillsByDate');
         sellerBills.clear();
+        profileScreenState = RequestState.error;
+        update();
       },
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
