@@ -802,7 +802,7 @@ class BillDetailsController extends IBillController
     initBillAccount(
         bill.billDetails.billAccountId != null ? read<AccountsController>().getAccountModelById(bill.billDetails.billAccountId!) : null);
     initFreeLocalSwitcher(bill.freeBill);
-
+log(bill.freeBill.toString(),name: 'initFreeLocalSwitcher');
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
 
     prepareBillRecords(bill.items, billPlutoController);
