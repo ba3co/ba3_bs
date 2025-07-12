@@ -49,10 +49,8 @@ class UserDetailsForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userDetailsController.userFormHandler
-                        .defaultValidator(value, 'اسم الحساب'),
-                    textEditingController: userDetailsController
-                        .userFormHandler.userNameController,
+                    validator: (value) => userDetailsController.userFormHandler.defaultValidator(value, 'اسم الحساب'),
+                    textEditingController: userDetailsController.userFormHandler.userNameController,
                     suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
@@ -62,15 +60,38 @@ class UserDetailsForm extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                     height: 70,
                     filedColor: AppColors.backGroundColor,
-                    validator: (value) => userDetailsController.userFormHandler
-                        .passwordValidator(value, 'كلمة السر'),
-                    textEditingController:
-                        userDetailsController.userFormHandler.passController,
+                    validator: (value) => userDetailsController.userFormHandler.passwordValidator(value, 'كلمة السر'),
+                    textEditingController: userDetailsController.userFormHandler.passController,
                     suffixIcon: const SizedBox.shrink(),
                     maxLength: 6,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(6),
                     ],
+                  ),
+                ),
+              ),
+              FormFieldRow(
+                firstItem: TextAndExpandedChildField(
+                  label: AppStrings.groupForTarget.tr,
+                  height: 50,
+                  child: CustomTextFieldWithoutIcon(
+                    height: 50,
+                    onSubmitted: (value) {
+                      userDetailsController.userFormHandler.openMaterialGroupSelectionDialog(query: value, context: context);
+                    },
+                    filedColor: AppColors.backGroundColor,
+                    textEditingController: userDetailsController.userFormHandler.groupForTargetController,
+                    suffixIcon: const SizedBox.shrink(),
+                  ),
+                ),
+                secondItem: TextAndExpandedChildField(
+                  label: AppStrings.userSalary.tr,
+                  height: 50,
+                  child: CustomTextFieldWithoutIcon(
+                    height: 50,
+                    filedColor: AppColors.backGroundColor,
+                    textEditingController: userDetailsController.userFormHandler.userSalaryController,
+                    suffixIcon: const SizedBox.shrink(),
                   ),
                 ),
               ),
@@ -89,8 +110,7 @@ class UserDetailsForm extends StatelessWidget {
                           hint: Text(AppStrings.roles.tr),
                           icon: const SizedBox(),
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          value: userDetailsController
-                              .userFormHandler.selectedRoleId.value,
+                          value: userDetailsController.userFormHandler.selectedRoleId.value,
                           items: read<UserManagementController>()
                               .allRoles
                               .map(
@@ -102,8 +122,7 @@ class UserDetailsForm extends StatelessWidget {
                               .toList(),
                           onChanged: (role) {
                             log('selectedRoleId $role');
-                            userDetailsController.userFormHandler.setRoleId =
-                                role;
+                            userDetailsController.userFormHandler.setRoleId = role;
                           },
                         ),
                       );
@@ -127,10 +146,8 @@ class UserDetailsForm extends StatelessWidget {
                                   .map(
                                     (element) => element.costGuid,
                                   )
-                                  .contains(userDetailsController
-                                      .userFormHandler.selectedSellerId.value)
-                              ? userDetailsController
-                                  .userFormHandler.selectedSellerId.value
+                                  .contains(userDetailsController.userFormHandler.selectedSellerId.value)
+                              ? userDetailsController.userFormHandler.selectedSellerId.value
                               : null,
                           items: sellerController.sellers.map(
                             (seller) {
@@ -142,8 +159,7 @@ class UserDetailsForm extends StatelessWidget {
                           ).toList(),
                           onChanged: (sellerId) {
                             log('selectedSellerId $sellerId');
-                            userDetailsController.userFormHandler.setSellerId =
-                                sellerId;
+                            userDetailsController.userFormHandler.setSellerId = sellerId;
                           },
                         ),
                       );
@@ -160,17 +176,12 @@ class UserDetailsForm extends StatelessWidget {
                   padding: EdgeInsets.all(5),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color:
-                        userDetailsController.userFormHandler.isUserActive.value
-                            ? Colors.green
-                            : AppColors.grayColor,
+                    color: userDetailsController.userFormHandler.isUserActive.value ? Colors.green : AppColors.grayColor,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    userDetailsController
-                        .userFormHandler.userActiveStatus.value.label,
-                    style: AppTextStyles.headLineStyle3
-                        .copyWith(color: Colors.white),
+                    userDetailsController.userFormHandler.userActiveStatus.value.label,
+                    style: AppTextStyles.headLineStyle3.copyWith(color: Colors.white),
                   ),
                 ),
               )

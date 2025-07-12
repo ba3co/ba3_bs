@@ -571,7 +571,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       materialFromHandler.parentModel = searchedMaterial;
       materialFromHandler.parentController.text = searchedMaterial.groupName.toString();
     } else {
-      if (!context.mounted) return;
 
       AppUIUtils.onFailure(
         'لم يتم العثور على المجموعة',

@@ -1,6 +1,7 @@
 import 'package:ba3_bs/core/helper/extensions/date_time/time_extensions.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/target_model.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -35,14 +36,12 @@ class UserDetailsController extends GetxController {
 
   int get holidaysLength => holidays.length;
 
-  UserManagementController get allUserController =>
-      read<UserManagementController>();
+  UserManagementController get allUserController => read<UserManagementController>();
 
   // UserModel? get selectedUserModel => allUserController.selectedUserModel;
   UserModel? selectedUserModel;
 
-  UserModel getUserById(String userId) => selectedUserModel =
-      allUserController.allUsers.firstWhere((user) => user.userId == userId);
+  UserModel getUserById(String userId) => selectedUserModel = allUserController.allUsers.firstWhere((user) => user.userId == userId);
 
   @override
   void onInit() {
@@ -70,10 +69,8 @@ class UserDetailsController extends GetxController {
   }
 
   void addWorkingHour() {
-    workingHours[workingHoursLength.toString()] = UserWorkingHours(
-        id: workingHoursLength.toString(),
-        enterTime: "AM 12:00",
-        outTime: "AM 12:00");
+    workingHours[workingHoursLength.toString()] =
+        UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
     update();
   }
 
@@ -91,8 +88,7 @@ class UserDetailsController extends GetxController {
           Get.back();
         },
         onTimeSelect: (dateRangePickerSelectionChangedArgs) {
-          final selectedDateList =
-              dateRangePickerSelectionChangedArgs.value as List<DateTime>;
+          final selectedDateList = dateRangePickerSelectionChangedArgs.value as List<DateTime>;
           holidays.addAll(
             selectedDateList.map((e) => e.toIso8601String().split("T")[0]),
           );
@@ -115,6 +111,9 @@ class UserDetailsController extends GetxController {
         workingHour: workingHours,
         userActiveState: userFormHandler.userActiveStatus.value,
         holidays: holidays.toList(),
+        groupTarget: TargetModel(1500, 0, 1100),
+        groupForTarget: userFormHandler.selectedMaterialGroup,
+        userSalary: userFormHandler.userSalaryController.text,
       );
 
   Future<void> saveOrUpdateUser(BuildContext context) async {
@@ -125,35 +124,41 @@ class UserDetailsController extends GetxController {
 
     // Handle null user model
     if (updatedUserModel == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات و البائع!', );
+      AppUIUtils.onFailure(
+        'من فضلك قم بادخال الصلاحيات و البائع!',
+      );
       return;
     }
 
     final result = await _usersFirebaseRepo.save(updatedUserModel);
 
     result.fold(
-      (failure) => _handleFailure(failure,context),
-      (userModel) => _onUserSaved(userModel,context),
+      (failure) => _handleFailure(failure, context),
+      (userModel) => _onUserSaved(userModel, context),
     );
   }
 
-  void _handleFailure(Failure failure,BuildContext context) => AppUIUtils.onFailure(failure.message, );
+  void _handleFailure(Failure failure, BuildContext context) => AppUIUtils.onFailure(
+        failure.message,
+      );
 
-  void _onUserSaved(UserModel userModel,BuildContext context) {
-    AppUIUtils.onSuccess('تم حفظ المستخدم بنجاح', );
+  void _onUserSaved(UserModel userModel, BuildContext context) {
+    AppUIUtils.onSuccess(
+      'تم حفظ المستخدم بنجاح',
+    );
     allUserController.getAllUsers();
 
     // Check if the user was newly saved
     final isSaved = selectedUserModel == null;
     if (isSaved) {
-      _createChangeDocument(userModel.userId!,context);
+      _createChangeDocument(userModel.userId!, context);
     }
     update();
   }
 
   // Call the ChangesController to create the document
-  Future<void> _createChangeDocument(String userId,BuildContext context) async =>
-      await read<ChangesController>().createChangeDocument(userId,context);
+  Future<void> _createChangeDocument(String userId, BuildContext context) async =>
+      await read<ChangesController>().createChangeDocument(userId, context);
 
   void initUserFormHandler(UserModel? user) {
     userFormHandler.init(user);
@@ -162,15 +167,13 @@ class UserDetailsController extends GetxController {
   String userDelay(String dayName) {
     UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
     if (userTimeModel == null) return "";
-    return AppServiceUtils.convertMinutesAndFormat(
-        userTimeModel.totalLogInDelay ?? 0);
+    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalLogInDelay ?? 0);
   }
 
   String userEarlier(String dayName) {
     UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
     if (userTimeModel == null) return "";
-    return AppServiceUtils.convertMinutesAndFormat(
-        userTimeModel.totalOutEarlier ?? 0);
+    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalOutEarlier ?? 0);
   }
 
   void resetDelay(BuildContext context) async {
@@ -183,8 +186,8 @@ class UserDetailsController extends GetxController {
     if (selectedUserModel != null) {
       final result = await _usersFirebaseRepo.save(selectedUserModel!);
       result.fold(
-        (failure) => _handleFailure(failure,context),
-        (userModel) => _onUserSaved(userModel,context),
+        (failure) => _handleFailure(failure, context),
+        (userModel) => _onUserSaved(userModel, context),
       );
     }
 

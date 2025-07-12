@@ -1,4 +1,5 @@
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
@@ -73,7 +74,8 @@ class BillDetailsButtons extends StatelessWidget {
                 onPressed: () => billDetailsController.changeBillPlutoView(billModel, context),
               ),
             ),
-            Visibility(visible: true, child: freeLocalSwitcher(billDetailsController: billDetailsController)),
+            Visibility(
+                visible: billModel.billTypeModel.isPurchaseRelated, child: freeLocalSwitcher(billDetailsController: billDetailsController)),
             /*           Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
@@ -217,9 +219,16 @@ class BillDetailsButtons extends StatelessWidget {
       first: true,
       second: false,
       spacing: 30.0,
-      style:  ToggleStyle(
-
-        borderColor:Colors.blue.shade700,
+      style: ToggleStyle(
+        borderColor: Colors.transparent,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: Offset(0, 1.5),
+          ),
+        ],
       ),
       borderWidth: 2.0,
       height: 40,

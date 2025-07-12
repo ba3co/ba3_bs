@@ -11,13 +11,17 @@ extension StoreProductConversion on StoreProduct {
         .searchOfProductByText(barcode ?? 'xxxxx')
         .lastOrNull;
     if (materialModel != null && barcode != '0' && barcode != '00') {
+
+
+      final double basePrice = (price!) / 1.05;
+      final double vat = basePrice * 0.05;
       return BillItem(
         itemGuid: materialModel.id!,
         itemName: materialModel.matName,
         itemQuantity: amount!,
         itemTotalPrice: (price! * amount!).toString(),
-        itemSubTotalPrice: (price!) / 1.05,
-        itemVatPrice: ((price!) / 1.05) * 0.05,
+        itemSubTotalPrice: truncateToTwoDecimals(basePrice),
+        itemVatPrice: truncateToTwoDecimals(vat),
         itemGiftsNumber: 0,
         itemGiftsPrice: 0,
         soldSerialNumber: null,
@@ -45,4 +49,8 @@ extension StoreProductsConversion on StoreProducts {
       itemList: storeProduct.map((e) => e.toBillItem()).toList(),
     );
   }
+}
+double truncateToTwoDecimals(double value) {
+  String decimalPart = value.toStringAsFixed(10).split('.')[1].substring(0, 2);
+  return double.parse('${value.floor()}.$decimalPart');
 }

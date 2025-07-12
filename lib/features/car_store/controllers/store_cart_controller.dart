@@ -55,6 +55,7 @@ class StoreCartController extends GetxController {
             billBeforeVatTotal: 0,
             billDate: DateTime.now(),
             billDiscountsTotal: 0,
+
             billFirstPay: 0,
             billCustomerId: AppConstants.primaryCashAccountId,
             billGiftsTotal: 0,

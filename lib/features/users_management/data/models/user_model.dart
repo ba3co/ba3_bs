@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:ba3_bs/features/users_management/data/models/target_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -27,14 +28,13 @@ class UserModel implements PlutoAdaptable {
   final List<UserTaskModel>? userTaskList;
   final Map<String, UserWorkingHours>? userWorkingHours;
 
-
-
   Map<String, UserTimeModel>? userTimeModel;
 
   /// new attribute
   final MaterialGroupModel? groupForTarget;
   final double? userSalaryRatio;
   final String? userSalary;
+  final TargetModel? groupTarget;
 
   UserModel({
     this.userId,
@@ -54,6 +54,7 @@ class UserModel implements PlutoAdaptable {
     this.groupForTarget,
     this.userSalaryRatio,
     this.userSalary,
+    this.groupTarget,
   });
 
   Map<String, dynamic> toJson() {
@@ -66,6 +67,7 @@ class UserModel implements PlutoAdaptable {
       'groupForTarget': groupForTarget?.toJson(),
       'userSalaryRatio': userSalaryRatio,
       'userSalary': userSalary,
+      'groupTarget': groupTarget?.toJson(),
       'userTaskList': userTaskList
           ?.map(
             (e) => e.toJson(),
@@ -105,6 +107,7 @@ class UserModel implements PlutoAdaptable {
       userName: json['userName'],
       userPassword: json['userPassword'],
       userRoleId: json['userRoleId'],
+      groupTarget: TargetModel.fromJson(json['groupTarget'] ?? {}),
       userSalaryRatio: json['userSalaryRatio'],
       userSalary: json['userSalary'],
       groupForTarget: MaterialGroupModel.fromJson(json['groupForTarget'] ?? {}),
@@ -136,6 +139,7 @@ class UserModel implements PlutoAdaptable {
     final bool? haveHoliday,
     final MaterialGroupModel? groupForTarget,
     final double? userSalaryRatio,
+    final TargetModel? groupTarget,
   }) =>
       UserModel(
         userId: userId ?? this.userId,
@@ -155,6 +159,7 @@ class UserModel implements PlutoAdaptable {
         groupForTarget: groupForTarget ?? this.groupForTarget,
         userSalaryRatio: userSalaryRatio ?? this.userSalaryRatio,
         userSalary: userSalary ?? this.userSalary,
+        groupTarget: groupTarget ?? this.groupTarget,
       );
 
   @override
