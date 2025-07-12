@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/store_cart_converter.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/listen_datasource_repo.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_details.dart';
 import 'package:ba3_bs/features/car_store/data/model/store_cart.dart';
@@ -15,8 +16,7 @@ import '../../patterns/data/models/bill_type_model.dart';
 
 class StoreCartController extends GetxController {
   final ListenDataSourceRepository<StoreCartModel> _dataSourceRepository;
-  final CompoundDatasourceRepository<BillModel, BillTypeModel>
-      _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
 
   List<StoreCartModel> storeCartModels = [];
   List<BillModel> bills = [];
@@ -26,23 +26,28 @@ class StoreCartController extends GetxController {
   void fetchAllStoreCart() async {
     final result = await _dataSourceRepository.getAll();
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (fetchedStoreCard) => onStoreCartFetched(fetchedStoreCard),
     );
   }
 
-  void onStoreCartFetched(List<StoreCartModel> fetchedStoreCard,    ) {
+  void onStoreCartFetched(
+    List<StoreCartModel> fetchedStoreCard,
+  ) {
     storeCartModels.assignAll(fetchedStoreCard);
 
-    convertStoreCartToBills(storeCartModels,);
+    convertStoreCartToBills(
+      storeCartModels,
+    );
   }
 
   void convertStoreCartToBills(List<StoreCartModel> storeCartModels) {
     for (var element in storeCartModels) {
       final double billTotal = element.storeProducts!.storeProduct.fold(
         0,
-        (previousValue, element) =>
-            previousValue + (element.price! * element.amount!),
+        (previousValue, element) => previousValue + (element.price! * element.amount!),
       );
 
       saveBillFromStoreCardAndHandleResult(
@@ -52,20 +57,18 @@ class StoreCartController extends GetxController {
           items: element.storeProducts!.toBillItems(),
           billDetails: BillDetails(
             billAdditionsTotal: 0,
-            billBeforeVatTotal: 0,
+            billBeforeVatTotal: AppServiceUtils.truncateToTwoDecimals(billTotal / 1.05),
             billDate: DateTime.now(),
             billDiscountsTotal: 0,
-
             billFirstPay: 0,
             billCustomerId: AppConstants.primaryCashAccountId,
             billGiftsTotal: 0,
             billPayType: 0,
             billTotal: billTotal,
-            billVatTotal: billTotal * 0.05,
+            billVatTotal: AppServiceUtils.truncateToTwoDecimals(billTotal * 0.05),
             billNote: '',
           ),
           status: Status.pending,
-
         ),
       );
     }
@@ -76,17 +79,23 @@ class StoreCartController extends GetxController {
     for (var storeCard in storeCartModels) {
       final result = await _dataSourceRepository.delete(storeCard.id!);
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message, ),
+        (failure) => AppUIUtils.onFailure(
+          failure.message,
+        ),
         (_) {},
       );
     }
   }
 
-  Future<void> saveBillFromStoreCardAndHandleResult(BillModel billModel, ) async {
+  Future<void> saveBillFromStoreCardAndHandleResult(
+    BillModel billModel,
+  ) async {
     final result = await _billsFirebaseRepo.save(billModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (_) {},
     );
   }

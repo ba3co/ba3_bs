@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 
@@ -20,8 +21,8 @@ extension StoreProductConversion on StoreProduct {
         itemName: materialModel.matName,
         itemQuantity: amount!,
         itemTotalPrice: (price! * amount!).toString(),
-        itemSubTotalPrice: truncateToTwoDecimals(basePrice),
-        itemVatPrice: truncateToTwoDecimals(vat),
+        itemSubTotalPrice:AppServiceUtils. truncateToTwoDecimals(basePrice),
+        itemVatPrice: AppServiceUtils. truncateToTwoDecimals(vat),
         itemGiftsNumber: 0,
         itemGiftsPrice: 0,
         soldSerialNumber: null,
@@ -49,8 +50,4 @@ extension StoreProductsConversion on StoreProducts {
       itemList: storeProduct.map((e) => e.toBillItem()).toList(),
     );
   }
-}
-double truncateToTwoDecimals(double value) {
-  String decimalPart = value.toStringAsFixed(10).split('.')[1].substring(0, 2);
-  return double.parse('${value.floor()}.$decimalPart');
 }

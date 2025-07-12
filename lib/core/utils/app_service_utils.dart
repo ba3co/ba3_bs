@@ -455,4 +455,8 @@ class AppServiceUtils {
     log(((a - b).abs()).toString(), name: 'AppServiceUtils.isRoughlyEqual');
     return (a - b).abs() < precision;
   }
+  static double truncateToTwoDecimals(double value) {
+    String decimalPart = value.toStringAsFixed(10).split('.')[1].substring(0, 2);
+    return double.parse('${value.floor()}.$decimalPart');
+  }
 }
