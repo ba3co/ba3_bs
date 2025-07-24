@@ -65,7 +65,7 @@ class StoreCartController extends GetxController {
             billGiftsTotal: 0,
             billPayType: 0,
             billTotal: billTotal,
-            billVatTotal: AppServiceUtils.truncateToTwoDecimals(billTotal * 0.05),
+            billVatTotal: AppServiceUtils.truncateToTwoDecimals((billTotal / 1.05) * 0.05),
             billNote: '',
           ),
           status: Status.pending,
