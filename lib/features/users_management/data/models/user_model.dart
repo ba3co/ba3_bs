@@ -34,7 +34,9 @@ class UserModel implements PlutoAdaptable {
   final MaterialGroupModel? groupForTarget;
   final double? userSalaryRatio;
   final String? userSalary;
-  final TargetModel? groupTarget;
+  bool hasGroupTarget;
+
+  // final TargetModel? groupTarget;
 
   UserModel({
     this.userId,
@@ -54,7 +56,9 @@ class UserModel implements PlutoAdaptable {
     this.groupForTarget,
     this.userSalaryRatio,
     this.userSalary,
-    this.groupTarget,
+    this.hasGroupTarget = false,
+
+    // this.groupTarget,
   });
 
   Map<String, dynamic> toJson() {
@@ -67,7 +71,7 @@ class UserModel implements PlutoAdaptable {
       'groupForTarget': groupForTarget?.toJson(),
       'userSalaryRatio': userSalaryRatio,
       'userSalary': userSalary,
-      'groupTarget': groupTarget?.toJson(),
+      // 'groupTarget': groupTarget?.toJson(),
       'userTaskList': userTaskList
           ?.map(
             (e) => e.toJson(),
@@ -107,7 +111,7 @@ class UserModel implements PlutoAdaptable {
       userName: json['userName'],
       userPassword: json['userPassword'],
       userRoleId: json['userRoleId'],
-      groupTarget: TargetModel.fromJson(json['groupTarget'] ?? {}),
+      // groupTarget: TargetModel.fromJson(json['groupTarget'] ?? {}),
       userSalaryRatio: json['userSalaryRatio'],
       userSalary: json['userSalary'],
       groupForTarget: MaterialGroupModel.fromJson(json['groupForTarget'] ?? {}),
@@ -117,6 +121,8 @@ class UserModel implements PlutoAdaptable {
       userActiveStatus: json['userActiveStatus'] != null ? UserActiveStatus.byLabel(json['userActiveStatus']) : UserActiveStatus.inactive,
       userTimeModel: userTimeModel,
       userTaskList: (json['userTaskList'] as List<dynamic>?)?.map((e) => UserTaskModel.fromJson(e as Map<String, dynamic>)).toList(),
+      hasGroupTarget: MaterialGroupModel.fromJson(json['groupForTarget'] ?? {}).groupName.trim().isNotEmpty,
+
     );
   }
 
@@ -159,7 +165,7 @@ class UserModel implements PlutoAdaptable {
         groupForTarget: groupForTarget ?? this.groupForTarget,
         userSalaryRatio: userSalaryRatio ?? this.userSalaryRatio,
         userSalary: userSalary ?? this.userSalary,
-        groupTarget: groupTarget ?? this.groupTarget,
+        // groupTarget: groupTarget ?? this.groupTarget,
       );
 
   @override

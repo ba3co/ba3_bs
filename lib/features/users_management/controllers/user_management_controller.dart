@@ -218,6 +218,7 @@ class UserManagementController extends GetxController
 
   void updatePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
+    update();
   }
 
 // Handle success when fetching the user
@@ -374,7 +375,7 @@ class UserManagementController extends GetxController
     super.onClose();
   }
 
-  refreshLoggedInUser(BuildContext context) async {
+  refreshLoggedInUser() async {
     final result = await _usersFirebaseRepo.getById(loggedInUserModel!.userId!);
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message, ),
@@ -448,6 +449,8 @@ class UserManagementController extends GetxController
 
   XFile? image;
   final ImagePicker _picker = ImagePicker();
+
+  bool  visiblePassword = false;
 
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -525,4 +528,6 @@ class UserManagementController extends GetxController
   UserModel? getUserBySellerId(String sellerId) {
     return allUsers.firstWhereOrNull((user) => user.userSellerId == sellerId);
   }
+
+
 }

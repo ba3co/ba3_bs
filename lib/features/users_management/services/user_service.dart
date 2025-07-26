@@ -39,7 +39,7 @@ class UserService {
         userHolidays: holidays,
         userActiveStatus: userActiveState,
         groupForTarget: groupForTarget,
-        groupTarget: groupTarget,
+        // groupTarget: groupTarget,
         userSalaryRatio: userSalaryRatio,
       );
     } else {

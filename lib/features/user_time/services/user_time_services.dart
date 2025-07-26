@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
+import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
@@ -242,14 +244,16 @@ class UserTimeServices {
     required bool isLogin,
     int gracePeriodMinutes = 10,
   }) {
+
+   final List<UserWorkingHours> currentWorkingHours= AppServiceUtils.isFriday()?AppConstants.fridayWorkingHours:workingHours;
     final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
-    if (dateList == null || workingHours.isEmpty) return 0;
+    if (dateList == null || currentWorkingHours.isEmpty) return 0;
 
     int totalMinutes = 0;
 
     for (int i = 0; i < dateList.length; i++) {
-      final workingTime = (i < workingHours.length)
-          ? (isLogin ? workingHours[i].enterTime : workingHours[i].outTime)
+      final workingTime = (i < currentWorkingHours.length)
+          ? (isLogin ? currentWorkingHours[i].enterTime : currentWorkingHours[i].outTime)
           : null;
       if (workingTime == null) continue;
 

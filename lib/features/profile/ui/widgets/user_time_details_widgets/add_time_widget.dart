@@ -7,7 +7,7 @@ import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../../core/widgets/organized_widget.dart';
-import '../../../controller/user_time_controller.dart';
+import '../../../../user_time/controller/user_time_controller.dart';
 
 class AddTimeWidget extends StatelessWidget {
   const AddTimeWidget({

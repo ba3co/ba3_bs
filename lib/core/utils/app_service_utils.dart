@@ -459,4 +459,9 @@ class AppServiceUtils {
     String decimalPart = value.toStringAsFixed(10).split('.')[1].substring(0, 2);
     return double.parse('${value.floor()}.$decimalPart');
   }
+
+  static bool isFriday() {
+    // في Dart: 5 = Friday
+    return DateTime.now().weekday == DateTime.friday;
+  }
 }

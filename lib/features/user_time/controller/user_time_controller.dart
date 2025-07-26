@@ -280,7 +280,7 @@ class UserTimeController extends GetxController {
     await _handleLog(
       context: context,
       newStatus: UserWorkStatus.online,
-      onUpdate: (u) => _userTimeServices.addLoginTimeToUserModel(userModel: u),
+      onUpdate: (user) => _userTimeServices.addLoginTimeToUserModel(userModel: user),
       errorMsg: "يجب تسجيل الخروج أولاً",
       state: logInState,
     );
@@ -303,7 +303,7 @@ class UserTimeController extends GetxController {
     required String errorMsg,
     required Rx<RequestState> state,
   }) async {
-    await read<UserManagementController>().refreshLoggedInUser(context);
+    await read<UserManagementController>().refreshLoggedInUser();
 
     if (!_validateLog(getUserById, newStatus)) {
       AppUIUtils.onFailure('تجاوزت حد اوقات الدخول لهذا اليوم');
@@ -381,5 +381,20 @@ class UserTimeController extends GetxController {
     );
 
     return isWithinRegion;
+  }
+
+ String get getTotalLoginDelayTime {
+  return  AppServiceUtils.convertMinutesAndFormat((getUserById.userTimeModel?.values.fold(
+      0,
+          (previousValue, element) => previousValue! + (element.totalLogInDelay ?? 0),
+    ) ??
+        0));
+  }
+  String get getTotalOutEarlierTime {
+    return  AppServiceUtils.convertMinutesAndFormat((getUserById.userTimeModel?.values.fold(
+      0,
+          (previousValue, element) => previousValue! + (element.totalOutEarlier ?? 0),
+    ) ??
+        0));
   }
 }
