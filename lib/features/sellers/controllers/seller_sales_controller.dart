@@ -28,6 +28,7 @@ import '../../../core/services/firebase/implementations/repos/compound_datasourc
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/data/models/bill_model.dart';
 import '../../materials/controllers/material_controller.dart';
+import '../../materials/controllers/material_group_controller.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 
 class SellerSalesController extends GetxController with AppNavigator, FloatingLauncher {
@@ -252,10 +253,12 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
       // Iterate through all items in each bill
       for (final item in bill.items.itemList) {
         final materialModel = read<MaterialController>().getMaterialById(item.itemGuid);
+        final materialGroupModel = read<MaterialGroupController>().getMaterialGroupById(materialModel.matGroupGuid);
         double itemCalcPrice = materialModel.calcMinPrice ?? 0.0;
-
-        if (loggedInUserModel?.groupForTarget?.matGroupGuid == materialModel.matGroupGuid) {
-          totalGroupSales+= item.itemTotalPrice.toDouble;
+        if (loggedInUserModel!.hasGroupTarget &&
+            (loggedInUserModel?.groupForTarget?.matGroupGuid == materialGroupModel?.parentGuid ||
+                loggedInUserModel?.groupForTarget?.matGroupGuid == materialGroupModel?.matGroupGuid)) {
+          totalGroupSales += item.itemTotalPrice.toDouble;
         }
         if (item.itemSubTotalPrice != null) {
           totalFees += item.itemSubTotalPrice! - itemCalcPrice;

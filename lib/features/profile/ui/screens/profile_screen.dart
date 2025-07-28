@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/profile/ui/widgets/profile_info_row_shimmer_widg
 import 'package:ba3_bs/features/profile/ui/widgets/profile_info_row_widget.dart';
 import 'package:ba3_bs/core/widgets/user_target_shimmer_widget.dart';
 import 'package:ba3_bs/features/profile/ui/widgets/task_list_widget.dart';
+import 'package:ba3_bs/features/profile/ui/widgets/user_time_details_widgets/jetour_days_widget.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +93,9 @@ class ProfileScreen extends StatelessWidget {
                                   userTimeController: read<UserTimeController>(),
                                 ),
                                 HolidaysWidget(
+                                  userTimeController: read<UserTimeController>(),
+                                ),
+                                JetourDaysWidget(
                                   userTimeController: read<UserTimeController>(),
                                 ),
                                 UserDailyTimeWidget(
