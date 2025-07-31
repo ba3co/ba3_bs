@@ -495,7 +495,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (savedMaterial) => {},
+      (savedMaterial) => {
+        reloadMaterials()
+      },
     );
   }
 
