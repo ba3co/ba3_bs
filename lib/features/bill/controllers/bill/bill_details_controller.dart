@@ -692,11 +692,21 @@ class BillDetailsController extends IBillController
         log((currentMat.matQuantity).toString(), name: 'matQuantity');
         log((item.itemQuantity).toString(), name: 'itemQuantity');
         log((currentMat.matQuantity! - item.itemQuantity).toString(), name: 'currentMat.matQuantity! - item.itemQuantity');
-        if (currentMat.matQuantity! - item.itemQuantity < 0) {
-          AppUIUtils.onFailure(
-            'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
-          );
-          return null;
+        if (existingBill == null && currentMat.matQuantity! - item.itemQuantity < 0) {
+        AppUIUtils.onFailure(
+          'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
+        );
+        return null;
+        }else{
+
+          int existingQuantity=existingBill!.items.itemList.elementAt(existingBill.items.itemList.indexOf(item)).itemQuantity ;
+          int quantity=item.itemQuantity-existingQuantity;
+          if (  currentMat.matQuantity! -quantity < 0) {
+            AppUIUtils.onFailure(
+              'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
+            );
+            return null;
+          }
         }
 
       }

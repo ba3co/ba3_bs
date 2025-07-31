@@ -496,7 +496,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         failure.message,
       ),
       (savedMaterial) => {
+/*
         reloadMaterials()
+*/
       },
     );
   }
@@ -517,11 +519,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       ),
       (_) {
         if (withPrint) {
-          AppUIUtils.onSuccess(
-            selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
-          );
+          // AppUIUtils.onSuccess(
+          //   selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
+          // );
         }
-        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        // read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
   }
