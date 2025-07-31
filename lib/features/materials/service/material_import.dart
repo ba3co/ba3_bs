@@ -42,7 +42,18 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
 
       int? getInt(String tagName) {
         final text = getText(tagName);
-        return text == null ? null : double.parse(text.toString()).toInt();
+
+        if( text == null) return 0;
+        try
+        {
+          return double.parse(text.toString()).toInt();
+        }
+        catch(e)
+        {
+          return 0;
+        }
+
+
       }
 
       double? getDouble(String tagName) {
