@@ -588,6 +588,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     await updateMaterial(
       updateFn(materialModel),
     );
+    reloadMaterials();
     // await saveOrUpdateMaterial();
   }
 
@@ -676,6 +677,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         );
       },
     );
+
   }
 
   /// Updates the material's quantity and minimum price when a bill is deleted.

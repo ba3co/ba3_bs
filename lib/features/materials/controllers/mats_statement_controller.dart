@@ -49,6 +49,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
         onSaveAllMatsStatementsModelsSuccess(
           mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
           onProgress: onProgress,
+
         );
       },
     );

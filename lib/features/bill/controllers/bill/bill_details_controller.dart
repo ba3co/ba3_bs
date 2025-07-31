@@ -493,6 +493,7 @@ class BillDetailsController extends IBillController
   Future<void> updateBill(
       {required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context, required withPrint}) async {
     if (saveBillRequestState.value == RequestState.loading) return;
+
     saveBillRequestState.value = RequestState.loading;
     if (RoleItemType.viewBill.hasUpdatePermission) {
       await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
@@ -686,6 +687,19 @@ class BillDetailsController extends IBillController
         );
         return null;
       }
+      if (!billTypeModel.isPurchaseRelated) {
+        final currentMat = read<MaterialController>().getMaterialById(item.itemGuid);
+        log((currentMat.matQuantity).toString(), name: 'matQuantity');
+        log((item.itemQuantity).toString(), name: 'itemQuantity');
+        log((currentMat.matQuantity! - item.itemQuantity).toString(), name: 'currentMat.matQuantity! - item.itemQuantity');
+        if (currentMat.matQuantity! - item.itemQuantity < 0) {
+          AppUIUtils.onFailure(
+            'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
+          );
+          return null;
+        }
+
+      }
     }
 
     if (requiredRequestNumber &&
@@ -802,7 +816,7 @@ class BillDetailsController extends IBillController
     initBillAccount(
         bill.billDetails.billAccountId != null ? read<AccountsController>().getAccountModelById(bill.billDetails.billAccountId!) : null);
     initFreeLocalSwitcher(bill.freeBill);
-log(bill.freeBill.toString(),name: 'initFreeLocalSwitcher');
+    log(bill.freeBill.toString(), name: 'initFreeLocalSwitcher');
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
 
     prepareBillRecords(bill.items, billPlutoController);
