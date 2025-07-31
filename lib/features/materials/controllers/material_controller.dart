@@ -132,7 +132,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
             ), (savedMaterials) {
       log('materials length before update item: ${materials.length}');
       if (withPrint) {
-
         AppUIUtils.onSuccess(
           'تم الحفظ بنجاح',
         );
@@ -205,7 +204,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         materialFromHandler.init(mat);
         await saveOrUpdateMaterial();
       }
-
+      AppUIUtils.onInfo('تحميل المواد', '${fetchedMaterial.length}تم تحميل ');
       /*   // Show progress in the UI
       FirestoreUploader firestoreUploader = FirestoreUploader();
 
@@ -224,6 +223,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
           _onSaveSuccess(materialModel, changeType: ChangeType.add, withReloadMaterial: false);
         }
       }*/
+    }else{
+      AppUIUtils.onInfo('تحميل المواد', 'لا يوجد مواد جديدة');
     }
 
     saveAllMaterialsRequestState.value = RequestState.success;
@@ -324,9 +325,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     reloadMaterials();
     return materials.firstWhere((material) => material.id == id);
   }
+
   MaterialModel? getMaterialByIdWithNull(
-      String id,
-      ) {
+    String id,
+  ) {
     reloadMaterials();
     return materials.firstWhereOrNull((material) => material.id == id);
   }
@@ -480,7 +482,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update,withPrint: false),
+      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update, withPrint: false),
     );
   }
 
@@ -497,7 +499,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  void _onSaveSuccess(MaterialModel materialModel, {required ChangeType changeType, bool withReloadMaterial = true,required bool withPrint }) async {
+  void _onSaveSuccess(MaterialModel materialModel,
+      {required ChangeType changeType, bool withReloadMaterial = true, required bool withPrint}) async {
     if (withReloadMaterial) reloadMaterials();
 
     // Prepare user change queue for saving
@@ -511,10 +514,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         failure.message,
       ),
       (_) {
-        if(withPrint) {
+        if (withPrint) {
           AppUIUtils.onSuccess(
-          selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
-        );
+            selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
+          );
         }
         read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
@@ -571,7 +574,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       materialFromHandler.parentModel = searchedMaterial;
       materialFromHandler.parentController.text = searchedMaterial.groupName.toString();
     } else {
-
       AppUIUtils.onFailure(
         'لم يتم العثور على المجموعة',
       );
@@ -677,7 +679,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         );
       },
     );
-
   }
 
   /// Updates the material's quantity and minimum price when a bill is deleted.
