@@ -199,8 +199,12 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     final newMaterials = fetchedMaterial.subtract(materials, (mat) => mat.matName);
     log('newMaterials length is ${newMaterials.length}');
 
+    int progress = 0;
     if (newMaterials.isNotEmpty) {
       for (var mat in newMaterials) {
+        uploadProgress.value = progress / newMaterials.length; // Update progress
+        log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+        progress++;
         materialFromHandler.init(mat);
         await saveOrUpdateMaterial();
       }
@@ -223,7 +227,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
           _onSaveSuccess(materialModel, changeType: ChangeType.add, withReloadMaterial: false);
         }
       }*/
-    }else{
+    } else {
       AppUIUtils.onInfo('تحميل المواد', 'لا يوجد مواد جديدة');
     }
 
@@ -495,11 +499,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (savedMaterial) => {
-/*
-        reloadMaterials()
-*/
-      },
+      (savedMaterial) => {reloadMaterials()},
     );
   }
 
@@ -519,11 +519,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       ),
       (_) {
         if (withPrint) {
-          // AppUIUtils.onSuccess(
-          //   selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
-          // );
+          AppUIUtils.onSuccess(
+            selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
+          );
         }
-        // read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
       },
     );
   }
