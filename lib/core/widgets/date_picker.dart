@@ -10,61 +10,71 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../features/floating_window/services/overlay_service.dart';
 import '../constants/app_constants.dart';
+import '../utils/app_ui_utils.dart';
 
 class DatePicker extends StatelessWidget {
   final Function(DateTime) onDateSelected;
   final String? initDate;
   final Color? color;
+  final bool canEditeDate;
 
   const DatePicker(
-      {super.key, required this.onDateSelected, this.initDate, this.color});
+      {super.key, required this.onDateSelected, this.initDate, this.color,this.canEditeDate=true });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: AppConstants.constHeightTextField,
       child: GestureDetector(
-        onTap: () {
-          OverlayService.showDialog(
-            context: context,
-            height: .35.sh,
-            width: .35.sw,
-            showDivider: false,
-            borderRadius: BorderRadius.circular(16),
-            contentPadding: EdgeInsets.zero,
-            title: AppStrings.choseDay.tr,
-            color: AppColors.backGroundColor,
-            content: ClipRRect(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-              child: SfDateRangePicker(
-                initialDisplayDate: DateTime.tryParse(initDate ?? ""),
-                enableMultiView: false,
-                cancelText: AppStrings.cancel.tr,
-                onCancel: () {
-                  OverlayService.back();
-                },
-                backgroundColor: AppColors.whiteColor,
-                headerStyle: const DateRangePickerHeaderStyle(
-                    backgroundColor: Colors.transparent),
-                navigationDirection:
-                    DateRangePickerNavigationDirection.vertical,
-                selectionMode: DateRangePickerSelectionMode.single,
-                monthViewSettings: const DateRangePickerMonthViewSettings(
-                    enableSwipeSelection: true),
-                showNavigationArrow: false,
-                navigationMode: DateRangePickerNavigationMode.scroll,
-                onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
-                  DateTime selectedDate =
-                      dateRangePickerSelectionChangedArgs.value as DateTime;
-                  onDateSelected(selectedDate);
-                  OverlayService.back();
-                },
+        onTap: () async{
+          if(!canEditeDate) {
+            if(!(await AppUIUtils.askForPassword(context))){
+              AppUIUtils.onFailure('لايمكنك تغيير التاريغ');
+             return;
+            }
+
+          }
+            OverlayService.showDialog(
+              context: context,
+              height: .35.sh,
+              width: .35.sw,
+              showDivider: false,
+              borderRadius: BorderRadius.circular(16),
+              contentPadding: EdgeInsets.zero,
+              title: AppStrings.choseDay.tr,
+              color: AppColors.backGroundColor,
+              content: ClipRRect(
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                child: SfDateRangePicker(
+                  initialDisplayDate: DateTime.tryParse(initDate ?? ""),
+                  enableMultiView: false,
+                  cancelText: AppStrings.cancel.tr,
+                  onCancel: () {
+                    OverlayService.back();
+                  },
+                  backgroundColor: AppColors.whiteColor,
+                  headerStyle: const DateRangePickerHeaderStyle(
+                      backgroundColor: Colors.transparent),
+                  navigationDirection:
+                  DateRangePickerNavigationDirection.vertical,
+                  selectionMode: DateRangePickerSelectionMode.single,
+                  monthViewSettings: const DateRangePickerMonthViewSettings(
+                      enableSwipeSelection: true),
+                  showNavigationArrow: false,
+                  navigationMode: DateRangePickerNavigationMode.scroll,
+                  onSelectionChanged: (dateRangePickerSelectionChangedArgs) {
+                    DateTime selectedDate =
+                    dateRangePickerSelectionChangedArgs.value as DateTime;
+                    onDateSelected(selectedDate);
+                    OverlayService.back();
+                  },
+                ),
               ),
-            ),
-            onCloseCallback: () {
-              log('DatePicker Dialog Closed.');
-            },
-          );
+              onCloseCallback: () {
+                log('DatePicker Dialog Closed.');
+              },
+            );
+
         },
         child: CustomTextFieldWithoutIcon(
           enabled: false,

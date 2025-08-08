@@ -95,6 +95,7 @@ class BillDetailsHeader extends StatelessWidget {
                 label: AppStrings.billDate.tr,
                 child: Obx(() {
                   return DatePicker(
+                    canEditeDate: false,
                     initDate: billDetailsController.billDate.value.dayMonthYear,
                     onDateSelected: (date) {
                       billDetailsController.setBillDate = date;
