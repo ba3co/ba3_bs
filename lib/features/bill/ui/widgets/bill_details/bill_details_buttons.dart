@@ -157,6 +157,12 @@ class BillDetailsButtons extends StatelessWidget {
         ),
       if (!billSearchController.isPending)
         _buildActionButton(
+          title: AppStrings.printLabelPdf.tr,
+          icon: FontAwesomeIcons.solidEnvelope,
+          onPressed: () => billDetailsController.generateAndSaveBillLabel(billModel, context),
+        ),
+      if (!billSearchController.isPending)
+        _buildActionButton(
           title: AppStrings.whatsApp.tr,
           icon: FontAwesomeIcons.whatsapp,
           onPressed: () => billDetailsController.sendBillToWhatsapp(billModel, context),

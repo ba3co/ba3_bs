@@ -11,4 +11,9 @@ class PdfGeneratorRepository<T> {
     return await _pdfGenerator.generatePdf(itemModel, fileName,
         logoSrc: logoSrc, fontSrc: fontSrc);
   }
+  Future<String> savePdfInLocation(T itemModel, String fileName,
+      {String? logoSrc, String? fontSrc}) async {
+    return await _pdfGenerator.generatePdfInLocation(itemModel, fileName,
+        logoSrc: logoSrc, fontSrc: fontSrc);
+  }
 }

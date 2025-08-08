@@ -102,6 +102,24 @@ mixin PdfBase {
       attachments: [pdfFilePath],
     );
   }
+  Future<void> generatePdfAndSaveInLocation<T>(
+      {required T itemModel,
+        required String fileName,
+        String logoSrc = AppAssets.ba3Logo,
+        String fontSrc = AppAssets.notoSansArabicRegular,
+        String? url,
+        String? subject,
+        String? body,
+      }) async {
+    final IPdfGenerator pdfGenerator =
+    PdfGeneratorFactory.resolveGenerator(itemModel);
+
+    final pdfGeneratorRepo = PdfGeneratorRepository(pdfGenerator: pdfGenerator);
+
+     await pdfGeneratorRepo.savePdfInLocation(itemModel, fileName,
+        logoSrc: logoSrc, fontSrc: fontSrc);
+
+  }
 
   /// Generates the bill PDF and returns the file path
   Future<String> _generatePdf<T>({

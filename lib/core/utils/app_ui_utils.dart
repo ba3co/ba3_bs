@@ -6,6 +6,7 @@ import 'package:ba3_bs/core/dialogs/custom_alert_dialog/helper_alert.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/address_dialog_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -528,8 +529,6 @@ class AppUIUtils {
           OverlayService.back();
         },
         onConfirm: (password) {
-
-
           if (password == AppConstants.staticAppPassword) {
             completer.complete(true);
             OverlayService.back();
@@ -544,5 +543,28 @@ class AppUIUtils {
     );
 
     return completer.future;
+  }
+
+  static Future<String> askForCustomerAddress(
+    BuildContext context,
+  ) async {
+    final completer = Completer<String>();
+    String addressController = '';
+    await OverlayService.showDialog(
+      context: context,
+      content: AddressDialogWidget(
+        title: AppStrings.askForCustomerAddress,
+
+        onConfirm: (address) {
+          addressController = address;
+          OverlayService.back();
+        },
+      ),
+      borderRadius: BorderRadius.circular(12),
+      width: 300,
+      height: 200,
+    );
+    completer.future;
+    return addressController;
   }
 }

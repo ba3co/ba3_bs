@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 
 import '../../../../features/bill/data/models/bill_items.dart';
+import '../../../../features/bill/data/models/delivery_item_model.dart';
 
 extension BillItemsExtension on List<BillItem> {
   List<BillItem> merge<T>() => mergeBy(
@@ -18,4 +19,15 @@ extension BillItemsExtension on List<BillItem> {
           itemGiftsPrice: (a.itemGiftsPrice ?? 0.0) + (b.itemGiftsPrice ?? 0.0),
         ),
       );
+  List<DeliveryItem> toDeliveryItems() {
+    return map((billItem) {
+      final double unitPrice = (billItem.itemSubTotalPrice ?? 0) +(billItem.itemVatPrice ?? 0);
+
+      return DeliveryItem(
+        name: billItem.itemName ?? 'Unnamed',
+        quantity: billItem.itemQuantity,
+        price: unitPrice,
+      );
+    }).toList();
+  }
 }

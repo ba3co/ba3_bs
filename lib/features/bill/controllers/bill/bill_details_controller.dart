@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_items_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
@@ -15,6 +16,7 @@ import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+import 'package:ba3_bs/features/bill/data/models/delivery_item_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_local_storage_service.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
@@ -507,9 +509,9 @@ class BillDetailsController extends IBillController
     // Validate the form first
 
     if (!await validateForm(context)) return;
-
+    if (!context.mounted) return;
     // 2. Create the bill model or handle failure and exit
-    final updatedBillModel = _buildBillModelOrNotifyFailure(billTypeModel, existingBill);
+    final updatedBillModel = await _buildBillModelOrNotifyFailure(billTypeModel, existingBill, context);
 
     if (updatedBillModel == null) {
       saveBillRequestState.value = RequestState.error;
@@ -649,7 +651,11 @@ class BillDetailsController extends IBillController
 
   /// Builds the new [BillModel] from the form data.
   /// If required fields are missing, shows a failure message and returns `null`.
-  BillModel? _buildBillModelOrNotifyFailure(BillTypeModel billTypeModel, BillModel? existingBill) {
+  Future<BillModel?> _buildBillModelOrNotifyFailure(
+    BillTypeModel billTypeModel,
+    BillModel? existingBill,
+    BuildContext context,
+  ) async {
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
     if (updatedBillModel == null) return null;
@@ -693,22 +699,22 @@ class BillDetailsController extends IBillController
         log((item.itemQuantity).toString(), name: 'itemQuantity');
         log((currentMat.matQuantity! - item.itemQuantity).toString(), name: 'currentMat.matQuantity! - item.itemQuantity');
         if (existingBill == null && currentMat.matQuantity! - item.itemQuantity < 0) {
-        AppUIUtils.onFailure(
-          'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
-        );
-        return null;
-        }else{
-
-          int existingQuantity=existingBill!.items.itemList.elementAt(existingBill.items.itemList.indexOf(item)).itemQuantity ;
-          int quantity=item.itemQuantity-existingQuantity;
-          if (  currentMat.matQuantity! -quantity < 0) {
-            AppUIUtils.onFailure(
-              'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
-            );
+          AppUIUtils.onFailure(
+            'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
+          );
+          if (await AppUIUtils.askForPassword(context) == false) {
             return null;
           }
+        } else {
+          // int existingQuantity = existingBill!.items.itemList.elementAt(existingBill.items.itemList.indexOf(item)).itemQuantity;
+          // int quantity = item.itemQuantity - existingQuantity;
+          // if (currentMat.matQuantity! - quantity < 0) {
+          //   AppUIUtils.onFailure(
+          //     'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
+          //   );
+          //   return null;
+          // }
         }
-
       }
     }
 
@@ -870,6 +876,26 @@ class BillDetailsController extends IBillController
       fileName: AppStrings.existedBill.tr,
       itemModel: billModel,
       recipientEmail: recipientEmail,
+    );
+  }
+
+  void generateAndSaveBillLabel(BillModel billModel, BuildContext context, {String? recipientEmail}) async {
+    if (!_billService.hasModelId(billModel.billId)) return;
+
+    if (!_billService.hasModelItems(billModel.items.itemList)) return;
+    String address = await AppUIUtils.askForCustomerAddress(
+      context,
+    );
+
+    _billService.generatePdfAndSaveInLocation(
+      fileName: AppStrings.existedBill.tr,
+      itemModel: DeliveryModel(
+          orderDate: billModel.billDetails.billDate!,
+          recipientName: billModel.billTypeModel.accounts![BillAccounts.caches]!.accName! + billModel.billDetails.orderNumber.toString(),
+          phone: billModel.billDetails.customerPhone!,
+          address: address,
+          orderId: billModel.billDetails.billNumber.toString(),
+          items: billModel.items.itemList.toDeliveryItems()),
     );
   }
 

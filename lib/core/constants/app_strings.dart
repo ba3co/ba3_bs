@@ -432,6 +432,7 @@ class AppStrings {
   static const String requiredRequestNumber='مطلوب رقم الطلب';
 
   static const String askForPermission ='تحتاج الصلاحيات لفعل ذالك';
+  static const String askForCustomerAddress ='ادخل اسم المستخدم';
 
   static const String  groupForTarget='تارغيت الشركة';
 
@@ -439,5 +440,7 @@ class AppStrings {
 
   static const String userSalary='راتب الموظف';
   static const String workInJetourShop='دوام محل الجيتور';
+
+  static const String printLabelPdf='طباعة لصاقة التوصيل';
 
 }
