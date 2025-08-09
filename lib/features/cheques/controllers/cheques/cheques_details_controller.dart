@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
@@ -237,6 +239,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     setChequesDueDate(cheques.chequesDueDate!.toDate);
     setIsPayed(cheques.isPayed ?? false);
     setIsRefundPay(cheques.isRefund ?? false);
+    log(cheques.chequesAccount2Guid.toString());
     setTowAccount(read<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
     setFirstAccount(read<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
     stChequesFormDate(cheques);
