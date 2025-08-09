@@ -314,15 +314,15 @@ class AllBillsController extends FloatingBillDetailsLauncher
       // );
       if (!context.mounted) return;
 
-      await createAndStoreEntryBonds(
-        sourceModels: fetchedBills,
-        context: context,
-        onProgress: (progress) {
-          uploadProgress.value = progress; // Update progress
-          log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
-        },
-        sourceNumbers: fetchedBills.select((bill) => bill.billDetails.billNumber),
-      );
+      // await createAndStoreEntryBonds(
+      //   sourceModels: fetchedBills,
+      //   context: context,
+      //   onProgress: (progress) {
+      //     uploadProgress.value = progress; // Update progress
+      //     log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
+      //   },
+      //   sourceNumbers: fetchedBills.select((bill) => bill.billDetails.billNumber),
+      // );
     }
     saveAllBillsRequestState.value = RequestState.success;
     if (!context.mounted) return;
