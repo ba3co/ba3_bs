@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
+import '../../../constants/app_assets.dart';
 import '../interfaces/i_pdf_generator.dart';
 import 'package:file_selector/file_selector.dart';
 abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
@@ -15,7 +16,7 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
       {Uint8List? logoUint8List, Font? font});
 
   @override
-  List<Widget> buildBody(T itemModel, {Font? font});
+  List<Widget> buildBody(T itemModel, {Font? font,Uint8List?logoUint8List});
 
   @override
   Widget buildFooter() => Directionality(
@@ -53,14 +54,9 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
       {String? logoSrc, String? fontSrc}) async {
     final Uint8List? logoUint8List;
     final Font? arabicFont;
-
     // Load the logo if provided
-    if (logoSrc == null) {
-      logoUint8List = null;
-    } else {
-      ByteData logoByteData = await rootBundle.load(logoSrc);
+      ByteData logoByteData = await rootBundle.load(AppAssets.printLogo);
       logoUint8List = logoByteData.buffer.asUint8List();
-    }
 
     // Load the font if provided
     if (fontSrc == null) {
@@ -124,12 +120,10 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
     final Font? arabicFont;
 
     // Load logo
-    if (logoSrc == null) {
-      logoUint8List = null;
-    } else {
-      ByteData logoByteData = await rootBundle.load(logoSrc);
+
+      ByteData logoByteData = await rootBundle.load(AppAssets.printLogo);
       logoUint8List = logoByteData.buffer.asUint8List();
-    }
+
 
     // Load font
     if (fontSrc == null) {
@@ -155,7 +149,7 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
             ? buildHeader(itemModel, fileName,
             logoUint8List: logoUint8List, font: arabicFont)
             : SizedBox.shrink(),
-        build: (context) => buildBody(itemModel, font: arabicFont),
+        build: (context) => buildBody(itemModel, font: arabicFont,logoUint8List:logoUint8List ),
         footer: (context) => context.pageNumber == context.pagesCount
             ? buildFooter()
             : SizedBox.shrink(),

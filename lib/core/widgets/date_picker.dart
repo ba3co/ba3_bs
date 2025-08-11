@@ -34,6 +34,7 @@ class DatePicker extends StatelessWidget {
             }
 
           }
+          if(!context.mounted)return;
             OverlayService.showDialog(
               context: context,
               height: .35.sh,

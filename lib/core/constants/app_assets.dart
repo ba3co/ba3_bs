@@ -8,6 +8,7 @@ const _baseFlagsPath = '$_baseAssetsPath/flags';
 class AppAssets {
   static const ba3Logo = '$_baseImagesPath/ba3_logo.jpg';
   static const logo = '$_baseImagesPath/logo.png';
+  static const printLogo = '$_baseImagesPath/ba3_logo.png';
 
   static const notoSansArabicRegular =
       '$_baseFontsPath/notoSansArabic/NotoSansArabic-Regular.ttf';
