@@ -49,7 +49,6 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
         onSaveAllMatsStatementsModelsSuccess(
           mapOfStatements: matsStatements.groupBy((matsStatements) => matsStatements.matId!),
           onProgress: onProgress,
-
         );
       },
     );
@@ -107,7 +106,7 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
   }
 
   /// to recalculate main price and quantity from mat statement list after we add all statement to materials
-  setupAllMaterials() async {
+  Future<void> setupAllMaterials() async {
     int i = 0;
     for (final material in _materialsController.materials) {
       final materialStatementList = await fetchMatStatementById(
@@ -116,10 +115,23 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
       if (materialStatementList != null) {
         log("mat num  ${++i} of ${_materialsController.materials.length}", name: "setupAllMaterials");
         await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
+          matId: material.id!,
+          quantity: _calculateQuantity(materialStatementList),
+          currentMinPrice: _calculateMinPrice(materialStatementList),
+          lastEnterPrice: _calculateLastEnterPrice(materialStatementList),
+          matFreeQuantity: _calculateFreeQuantity(materialStatementList),
+          matLocalQuantity: _calculateLocalQuantity(materialStatementList),
+        );
+      }
+      else{
+        await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
             matId: material.id!,
-            quantity: _calculateQuantity(materialStatementList),
-            currentMinPrice: _calculateMinPrice(materialStatementList),
-            lastEnterPrice: _calculateLastEnterPrice(materialStatementList));
+            matFreeQuantity: 0,
+            matLocalQuantity:0,
+            quantity: 0,
+            currentMinPrice: 0,
+            lastEnterPrice: 0);
+
       }
     }
   }
@@ -139,6 +151,14 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
           quantity: _calculateQuantity(materialStatementList),
           currentMinPrice: _calculateMinPrice(materialStatementList),
           lastEnterPrice: _calculateLastEnterPrice(materialStatementList));
+    }else{
+      await _materialsController.updateMaterialQuantityAndPriceWhenDeleteBill(
+          matId: material.id!,
+          matFreeQuantity: 0,
+          matLocalQuantity:0,
+          quantity: 0,
+          currentMinPrice: 0,
+          lastEnterPrice: 0);
     }
   }
 

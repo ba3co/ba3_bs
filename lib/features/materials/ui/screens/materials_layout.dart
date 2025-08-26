@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
+import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,9 +37,12 @@ class MaterialLayout extends StatelessWidget {
                           read<MaterialController>()
                               .fetchAllMaterialFromLocal();
                         }),
-                        _buildAdminButton(AppStrings.deletedMaterials.tr, () {
-                          read<MaterialController>()
-                              .deleteAllMaterialFromLocal();
+                        _buildAdminButton(AppStrings.repairMaterials.tr, () async{
+                          read<MaterialsStatementController>().setupAllMaterials().then((value) {
+                            read<MaterialController>()
+                                .deleteAllMaterialFromLocal();
+                          },);
+
                         }),
                         _buildAdminButton(AppStrings.downloadGroups.tr, () {
                           read<MaterialGroupController>()

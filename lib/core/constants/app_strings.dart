@@ -443,4 +443,8 @@ class AppStrings {
 
   static const String printLabelPdf='طباعة لصاقة التوصيل';
 
+  static var repairMaterials='تصحيح المواد';
+
+  static var repair='تصحيح';
+
 }

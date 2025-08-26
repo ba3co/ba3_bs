@@ -179,9 +179,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (_) => AppUIUtils.onSuccess(
-        'تم حذف المواد بنجاح',
-      ),
+      (_) {
+        AppUIUtils.onSuccess(
+          'تم حذف المواد بنجاح',
+        );
+
+        reloadMaterials();
+      },
     );
   }
 
@@ -499,7 +503,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (savedMaterial) => {reloadMaterials()},
+      (savedMaterial) => {
+        /*reloadMaterials()*/
+      },
     );
   }
 
@@ -594,7 +600,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     await updateMaterial(
       updateFn(materialModel),
     );
-    reloadMaterials();
+    await  reloadMaterials();
     // await saveOrUpdateMaterial();
   }
 
@@ -730,4 +736,6 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       log('mat number ${++i}');
     }
   }
+
+
 }
