@@ -1,5 +1,4 @@
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
-import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 
@@ -12,17 +11,13 @@ extension StoreProductConversion on StoreProduct {
         .searchOfProductByText(barcode ?? 'xxxxx')
         .lastOrNull;
     if (materialModel != null && barcode != '0' && barcode != '00') {
-
-
-      final double basePrice = (price!) / 1.05;
-      final double vat = basePrice * 0.05;
       return BillItem(
         itemGuid: materialModel.id!,
         itemName: materialModel.matName,
         itemQuantity: amount!,
         itemTotalPrice: (price! * amount!).toString(),
-        itemSubTotalPrice:AppServiceUtils. truncateToTwoDecimals(basePrice),
-        itemVatPrice: AppServiceUtils. truncateToTwoDecimals(vat),
+        itemSubTotalPrice: (price!) / 1.05,
+        itemVatPrice: ((price!) / 1.05) * 0.05,
         itemGiftsNumber: 0,
         itemGiftsPrice: 0,
         soldSerialNumber: null,

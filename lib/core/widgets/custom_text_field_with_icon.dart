@@ -16,7 +16,6 @@ class CustomTextFieldWithIcon extends StatefulWidget {
     this.isNumeric = false,
     this.textStyle,
     this.readOnly = false,
-    this.fillColor = Colors.white,
   });
 
   final TextEditingController textEditingController;
@@ -29,7 +28,6 @@ class CustomTextFieldWithIcon extends StatefulWidget {
   final bool isNumeric;
 
   final TextStyle? textStyle;
-  final Color? fillColor;
 
   final bool readOnly;
 
@@ -79,8 +77,6 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
         validator: widget.validator,
         onChanged: widget.onChanged,
         cursorHeight: 15,
-
-
         scrollPadding: EdgeInsets.zero,
         controller: widget.textEditingController,
         inputFormatters: widget.inputFormatters,
@@ -89,7 +85,7 @@ class _CustomTextFieldWithIconState extends State<CustomTextFieldWithIcon> {
             extentOffset: widget.textEditingController.text.length),
         style: const TextStyle(fontSize: 12),
         decoration: InputDecoration(
-            fillColor:widget. fillColor,
+            fillColor: Colors.white,
             filled: true,
             isDense: true,
             suffixIconConstraints: BoxConstraints(

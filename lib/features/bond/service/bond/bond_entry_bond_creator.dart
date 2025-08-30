@@ -20,7 +20,6 @@ class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
       itemBonds.add(EntryBondItemModel(
         originId: originId,
         docId: originId,
-        originName: "${BondType.byTypeGuide(model.payTypeGuid!).value} : ${model.payNumber}",
         date: model.payDate ?? date,
         note: note,
         account: AccountEntity(

@@ -1,47 +1,24 @@
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../bill/data/models/discount_addition_account_model.dart';
 
-part 'bill_type_model.g.dart';
-
-@HiveType(typeId: 4)
-// ignore: must_be_immutable
-class BillTypeModel extends HiveObject with EquatableMixin {
-  @HiveField(0)
+class BillTypeModel with EquatableMixin {
   final String? id;
-
-  @HiveField(1)
   final String? billTypeId;
-
-  @HiveField(2)
   final String? shortName;
-
-  @HiveField(3)
   final String? fullName;
-
-  @HiveField(4)
   final String? latinShortName;
-
-  @HiveField(5)
   final String? latinFullName;
-
-  @HiveField(6)
   final String? billTypeLabel;
-
-  @HiveField(7)
   final int? color;
-
-  @HiveField(8)
   final BillPatternType? billPatternType;
 
-  @HiveField(9)
+  // Using a map to store accounts with Account as the key and AccountModel as the value
   final Map<Account, AccountModel>? accounts;
-
-  @HiveField(10)
-  final Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts;
+  final Map<Account, List<DiscountAdditionAccountModel>>?
+      discountAdditionAccounts;
 
   BillTypeModel({
     this.id,
@@ -69,24 +46,30 @@ class BillTypeModel extends HiveObject with EquatableMixin {
       color: json['color'],
       billPatternType: BillPatternType.byValue(json['billType']),
       // Deserialize accounts map
-      accounts: (json['accounts'] as Map<String, dynamic>?)?.map((billAccountLabel, accountModelJson) {
+      accounts: (json['accounts'] as Map<String, dynamic>?)
+          ?.map((billAccountLabel, accountModelJson) {
         Account billAccount = getBillAccountFromLabel(billAccountLabel);
         AccountModel accountModel = AccountModel.fromMap(accountModelJson);
         return MapEntry(billAccount, accountModel);
       }),
-      discountAdditionAccounts: _deserializeDiscountAdditionAccounts(json['discountAdditionAccounts']),
+      discountAdditionAccounts: _deserializeDiscountAdditionAccounts(
+          json['discountAdditionAccounts']),
     );
   }
 
-  static Map<Account, List<DiscountAdditionAccountModel>>? _deserializeDiscountAdditionAccounts(
-      Map<String, dynamic>? discountAdditionAccountsJson) {
+  static Map<Account, List<DiscountAdditionAccountModel>>?
+      _deserializeDiscountAdditionAccounts(
+          Map<String, dynamic>? discountAdditionAccountsJson) {
     if (discountAdditionAccountsJson == null) return null;
 
-    return discountAdditionAccountsJson.map((billAccountLabel, discountListJson) {
+    return discountAdditionAccountsJson
+        .map((billAccountLabel, discountListJson) {
       Account billAccount = getBillAccountFromLabel(billAccountLabel);
-      List<DiscountAdditionAccountModel> discountList = (discountListJson as List)
-          .map((discountJson) => DiscountAdditionAccountModel.fromJson(discountJson))
-          .toList();
+      List<DiscountAdditionAccountModel> discountList =
+          (discountListJson as List)
+              .map((discountJson) =>
+                  DiscountAdditionAccountModel.fromJson(discountJson))
+              .toList();
       return MapEntry(billAccount, discountList);
     });
   }
@@ -101,17 +84,21 @@ class BillTypeModel extends HiveObject with EquatableMixin {
         'billType': billTypeLabel,
         'color': color,
         // Serialize accounts map
-        'accounts': accounts?.map((billAccounts, accountModel) => MapEntry(billAccounts.label, accountModel.toMap())),
+        'accounts': accounts?.map((billAccounts, accountModel) =>
+            MapEntry(billAccounts.label, accountModel.toMap())),
 
-        'discountAdditionAccounts': _serializeDiscountAdditionAccounts(discountAdditionAccounts),
+        'discountAdditionAccounts':
+            _serializeDiscountAdditionAccounts(discountAdditionAccounts),
       };
 
   Map<String, dynamic>? _serializeDiscountAdditionAccounts(
-      Map<Account, List<DiscountAdditionAccountModel>>? discountAdditionAccounts) {
+      Map<Account, List<DiscountAdditionAccountModel>>?
+          discountAdditionAccounts) {
     if (discountAdditionAccounts == null) return null;
 
     return discountAdditionAccounts.map((billAccount, discountList) {
-      return MapEntry(billAccount.label, discountList.map((discount) => discount.toJson()).toList());
+      return MapEntry(billAccount.label,
+          discountList.map((discount) => discount.toJson()).toList());
     });
   }
 
@@ -139,7 +126,8 @@ class BillTypeModel extends HiveObject with EquatableMixin {
           billTypeLabel: billTypeLabel ?? this.billTypeLabel,
           color: color ?? this.color,
           accounts: accounts ?? this.accounts,
-          discountAdditionAccounts: discountAdditionAccounts ?? this.discountAdditionAccounts,
+          discountAdditionAccounts:
+              discountAdditionAccounts ?? this.discountAdditionAccounts,
           billPatternType: billPatternType ?? this.billPatternType);
 
   @override

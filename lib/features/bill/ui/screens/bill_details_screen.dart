@@ -62,7 +62,6 @@ class BillDetailsScreen extends StatelessWidget {
                         const VerticalSpace(10),
                         BillDetailsCalculations(
                           billTypeModel: currentBill.billTypeModel,
-                          currentBill:billSearchController.currentBill ,
                           billDetailsPlutoController:
                               billDetailsPlutoController,
                           tag: tag,

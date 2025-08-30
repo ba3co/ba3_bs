@@ -3,13 +3,11 @@ import 'package:ba3_bs/core/widgets/searchable_material_field.dart';
 import 'package:ba3_bs/core/widgets/tax_dropdown.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
-import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../core/helper/enums/enums.dart';
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../widgets/add_material/add_material_form.dart';
 
 class AddMaterialScreen extends StatelessWidget {
@@ -21,14 +19,8 @@ class AddMaterialScreen extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Row(
-            children: [
-              Text(controller.selectedMaterial?.matName ??
-                  AppStrings.newMaterial.tr),
-              // Text(controller.selectedMaterial?.mat ??
-              //     AppStrings.newMaterial.tr),
-            ],
-          ),
+          title: Text(controller.selectedMaterial?.matName ??
+              AppStrings.newMaterial.tr),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -53,59 +45,36 @@ class AddMaterialScreen extends StatelessWidget {
                   },
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Obx(() {
-                    return AppButton(
-                      isLoading: controller.saveMaterialRequestState.value ==
-                          RequestState.loading,
-                      title: controller.selectedMaterial?.id == null
-                          ? AppStrings.add.tr
-                          : AppStrings.edit.tr,
-                      onPressed: () {
-                        controller.saveOrUpdateMaterial();
-                      },
-                      iconData: controller.selectedMaterial?.id == null
-                          ? Icons.add
-                          : Icons.edit,
-                      color: controller.selectedMaterial?.id == null
-                          ? null
-                          : Colors.green,
-                    );
-                  }),
-                  Obx(() {
-                    return AppButton(
-                      isLoading: controller.deleteMaterialRequestState.value ==
-                          RequestState.loading,
-                      title: AppStrings.delete.tr,
-                      onPressed: () {
-                        controller.deleteMaterial(context,true);
-                      },
-                      iconData: Icons.delete,
-                      color: Colors.red,
-                    );
-                  }),
-                  Obx(() {
-                    return AppButton(
-                      isLoading: controller.deleteMaterialRequestState.value ==
-                          RequestState.loading,
-                      title: AppStrings.repair.tr,
-                      onPressed: ()async {
-                        if( controller.deleteMaterialRequestState.value != RequestState.loading)
-                        {
-                          controller.deleteMaterialRequestState.value = RequestState.loading;
-                          await read<MaterialsStatementController>().setupOneMaterials(controller.selectedMaterial!.id!);
-                          controller.deleteMaterialRequestState.value = RequestState.success;
-                        }
-                      },
-                      iconData: Icons.home_repair_service_outlined,
-                      color: Colors.orange,
-                    );
-                  }),
-                ],
-              ),
-
+              Obx(() {
+                return AppButton(
+                  isLoading: controller.saveMaterialRequestState.value ==
+                      RequestState.loading,
+                  title: controller.selectedMaterial?.id == null
+                      ? AppStrings.add.tr
+                      : AppStrings.edit.tr,
+                  onPressed: () {
+                    controller.saveOrUpdateMaterial();
+                  },
+                  iconData: controller.selectedMaterial?.id == null
+                      ? Icons.add
+                      : Icons.edit,
+                  color: controller.selectedMaterial?.id == null
+                      ? null
+                      : Colors.green,
+                );
+              }),
+              Obx(() {
+                return AppButton(
+                  isLoading: controller.deleteMaterialRequestState.value ==
+                      RequestState.loading,
+                  title: AppStrings.delete.tr,
+                  onPressed: () {
+                    controller.deleteMaterial(context);
+                  },
+                  iconData: Icons.delete,
+                  color: Colors.red,
+                );
+              }),
             ],
           ),
         ),

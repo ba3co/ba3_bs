@@ -407,44 +407,7 @@ class AppStrings {
   static var invalidPhone = 'رقم الهاتف غير صحيح';
 
   static var savedNumber = 'تم حفظ رقم الهاتف';
-  static var viewProducts = 'عرض المنتجات';
-  static var billProductView = 'عرض منتجات الفاتورة';
 
   static var areYouSureContinueWithoutSeller =
       'هل تريد المتابعة بدون تحديد البائع؟';
-
-  static var firstPay='الدفعة الاولى';
-
-  static const String vatName='الضريبة';
-
-
-  static const String dailySales='المبيعات اليومية';
-
-  static const String dailiesReports='التقارير اليومية';
-
-  static const String monthlyReports='التقارير الشهرية';
-  static const String billsReports='تقارير الفواتير';
-
-  static const String  originName='اصل السند';
-
-  static const String balanceAfter='الرصيد بعد العملية';
-
-  static const String requiredRequestNumber='مطلوب رقم الطلب';
-
-  static const String askForPermission ='تحتاج الصلاحيات لفعل ذالك';
-  static const String askForCustomerAddress ='ادخل اسم المستخدم';
-
-  static const String  groupForTarget='تارغيت الشركة';
-
-  static const String userSalaryRatio='تقييم الموظف';
-
-  static const String userSalary='راتب الموظف';
-  static const String workInJetourShop='دوام محل الجيتور';
-
-  static const String printLabelPdf='طباعة لصاقة التوصيل';
-
-  static var repairMaterials='تصحيح المواد';
-
-  static var repair='تصحيح';
-
 }

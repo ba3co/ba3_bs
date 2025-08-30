@@ -25,7 +25,9 @@ class EntryBondDetailsScreen extends StatelessWidget {
           children: [
             Text(AppStrings.date.tr),
             Text(" ${entryBondModel.items!.itemList.first.date}"),
-
+            Spacer(),
+            Text(AppStrings.number.tr),
+            Text(" ${entryBondModel.items!.docId}"),
           ],
         ),
       ),
@@ -36,7 +38,7 @@ class EntryBondDetailsScreen extends StatelessWidget {
             horizontalScrollPhysics: const NeverScrollableScrollPhysics(),
             verticalScrollPhysics: const BouncingScrollPhysics(),
             source: BondDataGridSource(entryBondModel: entryBondModel),
-            allowEditing: true,
+            allowEditing: false,
             selectionMode: SelectionMode.singleDeselect,
             editingGestureType: EditingGestureType.tap,
             navigationMode: GridNavigationMode.cell,

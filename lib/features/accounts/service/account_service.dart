@@ -12,7 +12,6 @@ class AccountService {
     String? accParentGuid,
     String? accParentName,
     required DateTime accCheckDate,
-    required bool requiredRequestNumber,
   }) {
     if (accountModel == null) {
       return AccountModel(
@@ -23,7 +22,6 @@ class AccountService {
         accParentGuid: accParentGuid,
         accParentName: accParentName,
         accCheckDate: accCheckDate,
-        requiredRequestNumber: requiredRequestNumber,
       );
     } else {
       return accountModel.copyWith(
@@ -34,8 +32,6 @@ class AccountService {
         accParentGuid: accParentGuid,
         accParentName: accParentName,
         accCheckDate: accCheckDate,
-        requiredRequestNumber: requiredRequestNumber,
-
       );
     }
   }

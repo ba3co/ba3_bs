@@ -19,10 +19,11 @@ mixin MatsStatementsGenerator {
   Future<void> createAndStoreMatsStatements({
     required List sourceModels,
     void Function(double progress)? onProgress,
+    required BuildContext context
   }) async {
 
     final matsStatementsModels = _generateMatsStatementsModels(sourceModels);
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress,);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels, onProgress: onProgress,context: context);
     log("j is  ${j++}");
   }
 
@@ -39,13 +40,12 @@ mixin MatsStatementsGenerator {
     required T model,
     List<BillItem> deletedMaterials = const [],
     List<BillItem> updatedMaterials = const [],
-    required bool withPrint ,
-
+    required  BuildContext context
   }) async {
     final MatStatementCreator creator = MatStatementCreatorFactory.resolveMatStatementCreator(model);
     final matsStatementsModels = creator.createMatStatement(model: model, updatedMaterials: updatedMaterials);
 
-    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels);
+    await _materialsStatementController.saveAllMatsStatementsModels(matsStatements: matsStatementsModels,context: context);
 
     if (deletedMaterials.isNotEmpty) {
       final originId = matsStatementsModels.first.originId;
@@ -60,12 +60,13 @@ mixin MatsStatementsGenerator {
           );
         },
       ).toList();
+      if(!context.mounted) return;
 
-      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  withPrint);
+      await _materialsStatementController.deleteAllMatStatementModel(matStatementsToDelete,  context);
     }
   }
 
-  Future<void> deleteMatsStatementsModels(BillModel billModel, BuildContext context,bool withPrint) async {
+  Future<void> deleteMatsStatementsModels(BillModel billModel, BuildContext context) async {
     final String originId = billModel.billId!;
     final QuantityStrategy quantityStrategy = QuantityStrategyFactory.getStrategy(billModel);
 
@@ -81,6 +82,6 @@ mixin MatsStatementsGenerator {
         )
         .toList();
 
-    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,withPrint);
+    await _materialsStatementController.deleteAllMatStatementModel(matStatementsModels,context);
   }
 }

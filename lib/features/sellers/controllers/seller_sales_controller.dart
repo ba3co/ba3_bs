@@ -28,19 +28,18 @@ import '../../../core/services/firebase/implementations/repos/compound_datasourc
 import '../../../core/utils/app_ui_utils.dart';
 import '../../bill/data/models/bill_model.dart';
 import '../../materials/controllers/material_controller.dart';
-import '../../materials/controllers/material_group_controller.dart';
 import '../../patterns/data/models/bill_type_model.dart';
 
-class SellerSalesController extends GetxController with AppNavigator, FloatingLauncher {
-  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+class SellerSalesController extends GetxController
+    with AppNavigator, FloatingLauncher {
+  final CompoundDatasourceRepository<BillModel, BillTypeModel>
+      _billsFirebaseRepo;
 
   SellerSalesController(this._billsFirebaseRepo);
 
   // List of bills for the seller
   final List<BillModel> sellerBills = [];
   final List<BillModel> filteredBills = [];
-
-  UserModel? get loggedInUserModel => read<UserManagementController>().loggedInUserModel;
 
   bool isLoading = false;
 
@@ -50,6 +49,8 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
   RequestState profileScreenState = RequestState.initial;
 
+
+
   bool inFilterMode = false;
 
   List<BillModel> get sellerSales => inFilterMode ? filteredBills : sellerBills;
@@ -57,7 +58,6 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
   double get totalSales => calculateTotalSales(sellerSales);
 
   double totalAccessoriesSales = 0.0;
-  double totalGroupSales = 0.0;
   double totalMobilesSales = 0.0;
   double totalFees = 0.0;
 
@@ -92,7 +92,8 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
       update();
     } else if (startDate == null && endDate != null) {
       log('dateRange!.startDate == null');
-      final startDay = DateTime(endDate.year, endDate.month, 1); // First day of the month
+      final startDay =
+          DateTime(endDate.year, endDate.month, 1); // First day of the month
       setDateRange = PickerDateRange(startDay, endDate);
       update();
     }
@@ -110,9 +111,11 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     setInFilterMode = true;
 
     await fetchSellerBillsByDate(
-      context: context,
+      context: context
+,
       sellerModel: selectedSeller!,
-      dateTimeRange: DateTimeRange(start: dateRange!.startDate!, end: dateRange!.endDate!),
+      dateTimeRange:
+          DateTimeRange(start: dateRange!.startDate!, end: dateRange!.endDate!),
     );
 
     isLoading = false;
@@ -141,7 +144,8 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
   }
 
   // Sets the selected seller and fetches their bills
-  Future<void> onSelectSeller({SellerModel? sellerModel, String? sellerId, required BuildContext context}) async {
+  Future<void> onSelectSeller(
+      {SellerModel? sellerModel, String? sellerId ,required BuildContext context}) async {
     if (sellerModel == null && sellerId == null) return;
     profileScreenState = RequestState.loading;
     safeUpdateUI();
@@ -151,13 +155,18 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     setSelectedSeller = sellerModel;
 
     await fetchSellerBillsByDate(
-      context: context,
+      context: context
+,
       sellerModel: sellerModel,
-      dateTimeRange: DateTimeRange(start: defaultDateRange.startDate!, end: defaultDateRange.endDate!),
+      dateTimeRange: DateTimeRange(
+          start: defaultDateRange.startDate!, end: defaultDateRange.endDate!),
     );
   }
 
-  Future<int> getSellerMaterialsSales({required String sellerId, required DateTimeRange dateTimeRange, required String materialId}) async {
+  Future<int> getSellerMaterialsSales(
+      {required String sellerId,
+      required DateTimeRange dateTimeRange,
+      required String materialId}) async {
     int matQuantity = 0;
     log("sellerId $sellerId", name: "getSellerMaterialsSales");
     final result = await _billsFirebaseRepo.fetchWhere(
@@ -172,14 +181,16 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
     result.fold(
       (failure) {},
-      (bills) => matQuantity = _handleGetSellerMaterialsSalesSuccess(bills, materialId),
+      (bills) => matQuantity =
+          _handleGetSellerMaterialsSalesSuccess(bills, materialId),
     );
 
     return matQuantity;
   }
 
   Future<void> fetchSellerBillsByDate(
-      {required SellerModel sellerModel, required DateTimeRange dateTimeRange, required BuildContext context}) async {
+      {required SellerModel sellerModel,
+      required DateTimeRange dateTimeRange,required BuildContext context}) async {
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: BillType.sales.billTypeModel,
       field: ApiConstants.billSellerId,
@@ -193,18 +204,12 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     result.fold(
       (failure) {
         if (inFilterMode) {
-          AppUIUtils.onFailure(
-            ' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ',
-          );
+          AppUIUtils.onFailure(' لا توجد أي فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ', );
           totalAccessoriesSales = 0;
           totalMobilesSales = 0;
-          totalGroupSales = 0;
           clearFilter();
         }
-        log('failure', name: 'fetchSellerBillsByDate');
         sellerBills.clear();
-        profileScreenState = RequestState.error;
-        update();
       },
       (bills) => _handleGetSellerBillsStatusSuccess(bills),
     );
@@ -219,7 +224,8 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     calculateTotalAccessoriesMobiles();
   }
 
-  int _handleGetSellerMaterialsSalesSuccess(List<BillModel> bills, String materialId) {
+  int _handleGetSellerMaterialsSalesSuccess(
+      List<BillModel> bills, String materialId) {
     // log("all bills ${bills.length}");
     // log("all bills ${bills.map((bill) => bill.billDetails.billDate)}");
     int matQuantity = 0;
@@ -237,14 +243,14 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
   }
 
   // Method to calculate the total sales
-  double calculateTotalSales(List<BillModel> bills) => bills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal ?? 0));
+  double calculateTotalSales(List<BillModel> bills) =>
+      bills.fold(0.0, (sum, bill) => sum + (bill.billDetails.billTotal ?? 0));
 
   void calculateTotalAccessoriesMobiles() {
     // Reset totals
     totalAccessoriesSales = 0;
     totalMobilesSales = 0;
     totalFees = 0;
-    totalGroupSales = 0;
 
     final bills = inFilterMode ? filteredBills : sellerBills;
     log("calculateTotalAccessoriesMobiles ${bills.length}");
@@ -252,14 +258,9 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     for (final bill in bills) {
       // Iterate through all items in each bill
       for (final item in bill.items.itemList) {
-        final materialModel = read<MaterialController>().getMaterialById(item.itemGuid);
-        final materialGroupModel = read<MaterialGroupController>().getMaterialGroupById(materialModel.matGroupGuid);
-        double itemCalcPrice = materialModel.calcMinPrice ?? 0.0;
-        if (loggedInUserModel!.hasGroupTarget &&
-            (loggedInUserModel?.groupForTarget?.matGroupGuid == materialGroupModel?.parentGuid ||
-                loggedInUserModel?.groupForTarget?.matGroupGuid == materialGroupModel?.matGroupGuid)) {
-          totalGroupSales += item.itemTotalPrice.toDouble;
-        }
+        double itemCalcPrice =
+            read<MaterialController>().getMaterialMinPriceById(item.itemGuid);
+
         if (item.itemSubTotalPrice != null) {
           totalFees += item.itemSubTotalPrice! - itemCalcPrice;
           double itemTotal = item.itemTotalPrice.toDouble;
@@ -277,39 +278,50 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
     safeUpdateUI();
   }
 
-  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized().waitUntilFirstFrameRasterized.then(
+  void safeUpdateUI() => WidgetsFlutterBinding.ensureInitialized()
+          .waitUntilFirstFrameRasterized
+          .then(
         (value) {
           update();
         },
       );
 
-  void navigateToAddSellerScreen({SellerModel? seller, required BuildContext context}) {
+  void navigateToAddSellerScreen(
+      {SellerModel? seller, required BuildContext context}) {
     read<AddSellerController>().init(seller);
-    launchFloatingWindow(context: context, floatingScreen: AddSellerScreen(), defaultHeight: 100.h, defaultWidth: 200.w);
+    launchFloatingWindow(
+        context: context,
+        floatingScreen: AddSellerScreen(),
+        defaultHeight: 100.h,
+        defaultWidth: 200.w);
 
     // to(AppRoutes.addSellerScreen);
   }
 
   void navigateToAllSellersScreen(BuildContext context) async {
-    launchFloatingWindow(context: context, enableResizing: false, floatingScreen: AllSellersScreen());
+    launchFloatingWindow(
+        context: context,
+        enableResizing: false,
+        floatingScreen: AllSellersScreen());
 
     // to(AppRoutes.allSellersScreen);
   }
 
-  void navigateToSellerSalesScreen(SellerModel sellerModel, BuildContext context) async {
+  void navigateToSellerSalesScreen(
+      SellerModel sellerModel, BuildContext context) async {
     sellerBills.clear();
-    await onSelectSeller(sellerModel: sellerModel, context: context);
+    await onSelectSeller(sellerModel: sellerModel,context: context);
     if (!context.mounted) return;
     if (sellerBills.isNotEmpty) {
-      launchFloatingWindow(context: context, floatingScreen: SellerSalesScreen());
+      launchFloatingWindow(
+          context: context, floatingScreen: SellerSalesScreen());
     } else {
-      AppUIUtils.onFailure(
-        ' لا توجد فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ',
-      );
+      AppUIUtils.onFailure(' لا توجد فواتير مسجلة لـ ${sellerModel.costName} في هذا التاريخ❌ ', );
     }
   }
 
-  void launchToSellerSalesScreen(List<BillModel> bills, BuildContext context, PickerDateRange dashDateRange) async {
+  void launchToSellerSalesScreen(List<BillModel> bills, BuildContext context,
+      PickerDateRange dashDateRange) async {
     dateRange = dashDateRange;
     _handleGetSellerBillsStatusSuccess(bills);
 
@@ -350,7 +362,8 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
     return salesMap.entries.map((entry) {
       final sellerName = read<SellersController>().getSellerNameById(entry.key);
-      final userModel = read<UserManagementController>().getUserBySellerId(entry.key);
+      final userModel =
+          read<UserManagementController>().getUserBySellerId(entry.key);
       _handleGetSellerBillsStatusSuccess(entry.value);
       return SellerSalesData(
           sellerName: sellerName,
@@ -368,12 +381,18 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
           totalDayAttendance: userModel == null
               ? 0
               : getUserAttendanceStats(
-                      userTime: userModel.userTimeModel!, userHolidays: userModel.userHolidays!, startDate: startDay, endDate: endDay)
+                      userTime: userModel.userTimeModel!,
+                      userHolidays: userModel.userHolidays!,
+                      startDate: startDay,
+                      endDate: endDay)
                   .totalAbsents,
           totalDayLate: userModel == null
               ? 0
               : getUserAttendanceStats(
-                      userTime: userModel.userTimeModel!, userHolidays: userModel.userHolidays!, startDate: startDay, endDate: endDay)
+                      userTime: userModel.userTimeModel!,
+                      userHolidays: userModel.userHolidays!,
+                      startDate: startDay,
+                      endDate: endDay)
                   .totalAbsents,
           bills: entry.value);
     }).toList();
@@ -390,7 +409,9 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
     final dateFormat = DateFormat('yyyy-MM-dd');
 
-    for (DateTime date = startDate; !date.isAfter(endDate); date = date.add(Duration(days: 1))) {
+    for (DateTime date = startDate;
+        !date.isAfter(endDate);
+        date = date.add(Duration(days: 1))) {
       final dateStr = dateFormat.format(date);
       if (userHolidays.contains(dateStr)) continue;
       if (userTime.containsKey(dateStr)) {

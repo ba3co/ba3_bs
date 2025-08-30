@@ -1,27 +1,20 @@
-
 import 'package:equatable/equatable.dart';
-import 'package:hive/hive.dart';
 
 import 'invoice_record_model.dart';
 
-part 'bill_items.g.dart';
-
-@HiveType(typeId: 5)
-// ignore: must_be_immutable
-class BillItems extends HiveObject with EquatableMixin {
-  @HiveField(0)
+class BillItems extends Equatable {
   final List<BillItem> itemList;
 
-  BillItems({required this.itemList});
+  const BillItems({required this.itemList});
 
   factory BillItems.fromJson(Map<String, dynamic> json) {
     var itemsJson = json['Item'] as List<dynamic>;
-    List<BillItem> itemList = itemsJson.map((item) => BillItem.fromJson(item)).toList();
+    List<BillItem> itemList =
+        itemsJson.map((item) => BillItem.fromJson(item)).toList();
     return BillItems(itemList: itemList);
   }
 
   factory BillItems.fromBillRecords(List<InvoiceRecordModel> invoiceRecords) {
-
     final itemList = invoiceRecords.map(
       (invoiceRecord) {
         return BillItem(
@@ -65,36 +58,17 @@ class BillItems extends HiveObject with EquatableMixin {
   List<Object?> get props => [itemList];
 }
 
-@HiveType(typeId: 6)
 class BillItem extends Equatable {
-  @HiveField(0)
   final String itemGuid;
-
-  @HiveField(1)
   final String? itemName;
-
-  @HiveField(2)
   final int itemQuantity;
-
-  @HiveField(3)
   final String itemTotalPrice;
-
-  @HiveField(4)
   final double? itemSubTotalPrice;
-
-  @HiveField(5)
   final double? itemVatPrice;
-
-  @HiveField(6)
   final int? itemGiftsNumber;
-
-  @HiveField(7)
   final double? itemGiftsPrice;
 
-  @HiveField(8)
   final String? soldSerialNumber;
-
-  @HiveField(9)
   final List<String>? itemSerialNumbers;
 
   const BillItem({
@@ -125,9 +99,7 @@ class BillItem extends Equatable {
     );
   }
 
-  factory BillItem.fromJson(Map<String, dynamic> json) {
-    return BillItem(
-
+  factory BillItem.fromJson(Map<String, dynamic> json) => BillItem(
         itemGuid: json['ItemGuid'],
         itemName: json['ItemName'],
         itemQuantity: json['ItemQuantity'],
@@ -136,14 +108,15 @@ class BillItem extends Equatable {
         itemVatPrice: json['itemVatPrice'],
         itemGiftsNumber: json['itemGiftsNumber'],
         itemGiftsPrice: json['itemGiftsPrice'],
-        soldSerialNumber: json.containsKey('soldSerialNumber') ? json['soldSerialNumber'] as String? : null,
-        itemSerialNumbers:
-            (json['itemSerialNumbers'] is List) ? List<String>.from(json['itemSerialNumbers'] as List) : null,
+        soldSerialNumber: json.containsKey('soldSerialNumber')
+            ? json['soldSerialNumber'] as String?
+            : null,
+        itemSerialNumbers: (json['itemSerialNumbers'] is List)
+            ? List<String>.from(json['itemSerialNumbers'] as List)
+            : null,
       );
-  }
 
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String, dynamic> toJson() => {
         'ItemGuid': itemGuid,
         if (itemName != null) 'ItemName': itemName,
         'ItemQuantity': itemQuantity,
@@ -152,10 +125,11 @@ class BillItem extends Equatable {
         if (itemVatPrice != null) 'itemVatPrice': itemVatPrice,
         if (itemGiftsNumber != null) 'itemGiftsNumber': itemGiftsNumber,
         if (itemGiftsPrice != null) 'itemGiftsPrice': itemGiftsPrice,
-        if (soldSerialNumber != null && soldSerialNumber!.isNotEmpty) 'soldSerialNumber': soldSerialNumber,
-        if (itemSerialNumbers != null && itemSerialNumbers!.isNotEmpty) 'itemSerialNumbers': itemSerialNumbers,
+        if (soldSerialNumber != null && soldSerialNumber!.isNotEmpty)
+          'soldSerialNumber': soldSerialNumber,
+        if (itemSerialNumbers != null && itemSerialNumbers!.isNotEmpty)
+          'itemSerialNumbers': itemSerialNumbers,
       };
-  }
 
   BillItem copyWith({
     final String? itemGuid,

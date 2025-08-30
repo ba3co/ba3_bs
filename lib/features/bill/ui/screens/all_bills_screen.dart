@@ -7,15 +7,14 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
-import '../../../patterns/data/models/bill_type_model.dart';
 
 class AllBillsScreen extends StatelessWidget {
-  const AllBillsScreen({super.key, required this.bills, required this.billTypeModel});
+  const AllBillsScreen({super.key, required this.bills});
 
   final List<BillModel> bills;
-  final BillTypeModel billTypeModel ;
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +25,10 @@ class AllBillsScreen extends StatelessWidget {
         onSelected: (event) {
           String billId = event.row?.cells[AppConstants.billIdFiled]?.value;
           log('billId : $billId');
-
           controller.openFloatingBillDetailsById(
               billId: billId,
               context: context,
-              bilTypeModel:billTypeModel);
+              bilTypeModel: BillType.sales.billTypeModel);
         },
         isLoading: controller.isBillsLoading,
         tableSourceModels: controller.pendingBills.isEmpty
@@ -47,7 +45,7 @@ class AllBillsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    AppStrings.total.tr,
+                    AppStrings.totalSales.tr,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w300,

@@ -130,7 +130,6 @@ class UserTaskModel implements PlutoAdaptable {
         hide: true,
       ): docId,
       createAutoIdColumn(): '#',
-      createCheckColumn(): '',
       PlutoColumn(
         title: AppStrings.taskTitle.tr,
         field: 'عنوان المهمة',

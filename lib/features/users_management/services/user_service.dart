@@ -4,9 +4,6 @@ import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../materials/data/models/materials/material_group.dart';
-import '../data/models/target_model.dart';
-
 class UserService {
   UserModel? createUserModel({
     UserModel? userModel,
@@ -17,10 +14,6 @@ class UserService {
     Map<String, UserWorkingHours>? workingHour,
     List<String>? holidays,
     required UserActiveStatus userActiveState,
-    MaterialGroupModel? groupForTarget,
-    double? userSalaryRatio,
-    required String? userSalary,
-    TargetModel? groupTarget,
   }) {
     if (userRoleId == null || userSellerId == null) {
       return null;
@@ -30,32 +23,22 @@ class UserService {
 
     if (userModel == null) {
       newUserModel = UserModel(
-        userName: userName,
-        userSalary: userSalary,
-        userPassword: userPassword,
-        userRoleId: userRoleId,
-        userSellerId: userSellerId,
-        userWorkingHours: workingHour,
-        userHolidays: holidays,
-        userActiveStatus: userActiveState,
-        groupForTarget: groupForTarget,
-        // groupTarget: groupTarget,
-        userSalaryRatio: userSalaryRatio,
-      );
+          userName: userName,
+          userPassword: userPassword,
+          userRoleId: userRoleId,
+          userSellerId: userSellerId,
+          userWorkingHours: workingHour,
+          userHolidays: holidays,
+          userActiveStatus: userActiveState);
     } else {
       newUserModel = userModel.copyWith(
-        userName: userName,
-        userPassword: userPassword,
-        userRoleId: userRoleId,
-        userSalary: userSalary,
-        userSellerId: userSellerId,
-        userWorkingHours: workingHour,
-        userHolidays: holidays,
-        userActiveStatus: userActiveState,
-        groupForTarget: groupForTarget,
-        groupTarget: groupTarget,
-        userSalaryRatio: userSalaryRatio,
-      );
+          userName: userName,
+          userPassword: userPassword,
+          userRoleId: userRoleId,
+          userSellerId: userSellerId,
+          userWorkingHours: workingHour,
+          userHolidays: holidays,
+          userActiveStatus: userActiveState);
     }
     return newUserModel;
   }
@@ -65,7 +48,8 @@ class UserService {
     required UserTimeModel? timeModel,
     required bool isLogin,
   }) {
-    final dateList = isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
+    final dateList =
+        isLogin ? timeModel?.logInDateList : timeModel?.logOutDateList;
     if (dateList == null) {
       return AppStrings.notLoggedToday.tr;
     }
@@ -76,14 +60,17 @@ class UserService {
     int totalMinutes = 0;
 
     for (int i = 0; i < dateList.length; i++) {
-      final workingTime = isLogin ? workingHours.values.elementAtOrNull(i)?.enterTime : workingHours.values.elementAtOrNull(i)?.outTime;
+      final workingTime = isLogin
+          ? workingHours.values.elementAtOrNull(i)?.enterTime
+          : workingHours.values.elementAtOrNull(i)?.outTime;
 
       if (workingTime == null) {
         continue;
       }
 
       // تحويل الوقت المحدد (الدخول أو الخروج) إلى كائن DateTime
-      final workingDateTime = DateFormat("hh:mm a").tryParse(workingTime) ?? DateFormat("a hh:mm").parse(workingTime);
+      final workingDateTime = DateFormat("hh:mm a").tryParse(workingTime) ??
+          DateFormat("a hh:mm").parse(workingTime);
 
       final userDateTime = dateList.elementAt(i);
 

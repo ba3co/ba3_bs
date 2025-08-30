@@ -49,7 +49,7 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
   }
 
   @override
-  List<Widget> buildBody(BondModel itemModel, {Font? font,Uint8List?logoUint8List}) {
+  List<Widget> buildBody(BondModel itemModel, {Font? font}) {
     final headers = ['id', 'account', 'debt', 'credit', 'nots'];
     final data = _buildTableData(itemModel);
 

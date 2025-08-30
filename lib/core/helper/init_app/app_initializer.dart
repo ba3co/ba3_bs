@@ -1,8 +1,6 @@
 import 'dart:developer';
 
-import 'package:ba3_bs/core/bindings/bindings.dart';
 import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
-import 'package:ba3_bs/features/bill/services/bill/bills_count_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -18,28 +16,19 @@ import '../../../features/migration/controllers/migration_controller.dart';
 import '../../../features/migration/data/datasources/remote/migration_data_source.dart';
 import '../../../features/migration/data/models/migration_model.dart';
 import '../../../features/patterns/data/models/bill_type_model.dart';
-import '../../../features/users_management/controllers/user_management_controller.dart';
-import '../../../features/users_management/data/datasources/roles_data_source.dart';
-import '../../../features/users_management/data/datasources/users_data_source.dart';
-import '../../../features/users_management/data/models/role_model.dart';
-import '../../../features/users_management/data/models/user_model.dart';
 import '../../../firebase_options.dart';
 import '../../constants/app_constants.dart';
 import '../../services/firebase/implementations/repos/compound_datasource_repo.dart';
-import '../../services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import '../../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../services/firebase/implementations/services/compound_firestore_service.dart';
 import '../../services/firebase/implementations/services/firestore_service.dart';
 import '../../services/firebase/implementations/services/remote_config_service.dart';
 import '../../services/firebase/interfaces/i_compound_database_service.dart';
 import '../../services/firebase/interfaces/i_remote_database_service.dart';
-import '../../services/get_x/shared_preferences_service.dart';
 import '../../services/local_database/implementations/services/hive_database_service.dart';
 import '../../services/translation/translation_controller.dart';
 import '../enums/enums.dart';
 import '../extensions/getx_controller_extensions.dart';
-
-bool isConnected = true;
 
 Future<void> initializeAppServices() async {
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -47,10 +36,11 @@ Future<void> initializeAppServices() async {
     FlutterError.presentError(details);
   };
   //   await initializeWindowSettings();
+  WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+      name: AppConstants.getDatabaseAppName);
 
   await Hive.initializeApp();
 
@@ -61,31 +51,13 @@ Future<void> initializeAppServices() async {
   setupMigrationDependencies();
 
   await RemoteConfigService.init();
-
-  isConnected = await hasInternetConnection();
-
-  await _initializeApp();
-
-  await AppBindings().dependencies();
-}
-
-Future<void> _initializeApp() async {
-  final sharedPreferencesService = await putAsync(SharedPreferencesService().init());
-
-  put(
-    UserManagementController(
-      read<RemoteDataSourceRepository<RoleModel>>(),
-      read<FilterableDataSourceRepository<UserModel>>(),
-      sharedPreferencesService,
-    ),
-    permanent: true,
-  );
 }
 
 Future<void> initializeAppLocalization({required String boxName}) async {
   final Box<String> box = await Hive.openBox<String>(boxName);
 
-  final HiveDatabaseService<String> hiveLocalLangService = HiveDatabaseService(box);
+  final HiveDatabaseService<String> hiveLocalLangService =
+      HiveDatabaseService(box);
 
   put(TranslationController(hiveLocalLangService));
 }
@@ -93,18 +65,25 @@ Future<void> initializeAppLocalization({required String boxName}) async {
 void setupDatabaseServices() {
   // final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
-   FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
+  FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
       app: Firebase.app(AppConstants.getDatabaseAppName),
-     databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
-          ? null
-          : AppConstants.getDatabaseAppName);
+      databaseId:
+          AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+              ? null
+              : AppConstants.getDatabaseAppName);
 
+/*  final FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
+    app: Firebase.app(),
+    databaseId: 'test',
+  );*/
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);
 
-  final compoundDatabaseService = createCompoundDatabaseService(firestoreInstance);
+  final compoundDatabaseService =
+      createCompoundDatabaseService(firestoreInstance);
 
+  //final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
 
   // Register dependencies using lazyPut
   lazyPut(firestoreInstance);
@@ -113,10 +92,12 @@ void setupDatabaseServices() {
 
   lazyPut(compoundDatabaseService);
 
+  // lazyPut(remoteStorageService);
 }
 
 void setupMigrationDependencies() {
-  final compoundFireStoreService = read<ICompoundDatabaseService<Map<String, dynamic>>>();
+  final compoundFireStoreService =
+      read<ICompoundDatabaseService<Map<String, dynamic>>>();
 
   final fireStoreService = read<IRemoteDatabaseService<Map<String, dynamic>>>();
 
@@ -130,41 +111,40 @@ void setupMigrationDependencies() {
   final migrationRepository = createMigrationRepository(fireStoreService);
 
   // Register MigrationController
-  put(MigrationController(bondsRepository, billsRepository, chequesRepository, migrationRepository));
-
-  final rolesRepo = RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService));
-
-  final usersRepo = FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService));
-
-  lazyPut(rolesRepo);
-
-  lazyPut(usersRepo);
+  put(MigrationController(bondsRepository, billsRepository, chequesRepository,
+      migrationRepository));
 }
 
 // 🔹 Helper Methods for Initialization
-IRemoteDatabaseService<Map<String, dynamic>> createRemoteDatabaseService(FirebaseFirestore instance) =>
+IRemoteDatabaseService<Map<String, dynamic>> createRemoteDatabaseService(
+        FirebaseFirestore instance) =>
     FireStoreService(instance);
 
-ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(FirebaseFirestore instance) =>
+ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(
+        FirebaseFirestore instance) =>
     CompoundFireStoreService(instance);
 
 //IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
 
 CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>
-    CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: service));
+    CompoundDatasourceRepository(
+        BillCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<BondModel, BondType> createBondsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>
-    CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: service));
+    CompoundDatasourceRepository(
+        BondCompoundDatasource(compoundDatabaseService: service));
 
 CompoundDatasourceRepository<ChequesModel, ChequesType> createChequesRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>
-    CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: service));
+    CompoundDatasourceRepository(
+        ChequesCompoundDatasource(compoundDatabaseService: service));
 
 RemoteDataSourceRepository<MigrationModel> createMigrationRepository(
         IRemoteDatabaseService<Map<String, dynamic>> service) =>
-    RemoteDataSourceRepository(MigrationRemoteDatasource(databaseService: service));
+    RemoteDataSourceRepository(
+        MigrationRemoteDatasource(databaseService: service));
 
 // Future<void> initializeWindowSettings() async {
 //   await windowManager.ensureInitialized();

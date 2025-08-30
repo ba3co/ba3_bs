@@ -1,17 +1,13 @@
-import 'dart:developer';
-
-import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/compound_datasource_base.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../core/models/query_filter.dart';
 import '../../../../bond/data/models/entry_bond_model.dart';
 
-class AccountsStatementsDatasource
-    extends CompoundDatasourceBase<EntryBondItems, AccountEntity> {
+class AccountsStatementsDatasource extends CompoundDatasourceBase<EntryBondItems, AccountEntity> {
   AccountsStatementsDatasource({required super.compoundDatabaseService});
 
   // Parent Collection (e.g., "bills", "bonds")
@@ -24,8 +20,12 @@ class AccountsStatementsDatasource
   @override
   Future<List<EntryBondItems>> fetchAll(
       {required AccountEntity itemIdentifier}) async {
+
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subcollectionPath = getSubCollectionPath(itemIdentifier);
+
+    debugPrint("root document id $rootDocumentId");
+    debugPrint("sub collection id $subcollectionPath");
 
     final dataList = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
@@ -97,7 +97,7 @@ class AccountsStatementsDatasource
   @override
   Future<EntryBondItems> save({required EntryBondItems item}) async {
     final account = item.itemList.first.account;
-log((item.docId ?? item.id));
+
     final rootDocumentId = getRootDocumentId(account);
     final subCollectionPath = getSubCollectionPath(account);
     final savedData = await compoundDatabaseService.add(
@@ -105,7 +105,7 @@ log((item.docId ?? item.id));
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
       subDocumentId: item.docId ?? item.id,
-      data: {'items': item.itemList.map((item) => item.toJson()).toList(),'entryBondDate': Timestamp.fromDate(item.itemList.first.date!.toDate)},
+      data: {'items': item.itemList.map((item) => item.toJson()).toList()},
     );
 
     return EntryBondItems.fromJson(savedData);

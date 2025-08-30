@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../constants/app_assets.dart';
@@ -46,9 +47,7 @@ mixin PdfBase {
 
   /// Handles the success scenario during email sending
   void _onEmailSendSuccess(List<String>? attachments) {
-
-    /// TODO: add success message
-    // AppUIUtils.onSuccess('تم إرسال البريد الإلكتروني بنجاح');
+    AppUIUtils.onSuccess('تم إرسال البريد الإلكتروني بنجاح');
     if (attachments != null) {
       log('Attachments sent: ${attachments.first}');
       _deleteAttachments(attachments); // Optionally delete after sending
@@ -78,7 +77,7 @@ mixin PdfBase {
       String? url,
       String? subject,
       String? body,
-    }) async {
+      required BuildContext context}) async {
     final pdfFilePath = await _generatePdf(
         itemModel: itemModel,
         fileName: fileName,
@@ -92,7 +91,7 @@ mixin PdfBase {
           documentId: itemModel.billId!,
           type: itemModel.billTypeModel.billTypeLabel!);
     }
-
+    if (!context.mounted) return;
 
     await sendToEmail(
       recipientEmail: recipientEmail ?? AppConstants.recipientEmail,
@@ -101,24 +100,6 @@ mixin PdfBase {
       body: body,
       attachments: [pdfFilePath],
     );
-  }
-  Future<void> generatePdfAndSaveInLocation<T>(
-      {required T itemModel,
-        required String fileName,
-        String logoSrc = AppAssets.ba3Logo,
-        String fontSrc = AppAssets.notoSansArabicRegular,
-        String? url,
-        String? subject,
-        String? body,
-      }) async {
-    final IPdfGenerator pdfGenerator =
-    PdfGeneratorFactory.resolveGenerator(itemModel);
-
-    final pdfGeneratorRepo = PdfGeneratorRepository(pdfGenerator: pdfGenerator);
-
-     await pdfGeneratorRepo.savePdfInLocation(itemModel, fileName,
-        logoSrc: logoSrc, fontSrc: fontSrc);
-
   }
 
   /// Generates the bill PDF and returns the file path

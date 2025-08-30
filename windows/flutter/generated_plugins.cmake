@@ -5,7 +5,6 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   cloud_firestore
   connectivity_plus
-  desktop_multi_window
   file_selector_windows
   firebase_core
   flutter_platform_alert

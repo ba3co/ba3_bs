@@ -1,12 +1,10 @@
-import 'package:animated_toggle_switch/animated_toggle_switch.dart';
-import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
-import 'package:ba3_bs/core/styling/app_text_style.dart';
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -45,7 +43,7 @@ class BillDetailsButtons extends StatelessWidget {
           children: [
             //  if (!billDetailsController.isBillSaved.value) _buildAddAndPrintButton(context),
             _buildAddButton(context),
-            if ((!billSearchController.isNew) &&
+            if ((!billSearchController.isNew && RoleItemType.viewBill.hasAdminPermission) &&
                 (billModel.billTypeModel.billPatternType!.hasCashesAccount || billSearchController.isPending))
               _buildApprovalOrBondButton(context),
             if (!billSearchController.isPending)
@@ -65,18 +63,7 @@ class BillDetailsButtons extends StatelessWidget {
                 onPressed: () => billDetailsController.showEInvoiceDialog(billModel, context),
               ),
             if (!billSearchController.isNew) ..._buildEditDeletePdfButtons(context),
-            Visibility(
-              visible: RoleItemType.administrator.hasReadPermission,
-              child: _buildActionButton(
-                title: AppStrings.viewProducts.tr,
-                icon: FontAwesomeIcons.streetView,
-                width: 120,
-                onPressed: () => billDetailsController.changeBillPlutoView(billModel, context),
-              ),
-            ),
-            Visibility(
-                visible: billModel.billTypeModel.isPurchaseRelated, child: freeLocalSwitcher(billDetailsController: billDetailsController)),
-            /*           Obx(() => !billDetailsController.isCash
+            Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
                     fontSize: 14,
@@ -84,7 +71,10 @@ class BillDetailsButtons extends StatelessWidget {
                     onPressed: () {
                       billDetailsController.openFirstPayDialog(context);
                     })
-                : SizedBox.shrink()),*/
+                : SizedBox()),
+            Visibility(
+                visible: billModel.billTypeModel.isPurchaseRelated,
+                child: freeLocalSwitcher(billDetailsController: billDetailsController)),
           ],
         ),
       ),
@@ -133,7 +123,7 @@ class BillDetailsButtons extends StatelessWidget {
       color: isPending ? Colors.orange : null,
       onPressed: isPending
           ? () => billDetailsController.updateBillStatus(billModel, Status.approved, context)
-          : () => billDetailsController.launchFloatingEntryBondDetailsScreen(billModel, context),
+          : () => billDetailsController.createEntryBond(billModel, context),
     );
   }
 
@@ -149,33 +139,28 @@ class BillDetailsButtons extends StatelessWidget {
                 context: context, billModel: billModel, billTypeModel: billModel.billTypeModel, withPrint: false),
           );
         }),
-      if (!billSearchController.isPending)
+      if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,
           icon: FontAwesomeIcons.solidEnvelope,
-          onPressed: () => billDetailsController.generateAndSendBillPdfToEmail(billModel, context),
+          onPressed: () => billDetailsController.generateAndSendBillPdfToEmail(billModel,context),
         ),
-      if (!billSearchController.isPending)
-        _buildActionButton(
-          title: AppStrings.printLabelPdf.tr,
-          icon: FontAwesomeIcons.solidEnvelope,
-          onPressed: () => billDetailsController.generateAndSaveBillLabel(billModel, context),
-        ),
-      if (!billSearchController.isPending)
+      if (RoleItemType.viewBill.hasAdminPermission && !billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.whatsApp.tr,
           icon: FontAwesomeIcons.whatsapp,
           onPressed: () => billDetailsController.sendBillToWhatsapp(billModel, context),
         ),
-      Obx(() {
-        return _buildActionButton(
-          isLoading: billDetailsController.deleteBillRequestState.value == RequestState.loading,
-          title: AppStrings.delete.tr,
-          icon: FontAwesomeIcons.eraser,
-          color: Colors.red,
-          onPressed: () => billDetailsController.deleteBill(billModel, context),
-        );
-      }),
+      if (RoleItemType.viewBill.hasAdminPermission)
+        Obx(() {
+          return _buildActionButton(
+            isLoading: billDetailsController.deleteBillRequestState.value == RequestState.loading,
+            title: AppStrings.delete.tr,
+            icon: FontAwesomeIcons.eraser,
+            color: Colors.red,
+            onPressed: () => billDetailsController.deleteBill(billModel, context),
+          );
+        }),
     ];
   }
 
@@ -199,9 +184,7 @@ class BillDetailsButtons extends StatelessWidget {
     );
   }
 
-  /* Widget freeLocalSwitcher(
-      {required BillDetailsController billDetailsController}) {
-    log('freeLocalSwitcher ${billDetailsController.advancedSwitchController.value}');
+  Widget freeLocalSwitcher({required BillDetailsController billDetailsController}) {
     return AdvancedSwitch(
       controller: billDetailsController.advancedSwitchController,
       activeColor: Colors.green,
@@ -217,41 +200,6 @@ class BillDetailsButtons extends StatelessWidget {
         // Update the switch state in the GetX controller.
         billDetailsController.updateSwitch(value);
       },
-    );
-  } */
-  Widget freeLocalSwitcher({required BillDetailsController billDetailsController}) {
-    return AnimatedToggleSwitch<bool>.dual(
-      current: billDetailsController.advancedSwitchController.value,
-      first: true,
-      second: false,
-      spacing: 30.0,
-      style: ToggleStyle(
-        borderColor: Colors.transparent,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            spreadRadius: 1,
-            blurRadius: 2,
-            offset: Offset(0, 1.5),
-          ),
-        ],
-      ),
-      borderWidth: 2.0,
-      height: 40,
-      onChanged: (value) => billDetailsController.updateSwitch(value),
-      styleBuilder: (value) => ToggleStyle(indicatorColor: value ? Colors.red : Colors.amber),
-      // iconBuilder: (value) => value ? const Icon(Icons.coronavirus_rounded) : const Icon(Icons.tag_faces_rounded),
-      textBuilder: (value) => value
-          ? Center(
-              child: Text(
-              'فري',
-              style: AppTextStyles.headLineStyle3,
-            ))
-          : Center(
-              child: Text(
-              'لوكال',
-              style: AppTextStyles.headLineStyle3,
-            )),
     );
   }
 }

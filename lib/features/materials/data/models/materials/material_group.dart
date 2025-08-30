@@ -106,8 +106,6 @@ class MaterialGroupModel implements PlutoAdaptable {
           type: PlutoColumnType.text(),
           hide: true): matGroupGuid,
       createAutoIdColumn(): '#',
-      createCheckColumn(): '',
-
       PlutoColumn(
           title: AppStrings.materialName.tr,
           field: 'اسم المادة',

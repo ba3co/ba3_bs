@@ -1,9 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
-import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
-import 'package:ba3_bs/features/users_management/data/models/target_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -22,23 +20,15 @@ class UserModel implements PlutoAdaptable {
   final String? loginDelay;
   final String? logoutDelay;
   final bool? haveHoliday;
+
   final UserWorkStatus? userWorkStatus;
   final UserActiveStatus? userActiveStatus;
-  final List<String>? userHolidays;
-  final List<String>? userJetourWork;
 
+  final List<String>? userHolidays;
   final List<UserTaskModel>? userTaskList;
   final Map<String, UserWorkingHours>? userWorkingHours;
 
-  Map<String, UserTimeModel>? userTimeModel;
-
-  /// new attribute
-  final MaterialGroupModel? groupForTarget;
-  final double? userSalaryRatio;
-  final String? userSalary;
-  bool hasGroupTarget;
-
-  // final TargetModel? groupTarget;
+  final Map<String, UserTimeModel>? userTimeModel;
 
   UserModel({
     this.userId,
@@ -55,13 +45,6 @@ class UserModel implements PlutoAdaptable {
     this.loginDelay,
     this.logoutDelay,
     this.userTaskList,
-    this.groupForTarget,
-    this.userSalaryRatio,
-    this.userSalary,
-    this.hasGroupTarget = false,
-    this.userJetourWork,
-
-    // this.groupTarget,
   });
 
   Map<String, dynamic> toJson() {
@@ -71,10 +54,6 @@ class UserModel implements PlutoAdaptable {
       'userName': userName,
       'userPassword': userPassword,
       'userRoleId': userRoleId,
-      'groupForTarget': groupForTarget?.toJson(),
-      'userSalaryRatio': userSalaryRatio,
-      'userSalary': userSalary,
-      // 'groupTarget': groupTarget?.toJson(),
       'userTaskList': userTaskList
           ?.map(
             (e) => e.toJson(),
@@ -83,10 +62,14 @@ class UserModel implements PlutoAdaptable {
       if (userActiveStatus != null) 'userActiveStatus': userActiveStatus?.label,
       if (userWorkStatus != null) 'userWorkStatus': userWorkStatus?.label,
       if (userHolidays != null) 'userHolidays': userHolidays?.toList(),
-      if (userJetourWork != null) 'userJetourWork': userJetourWork?.toList(),
       if (userWorkingHours != null)
-        'userWorkingHours': Map.fromEntries(userWorkingHours!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
-      if (userTimeModel != null) "userTime": Map.fromEntries(userTimeModel!.entries.map((e) => MapEntry(e.key, e.value.toJson())).toList()),
+        'userWorkingHours': Map.fromEntries(userWorkingHours!.entries
+            .map((e) => MapEntry(e.key, e.value.toJson()))
+            .toList()),
+      if (userTimeModel != null)
+        "userTime": Map.fromEntries(userTimeModel!.entries
+            .map((e) => MapEntry(e.key, e.value.toJson()))
+            .toList()),
     };
   }
 
@@ -97,7 +80,8 @@ class UserModel implements PlutoAdaptable {
       userTimeModel[k] = UserTimeModel.fromJson(v);
     });
 
-    var sortedEntries = userTimeModel.entries.toList()..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
+    var sortedEntries = userTimeModel.entries.toList()
+      ..sort((a, b) => a.value.dayName!.compareTo(b.value.dayName!));
 
     userTimeModel = Map.fromEntries(sortedEntries);
 
@@ -105,7 +89,8 @@ class UserModel implements PlutoAdaptable {
 
     (json['userWorkingHours'] ?? {}).forEach(
       (String workingHourId, dynamic userWorkingHourJson) {
-        userDailyTime[workingHourId] = UserWorkingHours.fromJson(userWorkingHourJson);
+        userDailyTime[workingHourId] =
+            UserWorkingHours.fromJson(userWorkingHourJson);
       },
     );
 
@@ -115,19 +100,17 @@ class UserModel implements PlutoAdaptable {
       userName: json['userName'],
       userPassword: json['userPassword'],
       userRoleId: json['userRoleId'],
-      // groupTarget: TargetModel.fromJson(json['groupTarget'] ?? {}),
-      userSalaryRatio: json['userSalaryRatio'],
-      userSalary: json['userSalary'],
-      groupForTarget: MaterialGroupModel.fromJson(json['groupForTarget'] ?? {}),
       userHolidays: List<String>.from(json['userHolidays'] ?? []),
-      userJetourWork: List<String>.from(json['userJetourWork'] ?? []),
       userWorkingHours: userDailyTime,
-      userWorkStatus: UserWorkStatus.byLabel(json['userWorkStatus'] ?? UserWorkStatus.away.label),
-      userActiveStatus: json['userActiveStatus'] != null ? UserActiveStatus.byLabel(json['userActiveStatus']) : UserActiveStatus.inactive,
+      userWorkStatus: UserWorkStatus.byLabel(
+          json['userWorkStatus'] ?? UserWorkStatus.away.label),
+      userActiveStatus: json['userActiveStatus'] != null
+          ? UserActiveStatus.byLabel(json['userActiveStatus'])
+          : UserActiveStatus.inactive,
       userTimeModel: userTimeModel,
-      userTaskList: (json['userTaskList'] as List<dynamic>?)?.map((e) => UserTaskModel.fromJson(e as Map<String, dynamic>)).toList(),
-      hasGroupTarget: MaterialGroupModel.fromJson(json['groupForTarget'] ?? {}).groupName.trim().isNotEmpty,
-
+      userTaskList: (json['userTaskList'] as List<dynamic>?)
+          ?.map((e) => UserTaskModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -138,20 +121,15 @@ class UserModel implements PlutoAdaptable {
     final String? userPassword,
     final String? userRoleId,
     final String? userSellerId,
-    final String? userSalary,
     final UserWorkStatus? userWorkStatus,
     final UserActiveStatus? userActiveStatus,
     final List<String>? userHolidays,
-    final List<String>? userJetourWork,
     final List<UserTaskModel>? userTaskList,
     final Map<String, UserTimeModel>? userTimeModel,
     final Map<String, UserWorkingHours>? userWorkingHours,
     final String? loginDelay,
     final String? logoutDelay,
     final bool? haveHoliday,
-    final MaterialGroupModel? groupForTarget,
-    final double? userSalaryRatio,
-    final TargetModel? groupTarget,
   }) =>
       UserModel(
         userId: userId ?? this.userId,
@@ -163,22 +141,19 @@ class UserModel implements PlutoAdaptable {
         userWorkStatus: userWorkStatus ?? this.userWorkStatus,
         userActiveStatus: userActiveStatus ?? this.userActiveStatus,
         userHolidays: userHolidays ?? this.userHolidays,
-        userJetourWork: userJetourWork ?? this.userJetourWork,
         userWorkingHours: userWorkingHours ?? this.userWorkingHours,
         loginDelay: loginDelay ?? this.loginDelay,
         logoutDelay: logoutDelay ?? this.logoutDelay,
         haveHoliday: haveHoliday ?? this.haveHoliday,
         userTaskList: userTaskList ?? this.userTaskList,
-        groupForTarget: groupForTarget ?? this.groupForTarget,
-        userSalaryRatio: userSalaryRatio ?? this.userSalaryRatio,
-        userSalary: userSalary ?? this.userSalary,
-        // groupTarget: groupTarget ?? this.groupTarget,
       );
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([type]) {
     Color getStatusColor(String status) {
-      return status == UserWorkStatus.online.label ? Colors.lightGreen : Colors.redAccent;
+      return status == UserWorkStatus.online.label
+          ? Colors.lightGreen
+          : Colors.redAccent;
     }
 
     Widget buildStatusCell(String status) {
@@ -209,7 +184,6 @@ class UserModel implements PlutoAdaptable {
         hide: true,
       ): userId,
       createAutoIdColumn(): '#',
-      createCheckColumn(): '',
       PlutoColumn(
         title: AppStrings.employeeName.tr,
         field: 'اسم الموظف',
@@ -225,7 +199,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
           ? AppStrings.holiday.tr
-          : AppServiceUtils.formatDateTimeFromString(AppServiceUtils.getLastLogin(userTimeModel)?.toIso8601String()),
+          : AppServiceUtils.formatDateTimeFromString(
+              AppServiceUtils.getLastLogin(userTimeModel)?.toIso8601String()),
       PlutoColumn(
         title: AppStrings.lastCheckOutTime.tr,
         field: 'اخر خروج',
@@ -234,20 +209,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): hasHolidayToday()
           ? AppStrings.holiday.tr
-          : AppServiceUtils.formatDateTimeFromString(AppServiceUtils.getLastLogout(userTimeModel)?.toIso8601String()),
-      PlutoColumn(
-        title: AppStrings.workInJetourShop.tr,
-        field: 'دوام محل الجيتور',
-        width: 400,
-        renderer: (context) => Center(
-          child: Text(
-            context.cell.value.toString(),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-          ),
-        ),
-        textAlign: PlutoColumnTextAlign.center,
-        type: PlutoColumnType.text(),
-      ): userJetourWork?.where((date) => date.split("-")[1] == DateTime.now().month.toString().padLeft(2, '0')).toList().join(" , "),
+          : AppServiceUtils.formatDateTimeFromString(
+              AppServiceUtils.getLastLogout(userTimeModel)?.toIso8601String()),
       PlutoColumn(
         title: AppStrings.holidaysForThisMonth.tr,
         field: 'عطل هذا الشهر',
@@ -260,7 +223,12 @@ class UserModel implements PlutoAdaptable {
         ),
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
-      ): userHolidays?.where((date) => date.split("-")[1] == DateTime.now().month.toString().padLeft(2, '0')).toList().join(" , "),
+      ): userHolidays
+          ?.where((date) =>
+              date.split("-")[1] ==
+              DateTime.now().month.toString().padLeft(2, '0'))
+          .toList()
+          .join(" , "),
       PlutoColumn(
         title: AppStrings.status.tr,
         field: 'الحالة',
@@ -277,7 +245,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): AppServiceUtils.convertMinutesAndFormat((userTimeModel?.values.fold(
             0,
-            (previousValue, element) => previousValue! + (element.totalLogInDelay ?? 0),
+            (previousValue, element) =>
+                previousValue! + (element.totalLogInDelay ?? 0),
           ) ??
           0)),
       PlutoColumn(
@@ -288,7 +257,8 @@ class UserModel implements PlutoAdaptable {
         type: PlutoColumnType.text(),
       ): AppServiceUtils.convertMinutesAndFormat((userTimeModel?.values.fold(
             0,
-            (previousValue, element) => previousValue! + (element.totalOutEarlier ?? 0),
+            (previousValue, element) =>
+                previousValue! + (element.totalOutEarlier ?? 0),
           ) ??
           0)),
       PlutoColumn(
@@ -298,27 +268,6 @@ class UserModel implements PlutoAdaptable {
         textAlign: PlutoColumnTextAlign.center,
         type: PlutoColumnType.text(),
       ): "${userTaskList?.where((element) => element.status.isDone).length} /  ${userTaskList?.where((element) => element.status.isFailed).length}",
-      PlutoColumn(
-        title: AppStrings.groupForTarget.tr,
-        field: 'تارغيت الشركة',
-        width: 200,
-        frozen: PlutoColumnFrozen.start,
-        type: PlutoColumnType.text(),
-      ): groupForTarget?.groupName,
-      PlutoColumn(
-        title: AppStrings.userSalaryRatio.tr,
-        field: 'تقييم الموظف',
-        width: 200,
-        frozen: PlutoColumnFrozen.start,
-        type: PlutoColumnType.text(),
-      ): userSalaryRatio,
-      PlutoColumn(
-        title: AppStrings.userSalary.tr,
-        field: 'راتب الموظف',
-        width: 200,
-        frozen: PlutoColumnFrozen.start,
-        type: PlutoColumnType.text(),
-      ): userSalary,
     };
   }
 }
@@ -372,7 +321,6 @@ class UserTimeModel {
   final List<DateTime>? logOutDateList;
   int? totalLogInDelay;
   int? totalOutEarlier;
-  int? totalExtraMinutes;
 
   UserTimeModel({
     this.dayName,
@@ -380,17 +328,19 @@ class UserTimeModel {
     this.logOutDateList,
     this.totalLogInDelay,
     this.totalOutEarlier,
-    this.totalExtraMinutes,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'dayName': dayName,
-      if (logInDateList != null) 'logInDateList': logInDateList!.map((e) => e.toIso8601String()).toList(),
-      if (logOutDateList != null) 'logOutDateList': logOutDateList!.map((e) => e.toIso8601String()).toList(),
+      if (logInDateList != null)
+        'logInDateList':
+            logInDateList!.map((e) => e.toIso8601String()).toList(),
+      if (logOutDateList != null)
+        'logOutDateList':
+            logOutDateList!.map((e) => e.toIso8601String()).toList(),
       if (totalLogInDelay != null) 'totalLogInDelay': totalLogInDelay,
       if (totalOutEarlier != null) 'totalOutEarlier': totalOutEarlier,
-      if (totalExtraMinutes != null) 'totalExtraMinutes': totalExtraMinutes,
     };
   }
 
@@ -399,9 +349,12 @@ class UserTimeModel {
       dayName: json['dayName'] as String?,
       totalLogInDelay: json['totalLogInDelay'] ?? 0,
       totalOutEarlier: json['totalOutEarlier'] ?? 0,
-      totalExtraMinutes: json['totalExtraMinutes'] ?? 0,
-      logInDateList: (json['logInDateList'] as List<dynamic>?)?.map((e) => DateTime.parse(e as String)).toList(),
-      logOutDateList: (json['logOutDateList'] as List<dynamic>?)?.map((e) => DateTime.parse(e as String)).toList(),
+      logInDateList: (json['logInDateList'] as List<dynamic>?)
+          ?.map((e) => DateTime.parse(e as String))
+          .toList(),
+      logOutDateList: (json['logOutDateList'] as List<dynamic>?)
+          ?.map((e) => DateTime.parse(e as String))
+          .toList(),
     );
   }
 
@@ -411,7 +364,6 @@ class UserTimeModel {
     List<DateTime>? logOutDateList,
     int? totalLogInDelay,
     int? totalOutEarlier,
-    int? totalExtraMinutes,
   }) {
     return UserTimeModel(
       dayName: dayName ?? this.dayName,
@@ -419,22 +371,23 @@ class UserTimeModel {
       logOutDateList: logOutDateList ?? this.logOutDateList,
       totalLogInDelay: totalLogInDelay ?? this.totalLogInDelay,
       totalOutEarlier: totalOutEarlier ?? this.totalOutEarlier,
-      totalExtraMinutes: totalExtraMinutes ?? this.totalExtraMinutes,
     );
   }
 
   UserTimeModel copyWithAddTime({
     int? totalLogInDelay,
     int? totalOutEarlier,
-    int? totalExtraMinutes,
   }) {
     return UserTimeModel(
       dayName: dayName,
       logInDateList: logInDateList,
       logOutDateList: logOutDateList,
-      totalLogInDelay: totalLogInDelay != null ? totalLogInDelay + (this.totalLogInDelay ?? 0) : this.totalLogInDelay,
-      totalOutEarlier: totalOutEarlier != null ? totalOutEarlier + (this.totalOutEarlier ?? 0) : this.totalOutEarlier,
-      totalExtraMinutes: totalExtraMinutes != null ? totalExtraMinutes + (this.totalExtraMinutes ?? 0) : this.totalExtraMinutes,
+      totalLogInDelay: totalLogInDelay != null
+          ? totalLogInDelay + (this.totalLogInDelay ?? 0)
+          : this.totalLogInDelay,
+      totalOutEarlier: totalOutEarlier != null
+          ? totalOutEarlier + (this.totalOutEarlier ?? 0)
+          : this.totalOutEarlier,
     );
   }
 }

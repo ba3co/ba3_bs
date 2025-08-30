@@ -44,6 +44,7 @@ import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:ba3_bs/features/sellers/data/datasources/remote/sellers_data_source.dart';
 import 'package:ba3_bs/features/sellers/data/models/seller_model.dart';
 import 'package:ba3_bs/features/user_time/data/repositories/user_time_repo.dart';
+import 'package:ba3_bs/features/users_management/data/datasources/roles_data_source.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -68,7 +69,6 @@ import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/customer/service/customer_import.dart';
 import '../../features/dashboard/controller/bill_profit_dashboard_controller.dart';
-import '../../features/dashboard/controller/bill_report_controller.dart';
 import '../../features/dashboard/controller/cheques_timeline_controller.dart';
 import '../../features/dashboard/controller/seller_dashboard_controller.dart';
 import '../../features/logs/data/datasources/log_data_source.dart';
@@ -85,12 +85,13 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
+import '../../features/profile/controller/user_time_controller.dart';
 import '../../features/sellers/service/seller_import.dart';
 import '../../features/user_task/controller/all_task_controller.dart';
 import '../../features/user_task/data/datasources/user_task_data_source.dart';
 import '../../features/user_task/data/model/user_task_model.dart';
-import '../../features/user_time/controller/user_time_controller.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
+import '../../features/users_management/data/datasources/users_data_source.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
@@ -110,37 +111,41 @@ import '../services/translation/interfaces/i_api_client.dart';
 
 class AppBindings extends Bindings {
   @override
-  Future<void> dependencies() async {
+  void dependencies() async {
     // Initialize services
     final dioClient = _initializeDioClient();
 
     final IRemoteDatabaseService<Map<String, dynamic>> fireStoreService =
         read<IRemoteDatabaseService<Map<String, dynamic>>>();
 
-    final ICompoundDatabaseService<Map<String, dynamic>> compoundFireStoreService =
-        read<ICompoundDatabaseService<Map<String, dynamic>>>();
+    final ICompoundDatabaseService<Map<String, dynamic>>
+        compoundFireStoreService = read<ICompoundDatabaseService<Map<String, dynamic>>>();
 
     // final IRemoteStorageService<String> remoteStorageService = read<IRemoteStorageService<String>>();
 
-    // final rolesRepo = RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService));
-    //
-    // final usersRepo = FilterableDataSourceRepository(UsersDatasource(databaseService: fireStoreService));
+    final rolesRepo = RemoteDataSourceRepository(
+        RolesDatasource(databaseService: fireStoreService));
 
-    final changesRepo = ListenDataSourceRepository(ChangesListenDatasource(databaseService: fireStoreService));
+    final usersRepo = FilterableDataSourceRepository(
+        UsersDatasource(databaseService: fireStoreService));
 
-    // lazyPut(rolesRepo);
-    //
-    // lazyPut(usersRepo);
+    final changesRepo = ListenDataSourceRepository(
+        ChangesListenDatasource(databaseService: fireStoreService));
+
+    lazyPut(rolesRepo);
+
+    lazyPut(usersRepo);
 
     lazyPut(changesRepo);
 
-    final materialsHiveService = await _initializeHiveService<MaterialModel>(boxName: ApiConstants.materials);
+    final materialsHiveService = await _initializeHiveService<MaterialModel>(
+        boxName: ApiConstants.materials);
 
-    final dashboardHiveService =
-        await _initializeHiveService<DashAccountModel>(boxName: ApiConstants.dashBoardAccounts);
+    final dashboardHiveService = await _initializeHiveService<DashAccountModel>(
+        boxName: ApiConstants.dashBoardAccounts);
 
     // final ILocalDatabaseService<String> appLocalLangService = await _initializeHiveService<String>(boxName: AppConstants.appLocalLangBox);
-
+    //
     // put(TranslationController(appLocalLangService));
 
     final translationService = _initializeTranslationService(dioClient);
@@ -193,13 +198,15 @@ class AppBindings extends Bindings {
   // Initialize external services
   IAPiClient _initializeDioClient() => DioClient<Map<String, dynamic>>(Dio());
 
-  ITranslationService _initializeTranslationService(IAPiClient dioClient) => GoogleTranslationService(
+  ITranslationService _initializeTranslationService(IAPiClient dioClient) =>
+      GoogleTranslationService(
         baseUrl: ApiConstants.translationBaseUrl,
         apiKey: ApiConstants.translationApiKey,
         client: dioClient,
       );
 
-  Future<ILocalDatabaseService<T>> _initializeHiveService<T>({required String boxName}) async {
+  Future<ILocalDatabaseService<T>> _initializeHiveService<T>(
+      {required String boxName}) async {
     Box<T> box = await Hive.openBox<T>(boxName);
     return HiveDatabaseService(box);
   }
@@ -207,7 +214,8 @@ class AppBindings extends Bindings {
   // Repositories Initialization
   _Repositories _initializeRepositories({
     required IRemoteDatabaseService<Map<String, dynamic>> remoteDatabaseService,
-    required ICompoundDatabaseService<Map<String, dynamic>> remoteCompoundDataBaseService,
+    required ICompoundDatabaseService<Map<String, dynamic>>
+        remoteCompoundDataBaseService,
     // required IRemoteStorageService<String> remoteStorageService,
     required ITranslationService translationService,
     required IImportService<BillModel> billImportService,
@@ -229,62 +237,80 @@ class AppBindings extends Bindings {
   }) {
     return _Repositories(
       translationRepo: TranslationRepository(translationService),
-      patternsRepo: RemoteDataSourceRepository(PatternsDatasource(databaseService: remoteDatabaseService)),
-      migrationRepo: RemoteDataSourceRepository(MigrationRemoteDatasource(databaseService: remoteDatabaseService)),
-      billsRepo:
-          CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
-      serialNumbersRepo: QueryableSavableRepository(MaterialsSerialsDataSource(databaseService: remoteDatabaseService)),
-      bondsRepo:
-          CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
-      chequesRepo: CompoundDatasourceRepository(
-          ChequesCompoundDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
-      entryBondsRepo: BulkSavableDatasourceRepository(EntryBondsDatasource(databaseService: remoteDatabaseService)),
-      accountsStatementsRepo: CompoundDatasourceRepository(
-          AccountsStatementsDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
-      billImportExportRepo: ImportExportRepository(billImportService, billExportService),
-      chequesImportExportRepo: ImportExportRepository(chequesImportService, chequesExportService),
+      patternsRepo: RemoteDataSourceRepository(
+          PatternsDatasource(databaseService: remoteDatabaseService)),
+      migrationRepo: RemoteDataSourceRepository(
+          MigrationRemoteDatasource(databaseService: remoteDatabaseService)),
+      billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(
+          compoundDatabaseService: remoteCompoundDataBaseService)),
+      serialNumbersRepo: QueryableSavableRepository(
+          MaterialsSerialsDataSource(databaseService: remoteDatabaseService)),
+      bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(
+          compoundDatabaseService: remoteCompoundDataBaseService)),
+      chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(
+          compoundDatabaseService: remoteCompoundDataBaseService)),
+      entryBondsRepo: BulkSavableDatasourceRepository(
+          EntryBondsDatasource(databaseService: remoteDatabaseService)),
+      accountsStatementsRepo: CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
+      billImportExportRepo:
+          ImportExportRepository(billImportService, billExportService),
+      chequesImportExportRepo:
+          ImportExportRepository(chequesImportService, chequesExportService),
       userTimeRepo: UserTimeRepository(),
-      sellersRepo: BulkSavableDatasourceRepository(SellersDatasource(databaseService: remoteDatabaseService)),
-      materialsRemoteDatasourceRepo:
-          QueryableSavableRepository(MaterialsRemoteDatasource(databaseService: remoteDatabaseService)),
-      accountsRep: BulkSavableDatasourceRepository(AccountsDatasource(databaseService: remoteDatabaseService)),
-      bondImportExportRepo: ImportExportRepository(bondImportService, bondExportService),
-      materialImportExportRepo: ImportExportRepository(materialImportService, materialExportService),
-      accountImportExportRepo: ImportExportRepository(accountImportService, accountExportService),
+      sellersRepo: BulkSavableDatasourceRepository(
+          SellersDatasource(databaseService: remoteDatabaseService)),
+      materialsRemoteDatasourceRepo: QueryableSavableRepository(
+          MaterialsRemoteDatasource(databaseService: remoteDatabaseService)),
+      accountsRep: BulkSavableDatasourceRepository(
+          AccountsDatasource(databaseService: remoteDatabaseService)),
+      bondImportExportRepo:
+          ImportExportRepository(bondImportService, bondExportService),
+      materialImportExportRepo:
+          ImportExportRepository(materialImportService, materialExportService),
+      accountImportExportRepo:
+          ImportExportRepository(accountImportService, accountExportService),
       sellerImportRepo: ImportRepository(sellersImportService),
       materialsLocalDatasourceRepo: LocalDatasourceRepository(
         localDatasource: MaterialsLocalDatasource(materialsHiveService),
-        remoteDatasource: MaterialsRemoteDatasource(databaseService: remoteDatabaseService),
+        remoteDatasource:
+            MaterialsRemoteDatasource(databaseService: remoteDatabaseService),
       ),
       listenableDatasourceRepo: changesRepo,
       importMaterialRepository: ImportRepository(importMaterialGroupService),
-      materialGroupDataSource:
-          QueryableSavableRepository(MaterialsGroupsDataSource(databaseService: remoteDatabaseService)),
+      materialGroupDataSource: QueryableSavableRepository(
+          MaterialsGroupsDataSource(databaseService: remoteDatabaseService)),
       customerImportRepo: ImportRepository(customerImportService),
-      customersRepo: BulkSavableDatasourceRepository(CustomersDatasource(databaseService: remoteDatabaseService)),
+      customersRepo: BulkSavableDatasourceRepository(
+          CustomersDatasource(databaseService: remoteDatabaseService)),
       matStatementsRepo: CompoundDatasourceRepository(
-        MaterialsStatementsDatasource(compoundDatabaseService: remoteCompoundDataBaseService),
+        MaterialsStatementsDatasource(
+            compoundDatabaseService: remoteCompoundDataBaseService),
       ),
-      storeCartRepo: ListenDataSourceRepository(StoreCartDataSource(databaseService: remoteDatabaseService)),
+      storeCartRepo: ListenDataSourceRepository(
+          StoreCartDataSource(databaseService: remoteDatabaseService)),
       dashboardAccountRepo: LocalDatasourceRepository(
         localDatasource: DashboardAccountDataSource(dashboardHiveService),
-        remoteDatasource: RemoteDashboardDataSource(databaseService: remoteDatabaseService),
+        remoteDatasource:
+            RemoteDashboardDataSource(databaseService: remoteDatabaseService),
       ),
 
       // tasksRepo: UploaderStorageQueryableRepo(
       //   UserTaskDataSource(databaseService: remoteDatabaseService, databaseStorageService: remoteStorageService),
       // ),
 
-      tasksRepo: UploaderStorageQueryableRepo(UserTaskDataSource(databaseService: remoteDatabaseService)),
+      tasksRepo: UploaderStorageQueryableRepo(
+          UserTaskDataSource(databaseService: remoteDatabaseService)),
 
-      logsRepo: FilterableDataSourceRepository(LogDataSource(databaseService: remoteDatabaseService)),
+      logsRepo: FilterableDataSourceRepository(
+          LogDataSource(databaseService: remoteDatabaseService)),
     );
   }
 
   // Permanent Controllers Initialization
   void _initializePermanentControllers(_Repositories repositories) {
     put(
-      SellersController(repositories.sellersRepo, repositories.sellerImportRepo),
+      SellersController(
+          repositories.sellersRepo, repositories.sellerImportRepo),
       permanent: true,
     );
   }
@@ -306,11 +332,13 @@ class AppBindings extends Bindings {
     lazyPut(PlutoDualTableController());
     // lazyPut(TargetPointerController());
 
-    lazyPut(EntryBondController(repositories.entryBondsRepo, repositories.accountsStatementsRepo));
+    lazyPut(EntryBondController(
+        repositories.entryBondsRepo, repositories.accountsStatementsRepo));
 
     lazyPut(PatternController(repositories.patternsRepo));
 
-    lazyPut(MaterialGroupController(repositories.importMaterialRepository, repositories.materialGroupDataSource));
+    lazyPut(MaterialGroupController(repositories.importMaterialRepository,
+        repositories.materialGroupDataSource));
 
     lazyPut(
       MaterialController(
@@ -323,33 +351,40 @@ class AppBindings extends Bindings {
 
     lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
 
-    lazyPut(
-        AllBillsController(repositories.billsRepo, repositories.serialNumbersRepo, repositories.billImportExportRepo));
+    lazyPut(AllBillsController(repositories.billsRepo,
+        repositories.serialNumbersRepo, repositories.billImportExportRepo));
 
-    lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
+    lazyPut(AllBondsController(
+        repositories.bondsRepo, repositories.bondImportExportRepo));
 
-    lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
+    lazyPut(AllChequesController(
+        repositories.chequesRepo, repositories.chequesImportExportRepo));
 
-    lazyPut(CustomersController(repositories.customersRepo, repositories.customerImportRepo));
+    lazyPut(CustomersController(
+        repositories.customersRepo, repositories.customerImportRepo));
 
-    lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
+    lazyPut(AccountsController(
+        repositories.accountImportExportRepo, repositories.accountsRep));
 
     lazyPut(PrintingController(repositories.translationRepo));
 
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
 
-    lazyPut(UserTimeController(read<FilterableDataSourceRepository<UserModel>>(), repositories.userTimeRepo));
+    lazyPut(UserTimeController(
+        read<FilterableDataSourceRepository<UserModel>>(),
+        repositories.userTimeRepo));
 
     lazyPut(SellerSalesController(repositories.billsRepo));
 
     lazyPut(AddSellerController(repositories.sellersRepo));
 
-    lazyPut(UserDetailsController(read<FilterableDataSourceRepository<UserModel>>()));
+    lazyPut(UserDetailsController(
+        read<FilterableDataSourceRepository<UserModel>>()));
 
-    lazyPut(StoreCartController(repositories.storeCartRepo, repositories.billsRepo));
+    lazyPut(StoreCartController(
+        repositories.storeCartRepo, repositories.billsRepo));
 
     lazyPut(LogController(repositories.logsRepo));
-    lazyPut(BillReportController());
   }
 }
 
@@ -364,7 +399,8 @@ class _Repositories {
   final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
   final CompoundDatasourceRepository<ChequesModel, ChequesType> chequesRepo;
   final BulkSavableDatasourceRepository<EntryBondModel> entryBondsRepo;
-  final CompoundDatasourceRepository<EntryBondItems, AccountEntity> accountsStatementsRepo;
+  final CompoundDatasourceRepository<EntryBondItems, AccountEntity>
+      accountsStatementsRepo;
   final ImportExportRepository<BillModel> billImportExportRepo;
   final ImportExportRepository<BondModel> bondImportExportRepo;
   final ImportExportRepository<MaterialModel> materialImportExportRepo;
@@ -382,7 +418,8 @@ class _Repositories {
   final QueryableSavableRepository<MaterialGroupModel> materialGroupDataSource;
   final ImportRepository<CustomerModel> customerImportRepo;
   final BulkSavableDatasourceRepository<CustomerModel> customersRepo;
-  final CompoundDatasourceRepository<MatStatementModel, String> matStatementsRepo;
+  final CompoundDatasourceRepository<MatStatementModel, String>
+      matStatementsRepo;
   final ListenDataSourceRepository<StoreCartModel> storeCartRepo;
   final UploaderStorageQueryableRepo<UserTaskModel> tasksRepo;
   final FilterableDataSourceRepository<LogModel> logsRepo;

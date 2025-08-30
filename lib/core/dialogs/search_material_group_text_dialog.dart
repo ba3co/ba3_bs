@@ -19,7 +19,7 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(
 
   List<MaterialGroupModel> searchedMaterials;
 
-  searchedMaterials =await read<MaterialGroupController>()
+  searchedMaterials = read<MaterialGroupController>()
       .searchGroupProductByText(productGroupTextController.text);
 
   MaterialGroupModel? selectedMaterial;
@@ -69,7 +69,7 @@ Future<MaterialGroupModel?> searchProductGroupTextDialog(
                       textEditingController: productGroupTextController,
                       onSubmitted: (_) async {
                         searchedMaterials =
-                         await   materialController.searchGroupProductByText(
+                            materialController.searchGroupProductByText(
                                 productGroupTextController.text);
                         materialController.update();
                       },
