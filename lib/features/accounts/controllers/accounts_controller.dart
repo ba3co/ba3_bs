@@ -300,6 +300,26 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
     return null;
   }
 
+  Future<AccountModel?> getAccountModelByIdAsync(String? id) async {
+    if (id == null || id.isEmpty) return null;
+
+    // 1️⃣ البحث محلياً
+    try {
+      return accounts.firstWhere((item) => item.id == id);
+    } catch (_) {
+    }
+
+
+    // 2️⃣ جلب من النت
+    try {
+      await fetchAccounts(); // لازم تكون دالة بترجع وتحدث accounts
+      return accounts.firstWhere((item) => item.id == id);
+    } catch (_) {
+      AppUIUtils.onFailure("Account with id $id not found!");
+    }
+    return null;
+  }
+
   List<AccountModel> getAccounts(String query) => searchAccountsByNameOrCode(query);
 
   List<CustomerModel> getCustomersAccounts(String query, List<String>? customerIds) => searchAccountsCustomerByName(query, customerIds);

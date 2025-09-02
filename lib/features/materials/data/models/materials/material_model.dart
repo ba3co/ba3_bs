@@ -301,7 +301,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matVatGuid: json['matVatGuid']?.toString(),
       matExtraBarcode: List.from(json['matExtraBarcode'] ?? []),
       matQuantity: json['MatQuantity'] ?? 0,
-      calcMinPrice: json['calcMinPrice'] ?? 0.0,
+      calcMinPrice:AppServiceUtils.toDouble(json['calcMinPrice'])  ,
       serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
     );
   }

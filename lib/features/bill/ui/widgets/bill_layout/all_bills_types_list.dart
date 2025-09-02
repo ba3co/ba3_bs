@@ -30,6 +30,14 @@ class AllBillsTypesList extends StatelessWidget {
               ? List.generate(10, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
               : RoleItemType.viewBill.hasWritePermission
                   ? patternController.billsTypes
+                      .where(
+                        (type) =>
+                            type.billTypeId != "06f0e6ea-3493-480c-9e0c-573baf049605" &&
+                            type.billTypeId != "563af9aa-5d7e-470b-8c3c-fee784da810a" &&
+                            type.billTypeId != "494fa945-3fe5-4fc3-86d6-7a9999b6c9e8" &&
+                            type.billTypeId != "35c75331-1917-451e-84de-d26861134cd4" &&
+                            type.billTypeId != "5a9e7782-cde5-41db-886a-ac89732feda7",
+                      )
                       .map(
                         (billTypeModel) => BillTypeItemWidget(
                           text: read<TranslationController>().currentLocaleIsRtl ? billTypeModel.fullName! : billTypeModel.latinFullName!,

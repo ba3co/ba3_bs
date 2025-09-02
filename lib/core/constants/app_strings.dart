@@ -447,4 +447,8 @@ class AppStrings {
 
   static var repair='تصحيح';
 
+  static var allNegativeMaterials='المواد المخرجة بالسالب';
+
+  static var viewNegativeMaterial='عرض المواد المخرجة بالسالب';
+
 }

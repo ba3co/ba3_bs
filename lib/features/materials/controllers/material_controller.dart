@@ -100,7 +100,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> reloadMaterials() async {
+    saveAllMaterialsRequestState
+        .value=RequestState.loading;
     await fetchMaterials();
+    saveAllMaterialsRequestState
+        .value=RequestState.success;
   }
 
   Future<void> saveAllMaterialOnLocal(List<MaterialModel> materialsToSave, bool isWithDialog) async {
@@ -239,12 +243,16 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context}) async {
+  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context,bool? onlyNegativeMaterial}) async {
+List<MaterialModel>? materialList ;
+if(onlyNegativeMaterial!=null){
+  materialList=materials.where((element) => (element.matQuantity??0)<0).toList();
+}
     // reloadMaterials();
     fetchMaterialsGroup(groupGuid: groupGuid);
     await reloadMaterials();
     if (!context.mounted) return;
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen());
+    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen(materialList : materialList));
 
     // to(AppRoutes.showAllMaterialsScreen);
   }
