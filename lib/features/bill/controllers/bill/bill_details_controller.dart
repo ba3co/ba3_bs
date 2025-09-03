@@ -489,6 +489,7 @@ class BillDetailsController extends IBillController
   Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context, required bool withPrint}) async {
     if (saveBillRequestState.value == RequestState.loading) return;
     saveBillRequestState.value = RequestState.loading;
+
     await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context, withPrint: withPrint);
   }
 
@@ -658,7 +659,15 @@ class BillDetailsController extends IBillController
   ) async {
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
+
     if (updatedBillModel == null) return null;
+    if (existingBill != null) {
+      if ((DateTime.now().difference( existingBill.billDetails.billDate!)) > Duration(days: 2)) {
+        if (await AppUIUtils.askForPassword(context) == false) {
+          return null;
+        }
+      }
+    }
 
     for (BillItem item in updatedBillModel.items.itemList) {
       if (item.itemTotalPrice.toDouble > 99999999) {
@@ -730,6 +739,9 @@ class BillDetailsController extends IBillController
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
+
+
+
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
       if (!_billUtils.validateBillAccount(
@@ -829,8 +841,9 @@ class BillDetailsController extends IBillController
     initBillNumberController(bill.billDetails.billNumber);
     initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
     // initBillAccount(read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId));
-    initBillAccount(
-        bill.billDetails.billAccountId != null ?await read<AccountsController>().getAccountModelByIdAsync(bill.billDetails.billAccountId!) : null);
+    initBillAccount(bill.billDetails.billAccountId != null
+        ? await read<AccountsController>().getAccountModelByIdAsync(bill.billDetails.billAccountId!)
+        : null);
     initFreeLocalSwitcher(bill.freeBill);
     log(bill.freeBill.toString(), name: 'initFreeLocalSwitcher');
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
