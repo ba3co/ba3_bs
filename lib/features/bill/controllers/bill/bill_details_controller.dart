@@ -734,6 +734,13 @@ class BillDetailsController extends IBillController
       );
       return null;
     }
+    if (
+        (updatedBillModel.billDetails.customerPhone?.isEmpty)??false ) {
+      AppUIUtils.onFailure(
+        'من فضلك ادخل رقم الزبون',
+      );
+      return null;
+    }
 
     return updatedBillModel;
   }

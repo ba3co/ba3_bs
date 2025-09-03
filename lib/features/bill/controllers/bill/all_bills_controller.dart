@@ -428,7 +428,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
     required BuildContext context,
     required BillTypeModel billTypeModel,
   }) async {
-    BillModel? searchResults;
+    List<BillModel> searchResults = [];
 
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: billTypeModel,
@@ -438,17 +438,18 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     result.fold(
       (failure) {},
-      (bills) => searchResults = (bills.firstOrNull),
+      (bills) => searchResults = (bills),
     );
 
-    if (searchResults == null) {
+    if (searchResults.isEmpty) {
       // Show a message if no results found
       if (!context.mounted) return;
 
       AppUIUtils.onFailure('لا يوجد نتائج للبحث');
     } else {
       if (!context.mounted) return;
-      openFloatingBillDetails(context, billTypeModel, currentBill: searchResults);
+      lunchBillsScreen(searchResults, context);
+      // openFloatingBillDetails(context, billTypeModel, currentBill: searchResults);
       isBillsLoading = false;
     }
   }
