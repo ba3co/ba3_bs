@@ -362,8 +362,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()): (billDetails.billDate?.dayMonthYear ?? ''),
         PlutoColumn(title: AppStrings.taxTotal.tr, field: 'مجموع الضريبة', type: PlutoColumnType.text()):
         billDetails.billVatTotal!.toDouble().toStringAsFixed(2),
-        PlutoColumn(title: AppStrings.totalBeforeTax.tr, field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
-        billDetails.billBeforeVatTotal!.toDouble().toStringAsFixed(2),
+    PlutoColumn(title: AppStrings.phoneNumber.tr, field: AppStrings.phoneNumber, type: PlutoColumnType.text()):
+    billDetails.customerPhone ?? "",
         PlutoColumn(title: AppStrings.total.tr, field: 'المجموع الكلي', type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billTotal),
         PlutoColumn(title: AppStrings.payType.tr, field: 'نوع الدفع', type: PlutoColumnType.text()):
@@ -372,8 +372,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
         PlutoColumn(title: '${AppStrings.account.tr} ${AppStrings.seller.tr}', field: 'حساب البائع', type: PlutoColumnType.text()):
             read<SellersController>().getSellerNameById(billDetails.billSellerId),
-        PlutoColumn(title: AppStrings.store.tr, field: 'المستودع', type: PlutoColumnType.text()):
-            billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
+        // PlutoColumn(title: AppStrings.store.tr, field: 'المستودع', type: PlutoColumnType.text()):
+        //     billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
         PlutoColumn(title: AppStrings.illustration.tr, field: 'البيان', type: PlutoColumnType.text()): billDetails.billNote ?? '',
         // PlutoColumn(title: AppStrings.discountTotal.tr, field: 'مجموع الحسم', type: PlutoColumnType.number()):
         // AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
@@ -387,7 +387,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
             : AppConstants.taxLocalAccountName.replaceAll('ضريبة القيمة المضافة', ''),
     PlutoColumn(title: AppStrings.materials.tr, field: 'المواد', type: PlutoColumnType.text()): items.itemList.map((e) =>"(${e.itemName})",).toList().join('\n'),
     PlutoColumn(title: AppStrings.requiredRequestNumber.tr, field: 'ads', type: PlutoColumnType.text()):billDetails.orderNumber,
-
+    PlutoColumn(title: AppStrings.totalBeforeTax.tr, field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
+    billDetails.billBeforeVatTotal!.toDouble().toStringAsFixed(2),
       };
 
   List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;
