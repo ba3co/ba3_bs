@@ -1,19 +1,25 @@
+import 'package:flutter/material.dart';
+
 import '../../bond/data/models/entry_bond_model.dart';
 
 
 class FilterEntryBondItemsByBillTypesUseCase {
   List<EntryBondItemModel> execute(
-      List<String> billTypes,
+      List<String> billTypesIds,
       List<EntryBondItemModel> entryBondItems,
       ) {
-    if (billTypes.isEmpty) return entryBondItems;
+    if (billTypesIds.isEmpty) return entryBondItems;
+
+    debugPrint("FilterEntryBondItemsByBillTypesUseCase the billtype ids are "+billTypesIds.toString());
 
     return entryBondItems.where((item) {
-      final note = (item.note ?? "").toLowerCase();
+      final billTypeId = (item.billTypeId ?? "").toLowerCase();
+      item.printDetails();
+
 
       // Check if ANY billType is a substring of note
-      return billTypes.any(
-            (billType) => note.contains(billType.toLowerCase()),
+      return billTypesIds.any(
+            (billType) => billTypeId==billType.toLowerCase()
       );
     }).toList();
   }

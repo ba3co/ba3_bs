@@ -45,7 +45,7 @@ class ChequesComparisonPdfGenerator extends PdfGeneratorBase<List<ChequesModel>>
   }
 
   @override
-  List<Widget> buildBody(List<ChequesModel> itemModel, {Font? font}) {
+  List<Widget> buildBody(List<ChequesModel> itemModel, {Font? font,Uint8List?logoUint8List}) {
     final ChequesModel beforeUpdate = itemModel[0];
     final ChequesModel afterUpdate = itemModel[1];
 

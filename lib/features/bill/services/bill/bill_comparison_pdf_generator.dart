@@ -60,7 +60,7 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>>
   }
 
   @override
-  List<Widget> buildBody(List<BillModel> itemModel, {Font? font}) {
+  List<Widget> buildBody(List<BillModel> itemModel, {Font? font,Uint8List?logoUint8List}) {
     final beforeUpdate = itemModel[0];
     final afterUpdate = itemModel[1];
 

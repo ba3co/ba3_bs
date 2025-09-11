@@ -6,6 +6,8 @@ abstract class IPdfGenerator<T> {
   /// Generates a PDF and returns the file path.
   Future<String> generatePdf(T itemModel, String fileName,
       {String? logoSrc, String? fontSrc});
+  Future<String> generatePdfInLocation(T itemModel, String fileName,
+      {String? logoSrc, String? fontSrc});
 
   Widget buildFooter();
 

@@ -49,7 +49,7 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
   }
 
   @override
-  List<Widget> buildBody(List<BondModel> itemModel, {Font? font}) {
+  List<Widget> buildBody(List<BondModel> itemModel, {Font? font,Uint8List?logoUint8List}) {
     final BondModel beforeUpdate = itemModel[0];
     final BondModel afterUpdate = itemModel[1];
 

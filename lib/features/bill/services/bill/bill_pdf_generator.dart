@@ -71,7 +71,7 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
   }
 
   @override
-  List<Widget> buildBody(BillModel itemModel, {Font? font}) {
+  List<Widget> buildBody(BillModel itemModel, {Font? font,Uint8List?logoUint8List}) {
     return [
       buildTitleText('تفاصيل الفاتورة', 20,
           font: font, weight: FontWeight.bold),

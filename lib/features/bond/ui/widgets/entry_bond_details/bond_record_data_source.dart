@@ -19,11 +19,12 @@ class BondDataGridSource extends DataGridSource {
       cells: row
           .getCells()
           .map<Widget>((dataGridCell) => Container(
+
                 alignment:
                     dataGridCell.columnName == AppConstants.rowBondDescription
                         ? Alignment.centerRight
                         : Alignment.center,
-                color: Colors.white,
+                color:/*row.getCells()[0].value .contains("فري زون") ? Colors.red.withValues(alpha: 0.2) :*/ Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   textAlign: TextAlign.right,

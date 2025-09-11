@@ -1,17 +1,23 @@
 import 'dart:developer';
-
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+import 'package:ba3_bs/core/models/date_filter.dart';
 import 'package:ba3_bs/core/router/app_routes.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
 import 'package:ba3_bs/features/accounts/use_cases/group_accounts_by_final_category_use_case.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/helper/mixin/app_navigator.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
+import '../../../core/network/api_constants.dart';
+import '../../../core/network/error/failure.dart';
 import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../bond/data/models/entry_bond_model.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
@@ -27,7 +33,7 @@ import '../use_cases/process_entry_bond_items_in_isolate_use_case.dart';
 class AccountStatementController extends GetxController with FloatingLauncher, AppNavigator {
 
   // Dependencies
-  final CompoundDatasourceRepository<EntryBondItems, AccountEntity>   _accountsStatementsRepo;
+  final CompoundDatasourceRepository<EntryBondItems, AccountEntity> _accountsStatementsRepo;
 
   final AccountsController _accountsController = read<AccountsController>();
 
@@ -40,9 +46,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   late final FilterEntryBondItemsByDateUseCase _filterEntryBondItemsByDateUseCase;
 
   late final FilterEntryBondItemsByAmountUseCase _filterEntryBondItemsByAmountUseCase;
-
   late final FilterEntryBondItemsByTypeUseCase _filterEntryBondItemsByTypeUseCase;
-
   late final FilterEntryBondItemsByBillTypesUseCase _filterEntryBondItemsByBillTypeUseCase;
 
   late final GroupAccountsByFinalCategoryUseCase _filterAccountsUseCase;
@@ -62,9 +66,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   // to filter based on BondItemModel's type
   var selectedType = "".obs;
 
-  // to filter based on  bill type (EntryBondItemModel's note)
+  // to filter based on bill type (EntryBondItemModel's note)
   final RxList<String> selectedBillTypes = <String>[].obs;
-
 
   // Data
   final List<EntryBondItemModel> entryBondItems = [];
@@ -101,7 +104,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     _filterEntryBondItemsByAmountUseCase = FilterEntryBondItemsByAmountUseCase();
     _filterEntryBondItemsByTypeUseCase = FilterEntryBondItemsByTypeUseCase();
     _filterEntryBondItemsByBillTypeUseCase = FilterEntryBondItemsByBillTypesUseCase();
-
   }
 
   /// Clears fields and resets state
@@ -111,6 +113,10 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     storeForSearchController.clear();
     startDateController.text = _accountStatementService.formattedFirstDay;
     endDateController.text = _accountStatementService.formattedToday;
+    minAmountController.clear();
+    maxAmountController.clear();
+    selectedType.value = "";
+    selectedBillTypes.clear();
 
     if (initialAccount != null) {
       accountNameController.text = initialAccount;
@@ -123,8 +129,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   void onAccountNameSubmitted(String text, BuildContext context) async {
     final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
 
-    AccountModel? accountModel =
-        await _accountsController.openAccountSelectionDialog(
+    AccountModel? accountModel = await _accountsController.openAccountSelectionDialog(
       query: convertArabicNumbers,
       context: context,
     );
@@ -143,17 +148,13 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   void onMinAmountSubmitted(String text) async {
     final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
-
     minAmountController.text = convertArabicNumbers;
-
     _validateMinMax();
   }
 
   void onMaxAmountSubmitted(String text) async {
     final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
-
     maxAmountController.text = convertArabicNumbers;
-
     _validateMinMax();
   }
 
@@ -174,13 +175,11 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   }
 
   void onBondItemTypeSubmitted(String? text) async {
-    if(text!=null)
-      {
-        final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
-        selectedType.value= convertArabicNumbers;
-      }
+    if (text != null) {
+      final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
+      selectedType.value = convertArabicNumbers;
+    }
   }
-
 
   void onBillTypeAdded(String type) {
     if (!selectedBillTypes.contains(type)) {
@@ -194,99 +193,80 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     debugPrint(selectedBillTypes.toString());
   }
 
-
-  Future<void> fetchFinalAccountsStatements(
-      FinalAccounts selectedFinalAccount) async {
+  Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
     final accountGroups = _filterAccountsUseCase.execute();
     final tradingAccounts = accountGroups[FinalAccounts.tradingAccount] ?? [];
-    final profitAndLossAccounts =
-        accountGroups[FinalAccounts.profitAndLoss] ?? [];
-    final balanceSheetAccounts =
-        accountGroups[FinalAccounts.balanceSheet] ?? [];
+    final profitAndLossAccounts = accountGroups[FinalAccounts.profitAndLoss] ?? [];
+    final balanceSheetAccounts = accountGroups[FinalAccounts.balanceSheet] ?? [];
 
     log('start', name: 'FetchFinalAccountsStatements');
 
     // Convert to AccountEntity format
-    final tradingEntities =
-        tradingAccounts.map(AccountEntity.fromAccountModel).toList();
+    final tradingEntities = tradingAccounts.map(AccountEntity.fromAccountModel).toList();
 
     // Fetch trading account statements first (used in multiple cases)
-    final tradingAccountResult = await fetchAccountsStatement(tradingEntities,);
+    final tradingAccountResult = await fetchAccountsStatement(tradingEntities);
     Map<AccountEntity, List<EntryBondItems>> result = {};
 
     if (selectedFinalAccount == FinalAccounts.tradingAccount) {
       result = tradingAccountResult;
     } else if (selectedFinalAccount == FinalAccounts.profitAndLoss) {
-      result = await _fetchAndProcessProfitAndLoss(
-          tradingAccountResult, profitAndLossAccounts);
+      result = await _fetchAndProcessProfitAndLoss(tradingAccountResult, profitAndLossAccounts);
     } else if (selectedFinalAccount == FinalAccounts.balanceSheet) {
-      result = await _fetchAndProcessBalanceSheet(
-          tradingAccountResult, profitAndLossAccounts, balanceSheetAccounts);
+      result = await _fetchAndProcessBalanceSheet(tradingAccountResult, profitAndLossAccounts, balanceSheetAccounts);
     }
 
     // Process results in an isolate for better performance
     final List<EntryBondItemModel> entryBondItems =
-        await processEntryBondItemsInIsolateUseCase
-            .execute(result.values.expand((list) => list).toList());
+    await processEntryBondItemsInIsolateUseCase.execute(result.values.expand((list) => list).toList());
     finalAccountsEntryBondItems.assignAll(entryBondItems);
 
     _calculateFinalAccountValues();
     log('finish', name: 'FetchFinalAccountsStatements');
   }
 
-  Future<Map<AccountEntity, List<EntryBondItems>>>
-      _fetchAndProcessProfitAndLoss(
-    Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
-    List<AccountModel> profitAndLossAccounts,
-  ) async {
+  Future<Map<AccountEntity, List<EntryBondItems>>> _fetchAndProcessProfitAndLoss(
+      Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
+      List<AccountModel> profitAndLossAccounts,
+      ) async {
     Map<AccountEntity, List<EntryBondItems>> result = {};
 
     // Merge trading account data
-    final mergedTradingItem =
-        _mergeEntryBondItemsUseCase.mergeTradingItems(tradingAccountResult);
+    final mergedTradingItem = _mergeEntryBondItemsUseCase.mergeTradingItems(tradingAccountResult);
     if (mergedTradingItem != null) {
-      result[AccountEntity(
-          id: FinalAccounts.tradingAccount.accPtr,
-          name: FinalAccounts.tradingAccount.accName)] = [
+      result[AccountEntity(id: FinalAccounts.tradingAccount.accPtr, name: FinalAccounts.tradingAccount.accName)] = [
         EntryBondItems(id: '', itemList: [mergedTradingItem])
       ];
     }
 
     // Fetch profit & loss statements
-    final profitLossEntities =
-        profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
-    final profitAndLossAccountResult =
-        await fetchAccountsStatement(profitLossEntities,);
+    final profitLossEntities = profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
+    final profitAndLossAccountResult = await fetchAccountsStatement(profitLossEntities);
     result.addAll(profitAndLossAccountResult);
 
     return result;
   }
 
   Future<Map<AccountEntity, List<EntryBondItems>>> _fetchAndProcessBalanceSheet(
-    Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
-    List<AccountModel> profitAndLossAccounts,
-    List<AccountModel> balanceSheetAccounts,
-  ) async {
+      Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
+      List<AccountModel> profitAndLossAccounts,
+      List<AccountModel> balanceSheetAccounts,
+      ) async {
     // Fetch profit & loss and balance sheet statements concurrently
-    final profitLossEntities =
-        profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
-    final balanceSheetEntities =
-        balanceSheetAccounts.map(AccountEntity.fromAccountModel).toList();
+    final profitLossEntities = profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
+    final balanceSheetEntities = balanceSheetAccounts.map(AccountEntity.fromAccountModel).toList();
 
     final results = await Future.wait([
-      fetchAccountsStatement(profitLossEntities,),
-      fetchAccountsStatement(balanceSheetEntities,),
+      fetchAccountsStatement(profitLossEntities),
+      fetchAccountsStatement(balanceSheetEntities),
     ]);
     final profitAndLossAccountResult = results[0];
     final balanceSheetAccountResult = results[1];
 
-    final mergedProfitLossItem = _mergeEntryBondItemsUseCase
-        .mergeProfitLossItems(tradingAccountResult, profitAndLossAccountResult);
+    final mergedProfitLossItem = _mergeEntryBondItemsUseCase.mergeProfitLossItems(tradingAccountResult, profitAndLossAccountResult);
     if (mergedProfitLossItem != null) {
       return {
-        AccountEntity(
-            id: FinalAccounts.tradingAccount.accPtr,
-            name: FinalAccounts.tradingAccount.accName): [
+        AccountEntity(id: FinalAccounts.tradingAccount.accPtr, name: FinalAccounts.tradingAccount.accName): [
           EntryBondItems(id: '', itemList: [mergedProfitLossItem])
         ]
       }..addAll(balanceSheetAccountResult);
@@ -295,59 +275,13 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     return balanceSheetAccountResult;
   }
 
-  // List<AccountModel> filterAccountsBySelectedFinalAccount(FinalAccounts selectedFinalAccount) {
-  //   final accountsController = read<AccountsController>().accounts;
-  //
-  //   List<AccountModel> accounts = [];
-  //
-  //   // Mapping FinalAccounts to the corresponding account lists
-  //   final Map<FinalAccounts, List<AccountModel>> accountGroups = {
-  //     FinalAccounts.tradingAccount: accountsController.where((account) => account.accFinalGuid == FinalAccounts.tradingAccount.accPtr).toList(),
-  //     FinalAccounts.profitAndLoss: accountsController.where((account) => account.accFinalGuid == FinalAccounts.profitAndLoss.accPtr).toList(),
-  //     FinalAccounts.balanceSheet: accountsController.where((account) => account.accFinalGuid == FinalAccounts.balanceSheet.accPtr).toList(),
-  //   };
-  //
-  //   if (selectedFinalAccount == FinalAccounts.tradingAccount) {
-  //     accounts = accountGroups[FinalAccounts.tradingAccount] ?? [];
-  //   } else if (selectedFinalAccount == FinalAccounts.profitAndLoss) {
-  //     accounts = [...?accountGroups[FinalAccounts.tradingAccount], ...?accountGroups[FinalAccounts.profitAndLoss]];
-  //   } else {
-  //     accounts = [
-  //       ...?accountGroups[FinalAccounts.tradingAccount],
-  //       ...?accountGroups[FinalAccounts.profitAndLoss],
-  //       ...?accountGroups[FinalAccounts.balanceSheet]
-  //     ];
-  //   }
-  //
-  //   return accounts;
-  // }
-  //
-  // Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
-  //   final finalAccounts = filterAccountsBySelectedFinalAccount(selectedFinalAccount);
-  //
-  //   log('start', name: 'fetchFinalAccountsStatements');
-  //
-  //   final Map<AccountEntity, List<EntryBondItems>> result =
-  //       await fetchAccountsStatement(finalAccounts.map((AccountModel acc) => AccountEntity.fromAccountModel(acc)).toList());
-  //
-  //   // Use an isolate for heavy computation
-  //   final List<EntryBondItemModel> entryBondItems = await _runInIsolate(result);
-  //
-  //   finalAccountsEntryBondItems.assignAll(entryBondItems);
-  //
-  //   _calculateFinalAccountValues();
-  //
-  //   log('finish', name: 'fetchFinalAccountsStatements');
-  // }
-
   // Fetch bond items for the selected account
-  Future<void> fetchAccountEntryBondItems() async {
-
+  Future<void> fetchAccountEntryBondItems(bool oldWay) async {
     debugPrint("Future<void> fetchAccountEntryBondItems() called");
     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
 
     if (accountModel == null) {
-      AppUIUtils.onFailure("يرجى إدخال اسم الحساب", );
+      AppUIUtils.onFailure("يرجى إدخال اسم الحساب");
       return;
     }
 
@@ -363,23 +297,72 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     debugPrint("accountEntities: ${accountEntities.length.toString()}");
 
     for (var account in accountEntities) {
-
       log(account.name, name: 'Account name');
+      late Either<Failure, List<EntryBondItems>> result;
 
-      final result = await _accountsStatementsRepo.getAll(account);
+      if (oldWay) {
+        result = await _accountsStatementsRepo.getAll(account);
+      } else {
+        result = await _accountsStatementsRepo.fetchWhere(
+            itemIdentifier: account,
+            dateFilter: DateFilter(
+                dateFieldName: ApiConstants.entryBondDateField,
+                range: DateTimeRange(start: startDateController.text.toStartDate, end: endDateController.text.toEndDate)));
+      }
+
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message),
-        (fetchedItems) {
-          entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
-          debugPrint("fetchedItems length:${fetchedItems.length}" );
+            (failure) => AppUIUtils.onFailure(
+          'لا يوجد حركات في ${account.name} خلال الفترة: ${startDateController.text} - ${endDateController.text} ',
+        ),
+            (fetchedItems) {
+          if (oldWay) {
+            entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
+            debugPrint("fetchedItems length:${fetchedItems.length}");
+
+
+          } else {
+            processEntryBondItemsAsync(fetchedItems.expand((item) => item.itemList).toList());
+          }
         },
       );
     }
 
-    debugPrint("entryBondItems length:$entryBondItems");
-
-    _filterAndCalculateValues();
+    _filterAndCalculateValues(oldWay);
     _setLoadingState(false);
+  }
+
+  processEntryBondItemsAsync(List<EntryBondItemModel> fetchedItems) {
+    log(fetchedItems.length.toString(), name: 'fetchedItems');
+    final List<EntryBondItemModel> helperList = [];
+
+    entryBondItems.addAll(fetchedItems.mergeBy<BondKey>(
+          (bondItem) => BondKey(bondItem.docId ?? '', bondItem.bondItemType?.label ?? ''),
+          (accumulated, current) {
+        return EntryBondItemModel(
+          account: current.account,
+          billTypeId: current.billTypeId,
+          amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
+          bondItemType: current.bondItemType,
+          date: current.date,
+          docId: current.docId,
+          note: "${current.note} + ${accumulated.note}",
+          originId: current.originId,
+          amountAfterOperation: 0,
+          originName: current.originName,
+        );
+      },
+    ));
+    double balance = 0.0;
+    entryBondItems.sortBy((bondItem) => bondItem.date!);
+    helperList.assignAll(entryBondItems);
+    entryBondItems.assignAll(helperList.map((e) {
+      if (e.bondItemType!.label == BondItemType.debtor.label) {
+        balance += e.amount!;
+      } else {
+        balance -= e.amount!;
+      }
+      return e.copyWith(amountAfterOperation: balance);
+    }));
   }
 
   void _setLoadingState(bool state) {
@@ -392,22 +375,24 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       return [AccountEntity.fromAccountModel(accountModel)];
     }
 
-    final accountChildren =
-        _accountsController.getAccountChildren(accountModel.id);
-    // log('Number of children: ${accountModel.accAccNSons}', name: 'accAccNSons');
-
+    final accountChildren = _accountsController.getAccountChildren(accountModel.id);
     return accountChildren.map(AccountEntity.fromAccountModel).toList();
   }
 
-  void _filterAndCalculateValues() {
-    //filter by date
-    var filtered = _filterEntryBondItemsByDateUseCase.execute(
+  void _filterAndCalculateValues(bool oldWay) {
+    List<EntryBondItemModel> filtered = oldWay
+        ? _filterEntryBondItemsByDateUseCase.execute(
       startDateController.text,
       endDateController.text,
       entryBondItems,
-    );
+    )
+        : entryBondItems;
 
-    //filter by amount
+    filtered.forEach((element) {
+      element.printDetails();
+    });
+
+    // Apply additional filters from my_version
     final minText = minAmountController.text.trim();
     final maxText = maxAmountController.text.trim();
 
@@ -420,25 +405,21 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       entryBondItems: filtered,
     );
 
-    //filter by type
+    // Filter by type
     if (selectedType.value.isNotEmpty) {
-        final type = BondItemType.byLabel(selectedType.value);
-        filtered = _filterEntryBondItemsByTypeUseCase.execute(type, filtered);
-
+      final type = BondItemType.byLabel(selectedType.value);
+      filtered = _filterEntryBondItemsByTypeUseCase.execute(type, filtered);
     }
 
-    if(selectedBillTypes.isNotEmpty)
-      {
-        debugPrint("in filltering $selectedBillTypes");
-        filtered = _filterEntryBondItemsByBillTypeUseCase.execute(selectedBillTypes, filtered);
-      }
-
+    // Filter by bill types
+    if (selectedBillTypes.isNotEmpty) {
+      debugPrint("in filtering $selectedBillTypes");
+      filtered = _filterEntryBondItemsByBillTypeUseCase.execute(selectedBillTypes, filtered);
+    }
 
     filteredEntryBondItems = filtered;
-
     _calculateValues();
   }
-
 
   Future<double> getAccountBalance(AccountModel accountModel) async {
     double balance = 0.0;
@@ -448,74 +429,63 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     final accountEntities = _getAccountEntities(accountModel);
 
     for (var account in accountEntities) {
-      // log(account.name, name: 'Account name');
-
       final result = await _accountsStatementsRepo.getAll(account);
       result.fold(
-        (failure) => AppUIUtils.onFailure(failure.message, ),
-        (fetchedItems) {
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedItems) {
           entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
         },
       );
     }
 
-    _filterAndCalculateValues();
+    _filterAndCalculateValues(true);
     balance = totalValue;
     return balance;
   }
 
-  Future<List<EntryBondItemModel>> fetchAccountStatement(
-      AccountEntity accountEntity,BuildContext context) async {
+  Future<List<EntryBondItemModel>> fetchAccountStatement(AccountEntity accountEntity, BuildContext context) async {
     debugPrint(" Future<List<EntryBondItemModel>> fetchAccountStatement called");
     final result = await _accountsStatementsRepo.getAll(accountEntity);
 
     return result.fold(
-      (failure) {
+          (failure) {
         AppUIUtils.onFailure(failure.message);
-        return []; // Return an empty list in case of failure
+        return [];
       },
-      (List<EntryBondItems> fetchedItems) => fetchedItems
-          .expand((item) => item.itemList)
-          .toList(), // Return fetched items on success
+          (List<EntryBondItems> fetchedItems) => fetchedItems.expand((item) => item.itemList).toList(),
     );
   }
 
-  Future<Map<AccountEntity, List<EntryBondItems>>> fetchAccountsStatement(
-
-      List<AccountEntity> accountEntities) async {
+  Future<Map<AccountEntity, List<EntryBondItems>>> fetchAccountsStatement(List<AccountEntity> accountEntities) async {
     debugPrint("Future<Map<AccountEntity, List<EntryBondItems>>> fetchAccountStatement called");
-    final result =
-        await _accountsStatementsRepo.fetchAllNested(accountEntities);
+    final result = await _accountsStatementsRepo.fetchAllNested(accountEntities);
 
     return result.fold(
-      (failure) {
-        AppUIUtils.onFailure(failure.message, );
+          (failure) {
+        AppUIUtils.onFailure(failure.message);
         return {};
       },
-      (Map<AccountEntity, List<EntryBondItems>> fetchedItems) => fetchedItems,
+          (Map<AccountEntity, List<EntryBondItems>> fetchedItems) => fetchedItems,
     );
   }
 
   /// Navigation handler
-  void navigateToAccountStatementScreen() =>
-      to(AppRoutes.accountStatementScreen);
+  void navigateToAccountStatementScreen(BuildContext context) {
+    launchFloatingWindow(context: context, floatingScreen: AccountStatementScreen());
+  }
 
   void navigateToFinalAccountDetails(FinalAccounts account) =>
       to(AppRoutes.finalAccountDetailsScreen, arguments: account);
 
   void _calculateAccountValues(List<EntryBondItemModel> items,
-      {required void Function(double) setTotal,
-      required void Function(double) setDebit,
-      required void Function(double) setCredit}) {
+      {required void Function(double) setTotal, required void Function(double) setDebit, required void Function(double) setCredit}) {
     if (items.isEmpty) {
       setTotal(0.0);
       setDebit(0.0);
       setCredit(0.0);
     } else {
-      double debit = _accountStatementService.calculateSum(
-          items: items, type: BondItemType.debtor);
-      double credit = _accountStatementService.calculateSum(
-          items: items, type: BondItemType.creditor);
+      double debit = _accountStatementService.calculateSum(items: items, type: BondItemType.debtor);
+      double credit = _accountStatementService.calculateSum(items: items, type: BondItemType.creditor);
       double total = debit - credit;
 
       setTotal(total);
@@ -548,10 +518,11 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   // Helper Methods
 
-  void launchBondEntryBondScreen(
-      {required BuildContext context, required String originId}) async {
-    EntryBondModel entryBondModel =
-        await read<EntryBondController>().getEntryBondById(entryId: originId,context: context );
+  void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
+    EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
+      entryId: originId,
+     // context: context,
+    );
 
     if (!context.mounted) return;
     launchFloatingWindow(
@@ -560,4 +531,530 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
+
+  void onRefresh() {
+    fetchAccountEntryBondItems(false);
+  }
 }
+
+class BondKey {
+  final String docId;
+  final String bondTypeLabel;
+
+  BondKey(this.docId, this.bondTypeLabel);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is BondKey && runtimeType == other.runtimeType && docId == other.docId && bondTypeLabel == other.bondTypeLabel;
+
+  @override
+  int get hashCode => docId.hashCode ^ bondTypeLabel.hashCode;
+}
+// import 'dart:developer';
+//
+// import 'package:ba3_bs/core/helper/enums/enums.dart';
+// import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+// import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+// import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
+// import 'package:ba3_bs/core/models/date_filter.dart';
+// import 'package:ba3_bs/core/router/app_routes.dart';
+// import 'package:ba3_bs/core/utils/app_ui_utils.dart';
+// import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
+// import 'package:ba3_bs/features/accounts/ui/screens/account_statement_screen.dart';
+// import 'package:ba3_bs/features/accounts/use_cases/group_accounts_by_final_category_use_case.dart';
+// import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
+// import 'package:dartz/dartz.dart';
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+//
+// import '../../../core/helper/mixin/app_navigator.dart';
+// import '../../../core/helper/mixin/floating_launcher.dart';
+// import '../../../core/network/api_constants.dart';
+// import '../../../core/network/error/failure.dart';
+// import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
+// import '../../bond/data/models/entry_bond_model.dart';
+// import '../../bond/ui/screens/entry_bond_details_screen.dart';
+// import '../data/models/account_model.dart';
+// import '../service/account_statement_service.dart';
+//
+// // import '../use_cases/filter_entry_bond_items_by_date_use_case.dart';
+// import '../use_cases/filter_entry_bond_items_by_date_use_case.dart';
+// import '../use_cases/merge_entry_bond_items_use_case.dart';
+// import '../use_cases/process_entry_bond_items_in_isolate_use_case.dart';
+//
+// class AccountStatementController extends GetxController with FloatingLauncher, AppNavigator {
+//   // Dependencies
+//   final CompoundDatasourceRepository<EntryBondItems, AccountEntity> _accountsStatementsRepo;
+//
+//   final AccountsController _accountsController = read<AccountsController>();
+//
+//   AccountStatementController(this._accountsStatementsRepo);
+//
+//   late final AccountStatementService _accountStatementService;
+//   late final MergeEntryBondItemsUseCase _mergeEntryBondItemsUseCase;
+//
+//   late final ProcessEntryBondItemsInIsolateUseCase processEntryBondItemsInIsolateUseCase;
+//
+//   late final FilterEntryBondItemsByDateUseCase _filterEntryBondItemsByDateUseCase;
+//   late final GroupAccountsByFinalCategoryUseCase _filterAccountsUseCase;
+//
+//   // Text Controllers
+//   final productForSearchController = TextEditingController();
+//   final groupForSearchController = TextEditingController();
+//   final accountNameController = TextEditingController();
+//   final storeForSearchController = TextEditingController();
+//   final startDateController = TextEditingController();
+//   final endDateController = TextEditingController();
+//
+//   // Data
+//   final List<EntryBondItemModel> entryBondItems = [];
+//   List<EntryBondItemModel> filteredEntryBondItems = [];
+//
+//   List<EntryBondItemModel> finalAccountsEntryBondItems = [];
+//
+//   // State variables
+//   bool isLoading = false;
+//
+//   double totalValue = 0.0;
+//   double debitValue = 0.0;
+//   double creditValue = 0.0;
+//
+//   double totalFinalAccountValue = 0.0;
+//   double debitFinalAccountValue = 0.0;
+//   double creditFinalAccountValue = 0.0;
+//
+//   RequestState fetchFinalAccountsStatementRequestState = RequestState.initial;
+//
+//   @override
+//   void onInit() {
+//     super.onInit();
+//     _initializeServices();
+//     resetFields();
+//   }
+//
+//   void _initializeServices() {
+//     _accountStatementService = AccountStatementService();
+//     _mergeEntryBondItemsUseCase = MergeEntryBondItemsUseCase(_accountStatementService);
+//     processEntryBondItemsInIsolateUseCase = ProcessEntryBondItemsInIsolateUseCase(_accountStatementService);
+//     _filterEntryBondItemsByDateUseCase = FilterEntryBondItemsByDateUseCase();
+//     _filterAccountsUseCase = GroupAccountsByFinalCategoryUseCase();
+//   }
+//
+//   /// Clears fields and resets state
+//   void resetFields({String? initialAccount}) {
+//     productForSearchController.clear();
+//     groupForSearchController.clear();
+//     storeForSearchController.clear();
+//     startDateController.text = _accountStatementService.formattedFirstDay;
+//     endDateController.text = _accountStatementService.formattedToday;
+//
+//     if (initialAccount != null) {
+//       accountNameController.text = initialAccount;
+//     } else {
+//       accountNameController.clear();
+//     }
+//   }
+//
+//   // Event Handlers
+//   void onAccountNameSubmitted(String text, BuildContext context) async {
+//     final convertArabicNumbers = AppUIUtils.convertArabicNumbers(text);
+//
+//     AccountModel? accountModel = await _accountsController.openAccountSelectionDialog(
+//       query: convertArabicNumbers,
+//       context: context,
+//     );
+//     if (accountModel != null) {
+//       accountNameController.text = accountModel.accName!;
+//     }
+//   }
+//
+//   void onStartDateSubmitted(String text) {
+//     startDateController.text = AppUIUtils.getDateFromString(text);
+//   }
+//
+//   void onEndDateSubmitted(String text) {
+//     endDateController.text = AppUIUtils.getDateFromString(text);
+//   }
+//
+//   Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
+//     final accountGroups = _filterAccountsUseCase.execute();
+//     final tradingAccounts = accountGroups[FinalAccounts.tradingAccount] ?? [];
+//     final profitAndLossAccounts = accountGroups[FinalAccounts.profitAndLoss] ?? [];
+//     final balanceSheetAccounts = accountGroups[FinalAccounts.balanceSheet] ?? [];
+//
+//     log('start', name: 'FetchFinalAccountsStatements');
+//
+//     // Convert to AccountEntity format
+//     final tradingEntities = tradingAccounts.map(AccountEntity.fromAccountModel).toList();
+//
+//     // Fetch trading account statements first (used in multiple cases)
+//     final tradingAccountResult = await fetchAccountsStatement(
+//       tradingEntities,
+//     );
+//     Map<AccountEntity, List<EntryBondItems>> result = {};
+//
+//     if (selectedFinalAccount == FinalAccounts.tradingAccount) {
+//       result = tradingAccountResult;
+//     } else if (selectedFinalAccount == FinalAccounts.profitAndLoss) {
+//       result = await _fetchAndProcessProfitAndLoss(tradingAccountResult, profitAndLossAccounts);
+//     } else if (selectedFinalAccount == FinalAccounts.balanceSheet) {
+//       result = await _fetchAndProcessBalanceSheet(tradingAccountResult, profitAndLossAccounts, balanceSheetAccounts);
+//     }
+//
+//     // Process results in an isolate for better performance
+//     final List<EntryBondItemModel> entryBondItems =
+//         await processEntryBondItemsInIsolateUseCase.execute(result.values.expand((list) => list).toList());
+//     finalAccountsEntryBondItems.assignAll(entryBondItems);
+//
+//     _calculateFinalAccountValues();
+//   }
+//
+//   Future<Map<AccountEntity, List<EntryBondItems>>> _fetchAndProcessProfitAndLoss(
+//     Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
+//     List<AccountModel> profitAndLossAccounts,
+//   ) async {
+//     Map<AccountEntity, List<EntryBondItems>> result = {};
+//
+//     // Merge trading account data
+//     final mergedTradingItem = _mergeEntryBondItemsUseCase.mergeTradingItems(tradingAccountResult);
+//     if (mergedTradingItem != null) {
+//       result[AccountEntity(id: FinalAccounts.tradingAccount.accPtr, name: FinalAccounts.tradingAccount.accName)] = [
+//         EntryBondItems(
+//           id: '',
+//           itemList: [mergedTradingItem],
+//         )
+//       ];
+//     }
+//
+//     // Fetch profit & loss statements
+//     final profitLossEntities = profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
+//     final profitAndLossAccountResult = await fetchAccountsStatement(
+//       profitLossEntities,
+//     );
+//     result.addAll(profitAndLossAccountResult);
+//
+//     return result;
+//   }
+//
+//   Future<Map<AccountEntity, List<EntryBondItems>>> _fetchAndProcessBalanceSheet(
+//     Map<AccountEntity, List<EntryBondItems>> tradingAccountResult,
+//     List<AccountModel> profitAndLossAccounts,
+//     List<AccountModel> balanceSheetAccounts,
+//   ) async {
+//     // Fetch profit & loss and balance sheet statements concurrently
+//     final profitLossEntities = profitAndLossAccounts.map(AccountEntity.fromAccountModel).toList();
+//     final balanceSheetEntities = balanceSheetAccounts.map(AccountEntity.fromAccountModel).toList();
+//
+//     final results = await Future.wait([
+//       fetchAccountsStatement(
+//         profitLossEntities,
+//       ),
+//       fetchAccountsStatement(
+//         balanceSheetEntities,
+//       ),
+//     ]);
+//     final profitAndLossAccountResult = results[0];
+//     final balanceSheetAccountResult = results[1];
+//
+//     final mergedProfitLossItem = _mergeEntryBondItemsUseCase.mergeProfitLossItems(tradingAccountResult, profitAndLossAccountResult);
+//     if (mergedProfitLossItem != null) {
+//       return {
+//         AccountEntity(id: FinalAccounts.tradingAccount.accPtr, name: FinalAccounts.tradingAccount.accName): [
+//           EntryBondItems(
+//             id: '',
+//             itemList: [mergedProfitLossItem],
+//           )
+//         ]
+//       }..addAll(balanceSheetAccountResult);
+//     }
+//
+//     return balanceSheetAccountResult;
+//   }
+//
+//   // List<AccountModel> filterAccountsBySelectedFinalAccount(FinalAccounts selectedFinalAccount) {
+//   //   final accountsController = read<AccountsController>().accounts;
+//   //
+//   //   List<AccountModel> accounts = [];
+//   //
+//   //   // Mapping FinalAccounts to the corresponding account lists
+//   //   final Map<FinalAccounts, List<AccountModel>> accountGroups = {
+//   //     FinalAccounts.tradingAccount: accountsController.where((account) => account.accFinalGuid == FinalAccounts.tradingAccount.accPtr).toList(),
+//   //     FinalAccounts.profitAndLoss: accountsController.where((account) => account.accFinalGuid == FinalAccounts.profitAndLoss.accPtr).toList(),
+//   //     FinalAccounts.balanceSheet: accountsController.where((account) => account.accFinalGuid == FinalAccounts.balanceSheet.accPtr).toList(),
+//   //   };
+//   //
+//   //   if (selectedFinalAccount == FinalAccounts.tradingAccount) {
+//   //     accounts = accountGroups[FinalAccounts.tradingAccount] ?? [];
+//   //   } else if (selectedFinalAccount == FinalAccounts.profitAndLoss) {
+//   //     accounts = [...?accountGroups[FinalAccounts.tradingAccount], ...?accountGroups[FinalAccounts.profitAndLoss]];
+//   //   } else {
+//   //     accounts = [
+//   //       ...?accountGroups[FinalAccounts.tradingAccount],
+//   //       ...?accountGroups[FinalAccounts.profitAndLoss],
+//   //       ...?accountGroups[FinalAccounts.balanceSheet]
+//   //     ];
+//   //   }
+//   //
+//   //   return accounts;
+//   // }
+//   //
+//   // Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
+//   //   final finalAccounts = filterAccountsBySelectedFinalAccount(selectedFinalAccount);
+//   //
+//   //   log('start', name: 'fetchFinalAccountsStatements');
+//   //
+//   //   final Map<AccountEntity, List<EntryBondItems>> result =
+//   //       await fetchAccountsStatement(finalAccounts.map((AccountModel acc) => AccountEntity.fromAccountModel(acc)).toList());
+//   //
+//   //   // Use an isolate for heavy computation
+//   //   final List<EntryBondItemModel> entryBondItems = await _runInIsolate(result);
+//   //
+//   //   finalAccountsEntryBondItems.assignAll(entryBondItems);
+//   //
+//   //   _calculateFinalAccountValues();
+//   //
+//   //   log('finish', name: 'fetchFinalAccountsStatements');
+//   // }
+//
+//   // Fetch bond items for the selected account
+//
+//   Future<void> fetchAccountEntryBondItems(bool oldWay) async {
+//     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
+//
+//     if (accountModel == null) {
+//       AppUIUtils.onFailure(
+//         "يرجى إدخال اسم الحساب",
+//       );
+//       return;
+//     }
+//
+//     _setLoadingState(true);
+//
+//     // Clear previous items before fetching new ones
+//     entryBondItems.clear();
+//
+//     final accountEntities = _getAccountEntities(accountModel);
+//
+//     for (var account in accountEntities) {
+//       log(account.name, name: 'Account name');
+//       late Either<Failure, List<EntryBondItems>> result;
+//       if (oldWay) {
+//         result = await _accountsStatementsRepo.getAll(account);
+//       } else {
+//         result = await _accountsStatementsRepo.fetchWhere(
+//             itemIdentifier: account,
+//             dateFilter: DateFilter(
+//                 dateFieldName: ApiConstants.entryBondDateField,
+//                 range: DateTimeRange(start: startDateController.text.toStartDate, end: endDateController.text.toEndDate)));
+//       }
+//
+//       result.fold(
+//         (failure) => AppUIUtils.onFailure(
+//           'لا يوجد حركات في ${account.name} خلال الفترة: ${startDateController.text} - ${endDateController.text} ',
+//         ),
+//         (fetchedItems) {
+//           processEntryBondItemsAsync(fetchedItems.expand((item) => item.itemList).toList());
+//         },
+//       );
+//     }
+//
+//     _filterAndCalculateValues(oldWay);
+//     _setLoadingState(false);
+//   }
+//
+//   processEntryBondItemsAsync(List<EntryBondItemModel> fetchedItems) {
+//     log(fetchedItems.length.toString(), name: 'fetchedItems');
+//     final List<EntryBondItemModel> helperList = [];
+//
+//     entryBondItems.addAll(fetchedItems.mergeBy<BondKey>(
+//       (bondItem) => BondKey(bondItem.docId ?? '', bondItem.bondItemType?.label ?? ''),
+//       (accumulated, current) {
+//         return EntryBondItemModel(
+//           account: current.account,
+//           amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
+//           bondItemType: current.bondItemType,
+//           date: current.date,
+//           docId: current.docId,
+//           note: "${current.note} + ${accumulated.note}",
+//           originId: current.originId,
+//           amountAfterOperation: 0,
+//           originName: current.originName,
+//         );
+//       },
+//     ));
+//     double balance = 0.0;
+//     entryBondItems.sortBy((bondItem) => bondItem.date!);
+//     helperList.assignAll(entryBondItems);
+//     entryBondItems.assignAll(helperList.map((e) {
+//       if (e.bondItemType!.label == BondItemType.debtor.label) {
+//         balance += e.amount!;
+//       } else {
+//         balance -= e.amount!;
+//       }
+//       return e.copyWith(amountAfterOperation: balance);
+//     }));
+//   }
+//
+//   void _setLoadingState(bool state) {
+//     isLoading = state;
+//     update();
+//   }
+//
+//   List<AccountEntity> _getAccountEntities(AccountModel accountModel) {
+//     if (accountModel.accAccNSons == 0) {
+//       return [AccountEntity.fromAccountModel(accountModel)];
+//     }
+//
+//     final accountChildren = _accountsController.getAccountChildren(accountModel.id);
+//     // log('Number of children: ${accountModel.accAccNSons}', name: 'accAccNSons');
+//
+//     return accountChildren.map(AccountEntity.fromAccountModel).toList();
+//   }
+//
+//   void _filterAndCalculateValues(bool oldWay) {
+//     if(oldWay){
+//       filteredEntryBondItems = _filterEntryBondItemsByDateUseCase.execute(
+//         startDateController.text,
+//         endDateController.text,
+//         entryBondItems,
+//       );
+//     }else{
+//       filteredEntryBondItems = entryBondItems;
+//
+//     }
+//
+//     _calculateValues();
+//   }
+//
+//   Future<double> getAccountBalance(AccountModel accountModel) async {
+//     double balance = 0.0;
+//     // Clear previous items before fetching new ones
+//     entryBondItems.clear();
+//
+//     final accountEntities = _getAccountEntities(accountModel);
+//
+//     for (var account in accountEntities) {
+//       // log(account.name, name: 'Account name');
+//
+//       final result = await _accountsStatementsRepo.getAll(account);
+//       result.fold(
+//         (failure) => AppUIUtils.onFailure(
+//           failure.message,
+//         ),
+//         (fetchedItems) {
+//           entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
+//         },
+//       );
+//     }
+//
+//     _filterAndCalculateValues(true);
+//     balance = totalValue;
+//     return balance;
+//   }
+//
+//   Future<List<EntryBondItemModel>> fetchAccountStatement(AccountEntity accountEntity) async {
+//     final result = await _accountsStatementsRepo.getAll(accountEntity);
+//
+//     return result.fold(
+//       (failure) {
+//         AppUIUtils.onFailure(failure.message);
+//         return []; // Return an empty list in case of failure
+//       },
+//       (List<EntryBondItems> fetchedItems) => fetchedItems.expand((item) => item.itemList).toList(), // Return fetched items on success
+//     );
+//   }
+//
+//   Future<Map<AccountEntity, List<EntryBondItems>>> fetchAccountsStatement(List<AccountEntity> accountEntities) async {
+//     final result = await _accountsStatementsRepo.fetchAllNested(accountEntities);
+//
+//     return result.fold(
+//       (failure) {
+//         AppUIUtils.onFailure(
+//           failure.message,
+//         );
+//         return {};
+//       },
+//       (Map<AccountEntity, List<EntryBondItems>> fetchedItems) => fetchedItems,
+//     );
+//   }
+//
+//   /// Navigation handler
+//   void navigateToAccountStatementScreen(BuildContext context) {
+//     launchFloatingWindow(context: context, floatingScreen: AccountStatementScreen());
+//   }
+//
+//   void navigateToFinalAccountDetails(FinalAccounts account) => to(AppRoutes.finalAccountDetailsScreen, arguments: account);
+//
+//   void _calculateAccountValues(List<EntryBondItemModel> items,
+//       {required void Function(double) setTotal, required void Function(double) setDebit, required void Function(double) setCredit}) {
+//     if (items.isEmpty) {
+//       setTotal(0.0);
+//       setDebit(0.0);
+//       setCredit(0.0);
+//     } else {
+//       double debit = _accountStatementService.calculateSum(items: items, type: BondItemType.debtor);
+//       double credit = _accountStatementService.calculateSum(items: items, type: BondItemType.creditor);
+//       double total = debit - credit;
+//
+//       setTotal(total);
+//       setDebit(debit);
+//       setCredit(credit);
+//     }
+//   }
+//
+//   void _calculateFinalAccountValues() {
+//     _calculateAccountValues(
+//       finalAccountsEntryBondItems,
+//       setTotal: (value) => totalFinalAccountValue = value,
+//       setDebit: (value) => debitFinalAccountValue = value,
+//       setCredit: (value) => creditFinalAccountValue = value,
+//     );
+//   }
+//
+//   /// Calculates debit, credit, and total values
+//   void _calculateValues() {
+//     _calculateAccountValues(
+//       filteredEntryBondItems,
+//       setTotal: (value) => totalValue = value,
+//       setDebit: (value) => debitValue = value,
+//       setCredit: (value) => creditValue = value,
+//     );
+//   }
+//
+//   String get screenTitle => 'حركات ${accountNameController.text} من تاريخ ${startDateController.text} إلى تاريخ ${endDateController.text}';
+//
+//   // Helper Methods
+//
+//   void launchBondEntryBondScreen({required BuildContext context, required String originId}) async {
+//     EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
+//       entryId: originId,
+//     );
+//
+//     if (!context.mounted) return;
+//     launchFloatingWindow(
+//       context: context,
+//       minimizedTitle: 'سند خاص ب ${entryBondModel.origin!.originType!.label}',
+//       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
+//     );
+//   }
+//
+//   void onRefresh() {
+//     fetchAccountEntryBondItems(false);
+//   }
+// }
+//
+// class BondKey {
+//   final String docId;
+//   final String bondTypeLabel;
+//
+//   BondKey(this.docId, this.bondTypeLabel);
+//
+//   @override
+//   bool operator ==(Object other) =>
+//       identical(this, other) ||
+//       other is BondKey && runtimeType == other.runtimeType && docId == other.docId && bondTypeLabel == other.bondTypeLabel;
+//
+//   @override
+//   int get hashCode => docId.hashCode ^ bondTypeLabel.hashCode;
+// }

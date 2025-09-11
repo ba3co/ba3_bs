@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 
 import '../../../../models/date_filter.dart';
 import '../../../../network/error/error_handler.dart';
@@ -85,10 +84,8 @@ class CompoundDatasourceRepository<T, I> {
   }
 
   Future<Either<Failure, List<T>>> getAll(I itemIdentifier) async {
-    debugPrint(itemIdentifier.toString());
     try {
       final items = await _dataSource.fetchAll(itemIdentifier: itemIdentifier);
-      debugPrint("inside compound datasource repo inside fetch all and the items are ${items.length}");
       return Right(items); // Return list of items
     } catch (e, stackTrace) {
       log('Error in getAll: $e',

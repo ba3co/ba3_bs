@@ -33,6 +33,7 @@ class BondDetailsHeader extends StatelessWidget {
                   label: AppStrings.bondDate.tr,
                   child: Obx(() {
                     return DatePicker(
+                      canEditeDate: false,
                       initDate: bondDetailsController.bondDate.value,
                       onDateSelected: bondDetailsController.setBondDate,
                     );

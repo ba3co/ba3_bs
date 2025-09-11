@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -448,5 +450,18 @@ class AppServiceUtils {
     return int.tryParse(AppServiceUtils.replaceArabicNumbersWithEnglish(
             value.toString())) ??
         0;
+  }
+  static bool isRoughlyEqual(double a, double b, [double precision = 0.01]) {
+    log(((a - b).abs()).toString(), name: 'AppServiceUtils.isRoughlyEqual');
+    return (a - b).abs() < precision;
+  }
+  static double truncateToTwoDecimals(double value) {
+    String decimalPart = value.toStringAsFixed(10).split('.')[1].substring(0, 2);
+    return double.parse('${value.floor()}.$decimalPart');
+  }
+
+  static bool isFriday() {
+    // في Dart: 5 = Friday
+    return DateTime.now().weekday == DateTime.friday;
   }
 }

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../../features/bond/data/models/entry_bond_model.dart';
 import '../../../helper/enums/enums.dart';
 import '../interfaces/entry_bond_creator.dart';
@@ -7,15 +9,19 @@ abstract class BaseEntryBondCreator<T> implements EntryBondCreator<T> {
   EntryBondModel createEntryBond({
     required EntryBondType originType,
     required T model,
+    required DateTime entryBondDate,
     bool? isSimulatedVat,
-  }) =>
-      EntryBondModel(
+  }) {
+    debugPrint("createEntryBond called ");
+    return EntryBondModel(
         origin: createOrigin(model: model, originType: originType),
+        entryBondDate:entryBondDate ,
         items: EntryBondItems(
           id: getModelId(model),
           itemList: generateItems(model: model, isSimulatedVat: isSimulatedVat),
         ),
       );
+  }
 
   EntryBondOrigin createOrigin(
       {required T model, required EntryBondType originType});

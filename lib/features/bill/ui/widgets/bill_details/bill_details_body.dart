@@ -7,6 +7,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/get_accounts_by_enter_action.dart';
 import '../../../../../core/widgets/get_products_by_enter_action.dart';
+import '../../../../../core/widgets/pluto_grid_without_app_bar_.dart';
 import '../../../../../core/widgets/pluto_short_cut.dart';
 import '../../../../../core/widgets/pluto_with_edite.dart';
 import '../../../../patterns/data/models/bill_type_model.dart';
@@ -39,27 +40,26 @@ class BillDetailsBody extends StatelessWidget {
               child: GetBuilder<BillDetailsPlutoController>(
                   tag: tag,
                   builder: (_) {
-                    return FocusScope(
-                      autofocus: true,
-                      child: PlutoWithEdite(
-                        columns: billDetailsPlutoController.recordsTableColumns,
-                        rows: billDetailsPlutoController.recordsTableRows,
-                        onRowSecondaryTap:
-                            (PlutoGridOnRowSecondaryTapEvent event) {
-                          billDetailsPlutoController.onMainTableRowSecondaryTap(
-                              event,
-                              context,
-                              (billDetailsController.selectedCustomerAccount));
-                        },
-                        onChanged: (event) => billDetailsPlutoController
-                            .onMainTableStateManagerChanged(event,
-                                billDetailsController.selectedCustomerAccount),
-                        onLoaded: billDetailsPlutoController.onMainTableLoaded,
-                        shortCut: customPlutoShortcut(GetProductByEnterAction(
-                            billDetailsPlutoController, context)),
-                        evenRowColor: Color(billTypeModel.color!),
-                      ),
-                    );
+                    return billDetailsController.viewBillItemWithTax
+                        ? PlutoGridWithoutAppBar(
+                            onLoaded: (p0) {}, onSelected: (p0) {}, tableSourceModels: billDetailsController.productsWithTax)
+                        : FocusScope(
+                            autofocus: true,
+                            child: PlutoWithEdite(
+                              columns: billDetailsPlutoController.recordsTableColumns,
+                              rows: billDetailsPlutoController.recordsTableRows,
+                              // rowColorCallback: billDetailsPlutoController.rowColorCallback,
+                              onRowSecondaryTap: (PlutoGridOnRowSecondaryTapEvent event) {
+                                billDetailsPlutoController.onMainTableRowSecondaryTap(
+                                    event, context, (billDetailsController.selectedCustomerAccount));
+                              },
+                              onChanged: (event) => billDetailsPlutoController.onMainTableStateManagerChanged(
+                                  event, billDetailsController.selectedCustomerAccount),
+                              onLoaded: billDetailsPlutoController.onMainTableLoaded,
+                              shortCut: customPlutoShortcut(GetProductByEnterAction(billDetailsPlutoController, context)),
+                              evenRowColor: Color(billTypeModel.color!),
+                            ),
+                          );
                   }),
             ),
           ),
@@ -72,13 +72,10 @@ class BillDetailsBody extends StatelessWidget {
                   builder: (_) {
                     return BillGridWidget(
                       rowColor: Colors.grey,
-                      columns:
-                          billDetailsPlutoController.additionsDiscountsColumns,
+                      columns: billDetailsPlutoController.additionsDiscountsColumns,
                       rows: billDetailsPlutoController.additionsDiscountsRows,
-                      onChanged: billDetailsPlutoController
-                          .onAdditionsDiscountsChanged,
-                      onLoaded:
-                          billDetailsPlutoController.onAdditionsDiscountsLoaded,
+                      onChanged: billDetailsPlutoController.onAdditionsDiscountsChanged,
+                      onLoaded: billDetailsPlutoController.onAdditionsDiscountsLoaded,
                       shortCut: customPlutoShortcut(GetAccountsByEnterAction(
                         plutoController: billDetailsPlutoController,
                         textFieldName: AppConstants.id,

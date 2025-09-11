@@ -87,10 +87,20 @@ class UserManagementController extends GetxController
     userNavigator = UserNavigator(roleFormHandler, _sharedPreferencesService);
   }
 
-  List<UserModel> get nonLoggedInUsers => allUsers
-      .where((user) => user.userId != loggedInUserModel?.userId)
+  List<UserModel> get nonLoggedInUsers => allUsers.where((user)=>allUserIdsForChanges.contains(user.userId))
+      .where((user) => user.userId != loggedInUserModel?.userId )
       .toList();
 
+
+  List<String> get allUserIdsForChanges =>[
+    '0b0f8c5f-0dd0-4d58-a82f-c441476ab053',
+    '3436769b-9ad9-4936-b217-6e8b0a7f7145',
+    '3436769b-9ad9-4936-b217-6e8b0a7f7145',
+    'cd88433b-5485-4dee-9596-8bae3c40e167',
+    'fsCwYRtgG1SiTSJDfXXy',
+    'kTnpg7ePEAjERvWzt6VQ',
+    'xti265VhXe2DLVdeTgOR',
+  ];
   List<UserTaskModel> get allTaskList =>
       loggedInUserModel?.userTaskList
           ?.where((element) => !element.status.isFinished)
@@ -218,6 +228,7 @@ class UserManagementController extends GetxController
 
   void updatePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
+    update();
   }
 
 // Handle success when fetching the user
@@ -356,7 +367,7 @@ class UserManagementController extends GetxController
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message, ),
       (success) {
-        AppUIUtils.onSuccess('تم الحفظ بنجاح',);
+        AppUIUtils.onSuccess('تم حفظ او تعديل الدور بنجاح',);
         getAllRoles();
       },
     );
@@ -374,7 +385,7 @@ class UserManagementController extends GetxController
     super.onClose();
   }
 
-  refreshLoggedInUser(BuildContext context) async {
+  refreshLoggedInUser() async {
     final result = await _usersFirebaseRepo.getById(loggedInUserModel!.userId!);
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message, ),
@@ -448,6 +459,8 @@ class UserManagementController extends GetxController
 
   XFile? image;
   final ImagePicker _picker = ImagePicker();
+
+  bool  visiblePassword = false;
 
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -525,4 +538,6 @@ class UserManagementController extends GetxController
   UserModel? getUserBySellerId(String sellerId) {
     return allUsers.firstWhereOrNull((user) => user.userSellerId == sellerId);
   }
+
+
 }

@@ -2,27 +2,35 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/dialogs/search_material_group_text_dialog.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/helper/validators/app_validator.dart';
 import '../../../core/utils/app_service_utils.dart';
+import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/user_model.dart';
 
 class UserFormHandler with AppValidator {
   UserDetailsController get userDetailsController =>
       read<UserDetailsController>();
 
+
+
   final formKey = GlobalKey<FormState>();
   final userNameController = TextEditingController();
+  final userSalaryController = TextEditingController();
+  final groupForTargetController = TextEditingController();
   final passController = TextEditingController();
 
   RxnString selectedSellerId = RxnString();
   RxnString selectedRoleId = RxnString();
 
+  MaterialGroupModel? selectedMaterialGroup;
   Rx<bool> get isUserActive =>
       userActiveStatus.value == UserActiveStatus.active ? true.obs : false.obs;
   Rx<UserActiveStatus> userActiveStatus = UserActiveStatus.active.obs;
@@ -35,9 +43,11 @@ class UserFormHandler with AppValidator {
       selectedRoleId.value = user.userRoleId!;
 
       userNameController.text = user.userName ?? '';
+      groupForTargetController.text = user.groupForTarget?.groupName ?? '';
       passController.text = user.userPassword ?? '';
+      userSalaryController.text = user.userSalary ?? '';
       userActiveStatus.value = user.userActiveStatus!;
-
+      selectedMaterialGroup=user.groupForTarget;
       userDetailsController.workingHours = user.userWorkingHours ?? {};
       userDetailsController.holidays = user.userHolidays?.toSet() ?? {};
       log(isUserActive.toString());
@@ -46,6 +56,7 @@ class UserFormHandler with AppValidator {
 
       selectedSellerId.value = null;
       selectedRoleId.value = null;
+      selectedMaterialGroup=null;
       userActiveStatus.value = UserActiveStatus.active;
       userDetailsController.workingHours = {};
       userDetailsController.holidays = {};
@@ -57,6 +68,8 @@ class UserFormHandler with AppValidator {
   void clear() {
     userNameController.clear();
     passController.clear();
+    groupForTargetController .clear();
+    userSalaryController .clear();
   }
 
   bool validate() => formKey.currentState?.validate() ?? false;
@@ -162,4 +175,21 @@ class UserFormHandler with AppValidator {
           []);
 
   int get userTimeAtMonthLength => userTimeModelAtMonth.length;
+
+  void openMaterialGroupSelectionDialog({
+    required String query,
+    required BuildContext context,
+  }) async {
+    selectedMaterialGroup = await searchProductGroupTextDialog(query, context);
+
+    if (selectedMaterialGroup != null) {
+      groupForTargetController.text = selectedMaterialGroup!.groupName.toString();
+    } else {
+      groupForTargetController.clear();
+      AppUIUtils.onFailure(
+        'لم يتم العثور على المجموعة',
+      );
+    }
+    userDetailsController. update();
+  }
 }

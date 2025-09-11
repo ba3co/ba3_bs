@@ -1,7 +1,10 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
+import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import 'package:ba3_bs/features/dashboard/controller/cheques_timeline_controller.dart';
 import 'package:ba3_bs/features/dashboard/controller/seller_dashboard_controller.dart';
 import 'package:ba3_bs/features/dashboard/ui/widgets/seller_sale_chart/all_sellers_sales_board.dart';
@@ -105,6 +108,25 @@ class DashBoardLayout extends StatelessWidget {
           ),
         );
       }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          read<EntryBondController>().fetchAllAccountStatementAndAddDateToEntryBondModel();
+
+          /*
+             final window = await DesktopMultiWindow.createWindow(jsonEncode({
+            'screenName': AppRoutes.showAllAccountsScreen,
+          }));
+          window
+            ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+            ..center()
+            ..setTitle('Another window')
+            ..show();*/
+        },
+        child: const Icon(
+          Icons.refresh,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

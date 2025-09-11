@@ -53,7 +53,10 @@ class ChangesController extends GetxController {
     result.fold(
       (failure) =>
           AppUIUtils.onFailure('فشل في حفظ التغيير: ${failure.message}', ),
-      (success) => AppUIUtils.onSuccess('تم حفظ التغيير بنجاح', ),
+      (success) {
+        log('تم حفظ التغيير بنجاح');
+        // return AppUIUtils.onSuccess(, );
+      },
     );
   }
 
@@ -108,7 +111,7 @@ class ChangesController extends GetxController {
       // After processing all items, call saveMaterials and deleteMaterials to handle both
       saveMaterials(materialsToSave,Get.context);
       deleteMaterials(materialsToDelete,);
-      updateMaterials(materialsToUpdate,Get.context);
+      updateMaterials(materialsToUpdate,Get.context,false);
 
       deleteChanges(change,);
     } catch (e, stack) {
@@ -175,16 +178,16 @@ class ChangesController extends GetxController {
     if (materialsToSave.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController.saveAllMaterialOnLocal(
-          materialsToSave,); // Save all materials at once
+          materialsToSave,false); // Save all materials at once
     }
   }
 
   /// Saves the materials after all change items have been processed.
-  void updateMaterials(List<MaterialModel> materialsToUpdate,BuildContext? context) {
+  void updateMaterials(List<MaterialModel> materialsToUpdate,BuildContext? context,bool withPrint) {
     if (materialsToUpdate.isNotEmpty) {
       final materialController = read<MaterialController>();
       materialController
-          .updateAllMaterial(materialsToUpdate,); // Save all materials at once
+          .updateAllMaterial(materialsToUpdate,withPrint: withPrint); // Save all materials at once
     }
   }
 

@@ -1,7 +1,15 @@
+import 'package:hive/hive.dart';
+
 import '../../../accounts/data/models/account_model.dart';
 
+part 'discount_addition_account_model.g.dart';
+
+@HiveType(typeId: 11)
 class DiscountAdditionAccountModel extends AccountModel {
+  @HiveField(26)
   double amount; // Add amount for discount/addition
+
+  @HiveField(27)
   double percentage; // Add percentage for discount/addition
 
   DiscountAdditionAccountModel({

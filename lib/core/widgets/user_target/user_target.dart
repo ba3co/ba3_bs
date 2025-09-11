@@ -62,6 +62,25 @@ class UserTargets extends StatelessWidget {
                       )),
                 ],
               ),
+              if(salesController.loggedInUserModel!.groupForTarget!=null)
+              Column(
+                spacing: 10,
+                children: [
+                  Text(
+                    AppStrings.groupForTarget.tr,
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  SizedBox(
+                      width: 1.sw,
+                      height: height ?? 400,
+                      child: TargetPointerWidget(
+                        maxValue: 60000,
+                        midValue: 45000,
+                        minValue: 30000,
+                        value: salesController.totalGroupSales,
+                      )),
+                ],
+              ),
             ],
           ),
         ],

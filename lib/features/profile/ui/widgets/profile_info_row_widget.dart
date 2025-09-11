@@ -9,6 +9,7 @@ class ProfileInfoRowWidget extends StatelessWidget {
   final TextStyle? labelStyle;
   final TextStyle? valueStyle;
   final double width;
+  final Widget? icon;
 
   const ProfileInfoRowWidget({
     super.key,
@@ -17,6 +18,7 @@ class ProfileInfoRowWidget extends StatelessWidget {
     this.labelStyle,
     this.valueStyle,
     this.width = 50,
+    this.icon
   });
 
   @override
@@ -26,24 +28,33 @@ class ProfileInfoRowWidget extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(8)),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
-            width: width.w,
-            child: Text(
-              '$label :',
-              style: labelStyle ?? AppTextStyles.headLineStyle2,
-              textAlign: TextAlign.start,
-            ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(
+                width: width.w,
+                child: Text(
+                  '$label :',
+                  style: labelStyle ?? AppTextStyles.headLineStyle2,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              SizedBox(
+                width: width.w,
+                child: Text(
+                  value,
+                  style: valueStyle ?? AppTextStyles.headLineStyle2,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+
+            ],
           ),
-          SizedBox(
-            width: width.w,
-            child: Text(
-              value,
-              style: valueStyle ?? AppTextStyles.headLineStyle2,
-              textAlign: TextAlign.start,
-            ),
-          ),
+          Spacer(),
+          if(icon!=null)
+            icon!
         ],
       ),
     );

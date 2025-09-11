@@ -47,10 +47,7 @@ class EInvoiceDialogContent extends StatelessWidget {
                   hintText: "Enter email",
                 ),
                 onSubmitted: (recipientEmail) {
-                  // billController.sendToEmail(
-                  //   recipientEmail: recipientEmail,
-                  //   url: url,
-                  // );
+
 
                   billDetailsController.generateAndSendBillPdfToEmail(billModel,context,
                       recipientEmail: recipientEmail);

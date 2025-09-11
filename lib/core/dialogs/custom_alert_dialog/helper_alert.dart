@@ -18,6 +18,9 @@ class HelperAlert {
       type: CustomAlertType.success,
       title: title ?? AppStrings.success.tr,
       text: text,
+      onConfirmBtnTap: () {
+        CustomAlertDialog.hideAll();
+      },
     );
   }
 
@@ -31,6 +34,7 @@ class HelperAlert {
       type: CustomAlertType.error,
       title: title ?? AppStrings.error.tr,
       text: text,
+
     );
   }
 
@@ -48,7 +52,6 @@ class HelperAlert {
   }
 
   static void showInfo({
-    required BuildContext context,
     required String text,
     String? title,
   }) {

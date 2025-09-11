@@ -14,7 +14,9 @@ import '../../../../core/services/entry_bond_creator/implementations/entry_bonds
 import '../../../../core/services/json_file_operations/implementations/import_export_repo.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../../core/utils/app_ui_utils.dart';
+import '../../../bill/services/bill/bills_count_service.dart';
 import '../../data/models/cheques_model.dart';
+import '../../service/cheques_local_storage_service.dart';
 import '../../service/cheques_utils.dart';
 import '../../service/floating_cheques_details_launcher.dart';
 import '../../ui/screens/cheques_details.dart';
@@ -29,16 +31,20 @@ class AllChequesController extends FloatingChequesDetailsLauncher
 
   late bool isDebitOrCredit;
   List<ChequesModel> chequesList = [];
+  Map<ChequesType, List<ChequesModel>> nestedCheques = {};
+
   bool isLoading = true;
 
   AllChequesController(this._chequesFirebaseRepo, this._jsonImportExportRepo);
 
   // Services
   late final ChequesUtils _chequesUtils;
+  late final ChequesLocalStorageService _chequesLocalStorageService;
 
   // Initializer
   void _initializeServices() {
     _chequesUtils = ChequesUtils();
+    _chequesLocalStorageService=ChequesLocalStorageService();
   }
 
   @override
@@ -47,7 +53,48 @@ class AllChequesController extends FloatingChequesDetailsLauncher
     _initializeServices();
 
     fetchAllChequesByType(ChequesType.paidChecks,);
+    saveAllChequesIfConnected();
     // getAllChequesTypes();
+  }
+
+  Future<void> saveAllChequesIfConnected() async {
+    final hasData = await _chequesLocalStorageService.hasData();
+    log('hasData $hasData');
+    if (hasData) return;
+
+    // Check if the device is connected to the internet
+    final hasConnection = await hasInternetConnection();
+
+    // If connected, proceed to save the cheques to Firebase
+    if (hasConnection) {
+      try {
+        await fetchAllNestedCheques();
+        // Save cheques locally
+        await _chequesLocalStorageService.saveNestedCheques(nestedCheques);
+
+        AppUIUtils.onSuccess('Cheques saved locally.');
+      } catch (e) {
+        AppUIUtils.onFailure('An error occurred while saving cheques locally: $e');
+      }
+    }
+  }
+  Future<void> fetchAllNestedCheques() async {
+    // getAllNestedBondsRequestState.value = RequestState.loading;
+
+    final result = await _chequesFirebaseRepo.fetchAllNested(ChequesType.values);
+
+    result.fold(
+          (failure) => AppUIUtils.onFailure(failure.message, ),
+          (fetchedNestedBonds) => nestedCheques.assignAll(fetchedNestedBonds),
+    );
+
+
+
+
+
+    log("allNestedBonds is ${nestedCheques.length}");
+
+    // getAllNestedBondsRequestState.value = RequestState.success;
   }
 
   ChequesModel getChequesById(String chequesId) =>
@@ -238,11 +285,11 @@ class AllChequesController extends FloatingChequesDetailsLauncher
     return chequesModel;
   }
 
-/*  generateEntryBondsFromAllBonds({required List<ChequesModel> cheques}) {
-    final entryBonds = generateEntryBonds(cheques);
+/*  generateEntryChequessFromAllChequess({required List<ChequesModel> cheques}) {
+    final entryChequess = generateEntryChequess(cheques);
 
-    for (final entryBond in entryBonds) {
-      entryBondController.saveEntryBondModel(entryBondModel: entryBond);
+    for (final entryCheques in entryChequess) {
+      entryChequesController.saveEntryChequesModel(entryChequesModel: entryCheques);
     }
   }*/
 }

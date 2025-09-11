@@ -15,13 +15,13 @@ class BillTypesChecklist extends StatelessWidget {
   final PatternController controller = Get.find<PatternController>();
 
 
-  final void Function(String item) onItemSelected;
-  final void Function(String item) onItemDeselected;
+  final void Function(BillTypeModel item) onItemSelected;
+  final void Function(BillTypeModel item) onItemDeselected;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<BillTypeModel>>(
-      future: controller.getAllBillTypes(),
+      future: controller.getAllBillTypes(false),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -37,11 +37,9 @@ class BillTypesChecklist extends StatelessWidget {
 
         final billTypes = snapshot.data!;
 
-        return CustomChecklist(
-          items: billTypes
-              .where((e) => e.fullName != null && e.fullName!.isNotEmpty) // keep only valid names
-              .map((e) => e.fullName!) // safe unwrap
-              .toList(),
+        return CustomChecklist<BillTypeModel>(
+          items: billTypes.where((item) => item.fullName != null).toList(),
+          displayText: (item) => item.fullName!,
           onItemSelected: onItemSelected,
           onItemDeselected: onItemDeselected,
         );

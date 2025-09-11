@@ -77,11 +77,12 @@ class MaterialGroupController extends GetxController
     }
   }
 
-  List<MaterialGroupModel> searchGroupProductByText(String query) {
+  Future<List<MaterialGroupModel>> searchGroupProductByText(String query) async{
     if (materialGroups.isEmpty) {
+     await getAllGroups();
       log('Materials list is empty');
     }
-
+    log(materialGroups.length.toString());
     query = AppServiceUtils.replaceArabicNumbersWithEnglish(query);
     String lowerQuery = query.toLowerCase().trim();
 

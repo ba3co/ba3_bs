@@ -1,11 +1,15 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../features/pluto/controllers/pluto_controller.dart';
+import '../helper/enums/enums.dart';
 
 class PlutoGridWithAppBar<T> extends StatelessWidget {
   const PlutoGridWithAppBar({
@@ -49,10 +53,8 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar ?? _buildAppBar(),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _buildGrid(context),
+      appBar: appBar ?? _buildAppBar(context),
+      body: isLoading ? const Center(child: CircularProgressIndicator()) : _buildGrid(context),
     );
   }
 
@@ -68,44 +70,46 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
                     child: PlutoGrid(
                       key: controller.plutoKey,
                       onLoaded: (event) {
-                        event.stateManager.activateColumnsAutoSize();
-
+                        controller.stateManager = event.stateManager;
                         event.stateManager.setShowColumnFilter(true);
-
                         onLoaded(event);
                       },
                       onRowSecondaryTap: onRowSecondaryTap,
                       onSelected: onSelected,
+                      rowColorCallback: (rowColorContext) {
+                        if (rowColorContext.row.cells['extra_notes']?.value == "true") {
+                          return Colors.greenAccent.shade100;
+                        } else {
+                          return rowColorContext.rowIdx % 2 == 0 ? Colors.white : Colors.blue.shade200;
+                        }
+                      },
                       onRowDoubleTap: onRowDoubleTap,
-                      columns: controller.generateColumns<T>(
-                          tableSourceModels, type),
+                      columns: controller.generateColumns<T>(tableSourceModels, type),
                       rows: controller.generateRows<T>(tableSourceModels, type),
                       mode: PlutoGridMode.selectWithOneTap,
                       configuration: PlutoGridConfiguration(
                         style: PlutoGridStyleConfig(
+                            checkedColor: Colors.greenAccent,
                             gridBackgroundColor: Colors.white.withAlpha(126),
                             rowHeight: rowHeight ?? 30,
                             evenRowColor: Colors.blue.shade200,
                             borderColor: Colors.blue,
-                            gridBorderRadius:
-                                BorderRadius.all(Radius.circular(10)),
+                            gridBorderRadius: BorderRadius.all(Radius.circular(10)),
                             gridBorderColor: AppColors.backGroundColor,
                             // gridBorderRadius: BorderRadius.circular(50),
 
                             // cellTextStyle: TextStyle(fontFamily: 'Almarai'),
                             // columnTextStyle: TextStyle(fontFamily: 'Almarai'),
                             activatedBorderColor: Colors.teal),
-                        localeText: Get.locale == Locale('ar', 'AR')
-                            ? PlutoGridLocaleText.arabic()
-                            : PlutoGridLocaleText(),
+                        localeText: Get.locale == Locale('ar', 'AR') ? PlutoGridLocaleText.arabic() : PlutoGridLocaleText(),
                       ),
-                      createFooter: (stateManager) {
+                      /*  createFooter: (stateManager) {
                         stateManager.setPageSize(100, notify: false);
                         return Container(
                           color: Colors.white, // حدد اللون المطلوب هنا
                           child: PlutoPagination(stateManager),
                         );
-                      },
+                      },*/
                     ),
                   ),
                   if (rightChild != null) rightChild!
@@ -119,7 +123,7 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
     );
   }
 
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       centerTitle: true,
       backgroundColor: Colors.white,
@@ -137,10 +141,36 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
             color: Colors.blue,
             icon: Icon(icon),
           ),
+        GestureDetector(
+          onTapDown: (details) {
+            final tapPosition = details.globalPosition;
+            OverlayService.showPopupMenu<ExportFilterOption>(
+              context: context,
+              tapPosition: tapPosition,
+              items: ExportFilterOption.values,
+              itemLabelBuilder: (option) {
+                switch (option) {
+                  case ExportFilterOption.all:
+                    return '📄   الكل';
+                  case ExportFilterOption.checked:
+                    return '✅  المفعّل';
+                  case ExportFilterOption.unchecked:
+                    return 'بدون مطابقة';
+                }
+              },
+              onSelected: (option) {
+                read<PlutoController>().exportRowsToExcel(option);
+              },
+              onCloseCallback: () {
+                debugPrint('PopupMenu closed.');
+              },
+            );
+          },
+          child: Icon(FontAwesomeIcons.fileExport, color: Colors.blue),
+        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
-          child: Text(
-              '${AppStrings.numberOfAffectedItems.tr}: ${tableSourceModels.length}'),
+          child: Text('${AppStrings.numberOfAffectedItems.tr}: ${tableSourceModels.length}'),
         ),
       ],
     );

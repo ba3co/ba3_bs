@@ -1,4 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/styling/app_colors.dart';
+import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,9 +24,7 @@ class AddAccountScreen extends StatelessWidget {
             children: [
               Spacer(),
               Text(
-                controller.isEditAccount
-                    ? controller.selectedAccount!.accName!
-                    : AppStrings.accountCard.tr,
+                controller.isEditAccount ? controller.selectedAccount!.accName! : AppStrings.accountCard.tr,
               ),
               Spacer(),
               SizedBox(
@@ -31,9 +32,7 @@ class AddAccountScreen extends StatelessWidget {
                   child: CustomTextFieldWithoutIcon(
                       enabled: true,
                       textEditingController: TextEditingController()
-                        ..text = controller.isEditAccount
-                            ? controller.selectedAccount!.id!
-                            : '')),
+                        ..text = controller.isEditAccount ? controller.selectedAccount!.id! : '')),
               Spacer(),
             ],
           ),
@@ -44,8 +43,31 @@ class AddAccountScreen extends StatelessWidget {
             spacing: 20,
             children: [
               AddAccountFormWidget(controller: controller),
-              AccountTypeDropdown(
-                  accountSelectionHandler: controller.accountFromHandler),
+
+              Row(
+                children: [
+                  Expanded(child: AccountTypeDropdown(accountSelectionHandler: controller.accountFromHandler)),
+                  HorizontalSpace(40),
+                  Row(
+                    children: [
+
+                      Checkbox(
+                        fillColor: WidgetStatePropertyAll(AppColors.blueColor),
+                          checkColor: Colors.white,
+                          side: BorderSide(color: Colors.white),
+
+                          shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                          value: controller.accountFromHandler.accRequiredRequestNumber,
+                          onChanged: controller.accountFromHandler.changeRequiredRequestNumber),
+                      Text(
+                        AppStrings.requiredRequestNumber.tr,
+                        style: AppTextStyles.headLineStyle3,
+                      ),
+                    ],
+                  ),
+
+                ],
+              ),
 
               // Button to add a new customer
               AddCustomersWidget(),

@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
+import 'package:ba3_bs/features/cheques/service/cheques_local_storage_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -148,6 +151,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
 
     // Save the cheques to Firestore
     final result = await _chequesFirebaseRepo.save(updatedChequesModel);
+    ChequesLocalStorageService().saveSingleCheques(updatedChequesModel);
 
     // Handle the result (success or failure)
     result.fold(
@@ -235,6 +239,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     setChequesDueDate(cheques.chequesDueDate!.toDate);
     setIsPayed(cheques.isPayed ?? false);
     setIsRefundPay(cheques.isRefund ?? false);
+    log(cheques.chequesAccount2Guid.toString());
     setTowAccount(read<AccountsController>().getAccountModelById(cheques.chequesAccount2Guid)!);
     setFirstAccount(read<AccountsController>().getAccountModelById(cheques.accPtr) ?? AccountModel());
     stChequesFormDate(cheques);
@@ -278,8 +283,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     if(!context.mounted)return;
 
     read<EntryBondController>()
-        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,          context: context
-    );
+        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,           );
   }
 
   void refundPayCheques(ChequesModel chequesModel, BuildContext context) async {
@@ -317,7 +321,6 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
 
     read<EntryBondController>()
 
-        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,          context: context
-    );
+        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,            );
   }
 }

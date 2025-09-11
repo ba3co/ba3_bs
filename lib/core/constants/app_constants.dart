@@ -1,8 +1,10 @@
+import '../../features/users_management/data/models/user_model.dart';
 import '../helper/enums/enums.dart';
 
 abstract class AppConstants {
   static String dataName = '';
   static bool isFreeType = false;
+
   static const EnvType env = EnvType.debug; //"debug" or "release"
   static const vatGCC = 0.05;
   static const constHeightTextField = 30.0;
@@ -141,30 +143,18 @@ abstract class AppConstants {
   static const roleViewHome = "roleViewHome";
 
   ////////////--------------------------------------------------
-  static const invoiceChoosePriceMethodeCustomerPrice =
-      "invoiceChoosePriceMethodeCustomerPrice";
-  static const invoiceChoosePriceMethodeDefault =
-      "invoiceChoosePriceMethodeCustomerPrice";
-  static const invoiceChoosePriceMethodeLastPrice =
-      "invoiceChoosePriceMethodeLastPrice";
-  static const invoiceChoosePriceMethodeAveragePrice =
-      "invoiceChoosePriceMethodeAveragePrice";
-  static const invoiceChoosePriceMethodeHigher =
-      "invoiceChoosePriceMethodeHigher";
-  static const invoiceChoosePriceMethodeLower =
-      "invoiceChoosePriceMethodeLower";
-  static const invoiceChoosePriceMethodeMinPrice =
-      "invoiceChoosePriceMethodeMinPrice";
-  static const invoiceChoosePriceMethodeAverageBuyPrice =
-      "invoiceChoosePriceMethodeAverageBuyPrice";
-  static const invoiceChoosePriceMethodeWholePrice =
-      "invoiceChoosePriceMethodeWholePrice";
-  static const invoiceChoosePriceMethodeRetailPrice =
-      "invoiceChoosePriceMethodeRetailPrice";
-  static const invoiceChoosePriceMethodeCostPrice =
-      "invoiceChoosePriceMethodeCostPrice";
-  static const invoiceChoosePriceMethodeCustom =
-      "invoiceChoosePriceMethodeCustom";
+  static const invoiceChoosePriceMethodeCustomerPrice = "invoiceChoosePriceMethodeCustomerPrice";
+  static const invoiceChoosePriceMethodeDefault = "invoiceChoosePriceMethodeCustomerPrice";
+  static const invoiceChoosePriceMethodeLastPrice = "invoiceChoosePriceMethodeLastPrice";
+  static const invoiceChoosePriceMethodeAveragePrice = "invoiceChoosePriceMethodeAveragePrice";
+  static const invoiceChoosePriceMethodeHigher = "invoiceChoosePriceMethodeHigher";
+  static const invoiceChoosePriceMethodeLower = "invoiceChoosePriceMethodeLower";
+  static const invoiceChoosePriceMethodeMinPrice = "invoiceChoosePriceMethodeMinPrice";
+  static const invoiceChoosePriceMethodeAverageBuyPrice = "invoiceChoosePriceMethodeAverageBuyPrice";
+  static const invoiceChoosePriceMethodeWholePrice = "invoiceChoosePriceMethodeWholePrice";
+  static const invoiceChoosePriceMethodeRetailPrice = "invoiceChoosePriceMethodeRetailPrice";
+  static const invoiceChoosePriceMethodeCostPrice = "invoiceChoosePriceMethodeCostPrice";
+  static const invoiceChoosePriceMethodeCustom = "invoiceChoosePriceMethodeCustom";
 
   ////////////--------------------------------------------------
   static const rowAccountAggregateName = "rowAccountAggregateName";
@@ -287,8 +277,7 @@ abstract class AppConstants {
   static const String additionAr = 'الاضافات';
   static const String additionRatioAr = 'نسبة الاضافات';
   static const String deleteConfirmationTitle = 'تأكيد الحذف';
-  static const String deleteConfirmationMessage =
-      'هل انت متأكد من حذف هذا العنصر';
+  static const String deleteConfirmationMessage = 'هل انت متأكد من حذف هذا العنصر';
   static const String yes = 'نعم';
   static const String no = 'لا';
 
@@ -370,45 +359,34 @@ abstract class AppConstants {
 
   static const String appLocalLangBox = 'appLocalLangBox';
 
-  static const String defaultLangCode = 'en';
+  static const String defaultLangCode = 'ar';
 
-  static const String chequeToAccountId =
-      '7d471b63-4499-4c2f-ba99-21912c8b98b5';
+  static const String chequeToAccountId = '7d471b63-4499-4c2f-ba99-21912c8b98b5';
   static const String chequeToAccountName = 'اوراق الدفع';
   static const String bankAccountId = 'a3fe9771-c9cf-4790-b782-c1c3977bcd99';
   static const String bankToAccountName = 'المصرف';
 
   ///------------------------------------------
-  static const String taxLocalAccountId =
-      '3044a58b-8a76-461b-9385-cb87df3e0afd';
+  static const String taxLocalAccountId = '3044a58b-8a76-461b-9385-cb87df3e0afd';
   static const String taxLocalAccountName = 'ضريبة القيمة المضافة رأس الخيمة';
-  static const String returnTaxAccountId =
-      '81e6d822-e3ee-4f42-92bf-f96eed4a0045';
-  static const String returnTaxAccountName =
-      'استرداد ضريبة القيمة المضافة رأس الخيمة';
+  static const String returnTaxAccountId = '81e6d822-e3ee-4f42-92bf-f96eed4a0045';
+  static const String returnTaxAccountName = 'استرداد ضريبة القيمة المضافة رأس الخيمة';
 
   ///------------------------------------------
   static const String taxFreeAccountId = '19dccbca-b32e-4604-b37c-980cbbd2f15a';
   static const String taxFreeAccountName = 'ضريبة القيمة المضافة فري زون';
-  static const String returnFreeTaxAccountId =
-      '2181459c-3293-42f5-b80e-7232e824786f';
-  static const String returnFreeTaxAccountName =
-      'استرداد ضريبة القيمة المضافة فري زون';
+  static const String returnFreeTaxAccountId = '2181459c-3293-42f5-b80e-7232e824786f';
+  static const String returnFreeTaxAccountName = 'استرداد ضريبة القيمة المضافة فري زون';
 
   ///------------------------------------------
-  static const String primaryCashAccountId =
-      '5b36c82d-9105-4177-a5c3-0f90e5857e3c';
+  static const String primaryCashAccountId = '5b36c82d-9105-4177-a5c3-0f90e5857e3c';
   static const String primaryCashAccountName = 'الصندوق';
 
-  static const double targetLatitude =
-      25.793679566610773; // Latitude المنطقة المستهدفة
-  static const double targetLongitude =
-      55.948330278435; // Longitude المنطقة المستهدفة
+  static const double targetLatitude = 25.793679566610773; // Latitude المنطقة المستهدفة
+  static const double targetLongitude = 55.948330278435; // Longitude المنطقة المستهدفة
   static const double radiusInMeters = 25;
-  static const double secondTargetLatitude =
-      25.765046214850365; // Latitude المنطقة المستهدفة
-  static const double secondTargetLongitude =
-      55.970645196084746; // Longitude المنطقة المستهدفة
+  static const double secondTargetLatitude = 25.765046214850365; // Latitude المنطقة المستهدفة
+  static const double secondTargetLongitude = 55.970645196084746; // Longitude المنطقة المستهدفة
   static const double secondRadiusInMeters = 50;
 
   ////// pluto Filed Names
@@ -453,5 +431,17 @@ abstract class AppConstants {
   static const String testDataBaseAppName = 'test';
   static const String defaultFirebaseAppName = '[DEFAULT]';
 
+  static bool forcePending = false;
+  static String staticAppPassword = 'Asd123';
+
+  static List<UserWorkingHours> fridayWorkingHours = [
+    UserWorkingHours(
+      id: '0',
+      enterTime: "04:45 AM",
+      outTime: "12:00 AM",
+    )
+  ];
+
+  // @preserve: ali-dev-only getter
   static String get getDatabaseAppName => testDataBaseAppName;
 }

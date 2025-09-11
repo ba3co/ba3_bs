@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 
@@ -18,6 +17,8 @@ mixin EntryBondsGenerator {
     void Function(double progress)? onProgress,
     required BuildContext context
   }) async {
+
+    debugPrint("source models in  EntryBondGenerator"+sourceModels.toString());
     final entryBondModels = _mapModelsToEntryBonds(sourceModels);
     await read<EntryBondController>().saveAllEntryBondModels(
       entryBonds: entryBondModels,
@@ -39,7 +40,6 @@ mixin EntryBondsGenerator {
     final entryBondModels = _mapModelToEntryBonds(model);
 
     if (entryBondModels.length == 1) {
-      log('entryBondModels.length == 1', name: 'createAndStoreEntryBond');
       await entryBondController.saveEntryBondModel(
         entryBondModel: entryBondModels.first,
         sourceNumber: sourceNumbers.first,
@@ -66,6 +66,7 @@ mixin EntryBondsGenerator {
     return EntryBondCreatorFactory.resolveEntryBondCreators(model)
         .map(
           (creator) => creator.createEntryBond(
+            entryBondDate:EntryBondCreatorFactory.resolveOriginDate(model) ,
             originType: EntryBondCreatorFactory.resolveOriginType(model),
             model: model,
           ),
@@ -78,6 +79,8 @@ mixin EntryBondsGenerator {
     final creators = ChequesStrategyBondFactory.determineStrategy(model,
         type: chequesStrategyType);
     return creators.first.createEntryBond(
+      entryBondDate:EntryBondCreatorFactory.resolveOriginDate(model) ,
+
       model: model,
       originType: EntryBondCreatorFactory.resolveOriginType(model),
     );
@@ -108,6 +111,8 @@ mixin EntryBondsGenerator {
   EntryBondModel _createEntryBondInstance<T>(T model, {bool? isSimulatedVat}) {
     return EntryBondCreatorFactory.resolveEntryBondCreator(model)
         .createEntryBond(
+      entryBondDate:EntryBondCreatorFactory.resolveOriginDate(model) ,
+
       isSimulatedVat: isSimulatedVat,
       originType: EntryBondCreatorFactory.resolveOriginType(model),
       model: model,

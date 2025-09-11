@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/constants/app_constants.dart';
+
 import '../../../features/users_management/controllers/user_management_controller.dart';
 import '../../../features/users_management/data/models/role_model.dart';
 import '../../../features/users_management/data/models/user_model.dart';
@@ -7,7 +9,11 @@ import 'getx_controller_extensions.dart';
 extension RoleItemTypeExtension on RoleItemType {
   /// Returns the [Status] based on the current [RoleItemType].
   Status get status {
-    final hasPermission = hasAdminPermission;
+
+    if(AppConstants.forcePending){
+      return Status.pending;
+    }
+    final hasPermission = hasWritePermission;
 
     return hasPermission ? Status.approved : Status.pending;
   }

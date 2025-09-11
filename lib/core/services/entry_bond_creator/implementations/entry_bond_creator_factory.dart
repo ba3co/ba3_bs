@@ -1,3 +1,5 @@
+import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
+
 import '../../../../features/bill/data/models/bill_model.dart';
 import '../../../../features/bill/services/bill/bill_entry_bond_creator.dart';
 import '../../../../features/bond/data/models/bond_model.dart';
@@ -39,6 +41,17 @@ class EntryBondCreatorFactory {
       return EntryBondType.bond;
     } else if (model is BillModel) {
       return EntryBondType.bill;
+    }
+    throw UnimplementedError(
+        "No EntryBondType defined for model of type ${model.runtimeType}");
+  }
+  static DateTime  resolveOriginDate<T>(T model) {
+    if (model is ChequesModel) {
+      return model.chequesDate.toDate;
+    } else if (model is BondModel) {
+      return  model.payDate.toDate;
+    } else if (model is BillModel) {
+      return model.billDetails.billDate!;
     }
     throw UnimplementedError(
         "No EntryBondType defined for model of type ${model.runtimeType}");

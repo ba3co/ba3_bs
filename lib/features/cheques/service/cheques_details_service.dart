@@ -70,55 +70,66 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     );
   }
 
-  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController,BuildContext context,
+  Future<void> handleDeleteSuccess(ChequesModel chequesModel, ChequesSearchController chequesSearchController, BuildContext context,
       [fromChequesById]) async {
     final entryBondController = read<EntryBondController>();
     // Only fetchCheques if open cheques details by cheques id from AllChequesScreen
     if (fromChequesById) {
-      await read<AllChequesController>().fetchAllChequesByType(ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),);
+      await read<AllChequesController>().fetchAllChequesByType(
+        ChequesType.byTypeGuide(chequesModel.chequesTypeGuid!),
+      );
       Get.back();
     } else {
-      chequesSearchController.removeCheques(chequesModel,);
-    }if(!context.mounted)return;
+      chequesSearchController.removeCheques(
+        chequesModel,
+      );
+    }
+    if (!context.mounted) return;
 
-    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, context: context,sourceNumber: chequesModel.chequesNumber!);
+    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, sourceNumber: chequesModel.chequesNumber!);
     if (chequesModel.chequesPayGuid != null) {
-      entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,context: context);
+      entryBondController.deleteEntryBondModel(
+        entryId: chequesModel.chequesPayGuid!,
+        sourceNumber: chequesModel.chequesNumber!,
+      );
     }
     if (chequesModel.chequesRefundPayGuid != null) {
       entryBondController.deleteEntryBondModel(
-          entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,context: context);
+        entryId: chequesModel.chequesRefundPayGuid!,
+        sourceNumber: chequesModel.chequesNumber!,
+      );
     }
-    if(!context.mounted) return;
+    if (!context.mounted) return;
 
-    AppUIUtils.onSuccess('تم حذف الشيك بنجاح!',);
+    AppUIUtils.onSuccess(
+      'تم حذف الشيك بنجاح!',
+    );
   }
 
-  Future<void> handleSaveOrUpdateSuccess({
-    required ChequesModel currentChequesModel,
-    ChequesModel? prevChequesModel,
-    required ChequesDetailsController chequesDetailsController,
-    required ChequesSearchController chequesSearchController,
-    required bool isSave,
-    required BuildContext context
-  }) async {
+  Future<void> handleSaveOrUpdateSuccess(
+      {required ChequesModel currentChequesModel,
+      ChequesModel? prevChequesModel,
+      required ChequesDetailsController chequesDetailsController,
+      required ChequesSearchController chequesSearchController,
+      required bool isSave,
+      required BuildContext context}) async {
     final successMessage = isSave ? 'تم حفظ الشيك بنجاح!' : 'تم تعديل الشيك بنجاح!';
 
-    AppUIUtils.onSuccess(successMessage,);
+    AppUIUtils.onSuccess(
+      successMessage,
+    );
 
     if (isSave) {
       chequesDetailsController.updateIsChequesSaved(true);
       generatePdfAndSendToEmail(
         fileName: AppStrings.newBond.tr,
         itemModel: currentChequesModel,
-        context: context
       );
     } else {
       chequesSearchController.updateCheques(currentChequesModel);
       generatePdfAndSendToEmail(
         fileName: AppStrings.newBond.tr,
         itemModel: [prevChequesModel!, currentChequesModel],
-        context: context
       );
     }
 
@@ -140,9 +151,13 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     // }
   }
 
-  bool validateAccount(AccountModel? customerAccount, ) {
+  bool validateAccount(
+    AccountModel? customerAccount,
+  ) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!', );
+      AppUIUtils.onFailure(
+        'من فضلك أدخل اسم الحساب!',
+      );
       return false;
     }
     return true;

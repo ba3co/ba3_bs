@@ -1,6 +1,7 @@
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/services/entry_bond_creator/implementations/base_entry_bond_creator.dart';
@@ -12,14 +13,20 @@ class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
       {required BondModel model, bool? isSimulatedVat}) {
     List<EntryBondItemModel> itemBonds = [];
 
+    debugPrint("inside BondEntryBondCreator generateItems");
+    debugPrint("model : "+model.toJson().toString());
+    debugPrint("##################");
+
     final date = _currentDate;
     final note =
         "سند قيد ل${BondType.byTypeGuide(model.payTypeGuid!).value} رقم :${model.payNumber}";
     final originId = model.payGuid;
+
     for (var element in model.payItems.itemList) {
       itemBonds.add(EntryBondItemModel(
         originId: originId,
         docId: originId,
+        originName: "${BondType.byTypeGuide(model.payTypeGuid!).value} : ${model.payNumber}",
         date: model.payDate ?? date,
         note: note,
         account: AccountEntity(
