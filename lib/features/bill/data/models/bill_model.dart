@@ -381,6 +381,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         // AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
         PlutoColumn(title: AppStrings.giftsTotal.tr, field: 'مجموع الهدايا', type: PlutoColumnType.text()):
             billDetails.billGiftsTotal ?? 0,
+    PlutoColumn(title: AppStrings.phoneNumber.tr, field: AppStrings.phoneNumber, type: PlutoColumnType.text()):
+    billDetails.customerPhone ?? "",
         PlutoColumn(title: AppStrings.firstPay.tr, field: 'الدفع الاولى', type: PlutoColumnType.number()): billDetails.billFirstPay ?? 0,
         PlutoColumn(title: AppStrings.vatName.tr, field: 'الضريبة', type: PlutoColumnType.text()): freeBill == true
             ? AppConstants.taxFreeAccountName.replaceAll('ضريبة القيمة المضافة', '')

@@ -95,86 +95,156 @@ class PrintingController extends GetxController {
   // ----------------------------
   // WINDOWS: RAW via Win32
   // ----------------------------
+// عدّد كل الطابعات واستخرج أسماء الـ queues
+  Future<List<String>> _winEnumPrinterNames() async {
+    final names = <String>[];
+    final flags = win32.PRINTER_ENUM_LOCAL | win32.PRINTER_ENUM_CONNECTIONS; // 2 | 4
+    final cbNeeded = calloc<ffi.Uint32>();
+    final cReturned = calloc<ffi.Uint32>();
+
+    // Level 4 (PRINTER_INFO_4) كافي لقراءة الاسم
+    win32.EnumPrinters(flags, ffi.nullptr, 4, ffi.nullptr, 0, cbNeeded, cReturned);
+    final needed = cbNeeded.value;
+    if (needed == 0) {
+      calloc
+        ..free(cbNeeded)
+        ..free(cReturned);
+      return names;
+    }
+
+    final buffer = calloc<ffi.Uint8>(needed);
+    final ok = win32.EnumPrinters(flags, ffi.nullptr, 4, buffer, needed, cbNeeded, cReturned);
+    if (ok != 0) {
+      final count = cReturned.value;
+      final structSize = ffi.sizeOf<win32.PRINTER_INFO_4>();
+      for (var i = 0; i < count; i++) {
+        final base = buffer.elementAt(i * structSize);
+        final pInfo = base.cast<win32.PRINTER_INFO_4>().ref;
+        final name = pInfo.pPrinterName.toDartString();
+        if (name.isNotEmpty) names.add(name);
+      }
+    }
+
+    calloc
+      ..free(buffer)
+      ..free(cbNeeded)
+      ..free(cReturned);
+
+    return names;
+  }
+
+// WINDOWS: RAW عبر Spooler مع اكتشاف الاسم ومحاولات متعددة
   Future<void> _sendTicketWindowsRaw(
       List<int> ticket, {
         required String printerName,
       }) async {
+    ffi.Pointer<ffi.Uint8>? dataPtr;
+    final written = calloc<ffi.Uint32>();
+    final pHandle = calloc<ffi.IntPtr>();
+    final docInfo = calloc<win32.DOC_INFO_1>();
+
+    // بعد (استنتاج نوع + أبسط):
+    var printerNamePtr = printerName.toNativeUtf16();
+    ffi.Pointer<win32.PRINTER_DEFAULTS>? pDefaults;
+
     try {
-      final data = Uint8List.fromList(ticket);
+      // 1) طالع كل الأسماء وحاول تطابقها
+      final all = await _winEnumPrinterNames();
+      log('Windows printers: ${all.join(', ')}');
 
-      final printerNamePtr = printerName.toNativeUtf16();
-      final pHandle = calloc<ffi.IntPtr>();
-      final pDefaults = calloc<win32.PRINTER_DEFAULTS>();
-      pDefaults.ref
-        ..pDatatype = win32.TEXT('RAW')
-        ..pDevMode = ffi.nullptr
-        ..DesiredAccess = win32.PRINTER_ACCESS_USE;
-
-      final opened = win32.OpenPrinter(printerNamePtr, pHandle, pDefaults);
-      if (opened == 0) {
-        log('OpenPrinter failed. GetLastError=${win32.GetLastError()}');
-        calloc
-          ..free(printerNamePtr)
-          ..free(pHandle)
-          ..free(pDefaults);
+      String? resolved = all.firstWhere(
+            (n) => n.toLowerCase() == printerName.toLowerCase(),
+        orElse: () => '',
+      );
+      if (resolved.isEmpty) {
+        final candidates = all.where((n) => n.toLowerCase().contains(printerName.toLowerCase())).toList();
+        if (candidates.length == 1) {
+          resolved = candidates.first;
+        } else if (candidates.isNotEmpty) {
+          log("Multiple candidates for '$printerName': ${candidates.join(', ')}  (using first)");
+          resolved = candidates.first;
+        }
+      }
+      if (resolved.isEmpty) {
+        log("Printer '$printerName' not found. Available: ${all.join(', ')}");
         return;
       }
 
-      final docInfo = calloc<win32.DOC_INFO_1>();
+      // 2) حاول OpenPrinter بدون PRINTER_DEFAULTS أولاً
+      printerNamePtr = resolved.toNativeUtf16();
+      var opened = win32.OpenPrinter(printerNamePtr, pHandle, ffi.nullptr);
+      if (opened == 0) {
+        // 3) جرّب مع RAW access
+        pDefaults = calloc<win32.PRINTER_DEFAULTS>();
+        pDefaults.ref
+          ..pDatatype = win32.TEXT('RAW')
+          ..pDevMode = ffi.nullptr
+          ..DesiredAccess = win32.PRINTER_ACCESS_USE; // 0x00000008
+
+        opened = win32.OpenPrinter(printerNamePtr, pHandle, pDefaults);
+        if (opened == 0) {
+          final err = win32.GetLastError();
+          log("OpenPrinter('$resolved') failed. GetLastError=$err");
+          return;
+        }
+      }
+
+      // 4) جهّز StartDocPrinter
       docInfo.ref
         ..pDocName = win32.TEXT('ESC/POS from Flutter')
         ..pOutputFile = ffi.nullptr
         ..pDatatype = win32.TEXT('RAW');
 
-      final docId = win32.StartDocPrinter(pHandle.value, 1, docInfo);
+      final hPrinter = pHandle.value;
+      final docId = win32.StartDocPrinter(hPrinter, 1, docInfo);
       if (docId <= 0) {
         log('StartDocPrinter failed. GetLastError=${win32.GetLastError()}');
-        win32.EndDocPrinter(pHandle.value);
-        win32.ClosePrinter(pHandle.value);
-        calloc
-          ..free(printerNamePtr)
-          ..free(pHandle)
-          ..free(pDefaults)
-          ..free(docInfo);
         return;
       }
 
-      if (win32.StartPagePrinter(pHandle.value) == 0) {
+      if (win32.StartPagePrinter(hPrinter) == 0) {
         log('StartPagePrinter failed. GetLastError=${win32.GetLastError()}');
-        win32.EndDocPrinter(pHandle.value);
-        win32.ClosePrinter(pHandle.value);
-        calloc
-          ..free(printerNamePtr)
-          ..free(pHandle)
-          ..free(pDefaults)
-          ..free(docInfo);
+        win32.EndDocPrinter(hPrinter);
         return;
       }
 
-      final dataPtr = calloc<ffi.Uint8>(data.length);
-      dataPtr.asTypedList(data.length).setAll(0, data);
-      final written = calloc<ffi.Uint32>();
+      // 5) اكتب البيانات على شكل أجزاء (أسلم لبعض الدرايفرات)
+      final data = Uint8List.fromList(ticket);
+      const chunk = 60 * 1024; // 60KB
+      var offset = 0;
 
-      final ok = win32.WritePrinter(pHandle.value, dataPtr, data.length, written);
-      if (ok == 0) {
-        log('WritePrinter failed. GetLastError=${win32.GetLastError()}');
-      } else {
-        log('Wrote ${written.value} bytes to printer');
+      while (offset < data.length) {
+        final size = (data.length - offset > chunk) ? chunk : (data.length - offset);
+        dataPtr = calloc<ffi.Uint8>(size);
+        dataPtr.asTypedList(size).setAll(0, data.sublist(offset, offset + size));
+
+        final ok = win32.WritePrinter(hPrinter, dataPtr, size, written);
+        calloc.free(dataPtr);
+        dataPtr = null;
+
+        if (ok == 0) {
+          log('WritePrinter failed at offset=$offset size=$size. GetLastError=${win32.GetLastError()}');
+          break;
+        }
+        offset += size;
       }
 
-      win32.EndPagePrinter(pHandle.value);
-      win32.EndDocPrinter(pHandle.value);
-      win32.ClosePrinter(pHandle.value);
-
-      calloc
-        ..free(printerNamePtr)
-        ..free(pHandle)
-        ..free(pDefaults)
-        ..free(docInfo)
-        ..free(dataPtr)
-        ..free(written);
+      win32.EndPagePrinter(hPrinter);
+      win32.EndDocPrinter(hPrinter);
+      log('Printed ${data.length} bytes to "$resolved"');
     } catch (e) {
       log('Exception in _sendTicketWindowsRaw: $e');
+    } finally {
+      // تحرير الموارد
+      if (pHandle.value != 0) {
+        win32.ClosePrinter(pHandle.value);
+      }
+      calloc.free(printerNamePtr);
+      if (pDefaults != null) calloc.free(pDefaults);
+      if (dataPtr != null) calloc.free(dataPtr);
+      calloc.free(written);
+      calloc.free(pHandle);
+      calloc.free(docInfo);
     }
   }
 

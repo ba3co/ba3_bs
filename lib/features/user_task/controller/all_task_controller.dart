@@ -224,7 +224,7 @@ class AllTaskController extends GetxController with FloatingLauncher {
     late UserTaskModel userTaskModel;
 
     List<String> differentUser = [];
-    if (selectedTask != null) {
+    if (selectedTask == null) {
       differentUser = taskFormHandler.selectedUsers.subtract(
         selectedTask!.assignedTo!,
         (p0) => p0,

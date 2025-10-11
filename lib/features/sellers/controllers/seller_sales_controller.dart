@@ -431,6 +431,7 @@ class SellerSalesController extends GetxController with AppNavigator, FloatingLa
 
     return salesMap.entries.map((entry) {
       final sellerName = read<SellersController>().getSellerNameById(entry.key);
+
       _handleGetSellerBillsStatusSuccess(entry.value);
       return SellerSalesData(
           sellerName: sellerName,
