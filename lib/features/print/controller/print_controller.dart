@@ -1,349 +1,23 @@
-//
-// import 'dart:async';
-// import 'dart:developer';
-// import 'dart:ffi';
-//
-//
-//
-// import 'package:ba3_bs/core/constants/app_assets.dart';
-// import 'package:ba3_bs/core/constants/printer_constants.dart';
-// import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
-// import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
-// import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
-// import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-//
-// import 'package:ffi/ffi.dart';
-// import 'package:flutter/services.dart';
-// import 'package:win32/win32.dart';
-// import 'package:get/get.dart';
-// import 'package:image/image.dart' as img;
-//
-// import '../../../core/helper/extensions/getx_controller_extensions.dart';
-// import '../../../core/services/translation/implementations/translation_repo.dart';
-// import '../../../core/styling/printer_text_styles.dart';
-// import '../../bill/data/models/invoice_record_model.dart';
-// import '../../materials/data/models/materials/material_model.dart';
-// import '../ui/widgets/printing_loading_dialog.dart';
-//
-// class PrintingController extends GetxController {
-//   final TranslationRepository _translationRepository;
-//
-//   PrintingController(this._translationRepository);
-//
-//   RxString loadingDots = ''.obs;
-//   Timer? _loadingAnimationTimer;
-//
-//   @override
-//   void onInit() {
-//     super.onInit();
-//     _startLoadingDotsAnimation();
-//   }
-//
-//   @override
-//   void onClose() {
-//     _loadingAnimationTimer?.cancel();
-//     super.onClose();
-//   }
-//
-//   void _startLoadingDotsAnimation() {
-//     _loadingAnimationTimer =
-//         Timer.periodic(const Duration(milliseconds: 500), (timer) {
-//           loadingDots.value =
-//           loadingDots.value.length < 3 ? '${loadingDots.value}.' : '';
-//         });
-//   }
-//
-//   Future<void> startPrinting({
-//     required BuildContext context,
-//     required int billNumber,
-//     required List<InvoiceRecordModel> invRecords,
-//     required String invDate,
-//   }) async {
-//     _showLoadingDialog(context);
-//     await _printBill(
-//         billNumber: billNumber, invRecords: invRecords, invDate: invDate);
-//     _dismissLoadingDialog();
-//   }
-//
-//   /// يعرض نافذة تحميل أثناء عملية الطباعة
-//   void _showLoadingDialog(BuildContext context) {
-//     OverlayService.showDialog(
-//       context: context,
-//       title: '',
-//       width: 250,
-//       height: 100,
-//       content: const PrintingLoadingDialog(),
-//       contentPadding: EdgeInsets.zero,
-//       onCloseCallback: () {
-//         Get.delete<PrintingController>();
-//       },
-//     );
-//   }
-//
-//   void _dismissLoadingDialog() => OverlayService.back();
-//
-//   Future<void> _printBill({
-//     required int billNumber,
-//     required List<InvoiceRecordModel> invRecords,
-//     required String invDate,
-//   }) async {
-//     List<int> ticket =
-//     await _generateBillPrintData(invRecords, invDate, billNumber);
-//     await _sendTicketUSB(ticket);
-//   }
-//
-//   /// إرسال بيانات التذكرة إلى الطابعة عبر USB باستخدام Win32 API
-//   Future<void> _sendTicketUSB(List<int> ticket) async {
-//     try {
-//       final Uint8List data = Uint8List.fromList(ticket);
-//       // تأكد من أن اسم الطابعة مطابق لإعدادات Windows
-//       const String printerName = 'E-PoS printer driver';
-//
-//       // تحويل اسم الطابعة إلى مؤشر نصي (UTF-16)
-//       final printerNamePtr = printerName.toNativeUtf16();
-//
-//       // تخصيص ذاكرة لمقبض الطابعة
-//       final pHandle = calloc<IntPtr>();
-//
-//       // إعداد هيكل PRINTER_DEFAULTS لإرسال بيانات RAW
-//       final pDefaults = calloc<PRINTER_DEFAULTS>();
-//       pDefaults.ref.pDatatype = TEXT('RAW');
-//       pDefaults.ref.pDevMode = nullptr;
-//       pDefaults.ref.DesiredAccess = 0x00000008;
-//
-//
-//       // محاولة فتح الطابعة
-//       final openResult = OpenPrinter(printerNamePtr, pHandle, pDefaults);
-//       if (openResult == 0) {
-//         log('فشل فتح الطابعة. رمز الخطأ: ${GetLastError()}');
-//         calloc.free(printerNamePtr);
-//         calloc.free(pHandle);
-//         calloc.free(pDefaults);
-//         return;
-//       }
-//
-//       // إعداد هيكل DOC_INFO_1 لبدء مستند الطباعة
-//       final docInfo = calloc<DOC_INFO_1>();
-//       docInfo.ref.pDocName = TEXT('طباعة من Flutter'*500);
-//       docInfo.ref.pOutputFile = nullptr;
-//       docInfo.ref.pDatatype = TEXT('RAW');
-//
-//       // بدء مستند الطباعة
-//       final docId = StartDocPrinter(pHandle.value, 1, docInfo);
-//       if (docId <= 0) {
-//         log('فشل بدء مستند الطباعة. رمز الخطأ: ${GetLastError()}');
-//         EndDocPrinter(pHandle.value);
-//         ClosePrinter(pHandle.value);
-//         calloc.free(printerNamePtr);
-//         calloc.free(pHandle);
-//         calloc.free(pDefaults);
-//         calloc.free(docInfo);
-//         return;
-//       }
-//
-//       // بدء صفحة الطباعة
-//       final startPage = StartPagePrinter(pHandle.value);
-//       if (startPage == 0) {
-//         log('فشل بدء صفحة الطباعة. رمز الخطأ: ${GetLastError()}');
-//         EndDocPrinter(pHandle.value);
-//         ClosePrinter(pHandle.value);
-//         calloc.free(printerNamePtr);
-//         calloc.free(pHandle);
-//         calloc.free(pDefaults);
-//         calloc.free(docInfo);
-//         return;
-//       }
-//
-//       // تخصيص الذاكرة للبيانات التي سيتم إرسالها
-//       final dataPtr = calloc<Uint8>(data.length);
-//       final dataList = dataPtr.asTypedList(data.length);
-//       dataList.setAll(0, data);
-//
-//       // تخصيص متغير لتخزين عدد البايتات المكتوبة
-//       final written = calloc<Uint32>();
-//
-//       // إرسال البيانات للطابعة
-//       final writeResult =
-//       WritePrinter(pHandle.value, dataPtr, data.length, written);
-//       if (writeResult == 0) {
-//         log('فشل إرسال البيانات للطابعة. رمز الخطأ: ${GetLastError()}');
-//       } else {
-//         log('تم إرسال ${written.value} بايت إلى الطابعة');
-//       }
-//
-//       // إنهاء صفحة الطباعة والمستند
-//       EndPagePrinter(pHandle.value);
-//       EndDocPrinter(pHandle.value);
-//       ClosePrinter(pHandle.value);
-//
-//       // تحرير الذاكرة المخصصة
-//       calloc.free(printerNamePtr);
-//       calloc.free(pHandle);
-//       calloc.free(pDefaults);
-//       calloc.free(docInfo);
-//       calloc.free(dataPtr);
-//       calloc.free(written);
-//
-//       log("تم إرسال التذكرة بنجاح");
-//     } catch (e) {
-//       log("Exception in _sendTicketUSB: $e");
-//     }
-//   }
-//
-//   /// توليد بيانات الطباعة باستخدام esc_pos_utils_plus (تم تغيير حجم الورق إلى mm80 وإضافة أمر القطع)
-//   Future<List<int>> _generateBillPrintData(
-//       List<InvoiceRecordModel> invoiceRecords, String invoiceDate, int billNumber) async {
-//     final profile = await CapabilityProfile.load();
-//     final generator = Generator(PaperSize.mm80, profile);
-//     List<int> bytes = generator.reset();
-//
-//     // الهيدر
-//     bytes += generator.text(PrinterConstants.invoiceTitle,
-//         styles: PrinterTextStyles.centered, linesAfter: 1);
-//     bytes += await _generateLogo(generator);
-//     bytes += _createHeaderSection(generator, invoiceDate, billNumber);
-//
-//     // البنود والتفاصيل
-//     final result = await _generateItemsDetailsAndTotals(generator, invoiceRecords);
-//     bytes += result.bytes;
-//
-//     // ملخص الإجمالي
-//     bytes += _generateTotalSummary(generator, result.totals['netAmount']!, result.totals['vatAmount']!);
-//
-//     // الفوتر
-//     bytes += _createFooterSection(generator);
-//
-//     // إضافة أمر القطع لإنهاء التذكرة
-//     // bytes += generator.cut();
-//
-//     return bytes;
-//   }
-//
-//   Future<({List<int> bytes, Map<String, double> totals})>
-//   _generateItemsDetailsAndTotals(
-//       Generator generator, List<InvoiceRecordModel> invoiceRecords) async {
-//     double netAmount = 0;
-//     double vatAmount = 0;
-//     List<int> itemBytes = [];
-//
-//     final materialController = read<MaterialController>();
-//
-//     for (var record in invoiceRecords) {
-//       final material = materialController.getMaterialById(record.invRecId!);
-//       final recordTotals = _computeRecordTotals(record);
-//
-//       netAmount += recordTotals['netTotal']!;
-//       vatAmount += recordTotals['vatTotal']!;
-//
-//       itemBytes += await _generateItemDetails(generator, material!, record, recordTotals);
-//     }
-//
-//     return (bytes: itemBytes, totals: {'netAmount': netAmount, 'vatAmount': vatAmount});
-//   }
-//
-//   Map<String, double> _computeRecordTotals(InvoiceRecordModel record) {
-//     final unitPriceWithVat = record.invRecTotal! / record.invRecQuantity!;
-//     final vatPerUnit = unitPriceWithVat * 0.05;
-//     final netPerUnit = unitPriceWithVat - vatPerUnit;
-//
-//     return {
-//       'unitPriceWithVat': unitPriceWithVat,
-//       'vatPerUnit': vatPerUnit,
-//       'netPerUnit': netPerUnit,
-//       'lineTotal': record.invRecTotal!,
-//       'netTotal': record.invRecQuantity! * netPerUnit,
-//       'vatTotal': record.invRecQuantity! * vatPerUnit,
-//     };
-//   }
-//
-//   Future<List<int>> _generateItemDetails(
-//       Generator generator, MaterialModel material, InvoiceRecordModel record, Map<String, double> totals) async {
-//     final itemName = (material.matName?.decodeProblematic() ?? '')
-//         .substring(0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
-//     log('itemName: $itemName');
-//     final cleanedName =
-//     itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' ');
-//     final translatedName = await _translationRepository.translateText(cleanedName);
-//
-//     return [
-//       ...generator.text(translatedName, styles: PrinterTextStyles.left),
-//       ...generator.text(material.matBarCode ?? '', styles: PrinterTextStyles.left),
-//       ...generator.text(
-//         '${record.invRecQuantity} x ${totals['unitPriceWithVat']!.toStringAsFixed(2)} -> ${PrinterConstants.totalLabel}${totals['lineTotal']!.toStringAsFixed(2)}',
-//         styles: PrinterTextStyles.left,
-//         linesAfter: 1,
-//       ),
-//     ];
-//   }
-//
-//   Future<List<int>> _generateLogo(Generator generator) async {
-//     try {
-//       final ByteData data = await rootBundle.load(AppAssets.ba3Logo);
-//       final Uint8List imageBytes = data.buffer.asUint8List();
-//       final img.Image? image = img.decodeImage(imageBytes);
-//
-//       if (image != null) {
-//         // تغيير حجم الصورة إذا لزم الأمر (تم تقليصها إلى 150 بكسل)
-//         final img.Image resizedImage = img.copyResize(image, width: 150);
-//         return generator.imageRaster(resizedImage);
-//       } else {
-//         debugPrint('فشل في فك تشفير الصورة');
-//       }
-//     } catch (e) {
-//       debugPrint('خطأ أثناء توليد اللوجو: $e');
-//     }
-//     return [];
-//   }
-//
-//   List<int> _createHeaderSection(Generator generator, String date, int billNumber) {
-//     return [
-//       ...generator.emptyLines(2),
-//       ...generator.text(PrinterConstants.storeName, styles: PrinterTextStyles.boldCentered),
-//       ...generator.emptyLines(1),
-//       ...generator.text('${PrinterConstants.dateLabel}$date', styles: PrinterTextStyles.left),
-//       ...generator.text('${PrinterConstants.billNumberLabel}$billNumber', styles: PrinterTextStyles.left),
-//       ...generator.text(PrinterConstants.trnNumber, styles: PrinterTextStyles.left, linesAfter: 1),
-//     ];
-//   }
-//
-//   List<int> _generateTotalSummary(Generator generator, double netTotal, double vatTotal) {
-//     return [
-//       ...generator.text('${PrinterConstants.totalVatLabel}${vatTotal.toStringAsFixed(2)}', styles: PrinterTextStyles.centered),
-//       ...generator.text('-' * 30, styles: PrinterTextStyles.right),
-//       ...generator.text('${PrinterConstants.subTotalLabel}${netTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
-//       ...generator.text('${PrinterConstants.vatLabel}${vatTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
-//       ...generator.text('${PrinterConstants.totalLabel}${(netTotal + vatTotal).toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
-//       ...generator.emptyLines(1),
-//     ];
-//   }
-//
-//   List<int> _createFooterSection(Generator generator) {
-//     return [
-//       ...generator.text(PrinterConstants.storeLocation, styles: PrinterTextStyles.centered),
-//       ...generator.text(PrinterConstants.contactNumber, styles: PrinterTextStyles.centered),
-//       ...generator.text(PrinterConstants.thankYouMessage, styles: PrinterTextStyles.boldCentered),
-//       ...generator.emptyLines(2),
-//     ];
-//   }
-// }
+// lib/features/print/controller/printing_controller.dart
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi' as ffi;
+import 'dart:io';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
-import 'package:ba3_bs/core/constants/printer_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img;
-import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:win32/win32.dart' as win32;
 
 import '../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../core/services/translation/implementations/translation_repo.dart';
@@ -356,9 +30,6 @@ class PrintingController extends GetxController {
   final TranslationRepository _translationRepository;
 
   PrintingController(this._translationRepository);
-
-  bool isPrinterConnected = false;
-  List<BluetoothInfo> bluetoothDevices = [];
 
   RxString loadingDots = ''.obs;
   Timer? _loadingAnimationTimer;
@@ -376,27 +47,37 @@ class PrintingController extends GetxController {
   }
 
   void _startLoadingDotsAnimation() {
-    _loadingAnimationTimer =
-        Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      loadingDots.value =
-          loadingDots.value.length < 3 ? '${loadingDots.value}.' : '';
+    _loadingAnimationTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      loadingDots.value = loadingDots.value.length < 3 ? '${loadingDots.value}.' : '';
     });
   }
 
-  Future<void> startPrinting(
-      {required BuildContext context,
-      required int billNumber,
-      required List<InvoiceRecordModel> invRecords,
-      required String invDate}) async {
+  Future<void> startPrinting({
+    required BuildContext context,
+    required int billNumber,
+    required List<InvoiceRecordModel> invRecords,
+    required String invDate,
+    required String sellerName,
+  }) async {
     _showLoadingDialog(context);
+    try {
+      final translatedSellerName = await _translationRepository.translateText(sellerName);
 
-    await _printBill(
-        billNumber: billNumber, invRecords: invRecords, invDate: invDate);
+      final bytes = await _generateBillPrintData(invRecords, invDate, translatedSellerName,billNumber,);
 
-    _dismissLoadingDialog();
+      if (!kIsWeb && Platform.isWindows) {
+        await _sendTicketWindowsRaw(bytes, printerName: PrinterConstants.printerNameWindows);
+      } else if (!kIsWeb && Platform.isMacOS) {
+        await _sendTicketMacRaw(bytes, printerName: PrinterConstants.printerNameMac);
+      } else {
+        log('Unsupported platform for USB RAW printing.');
+        Get.snackbar('Printing', 'Unsupported platform for USB RAW printing');
+      }
+    } finally {
+      _dismissLoadingDialog();
+    }
   }
 
-  /// Displays a loading dialog during the printing process
   void _showLoadingDialog(BuildContext context) {
     OverlayService.showDialog(
       context: context,
@@ -405,134 +86,257 @@ class PrintingController extends GetxController {
       height: 100,
       content: const PrintingLoadingDialog(),
       contentPadding: EdgeInsets.zero,
-// titlePadding: EdgeInsets.zero,
-// radius: 8,
-      onCloseCallback: () {
-        Get.delete<PrintingController>();
-      },
+      onCloseCallback: () => Get.delete<PrintingController>(),
     );
   }
 
   void _dismissLoadingDialog() => OverlayService.back();
 
-  Future<void> _printBill(
-      {required int billNumber,
-      required List<InvoiceRecordModel> invRecords,
-      required String invDate}) async {
-    List<BluetoothInfo> bluetoothDevices = await _fetchPairedBluetoothDevices();
+  // ----------------------------
+  // WINDOWS: RAW via Win32
+  // ----------------------------
+  Future<void> _sendTicketWindowsRaw(
+      List<int> ticket, {
+        required String printerName,
+      }) async {
+    try {
+      final data = Uint8List.fromList(ticket);
 
-    const String targetPrinterMacAddress = PrinterConstants.printerMacAddress;
+      final printerNamePtr = printerName.toNativeUtf16();
+      final pHandle = calloc<ffi.IntPtr>();
+      final pDefaults = calloc<win32.PRINTER_DEFAULTS>();
+      pDefaults.ref
+        ..pDatatype = win32.TEXT('RAW')
+        ..pDevMode = ffi.nullptr
+        ..DesiredAccess = win32.PRINTER_ACCESS_USE;
 
-// Check if the specified printer is among the paired devices
-    bool isPrinterAvailable = bluetoothDevices.any((device) =>
-        device.macAdress.toLowerCase() ==
-        targetPrinterMacAddress.toLowerCase());
+      final opened = win32.OpenPrinter(printerNamePtr, pHandle, pDefaults);
+      if (opened == 0) {
+        log('OpenPrinter failed. GetLastError=${win32.GetLastError()}');
+        calloc
+          ..free(printerNamePtr)
+          ..free(pHandle)
+          ..free(pDefaults);
+        return;
+      }
 
-    if (isPrinterAvailable) {
-      if (!isPrinterConnected) await _connectToPrinter(targetPrinterMacAddress);
+      final docInfo = calloc<win32.DOC_INFO_1>();
+      docInfo.ref
+        ..pDocName = win32.TEXT('ESC/POS from Flutter')
+        ..pOutputFile = ffi.nullptr
+        ..pDatatype = win32.TEXT('RAW');
 
-      await _sendBillToPrinter(invRecords, invDate, billNumber);
-    } else {
-      debugPrint('Cannot find the printer');
+      final docId = win32.StartDocPrinter(pHandle.value, 1, docInfo);
+      if (docId <= 0) {
+        log('StartDocPrinter failed. GetLastError=${win32.GetLastError()}');
+        win32.EndDocPrinter(pHandle.value);
+        win32.ClosePrinter(pHandle.value);
+        calloc
+          ..free(printerNamePtr)
+          ..free(pHandle)
+          ..free(pDefaults)
+          ..free(docInfo);
+        return;
+      }
+
+      if (win32.StartPagePrinter(pHandle.value) == 0) {
+        log('StartPagePrinter failed. GetLastError=${win32.GetLastError()}');
+        win32.EndDocPrinter(pHandle.value);
+        win32.ClosePrinter(pHandle.value);
+        calloc
+          ..free(printerNamePtr)
+          ..free(pHandle)
+          ..free(pDefaults)
+          ..free(docInfo);
+        return;
+      }
+
+      final dataPtr = calloc<ffi.Uint8>(data.length);
+      dataPtr.asTypedList(data.length).setAll(0, data);
+      final written = calloc<ffi.Uint32>();
+
+      final ok = win32.WritePrinter(pHandle.value, dataPtr, data.length, written);
+      if (ok == 0) {
+        log('WritePrinter failed. GetLastError=${win32.GetLastError()}');
+      } else {
+        log('Wrote ${written.value} bytes to printer');
+      }
+
+      win32.EndPagePrinter(pHandle.value);
+      win32.EndDocPrinter(pHandle.value);
+      win32.ClosePrinter(pHandle.value);
+
+      calloc
+        ..free(printerNamePtr)
+        ..free(pHandle)
+        ..free(pDefaults)
+        ..free(docInfo)
+        ..free(dataPtr)
+        ..free(written);
+    } catch (e) {
+      log('Exception in _sendTicketWindowsRaw: $e');
     }
   }
 
-// Retrieves a list of paired Bluetooth devices
-  Future<List<BluetoothInfo>> _fetchPairedBluetoothDevices() async {
-    bluetoothDevices = await PrintBluetoothThermal.pairedBluetooths;
-    debugPrint(
-        'isPermissionBluetoothGranted ${await PrintBluetoothThermal.isPermissionBluetoothGranted}');
-    return bluetoothDevices;
-  }
+  // ----------------------------
+  // macOS: RAW via stdin (بدون lpstat) + fallbacks
+  // ----------------------------
+  // macOS: اطبع RAW عبر ملف مؤقت + Process.run (بدون detached)
+// macOS: اطبع RAW عبر stdin بدون ملفات مؤقتة، مع محاولة تعيين POS80 كافتراضي إذا لزم
+  Future<void> _sendTicketMacRaw(
+      List<int> ticket, {
+        required String printerName,
+      }) async {
+    try {
+      // محاولة 1: lp -d <printer> -o raw  عبر stdin
+      {
+        final p = await Process.start(
+          '/usr/bin/lp',
+          ['-d', printerName, '-o', 'raw'],
+          // مهم: الوضع الافتراضي (ليس detachedWithStdio)
+        );
+        p.stdin.add(ticket);
+        await p.stdin.flush();
+        await p.stdin.close();
+        final code = await p.exitCode;
+        final out = await p.stdout.transform(const Utf8Decoder()).join();
+        final err = await p.stderr.transform(const Utf8Decoder()).join();
+        log('lp (stdin) -> $printerName  stdout: $out');
+        log('lp (stdin) -> $printerName  stderr: $err');
+        if (code == 0) return;
+      }
 
-// Connects to the printer using its MAC address
-  Future<void> _connectToPrinter(String mac) async {
-    isPrinterConnected =
-        await PrintBluetoothThermal.connect(macPrinterAddress: mac);
-    debugPrint('Connection status: $isPrinterConnected');
-  }
+      // محاولة 2: اضبط الطابعة الافتراضية POS80 برمجياً ثم lp -o raw عبر stdin
+          {
+        final setDef = await Process.run('/usr/bin/lpoptions', ['-d', printerName]);
+        log('lpoptions set default stdout: ${setDef.stdout}');
+        log('lpoptions set default stderr: ${setDef.stderr}');
+        // حتى لو فشل، نجرب على أي حال
+        final p = await Process.start(
+          '/usr/bin/lp',
+          ['-o', 'raw'],
+        );
+        p.stdin.add(ticket);
+        await p.stdin.flush();
+        await p.stdin.close();
+        final code = await p.exitCode;
+        final out = await p.stdout.transform(const Utf8Decoder()).join();
+        final err = await p.stderr.transform(const Utf8Decoder()).join();
+        log('lp (stdin, default) stdout: $out');
+        log('lp (stdin, default) stderr: $err');
+        if (code == 0) return;
+      }
 
-// Disconnects from the printer
-  Future<void> _disconnectFromPrinter() async {
-    isPrinterConnected = !(await PrintBluetoothThermal.disconnect);
-    debugPrint('Disconnect status: $isPrinterConnected');
-  }
+      // محاولة 3: lpr -P <printer> -l  عبر stdin
+          {
+        final p2 = await Process.start(
+          '/usr/bin/lpr',
+          ['-P', printerName, '-l'],
+        );
+        p2.stdin.add(ticket);
+        await p2.stdin.flush();
+        await p2.stdin.close();
+        final code2 = await p2.exitCode;
+        final out2 = await p2.stdout.transform(const Utf8Decoder()).join();
+        final err2 = await p2.stderr.transform(const Utf8Decoder()).join();
+        log('lpr -> $printerName  stdout: $out2');
+        log('lpr -> $printerName  stderr: $err2');
+        if (code2 == 0) return;
+      }
 
-// Sends the print data to the printer if connected
-  Future<void> _sendBillToPrinter(List<InvoiceRecordModel> invRecords,
-      String invDate, int billNumber) async {
-    if (await PrintBluetoothThermal.connectionStatus) {
-      List<int> ticket =
-          await _generateBillPrintData(invRecords, invDate, billNumber);
-
-// Write bytes to the printer
-      await PrintBluetoothThermal.writeBytes(ticket);
-    } else {
-      await _disconnectFromPrinter();
-      debugPrint('Print connection status: false');
+      // محاولة 4: lpr -l (على الافتراضي)
+          {
+        final p3 = await Process.start(
+          '/usr/bin/lpr',
+          ['-l'],
+        );
+        p3.stdin.add(ticket);
+        await p3.stdin.flush();
+        await p3.stdin.close();
+        final code3 = await p3.exitCode;
+        final out3 = await p3.stdout.transform(const Utf8Decoder()).join();
+        final err3 = await p3.stderr.transform(const Utf8Decoder()).join();
+        log('lpr (default) stdout: $out3');
+        log('lpr (default) stderr: $err3');
+        if (code3 != 0) {
+          throw Exception('macOS print failed (lpr default) code=$code3');
+        }
+      }
+    } catch (e) {
+      log('Exception in _sendTicketMacRaw: $e');
     }
   }
 
-// Generates the print data for the invoice
+
+
+  // ----------------------------
+  // توليد بايتات الفاتورة (قوائم growable فقط)
+  // ----------------------------
   Future<List<int>> _generateBillPrintData(
       List<InvoiceRecordModel> invoiceRecords,
       String invoiceDate,
-      int billNumber) async {
+      String sellerName,
+      int billNumber,
+      ) async {
     final profile = await CapabilityProfile.load();
-    final generator = Generator(PaperSize.mm58, profile);
-    List<int> bytes = generator.reset();
+    final generator = Generator(PrinterConstants.paperSize, profile);
 
-// Header
-    bytes += generator.text(PrinterConstants.invoiceTitle,
-        styles: PrinterTextStyles.centered, linesAfter: 1);
-    bytes += await _generateLogo(generator);
-    bytes += _createHeaderSection(generator, invoiceDate, billNumber);
+    final bytes = <int>[];
 
-// Process Items
-    final result =
-        await _generateItemsDetailsAndTotals(generator, invoiceRecords);
-    bytes += result.bytes;
+    // Header
+    bytes.addAll(generator.reset());
+    bytes.addAll(generator.text(
+      PrinterConstants.invoiceTitle,
+      styles: PrinterTextStyles.centered,
+      linesAfter: 1,
+    ));
+    bytes.addAll(await _generateLogo(generator));
+    bytes.addAll(_createHeaderSection(generator, invoiceDate, billNumber,sellerName));
 
-// Totals Summary
-    bytes += _generateTotalSummary(
-        generator, result.totals['netAmount']!, result.totals['vatAmount']!);
+    // Items
+    final result = await _generateItemsDetailsAndTotals(generator, invoiceRecords);
+    bytes.addAll(result.bytes);
 
-// Footer
-    bytes += _createFooterSection(generator);
+    // Totals
+    bytes.addAll(_generateTotalSummary(
+      generator,
+      result.totals['netAmount']!,
+      result.totals['vatAmount']!,
+    ));
+
+    // Footer
+    bytes.addAll(_createFooterSection(generator));
+
+    // اختياري: قصّ الورق
+    bytes.addAll(generator.cut());
 
     return bytes;
   }
 
-// Processes each invoice record, calculates totals, and adds item details to the print data
   Future<({List<int> bytes, Map<String, double> totals})>
-      _generateItemsDetailsAndTotals(
-          Generator generator, List<InvoiceRecordModel> invoiceRecords) async {
+  _generateItemsDetailsAndTotals(
+      Generator generator,
+      List<InvoiceRecordModel> invoiceRecords,
+      ) async {
     double netAmount = 0;
     double vatAmount = 0;
-    List<int> itemBytes = [];
+    final itemBytes = <int>[];
 
     final materialController = read<MaterialController>();
 
-    for (var record in invoiceRecords) {
-      final material = materialController.getMaterialById(record.invRecId!,);
+    for (final record in invoiceRecords) {
+      final material = materialController.getMaterialById(record.invRecId!);
       final recordTotals = _computeRecordTotals(record);
 
-// Update totals
       netAmount += recordTotals['netTotal']!;
       vatAmount += recordTotals['vatTotal']!;
 
-// Generate item details
-      itemBytes +=
-          await _generateItemDetails(generator, material, record, recordTotals);
+      itemBytes.addAll(await _generateItemDetails(generator, material, record, recordTotals));
     }
 
-    return (
-      bytes: itemBytes,
-      totals: {'netAmount': netAmount, 'vatAmount': vatAmount}
-    );
+    return (bytes: itemBytes, totals: {'netAmount': netAmount, 'vatAmount': vatAmount});
   }
 
-// Calculates totals for an invoice record
   Map<String, double> _computeRecordTotals(InvoiceRecordModel record) {
     final unitPriceWithVat = record.invRecTotal! / record.invRecQuantity!;
     final vatPerUnit = unitPriceWithVat * 0.05;
@@ -548,97 +352,148 @@ class PrintingController extends GetxController {
     };
   }
 
-// Generates the item details for each invoice record
   Future<List<int>> _generateItemDetails(
       Generator generator,
       MaterialModel material,
       InvoiceRecordModel record,
-      Map<String, double> totals) async {
-    final itemName = (material.matName?.decodeProblematic() ?? '').substring(
-        0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
-    log('itemName is s $itemName');
-    log('itemName is ${itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '').replaceAll('ـ', ' ')}');
-    final translatedName = await _translationRepository.translateText(itemName
-        .replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640ـ]'), '')
-        .replaceAll('ـ', ' '));
+      Map<String, double> totals,
+      ) async {
+    final rawName = (material.matName?.decodeProblematic() ?? '');
+    final safeLen = (rawName.length).clamp(0, 64);
+    final itemName = rawName.substring(0, safeLen);
+
+    final cleaned = itemName
+        .replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640]'), '')
+        .replaceAll('ـ', ' ');
+    final translatedName = await _translationRepository.translateText(cleaned);
 
     return [
       ...generator.text(translatedName, styles: PrinterTextStyles.left),
-      ...generator.text(material.matBarCode ?? '',
-          styles: PrinterTextStyles.left),
+      ...generator.text(material.matBarCode ?? '', styles: PrinterTextStyles.left),
       ...generator.text(
         '${record.invRecQuantity} x ${totals['unitPriceWithVat']!.toStringAsFixed(2)} -> '
-        '${PrinterConstants.totalLabel}${totals['lineTotal']!.toStringAsFixed(2)}',
+            '${PrinterConstants.totalLabel}${totals['lineTotal']!.toStringAsFixed(2)}',
         styles: PrinterTextStyles.left,
         linesAfter: 1,
       ),
     ];
   }
 
-// Generates the logo image for printing
+  // شعار آمن (يمنع أخطاء القوائم الثابتة)
   Future<List<int>> _generateLogo(Generator generator) async {
     try {
-      final ByteData data = await rootBundle.load(AppAssets.ba3Logo);
-      final Uint8List imageBytes = data.buffer.asUint8List();
-      final img.Image? image = img.decodeImage(imageBytes);
+      // 1) حمّل الصورة وفكّ ترميزها
+      final data = await rootBundle.load(AppAssets.ba3Logo);
+      final img.Image? decoded =
+      img.decodeImage(Uint8List.fromList(data.buffer.asUint8List()));
+      if (decoded == null) {
+        debugPrint('Logo decode failed');
+        return const <int>[];
+      }
 
-      if (image != null) {
-        final img.Image resizedImage = img.copyResize(image, width: 200);
-        return generator.imageRaster(resizedImage);
-      } else {
-        debugPrint('Failed to decode the image');
+      // 2) احسب أقصى عرض بالنقاط بناءً على مقاس الورق (203dpi شائع)
+      // mm80 ≈ 576dots, mm58 ≈ 384dots
+      final int maxDots =
+      (PrinterConstants.paperSize == PaperSize.mm80) ? 576 : 384;
+
+      // استعمل قيمة مخصّصة لو موجودة، لكن لا تتجاوز maxDots
+      final int targetWidth = (PrinterConstants.logoWidthPx)
+          .clamp(64, maxDots); // حد أدنى 64 حتى نتجنّب مشاكل صغيرة
+
+      // 3) غيّر الحجم مع الحفاظ على النسبة
+      final img.Image resized = img.copyResize(
+        decoded,
+        width: targetWidth,
+        interpolation: img.Interpolation.average,
+        // preserveAspectRatio: true,
+      );
+
+      // 4) بعض الرولات تتطلّب عرضًا مضاعفًا لـ 8
+      final int w8 = resized.width - (resized.width % 8);
+      final img.Image ready =
+      (w8 == resized.width) ? resized : img.copyResize(resized, width: w8);
+
+      // 5) جرّب raster أولاً (أجود). لو فشل لأي سبب، fallback إلى image()
+      try {
+        final bytes = generator.imageRaster(
+          ready,
+          align: PosAlign.center,
+        );
+        return List<int>.from(bytes, growable: true);
+      } catch (e) {
+        debugPrint('imageRaster failed, fallback to image(): $e');
+        final bytes = generator.image(
+          ready,
+          align: PosAlign.center,
+        );
+        return List<int>.from(bytes, growable: true);
       }
     } catch (e) {
-      debugPrint('Error generating logo: $e');
+      debugPrint('Logo generation error: $e');
+      // لا توقف الطباعة بسبب الشعار
+      return const <int>[];
     }
-    return [];
   }
 
-  List<int> _createHeaderSection(
-      Generator generator, String date, int billNumber) {
+
+  List<int> _createHeaderSection(Generator generator, String date, int billNumber,String sellerName) {
     return [
       ...generator.emptyLines(2),
-      ...generator.text(PrinterConstants.storeName,
-          styles: PrinterTextStyles.boldCentered),
+      ...generator.text(PrinterConstants.storeName, styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(1),
-      ...generator.text('${PrinterConstants.dateLabel}$date',
-          styles: PrinterTextStyles.left),
-      ...generator.text('${PrinterConstants.billNumberLabel}$billNumber',
-          styles: PrinterTextStyles.left),
-      ...generator.text(PrinterConstants.trnNumber,
-          styles: PrinterTextStyles.left, linesAfter: 1),
+      ...generator.text('${PrinterConstants.dateLabel}$date', styles: PrinterTextStyles.left),
+      ...generator.text('${PrinterConstants.billNumberLabel}$billNumber', styles: PrinterTextStyles.left),
+      ...generator.text('${PrinterConstants.sellerName}$sellerName', styles: PrinterTextStyles.left),
+      ...generator.text(PrinterConstants.trnNumber, styles: PrinterTextStyles.left, linesAfter: 1),
     ];
   }
 
-  List<int> _generateTotalSummary(
-      Generator generator, double netTotal, double vatTotal) {
+  List<int> _generateTotalSummary(Generator generator, double netTotal, double vatTotal) {
     return [
-      ...generator.text(
-          '${PrinterConstants.totalVatLabel}${vatTotal.toStringAsFixed(2)}',
-          styles: PrinterTextStyles.centered),
+      ...generator.text('${PrinterConstants.totalVatLabel}${vatTotal.toStringAsFixed(2)}', styles: PrinterTextStyles.centered),
       ...generator.text('-' * 30, styles: PrinterTextStyles.right),
-      ...generator.text(
-          '${PrinterConstants.subTotalLabel}${netTotal.toStringAsFixed(2)} AED',
-          styles: PrinterTextStyles.rightBold),
-      ...generator.text(
-          '${PrinterConstants.vatLabel}${vatTotal.toStringAsFixed(2)} AED',
-          styles: PrinterTextStyles.rightBold),
-      ...generator.text(
-          '${PrinterConstants.totalLabel}${(netTotal + vatTotal).toStringAsFixed(2)} AED',
-          styles: PrinterTextStyles.rightBold),
+      ...generator.text('${PrinterConstants.subTotalLabel}${netTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
+      ...generator.text('${PrinterConstants.vatLabel}${vatTotal.toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
+      ...generator.text('${PrinterConstants.totalLabel}${(netTotal + vatTotal).toStringAsFixed(2)} AED', styles: PrinterTextStyles.rightBold),
       ...generator.emptyLines(1),
     ];
   }
 
   List<int> _createFooterSection(Generator generator) {
     return [
-      ...generator.text(PrinterConstants.storeLocation,
-          styles: PrinterTextStyles.centered),
-      ...generator.text(PrinterConstants.contactNumber,
-          styles: PrinterTextStyles.centered),
-      ...generator.text(PrinterConstants.thankYouMessage,
-          styles: PrinterTextStyles.boldCentered),
+      ...generator.text(PrinterConstants.storeLocation, styles: PrinterTextStyles.centered),
+      ...generator.text(PrinterConstants.contactNumber, styles: PrinterTextStyles.centered),
+      ...generator.text(PrinterConstants.thankYouMessage, styles: PrinterTextStyles.boldCentered),
       ...generator.emptyLines(2),
     ];
   }
+}
+
+
+
+class PrinterConstants {
+  // أسماء الطابعات
+  static const String printerNameWindows = 'POS80';
+  static const String printerNameMac = 'POS80';
+
+  // مقاس الورق (POS80 عادةً 80mm)
+  static final PaperSize paperSize = PaperSize.mm80;
+
+  // عرض اللوجو المقترح
+  static final int logoWidthPx = paperSize == PaperSize.mm58 ? 200 : 300;
+
+  // نصوص ثابتة
+  static const String invoiceTitle = 'TAX INVOICE';
+  static const String storeName = 'Burj Al Arab Mobile Phones';
+  static const String dateLabel = 'Date: ';
+  static const String billNumberLabel = 'Invoice #: ';
+  static const String sellerName = 'Seller Name #: ';
+  static const String trnNumber = 'TRN:  100369311400003';
+  static const String totalVatLabel = 'VAT Amount: ';
+  static const String subTotalLabel = 'Sub Total: ';
+  static const String vatLabel = 'VAT (5%): ';
+  static const String totalLabel = 'Total: ';
+  static const String storeLocation = 'Ras Al Khaimah, UAE';
+  static const String contactNumber = '+971-56-866-6411';
+  static const String thankYouMessage = 'Thank you for your purchase!';
 }

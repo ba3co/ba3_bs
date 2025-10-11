@@ -291,6 +291,7 @@ enum BondType  {
     label: "OpeningEntry",
     value: "القيد الافتتاحي",
     typeGuide: "ea69ba80-662d-4fa4-90ee-4d2e1988a8ea",
+
     from: 1,
     to: 1,
     taxType: 0,

@@ -5,7 +5,6 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
-import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -33,16 +32,16 @@ class BillLayout extends StatelessWidget {
             appBar: AppBar(
               leadingWidth: 300,
               actions: [
-                if (RoleItemType.administrator.hasAdminPermission)
-                  Padding(
+      /*    if (RoleItemType.administrator.hasAdminPermission)
+                 Padding(
                     padding: EdgeInsets.all(8),
                     child: AppButton(
-                      title: AppStrings.downloadBills.tr,
+                      title: "asd",
                       onPressed: () {
-                        allBillsController.fetchAllBillsFromLocal(context);
+                        allBillsController.runFixDuplicates();
                       },
                     ),
-                  ),
+                  ),*/
               ],
             ),
             body: Padding(

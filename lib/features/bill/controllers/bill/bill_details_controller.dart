@@ -228,6 +228,7 @@ class BillDetailsController extends IBillController
       invRecords: invRecords,
       billNumber: billModel.billDetails.billNumber!,
       invDate: billDate.value.dayMonthYear,
+      sellerName: selectedSellerAccount?.costName ?? '',
     );
   }
 

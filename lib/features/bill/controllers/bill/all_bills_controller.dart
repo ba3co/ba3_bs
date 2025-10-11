@@ -22,6 +22,7 @@ import 'package:ba3_bs/features/materials/controllers/material_group_controller.
 import 'package:ba3_bs/features/materials/service/mat_statement_generator.dart';
 import 'package:ba3_bs/features/materials/ui/screens/serials_statement_screen.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -283,6 +284,24 @@ class AllBillsController extends FloatingBillDetailsLauncher
         ),
         (fetchedBills) => _onFetchBillsFromLocalSuccess(fetchedBills, context),
       );
+    }
+  }
+  Future<void> runFixDuplicates() async {
+    try {
+      final functions = FirebaseFunctions.instanceFor(/*region: "europe-west6"*/);
+
+      final callable = functions.httpsCallable('fixDuplicatesByTypeGuide');
+
+      final result = await callable.call({
+        'typeGuide': '6ed3786c-08c6-453b-afeb-a0e9075dd26d', // مثلاً sales
+        'limit': 200, // اختياري
+      });
+
+      log("✅ Fix result: ${result.data}");
+    } on FirebaseFunctionsException catch (e) {
+      log("⚠️ Error from Cloud Function: ${e.code} - ${e.message}");
+    } catch (e) {
+      log("❌ Unexpected error: $e");
     }
   }
 

@@ -1,0 +1,14 @@
+{
+  "indexes": [
+    { "collectionGroup": "sales",               "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "purchase",            "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "salesReturn",         "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "purchaseReturn",      "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "adjustmentEntry",     "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "outputAdjustment",    "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "firstPeriodInventory","queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "transferIn",          "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] },
+    { "collectionGroup": "transferOut",         "queryScope": "COLLECTION_GROUP", "fields": [ { "fieldPath": "billDetails.billNumber", "order": "ASCENDING" }, { "fieldPath": "__name__", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": []
+}
