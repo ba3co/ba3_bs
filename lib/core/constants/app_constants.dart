@@ -1,5 +1,6 @@
 import '../../features/users_management/data/models/user_model.dart';
 import '../helper/enums/enums.dart';
+import 'app_assets.dart';
 
 abstract class AppConstants {
   static String dataName = '';
@@ -433,6 +434,9 @@ abstract class AppConstants {
 
   static bool forcePending = false;
   static String staticAppPassword = 'Asd123';
+  static const String printerNamePOS58 = 'POS58';
+  static const String printerNamePOS80 = 'POS80';
+  static const String logoAssetPath = AppAssets.ba3Logo;
 
   static List<UserWorkingHours> fridayWorkingHours = [
     UserWorkingHours(
@@ -443,8 +447,7 @@ abstract class AppConstants {
   ];
 
   // @preserve: ali-dev-only getter
-  static String get getDatabaseAppName => defaultFirebaseAppName;
+  static String get getDatabaseAppName => testDataBaseAppName;
 }
-
 
 ///https://shreyanspos.com/kp307/

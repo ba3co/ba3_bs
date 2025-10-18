@@ -38,6 +38,7 @@ import 'package:ba3_bs/features/materials/service/materials_groups_import.dart';
 import 'package:ba3_bs/features/migration/data/datasources/remote/migration_data_source.dart';
 import 'package:ba3_bs/features/migration/data/models/migration_model.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
+import 'package:ba3_bs/features/print/service/translation_service.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -85,6 +86,7 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
+import '../../features/print/service/printer_manager.dart';
 import '../../features/sellers/service/seller_import.dart';
 import '../../features/user_task/controller/all_task_controller.dart';
 import '../../features/user_task/data/datasources/user_task_data_source.dart';
@@ -334,7 +336,7 @@ class AppBindings extends Bindings {
 
     lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
 
-    lazyPut(PrintingController(repositories.translationRepo));
+    lazyPut(PrintingController( PrinterManager(ts: TranslationService(repositories.translationRepo))/*repositories.translationRepo*/));
 
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
 

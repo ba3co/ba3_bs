@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/helper/extensions/getx_controller_extensions.dart';
-import '../../controller/print_controller.dart';
+// import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+// import '../../controller/print_controller.dart';
 
 class PrintingLoadingDialog extends StatelessWidget {
   const PrintingLoadingDialog({super.key});
@@ -14,9 +14,9 @@ class PrintingLoadingDialog extends StatelessWidget {
       children: [
         Obx(() {
           // Observe dots and update text dynamically
-          final dots = read<PrintingController>().loadingDots.value;
+          // final dots = read<PrintingController>().loadingDots.value;
           return Text(
-            'جاري الطباعه$dots',
+            'جاري الطباعه',
             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           );
         }),
