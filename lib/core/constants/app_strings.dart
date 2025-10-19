@@ -451,4 +451,6 @@ class AppStrings {
 
   static var viewNegativeMaterial='عرض المواد المخرجة بالسالب';
 
+  static var barcodeIsRequired='يجب ادخال باركود للمادة';
+
 }

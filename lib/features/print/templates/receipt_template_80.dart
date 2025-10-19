@@ -1,11 +1,13 @@
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import '../core/print_job.dart';
 import '../escpos/escpos_generator.dart';
+import '../escpos/logo_helper.dart';
 import '../service/translation_service.dart';
 import 'base_template.dart';
 
 class ReceiptTemplate80 implements BaseTemplate {
   final TranslationService ts;
+
   ReceiptTemplate80(this.ts);
 
   @override
@@ -21,18 +23,26 @@ class ReceiptTemplate80 implements BaseTemplate {
       styles: const PosStyles(align: PosAlign.center, bold: true),
       linesAfter: 1,
     ));
+    b.addAll(g.reset());
+    final bytes = await LogoHelper.generateLogo(
+      paperSize,
+    );
+    b.addAll(bytes);
+    b.addAll(g.empty());
     b.addAll(g.text(
       'Burj Al Arab Mobile Phones',
       styles: const PosStyles(align: PosAlign.center, bold: true),
+      linesAfter: 1,
     ));
-
     final seller = await ts.safeTranslate(job.sellerName);
     final customer = await ts.safeTranslate(job.customerNumber);
+    final nots = await ts.safeTranslate(job.nots);
 
     b.addAll(g.text('Date: ${job.invoiceDate}', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('Invoice #: ${job.billNumber}', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('Seller Name #: $seller', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('Customer Number #: $customer', styles: const PosStyles(align: PosAlign.left)));
+    b.addAll(g.text('Nots #: $nots', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('TRN:  100369311400003', styles: const PosStyles(align: PosAlign.left)));
 
     double net = 0, vat = 0;
@@ -43,9 +53,7 @@ class ReceiptTemplate80 implements BaseTemplate {
       net += netU * r.invRecQuantity!;
       vat += vatU * r.invRecQuantity!;
 
-      final raw = (r.invRecProduct ?? '')
-          .replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640]'), '')
-          .replaceAll('ـ', ' ');
+      final raw = (r.invRecProduct ?? '').replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640]'), '').replaceAll('ـ', ' ');
       final name = await ts.safeTranslate(raw);
 
       b.addAll(g.text(name, styles: const PosStyles(align: PosAlign.left)));

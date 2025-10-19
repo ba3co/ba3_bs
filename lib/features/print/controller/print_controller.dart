@@ -1,5 +1,6 @@
 // lib/features/print/controller/printing_controller.dart
 
+import 'dart:convert' show AsciiCodec;
 import 'package:get/get.dart';
 
 import '../core/print_job.dart';
@@ -8,122 +9,151 @@ import '../core/print_result.dart';
 import '../service/printer_manager.dart';
 import '../templates/label_template.dart';
 
-// للِّيبل (باركود) نحتاج الجنريتور والملف الشخصي
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import '../escpos/escpos_generator.dart';
 
-// في حال أردت إرسال بايتات الليبل مباشرة (بدون PrinterManager)
 import '../io/print_adapter.dart';
 import '../io/windows_raw_adapter.dart';
 import '../io/macos_raw_adapter.dart';
+
 import '../../bill/data/models/invoice_record_model.dart';
+
+// ZPL
+import '../zpl/zpl_helpers.dart';
 
 class PrintingController extends GetxController {
   final PrinterManager manager;
   PrintingController(this.manager);
 
-  // =======================
-  // 58mm Receipt
-  // =======================
+  // ======= فواتير ESC/POS تبقى كما هي =======
   Future<PrintResult> printReceipt58({
     required List<InvoiceRecordModel> items,
     required int billNumber,
     required String date,
     required String seller,
     required String customer,
+    required String nots,
   }) async {
     final job = PrintJob(
       billNumber: billNumber,
       invoiceDate: date,
       sellerName: seller,
       customerNumber: customer,
+      nots: nots,
       items: items,
     );
-
     final device = PrinterDevice(
       name: 'POS58',
       paperKind: PaperKind.mm58,
-      platform:
-      GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
+      platform: GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
     );
-
     return manager.printJob(device, job);
   }
 
-  // =======================
-  // 80mm Receipt
-  // =======================
   Future<PrintResult> printReceipt80({
     required List<InvoiceRecordModel> items,
     required int billNumber,
     required String date,
     required String seller,
     required String customer,
+    required String nots,
   }) async {
     final job = PrintJob(
       billNumber: billNumber,
       invoiceDate: date,
       sellerName: seller,
       customerNumber: customer,
+      nots: nots,
       items: items,
     );
-
     final device = PrinterDevice(
       name: 'POS80',
       paperKind: PaperKind.mm80,
-      platform:
-      GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
+      platform: GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
     );
-
     return manager.printJob(device, job);
   }
 
-  // =======================
-  // Label (barcode-only)
-  // =======================
+  // ======= ليبل ESC/POS لغير Zebra =======
   Future<PrintResult> printLabel({
     required String printerName,
     required String barcodeData,
     String? title,
   }) async {
-    // نحدد نوع الجهاز كـ Label (معظم الليبلرز ESC/POS عرض 58mm افتراضياً)
     final device = PrinterDevice(
       name: printerName,
       paperKind: PaperKind.label,
-      platform:
-      GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
+      platform: GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
     );
 
-    // نبني البايتات عبر التمبلِيت
     final profile = await CapabilityProfile.load();
-    final generator = EscposGenerator(
-      PaperSize.mm58, // عدّلها لو ليبلر أوسع
-      profile,
-    );
+    final generator = EscposGenerator(PaperSize.mm58, profile);
 
     final labelTemplate = LabelTemplate(data: barcodeData, title: title);
     final bytes = await labelTemplate.build(
       generator,
       const PrintJob(
-        billNumber: 0,
-        invoiceDate: '',
-        sellerName: '',
-        customerNumber: '',
-        items: [],
+        nots: '',
+        billNumber: 0, invoiceDate: '', sellerName: '', customerNumber: '', items: [],
       ),
     );
 
-    // نرسل البايتات عبر المحول المناسب للمنصة
     final adapter = _adapterFor(device.platform);
     return adapter.send(bytes, printerName: device.name);
   }
 
-  // =======================
-  // Helpers
-  // =======================
-  PrintAdapter _adapterFor(PlatformKind platform) {
-    return platform == PlatformKind.windows
-        ? WindowsRawAdapter()
-        : MacosRawAdapter();
+  // ======= ليبل ZPL لطابعات Zebra (GX420t, ...) =======
+  Future<PrintResult> printTitlePriceBarcodeFullWidth({
+     String printerName='Zebra_Technologies_ZTC_GX420t',
+    required String barcodeData,
+    String? title,
+    String? priceText,
+
+    double widthMm = 55,
+    double heightMm = 30,
+
+    int copies = 1,
+    int darkness = 18,
+    int printSpeed = 2,
+    double quietZoneMm = 2.0,
+  }) async {
+
+    final device = PrinterDevice(
+      name: printerName,
+      paperKind: PaperKind.label,
+      platform: GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
+    );
+
+    final zpl = buildTitlePriceBarcodeFullWidthZpl(
+      data: barcodeData,
+      title: title,
+      priceText: priceText,
+      labelWidthMm: widthMm,
+      labelHeightMm: heightMm,
+      copies: copies,
+      darkness: darkness,
+      printSpeed: printSpeed,
+      quietZoneMm: quietZoneMm,
+      barcodeHeight: 80,
+        titleFontHeight: 20,
+        marginTopDots: 30,
+        titleLineSpacing: 2
+      // باقي الإعدادات الافتراضية داخل الدالة
+    );
+
+    final adapter = _adapterFor(device.platform);
+    final bytes = const AsciiCodec(allowInvalid: true).encode(zpl);
+    return adapter.send(bytes, printerName: device.name);
   }
+
+  // Helpers
+  PrintAdapter _adapterFor(PlatformKind platform) {
+    return platform == PlatformKind.windows ? WindowsRawAdapter() : MacosRawAdapter();
+
+  }
+
+
+
+  // Helpers
+
 }

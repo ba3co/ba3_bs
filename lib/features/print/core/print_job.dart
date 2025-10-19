@@ -7,6 +7,7 @@ class PrintJob {
   final String invoiceDate;
   final String sellerName;
   final String customerNumber;
+  final String nots;
   final List<InvoiceRecordModel> items;
 
 
@@ -16,5 +17,6 @@ class PrintJob {
     required this.sellerName,
     required this.customerNumber,
     required this.items,
+    required this.nots,
   });
 }

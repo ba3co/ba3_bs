@@ -23,8 +23,7 @@ class AddMaterialScreen extends StatelessWidget {
           centerTitle: false,
           title: Row(
             children: [
-              Text(controller.selectedMaterial?.matName ??
-                  AppStrings.newMaterial.tr),
+              Text(controller.selectedMaterial?.matName ?? AppStrings.newMaterial.tr),
               // Text(controller.selectedMaterial?.mat ??
               //     AppStrings.newMaterial.tr),
             ],
@@ -39,12 +38,10 @@ class AddMaterialScreen extends StatelessWidget {
                 controller: controller,
               ),
               FormFieldRow(
-                firstItem: TaxDropdown(
-                    taxSelectionHandler: controller.materialFromHandler),
+                firstItem: TaxDropdown(taxSelectionHandler: controller.materialFromHandler),
                 secondItem: SearchableMaterialField(
                   label: AppStrings.group.tr,
-                  textController:
-                      controller.materialFromHandler.parentController,
+                  textController: controller.materialFromHandler.parentController,
                   onSubmitted: (text) {
                     controller.openMaterialGroupSelectionDialog(
                       query: text,
@@ -58,29 +55,21 @@ class AddMaterialScreen extends StatelessWidget {
                 children: [
                   Obx(() {
                     return AppButton(
-                      isLoading: controller.saveMaterialRequestState.value ==
-                          RequestState.loading,
-                      title: controller.selectedMaterial?.id == null
-                          ? AppStrings.add.tr
-                          : AppStrings.edit.tr,
+                      isLoading: controller.saveMaterialRequestState.value == RequestState.loading,
+                      title: controller.selectedMaterial?.id == null ? AppStrings.add.tr : AppStrings.edit.tr,
                       onPressed: () {
                         controller.saveOrUpdateMaterial();
                       },
-                      iconData: controller.selectedMaterial?.id == null
-                          ? Icons.add
-                          : Icons.edit,
-                      color: controller.selectedMaterial?.id == null
-                          ? null
-                          : Colors.green,
+                      iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
+                      color: controller.selectedMaterial?.id == null ? null : Colors.green,
                     );
                   }),
                   Obx(() {
                     return AppButton(
-                      isLoading: controller.deleteMaterialRequestState.value ==
-                          RequestState.loading,
+                      isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
                       title: AppStrings.delete.tr,
                       onPressed: () {
-                        controller.deleteMaterial(context,true);
+                        controller.deleteMaterial(context, true);
                       },
                       iconData: Icons.delete,
                       color: Colors.red,
@@ -88,12 +77,10 @@ class AddMaterialScreen extends StatelessWidget {
                   }),
                   Obx(() {
                     return AppButton(
-                      isLoading: controller.deleteMaterialRequestState.value ==
-                          RequestState.loading,
+                      isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
                       title: AppStrings.repair.tr,
-                      onPressed: ()async {
-                        if( controller.deleteMaterialRequestState.value != RequestState.loading)
-                        {
+                      onPressed: () async {
+                        if (controller.deleteMaterialRequestState.value != RequestState.loading) {
                           controller.deleteMaterialRequestState.value = RequestState.loading;
                           await read<MaterialsStatementController>().setupOneMaterials(controller.selectedMaterial!.id!);
                           controller.deleteMaterialRequestState.value = RequestState.success;
@@ -103,9 +90,15 @@ class AddMaterialScreen extends StatelessWidget {
                       color: Colors.orange,
                     );
                   }),
+                  AppButton(
+                    title: AppStrings.print.tr,
+                    onPressed: () async {
+                      controller.printMaterialBarcode(material: controller.selectedMaterial!);
+                    },
+                    iconData: Icons.print_outlined,
+                  ),
                 ],
               ),
-
             ],
           ),
         ),

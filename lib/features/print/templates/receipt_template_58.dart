@@ -17,7 +17,7 @@ class ReceiptTemplate58 implements BaseTemplate {
   Future<List<int>> build(EscposGenerator g, PrintJob job) async {
     final b = <int>[];
 
-    // العناوين
+
     b.addAll(g.text(
       'TAX INVOICE',
       styles: const PosStyles(align: PosAlign.center, bold: true),
@@ -37,11 +37,13 @@ class ReceiptTemplate58 implements BaseTemplate {
     // معلومات عامة
     final seller = await ts.safeTranslate(job.sellerName);
     final customer = await ts.safeTranslate(job.customerNumber);
+    final nots = await ts.safeTranslate(job.nots);
 
     b.addAll(g.text('Date: ${job.invoiceDate}', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('Invoice #: ${job.billNumber}', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('Seller Name #: $seller', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('Customer Number #: $customer', styles: const PosStyles(align: PosAlign.left)));
+    b.addAll(g.text('Nots #: $nots', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.text('TRN:  100369311400003', styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.empty(1));
     b.addAll(g.text('products:', styles: const PosStyles(align: PosAlign.left)));

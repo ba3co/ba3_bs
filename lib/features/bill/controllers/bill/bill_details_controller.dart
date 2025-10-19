@@ -223,18 +223,13 @@ class BillDetailsController extends IBillController
       {required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
-    await read<PrintingController>().printReceipt58(
+    await read<PrintingController>().printReceipt80(
       date: billDate.value.dayMonthYear,
       items: invRecords,
       seller:  selectedSellerAccount?.costName ?? '',
-      // logoAssetPath: AppConstants.logoAssetPath,
-      // paperSize: PaperSize.mm58,
-      // printerName: AppConstants.printerNamePOS58,
-      // context: context,
-      // invRecords: invRecords,
       billNumber: billModel.billDetails.billNumber!,
-      // sellerName: selectedSellerAccount?.costName ?? '',
       customer: billModel.billDetails.customerPhone!,
+      nots: billModel.billDetails.billNote ?? '',
     );
   }
 
