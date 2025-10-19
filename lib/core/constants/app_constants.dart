@@ -434,9 +434,11 @@ abstract class AppConstants {
 
   static bool forcePending = false;
   static String staticAppPassword = 'Asd123';
-  static const String printerNamePOS58 = 'POS58';
-  static const String printerNamePOS80 = 'POS80';
   static const String logoAssetPath = AppAssets.ba3Logo;
+
+  static const String labelPrinterName='Zebra_Technologies_ZTC_GX420t';
+  static const String recitePrinter80Name='POS80';
+  static const String recitePrinter58Name='POS58';
 
   static List<UserWorkingHours> fridayWorkingHours = [
     UserWorkingHours(
@@ -447,7 +449,7 @@ abstract class AppConstants {
   ];
 
   // @preserve: ali-dev-only getter
-  static String get getDatabaseAppName => testDataBaseAppName;
+  static String get getDatabaseAppName => defaultFirebaseAppName;
 }
 
 ///https://shreyanspos.com/kp307/

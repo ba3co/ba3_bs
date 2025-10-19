@@ -1,9 +1,11 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/searchable_material_field.dart';
 import 'package:ba3_bs/core/widgets/tax_dropdown.dart';
 import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -53,29 +55,40 @@ class AddMaterialScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Obx(() {
-                    return AppButton(
-                      isLoading: controller.saveMaterialRequestState.value == RequestState.loading,
-                      title: controller.selectedMaterial?.id == null ? AppStrings.add.tr : AppStrings.edit.tr,
-                      onPressed: () {
-                        controller.saveOrUpdateMaterial();
-                      },
-                      iconData: controller.selectedMaterial?.id == null ? Icons.add : Icons.edit,
-                      color: controller.selectedMaterial?.id == null ? null : Colors.green,
-                    );
-                  }),
-                  Obx(() {
-                    return AppButton(
-                      isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
-                      title: AppStrings.delete.tr,
-                      onPressed: () {
-                        controller.deleteMaterial(context, true);
-                      },
-                      iconData: Icons.delete,
-                      color: Colors.red,
-                    );
-                  }),
-                  Obx(() {
+                  if (!controller.hasId)
+                    Obx(() {
+                      return AppButton(
+                        isLoading: controller.saveMaterialRequestState.value == RequestState.loading,
+                        title: AppStrings.add.tr,
+                        onPressed: () => controller.saveOrUpdateMaterial(),
+                        iconData: Icons.add,
+                      );
+                    })else
+                  if (RoleItemType.viewProduct.hasAdminPermission)
+                    Obx(() {
+                      return AppButton(
+                        isLoading: controller.saveMaterialRequestState.value == RequestState.loading,
+                        title: AppStrings.edit.tr,
+                        onPressed: () => controller.saveOrUpdateMaterial(),
+                        iconData: Icons.edit,
+                        color: Colors.green,
+                      );
+                    }),
+
+                  if (controller.hasId)
+                 ...[
+                   Obx(() {
+                     return AppButton(
+                       isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
+                       title: AppStrings.delete.tr,
+                       onPressed: () {
+                         controller.deleteMaterial(context, true);
+                       },
+                       iconData: Icons.delete,
+                       color: Colors.red,
+                     );
+                   }),
+                   Obx(() {
                     return AppButton(
                       isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
                       title: AppStrings.repair.tr,
@@ -93,10 +106,10 @@ class AddMaterialScreen extends StatelessWidget {
                   AppButton(
                     title: AppStrings.print.tr,
                     onPressed: () async {
-                      controller.printMaterialBarcode(material: controller.selectedMaterial!);
+                      controller.creatMultiCopiesMatBarcode(material: controller.selectedMaterial!, context: context);
                     },
                     iconData: Icons.print_outlined,
-                  ),
+                  ),]
                 ],
               ),
             ],

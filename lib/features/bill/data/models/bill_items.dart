@@ -2,6 +2,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
+import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../materials/controllers/material_controller.dart';
 import 'invoice_record_model.dart';
 
 part 'bill_items.g.dart';
@@ -50,16 +52,29 @@ class BillItems extends HiveObject with EquatableMixin {
         itemList: itemList ?? this.itemList,
       );
 
-  List<InvoiceRecordModel> get getMaterialRecords {
+  Future<List<InvoiceRecordModel>> get getMaterialRecords async {
     if (itemList.isEmpty) {
       return [];
     } else {
-      return _materialRecords;
+      return await _materialRecords;
     }
   }
 
-  List<InvoiceRecordModel> get _materialRecords =>
-      itemList.map((item) => InvoiceRecordModel.fromBillItem(item)).toList();
+  Future<List<InvoiceRecordModel>> get _materialRecords async {
+    final records = await Future.wait(
+      itemList.map((item) async {
+        final material = await read<MaterialController>()
+            .getMaterialByIdWithNull(item.itemGuid);
+
+        if (material == null) {
+          return null;
+        }
+        return InvoiceRecordModel.fromBillItem(item, material: material);
+      }),
+    );
+
+    return records.whereType<InvoiceRecordModel>().toList();
+  }
 
   @override
   List<Object?> get props => [itemList];

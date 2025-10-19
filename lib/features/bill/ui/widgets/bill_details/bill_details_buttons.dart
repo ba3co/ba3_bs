@@ -76,6 +76,15 @@ class BillDetailsButtons extends StatelessWidget {
             ),
             Visibility(
                 visible: billModel.billTypeModel.isPurchaseRelated, child: freeLocalSwitcher(billDetailsController: billDetailsController)),
+            Visibility(
+              visible: billModel.billTypeModel.isPurchaseRelated && !billSearchController.isNew,
+              child: _buildActionButton(
+                title: AppStrings.printLabel.tr,
+                icon: FontAwesomeIcons.print,
+                width: 120,
+                onPressed: () => billDetailsController.printMaterialLabel(billModel),
+              ),
+            ),
             /*           Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,

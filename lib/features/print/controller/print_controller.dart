@@ -1,6 +1,7 @@
 // lib/features/print/controller/printing_controller.dart
 
 import 'dart:convert' show AsciiCodec;
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:get/get.dart';
 
 import '../core/print_job.dart';
@@ -23,6 +24,7 @@ import '../zpl/zpl_helpers.dart';
 
 class PrintingController extends GetxController {
   final PrinterManager manager;
+
   PrintingController(this.manager);
 
   // ======= فواتير ESC/POS تبقى كما هي =======
@@ -43,7 +45,7 @@ class PrintingController extends GetxController {
       items: items,
     );
     final device = PrinterDevice(
-      name: 'POS58',
+      name: AppConstants.recitePrinter58Name,
       paperKind: PaperKind.mm58,
       platform: GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
     );
@@ -67,7 +69,7 @@ class PrintingController extends GetxController {
       items: items,
     );
     final device = PrinterDevice(
-      name: 'POS80',
+      name: AppConstants.recitePrinter80Name,
       paperKind: PaperKind.mm80,
       platform: GetPlatform.isWindows ? PlatformKind.windows : PlatformKind.macos,
     );
@@ -94,7 +96,11 @@ class PrintingController extends GetxController {
       generator,
       const PrintJob(
         nots: '',
-        billNumber: 0, invoiceDate: '', sellerName: '', customerNumber: '', items: [],
+        billNumber: 0,
+        invoiceDate: '',
+        sellerName: '',
+        customerNumber: '',
+        items: [],
       ),
     );
 
@@ -104,20 +110,17 @@ class PrintingController extends GetxController {
 
   // ======= ليبل ZPL لطابعات Zebra (GX420t, ...) =======
   Future<PrintResult> printTitlePriceBarcodeFullWidth({
-     String printerName='Zebra_Technologies_ZTC_GX420t',
+    String printerName = AppConstants.labelPrinterName,
     required String barcodeData,
     String? title,
     String? priceText,
-
     double widthMm = 55,
     double heightMm = 30,
-
     int copies = 1,
     int darkness = 18,
     int printSpeed = 2,
     double quietZoneMm = 2.0,
   }) async {
-
     final device = PrinterDevice(
       name: printerName,
       paperKind: PaperKind.label,
@@ -125,21 +128,21 @@ class PrintingController extends GetxController {
     );
 
     final zpl = buildTitlePriceBarcodeFullWidthZpl(
-      data: barcodeData,
-      title: title,
-      priceText: priceText,
-      labelWidthMm: widthMm,
-      labelHeightMm: heightMm,
-      copies: copies,
-      darkness: darkness,
-      printSpeed: printSpeed,
-      quietZoneMm: quietZoneMm,
-      barcodeHeight: 80,
+        data: barcodeData,
+        title: title,
+        priceText: priceText,
+        labelWidthMm: widthMm,
+        labelHeightMm: heightMm,
+        copies: copies,
+        darkness: darkness,
+        printSpeed: printSpeed,
+        quietZoneMm: quietZoneMm,
+        barcodeHeight: 80,
         titleFontHeight: 20,
-        marginTopDots: 30,
+        marginTopDots: 15,
         titleLineSpacing: 2
-      // باقي الإعدادات الافتراضية داخل الدالة
-    );
+        // باقي الإعدادات الافتراضية داخل الدالة
+        );
 
     final adapter = _adapterFor(device.platform);
     final bytes = const AsciiCodec(allowInvalid: true).encode(zpl);
@@ -149,11 +152,52 @@ class PrintingController extends GetxController {
   // Helpers
   PrintAdapter _adapterFor(PlatformKind platform) {
     return platform == PlatformKind.windows ? WindowsRawAdapter() : MacosRawAdapter();
+  }
+  /// 203dpi ≈ 8 dots لكل 1mm
+  int mmToDots(num mm) => (mm * 8).round();
 
+  Future<void> zebraCalibrateAndSetup({
+    required String printerName,
+    required int widthDots,    // مثال: 50mm => 400
+    required int heightDots,   // مثال: 30mm => 240
+    int darkness = 18,
+    int speed = 2,
+    ZebraMedia media = ZebraMedia.gap, // Gap/Web الافتراضي
+    bool saveToMemory = false,         // ^JUS حفظ الإعدادات
+  }) async {
+    // Media Tracking: ^MTT (Gap), ^MTR (Mark), ^MTN (Continuous)
+    final mt = switch (media) {
+      ZebraMedia.gap        => '^MTT',
+      ZebraMedia.mark       => '^MTR',
+      ZebraMedia.continuous => '^MTN',
+    };
+
+    // 🔒 لا تضع أي تعليقات داخل ZPL. ASCII فقط.
+    final zpl = '''
+^XA
+$mt
+^MMT
+^PW$widthDots
+^LL$heightDots
+^LS0
+^LT0
+^PR$speed
+^MD$darkness
+~JC
+${saveToMemory ? '^JUS' : ''}
+^XZ
+''';
+
+    // ASCII-safe
+    final bytes = const AsciiCodec(allowInvalid: true).encode(zpl);
+
+    // Standalone adapter (بدون الاعتماد على _adapterFor)
+    final PrintAdapter adapter = GetPlatform.isWindows
+        ? WindowsRawAdapter()
+        : MacosRawAdapter();
+
+    await adapter.send(bytes, printerName: printerName);
   }
 
-
-
-  // Helpers
-
 }
+enum ZebraMedia { gap, mark, continuous }

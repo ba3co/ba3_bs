@@ -320,6 +320,7 @@ class AppBindings extends Bindings {
         repositories.materialsLocalDatasourceRepo,
         repositories.listenableDatasourceRepo,
         repositories.materialsRemoteDatasourceRepo,
+        repositories.translationRepo
       ),
     );
 

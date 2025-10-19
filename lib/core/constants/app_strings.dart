@@ -453,4 +453,8 @@ class AppStrings {
 
   static var barcodeIsRequired='يجب ادخال باركود للمادة';
 
+  static var printLabel='طباعة اللصاقات';
+
+  static const printerCalibration='معايرة الطباعة';
+
 }

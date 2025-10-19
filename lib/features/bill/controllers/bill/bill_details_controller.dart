@@ -807,9 +807,9 @@ class BillDetailsController extends IBillController
     return billsCountByType;
   }
 
-  prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
+  prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) async =>
       billDetailsPlutoController.prepareBillMaterialsRows(
-        billItems.getMaterialRecords,
+      await  billItems.getMaterialRecords,
       );
 
   prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
@@ -857,7 +857,7 @@ class BillDetailsController extends IBillController
     log(bill.freeBill.toString(), name: 'initFreeLocalSwitcher');
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
 
-    prepareBillRecords(bill.items, billPlutoController);
+  await  prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);
     productsWithTax.assignAll(await _billService.getMaterialsWithTax(billModel: bill));
 
@@ -960,7 +960,46 @@ class BillDetailsController extends IBillController
     advancedSwitchController.value = freeBill ?? false;
   }
 
-  /// this for mobile
+  Future<void> printMaterialLabel(BillModel billModel) async {
+    final materialController = read<MaterialController>();
+
+    for (final materialRecord in billModel.items.itemList) {
+      // 1) جيب المادة
+      final MaterialModel? currentModel =
+      await materialController.getMaterialByIdWithNull(materialRecord.itemGuid);
+/*
+      if (currentModel == null) {
+        // عدم وجود المادّة: بلّغ وتخطّى هذا السطر
+        AppUIUtils.onFailure(
+          'بعض المواد غير موجودة \n(${materialRecord.itemGuid} - ${materialRecord.itemName})',
+        );
+        continue;
+      }*/
+
+      final dynamic qtyRaw = materialRecord.itemQuantity;
+      int copies;
+
+      if (qtyRaw is int) {
+        copies = qtyRaw;
+      } else if (qtyRaw is double) {
+        copies = qtyRaw.round();
+      } else {
+        copies = int.tryParse('$qtyRaw') ?? 1;
+      }
+
+      // ضمان المجال (على سبيل المثال 1..500)
+      copies = copies.clamp(1, 500);
+
+      // 3) اطبع
+      await materialController.printMaterialBarcode(
+        material: currentModel!,
+        copies: copies,
+      );
+    }
+  }
+
+
+/// this for mobile
 /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
       context: context,
       stateManager: billDetailsPlutoController.recordsTableStateManager,
