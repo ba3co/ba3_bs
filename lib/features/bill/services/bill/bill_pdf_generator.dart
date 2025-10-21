@@ -1,6 +1,5 @@
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
-import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:flutter/services.dart';
@@ -14,26 +13,25 @@ import '../../../../core/services/pdf_generator/implementations/pdf_generator_ba
 /// NewBillPdfGenerator
 class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
   final _sellerController = read<SellersController>();
-  final _accountsController = read<AccountsController>();
 
   @override
   Widget buildHeader(BillModel itemModel, String fileName,
       {Uint8List? logoUint8List, Font? font}) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _buildBillDetails(fileName, itemModel, font),
         if (logoUint8List != null) buildLogo(logoUint8List),
+        Spacer(),
+        _buildBillDetails(fileName, itemModel, font),
+
       ],
     );
   }
 
   Widget _buildBillDetails(String fileName, BillModel itemModel, Font? font) {
     final details = [
-      buildDetailRow('الرقم التعريفي للفاتورة: ', itemModel.billId!,
-          font: font),
-      buildDetailRow(
-          'رقم الفاتورة: ', itemModel.billDetails.billNumber.toString(),
+      buildDetailRow( 'الرقم الضريبي: ',  '10036 93114 00003'),
+      buildDetailRow('رقم الفاتورة: ', "${itemModel.billId!} (${itemModel.billDetails.billNumber}) ",
           font: font),
       buildDetailRow(
         'نوع الفاتورة: ',
@@ -41,30 +39,41 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
         font: font,
         valueColor: PdfColor.fromInt(itemModel.billTypeModel.color!),
       ),
+
+      buildDetailRow('التاريخ: ', itemModel.billDetails.billDate!.dayMonthYear,
+          font: font),
+
       buildDetailRow(
-          'العميل: ',
-          _accountsController
-              .getAccountNameById(itemModel.billDetails.billCustomerId),
+          'رقم العميل: ',
+          itemModel.billDetails.customerPhone.toString(),
+          font: font),
+      buildDetailRow(
+          'البيان: ',
+          itemModel.billDetails.billNote.toString(),
           font: font),
       buildDetailRow(
           'البائع: ',
           _sellerController
               .getSellerNameById(itemModel.billDetails.billSellerId),
           font: font),
-      buildDetailRow('التاريخ: ', itemModel.billDetails.billDate!.dayMonthYear,
-          font: font),
+
     ];
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+
       children: [
-        buildTitleText(
-          fileName,
-          32,
-          font: font,
-          weight: FontWeight.bold,
-          color: PdfColor.fromInt(itemModel.billTypeModel.color!),
+        Center(
+          child:  buildTitleText(
+            'فاتورة ضريبية',
+            24,
+            font: font,
+
+            weight: FontWeight.bold,
+            // color: PdfColor.fromInt(itemModel.billTypeModel.color!),
+          ),
         ),
+
         ...details.expand((detail) => [buildSpacing(), detail]),
       ],
     );
@@ -73,8 +82,15 @@ class BillPdfGenerator extends PdfGeneratorBase<BillModel> with PdfHelperMixin {
   @override
   List<Widget> buildBody(BillModel itemModel, {Font? font,Uint8List?logoUint8List}) {
     return [
-      buildTitleText('تفاصيل الفاتورة', 20,
-          font: font, weight: FontWeight.bold),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+
+          buildTitleText('تفاصيل الفاتورة', 20,
+              font: font, weight: FontWeight.bold),
+        ]
+      ),
+
       _buildTable(itemModel, font),
       Divider(),
       _buildTotalSection(itemModel),

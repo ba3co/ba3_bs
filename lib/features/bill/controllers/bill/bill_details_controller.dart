@@ -920,6 +920,17 @@ class BillDetailsController extends IBillController
           items: billModel.items.itemList.toDeliveryItems()),
     );
   }
+  Future<void> generateAndSaveBillPdf(BillModel billModel, BuildContext context, {String? recipientEmail}) async {
+    if (!_billService.hasModelId(billModel.billId)) return;
+
+    if (!_billService.hasModelItems(billModel.items.itemList)) return;
+
+
+  await  _billService.generatePdfAndSaveInLocation(
+      fileName: AppStrings.existedBill.tr,
+      itemModel: billModel,
+    );
+  }
 
   void sendBillToWhatsapp(BillModel billModel, BuildContext context) {
     if (!_billService.hasClientPhoneNumber(context)) return;

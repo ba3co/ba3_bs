@@ -75,8 +75,6 @@ class BillDetailsButtons extends StatelessWidget {
               ),
             ),
             Visibility(
-                visible: billModel.billTypeModel.isPurchaseRelated, child: freeLocalSwitcher(billDetailsController: billDetailsController)),
-            Visibility(
               visible: billModel.billTypeModel.isPurchaseRelated && !billSearchController.isNew,
               child: _buildActionButton(
                 title: AppStrings.printLabel.tr,
@@ -85,6 +83,9 @@ class BillDetailsButtons extends StatelessWidget {
                 onPressed: () => billDetailsController.printMaterialLabel(billModel),
               ),
             ),
+            Visibility(
+                visible: billModel.billTypeModel.isPurchaseRelated, child: freeLocalSwitcher(billDetailsController: billDetailsController)),
+
             /*           Obx(() => !billDetailsController.isCash
                 ? AppButton(
                     height: 20,
@@ -158,7 +159,7 @@ class BillDetailsButtons extends StatelessWidget {
                 context: context, billModel: billModel, billTypeModel: billModel.billTypeModel, withPrint: false),
           );
         }),
-      if (!billSearchController.isPending)
+/*      if (!billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,
           icon: FontAwesomeIcons.solidEnvelope,
@@ -176,6 +177,7 @@ class BillDetailsButtons extends StatelessWidget {
           icon: FontAwesomeIcons.whatsapp,
           onPressed: () => billDetailsController.sendBillToWhatsapp(billModel, context),
         ),
+        */
       Obx(() {
         return _buildActionButton(
           isLoading: billDetailsController.deleteBillRequestState.value == RequestState.loading,

@@ -71,7 +71,7 @@ class MaterialLayout extends StatelessWidget {
                         read<MaterialGroupController>().navigateToAllMaterialScreen(context: context);
                       },
                     ),
-                    if (RoleItemType.viewProduct.hasAdminPermission)
+                    if (RoleItemType.viewProduct.hasWritePermission)
                       buildAppMenuItem(
                         icon: Icons.add,
                         title: AppStrings.addMaterials.tr,

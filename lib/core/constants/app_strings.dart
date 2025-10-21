@@ -457,4 +457,16 @@ class AppStrings {
 
   static const printerCalibration='معايرة الطباعة';
 
+  static String send='ارسال';
+
+  static String copyInvoiceNumber='نسخ رقم الفاتورة';
+
+  static String sendViaEmail='ارسال عبر البريد الالكتروني';
+
+  static String savePdfLocal='حفظ PDF على الجهاز';
+
+  static String weWillSavePdfLocal= 'سيتم إنشاء ملف PDF للفاتورة وحفظه محليًا.';
+
+  static String savePdf='Save PDF';
+
 }

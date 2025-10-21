@@ -759,7 +759,8 @@ log(matchingItems.length.toString());
 
     OverlayService.showDialog(
       context: context,
-      title: 'Invoice QR Code',
+      color: AppColors.backGroundColor,
+      height: 400,
       content: EInvoiceDialogContent(
         billDetailsController: billDetailsController,
         billId: billModel.billId!,
