@@ -439,6 +439,7 @@ abstract class AppConstants {
   static const String labelPrinterName='Zebra_Technologies_ZTC_GX420t';
   static const String recitePrinter80Name='POS80';
   static const String recitePrinter58Name='POS58';
+  static const String jetourSalesId='2049df1d-37be-4153-a345-5c1b4a77d0c4';
 
   static List<UserWorkingHours> fridayWorkingHours = [
     UserWorkingHours(
@@ -449,7 +450,7 @@ abstract class AppConstants {
   ];
 
   // @preserve: ali-dev-only getter
-  static String get getDatabaseAppName => defaultFirebaseAppName;
+  static String get getDatabaseAppName => testDataBaseAppName;
 }
 
 ///https://shreyanspos.com/kp307/

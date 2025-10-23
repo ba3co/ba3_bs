@@ -1,21 +1,16 @@
 
-import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
-import 'package:ba3_bs/core/styling/app_colors.dart';
-import 'package:ba3_bs/core/styling/app_text_style.dart';
-import 'package:ba3_bs/core/widgets/organized_widget.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_spacer.dart';
-import '../widgets/bill_layout/all_bills_types_list.dart';
+import '../widgets/bill_layout/bills_info_widget.dart';
 
 class BillLayout extends StatelessWidget {
   const BillLayout({super.key});
@@ -88,178 +83,4 @@ class BillLayout extends StatelessWidget {
       );
     });
   }
-}
-
-class BillsInfoWidget extends StatelessWidget {
-  const BillsInfoWidget({
-    super.key,
-    required this.allBillsController,
-  });
-
-  final AllBillsController allBillsController;
-
-  @override
-  Widget build(BuildContext context) {
-    return OrganizedWidget(
-      titleWidget: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Row(
-          children: [
-            Text(
-              AppStrings.bills.tr,
-              style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
-            ),
-            Spacer(),
-            IconButton(
-              tooltip: AppStrings.refresh.tr,
-              icon: Icon(
-                FontAwesomeIcons.refresh,
-                color: AppColors.lightBlueColor,
-              ),
-              onPressed: allBillsController.refreshBillsTypes,
-            ),
-            PopupMenuButton<String>(
-              tooltip: AppStrings.options.tr,
-              onSelected: (value) {
-                if (value == AppConstants.serialNumbersStatement) {
-                  _showSerialNumberDialog(context, allBillsController);
-                }
-              },
-              itemBuilder: (BuildContext context) =>
-              <PopupMenuEntry<String>>[
-                PopupMenuItem<String>(
-                  value: AppConstants.serialNumbersStatement,
-                  child: Row(
-                    children: [
-                      Icon(FontAwesomeIcons.file, color: Colors.black54),
-                      SizedBox(width: 8),
-                      Text(AppStrings.serialNumbersStatement.tr),
-                    ],
-                  ),
-                ),
-
-              ],
-              icon: Icon(
-                FontAwesomeIcons.ellipsisVertical,
-                color: AppColors.lightBlueColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-      bodyWidget: GetBuilder<AllBillsController>(
-        builder: (controller) => AllBillsTypesList(allBillsController: controller),
-      ),
-    );
-  }
-}
-
-/*
-class BillReportWidget extends StatelessWidget {
-  const BillReportWidget({super.key, required this.allBillsController});
-
-  final AllBillsController allBillsController;
-
-  @override
-  Widget build(BuildContext context) {
-    return OrganizedWidget(
-        titleWidget: Row(
-          children: [
-            Text(
-              AppStrings.dailiesReports.tr,
-              style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
-            ),
-            Spacer(),
-          ],
-        ),
-        bodyWidget: Column(
-          spacing: 10,
-          children: [
-            Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.start,
-                crossAxisAlignment: WrapCrossAlignment.start,
-                children: allBillsController.getBillsTypesRequestState.value == RequestState.loading
-                    ? List.generate(2, (index) => const BillTypeShimmerWidget()) // Show shimmer placeholders
-                    : read<PatternController>().billsTypes.map(
-                      (billTypeModel) {
-                    int index = read<PatternController>().billsTypes.indexOf(billTypeModel);
-                    return Container(
-                      width: 0.15.sw,
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Color(billTypeModel.color!).withOpacity(0.6), width: 2), // Simulated border
-                      ),
-                      height: 150,
-                      child: GetBuilder<BillReportController>(builder: (billReportController) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          // spacing: 10,
-                          children: [
-                            Text(billTypeModel.shortName.toString(), style: AppTextStyles.headLineStyle3),
-                            DateRangePicker(
-                              onSubmit: () => billReportController.onSubmitDateRangePicker(index),
-                              pickedDateRange: billReportController.datesRanges[index],
-                              onSelectionChanged: (dateRangePickerSelectionChangedArgs) =>
-                                  billReportController.onSelectionChanged(dateRangePickerSelectionChangedArgs, index),
-                            ),
-                            Center(
-                              child: AppButton(
-                                title: AppStrings.start,
-                                onPressed: () {
-                                  billReportController.getBillsByDate(billTypeModel, index, context);
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                    );
-                  },
-                ).toList()),
-          ],
-        ));
-  }
-}
-*/
-
-// Function to show serial number dialog
-void _showSerialNumberDialog(BuildContext context, AllBillsController allBillsController) {
-  String serialNumberInput = '';
-  Get.dialog(
-    AlertDialog(
-      title: Text(AppStrings.enterSerialNumber.tr),
-      content: StatefulBuilder(
-        builder: (context, setState) {
-          return TextField(
-            decoration: InputDecoration(
-              labelText: AppStrings.serialNumber.tr,
-            ),
-            onChanged: (value) {
-              serialNumberInput = value;
-            },
-          );
-        },
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: Text(AppStrings.cancel.tr),
-          onPressed: () {
-            Get.back();
-          },
-        ),
-        TextButton(
-          child: Text(AppStrings.confirm.tr),
-          onPressed: () {
-            Get.back();
-            if (serialNumberInput.isEmpty) return;
-            allBillsController.getSerialNumberStatement(serialNumberInput, context: context);
-          },
-        ),
-      ],
-    ),
-  );
 }

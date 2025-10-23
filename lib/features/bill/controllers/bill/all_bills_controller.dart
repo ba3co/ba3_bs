@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
@@ -286,6 +287,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       );
     }
   }
+
   Future<void> runFixDuplicates() async {
     try {
       final functions = FirebaseFunctions.instanceFor(/*region: "europe-west6"*/);
@@ -634,6 +636,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
   }
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? currentBill}) async {
+
     final bills = await billsLastNumberByType(billTypeModel);
 
     if (!context.mounted) return;
@@ -673,6 +676,10 @@ class AllBillsController extends FloatingBillDetailsLauncher
     );
 
     if (!context.mounted) return;
+
+    if (currentBill.billTypeModel.id == AppConstants.jetourSalesId) {
+      log(currentBill.billTypeModel.toJson().toString()+"-"*30);
+    }
 
     launchFloatingWindow(
       context: context,

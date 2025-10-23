@@ -513,8 +513,8 @@ class UserManagementController extends GetxController
 
   void updateGeneralTask({required UserTaskModel task}) async {
     if (image != null) {
-      final imageUrl =
-          await read<AllTaskController>().uploadImageTask(image!.path);
+      final imageUrl = await read<AllTaskController>().uploadImageTask(image!.path, "task/${task.docId}");
+
 
       final updatedTask = task.copyWith(
           status: TaskStatus.done,
