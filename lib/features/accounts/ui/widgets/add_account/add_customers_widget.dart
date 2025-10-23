@@ -111,7 +111,7 @@ class AddCustomersWidget extends StatelessWidget {
                                     value: vat,
                                     child: Center(
                                       child: Text(
-                                        vat.taxName!,
+                                        vat.taxName,
                                         textAlign: TextAlign.center,
                                       ),
                                     ),

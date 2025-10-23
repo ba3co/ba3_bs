@@ -96,10 +96,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     )) {
       return;
     }
-    EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
-      entryId: billModel.billId!,
-    );
-    // final entryBondModel = createSimulatedVatEntryBond(billModel);
+    // EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
+    //   entryId: billModel.billId!,
+    // );
+    final entryBondModel = createSimulatedVatEntryBond(billModel);
     if (!context.mounted) return;
     launchFloatingWindow(
       context: context,

@@ -31,7 +31,7 @@ class TaxDropdown extends StatelessWidget {
             items: VatEnums.values,
             onChanged: taxSelectionHandler.onSelectedTaxChanged,
             textStyle: const TextStyle(fontSize: 14),
-            itemLabelBuilder: (tax) => tax.taxName!,
+            itemLabelBuilder: (tax) => tax.taxName,
             height: AppConstants.constHeightTextField,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black38),

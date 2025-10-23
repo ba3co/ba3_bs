@@ -497,7 +497,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   MaterialModel? _createMaterialModel() =>
       _materialService.createMaterialModel(
-        matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
+        matVatGuid: materialFromHandler.selectedTax.value.taxGuid,
         matGroupGuid: materialFromHandler.parentModel?.matGroupGuid ?? '',
         wholesalePrice: materialFromHandler.wholePriceController.text,
         retailPrice: materialFromHandler.retailPriceController.text,

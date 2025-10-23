@@ -707,10 +707,10 @@ enum VatEnums {
       taxRatio: 0,
       taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
 
-  final String? taxGuid;
-  final String? taxName;
-  final String? taxAccountGuid;
-  final double? taxRatio;
+  final String taxGuid;
+  final String taxName;
+  final String taxAccountGuid;
+  final double taxRatio;
 
   const VatEnums({
     required this.taxGuid,
