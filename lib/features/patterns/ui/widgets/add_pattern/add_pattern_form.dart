@@ -174,7 +174,7 @@ class AddPatternForm extends StatelessWidget {
                 );
                 if (accountModel != null) {
                   patternController.patternFormHandler.addToSelectedAccounts(
-                      key: BillAccounts.materials, value: accountModel);
+                      key: BillAccounts.gifts, value: accountModel);
 
                   patternController.patternFormHandler.giftsController.text =
                       (accountModel.accName!);
