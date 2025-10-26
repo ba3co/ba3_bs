@@ -10,10 +10,10 @@ class FilterEntryBondItemsByBillTypesUseCase {
       ) {
     if (billTypesIds.isEmpty) return entryBondItems;
 
-    debugPrint("FilterEntryBondItemsByBillTypesUseCase the billtype ids are "+billTypesIds.toString());
+    debugPrint("FilterEntryBondItemsByBillTypesUseCase the billtype ids are $billTypesIds");
 
     return entryBondItems.where((item) {
-      final billTypeId = (item.billTypeId ?? "").toLowerCase();
+      final billTypeId = (item.originTypeId ?? "").toLowerCase();
       item.printDetails();
 
 

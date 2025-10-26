@@ -284,7 +284,7 @@ enum Status {
 
 
 @HiveType(typeId: 16)
-enum BondType  {
+enum BondType {
 
   @HiveField(0)
   openingEntry(
@@ -354,6 +354,14 @@ enum BondType  {
     required this.icon,
     required this.color,
   });
+
+
+  factory BondType.byName(String name) {
+    return BondType.values.firstWhere(
+          (type) => type.name.toLowerCase() == name.toLowerCase(),
+      orElse: () => throw ArgumentError('No matching BondType for name: $name'),
+    );
+  }
 
   // Factory constructor with error handling for unmatched labels
   factory BondType.byLabel(String label) {

@@ -265,4 +265,6 @@ final Map<String, String> arAR = {
   AppStrings.tradingAccount: 'حساب المتاجرة',
   AppStrings.profitAndLoss: 'حساب الأرباح والخسائر',
   AppStrings.balanceSheet: 'الميزانية',
+  AppStrings.addBondType:'اضافة نوع سند',
+  AppStrings.typeGuide:'الدليل الارشادي'
 };

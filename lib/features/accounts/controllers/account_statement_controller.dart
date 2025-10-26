@@ -19,8 +19,11 @@ import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/error/failure.dart';
 import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
+import '../../bond/data/models/bond_type.dart';
 import '../../bond/data/models/entry_bond_model.dart';
 import '../../bond/ui/screens/entry_bond_details_screen.dart';
+import '../../cheques/data/models/cheque_type.dart';
+import '../../patterns/data/models/bill_type_model.dart';
 import '../data/models/account_model.dart';
 import '../service/account_statement_service.dart';
 import '../use_cases/filter_bond_items_by_bill_type_use_case.dart';
@@ -67,10 +70,19 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   var selectedType = "".obs;
 
   // to filter based on bill type (EntryBondItemModel's note)
-  final RxList<String> selectedBillTypes = <String>[].obs;
+  final RxList<String> selectedTypeIds = <String>[].obs;
+
+  // to save selected bill types ids, bond type ids , and cheque type ids to filter based on them
+  final RxList<BillTypeModel> selectedBillTypeIds = <BillTypeModel>[].obs;
+  final RxList<BondTypeModel> selectedBondTypeIds = <BondTypeModel>[].obs;
+  final RxList<ChequeType> selectedChequeTypeIds = <ChequeType>[].obs;
 
   // Data
+
+  //all entryBondItemModels
   final List<EntryBondItemModel> entryBondItems = [];
+
+  //filtered entryBondItemModels
   List<EntryBondItemModel> filteredEntryBondItems = [];
 
   List<EntryBondItemModel> finalAccountsEntryBondItems = [];
@@ -116,7 +128,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     minAmountController.clear();
     maxAmountController.clear();
     selectedType.value = "";
-    selectedBillTypes.clear();
+    selectedTypeIds.clear();
 
     if (initialAccount != null) {
       accountNameController.text = initialAccount;
@@ -181,16 +193,44 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     }
   }
 
-  void onBillTypeAdded(String type) {
-    if (!selectedBillTypes.contains(type)) {
-      selectedBillTypes.add(type);
+  void onItemSubmitted(Object? item) {
+    if (item == null) return;
+
+    // Add to the correct sublist based on type
+    if (item is BillTypeModel) {
+      if (!selectedBillTypeIds.contains(item)) {
+        selectedBillTypeIds.add(item);
+        selectedTypeIds.add(item.billTypeId??"no id");
+      }
+    } else if (item is BondTypeModel) {
+      if (!selectedBondTypeIds.contains(item)) {
+        selectedBondTypeIds.add(item);
+        selectedTypeIds.add(item.typeGuide);
+
+
+      }
+    } else if (item is ChequeType) {
+      if (!selectedChequeTypeIds.contains(item)) {
+        selectedChequeTypeIds.add(item);
+        selectedTypeIds.add(item.typeGuide);
+      }
     }
-    debugPrint(selectedBillTypes.toString());
   }
 
-  void onBillTypeRemoved(String type) {
-    selectedBillTypes.remove(type);
-    debugPrint(selectedBillTypes.toString());
+  void onItemRemoved(Object item) {
+    // Remove from master
+
+    // Remove from its sublist
+    if (item is BillTypeModel) {
+      selectedBillTypeIds.remove(item);
+      selectedTypeIds.remove(item.billTypeId??"no id");
+    } else if (item is BondTypeModel) {
+      selectedBondTypeIds.remove(item);
+      selectedTypeIds.remove(item.typeGuide);
+    } else if (item is ChequeType) {
+      selectedChequeTypeIds.remove(item);
+      selectedTypeIds.remove(item.typeGuide);
+    }
   }
 
   Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
@@ -340,7 +380,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
           (accumulated, current) {
         return EntryBondItemModel(
           account: current.account,
-          billTypeId: current.billTypeId,
+          originTypeId: current.originTypeId,
           amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
           bondItemType: current.bondItemType,
           date: current.date,
@@ -388,9 +428,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     )
         : entryBondItems;
 
-    filtered.forEach((element) {
-      element.printDetails();
-    });
 
     // Apply additional filters from my_version
     final minText = minAmountController.text.trim();
@@ -411,10 +448,9 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       filtered = _filterEntryBondItemsByTypeUseCase.execute(type, filtered);
     }
 
-    // Filter by bill types
-    if (selectedBillTypes.isNotEmpty) {
-      debugPrint("in filtering $selectedBillTypes");
-      filtered = _filterEntryBondItemsByBillTypeUseCase.execute(selectedBillTypes, filtered);
+    // Filter by bill,bond and cheque types
+    if (selectedTypeIds.isNotEmpty) {
+      filtered = _filterEntryBondItemsByBillTypeUseCase.execute(selectedTypeIds, filtered);
     }
 
     filteredEntryBondItems = filtered;

@@ -67,6 +67,7 @@ class BondDetailsScreen extends StatelessWidget {
                             bondDetailsPlutoController:
                                 bondDetailsPlutoController,
                           ),
+                          Text("batman"),
                           BondDetailsButtons(
                             bondDetailsController: bondDetailsController,
                             bondDetailsPlutoController:

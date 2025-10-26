@@ -16,8 +16,7 @@ class RemoteDataSourceRepository<T> {
       final items = await _dataSource.fetchAll();
       return Right(items); // Return list of items
     } catch (e, stackTrace) {
-      log('Error in getAll: $e',
-          stackTrace: stackTrace, name: 'RemoteDataSourceRepository getAll');
+      log('Error in getAll: $e', stackTrace: stackTrace, name: 'RemoteDataSourceRepository getAll');
       return Left(ErrorHandler(e).failure); // Return error
     }
   }
@@ -27,10 +26,8 @@ class RemoteDataSourceRepository<T> {
       final item = await _dataSource.fetchById(id);
       return Right(item); // Return the found item
     } catch (e, stackTrace) {
-      log('Error in getById: $e',
-          stackTrace: stackTrace, name: 'RemoteDataSourceRepository getById');
-      return Left(
-          ErrorHandler(e).failure); // Handle the error and return Failure
+      log('Error in getById: $e', stackTrace: stackTrace, name: 'RemoteDataSourceRepository getById');
+      return Left(ErrorHandler(e).failure); // Handle the error and return Failure
     }
   }
 

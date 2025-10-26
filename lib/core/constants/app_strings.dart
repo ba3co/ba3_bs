@@ -447,4 +447,8 @@ class AppStrings {
 
   static var repair='تصحيح';
 
+  static const String addBondType='اضافة نوع سند';
+
+  static const String typeGuide ='الدليل الارشادي';
+
 }

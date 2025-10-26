@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type.dart';
 
 import '../../../../../features/patterns/data/models/bill_type_model.dart';
 
@@ -23,6 +24,10 @@ mixin FirestorePathHelper<ItemTypeModel> {
     if (typeModel is String) {
       return typeModel;
     }
+    if (typeModel is BondTypeModel) {
+      return typeModel.typeGuide ?? (throw ArgumentError('bondTypeId is required for BondTypeModel.'));
+    }
+
 
     throw ArgumentError('Unsupported typeModel for getRootDocumentId.');
   }
@@ -35,6 +40,9 @@ mixin FirestorePathHelper<ItemTypeModel> {
       BondType(:final label) => label,
       ChequesType(:final label) => label,
       AccountEntity(:final id) => id,
+      BondTypeModel(:final label) => label ,
+
+
       String name => name, // For String, directly return it.
       _ =>
         throw ArgumentError('Unsupported typeModel for getSubCollectionPath.'),

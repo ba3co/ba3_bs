@@ -66,7 +66,7 @@ class ProcessEntryBondItemsInIsolateUseCase {
 
           mergedMap[key] = EntryBondItemModel(
             account: currentItem.account,
-            billTypeId: currentItem.billTypeId,
+            originTypeId: currentItem.originTypeId,
             amount: updatedAmount.abs(),
             bondItemType: finalType,
             date: currentItem.date,

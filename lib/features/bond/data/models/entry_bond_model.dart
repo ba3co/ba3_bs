@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -82,9 +83,7 @@ class EntryBondItems {
     );
   }
 
-  /// Converts the instance to a JSON object.
   Map<String, dynamic> toJson() {
-
     return {
       if (docId != null) 'docId': docId,
       if (docId != null) 'id': id,
@@ -128,13 +127,13 @@ class EntryBondItemModel implements PlutoAdaptable {
   final String? docId;
 
   final String? date;
-  String? billTypeId;
+  String? originTypeId;
 
   EntryBondItemModel({
     this.bondItemType,
     this.amount,
     this.note,
-    this.billTypeId,
+    this.originTypeId,
     this.originId,
     this.date,
     this.docId,
@@ -149,7 +148,7 @@ class EntryBondItemModel implements PlutoAdaptable {
       bondItemType: BondItemType.byLabel(json['bondItemType']),
       amount: (json['amount'] as num?)?.toDouble(),
       note: json['note'] as String?,
-      billTypeId: json['billTypeId'] as String?,
+      originTypeId: json['billTypeId'] as String?,
       originId: json['docId'] as String?,
       date: json['date'] as String?,
       docId: json['docId'] as String?,
@@ -167,7 +166,7 @@ class EntryBondItemModel implements PlutoAdaptable {
       'originId': originId,
       'date': date,
       'docId': docId,
-      'billTypeId':billTypeId,
+      'billTypeId':originTypeId,
       'originName': originName,
       'account': account.toJson(),
     };
@@ -181,7 +180,7 @@ class EntryBondItemModel implements PlutoAdaptable {
     final String? note,
     final String? originId,
     final String? docId,
-    final String? billTypeId,
+    final String? originTypeId,
     final String? date,
     final String? originName,
     final AccountEntity? account,
@@ -192,7 +191,7 @@ class EntryBondItemModel implements PlutoAdaptable {
       note: note ?? this.note,
       originId: originId ?? this.originId,
       date: date ?? this.date,
-      billTypeId: billTypeId?? this.billTypeId,
+      originTypeId: originTypeId ?? this.originTypeId,
       docId: docId ?? this.docId,
       account: account ?? this.account,
       amountAfterOperation: amountAfterOperation ?? this.amountAfterOperation,
@@ -270,20 +269,20 @@ class EntryBondItemModel implements PlutoAdaptable {
   }
 
   void printDetails() {
-    print('   🏷️  Bond Item Type: ${bondItemType?.label ?? "N/A"}');
-    print('   💰 Amount: ${amount ?? 0.0} AED');
-    print('   📊 Amount After Operation: ${amountAfterOperation ?? "N/A"} AED');
-    print('   📝 Note: ${note ?? "No note"}');
-    print('   🔗 Origin ID: ${originId ?? "N/A"}');
-    print('   📄 Document ID: ${docId ?? "N/A"}');
-    print('   📅 Date: ${date ?? "N/A"}');
-    print('   🏢 Origin Name: ${originName ?? "N/A"}');
-    print('   🏷️  Bond Item bill Type: ${billTypeId ?? "N/A"}');
+    debugPrint('   🏷️  Bond Item Type: ${bondItemType?.label ?? "N/A"}');
+    debugPrint('   💰 Amount: ${amount ?? 0.0} AED');
+    debugPrint('   📊 Amount After Operation: ${amountAfterOperation ?? "N/A"} AED');
+    debugPrint('   📝 Note: ${note ?? "No note"}');
+    debugPrint('   🔗 Origin ID: ${originId ?? "N/A"}');
+    debugPrint('   📄 Document ID: ${docId ?? "N/A"}');
+    debugPrint('   📅 Date: ${date ?? "N/A"}');
+    debugPrint('   🏢 Origin Name: ${originName ?? "N/A"}');
+    debugPrint('   🏷️  Bond Item bill Type: ${originTypeId ?? "N/A"}');
 
     // Print account details
-    print('   👤 ACCOUNT:');
-    print('      ID: ${account.id}');
-    print('      Name: ${account.name}');
+    debugPrint('   👤 ACCOUNT:');
+    debugPrint('      ID: ${account.id}');
+    debugPrint('      Name: ${account.name}');
   }
 
 
@@ -340,10 +339,10 @@ class EntryBondOrigin {
   }
 
   void printDetails() {
-    print('🔗 ENTRY BOND ORIGIN');
-    print('   Origin ID: ${originId ?? "N/A"}');
-    print('   Document ID: ${docId ?? "N/A"}');
-    print('   Origin Type ID: ${originTypeId ?? "N/A"}');
-    print('   Origin Type: ${originType?.label ?? "N/A"}');
+    debugPrint('🔗 ENTRY BOND ORIGIN');
+    debugPrint('   Origin ID: ${originId ?? "N/A"}');
+    debugPrint('   Document ID: ${docId ?? "N/A"}');
+    debugPrint('   Origin Type ID: ${originTypeId ?? "N/A"}');
+    debugPrint('   Origin Type: ${originType?.label ?? "N/A"}');
   }
 }

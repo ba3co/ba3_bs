@@ -265,4 +265,6 @@ final Map<String, String> enUS = {
   AppStrings.tradingAccount: 'Trading Account',
   AppStrings.profitAndLoss: 'Profit and Loss Account',
   AppStrings.balanceSheet: 'Balance Sheet',
+  AppStrings.addBondType:'Add Bond Type',
+  AppStrings.typeGuide:'Type Guide'
 };

@@ -77,14 +77,15 @@ class RotateBalancesUseCase {
 
     if (migrationGuard(currentYear)) return;
 
-    await saveBond(
-      BondModel.fromBondData(
-        bondType: BondType.openingEntry,
-        note: '📌 قيد إفتتاحي خاص بترحيل الأرصدة للسنة الجديدة',
-        payDate: DateTime.now().toIso8601String(),
-        bondRecordsItems: generatePayItems(entryBondItems),
-      ),
-    );
+    //todo fi this too
+    // await saveBond(
+    //   BondModel.fromBondData(
+    //     bondType: BondType.openingEntry,
+    //     note: '📌 قيد إفتتاحي خاص بترحيل الأرصدة للسنة الجديدة',
+    //     payDate: DateTime.now().toIso8601String(),
+    //     bondRecordsItems: generatePayItems(entryBondItems),
+    //   ),
+    // );
 
     log("✅ تم تدوير الأرصدة بنجاح.");
   }

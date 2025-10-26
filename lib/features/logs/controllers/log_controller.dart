@@ -139,11 +139,11 @@ class LogController extends GetxController with FloatingLauncher {
     // Define a map of actions for each possible LogOrigin
     final actions = {
       /// If the log is a bond (e.g., payment, receipt), open bond details
-      LogOrigin.bond: () => read<AllBondsController>().openBondDetailsById(
-            originId,
-            context,
-            BondType.byValue(sourceType),
-          ),
+      // LogOrigin.bond: () => read<AllBondsController>().openBondDetailsById(
+      //       originId,
+      //       context,
+      //       BondType.byValue(sourceType),
+      //     ),
 
       /// Ig the log is related to a bill (Invoice or settlement), open bill details
       LogOrigin.bill: () {

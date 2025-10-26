@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 /// T: The type of the items
 class CustomChecklist<T> extends StatefulWidget {
   final List<T> items;
+
+  // displayed tet could differ from actual saved values ( for example: display name, but the value is id)
   final String Function(T item) displayText;
   final T Function(String displayText)? valueFromText; // Optional converter
   final void Function(T item) onItemSelected;
@@ -64,7 +66,6 @@ class _CustomChecklistState<T> extends State<CustomChecklist<T>> {
             });
 
             if (value == true) {
-              debugPrint("the vaaalue "+item.toString());
               widget.onItemSelected(item);
             } else {
               widget.onItemDeselected(item);

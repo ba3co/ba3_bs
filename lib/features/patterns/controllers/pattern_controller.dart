@@ -28,8 +28,7 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
 
   BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType.value;
 
-  BillTypeModel get billsTypeSales =>
-      billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
+  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
 
   @override
   void onInit() {
@@ -171,6 +170,7 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
   }
 
   BillTypeModel _createBillTypeModel() {
+
     Map<Account, AccountModel> accounts = patternFormHandler.selectedAccounts;
 
     accounts[BillAccounts.store] = patternFormHandler.selectedStore.value.toStoreAccountModel;

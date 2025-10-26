@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/services/firebase/implementations/repos/bond_type_repository.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/queryable_savable_repo.dart';
@@ -11,6 +12,8 @@ import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_source.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_import.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/bond_type_controller.dart';
+import 'package:ba3_bs/features/bond/data/datasources/bond_type_data_source.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_import.dart';
 import 'package:ba3_bs/features/car_store/controllers/store_cart_controller.dart';
 import 'package:ba3_bs/features/car_store/data/datasource/store_cart_data_source.dart';
@@ -18,6 +21,7 @@ import 'package:ba3_bs/features/car_store/data/model/store_cart.dart';
 import 'package:ba3_bs/features/changes/data/datasources/changes_datasource.dart';
 import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/cheques/controllers/cheques/all_cheques_controller.dart';
+import 'package:ba3_bs/features/cheques/controllers/cheques/cheque_type_conntroller.dart';
 import 'package:ba3_bs/features/cheques/data/datasources/cheques_compound_data_source.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
@@ -63,7 +67,9 @@ import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bonds_compound_data_source.dart';
 import '../../features/bond/data/models/bond_model.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
+import '../../features/bond/get_bond_type_by_guide_usecase.dart';
 import '../../features/bond/service/bond/bond_export.dart';
+import '../../features/cheques/data/datasources/cheque_type_data_source.dart';
 import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
 import '../../features/customer/service/customer_import.dart';
@@ -93,6 +99,7 @@ import '../../features/user_time/controller/user_time_controller.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
+import '../services/firebase/implementations/repos/cheque_type_repository.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
@@ -114,8 +121,7 @@ class AppBindings extends Bindings {
     // Initialize services
     final dioClient = _initializeDioClient();
 
-    final IRemoteDatabaseService<Map<String, dynamic>> fireStoreService =
-        read<IRemoteDatabaseService<Map<String, dynamic>>>();
+    final IRemoteDatabaseService<Map<String, dynamic>> fireStoreService = read<IRemoteDatabaseService<Map<String, dynamic>>>();
 
     final ICompoundDatabaseService<Map<String, dynamic>> compoundFireStoreService =
         read<ICompoundDatabaseService<Map<String, dynamic>>>();
@@ -183,6 +189,9 @@ class AppBindings extends Bindings {
       changesRepo: changesRepo,
     );
 
+    // Initialize use cases
+    _initializeUseCases(repositories);
+
     // Lazy Controllers
     _initializeLazyControllers(repositories);
 
@@ -234,7 +243,9 @@ class AppBindings extends Bindings {
       billsRepo: CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
       serialNumbersRepo: QueryableSavableRepository(MaterialsSerialsDataSource(databaseService: remoteDatabaseService)),
       bondsRepo: CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
+      bondTypeRepo: BondTypeRepository(BondTypeDataSource(databaseService: remoteDatabaseService)),
       chequesRepo: CompoundDatasourceRepository(ChequesCompoundDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
+      chequeTypeRepo: ChequeTypeRepository(ChequeTypeDataSource(databaseService: remoteDatabaseService)),
       entryBondsRepo: BulkSavableDatasourceRepository(EntryBondsDatasource(databaseService: remoteDatabaseService)),
       accountsStatementsRepo: CompoundDatasourceRepository(AccountsStatementsDatasource(compoundDatabaseService: remoteCompoundDataBaseService)),
       billImportExportRepo: ImportExportRepository(billImportService, billExportService),
@@ -322,7 +333,11 @@ class AppBindings extends Bindings {
     lazyPut(
         AllBillsController(repositories.billsRepo, repositories.serialNumbersRepo, repositories.billImportExportRepo));
 
-    lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
+    Get.put(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
+
+    Get.put(BondTypeController(repositories.bondTypeRepo));
+
+    lazyPut(ChequeTypeController(repositories.chequeTypeRepo));
 
     lazyPut(AllChequesController(repositories.chequesRepo, repositories.chequesImportExportRepo));
 
@@ -347,6 +362,12 @@ class AppBindings extends Bindings {
     lazyPut(LogController(repositories.logsRepo));
     lazyPut(BillReportController());
   }
+
+  void _initializeUseCases(_Repositories repositories) {
+    // Bond Type Lookup Use Case
+    Get.lazyPut(() => GetBondTypeByGuideUseCase (repositories.bondTypeRepo));
+  }
+
 }
 
 // Helper class to group repositories
@@ -358,6 +379,10 @@ class _Repositories {
   final CompoundDatasourceRepository<BillModel, BillTypeModel> billsRepo;
   final QueryableSavableRepository<SerialNumberModel> serialNumbersRepo;
   final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
+  final BondTypeRepository bondTypeRepo;
+
+  final ChequeTypeRepository chequeTypeRepo;
+
   final CompoundDatasourceRepository<ChequesModel, ChequesType> chequesRepo;
   final BulkSavableDatasourceRepository<EntryBondModel> entryBondsRepo;
   final CompoundDatasourceRepository<EntryBondItems, AccountEntity> accountsStatementsRepo;
@@ -390,6 +415,8 @@ class _Repositories {
     required this.billsRepo,
     required this.serialNumbersRepo,
     required this.bondsRepo,
+    required this.bondTypeRepo,
+    required this.chequeTypeRepo,
     required this.chequesRepo,
     required this.entryBondsRepo,
     required this.accountsStatementsRepo,

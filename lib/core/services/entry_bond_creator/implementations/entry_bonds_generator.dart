@@ -18,7 +18,7 @@ mixin EntryBondsGenerator {
     required BuildContext context
   }) async {
 
-    debugPrint("source models in  EntryBondGenerator"+sourceModels.toString());
+    debugPrint("source models in  EntryBondGenerator$sourceModels");
     final entryBondModels = _mapModelsToEntryBonds(sourceModels);
     await read<EntryBondController>().saveAllEntryBondModels(
       entryBonds: entryBondModels,

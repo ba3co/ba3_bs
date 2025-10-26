@@ -19,22 +19,27 @@ class BondCompoundDatasource
       ApiConstants.bonds; // Collection name in Firestore
 
   @override
+
   Future<List<BondModel>> fetchAll({required BondType itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
+    /// Fetch all the bonds from the Firestore database.
     final data = await compoundDatabaseService.fetchAll(
       rootCollectionPath: rootCollectionPath,
       rootDocumentId: rootDocumentId,
       subCollectionPath: subCollectionPath,
     );
 
+    /// Convert the data to a list of [BondModel] objects.
     final bonds = data.map((item) => BondModel.fromJson(item)).toList();
 
+    /// Sort the bonds by their pay number in ascending order.
     bonds.sort((a, b) => a.payNumber!.compareTo(b.payNumber!));
 
     return bonds;
   }
+/* <<<<<<<<<<  6b23f2ce-af65-43cd-9ec4-dc87faaef5ed  >>>>>>>>>>> */
 
   @override
   Future<List<BondModel>> fetchWhere<V>(

@@ -91,8 +91,9 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }) async {
 
     debugPrint("### in entry bond controller saveEntryBond called ");
-    debugPrint("### in entry bond controller saveEntryBond source number is  "+ sourceNumber.toString());
-    debugPrint("### modified accounts : "+modifiedAccounts.toString());
+    debugPrint("### in entry bond controller saveEntryBond source number is  $sourceNumber");
+    debugPrint("### modified accounts : $modifiedAccounts");
+
 
 
     final result = await _entryBondsFirebaseRepo.save(entryBondModel);
@@ -270,7 +271,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
         id: originId,
         itemList: [
           EntryBondItemModel(
-            billTypeId: billTypeId,
+            originTypeId: billTypeId,
             account: AccountEntity.fromAccountModel(accountModel),
           ),
         ],

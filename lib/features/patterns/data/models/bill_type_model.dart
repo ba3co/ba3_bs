@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -161,7 +162,7 @@ class BillTypeModel extends HiveObject with EquatableMixin {
 
   // Add this method to your BillTypeModel class
   void printDetails() {
-    print('=== BillTypeModel Details ===');
+    debugPrint('=== BillTypeModel Details ===');
 
     _printField('id', id);
     _printField('billTypeId', billTypeId);
@@ -174,15 +175,15 @@ class BillTypeModel extends HiveObject with EquatableMixin {
     _printField('billPatternType', billPatternType?.toString());
 
 
-    print('=== End BillTypeModel Details ===\n');
+    debugPrint('=== End BillTypeModel Details ===\n');
   }
 
 // Helper method for the class
   void _printField(String fieldName, dynamic value) {
     if (value == null) {
-      print('$fieldName: null');
+      debugPrint('$fieldName: null');
     } else {
-      print('$fieldName: $value');
+      debugPrint('$fieldName: $value');
     }
   }
 }

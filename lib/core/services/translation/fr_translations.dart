@@ -234,4 +234,6 @@ final Map<String, String> frFR = {
   AppStrings.accessoriesTarget: 'Cible des accessoires',
   AppStrings.achievementsPanel: 'Panneau des réalisations',
   AppStrings.profile: 'Profil',
+  AppStrings.addBondType:'Ajouter un type d’obligation',
+  AppStrings.typeGuide:'Guide de type'
 };

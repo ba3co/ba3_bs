@@ -1,5 +1,6 @@
 import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dart';
 import 'package:ba3_bs/features/cheques/data/models/cheques_model.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/helper/enums/enums.dart';
@@ -54,16 +55,19 @@ abstract class BaseChequesBondStrategy
     required String originId,
     String? docId,
     required double amount,
+    required String originTypeId,
     required String date,
     required String originName,
     required AccountEntity creditAccount,
     required AccountEntity debitAccount,
   }) {
+    debugPrint("in createBondItems the originTypeId is : $originTypeId");
     return [
       EntryBondItemModel(
         note: note,
         amount: amount,
         originName: originName,
+        originTypeId: originTypeId,
         bondItemType: BondItemType.creditor,
         account: creditAccount,
         date: date,
@@ -74,6 +78,7 @@ abstract class BaseChequesBondStrategy
         note: note,
         amount: amount,
         originName: originName,
+        originTypeId: originTypeId,
         bondItemType: BondItemType.debtor,
         account: debitAccount,
         date: date,
@@ -99,6 +104,7 @@ class ChequesBondStrategy extends BaseChequesBondStrategy {
       return createBondItems(
         originName:"${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} : ${model.chequesNumber}" ,
         note: note,
+        originTypeId: model.chequesTypeGuid!,
         originId: originId,
         amount: amount,
         date: date,
@@ -132,10 +138,13 @@ class PayBondStrategy extends BaseChequesBondStrategy {
         "سند قيد لدفع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesPayGuid!;
+
+
     return createBondItems(
       originName:"${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} : ${model.chequesNumber}" ,
       note: note,
       originId: originId,
+      originTypeId: model.chequesTypeGuid!,
       amount: amount,
       docId: model.chequesPayGuid,
       date: date,
@@ -169,10 +178,12 @@ class RefundBondStrategy extends BaseChequesBondStrategy {
         "سند قيد لارجاع ${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} رقم :${model.chequesNumber}";
     final amount = model.chequesVal!;
     final originId = model.chequesGuid!;
+
     return createBondItems(
       originName:"${ChequesType.byTypeGuide(model.chequesTypeGuid!).value} : ${model.chequesNumber}" ,
       note: note,
       originId: originId,
+      originTypeId: model.chequesTypeGuid!,
       docId: model.chequesRefundPayGuid,
       amount: amount,
       date: date,

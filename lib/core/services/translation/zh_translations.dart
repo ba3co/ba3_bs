@@ -233,4 +233,6 @@ final Map<String, String> zhCN = {
   AppStrings.accessoriesTarget: '配件目标',
   AppStrings.achievementsPanel: '成就面板',
   AppStrings.profile: '个人资料',
+  AppStrings.addBondType:'添加债券类型',
+  AppStrings.typeGuide:'类型指南'
 };

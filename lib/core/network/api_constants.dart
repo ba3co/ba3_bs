@@ -33,7 +33,11 @@ class ApiConstants {
 
   static String get bonds => '${year}bonds';
 
+  static String get bondTypes => 'bond_types ';
+
   static String get cheques => '${year}cheques';
+
+  static String get chequeTypes => 'cheque_types';
 
   static String get entryBonds => '${year}entry_bonds';
 

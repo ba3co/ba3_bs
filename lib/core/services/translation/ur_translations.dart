@@ -265,4 +265,8 @@ final Map<String, String> urPK = {
   AppStrings.tradingAccount: 'تجارتی حساب',
   AppStrings.profitAndLoss: 'منافع اور نقصانات کا حساب',
   AppStrings.balanceSheet: 'بیلنس شیٹ',
+  AppStrings.addBondType:'بانڈ کی قسم شامل کریں',
+  AppStrings.typeGuide: 'قسم کی رہنمائی',
+
+
 };

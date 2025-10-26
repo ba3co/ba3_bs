@@ -408,7 +408,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
         ),
         note: note,
         originId: billId,
-        billTypeId: billTypeId,
+        originTypeId: billTypeId,
         docId: billId,
         date: date,
       );

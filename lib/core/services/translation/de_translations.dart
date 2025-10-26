@@ -234,4 +234,6 @@ final Map<String, String> deDE = {
   AppStrings.accessoriesTarget: 'Zubehörziel',
   AppStrings.achievementsPanel: 'Erfolgsanzeige',
   AppStrings.profile: 'Profil',
+  AppStrings.addBondType:'Anleihetyp hinzufügen',
+  AppStrings.typeGuide:'Typenleitfaden',
 };

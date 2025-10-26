@@ -14,7 +14,7 @@ class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
     List<EntryBondItemModel> itemBonds = [];
 
     debugPrint("inside BondEntryBondCreator generateItems");
-    debugPrint("model : "+model.toJson().toString());
+    debugPrint("model : ${model.toJson()}");
     debugPrint("##################");
 
     final date = _currentDate;
@@ -26,6 +26,7 @@ class BondEntryBondCreator extends BaseEntryBondCreator<BondModel> {
       itemBonds.add(EntryBondItemModel(
         originId: originId,
         docId: originId,
+        originTypeId: model.payTypeGuid,
         originName: "${BondType.byTypeGuide(model.payTypeGuid!).value} : ${model.payNumber}",
         date: model.payDate ?? date,
         note: note,
