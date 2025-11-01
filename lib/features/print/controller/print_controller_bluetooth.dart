@@ -4,7 +4,6 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
 import 'package:ba3_bs/core/constants/printer_constants.dart';
-import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -224,8 +223,8 @@ class PrintingController extends GetxController {
       MaterialModel material,
       InvoiceRecordModel record,
       Map<String, double> totals) async {
-    final itemName = (material.matName?.decodeProblematic() ?? '').substring(
-        0, (material.matName?.decodeProblematic().length ?? 0).clamp(0, 64));
+    final itemName = (material.matName/*?.decodeProblematic()*/ ?? '').substring(
+        0, (material.matName/*.decodeProblematic()*/?.length ?? 0).clamp(0, 64));
     log('itemName is s $itemName');
     log('itemName is ${itemName.replaceAll(RegExp(r'[^\x20-\x7Eء-ي\u0640]'), '').replaceAll('ـ', ' ')}');
     final translatedName = await _translationRepository.translateText(itemName

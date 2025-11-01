@@ -7,7 +7,6 @@ import 'dart:ffi' as ffi;
 import 'dart:io';
 
 import 'package:ba3_bs/core/constants/app_assets.dart';
-import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
@@ -360,7 +359,7 @@ class PrintingController extends GetxController {
       InvoiceRecordModel record,
       Map<String, double> totals,
       ) async {
-    final rawName = (material.matName?.decodeProblematic() ?? '');
+    final rawName = (material.matName/*?.decodeProblematic()*/ ?? '');
     final safeLen = (rawName.length).clamp(0, 64);
     final itemName = rawName.substring(0, safeLen);
 

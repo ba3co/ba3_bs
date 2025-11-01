@@ -86,17 +86,17 @@ class ChequesDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher 
     }
     if (!context.mounted) return;
 
-    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!, sourceNumber: chequesModel.chequesNumber!);
+    entryBondController.deleteEntryBondModel(entryId: chequesModel.chequesGuid!,/* sourceNumber: chequesModel.chequesNumber!*/);
     if (chequesModel.chequesPayGuid != null) {
       entryBondController.deleteEntryBondModel(
         entryId: chequesModel.chequesPayGuid!,
-        sourceNumber: chequesModel.chequesNumber!,
+      /*  sourceNumber: chequesModel.chequesNumber!,*/
       );
     }
     if (chequesModel.chequesRefundPayGuid != null) {
       entryBondController.deleteEntryBondModel(
         entryId: chequesModel.chequesRefundPayGuid!,
-        sourceNumber: chequesModel.chequesNumber!,
+       /* sourceNumber: chequesModel.chequesNumber!,*/
       );
     }
     if (!context.mounted) return;

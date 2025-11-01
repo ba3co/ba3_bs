@@ -1,4 +1,3 @@
-import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:xml/xml.dart';
 
@@ -69,7 +68,7 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
       return MaterialModel(
         id: getText('mptr') ?? '',
         matCode: getInt('MatCode'),
-        matName: (getText('MatName') ?? '').encodeProblematic(),
+        matName: (getText('MatName') ?? '')/*.encodeProblematic()*/,
         matBarCode: getText('MatBarCode') ?? '',
         matGroupGuid: getText('MatGroupGuid') ?? '',
         matUnity: getText('MatUnity'),

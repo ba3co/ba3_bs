@@ -125,6 +125,11 @@ class MaterialLayout extends StatelessWidget {
               isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,
               message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.materials.tr}',
               fontSize: 14.sp,
+            ),
+            LoadingDialog(
+              isLoading: read<MaterialController>().loadingMaterialsRequestState.value == RequestState.loading,
+              message: 'جاري تحديث المواد',
+              fontSize: 14.sp,
             )
           ],
         );

@@ -283,7 +283,7 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     if(!context.mounted)return;
 
     read<EntryBondController>()
-        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, sourceNumber: chequesModel.chequesNumber!,           );
+        .deleteEntryBondModel(entryId: chequesModel.chequesPayGuid!, /*sourceNumber: chequesModel.chequesNumber!,*/           );
   }
 
   void refundPayCheques(ChequesModel chequesModel, BuildContext context) async {
@@ -303,14 +303,14 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
     // read<EntryBondController>().saveEntryBondModel(entryBondModel: entryBondModel);
     if(!context.mounted)return;
 
-    createAndStoreChequeEntryBondByStrategy(
-      updatedModel,
-      chequesStrategyType: ChequesStrategyType.refundStrategy,
-      sourceNumber: updatedModel.chequesNumber!,
-      isSave: false,
-        context: context
-
-    );
+    // createAndStoreChequeEntryBondByStrategy(
+    //   updatedModel,
+    //   chequesStrategyType: ChequesStrategyType.refundStrategy,
+    //   sourceNumber: updatedModel.chequesNumber!,
+    //   isSave: false,
+    //     context: context
+    //
+    // );
   }
 
   void deleteRefundPayCheques(ChequesModel chequesModel, BuildContext context) async {
@@ -321,6 +321,6 @@ class ChequesDetailsController extends GetxController with AppValidator, EntryBo
 
     read<EntryBondController>()
 
-        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, sourceNumber: chequesModel.chequesNumber!,            );
+        .deleteEntryBondModel(entryId: chequesModel.chequesRefundPayGuid!, /*sourceNumber: chequesModel.chequesNumber!,*/            );
   }
 }

@@ -226,7 +226,7 @@ class BillDetailsController extends IBillController
     await read<PrintingController>().printReceipt80(
       date: billDate.value.dayMonthYear,
       items: invRecords,
-      seller:  selectedSellerAccount?.costName ?? '',
+      seller: selectedSellerAccount?.costName ?? '',
       billNumber: billModel.billDetails.billNumber!,
       customer: billModel.billDetails.customerPhone!,
       nots: billModel.billDetails.billNote ?? '',
@@ -661,10 +661,10 @@ class BillDetailsController extends IBillController
   ) async {
     final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
 
-
     if (updatedBillModel == null) return null;
     if (existingBill != null) {
-      if ((DateTime.now().difference( existingBill.billDetails.billDate!)) > Duration(days: 2)) {
+      if ((DateTime.now().difference(existingBill.billDetails.billDate!)) > Duration(days: 2) &&
+          !(RoleItemType.viewBill.hasAdminPermission)) {
         if (await AppUIUtils.askForPassword(context) == false) {
           return null;
         }
@@ -736,8 +736,7 @@ class BillDetailsController extends IBillController
       );
       return null;
     }
-    if (
-        (updatedBillModel.billDetails.customerPhone?.isEmpty)??false ) {
+    if (!(updatedBillModel.billTypeModel.isPurchaseRelated) && ((updatedBillModel.billDetails.customerPhone?.isEmpty) ?? false)) {
       AppUIUtils.onFailure(
         'من فضلك ادخل رقم الزبون',
       );
@@ -748,9 +747,6 @@ class BillDetailsController extends IBillController
   }
 
   BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
-
-
-
     // Validate customer and seller accounts
     if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
       if (!_billUtils.validateBillAccount(
@@ -809,7 +805,7 @@ class BillDetailsController extends IBillController
 
   prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) async =>
       billDetailsPlutoController.prepareBillMaterialsRows(
-      await  billItems.getMaterialRecords,
+        await billItems.getMaterialRecords,
       );
 
   prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
@@ -857,7 +853,7 @@ class BillDetailsController extends IBillController
     log(bill.freeBill.toString(), name: 'initFreeLocalSwitcher');
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
 
-  await  prepareBillRecords(bill.items, billPlutoController);
+    await prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);
     productsWithTax.assignAll(await _billService.getMaterialsWithTax(billModel: bill));
 
@@ -920,13 +916,13 @@ class BillDetailsController extends IBillController
           items: billModel.items.itemList.toDeliveryItems()),
     );
   }
+
   Future<void> generateAndSaveBillPdf(BillModel billModel, BuildContext context, {String? recipientEmail}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
-
-  await  _billService.generatePdfAndSaveInLocation(
+    await _billService.generatePdfAndSaveInLocation(
       fileName: AppStrings.existedBill.tr,
       itemModel: billModel,
     );
@@ -976,8 +972,7 @@ class BillDetailsController extends IBillController
 
     for (final materialRecord in billModel.items.itemList) {
       // 1) جيب المادة
-      final MaterialModel? currentModel =
-      await materialController.getMaterialByIdWithNull(materialRecord.itemGuid);
+      final MaterialModel? currentModel = await materialController.getMaterialByIdWithNull(materialRecord.itemGuid);
 /*
       if (currentModel == null) {
         // عدم وجود المادّة: بلّغ وتخطّى هذا السطر
@@ -1009,8 +1004,7 @@ class BillDetailsController extends IBillController
     }
   }
 
-
-/// this for mobile
+  /// this for mobile
 /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
       context: context,
       stateManager: billDetailsPlutoController.recordsTableStateManager,
