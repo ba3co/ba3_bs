@@ -6,7 +6,7 @@ import 'package:ba3_bs/core/helper/extensions/date_time/date_time_extensions.dar
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/bond/controllers/pluto/bond_details_pluto_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/bond/service/bond/bond_local_storage_service.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -18,6 +18,7 @@ import '../../../../core/helper/validators/app_validator.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../data/models/bond_type.dart';
 import '../../service/bond/bond_details_service.dart';
 import 'bond_search_controller.dart';
 
@@ -31,7 +32,7 @@ class BondDetailsController extends GetxController with AppValidator {
 
   // Repositories
 
-  final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
+  final CompoundDatasourceRepository<BondModel, BondTypeModel> _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
   final BondSearchController bondSearchController;
 
@@ -51,7 +52,7 @@ class BondDetailsController extends GetxController with AppValidator {
   bool isLoading = true;
   RxBool isBondSaved = false.obs;
 
-  late BondType bondType;
+  late BondTypeModel bondType;
 
   late bool isDebitOrCredit;
 
@@ -74,7 +75,7 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   void setIsDebitOrCredit() {
-    if (bondType == BondType.journalVoucher || bondType == BondType.openingEntry) {
+    if (bondType.type == BondType.journalVoucher || bondType.type == BondType.openingEntry) {
       isDebitOrCredit = false;
     } else {
       isDebitOrCredit = true;
@@ -119,11 +120,11 @@ class BondDetailsController extends GetxController with AppValidator {
     );
   }
 
-  Future<void> saveBond(BondType bondType, BuildContext context) async {
+  Future<void> saveBond(BondTypeModel bondType, BuildContext context) async {
     await _saveOrUpdateBond(bondType: bondType, context: context);
   }
 
-  Future<void> updateBond({required BondType bondType, required BondModel bondModel, required BuildContext context}) async {
+  Future<void> updateBond({required BondTypeModel bondType, required BondModel bondModel, required BuildContext context}) async {
     if (RoleItemType.viewBond.hasUpdatePermission) {
       await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel, context: context);
     } else {
@@ -131,7 +132,7 @@ class BondDetailsController extends GetxController with AppValidator {
     }
   }
 
-  Future<void> _saveOrUpdateBond({required BondType bondType, BondModel? existingBondModel, required BuildContext context}) async {
+  Future<void> _saveOrUpdateBond({required BondTypeModel bondType, BondModel? existingBondModel, required BuildContext context}) async {
     // Validate the form first
     if (!validateForm()) return;
 
@@ -160,8 +161,10 @@ class BondDetailsController extends GetxController with AppValidator {
       return;
     }
 
+    log("the details of the bond being currently added :  ");
+    log("the value of the note text editing controller "+noteController.text);
+    updatedBondModel.printBondModelDetails();
     saveBondRequestState.value = RequestState.loading;
-
     // Save the bond to Firestore
     final result = await _bondsFirebaseRepo.save(updatedBondModel);
     BondLocalStorageService().saveSingleBond(updatedBondModel);
@@ -202,7 +205,7 @@ class BondDetailsController extends GetxController with AppValidator {
     isBondSaved.value = newValue;
   }
 
-  BondModel? _createBondModelFromBondData(BondType bondType, [BondModel? bondModel]) {
+  BondModel? _createBondModelFromBondData(BondTypeModel bondType, [BondModel? bondModel]) {
     // Validate customer accounts
     if (bondSearchController.bondDetailsController.isDebitOrCredit) {
       if (!_bondService.validateAccount(
@@ -212,7 +215,6 @@ class BondDetailsController extends GetxController with AppValidator {
       }
     }
     // Create and return the bond model
-
     return _bondService.createBondModel(
       bondModel: bondModel,
       bondType: bondType,
@@ -260,8 +262,8 @@ class BondDetailsController extends GetxController with AppValidator {
     );
   }
 
-  appendNewBill({required BondType bondType, required int lastBondNumber}) {
-    BondModel newBond = BondModel.empty(bondType: bondType, lastBondNumber: lastBondNumber);
+  appendNewBill({required String typeGuide, required int lastBondNumber}) {
+    BondModel newBond = BondModel.empty(typeGuide: typeGuide, lastBondNumber: lastBondNumber);
 
     bondSearchController.insertLastAndUpdate(newBond);
   }

@@ -2,7 +2,8 @@ import 'dart:developer';
 
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/helper/enums/enums.dart';
@@ -10,6 +11,7 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/network/error/failure.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/pay_item_model.dart';
+import '../../service/bond/get_bond_types_models_service.dart';
 import '../pluto/bond_details_pluto_controller.dart';
 
 class BondSearchController extends GetxController {
@@ -29,6 +31,12 @@ class BondSearchController extends GetxController {
   }) {
     bonds = _prepareBondList(lastBondNumber, currentBond);
     currentBondIndex = _getBondIndexByNumber(currentBond.payNumber);
+
+    debugPrint("the bonds in the search controller are : ");
+    for (var element in bonds) {
+      element.printBondModelDetails();
+    }
+
 
     currentBond = bonds[currentBondIndex];
     this.bondDetailsController = bondDetailsController;
@@ -180,8 +188,9 @@ class BondSearchController extends GetxController {
   /// Fetches the Bond by number and handles success or failure.
   Future<void> _fetchAndNavigateToBond(
       int bondNumber, NavigationDirection source) async {
+    final bondTypeModel = Get.find<BondTypeService>().getBondTypeByGuide(currentBond.payTypeGuid!);
     final result = await read<AllBondsController>().fetchBondByNumber(
-      bondType: BondType.byTypeGuide(currentBond.payTypeGuid!),
+      bondType: bondTypeModel,
       bondNumber: bondNumber,
     );
 

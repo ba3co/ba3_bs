@@ -1,4 +1,7 @@
+import 'package:get/get.dart';
+
 import '../../../features/bond/data/models/entry_bond_model.dart';
+import '../../../features/bond/service/bond/get_bond_types_models_service.dart';
 import '../enums/enums.dart';
 
 extension EntryBondTypeUtils on EntryBondOrigin {
@@ -16,7 +19,8 @@ extension EntryBondTypeUtils on EntryBondOrigin {
         return BillType.byTypeGuide(typeGuide).value;
 
       case EntryBondType.bond:
-        return BondType.byTypeGuide(typeGuide).value;
+        return Get.find<BondTypeService>().getBondTypeByGuide(typeGuide).value;
+       // return BondType.byTypeGuide(typeGuide).value;
 
       case EntryBondType.cheque:
         return ChequesType.byTypeGuide(typeGuide).value;

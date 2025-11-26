@@ -42,7 +42,8 @@ import '../../../../core/services/firebase/implementations/repos/queryable_savab
 import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../bond/controllers/bonds/all_bond_controller.dart';
-import '../../../bond/data/models/bond_model.dart';
+import '../../../bond/data/models/bond_type_model.dart';
+import '../../../bond/service/bond/get_bond_types_models_service.dart';
 import '../../../dashboard/controller/bill_report_controller.dart';
 import '../../../floating_window/controllers/floating_window_controller.dart';
 import '../../../materials/data/models/materials/material_model.dart';
@@ -127,8 +128,10 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
     final List<BillModel> allBills = [];
     final List<BondModel> allBonds = [];
 
+
+    final  bondTypes = Get.find<BondTypeService>().getBondTypes();
     // انتظار كل Bonds
-    for (final element in BondType.values) {
+    for (final element in bondTypes) {
       final bonds = await read<AllBondsController>().fetchBondsByDate(
         element,
         DateFilter(

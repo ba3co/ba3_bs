@@ -3,7 +3,6 @@
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/core/services/firebase/interfaces/bulk_savable_datasource.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
-import 'package:flutter/material.dart';
 
 class EntryBondsDatasource extends BulkSavableDatasource<EntryBondModel> {
   EntryBondsDatasource({required super.databaseService});
@@ -36,7 +35,6 @@ class EntryBondsDatasource extends BulkSavableDatasource<EntryBondModel> {
 
   @override
   Future<EntryBondModel> save(EntryBondModel item) async {
-    debugPrint("### inside entry bonds data source save called ");
     final data = await databaseService.add(
       path: path,
       documentId: item.origin?.docId ?? item.origin?.originId,

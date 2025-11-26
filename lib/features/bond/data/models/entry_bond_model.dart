@@ -57,6 +57,42 @@ class EntryBondModel {
       entryBondDate: entryBondDate ?? this.entryBondDate,
     );
   }
+
+  void printDetails() {
+    debugPrint('====================================================');
+    debugPrint('📘 ENTRY BOND MODEL');
+    debugPrint('====================================================');
+
+    debugPrint('🗓️  Entry Bond Date: $entryBondDate');
+
+    debugPrint('----------------------------------------------------');
+    debugPrint('📌 ORIGIN:');
+    if (origin != null) {
+      origin!.printDetails();
+    } else {
+      debugPrint('   ❌ No Origin');
+    }
+
+    debugPrint('----------------------------------------------------');
+    debugPrint('📦 ITEMS:');
+    if (items == null) {
+      debugPrint('❌ No Items');
+    } else {
+      debugPrint('   🆔 Items ID: ${items!.id}');
+      debugPrint('   📄 Document ID: ${items!.docId ?? "N/A"}');
+      debugPrint('   📋 Total Items: ${items!.itemList.length}');
+      debugPrint('----------------------------------------------------');
+
+      for (int i = 0; i < items!.itemList.length; i++) {
+        debugPrint('🧩 Item #${i + 1}');
+        items!.itemList[i].printDetails();
+        debugPrint('----------------------------------------------------');
+      }
+    }
+
+    debugPrint('====================================================');
+  }
+
 }
 
 /// Represents a collection of bond items with an identifier.
@@ -104,6 +140,8 @@ class EntryBondItems {
       itemList: itemList ?? this.itemList,
     );
   }
+
+
 }
 
 /// Represents a single bond item within a bond entry.

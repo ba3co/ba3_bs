@@ -8,7 +8,7 @@ import 'package:ba3_bs/features/cheques/service/cheques_pdf_generator.dart';
 import '../../../../features/bill/data/models/bill_model.dart';
 import '../../../../features/bill/services/bill/bill_comparison_pdf_generator.dart';
 import '../../../../features/bill/services/bill/delivery_label_pdf_generator.dart';
-import '../../../../features/bond/data/models/bond_model.dart';
+import '../../../../features/bond/data/models/bond_type_model.dart';
 import '../../../../features/bond/service/bond/bond_comparison_pdf_generator.dart';
 import '../interfaces/i_pdf_generator.dart';
 

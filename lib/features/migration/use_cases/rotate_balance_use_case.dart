@@ -4,7 +4,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/accounts/controllers/account_statement_controller.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type_model.dart';
 import 'package:ba3_bs/features/bond/data/models/entry_bond_model.dart';
 import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 

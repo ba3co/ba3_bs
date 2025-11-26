@@ -55,7 +55,7 @@ final Map<String, String> deDE = {
   AppStrings.view: 'Anzeigen',
   AppStrings.bonds: 'Anleihen',
   AppStrings.date: 'Datum',
-  AppStrings.number: '',
+  AppStrings.number: 'Zahl',
   AppStrings.viewOrigin: 'Original anzeigen',
   AppStrings.difference: 'Differenz',
   AppStrings.account: 'Konto',

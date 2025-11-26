@@ -6,8 +6,8 @@ import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
+import '../../service/bond/get_bond_types_models_service.dart';
 
 class AllBondScreen extends StatelessWidget {
   const AllBondScreen({super.key});
@@ -20,8 +20,8 @@ class AllBondScreen extends StatelessWidget {
         onLoaded: (e) {},
         onSelected: (event) {
           String bondId = event.row?.cells[AppConstants.bondIdFiled]?.value;
-          BondType bondType =
-              BondType.byTypeGuide(event.row?.cells['type']?.value);
+          final bondType = Get.find<BondTypeService>().getBondTypeByGuide(event.row?.cells['type']?.value);
+         // BondType bondType = BondType.byTypeGuide(event.row?.cells['type']?.value);
           log('bondId : $bondId');
           controller.openBondDetailsById(bondId, context, bondType);
         },

@@ -1,9 +1,10 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:get/get.dart';
 
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/firebase/interfaces/remote_datasource_base.dart';
-import '../models/bond_model.dart';
+import '../../service/bond/get_bond_types_models_service.dart';
+import '../models/bond_type_model.dart';
 
 class BondsDataSource extends RemoteDatasourceBase<BondModel>
     with FirestoreSequentialNumbers {
@@ -49,7 +50,7 @@ class BondsDataSource extends RemoteDatasourceBase<BondModel>
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
     final newBondNumber = await fetchAndIncrementEntityNumber(
-        path, BondType.byTypeGuide(bond.payTypeGuid!).value);
+        path, Get.find<BondTypeService>().getBondTypeByGuide(bond.payTypeGuid!).value);
     return bond.copyWith(payNumber: newBondNumber.nextNumber);
   }
 

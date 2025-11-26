@@ -1,6 +1,6 @@
 import 'package:ba3_bs/core/services/export_xml/xml_helpers.dart';
 import 'package:xml/xml.dart' as xml;
-import '../../../features/bond/data/models/bond_model.dart';
+import '../../../features/bond/data/models/bond_type_model.dart';
 
 /// A class responsible for exporting bond (or payment) data into an XML format.
 class BondsExport {

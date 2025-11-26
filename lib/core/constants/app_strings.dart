@@ -450,5 +450,4 @@ class AppStrings {
   static const String addBondType='اضافة نوع سند';
 
   static const String typeGuide ='الدليل الارشادي';
-
 }

@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
+import 'package:ba3_bs/features/bond/service/bond/get_bond_types_models_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
@@ -56,7 +57,10 @@ class BondTypeController extends GetxController with AppNavigator, FloatingLaunc
       // no offline fallback for now
       bondTypes.clear();
     }
+    update();
+    Get.find<BondTypeService>().refreshBondTypes();
     return bondTypes;
+
   }
 
   void navigateToAddBondTypeScreen({
@@ -83,6 +87,13 @@ class BondTypeController extends GetxController with AppNavigator, FloatingLaunc
       AppUIUtils.onFailure('Please select a bond type.');
       return;
     }
+
+    if (bondTypeFormHandler.colorController.text.isEmpty) {
+      AppUIUtils.onFailure('Please select a color.');
+      return;
+    }
+
+
     addOrUpdateBondTypeRequestState.value = RequestState.loading;
 
 

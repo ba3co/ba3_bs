@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
-
-// Import your enum file
 import '../../../../core/helper/enums/enums.dart';
 @HiveType(typeId: 0)
 class BondTypeModel extends HiveObject with EquatableMixin {

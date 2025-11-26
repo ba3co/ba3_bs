@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,8 @@ import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/bonds/bond_search_controller.dart';
 import '../../../controllers/pluto/bond_details_pluto_controller.dart';
-import '../../../data/models/bond_model.dart';
+import '../../../data/models/bond_type_model.dart';
+import '../../../use_cases/get_bond_type_by_guide_usecase.dart';
 
 class BondDetailsButtons extends StatelessWidget {
   const BondDetailsButtons({
@@ -36,18 +38,41 @@ class BondDetailsButtons extends StatelessWidget {
         children: [
           Obx(() {
             return AppButton(
-                isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
-                title: bondDetailsController.isBondSaved.value ? AppStrings.newS.tr : AppStrings.add.tr,
-                height: 20,
-                color: bondDetailsController.isBondSaved.value ? Colors.green : Colors.blue.shade700,
-                onPressed: bondDetailsController.isBondSaved.value
-                    ? () => bondDetailsController.appendNewBill(
-                        bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
-                        lastBondNumber: bondSearchController.bonds.last.payNumber!)
-                    : () async {
-                        await bondDetailsController.saveBond(BondType.byTypeGuide(bondModel.payTypeGuid!),context);
-                      },
-                iconData: Icons.add_chart_outlined);
+              isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
+              title: bondDetailsController.isBondSaved.value
+                  ? AppStrings.newS.tr
+                  : AppStrings.add.tr,
+              height: 20,
+              color: bondDetailsController.isBondSaved.value
+                  ? Colors.green
+                  : Colors.blue.shade700,
+              onPressed: () async {
+                final getBondTypeByGuideUseCase = Get.find<GetBondTypeByGuideUseCase>();
+                final result = await getBondTypeByGuideUseCase(bondModel.payTypeGuid!);
+
+                result.fold(
+                      (failure) {
+                    // Handle failure gracefully
+                    Get.snackbar('Error', failure.message);
+                  },
+                      (bondTypeModel) async {
+
+                    if (bondDetailsController.isBondSaved.value) {
+                      // When bond is already saved → append new bill
+                      // bondDetailsController.appendNewBill(
+                      //   bondType: bondTypeModel,
+                      //   lastBondNumber: bondSearchController.bonds.last.payNumber!,
+                      // );
+                    } else {
+                      // When bond is new → save bond
+
+                      await bondDetailsController.saveBond(bondTypeModel, context);
+                    }
+                  },
+                );
+              },
+              iconData: Icons.add_chart_outlined,
+            );
           }),
           if (!bondSearchController.isNew) ...[
             AppButton(
@@ -64,11 +89,11 @@ class BondDetailsButtons extends StatelessWidget {
                 title: AppStrings.edit.tr,
                 height: 20,
                 onPressed: () async {
-                  bondDetailsController.updateBond(
-                    bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
-                    bondModel: bondModel,
-                    context: context
-                  );
+                  // bondDetailsController.updateBond(
+                  //   bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
+                  //   bondModel: bondModel,
+                  //   context: context
+                  // );
                 },
                 iconData: Icons.edit_outlined,
               );

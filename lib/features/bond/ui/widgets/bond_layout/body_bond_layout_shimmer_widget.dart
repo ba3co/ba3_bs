@@ -18,7 +18,7 @@ class BodyBondLayoutShimmerWidget extends StatelessWidget {
           highlightColor: Colors.grey[100]!,
           child: SizedBox(
             child: Text(
-              AppStrings.from.tr,
+              AppStrings.number.tr,
               style: AppTextStyles.headLineStyle3,
             ),
           ),
@@ -28,7 +28,7 @@ class BodyBondLayoutShimmerWidget extends StatelessWidget {
           highlightColor: Colors.grey[100]!,
           child: SizedBox(
             child: Text(
-              AppStrings.to.tr,
+              AppStrings.bonds.tr,
               style: AppTextStyles.headLineStyle3,
             ),
           ),

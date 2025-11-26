@@ -55,7 +55,7 @@ final Map<String, String> frFR = {
   AppStrings.view: 'Voir',
   AppStrings.bonds: 'Bons',
   AppStrings.date: 'Date',
-  AppStrings.number: '',
+  AppStrings.number: 'Nombre De',
   AppStrings.viewOrigin: 'Voir l’original',
   AppStrings.difference: 'Différence',
   AppStrings.account: 'Compte',

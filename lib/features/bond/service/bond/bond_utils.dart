@@ -1,17 +1,16 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../sellers/data/models/seller_model.dart';
-import '../../data/models/bond_model.dart';
+import '../../data/models/bond_type_model.dart';
 
 class BondUtils {
-  BondModel appendEmptyBondModel(List<BondModel> bonds, BondType bondTyp) {
+  BondModel appendEmptyBondModel(List<BondModel> bonds, String typeGuide) {
     final int lastBondNumber = bonds.isNotEmpty ? bonds.last.payNumber! : 0;
 
     final emptyBondModel = BondModel.empty(
-      bondType: bondTyp,
+      typeGuide: typeGuide,
       lastBondNumber: lastBondNumber,
     );
 
@@ -20,10 +19,10 @@ class BondUtils {
   }
 
   List<BondModel> appendEmptyBondModelNew(
-      BondType bondType, int lastBondNumber) {
+      String typeGuide, int lastBondNumber) {
     final List<BondModel> bonds = [];
     final emptyBillModel =
-        BondModel.empty(bondType: bondType, lastBondNumber: lastBondNumber);
+        BondModel.empty(typeGuide:typeGuide, lastBondNumber: lastBondNumber);
 
     bonds.add(emptyBillModel);
     return bonds;

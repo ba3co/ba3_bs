@@ -20,6 +20,7 @@ import '../../../../core/network/error/failure.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../data/models/entry_bond_model.dart';
+import '../../service/bond/get_bond_types_models_service.dart';
 
 class EntryBondController extends GetxController with FloatingLauncher {
   final BulkSavableDatasourceRepository<EntryBondModel> _entryBondsFirebaseRepo;
@@ -89,11 +90,6 @@ class EntryBondController extends GetxController with FloatingLauncher {
     required bool isSave,
     Map<String, AccountModel> modifiedAccounts = const {},
   }) async {
-
-    debugPrint("### in entry bond controller saveEntryBond called ");
-    debugPrint("### in entry bond controller saveEntryBond source number is  $sourceNumber");
-    debugPrint("### modified accounts : $modifiedAccounts");
-
 
 
     final result = await _entryBondsFirebaseRepo.save(entryBondModel);
@@ -396,11 +392,17 @@ class EntryBondController extends GetxController with FloatingLauncher {
       return;
     }
 
+    final bondTypeModel = Get.find<BondTypeService>().getBondTypeByGuide(entryBondModel.origin!.originTypeId!);
+
+
+    debugPrint("when the use case is called ");
+    entryBondModel.printDetails();
+
     final actions = {
       EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(
           origin.originId!,
           context,
-          BondType.byTypeGuide(entryBondModel.origin!.originTypeId!)),
+          bondTypeModel),
       EntryBondType.bill: () {
         log(origin.toJson().toString());
         read<AllBillsController>().openFloatingBillDetailsById(

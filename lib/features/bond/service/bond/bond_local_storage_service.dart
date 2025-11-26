@@ -1,14 +1,13 @@
 import 'dart:developer';
 
 import 'package:hive/hive.dart';
-
-import '../../../../core/helper/enums/enums.dart';
-import '../../data/models/bond_model.dart';
+import '../../data/models/bond_type_model.dart';
+import '../../data/models/bond_type.dart';
 
 class BondLocalStorageService {
   static const String _nestedBoxName = 'nestedBondsBox';
 
-  Future<void> saveNestedBonds(Map<BondType, List<BondModel>> nestedBonds) async {
+  Future<void> saveNestedBonds(Map<BondTypeModel, List<BondModel>> nestedBonds) async {
     log('BondLocalStorageService');
     nestedBonds.forEach((k, v) => log('bond Type: ${k.label} has ${v.length} bonds', name: 'saveNestedBonds'));
 

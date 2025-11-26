@@ -11,7 +11,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../features/bill/data/datasources/bills_compound_data_source.dart';
 import '../../../features/bill/data/models/bill_model.dart';
 import '../../../features/bond/data/datasources/bonds_compound_data_source.dart';
-import '../../../features/bond/data/models/bond_model.dart';
+import '../../../features/bond/data/models/bond_type_model.dart';
+import '../../../features/bond/data/models/bond_type.dart';
 import '../../../features/cheques/data/datasources/cheques_compound_data_source.dart';
 import '../../../features/cheques/data/models/cheques_model.dart';
 import '../../../features/migration/controllers/migration_controller.dart';
@@ -154,7 +155,7 @@ CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BillCompoundDatasource(compoundDatabaseService: service));
 
-CompoundDatasourceRepository<BondModel, BondType> createBondsRepository(
+CompoundDatasourceRepository<BondModel, BondTypeModel> createBondsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>
     CompoundDatasourceRepository(BondCompoundDatasource(compoundDatabaseService: service));
 

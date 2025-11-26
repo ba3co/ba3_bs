@@ -1,7 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/body_bond_layout_shimmer_widget.dart';
@@ -55,7 +55,7 @@ class BondTypeWidget extends StatelessWidget {
                   bondTypeModel.type.icon,
                   width: 0.035.sw,
                   height: 0.035.sh,
-                  // color: index == tabIndex ? AppColors.whiteColor : AppColors.grayColor,
+                  color: AppUIUtils.parseColor(bondTypeModel.color),
                 ),
               ],
             ),
@@ -71,9 +71,10 @@ class BondTypeWidget extends StatelessWidget {
                   //     .fetchAllBondByType(bondTypeModel.type, context);
                 },
                 child: BodyBondLayoutWidget(
-                    firstText: "${AppStrings.from.tr}  ${bondTypeModel.from}",
+                    // firstText: "${AppStrings.from.tr}  ${bondTypeModel.from}",
+                    firstText: "${AppStrings.number.tr} ${AppStrings.bonds}",
                     secondText:
-                    "${AppStrings.to.tr}  ${bondsController.allBondsCounts(bondTypeModel.type)}"),
+                    "${bondsController.allBondsCounts(bondTypeModel)}"),
               );
             }),
 
@@ -83,7 +84,7 @@ class BondTypeWidget extends StatelessWidget {
               title: AppStrings.newS.tr,
               onPressed: onTap,
               iconData: Icons.add,
-              color: Color(int.parse("0xff${bondTypeModel.color}")).withAlpha(220),
+              color: AppUIUtils.parseColor(bondTypeModel.color).withAlpha(220),
             )
           ],
         ));

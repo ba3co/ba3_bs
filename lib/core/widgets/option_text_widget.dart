@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 
 import 'custom_text_field_with_icon.dart';
 
-class OptionTextWidget extends StatelessWidget {
+class OptionTextWidget extends StatefulWidget {
   const OptionTextWidget({required this.title, super.key, required this.controller, required this.onSubmitted});
 
   final String title;
@@ -12,17 +12,22 @@ class OptionTextWidget extends StatelessWidget {
   final void Function(String) onSubmitted;
 
   @override
+  State<OptionTextWidget> createState() => _OptionTextWidgetState();
+}
+
+class _OptionTextWidgetState extends State<OptionTextWidget> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(width: 100, child: Text(title)),
+          SizedBox(width: 100, child: Text(widget.title)),
           SizedBox(
             width: 250,
             child:
-                CustomTextFieldWithIcon(fillColor: AppColors.backGroundColor, textEditingController: controller, onSubmitted: onSubmitted),
+                CustomTextFieldWithIcon(fillColor: AppColors.backGroundColor, textEditingController: widget.controller, onSubmitted: widget.onSubmitted),
           ),
         ],
       ),

@@ -11,7 +11,8 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
-import '../../data/models/bond_model.dart';
+import '../../data/models/bond_type_model.dart';
+import 'get_bond_types_models_service.dart';
 
 class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
     with PdfHelperMixin {
@@ -42,7 +43,7 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
             'رقم السند: ', afterUpdate.payNumber.toString().toString(),
             font: font),
         buildDetailRow(
-            'نوع السند: ', BondType.byTypeGuide(afterUpdate.payTypeGuid!).value,
+            'نوع السند: ', Get.find<BondTypeService>().getBondTypeByGuide(afterUpdate.payTypeGuid!).value,
             font: font),
       ],
     );
@@ -215,9 +216,9 @@ class BondComparisonPdfGenerator extends PdfGeneratorBase<List<BondModel>>
         _accountsController.getAccountNameById(afterUpdate.payAccountGuid);
 
     return [
-      if (BondType.byTypeGuide(beforeUpdate.payTypeGuid!) ==
+      if (Get.find<BondTypeService>().getBondTypeByGuide(beforeUpdate.payTypeGuid!).type ==
               BondType.paymentVoucher ||
-          BondType.byTypeGuide(beforeUpdate.payTypeGuid!) ==
+          Get.find<BondTypeService>().getBondTypeByGuide(beforeUpdate.payTypeGuid!).type ==
               BondType.receiptVoucher)
         ['الحساب', beforeCustomerName, afterCustomerName],
       ['التاريخ', beforeUpdate.payDate, afterUpdate.payDate],

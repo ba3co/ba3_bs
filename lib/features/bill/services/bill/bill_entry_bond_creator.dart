@@ -8,7 +8,6 @@ import 'package:ba3_bs/features/bill/data/models/bill_items.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
-import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
@@ -22,7 +21,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
   @override
   List<EntryBondItemModel> generateItems({required BillModel model, bool? isSimulatedVat}) {
 
-    debugPrint("generate items in BillEntryBondCreator called");
 
     if (!model.billTypeModel.billPatternType!.hasMaterialAccount || !model.billTypeModel.billPatternType!.hasCashesAccount) {
       log("message", name: "BillEntryBondCreator");
@@ -35,7 +33,6 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
 
     final firstPayBond = [];
 
-    debugPrint("in bills bond type is "+ model.billTypeModel.billTypeId.toString());
 
     if ((model.billDetails.billFirstPay ?? 0) > 0) {
       firstPayBond.addAll(_createFirstPayBond(

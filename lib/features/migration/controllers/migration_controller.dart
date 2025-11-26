@@ -16,7 +16,8 @@ import '../../../core/services/entry_bond_creator/implementations/entry_bonds_ge
 import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../bill/use_cases/convert_bills_to_linked_list_use_case.dart';
 import '../../bill/use_cases/divide_large_bill_use_case.dart';
-import '../../bond/data/models/bond_model.dart';
+import '../../bond/data/models/bond_type_model.dart';
+import '../../bond/data/models/bond_type.dart';
 import '../../bond/data/models/pay_item_model.dart';
 import '../../bond/service/bond/floating_bond_details_launcher.dart';
 import '../../cheques/data/models/cheques_model.dart';
@@ -29,7 +30,7 @@ import '../use_cases/rotate_balance_use_case.dart';
 
 class MigrationController extends FloatingBondDetailsLauncher
     with EntryBondsGenerator, FirestoreSequentialNumbers {
-  final CompoundDatasourceRepository<BondModel, BondType> _bondsFirebaseRepo;
+  final CompoundDatasourceRepository<BondModel, BondTypeModel> _bondsFirebaseRepo;
   final CompoundDatasourceRepository<BillModel, BillTypeModel>
       _billsFirebaseRepo;
 

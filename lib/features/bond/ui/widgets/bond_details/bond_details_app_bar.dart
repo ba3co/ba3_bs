@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/widgets/app_spacer.dart';
 import '../../../../../core/widgets/custom_icon_button.dart';
 import '../../../../../core/widgets/custom_text_field_without_icon.dart';
@@ -16,12 +15,12 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.bondDetailsController,
     required this.bondSearchController,
-    required this.bondTypeModel,
+    required this.title,
   });
 
   final BondDetailsController bondDetailsController;
   final BondSearchController bondSearchController;
-  final BondType bondTypeModel;
+  final String title;
 
   // kToolbarHeight: default AppBar height.
   @override
@@ -31,7 +30,7 @@ class BondDetailsAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leadingWidth: 100,
-      title: Text(bondTypeModel.value),
+      title: Text(title),
       actions: [
         HorizontalSpace(20),
         CustomIconButton(

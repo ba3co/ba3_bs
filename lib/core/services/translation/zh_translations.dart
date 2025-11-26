@@ -55,7 +55,7 @@ final Map<String, String> zhCN = {
   AppStrings.view: '查看',
   AppStrings.bonds: '债券',
   AppStrings.date: '日期',
-  AppStrings.number: '',
+  AppStrings.number: '的数量',
   AppStrings.viewOrigin: '查看原件',
   AppStrings.difference: '差额',
   AppStrings.account: '账户',

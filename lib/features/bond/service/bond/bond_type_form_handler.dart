@@ -5,7 +5,6 @@ import 'package:ba3_bs/core/interfaces/i_store_selection_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/get_rx.dart';
 import '../../controllers/bonds/all_bond_controller.dart';
-import '../../controllers/bonds/bond_type_controller.dart';
 import '../../data/models/bond_type.dart';
 
 
@@ -97,6 +96,7 @@ class BondTypeFormHandler with AppValidator implements IStoreSelectionHandler {
   /// Handle color change from color picker or dropdown
   void onMainColorChanged(int? newColorValue) {
     if (newColorValue != null) {
+      debugPrint(newColorValue.toString());
       colorController.text = newColorValue.toString();
       bondTypeController.update();
     }

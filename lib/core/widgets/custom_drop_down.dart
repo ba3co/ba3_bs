@@ -1,70 +1,60 @@
-import 'package:ba3_bs/core/styling/app_colors.dart';
-import 'package:ba3_bs/core/styling/app_text_style.dart';
+// Replace your entire CustomDropDown with this modern version
+
 import 'package:flutter/material.dart';
 
-class CustomDropDown extends StatelessWidget {
-  const CustomDropDown(
-      {super.key,
-      required this.value,
-      required this.listValue,
-      required this.label,
-      required this.onChange,
-      this.isFullBorder,
-      this.size,
-      this.enable = true});
+import '../styling/app_colors.dart';
 
-  final double? size;
-  final bool? enable;
+class CustomDropDown extends StatelessWidget {
+  final String? value;
+  final List<String> listValue;
+  final String label;
+  final Function(String?) onChange;
+  final bool enabled;
+
+  const CustomDropDown({
+    super.key,
+    required this.value,
+    required this.listValue,
+    required this.label,
+    required this.onChange,
+    this.enabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return DropdownMenu<String>(
       width: 250,
-      child: Container(
-        color: Colors.white,
-        child: DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            hintStyle: AppTextStyles.headLineStyle3
-                .copyWith(overflow: TextOverflow.ellipsis),
-            hintText: label,
-            // labelText: label,
-            enabled: enable ?? true,
-            labelStyle: AppTextStyles.headLineStyle3
-                .copyWith(overflow: TextOverflow.ellipsis),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.grayColor, width: 1),
-            ),
-            disabledBorder: UnderlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.grayColor, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: AppColors.blueColor, width: 1),
-            ),
-          ),
-          value: value == '' ? null : value,
-          iconEnabledColor: Colors.blue,
-          hint: Text(label,
-              style: AppTextStyles.headLineStyle4,
-              overflow: TextOverflow.ellipsis),
-          onChanged: onChange,
-          items: listValue.map((e) {
-            return DropdownMenuItem(
-              value: e,
-              child: Text(e, overflow: TextOverflow.ellipsis),
-            );
-          }).toList(),
+      enabled: enabled,
+      hintText: label,
+      initialSelection: value?.isNotEmpty == true ? value : null,
+      dropdownMenuEntries: listValue.map((e) {
+        return DropdownMenuEntry(value: e, label: e);
+      }).toList(),
+      onSelected: onChange,
+
+      // Styling to match your old design
+      inputDecorationTheme: InputDecorationTheme(
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        constraints: const BoxConstraints(maxHeight: 56),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppColors.grayColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppColors.lightBlueColor, width: 2),
+        ),
+      ),
+
+      menuStyle: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(Colors.white),
+        surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+        elevation: const WidgetStatePropertyAll(8),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );
   }
-
-  final String value, label;
-
-  final bool? isFullBorder;
-  final List<String> listValue;
-
-  final Function(String? value) onChange;
 }

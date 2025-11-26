@@ -6,7 +6,7 @@ import 'package:xml/xml.dart' as xml;
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 
 import '../../../../../features/accounts/data/models/account_model.dart';
-import '../../../../../features/bond/data/models/bond_model.dart';
+import '../../../../../features/bond/data/models/bond_type_model.dart';
 import '../../../../../features/cheques/data/models/cheques_model.dart';
 import '../../../../../features/cheques/service/cheques_export.dart';
 import '../../../../../features/customer/data/models/customer_model.dart';

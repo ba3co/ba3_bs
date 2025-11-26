@@ -17,7 +17,6 @@ import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_spacer.dart';
-import '../widgets/bond_layout/bond_item_widget.dart';
 import '../widgets/bond_layout/bond_type_widget.dart';
 
 class BondLayout extends StatelessWidget {
@@ -71,8 +70,9 @@ class BondLayout extends StatelessWidget {
                                   child: BondTypeWidget(
                                     bondsController: controller,
                                     onTap: () {
+                                      /// this is the most important line in the whole thing
                                       controller.openFloatingBondDetails(
-                                          context, bondType.type);
+                                          context, bondType);
                                     },
                                     bondTypeModel: bondType,
                                   ),

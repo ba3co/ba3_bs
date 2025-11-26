@@ -3,10 +3,10 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:xml/xml.dart';
 
-import '../../../features/bond/data/models/bond_model.dart';
+import '../../../features/bond/data/models/bond_type_model.dart';
+import '../../../features/bond/data/models/bond_type.dart';
 import '../../../features/cheques/data/models/cheques_model.dart';
 import '../../../features/materials/data/models/materials/material_model.dart';
-import '../../helper/enums/enums.dart';
 
 /// This class is responsible for generating the static sections
 /// of the exported XML file, such as version info, export settings,
@@ -21,7 +21,7 @@ class StaticSections {
   void buildStaticSections({
     required XmlBuilder builder,
     required List<MaterialModel> materials,
-    required Map<BondType, List<BondModel>> bonds,
+    required Map<BondTypeModel, List<BondModel>> bonds,
     required Map<BillTypeModel, List<BillModel>> bills,
     required List<ChequesModel> chequesList,
   }) {
@@ -47,7 +47,7 @@ class StaticSections {
   /// Builds export settings, including counts, ranges of pay numbers and cheques, and export filters.
   void _buildExpSetting(
     XmlBuilder builder,
-    Map<BondType, List<BondModel>> bonds,
+    Map<BondTypeModel, List<BondModel>> bonds,
     List<ChequesModel> chequesList,
     Map<BillTypeModel, List<BillModel>> bills,
   ) {
@@ -230,7 +230,7 @@ class StaticSections {
 
   /// Builds payment type definitions and their ranges dynamically from bond data.
   void _buildPayTypesDescription(
-      XmlBuilder builder, Map<BondType, List<BondModel>> bonds) {
+      XmlBuilder builder, Map<BondTypeModel, List<BondModel>> bonds) {
     builder.element('PayDesc', nest: () {
       for (final entry in bonds.entries) {
         final type = entry.key;

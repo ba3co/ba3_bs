@@ -9,16 +9,17 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
 import '../../../accounts/data/models/account_model.dart';
+import '../../data/models/bond_type.dart';
 import '../../data/models/pay_item_model.dart';
 
 class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
   // Columns and rows
   late List<PlutoColumn> recordsTableColumns =
-      PayItem().toPlutoGridFormat(bondType).keys.toList();
+      PayItem().toPlutoGridFormat(bondType.type).keys.toList();
 
   List<PlutoRow> recordsTableRows = [];
 
-  final BondType bondType;
+  final BondTypeModel bondType;
 
   String accountGuid = '';
 
@@ -83,7 +84,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   double calcCreditTotal() {
     double total = 0;
-    if (bondType == BondType.paymentVoucher) {
+    if (bondType.type == BondType.paymentVoucher) {
       return calcDebitTotal();
     }
 
@@ -102,7 +103,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   double calcDebitTotal() {
     double total = 0;
-    if (bondType == BondType.receiptVoucher) {
+    if (bondType.type == BondType.receiptVoucher) {
       return calcCreditTotal();
     }
     for (var element in recordsTableStateManager.rows) {
@@ -138,8 +139,8 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
         .whereType<PayItem>()
         .toList();
 
-    final oppositeItems = (bondType == BondType.paymentVoucher ||
-            bondType == BondType.receiptVoucher)
+    final oppositeItems = (bondType.type == BondType.paymentVoucher ||
+            bondType.type == BondType.receiptVoucher)
         ? payItems
             .map((item) {
               return _generateOppositeItem(item, accountName);
@@ -156,14 +157,14 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
   }
 
   PayItem _generateOppositeItem(PayItem item, String accountName) {
-    if (bondType == BondType.paymentVoucher) {
+    if (bondType.type == BondType.paymentVoucher) {
       return item.copyWith(
         entryAccountGuid: accountGuid,
         entryAccountName: accountName,
         entryCredit: item.entryDebit,
         entryDebit: 0,
       );
-    } else if (bondType == BondType.receiptVoucher) {
+    } else if (bondType.type == BondType.receiptVoucher) {
       return item.copyWith(
         entryAccountGuid: accountGuid,
         entryAccountName: accountName,
@@ -273,7 +274,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
 
   List<PlutoRow> convertRecordsToRows(List<PayItem> records) =>
       records.map((record) {
-        final rowData = record.toPlutoGridFormat(bondType);
+        final rowData = record.toPlutoGridFormat(bondType.type);
         final cells = rowData.map((key, value) =>
             MapEntry(key.field, PlutoCell(value: value?.toString() ?? '')));
         return PlutoRow(cells: cells);

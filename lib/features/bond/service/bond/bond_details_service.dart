@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/helper/mixin/pdf_base.dart';
@@ -19,8 +18,10 @@ import '../../../../core/utils/app_ui_utils.dart';
 import '../../controllers/bonds/all_bond_controller.dart';
 import '../../controllers/bonds/bond_search_controller.dart';
 import '../../controllers/entry_bond/entry_bond_controller.dart';
-import '../../data/models/bond_model.dart';
+import '../../data/models/bond_type_model.dart';
+import '../../data/models/bond_type.dart';
 import '../../ui/screens/entry_bond_details_screen.dart';
+import 'get_bond_types_models_service.dart';
 
 class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
   final IRecodesPlutoController<PayItem> plutoController;
@@ -42,24 +43,23 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     launchFloatingWindow(
       context: context,
       minimizedTitle:
-          'سند خاص ب ${BondType.byTypeGuide(bondModel.payTypeGuid!).value}',
+          'سند خاص ب ${Get.find<BondTypeService>().getBondTypeByGuide(bondModel.payTypeGuid!).value}',
       floatingScreen: EntryBondDetailsScreen(entryBondModel: entryBondModel),
     );
   }
 
   BondModel? createBondModel({
     BondModel? bondModel,
-    required BondType bondType,
+    required BondTypeModel bondType,
     required String payAccountGuid,
     required String payDate,
     String? note,
   }) {
     log("generateRecords ${plutoController.generateRecords.length}",
         name: "createBondModel");
-
     return BondModel.fromBondData(
       bondModel: bondModel,
-      bondType: bondType,
+      bondTypeModel: bondType,
       note: note,
       payAccountGuid: payAccountGuid,
       payDate: payDate,
@@ -72,8 +72,10 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
       [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
+      final bondType = Get.find<BondTypeService>().getBondTypeByGuide(bondModel.payTypeGuid!);
+
       await read<AllBondsController>()
-          .fetchAllBondsByType(BondType.byTypeGuide(bondModel.payTypeGuid!),);
+          .fetchAllBondsByType(bondType,);
       // await read<AllBondsController>().fetchAllBondsLocal();
       Get.back();
     } else {
@@ -98,6 +100,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     _showSuccessMessage(isSave, context,oldBillNumberFromUi,currentBond);
 
 
+    log("handleSaveOrUpdateSuccess :  ${currentBond.bondTypeLabel??"no label"}");
     Map<String, AccountModel> modifiedBondTypeAccounts = {};
     if (isSave) {
       bondDetailsController.updateIsBondSaved(true);
@@ -128,6 +131,8 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     }
     bondSearchController.updateBond(currentBond);
 
+
+    debugPrint("inside handleSaveOrUpdateSuccess the value of bond model label is :  ${currentBond.bondTypeLabel??"no id"}");
     createAndStoreEntryBond(
       model: currentBond,
       sourceNumbers: [currentBond.payNumber!],

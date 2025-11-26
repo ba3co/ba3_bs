@@ -3,11 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
 
-import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/services/pdf_generator/implementations/pdf_generator_base.dart';
 import '../../../accounts/controllers/accounts_controller.dart';
-import '../../data/models/bond_model.dart';
+import '../../data/models/bond_type_model.dart';
 
 class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
   final _accountsController = read<AccountsController>();
@@ -107,5 +106,6 @@ class BondPdfGenerator extends PdfGeneratorBase<BondModel> with PdfHelperMixin {
       };
 
   String bondName(BondModel bondModel) =>
-      BondType.byTypeGuide(bondModel.payTypeGuid!).value;
+     // BondType.byTypeGuide(bondModel.payTypeGuid!).value;
+        bondModel.bondTypeLabel??"test";
 }

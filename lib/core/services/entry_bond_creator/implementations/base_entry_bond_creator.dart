@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import '../../../../features/bond/data/models/entry_bond_model.dart';
 import '../../../helper/enums/enums.dart';
 import '../interfaces/entry_bond_creator.dart';
@@ -12,7 +10,6 @@ abstract class BaseEntryBondCreator<T> implements EntryBondCreator<T> {
     required DateTime entryBondDate,
     bool? isSimulatedVat,
   }) {
-    debugPrint("createEntryBond called ");
     return EntryBondModel(
         origin: createOrigin(model: model, originType: originType),
         entryBondDate:entryBondDate ,

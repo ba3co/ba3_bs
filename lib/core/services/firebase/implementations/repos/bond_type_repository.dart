@@ -8,10 +8,13 @@ import '../../../../network/error/failure.dart';
 class BondTypeRepository extends RemoteDataSourceRepository<BondTypeModel> {
   List<BondTypeModel>? _cache; // Internal cache
 
+
+  List<BondTypeModel>? get cachedBondTypes => _cache;
+
   BondTypeRepository(super.dataSource);
 
   /// Internal method to get all bond types with caching
-  Future<Either<Failure, List<BondTypeModel>>> _getAllCached() async {
+  Future<Either<Failure, List<BondTypeModel>>> getAllCached() async {
     if (_cache != null) {
       return Right(_cache!); // Return cached data
     }
@@ -30,9 +33,27 @@ class BondTypeRepository extends RemoteDataSourceRepository<BondTypeModel> {
     }
   }
 
+
+  /// Force refresh bond types from remote and update the cache
+  Future<Either<Failure, List<BondTypeModel>>> refresh() async {
+    try {
+      final result = await getAll(); // Always fetch fresh from remote
+      return result.fold(
+            (failure) => Left(failure),
+            (bondTypes) {
+          _cache = bondTypes; // Update internal cache
+          return Right(bondTypes);
+        },
+      );
+    } catch (e) {
+      return Left(ErrorHandler(e).failure);
+    }
+  }
+
+
   /// Lookup by label
   Future<Either<Failure, BondTypeModel>> byLabel(String label) async {
-    final result = await _getAllCached();
+    final result = await getAllCached();
     return result.fold(
           (failure) => Left(failure),
           (bondTypes) {
@@ -49,7 +70,7 @@ class BondTypeRepository extends RemoteDataSourceRepository<BondTypeModel> {
 
   /// Lookup by value
   Future<Either<Failure, BondTypeModel>> byValue(String value) async {
-    final result = await _getAllCached();
+    final result = await getAllCached();
     return result.fold(
           (failure) => Left(failure),
           (bondTypes) {
@@ -65,7 +86,7 @@ class BondTypeRepository extends RemoteDataSourceRepository<BondTypeModel> {
 
   /// Lookup by typeGuide
   Future<Either<Failure, BondTypeModel>> byTypeGuide(String typeGuide) async {
-    final result = await _getAllCached();
+    final result = await getAllCached();
     return result.fold(
           (failure) => Left(failure),
           (bondTypes) {

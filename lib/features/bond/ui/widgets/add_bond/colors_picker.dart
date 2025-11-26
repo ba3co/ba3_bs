@@ -13,6 +13,7 @@ class ColorsPicker extends StatelessWidget {
     return Center(
       child: MaterialColorPicker(
           allowShades: false,
+
           onMainColorChange: (ColorSwatch? color) {
             // ignore: deprecated_member_use
             bondTypeController.bondTypeFormHandler

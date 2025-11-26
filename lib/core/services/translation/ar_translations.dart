@@ -56,7 +56,7 @@ final Map<String, String> arAR = {
   AppStrings.view: 'عرض',
   AppStrings.bonds: 'السندات',
   AppStrings.date: 'التاريخ',
-  AppStrings.number: '',
+  AppStrings.number: 'عدد',
   AppStrings.viewOrigin: 'عرض الاصل',
   AppStrings.difference: 'الفرق',
   AppStrings.account: 'الحساب',

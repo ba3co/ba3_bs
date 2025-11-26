@@ -1,6 +1,5 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type_model.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_app_bar.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_body.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_details/bond_details_buttons.dart';
@@ -11,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../controllers/bonds/bond_search_controller.dart';
 import '../../controllers/pluto/bond_details_pluto_controller.dart';
+import '../../service/bond/get_bond_types_models_service.dart';
 
 class BondDetailsScreen extends StatelessWidget {
   const BondDetailsScreen({
@@ -31,57 +31,52 @@ class BondDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<BondSearchController>(
-        tag: tag,
-        builder: (_) {
-          final BondModel currentBond = bondSearchController.getCurrentBond;
-
-          return GetBuilder<BondDetailsController>(
-              tag: tag,
-              builder: (_) {
-                return Scaffold(
-                  appBar: BondDetailsAppBar(
-                      bondDetailsController: bondDetailsController,
-                      bondSearchController: bondSearchController,
-                      bondTypeModel:
-                          BondType.byTypeGuide(currentBond.payTypeGuid!)),
-                  body: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          BondDetailsHeader(
-                            bondDetailsController: bondDetailsController,
-                          ),
-                          BondDetailsBody(
-                            bondTypeModel:
-                                BondType.byTypeGuide(currentBond.payTypeGuid!),
-                            bondDetailsController: bondDetailsController,
-                            bondDetailsPlutoController:
-                                bondDetailsPlutoController,
-                            tag: tag,
-                          ),
-                          BondDetailsCalculations(
-                            tag: tag,
-                            bondDetailsPlutoController:
-                                bondDetailsPlutoController,
-                          ),
-                          Text("batman"),
-                          BondDetailsButtons(
-                            bondDetailsController: bondDetailsController,
-                            bondDetailsPlutoController:
-                                bondDetailsPlutoController,
-                            bondModel: currentBond,
-                            fromBondById: fromBondById,
-                            bondSearchController: bondSearchController,
-                          )
-                        ],
+      tag: tag,
+      builder: (_) {
+        final BondModel currentBond = bondSearchController.getCurrentBond;
+        return GetBuilder<BondDetailsController>(
+          tag: tag,
+          builder: (bondDetailsController) {
+            return Scaffold(
+              appBar: BondDetailsAppBar(
+                bondDetailsController: bondDetailsController,
+                bondSearchController: bondSearchController,
+                title: currentBond.bondTypeLabel ?? Get.find<BondTypeService>().getBondTypeByGuide(currentBond.payTypeGuid!).label,
+              ),
+              body: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      BondDetailsHeader(
+                        bondDetailsController: bondDetailsController,
                       ),
-                    ),
+                      BondDetailsBody(
+                        bondDetailsController: bondDetailsController,
+                        bondDetailsPlutoController: bondDetailsPlutoController,
+                        tag: tag,
+                      ),
+                      BondDetailsCalculations(
+                        tag: tag,
+                        bondDetailsPlutoController: bondDetailsPlutoController,
+                      ),
+                      BondDetailsButtons(
+                        bondDetailsController: bondDetailsController,
+                        bondDetailsPlutoController: bondDetailsPlutoController,
+                        bondModel: currentBond,
+                        fromBondById: fromBondById,
+                        bondSearchController: bondSearchController,
+                      ),
+                    ],
                   ),
-                );
-              });
-        });
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

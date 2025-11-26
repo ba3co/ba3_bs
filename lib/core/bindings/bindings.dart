@@ -65,10 +65,13 @@ import '../../features/bill/services/bill/bil_export.dart';
 import '../../features/bond/controllers/bonds/all_bond_controller.dart';
 import '../../features/bond/controllers/entry_bond/entry_bond_controller.dart';
 import '../../features/bond/data/datasources/bonds_compound_data_source.dart';
-import '../../features/bond/data/models/bond_model.dart';
+import '../../features/bond/data/models/bond_type_model.dart';
+import '../../features/bond/data/models/bond_type.dart';
 import '../../features/bond/data/models/entry_bond_model.dart';
-import '../../features/bond/get_bond_type_by_guide_usecase.dart';
+import '../../features/bond/use_cases/get_bond_type_by_guide_usecase.dart';
 import '../../features/bond/service/bond/bond_export.dart';
+import '../../features/bond/service/bond/get_bond_types_models_service.dart';
+import '../../features/bond/use_cases/get_bond_types_models_use_case.dart';
 import '../../features/cheques/data/datasources/cheque_type_data_source.dart';
 import '../../features/cheques/service/cheques_export.dart';
 import '../../features/cheques/service/cheques_import.dart';
@@ -154,6 +157,7 @@ class AppBindings extends Bindings {
     final billImport = BillImport();
     final billExport = BillExport();
     final bondImport = BondImport();
+    Get.put(bondImport);
     final bondExport = BondExport();
     final materialImport = MaterialImport();
     final materialExport = MaterialExport();
@@ -188,9 +192,13 @@ class AppBindings extends Bindings {
       dashboardHiveService: dashboardHiveService,
       changesRepo: changesRepo,
     );
+    // initialize specific services
+    await _initializeServices(repositories);
+
 
     // Initialize use cases
     _initializeUseCases(repositories);
+
 
     // Lazy Controllers
     _initializeLazyControllers(repositories);
@@ -333,7 +341,7 @@ class AppBindings extends Bindings {
     lazyPut(
         AllBillsController(repositories.billsRepo, repositories.serialNumbersRepo, repositories.billImportExportRepo));
 
-    Get.put(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo));
+    lazyPut(AllBondsController(repositories.bondsRepo, repositories.bondImportExportRepo,));
 
     Get.put(BondTypeController(repositories.bondTypeRepo));
 
@@ -366,7 +374,24 @@ class AppBindings extends Bindings {
   void _initializeUseCases(_Repositories repositories) {
     // Bond Type Lookup Use Case
     Get.lazyPut(() => GetBondTypeByGuideUseCase (repositories.bondTypeRepo));
+
+    // Bond Type Use Case
+    Get.lazyPut(() => GetAllBondTypesUseCase (repositories.bondTypeRepo));
   }
+
+  Future<void> _initializeServices(_Repositories repositories) async {
+    final bondTypeService = BondTypeService(repositories.bondTypeRepo);
+
+    Get.put(bondTypeService);
+
+    await bondTypeService.initializeBondTypes();
+
+    final bondImport = Get.find<BondImport>();
+
+    await bondImport.init(bondTypeService);
+
+  }
+
 
 }
 
@@ -378,7 +403,7 @@ class _Repositories {
 
   final CompoundDatasourceRepository<BillModel, BillTypeModel> billsRepo;
   final QueryableSavableRepository<SerialNumberModel> serialNumbersRepo;
-  final CompoundDatasourceRepository<BondModel, BondType> bondsRepo;
+  final CompoundDatasourceRepository<BondModel, BondTypeModel> bondsRepo;
   final BondTypeRepository bondTypeRepo;
 
   final ChequeTypeRepository chequeTypeRepo;

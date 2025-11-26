@@ -567,4 +567,31 @@ class AppUIUtils {
     completer.future;
     return addressController;
   }
+
+ static Color parseColor(String colorStr) {
+    String hex = colorStr.trim().replaceAll('#', ''); // remove # and spaces
+
+    // If it's already a decimal ARGB/RGB integer string like "4280391411"
+    if (int.tryParse(hex) != null && hex.length >= 6) {
+      int value = int.parse(hex);
+      // If it's only 6 digits (RGB), add full alpha. If 8 digits it's already ARGB.
+      if (hex.length <= 7) {
+        value = 0xFF000000 | value; // add full opacity
+      }
+      return Color(value);
+    }
+
+    // Otherwise treat it as hex string (3, 6 or 8 digits)
+    if (hex.length == 3) {
+      hex = hex.split('').map((c) => c + c).join(); // expand 3-digit to 6-digit
+    }
+    if (hex.length == 6) {
+      hex = 'FF$hex'; // add full alpha if missing
+    }
+    if (hex.length != 8) {
+      throw FormatException('Invalid color string: $colorStr');
+    }
+
+    return Color(int.parse(hex, radix: 16));
+  }
 }

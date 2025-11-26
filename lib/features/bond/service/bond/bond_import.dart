@@ -1,14 +1,15 @@
-import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/date_format_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
-import 'package:ba3_bs/features/bond/data/models/bond_model.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type_model.dart';
+import 'package:get/get.dart';
 import 'package:xml/xml.dart';
 
 import '../../../../core/network/api_constants.dart';
 import '../../../../core/services/json_file_operations/interfaces/import/import_service_base.dart';
 import '../../data/models/pay_item_model.dart';
+import 'get_bond_types_models_service.dart';
 
 class BondImport extends ImportServiceBase<BondModel>
     with FirestoreSequentialNumbers {
@@ -23,13 +24,19 @@ class BondImport extends ImportServiceBase<BondModel>
         .toList();
   }
 
-  Map<String, int> bondsNumbers = {
-    for (var bondType in BondType.values) bondType.typeGuide: 0
-  };
+  Map<String, int> bondsNumbers = {};
+
+  Future<void> init(BondTypeService bondTypeService) async {
+    bondsNumbers = {
+      for (var bondType in bondTypeService.getBondTypes())
+        bondType.typeGuide: 0
+    };
+  }
+
 
   Future<void> _initializeNumbers() async {
     bondsNumbers = {
-      for (var billType in BondType.values)
+      for (var billType in Get.find<BondTypeService>().getBondTypes())
         billType.typeGuide: await getLastNumber(
           category: ApiConstants.bonds,
           entityType: billType.label,
@@ -50,7 +57,7 @@ class BondImport extends ImportServiceBase<BondModel>
     bondsNumbers.forEach(
       (billTypeGuid, number) async {
         await setLastUsedNumber(ApiConstants.bonds,
-            BondType.byTypeGuide(billTypeGuid).label, number);
+            Get.find<BondTypeService>().getBondTypeByGuide(billTypeGuid).label, number);
       },
     );
   }

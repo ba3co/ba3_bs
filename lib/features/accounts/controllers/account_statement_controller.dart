@@ -67,7 +67,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   final maxAmountController = TextEditingController();
 
   // to filter based on BondItemModel's type
-  var selectedType = "".obs;
+  RxString selectedType = "".obs;
 
   // to filter based on bill type (EntryBondItemModel's note)
   final RxList<String> selectedTypeIds = <String>[].obs;
@@ -317,7 +317,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   // Fetch bond items for the selected account
   Future<void> fetchAccountEntryBondItems(bool oldWay) async {
-    debugPrint("Future<void> fetchAccountEntryBondItems() called");
     final accountModel = _accountsController.getAccountModelByName(accountNameController.text);
 
     if (accountModel == null) {
@@ -325,16 +324,12 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       return;
     }
 
-    debugPrint("accountModel: ${accountModel.accName.toString()}");
-
     _setLoadingState(true);
 
     // Clear previous items before fetching new ones
     entryBondItems.clear();
 
     final accountEntities = _getAccountEntities(accountModel);
-
-    debugPrint("accountEntities: ${accountEntities.length.toString()}");
 
     for (var account in accountEntities) {
       log(account.name, name: 'Account name');
@@ -357,7 +352,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
             (fetchedItems) {
           if (oldWay) {
             entryBondItems.addAll(fetchedItems.expand((item) => item.itemList));
-            debugPrint("fetchedItems length:${fetchedItems.length}");
 
 
           } else {

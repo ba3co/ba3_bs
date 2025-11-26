@@ -65,7 +65,7 @@ class UserDetails extends StatelessWidget {
                           .updateSelectedMonth(value);
                     }
                   },
-                  isFullBorder: true,
+                  //isFullBorder: true,
                 ),
                 AllHolidaysWidget(
                   userDetailsController: userDetailsController,

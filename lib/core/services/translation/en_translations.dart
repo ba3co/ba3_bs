@@ -56,7 +56,7 @@ final Map<String, String> enUS = {
   AppStrings.view: 'View',
   AppStrings.bonds: 'Bonds',
   AppStrings.date: 'Date',
-  AppStrings.number: '',
+  AppStrings.number: 'Number of',
   AppStrings.viewOrigin: 'View Original',
   AppStrings.difference: 'Difference',
   AppStrings.account: 'Account',

@@ -16,133 +16,133 @@ class AccountFilterDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: GetBuilder<AccountStatementController>(builder: (controller) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Container(
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(
-                          color: AppColors.lightBlueColor,
+    return Material(
+      type: MaterialType.transparency,
+      child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: GetBuilder<AccountStatementController>(builder: (controller) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: AppColors.whiteColor,
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(
+                            color: AppColors.lightBlueColor,
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          const Text('خيارت العرض'),
-                          const SizedBox(height: 15),
-                          OptionTextWidget(
-                              title: 'اسم الحساب :  ',
-                              controller: controller.accountNameController,
-                              onSubmitted: (text) {
-                                controller.onAccountNameSubmitted(text, context);
-                              }),
-                          OptionTextWidget(
-                            title: 'من تاريخ :  ',
-                            controller: controller.startDateController,
-                            onSubmitted: controller.onStartDateSubmitted,
-                          ),
-                          OptionTextWidget(
-                            title: 'الى تاريخ :  ',
-                            controller: controller.endDateController,
-                            onSubmitted: controller.onEndDateSubmitted,
-                          ),
-                          OptionTextWidget(
-                            title: 'المجموع الأدنى',
-                            controller: controller.minAmountController,
-                            onSubmitted: controller.onMinAmountSubmitted,
-                          ),
-                          OptionTextWidget(
-                            title: 'المجموع الأعلى',
-                            controller: controller.maxAmountController,
-                            onSubmitted: controller.onMaxAmountSubmitted,
-                          ),
-                          OptionDropdownWidget(
-                            title: AppStrings.bond.tr,
-                            value: controller.selectedType.value,
-                            listValue: BondItemType.values.map((e) => e.label).toList(),
-                            label: "اختر نوع السند",
-                            onChange: controller.onBondItemTypeSubmitted,
-                          ),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            child: BillBondChequeTypesChecklist(
-                                initiallySelectedBillTypes: controller.selectedBillTypeIds.value,
-                                initiallySelectedBondTypes: controller.selectedBondTypeIds.value,
-                                initiallySelectedChequeTypes: controller.selectedChequeTypeIds.value,
-                                onBillTypeSelected: (type) {
-                                  type.printDetails();
-                                  controller.onItemSubmitted(type);
-                                },
-                                onBillTypeDeselected: (type) {
-                                  controller.onItemRemoved(type);
-                                },
-                                onBondTypeSelected: (type) {
-                                  controller.onItemSubmitted(type);
-                                },
-                                onBondTypeDeselected: (type) {
-                                  controller.onItemRemoved(type);
-                                },
-                                onChequeTypeSelected: (type) {
-                                  debugPrint(type.typeGuide);
-                                  controller.onItemSubmitted(type);
-                                },
-                                onChequeTypeDeselected: (type) {
-                                  controller.onItemRemoved(type);
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            const Text('خيارت العرض'),
+                            const SizedBox(height: 15),
+                            OptionTextWidget(
+                                title: 'اسم الحساب :  ',
+                                controller: controller.accountNameController,
+                                onSubmitted: (text) {
+                                  controller.onAccountNameSubmitted(text, context);
                                 }),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                            OptionTextWidget(
+                              title: 'من تاريخ :  ',
+                              controller: controller.startDateController,
+                              onSubmitted: controller.onStartDateSubmitted,
+                            ),
+                            OptionTextWidget(
+                              title: 'الى تاريخ :  ',
+                              controller: controller.endDateController,
+                              onSubmitted: controller.onEndDateSubmitted,
+                            ),
+                            OptionTextWidget(
+                              title: 'المجموع الأدنى',
+                              controller: controller.minAmountController,
+                              onSubmitted: controller.onMinAmountSubmitted,
+                            ),
+                            OptionTextWidget(
+                              title: 'المجموع الأعلى',
+                              controller: controller.maxAmountController,
+                              onSubmitted: controller.onMaxAmountSubmitted,
+                            ),
+                            OptionDropdownWidget(
+                              title: AppStrings.bond.tr,
+                              value: controller.selectedType.value,
+                              listValue: BondItemType.values.map((e) => e.label).toList(),
+                              label: "اختر نوع السند",
+                              onChange: controller.onBondItemTypeSubmitted,
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              child: BillBondChequeTypesChecklist(
+                                  initiallySelectedBillTypes: controller.selectedBillTypeIds,
+                                  initiallySelectedBondTypes: controller.selectedBondTypeIds,
+                                  initiallySelectedChequeTypes: controller.selectedChequeTypeIds,
+                                  onBillTypeSelected: (type) {
+                                    type.printDetails();
+                                    controller.onItemSubmitted(type);
+                                  },
+                                  onBillTypeDeselected: (type) {
+                                    controller.onItemRemoved(type);
+                                  },
+                                  onBondTypeSelected: (type) {
+                                    controller.onItemSubmitted(type);
+                                  },
+                                  onBondTypeDeselected: (type) {
+                                    controller.onItemRemoved(type);
+                                  },
+                                  onChequeTypeSelected: (type) {
+                                    controller.onItemSubmitted(type);
+                                  },
+                                  onChequeTypeDeselected: (type) {
+                                    controller.onItemRemoved(type);
+                                  }),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 15),
-                Center(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 15,
-                    children: [
-                      AppButton(
-                        title: AppStrings.confirm.tr,
-                        iconData: Icons.check,
-                        onPressed: () {
-                          controller
-                            ..fetchAccountEntryBondItems(true)
-                            ..navigateToAccountStatementScreen(context);
-                        },
-                      ),
-                      if (RoleItemType.administrator.hasAdminPermission)
+                  const SizedBox(height: 15),
+                  Center(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 15,
+                      children: [
                         AppButton(
-                          title: "${AppStrings.confirm.tr}  new way",
+                          title: AppStrings.confirm.tr,
                           iconData: Icons.check,
                           onPressed: () {
                             controller
-                              ..fetchAccountEntryBondItems(false)
+                              ..fetchAccountEntryBondItems(true)
                               ..navigateToAccountStatementScreen(context);
                           },
                         ),
-                    ],
+                        if (RoleItemType.administrator.hasAdminPermission)
+                          AppButton(
+                            title: "${AppStrings.confirm.tr}  new way",
+                            iconData: Icons.check,
+                            onPressed: () {
+                              controller
+                                ..fetchAccountEntryBondItems(false)
+                                ..navigateToAccountStatementScreen(context);
+                            },
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
+                ],
+              ),
+            );
+          }),
+        ),
     );
   }
 }

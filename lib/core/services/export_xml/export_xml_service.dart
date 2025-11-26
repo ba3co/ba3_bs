@@ -2,7 +2,8 @@ import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:xml/xml.dart' as xml;
 import '../../../features/accounts/data/models/account_model.dart';
 import '../../../features/bill/data/models/bill_model.dart';
-import '../../../features/bond/data/models/bond_model.dart';
+import '../../../features/bond/data/models/bond_type_model.dart';
+import '../../../features/bond/data/models/bond_type.dart';
 import '../../../features/cheques/data/models/cheques_model.dart';
 import '../../../features/customer/data/models/customer_model.dart';
 import '../../../features/materials/data/models/materials/material_group.dart';
@@ -58,7 +59,7 @@ class ExportXmlService {
   /// - A [String] containing the complete XML document in a pretty formatted style.
   String generateFullXml({
     required Map<BillTypeModel, List<BillModel>> bills,
-    required Map<BondType, List<BondModel>> bonds,
+    required Map<BondTypeModel, List<BondModel>> bonds,
     required List<MaterialModel> materials,
     required List<ChequesModel> cheques,
     required List<CustomerModel> customers,

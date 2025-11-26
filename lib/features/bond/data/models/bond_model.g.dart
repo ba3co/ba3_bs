@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'bond_model.dart';
+part of 'bond_type_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

@@ -25,7 +25,7 @@ mixin FirestorePathHelper<ItemTypeModel> {
       return typeModel;
     }
     if (typeModel is BondTypeModel) {
-      return typeModel.typeGuide ?? (throw ArgumentError('bondTypeId is required for BondTypeModel.'));
+      return typeModel.typeGuide;
     }
 
 
