@@ -47,4 +47,8 @@ class EscposGenerator {
 
   List<int> qr(String data, {QRSize size = QRSize.size4}) =>
       gen.qrcode(data, size: size);
+
+  List<int> row(List<PosColumn> columns) {
+    return gen.row(columns);
+  }
 }

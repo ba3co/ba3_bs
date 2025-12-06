@@ -14,7 +14,7 @@ class LogoHelper{
     final profile = await CapabilityProfile.load();
     final generator = Generator(paperSize, profile);
 
-    final int logoWidthPx = paperSize == PaperSize.mm58 ? 200 : 300;
+    final int logoWidthPx = paperSize == PaperSize.mm58 ? 100 : 150;
     try {
       // 1) حمّل الصورة وفكّ ترميزها
       final data = await rootBundle.load(AppAssets.ba3Logo);
@@ -51,14 +51,14 @@ class LogoHelper{
       try {
         final bytes = generator.imageRaster(
           ready,
-          align: PosAlign.center,
+          align: PosAlign.left,
         );
         return List<int>.from(bytes, growable: true);
       } catch (e) {
         debugPrint('imageRaster failed, fallback to image(): $e');
         final bytes = generator.image(
           ready,
-          align: PosAlign.center,
+          align: PosAlign.left,
         );
         return List<int>.from(bytes, growable: true);
       }
