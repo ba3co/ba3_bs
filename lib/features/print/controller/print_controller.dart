@@ -35,6 +35,7 @@ class PrintingController extends GetxController {
     required String seller,
     required String customer,
     required String nots,
+    required String buyer,
   }) async {
     final job = PrintJob(
       billNumber: billNumber,
@@ -43,6 +44,7 @@ class PrintingController extends GetxController {
       customerNumber: customer,
       nots: nots,
       items: items,
+      buyer: buyer,
     );
     final device = PrinterDevice(
       name: AppConstants.recitePrinter58Name,
@@ -59,6 +61,7 @@ class PrintingController extends GetxController {
     required String seller,
     required String customer,
     required String nots,
+    required String buyer,
   }) async {
     final job = PrintJob(
       billNumber: billNumber,
@@ -67,6 +70,7 @@ class PrintingController extends GetxController {
       customerNumber: customer,
       nots: nots,
       items: items,
+      buyer: buyer,
     );
     final device = PrinterDevice(
       name: AppConstants.recitePrinter80Name,
@@ -101,6 +105,7 @@ class PrintingController extends GetxController {
         sellerName: '',
         customerNumber: '',
         items: [],
+        buyer: '',
       ),
     );
 

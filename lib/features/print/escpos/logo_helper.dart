@@ -14,7 +14,7 @@ class LogoHelper{
     final profile = await CapabilityProfile.load();
     final generator = Generator(paperSize, profile);
 
-    final int logoWidthPx = paperSize == PaperSize.mm58 ? 100 : 150;
+    final int logoWidthPx = paperSize == PaperSize.mm58 ? 150 : 200;
     try {
       // 1) حمّل الصورة وفكّ ترميزها
       final data = await rootBundle.load(AppAssets.ba3Logo);

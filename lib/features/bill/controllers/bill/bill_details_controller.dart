@@ -230,6 +230,7 @@ class BillDetailsController extends IBillController
       billNumber: billModel.billDetails.billNumber!,
       customer: billModel.billDetails.customerPhone!,
       nots: billModel.billDetails.billNote ?? '',
+      buyer: billModel.billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
     );
   }
 

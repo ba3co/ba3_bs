@@ -29,7 +29,7 @@ class ReceiptTemplate80 implements BaseTemplate {
     // // LOGO small - left side
     final logo = await LogoHelper.generateLogo(paperSize);
     if (logo.isNotEmpty) {
-      b.addAll([0x1B, 0x61, 0x00]); // ESC a 0 = Align Left
+/*      b.addAll([0x1B, 0x61, 0x00]); // ESC a 0 = Align Left*/
 
       b.addAll(logo);
       b.addAll(g.text('', styles: const PosStyles(align: PosAlign.left)));
@@ -41,7 +41,7 @@ class ReceiptTemplate80 implements BaseTemplate {
     b.addAll(g.text('Ras Al Khaimah, UAE',
         styles: const PosStyles(align: PosAlign.left)));
 
-    b.addAll(g.text('Units 1+2+3, Sheikh Muhammad Bin Salem Street',
+    b.addAll(g.text('Sheikh Muhammad Bin Salem Street',
         styles: const PosStyles(align: PosAlign.left)));
 
     b.addAll(g.text('Tel: +971 56 866 6411',
@@ -56,7 +56,13 @@ class ReceiptTemplate80 implements BaseTemplate {
     b.addAll(g.text('Date: ${job.invoiceDate}',
         styles: const PosStyles(align: PosAlign.left)));
     final seller = await ts.safeTranslate(job.sellerName );
+    final nots = await ts.safeTranslate(job.nots );
+    final buyer = await ts.safeTranslate(job.buyer );
     b.addAll(g.text('Seller: $seller',
+        styles: const PosStyles(align: PosAlign.left)));
+    b.addAll(g.text('Buyer: $buyer',
+        styles: const PosStyles(align: PosAlign.left)));
+    b.addAll(g.text('Note: $nots',
         styles: const PosStyles(align: PosAlign.left)));
     b.addAll(g.hr());
 
@@ -79,7 +85,7 @@ class ReceiptTemplate80 implements BaseTemplate {
       final name = await ts.safeTranslate(r.invRecProduct ?? '');
 
       final unit = total / qty;
-      final vatU = unit * 0.05;
+      final vatU = (unit/1.05) * 0.05;
       final netU = unit - vatU;
 
       vat += vatU * qty;
