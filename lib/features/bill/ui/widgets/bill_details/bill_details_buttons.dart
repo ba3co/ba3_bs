@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/styling/app_colors.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../users_management/data/models/role_model.dart';
 import '../../../controllers/bill/bill_details_controller.dart';
@@ -85,6 +87,10 @@ class BillDetailsButtons extends StatelessWidget {
                       billDetailsController.openFirstPayDialog(context);
                     })
                 : SizedBox.shrink()),*/
+
+            _buildCopyButton(),
+            _buildPasteButton(),
+            _buildExportExcelButton(context)
           ],
         ),
       ),
@@ -173,9 +179,15 @@ class BillDetailsButtons extends StatelessWidget {
           title: AppStrings.delete.tr,
           icon: FontAwesomeIcons.eraser,
           color: Colors.red,
-          onPressed: () => billDetailsController.deleteBill(billModel, context),
+          onPressed: () async {
+            if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+              if (!context.mounted) return;
+              billDetailsController.deleteBill(billModel, context);
+            }
+          },
+
         );
-      }),
+      })
     ];
   }
 
@@ -254,4 +266,41 @@ class BillDetailsButtons extends StatelessWidget {
             )),
     );
   }
+
+
+
+// Function to create the "Copy" button
+  Widget _buildCopyButton() {
+      return _buildActionButton(
+        title: AppStrings.copy.tr,
+        icon: Icons.copy,
+        onPressed: () => billDetailsController.copyFilledRows(),
+      );
+  }
+
+
+// Function to create the "Paste" button
+  Widget _buildPasteButton() {
+      return _buildActionButton(
+        title: AppStrings.paste.tr,
+        icon: Icons.paste_rounded,
+        onPressed: () => billDetailsController.pasteRowsFromClipboard(),
+      );
+  }
+
+
+  Widget _buildExportExcelButton(BuildContext context) {
+    return _buildActionButton(
+      title: "Excel",
+      icon: FontAwesomeIcons.fileExport,
+      color: AppColors.greenColor,
+      onPressed: ()=> billDetailsController.showColumnsFilterDialog(context: context)
+
+    );
+  }
+
+
+
+
+
 }

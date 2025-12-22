@@ -235,5 +235,13 @@ final Map<String, String> frFR = {
   AppStrings.achievementsPanel: 'Panneau des réalisations',
   AppStrings.profile: 'Profil',
   AppStrings.addBondType:'Ajouter un type d’obligation',
-  AppStrings.typeGuide:'Guide de type'
+  AppStrings.typeGuide:'Guide de type',
+  AppStrings.copy: 'Copier',
+  AppStrings.paste: 'Coller',
+  AppStrings.viewOptions : "Options d’affichage",
+  AppStrings.bondType : "Type d'obligation",
+  AppStrings.min: "Min",
+  AppStrings.max: "Max"
+
+
 };

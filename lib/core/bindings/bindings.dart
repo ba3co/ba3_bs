@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/helper/enums/enums.dart';
+import 'package:ba3_bs/core/services/copy_paste_services/copy_paste_xml_service.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bond_type_repository.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/bulk_savable_datasource_repo.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
@@ -8,6 +9,7 @@ import 'package:ba3_bs/core/services/json_file_operations/implementations/import
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/interfaces/import/i_import_repository.dart';
 import 'package:ba3_bs/core/services/translation/interfaces/i_translation_service.dart';
+import 'package:ba3_bs/core/use_cases/copy_paste_use_case.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
 import 'package:ba3_bs/features/accounts/data/datasources/remote/account_data_source.dart';
 import 'package:ba3_bs/features/accounts/data/models/account_model.dart';
@@ -102,6 +104,7 @@ import '../../features/user_time/controller/user_time_controller.dart';
 import '../../features/users_management/controllers/user_details_controller.dart';
 import '../helper/extensions/getx_controller_extensions.dart';
 import '../network/api_constants.dart';
+import '../services/copy_paste_services/copy_paste_json_service.dart';
 import '../services/firebase/implementations/repos/cheque_type_repository.dart';
 import '../services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
@@ -168,6 +171,13 @@ class AppBindings extends Bindings {
     final sellersImport = SellerImport();
     final materialGroupImport = MaterialGroupImport();
     final customerImport = CustomerImport();
+    final ClipboardJsonService clipboardJsonService= ClipboardJsonService();
+    Get.put(clipboardJsonService);
+
+    final ClipboardXmlService clipboardXMLService= ClipboardXmlService();
+    Get.put(clipboardXMLService);
+
+
 
     // Initialize repositories
     final repositories = _initializeRepositories(
@@ -377,6 +387,8 @@ class AppBindings extends Bindings {
 
     // Bond Type Use Case
     Get.lazyPut(() => GetAllBondTypesUseCase (repositories.bondTypeRepo));
+
+    Get.lazyPut(()=> CopyPasteJsonUseCase(Get.find<ClipboardJsonService>()));
   }
 
   Future<void> _initializeServices(_Repositories repositories) async {

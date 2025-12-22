@@ -266,5 +266,16 @@ final Map<String, String> enUS = {
   AppStrings.profitAndLoss: 'Profit and Loss Account',
   AppStrings.balanceSheet: 'Balance Sheet',
   AppStrings.addBondType:'Add Bond Type',
-  AppStrings.typeGuide:'Type Guide'
+  AppStrings.typeGuide:'Type Guide',
+  AppStrings.copy: 'Copy',
+  AppStrings.paste: 'Paste',
+  AppStrings.viewOptions:"View Options",
+  AppStrings.bondType :"Bond Type",
+  AppStrings.min: "Min",
+  AppStrings.max: "Max",
+  AppStrings.lastPayPrice :"Last Pay Price"
+
+
+
+
 };

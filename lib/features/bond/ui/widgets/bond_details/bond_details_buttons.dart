@@ -4,6 +4,7 @@ import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/utils/app_ui_utils.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/bonds/bond_search_controller.dart';
@@ -115,8 +116,12 @@ class BondDetailsButtons extends StatelessWidget {
                 color: Colors.red,
                 title: AppStrings.delete.tr,
                 onPressed: () async {
-                  bondDetailsController.deleteBond(bondModel,context, fromBondById: fromBondById);
+                  if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                    if (!context.mounted) return;
+                    bondDetailsController.deleteBond(bondModel,context, fromBondById: fromBondById);
+                  }
                 },
+
               );
             }),
           ]

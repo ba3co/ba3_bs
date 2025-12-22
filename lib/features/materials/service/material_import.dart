@@ -89,7 +89,7 @@ class MaterialImport extends ImportServiceBase<MaterialModel> {
         matSNFlag: getInt('MatSNFlag'),
         matForceInSN: getInt('MatForceInSN'),
         matForceOutSN: getInt('MatForceOutSN'),
-        matVAT: getInt('MatVAT'),
+        matVAT: getDouble('MatVAT'),
         matDefUnit: getInt('MatDefUnit'),
         matBranchMask: getInt('MatBranchMask'),
         matAss: getInt('MatAss'),

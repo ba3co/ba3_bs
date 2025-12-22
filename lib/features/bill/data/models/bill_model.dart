@@ -433,7 +433,11 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         AppConstants.additionRatio: additionRatio,
       };
 
-  String _calculateRatio(double value, double total) => total > 0 && value > 0 ? ((value / total) * 100).toStringAsFixed(0) : '';
+  /// the rounding error problem was here but now it is fixed
+  String _calculateRatio(double value, double total) =>
+      total > 0 && value > 0
+          ? ((value / total) * 100).toStringAsFixed(2)
+          : '';
 
   double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 

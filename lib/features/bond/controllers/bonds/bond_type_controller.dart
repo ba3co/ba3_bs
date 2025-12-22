@@ -28,6 +28,9 @@ class BondTypeController extends GetxController with AppNavigator, FloatingLaunc
 
   Rx<RequestState> addOrUpdateBondTypeRequestState = RequestState.initial.obs;
 
+  Rx<RequestState> getBondsTypesRequestState = RequestState.initial.obs;
+
+
 
   @override
   void onInit() {
@@ -41,6 +44,7 @@ class BondTypeController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> fetchBondTypes() async {
+    getBondsTypesRequestState.value = RequestState.loading;
     final hasConnection = await hasInternetConnection();
     getAllBondTypes(hasConnection);
   }
@@ -51,7 +55,10 @@ class BondTypeController extends GetxController with AppNavigator, FloatingLaunc
 
       result.fold(
             (failure) => AppUIUtils.onFailure(failure.message),
-            (fetchedBondTypes) => bondTypes.assignAll(fetchedBondTypes),
+            (fetchedBondTypes) {
+              getBondsTypesRequestState.value = RequestState.success;
+              bondTypes.assignAll(fetchedBondTypes);
+            },
       );
     } else {
       // no offline fallback for now
@@ -110,7 +117,7 @@ class BondTypeController extends GetxController with AppNavigator, FloatingLaunc
           (_) {
         AppUIUtils.onSuccess('Bond type saved successfully!');
         addOrUpdateBondTypeRequestState.value = RequestState.success;
-        getAllBondTypes(true); // Refresh list
+        fetchBondTypes(); // Refresh list
       },
     );
   }

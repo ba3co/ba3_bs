@@ -236,4 +236,12 @@ final Map<String, String> deDE = {
   AppStrings.profile: 'Profil',
   AppStrings.addBondType:'Anleihetyp hinzufügen',
   AppStrings.typeGuide:'Typenleitfaden',
+  AppStrings.copy: 'Kopieren',
+  AppStrings.paste: 'Einfügen',
+  AppStrings.viewOptions : "Anzeigeoptionen",
+  AppStrings.bondType :"Anleihetyp",
+  AppStrings.min: "Min",
+  AppStrings.max: "Max"
+
+
 };

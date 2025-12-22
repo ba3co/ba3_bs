@@ -44,8 +44,15 @@ class PlutoController extends GetxController {
         );
     return PlutoRow(cells: cells);
   }
-  void exportRowsToExcel(ExportFilterOption option) {
+  void exportRowsToExcel(
+      ExportFilterOption option, {
+        List<String>? columnsToExport,
+      }) {
     final rows = stateManager.rows;
+
+    // Determine which columns to export
+    final fieldsToExport = columnsToExport ??
+        stateManager.columns.map((c) => c.field).toList(); // Use all columns if none specified
 
     final filteredRows = rows.where((row) {
       final value = row.cells['extra_notes']?.value?.toString();
@@ -60,10 +67,15 @@ class PlutoController extends GetxController {
     });
 
     final jsonList = filteredRows.map((row) {
-      return row.cells.map((key, cell) => MapEntry(key, cell.value));
+      return Map.fromEntries(
+        row.cells.entries
+            .where((e) => fieldsToExport.contains(e.key))
+            .map((e) => MapEntry(e.key, e.value.value)),
+      );
     }).toList();
 
     exportJsonToExcel(jsonList);
   }
+
 
 }

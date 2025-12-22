@@ -266,5 +266,10 @@ final Map<String, String> arAR = {
   AppStrings.profitAndLoss: 'حساب الأرباح والخسائر',
   AppStrings.balanceSheet: 'الميزانية',
   AppStrings.addBondType:'اضافة نوع سند',
-  AppStrings.typeGuide:'الدليل الارشادي'
+  AppStrings.typeGuide:'الدليل الارشادي',
+  AppStrings.copy: "نسخ",
+  AppStrings.paste:"لصق",
+  AppStrings.viewOptions:"خيارات العرض",
+  AppStrings.min:"الأدني",
+  AppStrings.max:"الأعلى"
 };

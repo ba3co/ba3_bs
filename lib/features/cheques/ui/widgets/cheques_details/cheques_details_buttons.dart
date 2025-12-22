@@ -5,6 +5,7 @@ import 'package:ba3_bs/features/cheques/controllers/cheques/cheques_search_contr
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/utils/app_ui_utils.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../data/models/cheques_model.dart';
 
@@ -61,9 +62,12 @@ class AddChequeButtons extends StatelessWidget {
           Obx(() {
             return AppButton(
               isLoading: chequesDetailsController.deleteChequesRequestState.value == RequestState.loading,
-              onPressed: () {
-                chequesDetailsController.deleteCheques(chequesModel,
-                    context,);
+              onPressed: () async {
+                if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                  if (!context.mounted) return;
+                  chequesDetailsController.deleteCheques(chequesModel, context,);
+
+                }
               },
               title: AppStrings.delete.tr,
               iconData: Icons.delete_outline,

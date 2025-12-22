@@ -41,7 +41,7 @@ class MaterialModelAdapter extends TypeAdapter<MaterialModel> {
       matSNFlag: fields[19] as int?,
       matForceInSN: fields[20] as int?,
       matForceOutSN: fields[21] as int?,
-      matVAT: fields[22] as int?,
+      matVAT: fields[22] as double?,
       matDefUnit: fields[23] as int?,
       matBranchMask: fields[24] as int?,
       matAss: fields[25] as int?,

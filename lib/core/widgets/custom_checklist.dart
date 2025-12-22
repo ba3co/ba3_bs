@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class CustomChecklist<T> extends StatefulWidget {
   final List<T> items;
 
-  // displayed tet could differ from actual saved values ( for example: display name, but the value is id)
+  // displayed text could differ from actual saved values ( for example: display name, but the value is id)
   final String Function(T item) displayText;
   final T Function(String displayText)? valueFromText; // Optional converter
   final void Function(T item) onItemSelected;

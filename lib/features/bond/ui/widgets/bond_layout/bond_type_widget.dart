@@ -4,13 +4,11 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
-import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/body_bond_layout_shimmer_widget.dart';
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/body_bond_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../../core/helper/enums/enums.dart';
 import '../../../data/models/bond_type.dart';
 
 class BondTypeWidget extends StatelessWidget {
@@ -61,22 +59,17 @@ class BondTypeWidget extends StatelessWidget {
             ),
             Spacer(),
 
-            Obx(() {
-              return bondsController.allBondsRequestState.value ==
-                  RequestState.loading
-                  ? BodyBondLayoutShimmerWidget()
-                  : GestureDetector(
-                onTap: () {
-                  // read<AllBondsController>()
-                  //     .fetchAllBondByType(bondTypeModel.type, context);
-                },
-                child: BodyBondLayoutWidget(
-                    // firstText: "${AppStrings.from.tr}  ${bondTypeModel.from}",
-                    firstText: "${AppStrings.number.tr} ${AppStrings.bonds}",
-                    secondText:
-                    "${bondsController.allBondsCounts(bondTypeModel)}"),
-              );
-            }),
+            GestureDetector(
+              onTap: () {
+                // read<AllBondsController>()
+                //     .fetchAllBondByType(bondTypeModel.type, context);
+              },
+              child: BodyBondLayoutWidget(
+                // firstText: "${AppStrings.from.tr}  ${bondTypeModel.from}",
+                  firstText: "${AppStrings.number.tr} ${AppStrings.bonds.tr}",
+                  secondText:
+                  "${bondsController.allBondsCounts(bondTypeModel)}"),
+            ),
 
             // BodyBondLayoutWidget(firstText: "العدد الكلي :", secondText: ((bondType.to-bondType.from)+1).toString()),
             Spacer(),

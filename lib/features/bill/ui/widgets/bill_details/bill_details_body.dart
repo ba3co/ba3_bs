@@ -70,6 +70,7 @@ class BillDetailsBody extends StatelessWidget {
               child: GetBuilder<BillDetailsPlutoController>(
                   tag: tag,
                   builder: (_) {
+
                     return BillGridWidget(
                       rowColor: Colors.grey,
                       columns: billDetailsPlutoController.additionsDiscountsColumns,

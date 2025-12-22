@@ -1,8 +1,9 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
+import '../../../../../core/utils/app_ui_utils.dart';
 import '../../../../../core/widgets/app_button.dart';
 import '../../../controllers/accounts_controller.dart';
 
@@ -15,6 +16,7 @@ class AddAccountButtonsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       spacing: 20,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Obx(() {
           return AppButton(
@@ -33,9 +35,13 @@ class AddAccountButtonsWidget extends StatelessWidget {
             return AppButton(
               isLoading: controller.deleteAccountRequestState.value ==
                   RequestState.loading,
+              color: Colors.red,
               title: AppStrings.delete.tr,
-              onPressed: () {
-                controller.deleteAccount(context);
+              onPressed: () async {
+                if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                  if (!context.mounted) return;
+                  controller.deleteAccount(context);
+                }
               },
             );
           }),

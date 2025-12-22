@@ -479,6 +479,7 @@ class AccountsController extends GetxController with AppNavigator, FloatingLaunc
           AppUIUtils.onSuccess(
             'تم حذف الحساب بنجاح',
           );
+          fetchAccounts();
           read<LogController>().addLog(item: selectedAccount, eventType: LogEventType.delete);
         },
       );

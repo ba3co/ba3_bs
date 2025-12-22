@@ -17,6 +17,7 @@ import '../../../../core/styling/app_colors.dart';
 import '../../../../core/styling/app_text_style.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_spacer.dart';
+import '../widgets/bond_layout/body_bond_layout_shimmer_widget.dart';
 import '../widgets/bond_layout/bond_type_widget.dart';
 
 class BondLayout extends StatelessWidget {
@@ -29,22 +30,23 @@ class BondLayout extends StatelessWidget {
 
       return Stack(
         children: [
-          GetBuilder<BondTypeController>(
-            builder: (bondTypeController) {
-              return GetBuilder<AllBondsController>(builder: (controller) {
-                return Scaffold(
-                  appBar: bondLayoutAppBar(controller, context),
-                  body: Container(
-                    padding: EdgeInsets.all(8),
-                    width: 1.sw,
+          GetBuilder<AllBondsController>(builder: (controller) {
+            return Scaffold(
+              appBar: bondLayoutAppBar(controller, context),
+              body: Container(
+                padding: EdgeInsets.all(8),
+                width: 1.sw,
+                child: Obx(() {
+                  final bondTypeController = Get.find<BondTypeController>();
+                  return RefreshIndicator(
+                    onRefresh: () => bondTypeController.fetchBondTypes(),
                     child: OrganizedWidget(
                       titleWidget: Row(
                         children: [
                           Align(
                             child: Text(
                               AppStrings.bonds.tr,
-                              style: AppTextStyles.headLineStyle2
-                                  .copyWith(color: AppColors.blueColor),
+                              style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
                             ),
                           ),
                           Spacer(),
@@ -58,56 +60,83 @@ class BondLayout extends StatelessWidget {
                           ),
                         ],
                       ),
-                      bodyWidget: Column(
-                        // padding: const EdgeInsets.all(15.0),
+                      bodyWidget: bondTypeController.getBondsTypesRequestState.value == RequestState.loading
+                          ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Wrap(
-                            children: bondTypeController.bondTypes.toList().map(
-                                  (bondType) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: BondTypeWidget(
-                                    bondsController: controller,
-                                    onTap: () {
-                                      /// this is the most important line in the whole thing
-                                      controller.openFloatingBondDetails(
-                                          context, bondType);
-                                    },
-                                    bondTypeModel: bondType,
-                                  ),
-                                );
-                              },
-                            ).toList(),
+                            children: List.generate(
+                              10,
+                                  (index) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: const BodyBondLayoutShimmerWidget(),
+                              ),
+                            ),
                           ),
+
                           VerticalSpace(),
+
                           Center(
-                            child: AppButton(
-                              title: AppStrings.addBondType.tr,
-                              fontSize: 13.sp,
-                              color: AppColors.grayColor,
-                              onPressed: () {
-                                bondTypeController.navigateToAddBondTypeScreen(context: context);
-                              },
-                              iconData: Icons.view_list_outlined,
-                              width: max(45.w, 140),
-                              // width: 40.w,
+                            child: Opacity(
+                              opacity: 0.5, // Looks shimmer-like
+                              child: Container(
+                                width: max(45.w, 140),
+                                height: 35.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
                             ),
                           ),
                         ],
-                      ),
+                      )
+                          : Column(
+                              // padding: const EdgeInsets.all(15.0),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  children: bondTypeController.bondTypes.toList().map(
+                                    (bondType) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: BondTypeWidget(
+                                          bondsController: controller,
+                                          onTap: () {
+                                            /// this is the most important line in the whole thing
+                                            controller.openFloatingBondDetails(context, bondType);
+                                          },
+                                          bondTypeModel: bondType,
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                ),
+                                VerticalSpace(),
+                                Center(
+                                  child: AppButton(
+                                    title: AppStrings.addBondType.tr,
+                                    fontSize: 13.sp,
+                                    color: AppColors.grayColor,
+                                    onPressed: () {
+                                      bondTypeController.navigateToAddBondTypeScreen(context: context);
+                                    },
+                                    iconData: Icons.view_list_outlined,
+                                    width: max(45.w, 140),
+                                    // width: 40.w,
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
-                  ),
-                );
-              });
-            },
-          ),
+                  );
+                }),
+              ),
+            );
+          }),
           LoadingDialog(
-            isLoading:
-            read<AllBondsController>().saveAllBondsRequestState.value ==
-                RequestState.loading,
-            message:
-            '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr}',
+            isLoading: read<AllBondsController>().saveAllBondsRequestState.value == RequestState.loading,
+            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr}',
             fontSize: 14.sp,
           )
         ],

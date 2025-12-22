@@ -267,6 +267,13 @@ final Map<String, String> urPK = {
   AppStrings.balanceSheet: 'بیلنس شیٹ',
   AppStrings.addBondType:'بانڈ کی قسم شامل کریں',
   AppStrings.typeGuide: 'قسم کی رہنمائی',
+  AppStrings.copy: 'کاپی کریں',
+  AppStrings.paste: 'چسپاں کریں',
+  AppStrings.viewOptions : "دیکھنے کے اختیارات",
+  AppStrings.bondType : "بانڈ کی قسم",
+  AppStrings.min: "کم از کم",
+  AppStrings.max: "زیادہ سے زیادہ"
+
 
 
 };

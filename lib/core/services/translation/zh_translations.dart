@@ -234,5 +234,13 @@ final Map<String, String> zhCN = {
   AppStrings.achievementsPanel: '成就面板',
   AppStrings.profile: '个人资料',
   AppStrings.addBondType:'添加债券类型',
-  AppStrings.typeGuide:'类型指南'
+  AppStrings.typeGuide:'类型指南',
+  AppStrings.copy: '复制',
+  AppStrings.paste: '粘贴',
+  AppStrings.viewOptions : "显示选项",
+  AppStrings.bondType: "债券类型",
+  AppStrings.min: "最小值",
+  AppStrings.max: "最大值"
+
+
 };

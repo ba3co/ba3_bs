@@ -6,6 +6,7 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:xml/xml.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -82,7 +83,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   final int? matForceOutSN;
 
   @HiveField(22)
-  final int? matVAT;
+  final double? matVAT;
 
   @HiveField(23)
   final int? matDefUnit;
@@ -329,42 +330,42 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'matLocalQuantity': matLocalQuantity,
         'matFreeQuantity': matFreeQuantity,
         'serialNumbers': serialNumbers,
-        // 'MatUnity': matUnity,
-        // 'MatPriceType': matPriceType,
-        // 'MatBonus': matBonus,
-        // 'MatBonusOne': matBonusOne,
-        // 'MatCurrencyGuid': matCurrencyGuid,
-        // 'MatType': matType,
-        // 'MatSecurity': matSecurity,
-        // 'MatFlag': matFlag,
-        // 'MatExpireFlag': matExpireFlag,
-        // 'MatProdFlag': matProdFlag,
-        // 'MatUnit2FactFlag': matUnit2FactFlag,
-        // 'MatUnit3FactFlag': matUnit3FactFlag,
-        // 'MatSNFlag': matSNFlag,
-        // 'MatForceInSN': matForceInSN,
-        // 'MatForceOutSN': matForceOutSN,
-        // 'MatVAT': matVAT,
-        // 'MatDefUnit': matDefUnit,
-        // 'MatBranchMask': matBranchMask,
-        // 'MatAss': matAss,
-        // 'MatOldGUID': matOldGUID,
-        // 'MatNewGUID': matNewGUID,
-        // 'MatCalPriceFromDetail': matCalPriceFromDetail,
-        // 'MatForceInExpire': matForceInExpire,
-        // 'MatForceOutExpire': matForceOutExpire,
-        // 'MatIsIntegerQuantity': matIsIntegerQuantity,
-        // 'MatClassFlag': matClassFlag,
-        // 'MatForceInClass': matForceInClass,
-        // 'MatForceOutClass': matForceOutClass,
-        // 'MatDisableLastPrice': matDisableLastPrice,
-        // 'MovedComposite': movedComposite,
-        // 'MatFirstCostDate': matFirstCostDate?.toIso8601String(),
-        // 'MatHasSegments': matHasSegments,
-        // 'MatParent': matParent,
-        // 'MatIsCompositionUpdated': matIsCompositionUpdated,
-        // 'MatInheritsParentSpecs': matInheritsParentSpecs,
-        // 'MatCompositionName': matCompositionName,
+        'MatUnity': matUnity,
+        'MatPriceType': matPriceType,
+        'MatBonus': matBonus,
+        'MatBonusOne': matBonusOne,
+        'MatCurrencyGuid': matCurrencyGuid,
+        'MatType': matType,
+        'MatSecurity': matSecurity,
+        'MatFlag': matFlag,
+        'MatExpireFlag': matExpireFlag,
+        'MatProdFlag': matProdFlag,
+        'MatUnit2FactFlag': matUnit2FactFlag,
+        'MatUnit3FactFlag': matUnit3FactFlag,
+        'MatSNFlag': matSNFlag,
+        'MatForceInSN': matForceInSN,
+        'MatForceOutSN': matForceOutSN,
+        'MatVAT': matVAT,
+        'MatDefUnit': matDefUnit,
+        'MatBranchMask': matBranchMask,
+        'MatAss': matAss,
+        'MatOldGUID': matOldGUID,
+        'MatNewGUID': matNewGUID,
+        'MatCalPriceFromDetail': matCalPriceFromDetail,
+        'MatForceInExpire': matForceInExpire,
+        'MatForceOutExpire': matForceOutExpire,
+        'MatIsIntegerQuantity': matIsIntegerQuantity,
+        'MatClassFlag': matClassFlag,
+        'MatForceInClass': matForceInClass,
+        'MatForceOutClass': matForceOutClass,
+        'MatDisableLastPrice': matDisableLastPrice,
+        'MovedComposite': movedComposite,
+        'MatFirstCostDate': matFirstCostDate?.toIso8601String(),
+        'MatHasSegments': matHasSegments,
+        'MatParent': matParent,
+        'MatIsCompositionUpdated': matIsCompositionUpdated,
+        'MatInheritsParentSpecs': matInheritsParentSpecs,
+        'MatCompositionName': matCompositionName,
       };
 
   @override
@@ -474,7 +475,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     final int? matSNFlag,
     final int? matForceInSN,
     final int? matForceOutSN,
-    final int? matVAT,
+    final double? matVAT,
     final int? matDefUnit,
     final int? matBranchMask,
     final int? matAss,
@@ -573,6 +574,175 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   String toString() {
     return 'MaterialModel(id: $id, matName: $matName)';
   }
+
+  String _f10(num? v) => (v ?? 0).toDouble().toStringAsFixed(10);
+  String _f2(num? v) => (v ?? 0).toDouble().toStringAsFixed(2);
+
+  String _dateOr1980(DateTime? d) {
+    final dt = d ?? DateTime(1980, 1, 1);
+    return '${dt.day}-${dt.month}-${dt.year}';
+  }
+
+
+  void toXml(XmlBuilder builder) {
+    final unitPrice = double.tryParse(retailPrice ?? '') ?? 0.0;
+    final quantity = (matQuantity ?? 0).toDouble();
+    final vatRatio = (matVAT ?? 0) / 100;
+    final vatValue = unitPrice * vatRatio;
+    final subtotal = unitPrice * quantity;
+    final profit = unitPrice - vatValue;
+
+    builder.element('MatRec', nest: () {
+      builder.element('Name', nest: matName ?? '');
+      builder.element('Code', nest: matCode?.toString() ?? '');
+      builder.element('Notes');
+
+      builder.element('UnityName', nest: matUnity ?? '');
+      builder.element('StoreName', nest: ''); // no store field in model
+
+      builder.element('MatPtr', nest: id ?? '');
+      builder.element('StorePtr', nest: matGroupGuid ?? '');
+
+      builder.element('UnitPrice', nest: _f10(unitPrice));
+      builder.element('CurVal', nest: _f10(matCurrencyVal));
+      builder.element('Quantity', nest: _f10(quantity));
+
+      builder.element('CurBonus', nest: _f10(matBonus));
+      builder.element('CurUnit', nest: matDefUnit?.toString() ?? '');
+      builder.element('CurUnitFact', nest: _f10(1));
+
+      builder.element('DiscountRatio', nest: _f10(0));
+      builder.element('ExtraRatio', nest: _f10(0));
+      builder.element('BonusDiscounts', nest: _f10(0));
+
+      builder.element('Profit', nest: _f10(profit));
+
+      builder.element('Length', nest: _f10(0));
+      builder.element('Width', nest: _f10(0));
+      builder.element('Height', nest: _f10(0));
+      builder.element('Count', nest: _f10(0));
+      builder.element('Qty2', nest: _f10(0));
+      builder.element('Qty3', nest: _f10(0));
+
+      builder.element('Vat', nest: _f10(matVAT));
+
+      builder.element('CostPtr', nest: matVatGuid ?? '');
+      builder.element('ClassPtr');
+
+      builder.element('ProdDate', nest: _dateOr1980(matCreateDate));
+      builder.element('ExpireDate', nest: _dateOr1980(null));
+
+      builder.element('ProdFlag', nest: (matProdFlag ?? 0).toString());
+      builder.element('ExpireFlag', nest: (matExpireFlag ?? 0).toString());
+      builder.element('Unit2Flag', nest: (matUnit2FactFlag ?? 0).toString());
+      builder.element('Unit3Flag', nest: (matUnit3FactFlag ?? 0).toString());
+
+      builder.element('SNFlag', nest: (matSNFlag ?? 0).toString());
+      builder.element('ForceInSN', nest: (matForceInSN ?? 0).toString());
+      builder.element('ForceOutSN', nest: (matForceOutSN ?? 0).toString());
+
+      builder.element('guid', nest: matNewGUID ?? id ?? '');
+
+      builder.element('SNReadFlag', nest: (serialNumbers?.isNotEmpty ?? false) ? '1' : '0');
+      builder.element('PriceSecViol', nest: (matSecurity ?? 0).toString());
+      builder.element('m_SecViol', nest: (matSecurity ?? 0).toString());
+      builder.element('m_SOType', nest: (matType ?? 0).toString());
+      builder.element('m_SOGuid', nest: matOldGUID ?? '');
+
+      builder.element('BillSubTotal', nest: _f10(subtotal));
+      builder.element('TotalBillDisc', nest: _f10(0));
+      builder.element('TotalBillExtra', nest: _f10(0));
+
+      builder.element('Assembled', nest: (matAss ?? 0).toString());
+      builder.element('Flexible', nest: (matHasSegments ?? 0).toString());
+      builder.element('Required', nest: '0');
+
+      builder.element('mtDim');
+      builder.element('mtOrigin');
+      builder.element('mtPos');
+      builder.element('mtCompany');
+      builder.element('mtColor');
+      builder.element('mtProvenance');
+
+      builder.element('Barcode', nest: matBarCode ?? '');
+
+      builder.element('mtQuality');
+      builder.element('mtModel');
+
+      builder.element('bPrintInBill', nest: '1'); // no field exists
+      builder.element('bPrintPriceInBill', nest: '1'); // no field exists
+      builder.element('bSharedFld', nest: (matFlag ?? 0).toString());
+
+      builder.element('mtParentGuid', nest: matParent ?? '');
+
+      builder.element('VatRatio', nest: _f10(matVAT));
+      builder.element('mtVatRatio', nest: _f10(0));
+      builder.element('mtType', nest: (matType ?? 0).toString());
+      builder.element('ClassPrice', nest: _f10(calcMinPrice));
+      builder.element('mtClassFlag', nest: (matClassFlag ?? 0).toString());
+      builder.element('mtItemNumer', nest: matQuantity?.toString() ?? '0');
+
+      builder.element('MatCardVATTaxCode', nest: matVAT?.toString() ?? '');
+      builder.element('MatCardVATTaxRatio', nest: _f2(matVAT));
+      builder.element('MatCardExciseTaxCode', nest: '');
+      builder.element('MatCardExciseTaxRatio', nest: '0.00');
+      builder.element('MatCardIsProfitMargin', nest: '0');
+      builder.element('BillItemTaxCode', nest: matVAT?.toString() ?? '');
+
+      builder.element('BillCurrencyGuid', nest: matCurrencyGuid ?? '');
+
+      builder.element('CompositionName', nest: matCompositionName ?? '');
+    });
+  }
+
+
+
+
+  factory MaterialModel.fromXml(String xmlString) {
+    final document = XmlDocument.parse(xmlString);
+    final mat = document.findAllElements('MatRec').first;
+
+    String text(String name) =>
+        mat.getElement(name)?.innerText.trim() ?? '';
+
+    int? intVal(String name) {
+      final v = text(name);
+      return v.isEmpty ? null : int.tryParse(v);
+    }
+
+    double? doubleVal(String name) {
+      final v = text(name);
+      return v.isEmpty ? null : double.tryParse(v);
+    }
+
+    DateTime? dateVal(String name) {
+      final v = text(name);
+      if (v.isEmpty || v == '1-1-1980') return null;
+      return DateTime.tryParse(v);
+    }
+
+    return MaterialModel(
+      id: text('MatPtr').isEmpty ? null : text('MatPtr'),
+      matName: text('Name'),
+      matCode: intVal('Code'),
+      matUnity: text('UnityName'),
+      matBarCode: text('Barcode'),
+      matLastPriceCurVal: doubleVal('UnitPrice'),
+      matQuantity: doubleVal('Quantity')?.toInt(),
+      matVAT: doubleVal('Vat'),
+      matCreateDate: dateVal('ProdDate'),
+      matProdFlag: intVal('ProdFlag'),
+      matExpireFlag: intVal('ExpireFlag'),
+      matUnit2FactFlag: intVal('Unit2Flag'),
+      matUnit3FactFlag: intVal('Unit3Flag'),
+      matSNFlag: intVal('SNFlag'),
+      matForceInSN: intVal('ForceInSN'),
+      matForceOutSN: intVal('ForceOutSN'),
+      matNewGUID: text('guid').isEmpty ? null : text('guid'),
+    );
+  }
+
+
 }
 
 @HiveType(typeId: 1)

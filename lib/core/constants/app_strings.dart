@@ -450,4 +450,16 @@ class AppStrings {
   static const String addBondType='اضافة نوع سند';
 
   static const String typeGuide ='الدليل الارشادي';
+
+  static const String copy = 'نسخ';
+
+  static const String paste = 'لصق';
+
+  static const String viewOptions = "خيارات العرض" ;
+
+  static const String bondType ="نوع السند";
+
+  static const String min = "الأدنى";
+
+  static const String max = "الأعلى";
 }

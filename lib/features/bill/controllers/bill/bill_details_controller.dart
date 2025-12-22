@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
@@ -23,17 +24,22 @@ import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/dialogs/custom_alert_dialog/helper_alert.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/helper/mixin/floating_launcher.dart';
 import '../../../../core/network/api_constants.dart';
 import '../../../../core/network/error/failure.dart';
+import '../../../../core/services/copy_paste_services/copy_paste_xml_service.dart';
 import '../../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../../core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import '../../../../core/services/whatsapp/whatsapp_service.dart';
+import '../../../../core/use_cases/copy_paste_use_case.dart';
 import '../../../../core/utils/app_ui_utils.dart';
 import '../../../accounts/data/models/account_model.dart';
 import '../../../customer/data/models/customer_model.dart';
@@ -50,11 +56,12 @@ import '../../data/models/invoice_record_model.dart';
 import '../../data/models/product_with_tax_model.dart';
 import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
+import '../../ui/dialogs/choose_columns_dialog.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController
-    with AppValidator, AppNavigator, FirestoreSequentialNumbers
-    implements IStoreSelectionHandler {
+    with AppValidator, AppNavigator, FirestoreSequentialNumbers ,FloatingLauncher
+implements IStoreSelectionHandler {
   // Repositories
 
   final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
@@ -938,7 +945,190 @@ class BillDetailsController extends IBillController
     advancedSwitchController.value = freeBill ?? false;
   }
 
-  /// this for mobile
+  // Copy the filled rows from the Pluto table
+  Future<void> copyFilledRowsJson() async {
+    final filledRows = billDetailsPlutoController.recordsTableRows
+        .where((row) =>
+    (row.cells["invRecProduct"]?.value?.toString().trim() ?? "").isNotEmpty &&
+        (row.cells["invRecQuantity"]?.value?.toString().trim() ?? "").isNotEmpty)
+        .toList();
+
+    Get.find<CopyPasteJsonUseCase>().copy(filledRows);
+  }
+
+  // Paste rows from the clipboard into the Pluto table
+  Future<void> pasteRowsFromClipboardJson() async {
+    try {
+      final clipboardData = await Clipboard.getData('text/plain');
+      if (clipboardData == null || clipboardData.text == null || clipboardData.text!.isEmpty) return;
+
+      final jsonData = jsonDecode(clipboardData.text!);
+      final List<Map<String, dynamic>> rowsData = List<Map<String, dynamic>>.from(jsonData['data']);
+
+      debugPrint(rowsData.toString());
+
+      // Keep only rows that have product and quantity filled
+      final filledRowsData = rowsData.where((row) {
+        final product = (row['invRecProduct'] ?? '').toString().trim();
+        final qty = (row['invRecQuantity'] ?? '').toString().trim();
+        return product.isNotEmpty && qty.isNotEmpty;
+      }).toList();
+
+      if (filledRowsData.isEmpty) return;
+
+      final stateManager = billDetailsPlutoController.recordsTableStateManager;
+
+      // Only include keys that exist in columns
+      final validFieldNames = stateManager.columns.map((c) => c.field).toSet();
+
+      final newPlutoRows = filledRowsData.map((rowMap) {
+        final cells = <String, PlutoCell>{};
+
+        rowMap.forEach((key, value) {
+          if (validFieldNames.contains(key)) {
+            // Just create the cell normally; PlutoGrid will link it to the column automatically
+            cells[key] = PlutoCell(value: value);
+          }
+        });
+
+        return PlutoRow(cells: cells);
+      }).toList();
+
+      // Insert after the last filled row
+      final insertIndex = billDetailsPlutoController.getLastFilledRowIndex();
+      stateManager.insertRows(insertIndex, newPlutoRows);
+
+      billDetailsPlutoController.update();
+    } catch (e, st) {
+      debugPrint("Failed to paste: $e\n$st");
+    }
+  }
+
+
+  // Copy only filled rows (product + quantity) to clipboard as XML
+  Future<void> copyFilledRows() async {
+    final controller = billDetailsPlutoController;
+
+    final materialController = read<MaterialController>();
+
+
+    // Filter rows that have both product and quantity
+    final filledRows = controller.recordsTableRows.where((row) {
+      final product = row.cells["invRecProduct"]?.value?.toString().trim() ?? "";
+      final qty = row.cells["invRecQuantity"]?.value?.toString().trim() ?? "";
+      return product.isNotEmpty && qty.isNotEmpty;
+    }).toList();
+
+    if (filledRows.isEmpty) return;
+
+    // Convert PlutoRow → MaterialModel
+    final matList = filledRows.map((row) {
+
+      final vat = double.tryParse(
+        row.cells["invRecVat"]?.value?.toString() ?? '0',
+      );
+
+       MaterialModel material = materialController.getMaterialByName(row.cells["invRecProduct"]?.value?.toString())!;
+
+       material = material.copyWith(
+         matQuantity: int.tryParse(row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
+         matVAT: vat
+
+       );
+
+       return material;
+      // return MaterialModel(
+      //   matName: row.cells["invRecProduct"]?.value?.toString(),
+      //   matQuantity: int.tryParse(row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
+      //   matLastPriceCurVal: double.tryParse(row.cells["invRecPrice"]?.value?.toString() ?? '0'),
+      //   // add other fields as needed
+      // );
+    }).toList();
+
+    // Copy list to clipboard using ClipboardXmlService
+    await Get.find<ClipboardXmlService>().copyXmlWithCustom128(matList);
+  }
+
+  // Paste rows from XML clipboard into Pluto table
+  Future<void> pasteRowsFromClipboard() async {
+    try {
+      final matList = await Get.find<ClipboardXmlService>().paste();
+      if (matList == null || matList.isEmpty) return;
+
+      // Keep only rows that have product and quantity
+      final filledRowsData = matList.where((mat) {
+        final product = (mat.matName ?? '').trim();
+        final qty = mat.matQuantity ?? 0;
+        return product.isNotEmpty && qty > 0;
+      }).toList();
+
+      if (filledRowsData.isEmpty) return;
+
+      final stateManager = billDetailsPlutoController.recordsTableStateManager;
+      final billTypeModel = billDetailsPlutoController.billTypeModel;
+
+      // Helper to convert MaterialModel → InvoiceRecordModel
+
+
+      // Convert all MaterialModels to PlutoRows via InvoiceRecordModel.toEditedMap
+      final newPlutoRows = filledRowsData.map((mat) {
+        final invoice = materialToInvoice(mat);
+
+        final cells = invoice.toEditedMap(billTypeModel).map(
+              (column, value) => MapEntry(column.field, PlutoCell(value: value)),
+        );
+
+        return PlutoRow(cells: cells);
+      }).toList();
+
+      final insertIndex = billDetailsPlutoController.getLastFilledRowIndex();
+
+      stateManager.insertRows(insertIndex, newPlutoRows);
+      billDetailsPlutoController.update();
+    } catch (e, st) {
+      debugPrint("Failed to paste XML rows: $e\n$st");
+    }
+  }
+
+
+  InvoiceRecordModel materialToInvoice(MaterialModel mat) {
+    final int quantity = mat.matQuantity ?? 0;
+    final double subTotal = mat.calcMinPrice ?? 0.0;
+    final double vat = (mat.matVAT ?? 0).toDouble();
+    final double total = subTotal * quantity;
+    final int giftQty = mat.matBonus ?? 0;
+    final double giftTotal = giftQty > 0 ? giftQty * (subTotal + vat) : 0.0;
+
+    return InvoiceRecordModel(
+      invRecId: mat.id,
+      invRecProduct: mat.matName,
+      invRecProductCode: mat.matCode?.toString(),
+      invRecQuantity: quantity,
+      invRecSubTotal: subTotal,
+      invRecVat: vat,
+      invRecTotal: total,
+      invRecGift: giftQty,
+      invRecGiftTotal: giftTotal,
+      invRecProductSoldSerial: mat.matForceOutSN?.toString(),
+      invRecProductSerialNumbers: mat.serialNumbers?.keys.toList() ?? [],
+    );
+  }
+
+
+
+
+
+  showColumnsFilterDialog({required BuildContext context}) {
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: AppStrings.options,
+        floatingScreen: MaterialAttributesDialog(billDetailsPlutoController: billDetailsPlutoController,),
+        defaultHeight: 100,
+        defaultWidth: 300);
+  }
+
+
+/// this for mobile
 /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
       context: context,
       stateManager: billDetailsPlutoController.recordsTableStateManager,

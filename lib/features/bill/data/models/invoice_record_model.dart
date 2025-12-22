@@ -376,6 +376,19 @@ class InvoiceRecordModel {
       {required int quantity, required double total, required double vat}) {
     return (total / quantity) - (total / quantity) * vat;
   }
+
+  PlutoRow toPlutoRow(BillTypeModel billTypeModel) {
+    final editedMap = toEditedMap(billTypeModel);
+
+    final cells = <String, PlutoCell>{};
+
+    for (final entry in editedMap.entries) {
+      cells[entry.key.field] = PlutoCell(value: entry.value);
+    }
+
+    return PlutoRow(cells: cells);
+  }
+
 }
 
 class AdditionsDiscountsRecordModel {

@@ -162,7 +162,6 @@ class BondDetailsController extends GetxController with AppValidator {
     }
 
     log("the details of the bond being currently added :  ");
-    log("the value of the note text editing controller "+noteController.text);
     updatedBondModel.printBondModelDetails();
     saveBondRequestState.value = RequestState.loading;
     // Save the bond to Firestore

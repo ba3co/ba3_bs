@@ -87,6 +87,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (fetchedMaterial) {
         materials.assignAll(fetchedMaterial);
         productsGrouped = fetchedMaterial.groupBy((product) => product.matGroupGuid!);
+        update();
       },
     );
   }
@@ -101,6 +102,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   Future<void> reloadMaterials() async {
     await fetchMaterials();
+    await fetchMaterialsGroup();
   }
 
   Future<void> saveAllMaterialOnLocal(List<MaterialModel> materialsToSave, bool isWithDialog) async {
@@ -556,6 +558,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
         reloadMaterials();
 
+        // Close the material overlay
+
         log('materials length after add item: ${materials.length}');
       },
     );
@@ -736,6 +740,21 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       log('mat number ${++i}');
     }
   }
+
+  void clearMaterialForm() {
+    // Reset selected material
+    selectedMaterial = null;
+
+    // Clear text controllers
+    materialFromHandler.clear();
+
+    // Reset request states
+    saveMaterialRequestState.value = RequestState.initial;
+    deleteMaterialRequestState.value = RequestState.initial;
+
+    update(); // Refresh UI
+  }
+
 
 
 }

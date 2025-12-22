@@ -1,4 +1,6 @@
 
+import 'dart:collection';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_model_extensions.dart';
@@ -7,11 +9,14 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/i_controllers/i_pluto_controller.dart';
+import '../../../../core/services/export_excl/excel_export.dart';
 import '../../../../core/utils/app_service_utils.dart';
 import '../../../customer/data/models/customer_model.dart';
 import '../../data/models/bill_items.dart';
@@ -367,7 +372,6 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
   }
 
   void _showDeleteConfirmationDialog(event, BuildContext context) => _contextMenu.showDeleteConfirmationDialog(event.rowIdx, context);
-
   void onAdditionsDiscountsChanged(PlutoGridOnChangedEvent event) {
     final field = event.column.field;
     final cells = event.row.cells;
@@ -490,7 +494,170 @@ class BillDetailsPlutoController extends IPlutoController<InvoiceRecordModel> {
     safeUpdateUI();
   }
 
-  /// this for mobile
+  int getLastFilledRowIndex() {
+    final rows =  recordsTableStateManager.refRows.originalList;
+
+    // Loop from the end to find the last filled row
+    for (int i = rows.length - 1; i >= 0; i--) {
+      final row = rows[i];
+
+      final product = (row.cells["invRecProduct"]?.value?.toString().trim() ?? '');
+      final quantity = (row.cells["invRecQuantity"]?.value?.toString().trim() ?? '');
+
+      if (product.isNotEmpty && quantity.isNotEmpty) {
+        return i; // Return the index of the last filled row
+      }
+    }
+
+    return 0; // No filled row found
+  }
+
+
+  // void exportBillItemsToExcel(
+  //     ExportFilterOption option, {
+  //       List<String>? columnsToExport,
+  //     }) {
+  //   final rows = recordsTableStateManager.rows;
+  //
+  //   // Decide which columns to export
+  //   final fieldsToExport = columnsToExport ??
+  //       recordsTableStateManager.columns.map((c) => c.title).toList();
+  //
+  //   final filteredRows = rows.where((row) {
+  //     final value = row.cells['extra_notes']?.value?.toString();
+  //     switch (option) {
+  //       case ExportFilterOption.checked:
+  //         return value == 'true';
+  //       case ExportFilterOption.unchecked:
+  //         return value != 'true';
+  //       case ExportFilterOption.all:
+  //         return true;
+  //     }
+  //   });
+  //
+  //   final List<Map<String, dynamic>> jsonList = [];
+  //
+  //   for (final row in filteredRows) {
+  //     // Build invoice row as before
+  //     final exportMap = <String, dynamic>{};
+  //
+  //     for (final entry in row.cells.entries) {
+  //       final colTitle = entry.value.column.title;
+  //       if (fieldsToExport.contains(colTitle)) {
+  //         exportMap[colTitle] = entry.value.value;
+  //       }
+  //     }
+  //
+  //     // Fetch material based on material name column
+  //     final materialName =
+  //         row.cells[AppConstants.invRecProduct]?.value?.toString() ?? '';
+  //
+  //     MaterialModel? materialModel;
+  //
+  //     if (materialName.isNotEmpty) {
+  //       materialModel = read<MaterialController>().searchMaterialByName(materialName);
+  //     }
+  //
+  //     // Append material fields to the Excel row
+  //     if (materialModel != null) {
+  //       exportMap.addAll({
+  //         AppStrings.materialName.tr: materialModel.matName ?? '',
+  //         AppStrings.mediatorPrice.tr: materialModel.calcMinPrice ?? '',
+  //         AppStrings.lastPayPrice.tr: materialModel.matLastPriceCurVal ?? '',
+  //         AppStrings.retailPrice.tr: materialModel.retailPrice ?? '',
+  //         AppStrings.consumer.tr: materialModel.endUserPrice ?? '',
+  //         AppStrings.wholesale.tr: materialModel.wholesalePrice ?? '',
+  //         AppStrings.materialCode.tr: materialModel.matCode ?? '',
+  //         AppStrings.barcode.tr: materialModel.matBarCode ?? '',
+  //       });
+  //     }
+  //
+  //     jsonList.add(exportMap);
+  //   }
+  //
+  //   exportJsonToExcel(jsonList);
+  // }
+
+
+
+  void exportBillItemsToExcel(
+      ExportFilterOption option, {
+        List<String>? columnsToExport,
+      }) {
+    final rows = recordsTableStateManager.rows;
+
+    final filteredRows = rows.where((row) {
+      final value = row.cells['extra_notes']?.value?.toString();
+      switch (option) {
+        case ExportFilterOption.checked:
+          return value == 'true';
+        case ExportFilterOption.unchecked:
+          return value != 'true';
+        case ExportFilterOption.all:
+          return true;
+      }
+    });
+
+    final List<Map<String, dynamic>> jsonList = [];
+
+    for (final row in filteredRows) {
+      // 1) Build a map with all table columns
+      final exportMap = <String, dynamic>{};
+
+      for (final entry in row.cells.entries) {
+        final colTitle = entry.value.column.title.tr;
+        exportMap[colTitle] = entry.value.value;
+      }
+
+      // 2) Add material fields (keys are localized strings)
+      final materialName =
+          row.cells[AppConstants.invRecProduct]?.value?.toString() ?? '';
+
+      if (materialName.isNotEmpty) {
+        final materialModel =
+        read<MaterialController>().searchMaterialByName(materialName);
+
+        if (materialModel != null) {
+          exportMap[AppStrings.materialName.tr] = materialModel.matName ?? '';
+          exportMap[AppStrings.mediatorPrice.tr] =
+              materialModel.calcMinPrice ?? '';
+          exportMap[AppStrings.lastPayPrice.tr] =
+              materialModel.matLastPriceCurVal ?? '';
+          exportMap[AppStrings.retailPrice.tr] = materialModel.retailPrice ?? '';
+          exportMap[AppStrings.consumer.tr] = materialModel.endUserPrice ?? '';
+          exportMap[AppStrings.wholesale.tr] =
+              materialModel.wholesalePrice ?? '';
+          exportMap[AppStrings.materialCode.tr] = materialModel.matCode ?? '';
+          exportMap[AppStrings.barcode.tr] = materialModel.matBarCode ?? '';
+        }
+      }
+
+      // 3) If columnsToExport is provided, include only those keys in that order
+      if (columnsToExport != null && columnsToExport.isNotEmpty) {
+        final orderedMap = <String, dynamic>{};
+
+        for (final key in columnsToExport) {
+          if (exportMap.containsKey(key)) {
+            orderedMap[key] = exportMap[key];
+          }
+        }
+
+        jsonList.add(orderedMap);
+      } else {
+        // No columnsToExport provided => include all keys (table + material fields), order doesn't matter
+        jsonList.add(LinkedHashMap<String, dynamic>.from(exportMap));
+      }
+    }
+
+    exportJsonToExcel(jsonList);
+  }
+
+
+
+
+
+
+/// this for mobile
 /*  @override
   void updateWithSelectedMaterial({
     required MaterialModel? materialModel,

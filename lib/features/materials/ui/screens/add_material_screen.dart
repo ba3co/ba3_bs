@@ -5,11 +5,13 @@ import 'package:ba3_bs/features/bill/ui/widgets/bill_shared/form_field_row.dart'
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/app_button.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/utils/app_ui_utils.dart';
 import '../widgets/add_material/add_material_form.dart';
 
 class AddMaterialScreen extends StatelessWidget {
@@ -74,13 +76,25 @@ class AddMaterialScreen extends StatelessWidget {
                           : Colors.green,
                     );
                   }),
+                  AppButton(
+                    title: AppStrings.newS.tr,
+                    onPressed: (){
+
+                      controller.clearMaterialForm();
+                    },
+                    iconData: FontAwesomeIcons.filePen,
+                    color: Colors.grey,
+                  ),
                   Obx(() {
                     return AppButton(
                       isLoading: controller.deleteMaterialRequestState.value ==
                           RequestState.loading,
                       title: AppStrings.delete.tr,
-                      onPressed: () {
-                        controller.deleteMaterial(context,true);
+                      onPressed: () async {
+                        if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                          if (!context.mounted) return;
+                          controller.deleteMaterial(context, true);
+                        }
                       },
                       iconData: Icons.delete,
                       color: Colors.red,

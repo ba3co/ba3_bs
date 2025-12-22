@@ -42,66 +42,69 @@ class AccountFilterDialog extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            const Text('خيارت العرض'),
+                            Text(AppStrings.viewOptions.tr),
                             const SizedBox(height: 15),
                             OptionTextWidget(
-                                title: 'اسم الحساب :  ',
+                                title: AppStrings.accountName.tr,
                                 controller: controller.accountNameController,
                                 onSubmitted: (text) {
                                   controller.onAccountNameSubmitted(text, context);
                                 }),
                             OptionTextWidget(
-                              title: 'من تاريخ :  ',
+                              title: "${AppStrings.from.tr} - ${AppStrings.date.tr}",
                               controller: controller.startDateController,
                               onSubmitted: controller.onStartDateSubmitted,
                             ),
                             OptionTextWidget(
-                              title: 'الى تاريخ :  ',
+                              title: "${AppStrings.to.tr} - ${AppStrings.date.tr}",
                               controller: controller.endDateController,
                               onSubmitted: controller.onEndDateSubmitted,
                             ),
                             OptionTextWidget(
-                              title: 'المجموع الأدنى',
+                              title: "${AppStrings.min.tr} - ${AppStrings.amount.tr}",
                               controller: controller.minAmountController,
                               onSubmitted: controller.onMinAmountSubmitted,
                             ),
                             OptionTextWidget(
-                              title: 'المجموع الأعلى',
+                              title: "${AppStrings.max.tr} - ${AppStrings.amount.tr}",
                               controller: controller.maxAmountController,
                               onSubmitted: controller.onMaxAmountSubmitted,
                             ),
                             OptionDropdownWidget(
-                              title: AppStrings.bond.tr,
+                              title: AppStrings.bondType.tr,
                               value: controller.selectedType.value,
                               listValue: BondItemType.values.map((e) => e.label).toList(),
-                              label: "اختر نوع السند",
+                              label: AppStrings.bondType.tr,
                               onChange: controller.onBondItemTypeSubmitted,
                             ),
                             const SizedBox(height: 20),
-                            SizedBox(
-                              child: BillBondChequeTypesChecklist(
-                                  initiallySelectedBillTypes: controller.selectedBillTypeIds,
-                                  initiallySelectedBondTypes: controller.selectedBondTypeIds,
-                                  initiallySelectedChequeTypes: controller.selectedChequeTypeIds,
-                                  onBillTypeSelected: (type) {
-                                    type.printDetails();
-                                    controller.onItemSubmitted(type);
-                                  },
-                                  onBillTypeDeselected: (type) {
-                                    controller.onItemRemoved(type);
-                                  },
-                                  onBondTypeSelected: (type) {
-                                    controller.onItemSubmitted(type);
-                                  },
-                                  onBondTypeDeselected: (type) {
-                                    controller.onItemRemoved(type);
-                                  },
-                                  onChequeTypeSelected: (type) {
-                                    controller.onItemSubmitted(type);
-                                  },
-                                  onChequeTypeDeselected: (type) {
-                                    controller.onItemRemoved(type);
-                                  }),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: SizedBox(
+                                child: BillBondChequeTypesChecklist(
+                                    initiallySelectedBillTypes: controller.selectedBillTypeIds,
+                                    initiallySelectedBondTypes: controller.selectedBondTypeIds,
+                                    initiallySelectedChequeTypes: controller.selectedChequeTypeIds,
+                                    onBillTypeSelected: (type) {
+                                      type.printDetails();
+                                      controller.onItemSubmitted(type);
+                                    },
+                                    onBillTypeDeselected: (type) {
+                                      controller.onItemRemoved(type);
+                                    },
+                                    onBondTypeSelected: (type) {
+                                      controller.onItemSubmitted(type);
+                                    },
+                                    onBondTypeDeselected: (type) {
+                                      controller.onItemRemoved(type);
+                                    },
+                                    onChequeTypeSelected: (type) {
+                                      controller.onItemSubmitted(type);
+                                    },
+                                    onChequeTypeDeselected: (type) {
+                                      controller.onItemRemoved(type);
+                                    }),
+                              ),
                             ),
                             const SizedBox(height: 20),
                           ],

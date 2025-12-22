@@ -86,9 +86,9 @@ class BillBondChequeTypesChecklist extends StatelessWidget {
               if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
               final bondTypes = snapshot.data!;
               return CustomChecklist<BondTypeModel>(
-                items: bondTypes.where((item) => item.label != null).toList(),
+                items: bondTypes.toList(),
                 initiallySelected: initiallySelectedBondTypes,
-                displayText: (item) => item.label ?? '',
+                displayText: (item) => item.label,
                 onItemSelected: onBondTypeSelected,
                 onItemDeselected: onBondTypeDeselected,
               );

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
 import 'custom_drop_down.dart';
 
 class OptionDropdownWidget extends StatelessWidget {
@@ -24,11 +22,11 @@ class OptionDropdownWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(width: 100, child: Text(title)),
           SizedBox(
-            width: Get.width / 3,
+            width: 250,
             child: CustomDropDown(
               value: value,
               listValue: listValue,

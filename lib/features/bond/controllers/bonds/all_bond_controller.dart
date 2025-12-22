@@ -459,4 +459,9 @@ class AllBondsController extends FloatingBondDetailsLauncher
     return allBonds;
   }
 
+  refreshController(){
+    _initializeServices();
+    saveAllBondIfConnected();
+  }
+
 }
