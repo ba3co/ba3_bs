@@ -13,6 +13,7 @@ import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
+import 'package:xml/xml.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/enums/enums.dart';
@@ -34,6 +35,8 @@ class InvoiceRecordModel {
   bool? invRecIsLocal;
   String? invRecProductSoldSerial;
   List<String>? invRecProductSerialNumbers;
+  String? invRecMaterialBarcode;
+
 
   InvoiceRecordModel({
     this.invRecId,
@@ -49,6 +52,7 @@ class InvoiceRecordModel {
     this.invRecProductSoldSerial,
     this.invRecProductSerialNumbers,
     this.invRecProductCode,
+    this.invRecMaterialBarcode
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
@@ -72,6 +76,7 @@ class InvoiceRecordModel {
         invRecGiftTotal: billItem.itemGiftsPrice,
         invRecProductSoldSerial: billItem.soldSerialNumber,
         invRecProductSerialNumbers: billItem.itemSerialNumbers,
+        invRecMaterialBarcode: material.matBarCode
       );
   }
 
@@ -88,6 +93,7 @@ class InvoiceRecordModel {
         invRecIsLocal: map[AppConstants.invRecIsLocal],
         invRecGift: int.tryParse(map[AppConstants.invRecGift].toString()),
         invRecGiftTotal: (map[AppConstants.invRecGiftTotal] ?? 0) * 1.0,
+        invRecMaterialBarcode: map[AppStrings.materialBarcode]
       );
 
   Map<String, dynamic> toJson() => {
@@ -100,6 +106,7 @@ class InvoiceRecordModel {
         AppConstants.invRecIsLocal: invRecIsLocal,
         AppConstants.invRecGift: invRecGift,
         AppConstants.invRecGiftTotal: invRecGiftTotal,
+        AppStrings.materialBarcode: invRecMaterialBarcode
       };
 
   factory InvoiceRecordModel.fromJsonPluto(
@@ -117,6 +124,9 @@ class InvoiceRecordModel {
     List<String>? productSerialNumbers;
 
     final raw = map[AppConstants.invRecProductSerialNumbers].toString();
+
+    final String? materialBarcode = map[AppStrings.materialBarcode];
+
 
     if (raw.isNotEmpty) {
       try {
@@ -167,6 +177,7 @@ class InvoiceRecordModel {
       invRecGiftTotal: giftTotal,
       invRecProductSoldSerial: productSoldSerial,
       invRecProductSerialNumbers: productSerialNumbers,
+      invRecMaterialBarcode: materialBarcode
     );
   }
 
@@ -236,6 +247,11 @@ class InvoiceRecordModel {
       oldChanges['invRecGiftTotal'] = invRecGiftTotal;
     }
 
+    if (invRecMaterialBarcode != other.invRecMaterialBarcode) {
+      newChanges[AppStrings.materialBarcode] = other.invRecMaterialBarcode;
+      oldChanges[AppStrings.materialBarcode] = invRecMaterialBarcode;
+    }
+
     if (newChanges.isNotEmpty) newChanges['invRecId'] = other.invRecId;
     if (oldChanges.isNotEmpty) oldChanges['invRecId'] = invRecId;
 
@@ -278,6 +294,14 @@ class InvoiceRecordModel {
         width: 300,
         hasContextMenu: false,
       ): invRecProduct,
+
+      buildPlutoColumn(
+        title: AppStrings.materialBarcode.tr,
+        field: AppStrings.materialBarcode,
+        type: PlutoColumnType.text(),
+        width: 250,
+        hasContextMenu: false,
+      ): invRecMaterialBarcode,
 
       // Quantity Column
       buildPlutoColumn(
@@ -387,6 +411,46 @@ class InvoiceRecordModel {
     }
 
     return PlutoRow(cells: cells);
+  }
+
+  // Factory method to create an InvoiceRecordModel directly from XML
+  factory InvoiceRecordModel.fromXml(String xml) {
+    final doc = XmlDocument.parse(xml);
+    final m = doc.findAllElements('MatRec').first;
+
+    String t(String n) => m.getElement(n)?.innerText.trim() ?? '';
+    double? d(String n) => double.tryParse(t(n));
+
+    final materialCode = t('Code');
+    final materialName = t('Name');
+    final materialBarcode = t('Barcode');
+
+    final quantity = d('Quantity') ?? 1;
+    final unitPrice = d('UnitPrice');
+    final vat = d('Vat');
+    final total = d('BillSubTotal');
+    final giftQty = d('CurBonus');
+
+    // Parse serial numbers
+    List<String> serialNumbers = [];
+    final hasSerials = t('SNFlag') == '1' || t('SNReadFlag') == '1';
+    if (hasSerials) {
+      serialNumbers = <String>[];  // You can add logic for serials if needed
+    }
+
+    return InvoiceRecordModel(
+      invRecId: materialCode,
+      invRecProduct: materialName,
+      invRecProductCode: materialCode,
+      invRecMaterialBarcode: materialBarcode,
+      invRecQuantity: quantity.toInt(),
+      invRecSubTotal: unitPrice,
+      invRecTotal: total,
+      invRecVat: vat,
+      invRecGift: giftQty?.toInt(),
+      invRecGiftTotal: (giftQty != null && giftQty > 0) ? (unitPrice! * giftQty) : null,
+      invRecProductSerialNumbers: serialNumbers,
+    );
   }
 
 }

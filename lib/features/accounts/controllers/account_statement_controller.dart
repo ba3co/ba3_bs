@@ -77,6 +77,11 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
   final RxList<BondTypeModel> selectedBondTypeIds = <BondTypeModel>[].obs;
   final RxList<ChequeType> selectedChequeTypeIds = <ChequeType>[].obs;
 
+  RxBool isBillTypesSelectedAll = false.obs;
+  RxBool isBondTypesSelectedAll = false.obs;
+  RxBool isChequeTypesSelectedAll = false.obs;
+
+
   // Data
 
   //all entryBondItemModels
@@ -224,14 +229,77 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     if (item is BillTypeModel) {
       selectedBillTypeIds.remove(item);
       selectedTypeIds.remove(item.billTypeId??"no id");
+      if(isBillTypesSelectedAll.value)
+        {
+          isBillTypesSelectedAll.value=false;
+        }
     } else if (item is BondTypeModel) {
       selectedBondTypeIds.remove(item);
       selectedTypeIds.remove(item.typeGuide);
+      if(isBondTypesSelectedAll.value)
+      {
+        isBondTypesSelectedAll.value=false;
+      }
     } else if (item is ChequeType) {
       selectedChequeTypeIds.remove(item);
       selectedTypeIds.remove(item.typeGuide);
+      if(isChequeTypesSelectedAll.value)
+      {
+        isChequeTypesSelectedAll.value=false;
+      }
     }
   }
+
+  void selectAllBills(List<BillTypeModel> items) {
+    for (final item in items) {
+      onItemSubmitted(item);
+    }
+    isBillTypesSelectedAll.value = true;
+  }
+
+  void unselectAllBills() {
+    // make a copy to avoid concurrent modification
+    final items = List<BillTypeModel>.from(selectedBillTypeIds);
+
+    for (final item in items) {
+      onItemRemoved(item);
+    }
+    isBillTypesSelectedAll.value = false;
+  }
+
+  void selectAllBonds(List<BondTypeModel> items) {
+    for (final item in items) {
+      onItemSubmitted(item);
+    }
+    isBondTypesSelectedAll.value = true;
+  }
+
+  void unselectAllBonds() {
+    final items = List<BondTypeModel>.from(selectedBondTypeIds);
+
+    for (final item in items) {
+      onItemRemoved(item);
+    }
+    isBondTypesSelectedAll.value = false;
+  }
+
+  void selectAllCheques(List<ChequeType> items) {
+    for (final item in items) {
+      onItemSubmitted(item);
+    }
+    isChequeTypesSelectedAll.value = true;
+  }
+
+  void unselectAllCheques() {
+    final items = List<ChequeType>.from(selectedChequeTypeIds);
+
+    for (final item in items) {
+      onItemRemoved(item);
+    }
+    isChequeTypesSelectedAll.value = false;
+  }
+
+
 
   Future<void> fetchFinalAccountsStatements(FinalAccounts selectedFinalAccount) async {
     final accountGroups = _filterAccountsUseCase.execute();
@@ -399,6 +467,52 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     }));
   }
 
+  void processFilteredEntryBondItemsAsync(List<EntryBondItemModel> fetchedItems) {
+    log(fetchedItems.length.toString(), name: 'fetchedItems');
+    final List<EntryBondItemModel> helperList = [];
+
+    filteredEntryBondItems.addAll(
+      fetchedItems.mergeBy<BondKey>(
+            (bondItem) => BondKey(
+          bondItem.docId ?? '',
+          bondItem.bondItemType?.label ?? '',
+        ),
+            (accumulated, current) {
+          return EntryBondItemModel(
+            account: current.account,
+            originTypeId: current.originTypeId,
+            amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
+            bondItemType: current.bondItemType,
+            date: current.date,
+            docId: current.docId,
+            note: "${current.note} + ${accumulated.note}",
+            originId: current.originId,
+            amountAfterOperation: 0,
+            originName: current.originName,
+          );
+        },
+      ),
+    );
+
+    double balance = 0.0;
+
+    filteredEntryBondItems.sortBy((bondItem) => bondItem.date!);
+
+    helperList.assignAll(filteredEntryBondItems);
+
+    filteredEntryBondItems.assignAll(
+      helperList.map((e) {
+        if (e.bondItemType!.label == BondItemType.debtor.label) {
+          balance += e.amount!;
+        } else {
+          balance -= e.amount!;
+        }
+        return e.copyWith(amountAfterOperation: balance);
+      }),
+    );
+  }
+
+
   void _setLoadingState(bool state) {
     isLoading = state;
     update();
@@ -448,6 +562,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     }
 
     filteredEntryBondItems = filtered;
+    processFilteredEntryBondItemsAsync(filteredEntryBondItems);
     _calculateValues();
   }
 

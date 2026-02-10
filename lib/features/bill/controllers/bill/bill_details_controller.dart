@@ -56,7 +56,7 @@ import '../../data/models/invoice_record_model.dart';
 import '../../data/models/product_with_tax_model.dart';
 import '../../services/bill/account_handler.dart';
 import '../../services/bill/bill_details_service.dart';
-import '../../ui/dialogs/choose_columns_dialog.dart';
+import '../../../../core/dialogs/choose_columns_dialog.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController
@@ -1030,9 +1030,11 @@ implements IStoreSelectionHandler {
 
        MaterialModel material = materialController.getMaterialByName(row.cells["invRecProduct"]?.value?.toString())!;
 
+       var materialName = material.matName!.replaceAll('\u2063', '');
        material = material.copyWith(
          matQuantity: int.tryParse(row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
-         matVAT: vat
+         matVAT: vat,
+           matName: materialName
 
        );
 
@@ -1052,43 +1054,50 @@ implements IStoreSelectionHandler {
   // Paste rows from XML clipboard into Pluto table
   Future<void> pasteRowsFromClipboard() async {
     try {
-      final matList = await Get.find<ClipboardXmlService>().paste();
-      if (matList == null || matList.isEmpty) return;
+      final invoiceRecords =
+      await Get.find<ClipboardXmlService>().paste();
 
-      // Keep only rows that have product and quantity
-      final filledRowsData = matList.where((mat) {
-        final product = (mat.matName ?? '').trim();
-        final qty = mat.matQuantity ?? 0;
-        return product.isNotEmpty && qty > 0;
-      }).toList();
+      if (invoiceRecords == null || invoiceRecords.isEmpty) {
+        debugPrint("No valid records found");
+        return;
+      }
 
-      if (filledRowsData.isEmpty) return;
+      final validRecords = invoiceRecords.where(
+            (e) =>
+        (e.invRecProduct?.trim() ?? '').isNotEmpty &&
+            (e.invRecQuantity ?? 0) > 0,
+      ).toList();
 
-      final stateManager = billDetailsPlutoController.recordsTableStateManager;
-      final billTypeModel = billDetailsPlutoController.billTypeModel;
+      if (validRecords.isEmpty) return;
 
-      // Helper to convert MaterialModel → InvoiceRecordModel
+      final stateManager =
+          billDetailsPlutoController.recordsTableStateManager;
+      final billTypeModel =
+          billDetailsPlutoController.billTypeModel;
 
-
-      // Convert all MaterialModels to PlutoRows via InvoiceRecordModel.toEditedMap
-      final newPlutoRows = filledRowsData.map((mat) {
-        final invoice = materialToInvoice(mat);
-
-        final cells = invoice.toEditedMap(billTypeModel).map(
-              (column, value) => MapEntry(column.field, PlutoCell(value: value)),
+      final newRows = validRecords.map((invoice) {
+        final cells = invoice
+            .toEditedMap(billTypeModel)
+            .map(
+              (col, val) => MapEntry(col.field, PlutoCell(value: val)),
         );
 
         return PlutoRow(cells: cells);
       }).toList();
 
-      final insertIndex = billDetailsPlutoController.getLastFilledRowIndex();
+      final insertIndex =
+      billDetailsPlutoController.getLastFilledRowIndex();
 
-      stateManager.insertRows(insertIndex, newPlutoRows);
+      stateManager.insertRows(insertIndex, newRows);
       billDetailsPlutoController.update();
     } catch (e, st) {
-      debugPrint("Failed to paste XML rows: $e\n$st");
+      debugPrint('Failed to paste XML rows: $e\n$st');
     }
   }
+
+
+
+
 
 
   InvoiceRecordModel materialToInvoice(MaterialModel mat) {

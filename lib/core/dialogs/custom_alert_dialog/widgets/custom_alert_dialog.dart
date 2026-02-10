@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../../apps/app.dart';
 import '../models/custom_alert_anim_type.dart';
 import '../models/custom_alert_options.dart';
 import '../models/custom_alert_type.dart';
@@ -25,7 +26,7 @@ class CustomAlertDialog {
     bool barrierDismissible = true,
     VoidCallback? onConfirmBtnTap,
     VoidCallback? onCancelBtnTap,
-    String? confirmBtnText ,
+    String? confirmBtnText,
     String? cancelBtnText,
     Color confirmBtnColor = Colors.blue,
     Color cancelBtnColor = Colors.redAccent,
@@ -47,7 +48,11 @@ class CustomAlertDialog {
     Timer? timer;
 
     final validContext = context ?? Get.overlayContext!;
-    final overlay = Overlay.of(validContext, rootOverlay: true);
+    final overlay = navigatorKey.currentState?.overlay;
+
+    if (overlay == null) {
+      throw Exception('No overlay found');
+    }
 
     if (autoCloseDuration != null) {
       timer = Timer(autoCloseDuration, () {
@@ -73,8 +78,8 @@ class CustomAlertDialog {
         hide();
         onCancelBtnTap?.call();
       },
-      confirmBtnText: confirmBtnText??AppStrings.done,
-      cancelBtnText: cancelBtnText??AppStrings.cancel,
+      confirmBtnText: confirmBtnText ?? AppStrings.done,
+      cancelBtnText: cancelBtnText ?? AppStrings.cancel,
       confirmBtnColor: confirmBtnColor,
       cancelBtnColor: cancelBtnColor,
       confirmBtnTextStyle: confirmBtnTextStyle,
@@ -103,8 +108,7 @@ class CustomAlertDialog {
         focusNode: FocusNode(),
         autofocus: true,
         onKey: (event) {
-          if (event is RawKeyUpEvent &&
-              event.logicalKey == LogicalKeyboardKey.enter) {
+          if (event is RawKeyUpEvent && event.logicalKey == LogicalKeyboardKey.enter) {
             hide();
             onConfirmBtnTap?.call();
           }

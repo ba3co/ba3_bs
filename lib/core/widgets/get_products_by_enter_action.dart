@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_constants.dart';
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/material.dart';
@@ -209,8 +210,21 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     updateCellValue(
         stateManager, AppConstants.invRecProduct, materialModel.matName);
     updateCellValue(
+        stateManager, AppStrings.materialBarcode, materialModel.matBarCode);
+    updateCellValue(
+        stateManager, AppStrings.materialCode, materialModel.matCode);
+    updateCellValue(
         stateManager, AppConstants.invRecSubTotal, materialModel.endUserPrice);
-    updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
+
+    if(stateManager.currentRow!.cells[AppConstants.invRecQuantity]!.value>1)
+      {
+        updateCellValue(stateManager, AppConstants.invRecQuantity, stateManager.currentRow!.cells[AppConstants.invRecQuantity]!.value);
+      }
+    else
+      {
+        updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
+
+      }
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {

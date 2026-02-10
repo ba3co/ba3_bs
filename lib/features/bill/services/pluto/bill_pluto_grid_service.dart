@@ -1,4 +1,5 @@
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
 import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
@@ -272,6 +273,7 @@ class BillPlutoGridService {
     }
 
     updateCellValue(stateManager, AppConstants.invRecProduct, '');
+    updateCellValue(stateManager, AppStrings.materialBarcode, '');
     updateCellValue(stateManager, AppConstants.invRecSubTotal, '');
     updateCellValue(stateManager, AppConstants.invRecTotal, '');
     updateCellValue(stateManager, AppConstants.invRecQuantity, '');

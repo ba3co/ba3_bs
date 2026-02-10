@@ -428,7 +428,7 @@ abstract class AppConstants {
   static bool? forceFree;
 
   /// 🔹 To connect to a test Firebase project, use:
-  static const String testDataBaseAppName = 'test';
+  static const String testDataBaseAppName = "test";
   static const String defaultFirebaseAppName = '[DEFAULT]';
 
   static bool forcePending = false;

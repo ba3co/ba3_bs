@@ -333,7 +333,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     String id,
   ) {
     reloadMaterials();
-    return materials.firstWhere((material) => material.id == id);
+    return materials.firstWhereOrNull((material) => material.id == id) ?? materials.first;
   }
 
   MaterialModel? getMaterialByIdWithNull(

@@ -44,7 +44,7 @@ class BondTypeWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    bondTypeModel.label,
+                    bondTypeModel.value,
                     style: AppTextStyles.headLineStyle2,
                     textDirection: TextDirection.rtl,
                   ),

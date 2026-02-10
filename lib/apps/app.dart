@@ -10,6 +10,8 @@ import '../core/services/translation/translation_controller.dart';
 import '../core/styling/app_themes.dart';
 import '../core/widgets/app_scroll_behavior.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       fontSizeResolver: FontSizeResolvers.height,
       child: GetMaterialApp(
+        navigatorKey: navigatorKey,
         // initialBinding: AppBindings(),
         debugShowCheckedModeBanner: false,
         scrollBehavior: AppScrollBehavior(),

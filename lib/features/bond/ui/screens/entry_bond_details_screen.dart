@@ -71,7 +71,6 @@ class EntryBondDetailsScreen extends StatelessWidget {
             title: AppStrings.viewOrigin.tr,
             onPressed: () {
 
-              debugPrint("when the button is clicked");
               entryBondModel.printDetails();
 
               read<EntryBondController>()

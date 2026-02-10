@@ -392,17 +392,17 @@ class EntryBondController extends GetxController with FloatingLauncher {
       return;
     }
 
-    final bondTypeModel = Get.find<BondTypeService>().getBondTypeByGuide(entryBondModel.origin!.originTypeId!);
 
-
-    debugPrint("when the use case is called ");
-    entryBondModel.printDetails();
 
     final actions = {
-      EntryBondType.bond: () => read<AllBondsController>().openBondDetailsById(
+      EntryBondType.bond: () {
+        final bondTypeModel = Get.find<BondTypeService>().getBondTypeByGuide(entryBondModel.origin!.originTypeId!);
+
+        read<AllBondsController>().openBondDetailsById(
           origin.originId!,
           context,
-          bondTypeModel),
+          bondTypeModel);
+      },
       EntryBondType.bill: () {
         log(origin.toJson().toString());
         read<AllBillsController>().openFloatingBillDetailsById(

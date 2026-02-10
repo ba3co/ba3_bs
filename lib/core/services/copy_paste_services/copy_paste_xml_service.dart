@@ -1,8 +1,10 @@
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 
+import '../../../features/bill/data/models/invoice_record_model.dart';
 import '../../helper/win23_helpers/clipboard_custom128.dart';
 
 
@@ -16,7 +18,7 @@ class ClipboardXmlService {
     builder.element('Lines', nest: () {
       for (var item in items) {
         builder.element('Line', nest: () {
-          item.toXml(builder);
+          builder.text(item.toXml());
         });
       }
     });
@@ -32,10 +34,11 @@ class ClipboardXmlService {
     builder.processing('xml', 'version="1.0" encoding="UTF-8"');
     builder.element('Lines', nest: () {
       for (var item in items) {
-        builder.element('Line', nest: () => item.toXml(builder));
+        builder.element('Line', nest: () {
+          builder.text(item.toXml());
+        });
       }
     });
-
     final xml = builder.buildDocument().toXmlString(pretty: true, indent: '  ');
 
     // 1️⃣ Copy as normal text
@@ -53,9 +56,6 @@ class ClipboardXmlService {
 
 
 
-// -------------------------------------------------------------
-//  CLEANER: Removes invisible characters, BOM, duplicate <?xml>
-// -------------------------------------------------------------
   String sanitizeXml(String input) {
     String cleaned = input
 
@@ -82,94 +82,52 @@ class ClipboardXmlService {
     return cleaned;
   }
 
-// -------------------------------------------------------------
-//  PASTE FUNCTION (sanitizes, parses safely, returns list)
-// -------------------------------------------------------------
-  Future<List<MaterialModel>?> paste() async {
+  Future<List<InvoiceRecordModel>?> paste() async {
     final clipboard = await Clipboard.getData('text/plain');
-    if (clipboard == null || clipboard.text == null) return null;
+    if (clipboard?.text == null) return null;
 
-    String text = sanitizeXml(clipboard.text!);
-
-    debugPrint("SANITIZED XML:\n$text");
+    final sanitized = sanitizeXml(clipboard!.text!);
 
     try {
-
-      var mats= parseXmlTolerant(text);
-      return mats;
-
-    } catch (e) {
-      debugPrint("FINAL XML PARSE FAILURE: $e");
+      return parseXmlTolerant(sanitized);
+    } catch (e, st) {
+      debugPrint('Paste failed: $e\n$st');
+      AppUIUtils.onFailure('Paste failed: $e\n$st');
       return null;
     }
   }
 
+  List<InvoiceRecordModel> parseXmlTolerant(String xmlString) {
+    final doc = XmlDocument.parse(xmlString);
+    final result = <InvoiceRecordModel>[];
 
-// -------------------------------------------------------------
-//  TOLERANT PARSER — extracts all <MatRec> no matter structure
-// -------------------------------------------------------------
+    for (final line in doc.findAllElements('Line')) {
+      try {
+        final escapedMatRecXml = line.innerText.trim();
+        if (escapedMatRecXml.isEmpty) continue;
 
-  List<MaterialModel> parseXmlTolerant(String xmlString) {
-    final document = XmlDocument.parse(xmlString);
+        // Decode &lt; &gt; &amp; etc
+        final decodedXml = escapedMatRecXml
+            .replaceAll('&lt;', '<')
+            .replaceAll('&gt;', '>')
+            .replaceAll('&amp;', '&');
 
-    final recs = <MaterialModel>[];
+        // Parse decoded XML
+        final matRecDoc = XmlDocument.parse(decodedXml);
+        final matRec = matRecDoc.findAllElements('MatRec').first;
 
-    final lines = document.findAllElements('Line');
-
-    for (final line in lines) {
-      final matRec = line.getElement('MatRec');
-      if (matRec == null) continue;
-
-
-      final mat = MaterialModel(
-        matName: matRec.getElement('Name')?.innerText,
-
-        matCode: _parseIntFromDecimal(
-            matRec.getElement('Code')?.innerText),
-        matQuantity: _parseIntFromDecimal(
-            matRec.getElement('Quantity')?.innerText),
-        matBonus: _parseIntFromDecimal(
-            matRec.getElement('CurBonus')?.innerText),
-        matDefUnit: _parseIntFromDecimal(
-            matRec.getElement('CurUnit')?.innerText),
-        matUnit2FactFlag: _parseIntFromDecimal(
-            matRec.getElement('CurUnitFact')?.innerText),
-        matVAT: _parseDouble(
-            matRec.getElement('Vat')?.innerText),
-
-        matCurrencyVal: _parseDouble(
-            matRec.getElement('CurVal')?.innerText),
-        matLastPriceCurVal: _parseDouble(
-            matRec.getElement('Profit')?.innerText),
-        calcMinPrice: _parseDouble(
-            matRec.getElement('UnitPrice')?.innerText),
-
-        matUnity: matRec.getElement('UnityName')?.innerText,
-        matNewGUID: matRec.getElement('MatPtr')?.innerText,
-        matCompositionName:
-        matRec.getElement('CompositionName')?.innerText,
-        matVatGuid:
-        matRec.getElement('BillCurrencyGuid')?.innerText,
-      );
-
-      recs.add(mat);
+        result.add(
+          InvoiceRecordModel.fromXml(matRec.toXmlString()),
+        );
+      } catch (e) {
+        // tolerate broken lines
+        debugPrint('Skipping broken Line: $e');
+        continue;
+      }
     }
 
-    return recs;
+    return result;
   }
-
-
-  int? _parseIntFromDecimal(String? text) {
-    if (text == null || text.trim().isEmpty) return null;
-    return double.tryParse(text)?.toInt();
-  }
-
-  double? _parseDouble(String? text) {
-    if (text == null || text.trim().isEmpty) return null;
-    return double.tryParse(text);
-  }
-
-
 
 }
 

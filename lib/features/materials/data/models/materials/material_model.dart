@@ -6,7 +6,6 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:xml/xml.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/helper/extensions/getx_controller_extensions.dart';
@@ -513,7 +512,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     return MaterialModel(
       id: id ?? this.id,
       matCode: matCode ?? this.matCode,
-      matName: matName ?? this.matName,
+      matName: matName ?? this.matName!.replaceAll('\u2063', ''),
       matBarCode: matBarCode ?? this.matBarCode,
       matGroupGuid: matGroupGuid ?? this.matGroupGuid,
       matUnity: matUnity ?? this.matUnity,
@@ -584,163 +583,130 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   }
 
 
-  void toXml(XmlBuilder builder) {
+  String _buildMatRecXml() {
     final unitPrice = double.tryParse(retailPrice ?? '') ?? 0.0;
     final quantity = (matQuantity ?? 0).toDouble();
-    final vatRatio = (matVAT ?? 0) / 100;
-    final vatValue = unitPrice * vatRatio;
+    final vatPercent = matVAT ?? 0;
+    final vatValue = unitPrice * vatPercent / 100;
     final subtotal = unitPrice * quantity;
     final profit = unitPrice - vatValue;
 
-    builder.element('MatRec', nest: () {
-      builder.element('Name', nest: matName ?? '');
-      builder.element('Code', nest: matCode?.toString() ?? '');
-      builder.element('Notes');
+    final b = StringBuffer();
 
-      builder.element('UnityName', nest: matUnity ?? '');
-      builder.element('StoreName', nest: ''); // no store field in model
+    b.writeln('<MatRec>');
+    b.writeln('<Name>${matName ?? ''}</Name>');
+    b.writeln('<Code>${matCode?.toString() ?? ''}</Code>');
+    b.writeln('<Notes/>');
 
-      builder.element('MatPtr', nest: id ?? '');
-      builder.element('StorePtr', nest: matGroupGuid ?? '');
+    b.writeln('<UnityName>${matUnity ?? ''}</UnityName>');
+    b.writeln('<StoreName/>');
 
-      builder.element('UnitPrice', nest: _f10(unitPrice));
-      builder.element('CurVal', nest: _f10(matCurrencyVal));
-      builder.element('Quantity', nest: _f10(quantity));
+    b.writeln('<MatPtr>${id ?? ''}</MatPtr>');
+    b.writeln('<StorePtr>${matGroupGuid ?? ''}</StorePtr>');
 
-      builder.element('CurBonus', nest: _f10(matBonus));
-      builder.element('CurUnit', nest: matDefUnit?.toString() ?? '');
-      builder.element('CurUnitFact', nest: _f10(1));
+    b.writeln('<UnitPrice>${_f10(unitPrice)}</UnitPrice>');
+    b.writeln('<CurVal>${_f10(matCurrencyVal)}</CurVal>');
+    b.writeln('<Quantity>${_f10(quantity)}</Quantity>');
 
-      builder.element('DiscountRatio', nest: _f10(0));
-      builder.element('ExtraRatio', nest: _f10(0));
-      builder.element('BonusDiscounts', nest: _f10(0));
+    b.writeln('<CurBonus>${_f10(matBonus)}</CurBonus>');
+    b.writeln('<CurUnit>${matDefUnit ?? ''}</CurUnit>');
+    b.writeln('<CurUnitFact>${_f10(1)}</CurUnitFact>');
 
-      builder.element('Profit', nest: _f10(profit));
+    b.writeln('<DiscountRatio>${_f10(0)}</DiscountRatio>');
+    b.writeln('<ExtraRatio>${_f10(0)}</ExtraRatio>');
+    b.writeln('<BonusDiscounts>${_f10(0)}</BonusDiscounts>');
 
-      builder.element('Length', nest: _f10(0));
-      builder.element('Width', nest: _f10(0));
-      builder.element('Height', nest: _f10(0));
-      builder.element('Count', nest: _f10(0));
-      builder.element('Qty2', nest: _f10(0));
-      builder.element('Qty3', nest: _f10(0));
+    b.writeln('<Profit>${_f10(profit)}</Profit>');
 
-      builder.element('Vat', nest: _f10(matVAT));
+    b.writeln('<Length>${_f10(0)}</Length>');
+    b.writeln('<Width>${_f10(0)}</Width>');
+    b.writeln('<Height>${_f10(0)}</Height>');
+    b.writeln('<Count>${_f10(0)}</Count>');
 
-      builder.element('CostPtr', nest: matVatGuid ?? '');
-      builder.element('ClassPtr');
+    // second XML expects Qty2 / Qty3 populated
+    b.writeln('<Qty2>${_f10(quantity)}</Qty2>');
+    b.writeln('<Qty3>${_f10(quantity)}</Qty3>');
 
-      builder.element('ProdDate', nest: _dateOr1980(matCreateDate));
-      builder.element('ExpireDate', nest: _dateOr1980(null));
+    b.writeln('<Vat>${_f10(vatValue)}</Vat>');
 
-      builder.element('ProdFlag', nest: (matProdFlag ?? 0).toString());
-      builder.element('ExpireFlag', nest: (matExpireFlag ?? 0).toString());
-      builder.element('Unit2Flag', nest: (matUnit2FactFlag ?? 0).toString());
-      builder.element('Unit3Flag', nest: (matUnit3FactFlag ?? 0).toString());
+   // b.writeln('<CostPtr>${matVatGuid ?? ''}</CostPtr>');
+    b.writeln('<ClassPtr/>');
 
-      builder.element('SNFlag', nest: (matSNFlag ?? 0).toString());
-      builder.element('ForceInSN', nest: (matForceInSN ?? 0).toString());
-      builder.element('ForceOutSN', nest: (matForceOutSN ?? 0).toString());
+    b.writeln('<ProdDate>${_dateOr1980(matCreateDate)}</ProdDate>');
+    b.writeln('<ExpireDate>${_dateOr1980(null)}</ExpireDate>');
 
-      builder.element('guid', nest: matNewGUID ?? id ?? '');
+    b.writeln('<ProdFlag>${matProdFlag ?? 0}</ProdFlag>');
+    b.writeln('<ExpireFlag>${matExpireFlag ?? 0}</ExpireFlag>');
+    b.writeln('<Unit2Flag>${matUnit2FactFlag ?? 0}</Unit2Flag>');
+    b.writeln('<Unit3Flag>${matUnit3FactFlag ?? 0}</Unit3Flag>');
 
-      builder.element('SNReadFlag', nest: (serialNumbers?.isNotEmpty ?? false) ? '1' : '0');
-      builder.element('PriceSecViol', nest: (matSecurity ?? 0).toString());
-      builder.element('m_SecViol', nest: (matSecurity ?? 0).toString());
-      builder.element('m_SOType', nest: (matType ?? 0).toString());
-      builder.element('m_SOGuid', nest: matOldGUID ?? '');
+    b.writeln('<SNFlag>${matSNFlag ?? 0}</SNFlag>');
+    b.writeln('<ForceInSN>${matForceInSN ?? 0}</ForceInSN>');
+    b.writeln('<ForceOutSN>${matForceOutSN ?? 0}</ForceOutSN>');
 
-      builder.element('BillSubTotal', nest: _f10(subtotal));
-      builder.element('TotalBillDisc', nest: _f10(0));
-      builder.element('TotalBillExtra', nest: _f10(0));
+    //b.writeln('<guid>${matNewGUID ?? id ?? ''}</guid>');
 
-      builder.element('Assembled', nest: (matAss ?? 0).toString());
-      builder.element('Flexible', nest: (matHasSegments ?? 0).toString());
-      builder.element('Required', nest: '0');
+    b.writeln('<SNReadFlag>${(serialNumbers?.isNotEmpty ?? false) ? 1 : 0}</SNReadFlag>');
+    b.writeln('<PriceSecViol>${matSecurity ?? 0}</PriceSecViol>');
+    b.writeln('<m_SecViol>${matSecurity ?? 0}</m_SecViol>');
+    b.writeln('<m_SOType>${matType ?? 0}</m_SOType>');
+    b.writeln('<m_SOGuid>${matOldGUID ?? ''}</m_SOGuid>');
 
-      builder.element('mtDim');
-      builder.element('mtOrigin');
-      builder.element('mtPos');
-      builder.element('mtCompany');
-      builder.element('mtColor');
-      builder.element('mtProvenance');
+    b.writeln('<BillSubTotal>${_f10(subtotal)}</BillSubTotal>');
+    b.writeln('<TotalBillDisc>${_f10(0)}</TotalBillDisc>');
+    b.writeln('<TotalBillExtra>${_f10(0)}</TotalBillExtra>');
 
-      builder.element('Barcode', nest: matBarCode ?? '');
+    b.writeln('<Assembled>${matAss ?? 0}</Assembled>');
+    b.writeln('<Flexible>${matHasSegments ?? 0}</Flexible>');
+    b.writeln('<Required>0</Required>');
 
-      builder.element('mtQuality');
-      builder.element('mtModel');
+    b.writeln('<mtDim/>');
+    b.writeln('<mtOrigin/>');
+    b.writeln('<mtPos/>');
+    b.writeln('<mtCompany/>');
+    b.writeln('<mtColor/>');
+    b.writeln('<mtProvenance/>');
 
-      builder.element('bPrintInBill', nest: '1'); // no field exists
-      builder.element('bPrintPriceInBill', nest: '1'); // no field exists
-      builder.element('bSharedFld', nest: (matFlag ?? 0).toString());
+    b.writeln('<Barcode>${matBarCode ?? ''}</Barcode>');
 
-      builder.element('mtParentGuid', nest: matParent ?? '');
+    b.writeln('<mtQuality/>');
+    b.writeln('<mtModel/>');
 
-      builder.element('VatRatio', nest: _f10(matVAT));
-      builder.element('mtVatRatio', nest: _f10(0));
-      builder.element('mtType', nest: (matType ?? 0).toString());
-      builder.element('ClassPrice', nest: _f10(calcMinPrice));
-      builder.element('mtClassFlag', nest: (matClassFlag ?? 0).toString());
-      builder.element('mtItemNumer', nest: matQuantity?.toString() ?? '0');
+    b.writeln('<bPrintInBill>1</bPrintInBill>');
+    b.writeln('<bPrintPriceInBill>1</bPrintPriceInBill>');
+    b.writeln('<bSharedFld>${matFlag ?? 0}</bSharedFld>');
 
-      builder.element('MatCardVATTaxCode', nest: matVAT?.toString() ?? '');
-      builder.element('MatCardVATTaxRatio', nest: _f2(matVAT));
-      builder.element('MatCardExciseTaxCode', nest: '');
-      builder.element('MatCardExciseTaxRatio', nest: '0.00');
-      builder.element('MatCardIsProfitMargin', nest: '0');
-      builder.element('BillItemTaxCode', nest: matVAT?.toString() ?? '');
+    b.writeln('<mtParentGuid>${matParent ?? ''}</mtParentGuid>');
 
-      builder.element('BillCurrencyGuid', nest: matCurrencyGuid ?? '');
+    // IMPORTANT: second XML uses VAT PERCENT here
+    b.writeln('<VatRatio>${_f10(vatPercent)}</VatRatio>');
+    b.writeln('<mtVatRatio>${_f10(0)}</mtVatRatio>');
+    b.writeln('<mtType>${matType ?? 0}</mtType>');
+    b.writeln('<ClassPrice>${_f10(calcMinPrice)}</ClassPrice>');
+    b.writeln('<mtClassFlag>${matClassFlag ?? 0}</mtClassFlag>');
+    b.writeln('<mtItemNumer>${matQuantity ?? 0}</mtItemNumer>');
 
-      builder.element('CompositionName', nest: matCompositionName ?? '');
-    });
+    b.writeln('<MatCardVATTaxCode>$vatPercent</MatCardVATTaxCode>');
+    b.writeln('<MatCardVATTaxRatio>${_f2(vatPercent)}</MatCardVATTaxRatio>');
+    b.writeln('<MatCardExciseTaxCode/>');
+    b.writeln('<MatCardExciseTaxRatio>0.00</MatCardExciseTaxRatio>');
+    b.writeln('<MatCardIsProfitMargin>0</MatCardIsProfitMargin>');
+    b.writeln('<BillItemTaxCode>$vatPercent</BillItemTaxCode>');
+
+    b.writeln('<BillCurrencyGuid>${matCurrencyGuid ?? ''}</BillCurrencyGuid>');
+    b.writeln('<CompositionName>${matCompositionName ?? ''}</CompositionName>');
+    b.writeln('</MatRec>');
+
+    return b.toString();
   }
 
 
-
-
-  factory MaterialModel.fromXml(String xmlString) {
-    final document = XmlDocument.parse(xmlString);
-    final mat = document.findAllElements('MatRec').first;
-
-    String text(String name) =>
-        mat.getElement(name)?.innerText.trim() ?? '';
-
-    int? intVal(String name) {
-      final v = text(name);
-      return v.isEmpty ? null : int.tryParse(v);
-    }
-
-    double? doubleVal(String name) {
-      final v = text(name);
-      return v.isEmpty ? null : double.tryParse(v);
-    }
-
-    DateTime? dateVal(String name) {
-      final v = text(name);
-      if (v.isEmpty || v == '1-1-1980') return null;
-      return DateTime.tryParse(v);
-    }
-
-    return MaterialModel(
-      id: text('MatPtr').isEmpty ? null : text('MatPtr'),
-      matName: text('Name'),
-      matCode: intVal('Code'),
-      matUnity: text('UnityName'),
-      matBarCode: text('Barcode'),
-      matLastPriceCurVal: doubleVal('UnitPrice'),
-      matQuantity: doubleVal('Quantity')?.toInt(),
-      matVAT: doubleVal('Vat'),
-      matCreateDate: dateVal('ProdDate'),
-      matProdFlag: intVal('ProdFlag'),
-      matExpireFlag: intVal('ExpireFlag'),
-      matUnit2FactFlag: intVal('Unit2Flag'),
-      matUnit3FactFlag: intVal('Unit3Flag'),
-      matSNFlag: intVal('SNFlag'),
-      matForceInSN: intVal('ForceInSN'),
-      matForceOutSN: intVal('ForceOutSN'),
-      matNewGUID: text('guid').isEmpty ? null : text('guid'),
-    );
+  String toXml() {
+    final matRecXml = _buildMatRecXml();
+    return matRecXml;
   }
+
+
 
 
 }

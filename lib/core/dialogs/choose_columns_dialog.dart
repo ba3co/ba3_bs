@@ -3,11 +3,10 @@ import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/bill/controllers/pluto/bill_details_pluto_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/styling/app_colors.dart';
-import '../../../../core/widgets/custom_checklist.dart';
+import '../constants/app_strings.dart';
+import '../styling/app_colors.dart';
+import '../widgets/custom_checklist.dart';
 
 class MaterialAttributesDialog extends StatefulWidget {
   BillDetailsPlutoController billDetailsPlutoController;
@@ -21,28 +20,30 @@ class _MaterialAttributesDialogState extends State<MaterialAttributesDialog> {
   List<String> _selectedAttributes = [];
 
   final List<String> materialAttributes = [
-    AppStrings.material.tr,
+    // AppStrings.quantity.tr,
+
+    AppStrings.materialCode.tr,
+    AppStrings.materialName.tr,
+    AppStrings.barcode.tr,
     AppStrings.quantity.tr,
+    AppStrings.consumer.tr,
     AppStrings.individual.tr,
     AppStrings.tax.tr,
     AppStrings.total.tr,
+
+    AppStrings.retailPrice.tr,
+    AppStrings.wholesale.tr,
+
+
+
     AppStrings.gifts.tr,
     AppStrings.invRecSubTotalWithVat.tr,
     AppStrings.productSerialNumbers.tr,
     AppStrings.productSoldSerialNumber.tr,
 
-    AppStrings.materialName.tr,
     AppStrings.identificationNumber.tr,
-    AppStrings.quantity.tr,
     AppStrings.mediatorPrice.tr,
     AppStrings.lastPayPrice.tr,
-    AppStrings.retailPrice.tr,
-    AppStrings.consumer.tr,
-    AppStrings.wholesale.tr,
-    AppStrings.materialCode.tr,
-    AppStrings.barcode.tr,
-
-
   ];
 
   void _onSelect(String attribute) {
@@ -106,7 +107,6 @@ super.initState();
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 15,
                 children: [
-                  AppButton(title: AppStrings.cancel.tr, onPressed:() => Navigator.pop(context),color: Colors.red,iconData: FontAwesomeIcons.cancel, ),
                   AppButton(title: AppStrings.confirm.tr, onPressed: () {
                     widget.billDetailsPlutoController.exportBillItemsToExcel(ExportFilterOption.all,columnsToExport: _selectedAttributes);
                   },color: AppColors.greenColor,iconData: Icons.check,),

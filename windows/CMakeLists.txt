@@ -5,6 +5,7 @@ project(ba3_bs LANGUAGES CXX)
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "ba3_bs")
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
