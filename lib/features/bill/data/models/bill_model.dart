@@ -17,6 +17,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/interfaces/excel_nested_exportable.dart';
 import '../../../../core/widgets/pluto_auto_id_column.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import 'bill_details.dart';
@@ -27,7 +28,7 @@ part 'bill_model.g.dart';
 
 @HiveType(typeId: 3)
 // ignore: must_be_immutable
-class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable {
+class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable ,ExcelNestedExportable {
   @HiveField(0)
   final String? billId;
 
@@ -385,10 +386,10 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         PlutoColumn(title: AppStrings.vatName.tr, field: 'الضريبة', type: PlutoColumnType.text()): freeBill == true
             ? AppConstants.taxFreeAccountName.replaceAll('ضريبة القيمة المضافة', '')
             : AppConstants.taxLocalAccountName.replaceAll('ضريبة القيمة المضافة', ''),
-    PlutoColumn(title: AppStrings.materials.tr, field: 'المواد', type: PlutoColumnType.text()): items.itemList.map((e) =>"(${e.itemName})",).toList().join('\n'),
+    PlutoColumn(title: AppStrings.materials.tr, field: 'المواد', type: PlutoColumnType.text()): items.itemList.map((e) =>"(${e.itemName})",).toList(),
     PlutoColumn(title: AppStrings.requiredRequestNumber.tr, field: 'ads', type: PlutoColumnType.text()):billDetails.orderNumber,
-
-      };
+    PlutoColumn(title: 'nested', field: '_isNested', type: PlutoColumnType.text(), hide: true): AppStrings.materials.tr, // <-- points to the nested column
+  };
 
   List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;
 
@@ -449,4 +450,43 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         billDetails,
         status,
       ];
+
+  @override
+  Map<String, dynamic> buildParentExcelRow(List<String> fields) {
+    final map = <String, dynamic>{};
+
+    for (final field in fields) {
+      map[field] = '';
+    }
+
+    map[AppConstants.billIdFiled] = billId;
+    map['رقم الفاتورة'] = billDetails.billNumber;
+    map['التاريخ'] = billDetails.billDate?.dayMonthYear;
+    map['المجموع الكلي'] = billDetails.billTotal;
+    map['حساب العميل'] =
+        billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '';
+    map['البيان'] = billDetails.billNote ?? '';
+
+    return map;
+  }
+
+  @override
+  List<Map<String, dynamic>> buildChildExcelRows(List<String> fields) {
+    return items.itemList.map((item) {
+      final row = <String, dynamic>{};
+
+      for (final field in fields) {
+        row[field] = '';
+      }
+
+      row[AppStrings.materials.tr] = item.itemName;
+      row['الكمية'] = item.itemQuantity;
+      row['السعر'] = item.itemSubTotalPrice;
+      row['الإجمالي'] = item.itemTotalPrice;
+      row['الضريبة'] = item.itemVatPrice;
+
+      return row;
+    }).toList();
+  }
+
 }

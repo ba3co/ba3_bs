@@ -853,7 +853,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
               height: 150,
               child: GetBuilder<BillReportController>(builder: (billReportController) {
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   // spacing: 10,
                   children: [

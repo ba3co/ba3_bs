@@ -44,6 +44,7 @@ class PlutoController extends GetxController {
         );
     return PlutoRow(cells: cells);
   }
+
   void exportRowsToExcel(
       ExportFilterOption option, {
         List<String>? columnsToExport,
@@ -52,8 +53,9 @@ class PlutoController extends GetxController {
 
     // Determine which columns to export
     final fieldsToExport = columnsToExport ??
-        stateManager.columns.map((c) => c.field).toList(); // Use all columns if none specified
+        stateManager.columns.map((c) => c.field).toList();
 
+    // Filter rows based on the option (assuming 'extra_notes' is the checkbox field)
     final filteredRows = rows.where((row) {
       final value = row.cells['extra_notes']?.value?.toString();
       switch (option) {
@@ -66,13 +68,75 @@ class PlutoController extends GetxController {
       }
     });
 
-    final jsonList = filteredRows.map((row) {
-      return Map.fromEntries(
+    final jsonList = <Map<String, dynamic>>[];
+
+    // Create an empty map template
+    final emptyMap = <String, dynamic>{};
+    for (final field in fieldsToExport) {
+      if (field == '_isNested') continue;
+      emptyMap[field] = '';
+    }
+
+    for (final row in filteredRows) {
+      // Check for nested indicator
+      final nestedTitle = row.cells['_isNested']?.value?.toString();
+
+      if (nestedTitle != null) {
+        // Find the nested column by title
+        final nestedCol = stateManager.columns
+            .firstWhereOrNull((c) => c.title == nestedTitle);
+
+        if (nestedCol != null) {
+          final nestedField = nestedCol.field;
+          final nestedVal = row.cells[nestedField]?.value;
+
+          List<String> items = [];
+          if (nestedVal is List) {
+            items = nestedVal.map((e) => e.toString().replaceAll('(', '').replaceAll(')', '').trim()).toList();
+          } else if (nestedVal != null) {
+            String valStr = nestedVal.toString();
+            if (valStr.startsWith('[') && valStr.endsWith(']')) {
+              valStr = valStr.substring(1, valStr.length - 1);
+            }
+            items = valStr.split(',').map((s) => s.replaceAll('(', '').replaceAll(')', '').trim()).toList();
+          }
+
+          // Create main row map (all fields except _isNested)
+          final mainMap = <String, dynamic>{};
+          for (final field in fieldsToExport) {
+            if (field == '_isNested') continue;
+            final cellValue = row.cells[field]?.value;
+            mainMap[field] = (field == nestedField)
+                ? (items.isNotEmpty ? items.first : '')
+                : cellValue;
+          }
+          jsonList.add(mainMap);
+
+          // Create sub-rows for remaining items
+          for (final item in items.skip(1)) {
+            final subMap = <String, dynamic>{};
+            for (final field in fieldsToExport) {
+              if (field == '_isNested') continue;
+              subMap[field] = (field == nestedField) ? item : '';
+            }
+            jsonList.add(subMap);
+          }
+
+          jsonList.add(Map.from(emptyMap)); // Add empty row after bill
+          continue; // Skip adding the default map
+        }
+      }
+
+      // Default behavior for non-nested rows (exclude _isNested if present)
+      final defaultMap = Map.fromEntries(
         row.cells.entries
-            .where((e) => fieldsToExport.contains(e.key))
+            .where((e) =>
+        fieldsToExport.contains(e.key) && e.key != '_isNested')
             .map((e) => MapEntry(e.key, e.value.value)),
       );
-    }).toList();
+      jsonList.add(defaultMap);
+      jsonList.add(Map.from(emptyMap)); // Add empty row after bill
+    }
 
     exportJsonToExcel(jsonList);
   }
