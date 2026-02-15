@@ -469,23 +469,22 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
 
   void processFilteredEntryBondItemsAsync(List<EntryBondItemModel> fetchedItems) {
     log(fetchedItems.length.toString(), name: 'fetchedItems');
+
     final List<EntryBondItemModel> helperList = [];
 
+    // Merge by docId ONLY → purchase and tax part become one row
     filteredEntryBondItems.addAll(
-      fetchedItems.mergeBy<BondKey>(
-            (bondItem) => BondKey(
-          bondItem.docId ?? '',
-          bondItem.bondItemType?.label ?? '',
-        ),
+      fetchedItems.mergeBy<String>(
+            (bondItem) => bondItem.docId ?? '',
             (accumulated, current) {
           return EntryBondItemModel(
             account: current.account,
             originTypeId: current.originTypeId,
             amount: (accumulated.amount ?? 0) + (current.amount ?? 0),
-            bondItemType: current.bondItemType,
+            bondItemType: current.bondItemType,           // keeps الدائن (same in both)
             date: current.date,
             docId: current.docId,
-            note: "${current.note} + ${accumulated.note}",
+            note: "${accumulated.note} + ${current.note}",
             originId: current.originId,
             amountAfterOperation: 0,
             originName: current.originName,
@@ -495,7 +494,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     );
 
     double balance = 0.0;
-
     filteredEntryBondItems.sortBy((bondItem) => bondItem.date!);
 
     helperList.assignAll(filteredEntryBondItems);
@@ -511,7 +509,6 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       }),
     );
   }
-
 
   void _setLoadingState(bool state) {
     isLoading = state;
@@ -561,8 +558,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
       filtered = _filterEntryBondItemsByBillTypeUseCase.execute(selectedTypeIds, filtered);
     }
 
-    filteredEntryBondItems = filtered;
-    processFilteredEntryBondItemsAsync(filteredEntryBondItems);
+
+    processFilteredEntryBondItemsAsync(filtered);
     _calculateValues();
   }
 
