@@ -220,6 +220,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         selectedTypeIds.add(item.typeGuide);
       }
     }
+    update();
   }
 
   void onItemRemoved(Object item) {
@@ -248,6 +249,7 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
         isChequeTypesSelectedAll.value=false;
       }
     }
+    update();
   }
 
   void selectAllBills(List<BillTypeModel> items) {
@@ -471,6 +473,8 @@ class AccountStatementController extends GetxController with FloatingLauncher, A
     log(fetchedItems.length.toString(), name: 'fetchedItems');
 
     final List<EntryBondItemModel> helperList = [];
+
+    filteredEntryBondItems.clear();
 
     // Merge by docId ONLY → purchase and tax part become one row
     filteredEntryBondItems.addAll(

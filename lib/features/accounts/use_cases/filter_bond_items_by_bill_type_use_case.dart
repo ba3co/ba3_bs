@@ -14,7 +14,7 @@ class FilterEntryBondItemsByBillTypesUseCase {
 
     return entryBondItems.where((item) {
       final billTypeId = (item.originTypeId ?? "").toLowerCase();
-      item.printDetails();
+      //item.printDetails();
 
 
       // Check if ANY billType is a substring of note

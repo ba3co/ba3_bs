@@ -96,12 +96,11 @@ class AccountFilterDialog extends StatelessWidget {
                                       }
 
                                       final billTypes = snapshot.data!;
-                                      final controller = Get.find<AccountStatementController>();
 
                                       return Obx(() => SelectableChecklistSection<BillTypeModel>(
                                         title: AppStrings.bills.tr,
                                         items: billTypes,
-                                        initiallySelected: controller.selectedBillTypeIds,
+                                        initiallySelected: controller.selectedBillTypeIds.value,
                                         displayText: (e) => e.fullName!,
                                         isAllSelected: controller.isBillTypesSelectedAll.value,
                                         onSelectAll: () => controller.selectAllBills(billTypes),
@@ -120,12 +119,11 @@ class AccountFilterDialog extends StatelessWidget {
                                       }
 
                                       final bondTypes = snapshot.data!;
-                                      final controller = Get.find<AccountStatementController>();
 
                                       return Obx(() => SelectableChecklistSection<BondTypeModel>(
                                         title: AppStrings.bonds.tr,
                                         items: bondTypes,
-                                        initiallySelected: controller.selectedBondTypeIds,
+                                        initiallySelected: controller.selectedBondTypeIds.value,
                                         displayText: (e) => e.value,
                                         isAllSelected: controller.isBondTypesSelectedAll.value,
                                         onSelectAll: () => controller.selectAllBonds(bondTypes),
@@ -144,12 +142,11 @@ class AccountFilterDialog extends StatelessWidget {
 
                                       final chequeTypes =
                                       snapshot.data!.where((e) => e.label.isNotEmpty).toList();
-                                      final controller = Get.find<AccountStatementController>();
 
                                       return Obx(() => SelectableChecklistSection<ChequeType>(
                                         title: AppStrings.cheques.tr,
                                         items: chequeTypes,
-                                        initiallySelected: controller.selectedChequeTypeIds,
+                                        initiallySelected: controller.selectedChequeTypeIds.value,
                                         displayText: (e) => e.value,
                                         isAllSelected: controller.isChequeTypesSelectedAll.value,
                                         onSelectAll: () => controller.selectAllCheques(chequeTypes),
