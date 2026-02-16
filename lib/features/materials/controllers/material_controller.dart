@@ -34,6 +34,7 @@ import '../../print/controller/print_controller.dart';
 import '../data/models/materials/material_model.dart';
 import '../ui/screens/add_material_screen.dart';
 import '../ui/widgets/add_material/copies_dialog.dart';
+import '../ui/widgets/add_material/label_settings_dialog.dart';
 import 'mats_statement_controller.dart';
 
 class MaterialController extends GetxController with AppNavigator, FloatingLauncher {
@@ -795,16 +796,30 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       return;
     }
 
-    // 👍 اسأل المستخدم عن عدد النسخ
+    // واجهة إعدادات اللصاقة أولاً (اسم، باركود، سعر، نسبة البطارية)
+    final labelData = await showLabelSettingsDialog(context, material: material);
+    if (labelData == null) return;
+
+    // ثم اسأل عن عدد النسخ
     final copies = await pickCopiesDialog(context, initial: 1, min: 1, max: 500);
+    if (copies == null) return;
 
-    if (copies == null) {
-      // المستخدم أغلق الحوار
-      return;
-    }
+    await printMaterialBarcodeWithLabelData(labelData: labelData, copies: copies);
+  }
 
-    // تابع طباعة الباركود بعدد النسخ المختار
-    printMaterialBarcode(material: material, copies: copies);
+  /// طباعة اللصاقة باستخدام بيانات إعدادات اللصاقة (بدون ترجمة).
+  Future<void> printMaterialBarcodeWithLabelData({
+    required LabelSettingsResult labelData,
+    required int copies,
+  }) async {
+    final title = labelData.name.length >= 193 ? labelData.name.substring(0, 193) : labelData.name;
+    await read<PrintingController>().printTitlePriceBarcodeFullWidth(
+      barcodeData: labelData.barcode,
+      copies: copies,
+      title: title,
+      priceText: labelData.priceText,
+      batteryText: labelData.batteryPercent,
+    );
   }
 
   printMaterialBarcode({int copies = 1, required MaterialModel material}) async {

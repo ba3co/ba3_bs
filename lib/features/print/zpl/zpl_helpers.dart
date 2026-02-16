@@ -11,7 +11,8 @@ String _zplSanitize(String s) {
 }
 
 bool _isAllDigits(String s) => RegExp(r'^\d+$').hasMatch(s);
-bool _looksLikeEan13(String s) => _isAllDigits(s) && (s.length == 12 || s.length == 13);
+bool _looksLikeEan13(String s) =>
+    _isAllDigits(s) && (s.length == 12 || s.length == 13);
 
 /// ليبل: "اسم (سطرين) ثم سعر ثم باركود ممتد بعرض اللصاقة مع هوامش هادئة"
 /// - يمدد EAN-13 على كامل عرض منطقة الطباعة (مع ترك quiet zones).
@@ -21,6 +22,7 @@ String buildTitlePriceBarcodeFullWidthZpl({
   required String data,
   String? title,
   String? priceText,
+  String? batteryText,
 
   // مقاس اللصاقة
   double labelWidthMm = 50,
@@ -41,21 +43,30 @@ String buildTitlePriceBarcodeFullWidthZpl({
   double quietZoneMm = 2.0,
 
   // نصوص
-  int titleFontHeight = 24,   // أصغر شوي
+  int titleFontHeight = 24, // أصغر شوي
   int titleLineSpacing = 2,
   int titleMaxLines = 2,
   int priceFontHeight = 22,
+  int batteryFontHeight = 18,
 
   // ارتفاع الباركود
   int barcodeHeight = 110,
+  // خط رقم الباركود تحت الشريط
+  int barcodeNumberFontHeight = 18,
 }) {
   final W = mmToDots(labelWidthMm);
   final H = mmToDots(labelHeightMm);
   final Q = mmToDots(quietZoneMm);
 
   final d = _zplSanitize(data);
-  final t = (title != null && title.trim().isNotEmpty) ? _zplSanitize(title) : null;
-  final p = (priceText != null && priceText.trim().isNotEmpty) ? _zplSanitize(priceText) : null;
+  final t =
+      (title != null && title.trim().isNotEmpty) ? _zplSanitize(title) : null;
+  final p = (priceText != null && priceText.trim().isNotEmpty)
+      ? _zplSanitize(priceText)
+      : null;
+  final b = (batteryText != null && batteryText.trim().isNotEmpty)
+      ? _zplSanitize(batteryText)
+      : null;
 
   final innerWidth = W - marginLeftDots - marginRightDots;
 
@@ -73,7 +84,8 @@ String buildTitlePriceBarcodeFullWidthZpl({
   if (t != null) {
     buf
       ..write('^CF0,$titleFontHeight')
-      ..write('^FO$marginLeftDots,$y^FB$innerWidth,$titleMaxLines,$titleLineSpacing,C,0^FD$t^FS\n');
+      ..write(
+          '^FO$marginLeftDots,$y^FB$innerWidth,$titleMaxLines,$titleLineSpacing,C,0^FD$t^FS\n');
     y += (titleMaxLines * (titleFontHeight + titleLineSpacing)) + 6;
   }
 
@@ -85,23 +97,32 @@ String buildTitlePriceBarcodeFullWidthZpl({
     y += priceFontHeight + 8;
   }
 
+  // ---- نسبة البطارية مع علامة بطارية (اختياري)
+  if (b != null) {
+    const batteryLabel =
+        'Batt '; // علامة البطارية بجانب النسبة (ASCII لضمان الطباعة)
+    final batteryLine = '$batteryLabel$b';
+    buf
+      ..write('^CF0,$batteryFontHeight')
+      ..write(
+          '^FO$marginLeftDots,$y^FB$innerWidth,1,0,C,0^FD$batteryLine^FS\n');
+    y += batteryFontHeight + 6;
+  }
+
   // ---- الباركود بعرض اللصاقة بالكامل مع هوامش هادئة
   final isEan = _looksLikeEan13(d);
   // منطقة الباركود الأفقية المتاحة = innerWidth - 2*Q
   final availBarcodeWidth = innerWidth - 2 * Q;
 
-  // اضبط ارتفاع الباركود إذا بقي قليل مساحة عمودية:
-  final minNeeded = y + barcodeHeight + marginBottomDots;
-  int finalH = (minNeeded > H) ? minNeeded : H;
-
-  buf.writeln('^BY2,2,$barcodeHeight'); // الافتراضي، سنعدل الموديول لاحقًا حسب النوع
+  buf.writeln(
+      '^BY2,2,$barcodeHeight'); // الافتراضي، سنعدل الموديول لاحقًا حسب النوع
 
   if (isEan) {
     // EAN-13 ثابت 95 وحدة (بدون احتساب الهدوء الذي نتركه نحن)
     const eanModules = 95;
     int module = (availBarcodeWidth / eanModules).floor();
-    if (module < 2) module = 2;        // لا تنزل أقل من 2 لضمان جودة
-    if (module > 4) module = 4;        // لا ترفع كثيراً حتى لا يتجاوز الهدوء
+    if (module < 2) module = 2; // لا تنزل أقل من 2 لضمان جودة
+    if (module > 4) module = 4; // لا ترفع كثيراً حتى لا يتجاوز الهدوء
 
     final eanWidthDots = module * eanModules;
     // ضع الباركود بحيث يترك Q يمين ويسار ويتمركز في innerWidth
@@ -129,7 +150,8 @@ String buildTitlePriceBarcodeFullWidthZpl({
     final left = marginLeftDots + Q;
     final right = W - marginRightDots - Q;
     final centerX = ((left + right) / 2).round();
-    final approxWidth = (d.length * 11 + 35) * module; // تقدير تقريبي لعرض Code128
+    final approxWidth =
+        (d.length * 11 + 35) * module; // تقدير تقريبي لعرض Code128
     int barcodeX = centerX - (approxWidth ~/ 2);
     if (barcodeX < left) barcodeX = left;
     if (barcodeX + approxWidth > right) barcodeX = right - approxWidth;
@@ -139,10 +161,17 @@ String buildTitlePriceBarcodeFullWidthZpl({
       ..writeln('^FO$barcodeX,$y^BCN,$barcodeHeight,N,N,N^FD$d^FS');
   }
 
-  y += barcodeHeight + 6;
+  y += barcodeHeight + 4;
+
+  // ---- رقم الباركود تحت الشريط (مقروء)
+  buf
+    ..write('^CF0,$barcodeNumberFontHeight')
+    ..write('^FO$marginLeftDots,$y^FB$innerWidth,1,0,C,0^FD$d^FS\n');
+  y += barcodeNumberFontHeight + 6;
 
   // تحديث الطول لو احتجنا
-  if (finalH != H) buf.writeln('^LL$finalH');
+  final minNeededWithNumber = y + marginBottomDots;
+  if (minNeededWithNumber > H) buf.writeln('^LL$minNeededWithNumber');
 
   buf.writeln('^XZ');
   return buf.toString();
