@@ -89,28 +89,26 @@ String buildTitlePriceBarcodeFullWidthZpl({
     y += (titleMaxLines * (titleFontHeight + titleLineSpacing)) + 6;
   }
 
-  // ---- السعر تحت الاسم مباشرة (وسط)
-  if (p != null) {
+  // ---- السعر ونسبة البطارية في سطر واحد مع فراغ بينهما (وسط)
+  final priceAndBatteryLine = () {
+    if (p != null && b != null) {
+      const batteryLabel = 'Batt ';
+      return '$p   $batteryLabel$b';
+    }
+    if (p != null) return p;
+    if (b != null) return 'Batt $b';
+    return null;
+  }();
+  if (priceAndBatteryLine != null) {
     buf
       ..write('^CF0,$priceFontHeight')
-      ..write('^FO$marginLeftDots,$y^FB$innerWidth,1,0,C,0^FD$p^FS\n');
+      ..write(
+          '^FO$marginLeftDots,$y^FB$innerWidth,1,0,C,0^FD$priceAndBatteryLine^FS\n');
     y += priceFontHeight + 8;
   }
 
-  // ---- نسبة البطارية مع علامة بطارية (اختياري)
-  if (b != null) {
-    const batteryLabel =
-        'Batt '; // علامة البطارية بجانب النسبة (ASCII لضمان الطباعة)
-    final batteryLine = '$batteryLabel$b';
-    buf
-      ..write('^CF0,$batteryFontHeight')
-      ..write(
-          '^FO$marginLeftDots,$y^FB$innerWidth,1,0,C,0^FD$batteryLine^FS\n');
-    y += batteryFontHeight + 6;
-  }
-
   // ---- الباركود بعرض اللصاقة بالكامل مع هوامش هادئة
-  final isEan = _looksLikeEan13(d);
+  final isEan = false;
   // منطقة الباركود الأفقية المتاحة = innerWidth - 2*Q
   final availBarcodeWidth = innerWidth - 2 * Q;
 
