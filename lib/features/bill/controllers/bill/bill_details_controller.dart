@@ -1016,6 +1016,7 @@ implements IStoreSelectionHandler {
     final filledRows = controller.recordsTableRows.where((row) {
       final product = row.cells["invRecProduct"]?.value?.toString().trim() ?? "";
       final qty = row.cells["invRecQuantity"]?.value?.toString().trim() ?? "";
+
       return product.isNotEmpty && qty.isNotEmpty;
     }).toList();
 
@@ -1027,14 +1028,17 @@ implements IStoreSelectionHandler {
       final vat = double.tryParse(
         row.cells["invRecVat"]?.value?.toString() ?? '0',
       );
+      final unitPrice = row.cells["invRecSubTotal"]?.value?.toString().trim() ?? "";
 
-       MaterialModel material = materialController.getMaterialByName(row.cells["invRecProduct"]?.value?.toString())!;
+
+      MaterialModel material = materialController.getMaterialByName(row.cells["invRecProduct"]?.value?.toString())!;
 
        var materialName = material.matName!.replaceAll('\u2063', '');
        material = material.copyWith(
          matQuantity: int.tryParse(row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
          matVAT: vat,
-           matName: materialName
+           matName: materialName,
+         retailPrice: unitPrice
 
        );
 

@@ -627,7 +627,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     b.writeln('<Qty2>${_f10(quantity)}</Qty2>');
     b.writeln('<Qty3>${_f10(quantity)}</Qty3>');
 
-    b.writeln('<Vat>${_f10(vatValue)}</Vat>');
+    b.writeln('<Vat>$vatValue</Vat>');
 
    // b.writeln('<CostPtr>${matVatGuid ?? ''}</CostPtr>');
     b.writeln('<ClassPtr/>');
@@ -679,7 +679,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     b.writeln('<mtParentGuid>${matParent ?? ''}</mtParentGuid>');
 
     // IMPORTANT: second XML uses VAT PERCENT here
-    b.writeln('<VatRatio>${_f10(vatRatio)}</VatRatio>');
+    b.writeln('<VatRatio>$vatRatio</VatRatio>');
     b.writeln('<mtVatRatio>${_f10(0)}</mtVatRatio>');
     b.writeln('<mtType>${matType ?? 0}</mtType>');
     b.writeln('<ClassPrice>${_f10(calcMinPrice)}</ClassPrice>');

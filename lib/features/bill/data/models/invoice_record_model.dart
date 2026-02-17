@@ -278,6 +278,16 @@ class InvoiceRecordModel {
           return const Text("");
         },
       ): invRecId,
+
+      buildPlutoColumn(
+        title: AppStrings.materialBarcode.tr,
+        field: AppStrings.materialBarcode,
+        type: PlutoColumnType.text(),
+        width: 200,
+        hasContextMenu: false,
+      ): invRecMaterialBarcode,
+
+
       buildPlutoColumn(
         title: AppStrings.materialCode.tr,
         field: AppStrings.materialCode,
@@ -295,13 +305,6 @@ class InvoiceRecordModel {
         hasContextMenu: false,
       ): invRecProduct,
 
-      buildPlutoColumn(
-        title: AppStrings.materialBarcode.tr,
-        field: AppStrings.materialBarcode,
-        type: PlutoColumnType.text(),
-        width: 250,
-        hasContextMenu: false,
-      ): invRecMaterialBarcode,
 
       // Quantity Column
       buildPlutoColumn(
@@ -426,9 +429,21 @@ class InvoiceRecordModel {
     final materialBarcode = t('Barcode');
 
     final quantity = d('Quantity') ?? 1;
-    final unitPrice = d('UnitPrice');
-    final vat = d('Vat');
-    final total = d('BillSubTotal');
+    final unitPrice = d('UnitPrice') ?? 0.0;
+
+    final vatValue = d('Vat');
+
+    final rawVat = (unitPrice * 0.05);
+
+    // Round VAT to 2 decimal places
+    final vat = double.parse(rawVat.toStringAsFixed(2));
+
+    // Total = (unitPrice + vat) * quantity
+
+    final rawTotal = (unitPrice + vat) * quantity;
+
+    final total = double.parse(rawTotal.toStringAsFixed(2));
+
     final giftQty = d('CurBonus');
 
     // Parse serial numbers

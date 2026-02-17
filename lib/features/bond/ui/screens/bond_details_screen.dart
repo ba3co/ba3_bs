@@ -41,7 +41,7 @@ class BondDetailsScreen extends StatelessWidget {
               appBar: BondDetailsAppBar(
                 bondDetailsController: bondDetailsController,
                 bondSearchController: bondSearchController,
-                title: currentBond.bondTypeLabel ?? Get.find<BondTypeService>().getBondTypeByGuide(currentBond.payTypeGuid!).label,
+                title: currentBond.bondTypeLabel ?? Get.find<BondTypeService>().getBondTypeByGuide(currentBond.payTypeGuid!).value,
               ),
               body: Directionality(
                 textDirection: TextDirection.rtl,
