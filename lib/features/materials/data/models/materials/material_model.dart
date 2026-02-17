@@ -586,8 +586,8 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   String _buildMatRecXml() {
     final unitPrice = double.tryParse(retailPrice ?? '') ?? 0.0;
     final quantity = (matQuantity ?? 0).toDouble();
-    final vatPercent = matVAT ?? 0;
-    final vatValue = unitPrice * vatPercent / 100;
+    final vatRatio = 5.0000000000;
+    final vatValue = unitPrice * vatRatio / 100;
     final subtotal = unitPrice * quantity;
     final profit = unitPrice - vatValue;
 
@@ -652,7 +652,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     b.writeln('<m_SOType>${matType ?? 0}</m_SOType>');
     b.writeln('<m_SOGuid>${matOldGUID ?? ''}</m_SOGuid>');
 
-    b.writeln('<BillSubTotal>${_f10(subtotal)}</BillSubTotal>');
+  //  b.writeln('<BillSubTotal>${_f10(subtotal)}</BillSubTotal>');
     b.writeln('<TotalBillDisc>${_f10(0)}</TotalBillDisc>');
     b.writeln('<TotalBillExtra>${_f10(0)}</TotalBillExtra>');
 
@@ -679,19 +679,19 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     b.writeln('<mtParentGuid>${matParent ?? ''}</mtParentGuid>');
 
     // IMPORTANT: second XML uses VAT PERCENT here
-    b.writeln('<VatRatio>${_f10(vatPercent)}</VatRatio>');
+    b.writeln('<VatRatio>${_f10(vatRatio)}</VatRatio>');
     b.writeln('<mtVatRatio>${_f10(0)}</mtVatRatio>');
     b.writeln('<mtType>${matType ?? 0}</mtType>');
     b.writeln('<ClassPrice>${_f10(calcMinPrice)}</ClassPrice>');
     b.writeln('<mtClassFlag>${matClassFlag ?? 0}</mtClassFlag>');
     b.writeln('<mtItemNumer>${matQuantity ?? 0}</mtItemNumer>');
 
-    b.writeln('<MatCardVATTaxCode>$vatPercent</MatCardVATTaxCode>');
-    b.writeln('<MatCardVATTaxRatio>${_f2(vatPercent)}</MatCardVATTaxRatio>');
+    b.writeln('<MatCardVATTaxCode>$vatRatio</MatCardVATTaxCode>');
+    b.writeln('<MatCardVATTaxRatio>${_f2(vatRatio)}</MatCardVATTaxRatio>');
     b.writeln('<MatCardExciseTaxCode/>');
     b.writeln('<MatCardExciseTaxRatio>0.00</MatCardExciseTaxRatio>');
     b.writeln('<MatCardIsProfitMargin>0</MatCardIsProfitMargin>');
-    b.writeln('<BillItemTaxCode>$vatPercent</BillItemTaxCode>');
+    b.writeln('<BillItemTaxCode>$vatRatio</BillItemTaxCode>');
 
     b.writeln('<BillCurrencyGuid>${matCurrencyGuid ?? ''}</BillCurrencyGuid>');
     b.writeln('<CompositionName>${matCompositionName ?? ''}</CompositionName>');
