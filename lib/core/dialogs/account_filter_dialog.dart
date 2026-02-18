@@ -100,7 +100,7 @@ class AccountFilterDialog extends StatelessWidget {
                                       return Obx(() => SelectableChecklistSection<BillTypeModel>(
                                         title: AppStrings.bills.tr,
                                         items: billTypes,
-                                        initiallySelected: controller.selectedBillTypeIds.value,
+                                        initiallySelected: controller.selectedBillTypeIds,
                                         displayText: (e) => e.fullName!,
                                         isAllSelected: controller.isBillTypesSelectedAll.value,
                                         onSelectAll: () => controller.selectAllBills(billTypes),
@@ -123,7 +123,7 @@ class AccountFilterDialog extends StatelessWidget {
                                       return Obx(() => SelectableChecklistSection<BondTypeModel>(
                                         title: AppStrings.bonds.tr,
                                         items: bondTypes,
-                                        initiallySelected: controller.selectedBondTypeIds.value,
+                                        initiallySelected: controller.selectedBondTypeIds,
                                         displayText: (e) => e.value,
                                         isAllSelected: controller.isBondTypesSelectedAll.value,
                                         onSelectAll: () => controller.selectAllBonds(bondTypes),
@@ -146,7 +146,7 @@ class AccountFilterDialog extends StatelessWidget {
                                       return Obx(() => SelectableChecklistSection<ChequeType>(
                                         title: AppStrings.cheques.tr,
                                         items: chequeTypes,
-                                        initiallySelected: controller.selectedChequeTypeIds.value,
+                                        initiallySelected: controller.selectedChequeTypeIds,
                                         displayText: (e) => e.value,
                                         isAllSelected: controller.isChequeTypesSelectedAll.value,
                                         onSelectAll: () => controller.selectAllCheques(chequeTypes),

@@ -23,28 +23,17 @@ class MyApp extends StatelessWidget {
       designSize: const Size(390, 852),
       splitScreenMode: true,
       fontSizeResolver: FontSizeResolvers.height,
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: Banner(
-          message: 'TEST',
-          location: BannerLocation.topEnd,
-          color: Colors.red,
-
-          textDirection: TextDirection.ltr,
-          textStyle:  TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28, backgroundColor: Colors.red,),
-          child: GetMaterialApp(
-          navigatorKey: navigatorKey,
-          // initialBinding: AppBindings(),
-          debugShowCheckedModeBanner: false,
-          scrollBehavior: AppScrollBehavior(),
-          locale: Locale(translationController.localLangCode),
-          translations: AppTranslations(),
-          fallbackLocale: Locale('en', 'US'),
-          title: AppStrings.appTitle.tr,
-          theme: AppThemes.defaultTheme,
-          getPages: appRouter,
-        ),
-            ),
-      ));
+      child: GetMaterialApp(
+      navigatorKey: navigatorKey,
+      // initialBinding: AppBindings(),
+      debugShowCheckedModeBanner: false,
+      scrollBehavior: AppScrollBehavior(),
+      locale: Locale(translationController.localLangCode),
+      translations: AppTranslations(),
+      fallbackLocale: Locale('en', 'US'),
+      title: AppStrings.appTitle.tr,
+      theme: AppThemes.defaultTheme,
+      getPages: appRouter,
+            ));
   }
 }
