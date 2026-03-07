@@ -183,6 +183,9 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   final int? matLocalQuantity;
   @HiveField(56)
   final int? matFreeQuantity;
+
+  @HiveField(57)
+  final List<DateTime>? lastTransactions;
   MaterialModel({
     this.id,
     this.matLocalQuantity,
@@ -241,6 +244,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     this.matQuantity,
     this.calcMinPrice,
     this.serialNumbers,
+    this.lastTransactions
   });
 
   // Factory constructor to create an instance from JSON
@@ -303,6 +307,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice: json['calcMinPrice'] ?? 0.0,
       serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
+      lastTransactions: json['lastTransactions']
     );
   }
 
@@ -365,6 +370,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'MatIsCompositionUpdated': matIsCompositionUpdated,
         'MatInheritsParentSpecs': matInheritsParentSpecs,
         'MatCompositionName': matCompositionName,
+        'lastTransactions':lastTransactions
       };
 
   @override
@@ -508,6 +514,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     final int? matFreeQuantity,
     final double? calcMinPrice,
     final Map<String, bool>? serialNumbers,
+    final List<DateTime>? lastTransactions,
   }) {
     return MaterialModel(
       id: id ?? this.id,
@@ -566,6 +573,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       serialNumbers: serialNumbers ?? this.serialNumbers,
       matLocalQuantity: matLocalQuantity ?? this.matLocalQuantity,
       matFreeQuantity: matFreeQuantity ?? this.matFreeQuantity,
+      lastTransactions: lastTransactions ?? this.lastTransactions,
     );
   }
 

@@ -86,4 +86,7 @@ class ApiConstants {
   static const String entryBondDateField = 'entryBondDate';
 
   static String userTask = 'user_task';
+
+  static const String lastTransactionsField = 'lastTransactions';
+
 }

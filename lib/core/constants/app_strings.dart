@@ -462,4 +462,7 @@ class AppStrings {
   static const String min = "الأدنى";
 
   static const String max = "الأعلى";
+
+  static const String deadStock = "المواد الكاسدة";
+
 }

@@ -271,5 +271,7 @@ final Map<String, String> arAR = {
   AppStrings.paste:"لصق",
   AppStrings.viewOptions:"خيارات العرض",
   AppStrings.min:"الأدني",
-  AppStrings.max:"الأعلى"
+  AppStrings.max:"الأعلى",
+  AppStrings.deadStock : "المواد الكاسدة"
+
 };

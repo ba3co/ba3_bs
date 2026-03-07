@@ -18,9 +18,13 @@ import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../../../core/constants/app_strings.dart';
+import '../../../core/dialogs/choose_start_end_date_dialog.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
@@ -31,6 +35,7 @@ import '../../../core/utils/app_ui_utils.dart';
 import '../../logs/controllers/log_controller.dart';
 import '../data/models/materials/material_model.dart';
 import '../ui/screens/add_material_screen.dart';
+import '../ui/screens/dead_stock_materials_screen.dart';
 
 class MaterialController extends GetxController with AppNavigator, FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
@@ -43,6 +48,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   List<MaterialModel> materials = [];
   List<MaterialModel> materialsForShow = [];
+
+  List<MaterialModel> deadStockMaterialsForShow = [];
+
 
   // Map<String, List<MaterialModel>> get productsGrouped => materials.groupBy((product) => product.matGroupGuid!);
   Map<String, List<MaterialModel>> productsGrouped = {};
@@ -58,6 +66,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   Rx<RequestState> saveMaterialRequestState = RequestState.initial.obs;
 
   Rx<RequestState> deleteMaterialRequestState = RequestState.initial.obs;
+
+  PickerDateRange? datesRange;
+
 
   @override
   onInit() {
@@ -249,6 +260,66 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen());
 
     // to(AppRoutes.showAllMaterialsScreen);
+  }
+
+  void setDateRange(dynamic value) {
+    datesRange = value;
+    update();
+  }
+
+  void onSubmitDeadStockFilter(BuildContext context) {
+    if (datesRange == null) {
+      AppUIUtils.onFailure('الرجاء اختيار فترة زمنية');
+      return;
+    }
+
+    final startDate = datesRange!.startDate!;
+    final endDate = datesRange!.endDate!;
+
+    final filtered = materials.where((material) {
+      final txs = material.lastTransactions ?? [];
+
+      if (txs.isEmpty) return false;
+
+      // Count transactions inside selected range
+      final countInRange = txs.where((date) {
+        return !date.isBefore(startDate) &&
+            !date.isAfter(endDate);
+      }).length;
+
+      // Less than 6 transactions in selected range
+      return countInRange < 6;
+
+    }).toList();
+
+    debugPrint("dead stock count = ${filtered.length}");
+
+    deadStockMaterialsForShow = filtered;
+    navigateToDeadStockScreen(context: context);
+  }
+  showDeadStockFilterDialog({required BuildContext context}) {
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: ApiConstants.accounts.tr,
+        floatingScreen: ChooseStartEndDateDialog(
+        pickedDateRange: datesRange,
+        onSelectionChanged: (value) {
+          setDateRange(value);
+        },
+        onSubmit: () {
+          onSubmitDeadStockFilter(context);
+        },
+      ),
+        defaultHeight: 5,
+        defaultWidth: 20);
+  }
+  void navigateToDeadStockScreen({required BuildContext context}) {
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: AppStrings.deadStock.tr,
+        floatingScreen: DeadStockMaterialsScreen());
+
+    // to(AppRoutes.showAllMaterialsGroupScreen);
   }
 
   List<MaterialModel> searchOfProductByText(String query) {

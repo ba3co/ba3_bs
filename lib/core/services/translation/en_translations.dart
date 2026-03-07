@@ -273,7 +273,8 @@ final Map<String, String> enUS = {
   AppStrings.bondType :"Bond Type",
   AppStrings.min: "Min",
   AppStrings.max: "Max",
-  AppStrings.lastPayPrice :"Last Pay Price"
+  AppStrings.lastPayPrice :"Last Pay Price",
+  AppStrings.deadStock : "Dead Stock"
 
 
 

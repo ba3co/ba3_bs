@@ -30,7 +30,7 @@ class QueryableSavableRepository<T> extends RemoteDataSourceRepository<T> {
       {required List<QueryFilter> queryFilters, DateFilter? dateFilter}) async {
     try {
       final filteredItems = await _queryableSavableDatasource.fetchWhere(
-          queryFilters: queryFilters);
+          queryFilters: queryFilters,dateFilter: dateFilter);
       return Right(filteredItems); // Return the list of filtered items
     } catch (e, stackTrace) {
       log('Error in fetchWhere: $e',

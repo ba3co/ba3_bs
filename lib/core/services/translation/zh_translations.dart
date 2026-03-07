@@ -240,7 +240,8 @@ final Map<String, String> zhCN = {
   AppStrings.viewOptions : "显示选项",
   AppStrings.bondType: "债券类型",
   AppStrings.min: "最小值",
-  AppStrings.max: "最大值"
+  AppStrings.max: "最大值",
+  AppStrings.deadStock : "呆滞库存"
 
 
 };

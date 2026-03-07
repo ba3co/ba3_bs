@@ -241,7 +241,8 @@ final Map<String, String> deDE = {
   AppStrings.viewOptions : "Anzeigeoptionen",
   AppStrings.bondType :"Anleihetyp",
   AppStrings.min: "Min",
-  AppStrings.max: "Max"
+  AppStrings.max: "Max",
+  AppStrings.deadStock : "Nicht verkäuflicher Bestand"
 
 
 };

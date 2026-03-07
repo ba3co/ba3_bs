@@ -7,6 +7,7 @@ import 'package:ba3_bs/features/materials/controllers/mats_statement_controller.
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dialogs/loading_dialog.dart';
@@ -84,6 +85,14 @@ class MaterialLayout extends StatelessWidget {
                                   context: context);
                         },
                       ),
+                    buildAppMenuItem(
+                      icon: FontAwesomeIcons.boxesStacked,
+                      title: AppStrings.deadStock.tr,
+                      onTap: () {
+                        read<MaterialController>().showDeadStockFilterDialog(context: context);
+
+                      },
+                    ),
                   ],
                 ),
               ),

@@ -241,7 +241,8 @@ final Map<String, String> frFR = {
   AppStrings.viewOptions : "Options d’affichage",
   AppStrings.bondType : "Type d'obligation",
   AppStrings.min: "Min",
-  AppStrings.max: "Max"
+  AppStrings.max: "Max",
+  AppStrings.deadStock : "Stock dormant"
 
 
 };

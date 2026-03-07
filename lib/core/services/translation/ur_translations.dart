@@ -272,7 +272,8 @@ final Map<String, String> urPK = {
   AppStrings.viewOptions : "دیکھنے کے اختیارات",
   AppStrings.bondType : "بانڈ کی قسم",
   AppStrings.min: "کم از کم",
-  AppStrings.max: "زیادہ سے زیادہ"
+  AppStrings.max: "زیادہ سے زیادہ",
+  AppStrings.deadStock : "غیر متحرک اسٹاک"
 
 
 

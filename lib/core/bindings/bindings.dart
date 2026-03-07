@@ -91,6 +91,7 @@ import '../../features/materials/data/datasources/remote/materials_groups_data_s
 import '../../features/materials/data/datasources/remote/materials_statements_data_source.dart';
 import '../../features/materials/data/models/mat_statement/mat_statement_model.dart';
 import '../../features/materials/service/material_import.dart';
+import '../../features/materials/service/material_last_transaction_service.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
@@ -176,7 +177,6 @@ class AppBindings extends Bindings {
 
     final ClipboardXmlService clipboardXMLService= ClipboardXmlService();
     Get.put(clipboardXMLService);
-
 
 
     // Initialize repositories
@@ -401,6 +401,11 @@ class AppBindings extends Bindings {
     final bondImport = Get.find<BondImport>();
 
     await bondImport.init(bondTypeService);
+
+    final MaterialLastTransactionService lastTransactionService = MaterialLastTransactionService(repositories.materialsRemoteDatasourceRepo);
+
+    Get.put(lastTransactionService);
+
 
   }
 

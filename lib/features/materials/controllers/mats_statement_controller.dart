@@ -12,6 +12,7 @@ import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/services/firebase/implementations/repos/compound_datasource_repo.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../data/models/mat_statement/mat_statement_model.dart';
+import '../service/material_last_transaction_service.dart';
 import 'material_controller.dart';
 
 class MaterialsStatementController extends GetxController with FloatingLauncher, AppNavigator {
@@ -58,30 +59,26 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
     required Map<String, List<MatStatementModel>> mapOfStatements,
     void Function(double progress)? onProgress,
   }) async {
-    final allSavedStatements = mapOfStatements.values.expand((list) => list).toList(); // List<MatStatementModel>
 
-    // If we have none, exit early
+    final allSavedStatements =
+    mapOfStatements.values.expand((list) => list).toList();
+
     if (allSavedStatements.isEmpty) {
       log('تم الحفظ بنجاح (لا توجد عناصر للحفظ)');
-      // AppUIUtils.onSuccess('تم الحفظ بنجاح (لا توجد عناصر للحفظ)', );
       return;
     }
 
     int completed = 0;
     final total = allSavedStatements.length;
+
     log(
-      'تم حركات المواد ${allSavedStatements.map(
-            (e) => e.matName,
-          ).toList().join(",\n")} بنجاح',
+      'تم حركات المواد ${allSavedStatements.map((e) => e.matName).toList().join(",\n")} بنجاح',
     );
-    // AppUIUtils.onSuccess(
-    // 'تم حركات المواد ${allSavedStatements.map((e) => e.matName,).toList().join(",\n")} بنجاح',); // from the nested save
 
-    // 3. Update each material's quantity in parallel
-
+    /// 1️⃣ Update quantities
     await Future.wait(
       allSavedStatements.map(
-        (statement) async {
+            (statement) async {
           if (statement.defQuantity != null && statement.defQuantity! > 0) {
             await _materialsController.updateMaterialQuantityAndPrice(
               matId: statement.matId!,
@@ -98,11 +95,22 @@ class MaterialsStatementController extends GetxController with FloatingLauncher,
             );
           }
 
-          // Update progress after each statement finishes
           onProgress?.call(++completed / total);
         },
       ),
     );
+
+    /// 2️⃣ Update last 6 transactions (NEW)
+    try {
+      await Get.find<MaterialLastTransactionService>()
+          .updateFromStatements(allSavedStatements);
+    } catch (e, stackTrace) {
+      log(
+        "Failed to update last transactions: $e",
+        stackTrace: stackTrace,
+        name: 'MaterialLastTransactionService',
+      );
+    }
   }
 
   /// to recalculate main price and quantity from mat statement list after we add all statement to materials
