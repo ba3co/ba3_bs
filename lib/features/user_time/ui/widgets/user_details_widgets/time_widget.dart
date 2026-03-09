@@ -2,6 +2,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/styling/app_colors.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
+import 'package:ba3_bs/features/user_time/data/models/leave_requests_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,8 @@ class TimeWidget extends StatelessWidget {
   }
 
   Widget _buildDayHeader(String dayName) {
+    LeaveType? leaveType = userDetailsController.getLeaveTypeForDate(dayName);
+    bool isHoliday = userDetailsController.isHoliday(dayName);
     return Container(
       width: 1.sw,
       decoration: BoxDecoration(
@@ -73,25 +76,50 @@ class TimeWidget extends StatelessWidget {
                 border:
                     Border.symmetric(vertical: BorderSide(color: Colors.red))),
             padding: EdgeInsets.all(8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text("التأخير :",
-                    style: AppTextStyles.headLineStyle4
-                        .copyWith(color: Colors.red)),
-                Text(userDetailsController.userDelay(dayName),
-                    style: AppTextStyles.headLineStyle4),
-                // VerticalSpace(),
-                VerticalDivider(),
-                Text("الخروج المبكر :",
-                    style: AppTextStyles.headLineStyle4
-                        .copyWith(color: Colors.red)),
-                Text(userDetailsController.userEarlier(dayName),
-                    style: AppTextStyles.headLineStyle4),
-              ],
-            ),
+            child: leaveType != null
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 90),
+                    child: Text(
+                      "إجازة ${leaveType == LeaveType.sick ? "مرضية" : leaveType == LeaveType.paid ? "مدفوعة" : "غير مدفوعة"}",
+                      style: AppTextStyles.headLineStyle4
+                          .copyWith(color: Colors.red),
+                    ),
+                  )
+                : isHoliday
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 100),
+                        child: Text("عطلة",
+                            style: AppTextStyles.headLineStyle4
+                                .copyWith(color: Colors.red)),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("التأخير :",
+                              style: AppTextStyles.headLineStyle4
+                                  .copyWith(color: Colors.red)),
+                          Text(userDetailsController.userDelay(dayName),
+                              style: AppTextStyles.headLineStyle4),
+                          // VerticalSpace(),
+                          VerticalDivider(),
+                          Text("الخروج المبكر :",
+                              style: AppTextStyles.headLineStyle4
+                                  .copyWith(color: Colors.red)),
+                          Text(userDetailsController.userEarlier(dayName),
+                              style: AppTextStyles.headLineStyle4),
+                          if (userDetailsController.userOverTime(dayName) ==
+                              "0") ...[
+                            VerticalDivider(),
+                            Text("الوقت الاضافي  :",
+                                style: AppTextStyles.headLineStyle4
+                                    .copyWith(color: Colors.red)),
+                            Text(userDetailsController.userOverTime(dayName),
+                                style: AppTextStyles.headLineStyle4),
+                          ]
+                        ],
+                      ),
           )
         ],
       ),

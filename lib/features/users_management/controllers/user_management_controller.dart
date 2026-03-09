@@ -6,9 +6,11 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/task_status_extension.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
+import 'package:ba3_bs/core/services/export_excl/excel_export.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/user_task/controller/all_task_controller.dart';
 import 'package:ba3_bs/features/user_task/data/model/user_task_model.dart';
+import 'package:ba3_bs/features/user_time/data/models/leave_requests_model.dart';
 import 'package:ba3_bs/features/users_management/services/role_service.dart';
 import 'package:ba3_bs/features/users_management/services/user_navigator.dart';
 import 'package:ba3_bs/features/users_management/services/user_service.dart';
@@ -87,20 +89,20 @@ class UserManagementController extends GetxController
     userNavigator = UserNavigator(roleFormHandler, _sharedPreferencesService);
   }
 
-  List<UserModel> get nonLoggedInUsers => allUsers.where((user)=>allUserIdsForChanges.contains(user.userId))
-      .where((user) => user.userId != loggedInUserModel?.userId )
+  List<UserModel> get nonLoggedInUsers => allUsers
+      .where((user) => allUserIdsForChanges.contains(user.userId))
+      .where((user) => user.userId != loggedInUserModel?.userId)
       .toList();
 
-
-  List<String> get allUserIdsForChanges =>[
-    '0b0f8c5f-0dd0-4d58-a82f-c441476ab053',
-    '3436769b-9ad9-4936-b217-6e8b0a7f7145',
-    '3436769b-9ad9-4936-b217-6e8b0a7f7145',
-    'cd88433b-5485-4dee-9596-8bae3c40e167',
-    'fsCwYRtgG1SiTSJDfXXy',
-    'kTnpg7ePEAjERvWzt6VQ',
-    'xti265VhXe2DLVdeTgOR',
-  ];
+  List<String> get allUserIdsForChanges => [
+        '0b0f8c5f-0dd0-4d58-a82f-c441476ab053',
+        '3436769b-9ad9-4936-b217-6e8b0a7f7145',
+        '3436769b-9ad9-4936-b217-6e8b0a7f7145',
+        'cd88433b-5485-4dee-9596-8bae3c40e167',
+        'fsCwYRtgG1SiTSJDfXXy',
+        'kTnpg7ePEAjERvWzt6VQ',
+        'xti265VhXe2DLVdeTgOR',
+      ];
   List<UserTaskModel> get allTaskList =>
       loggedInUserModel?.userTaskList
           ?.where((element) => !element.status.isFinished)
@@ -181,7 +183,9 @@ class UserManagementController extends GetxController
     final result = await _rolesFirebaseRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (fetchedRoles) {
         allRoles = fetchedRoles;
       },
@@ -194,7 +198,9 @@ class UserManagementController extends GetxController
     final result = await _usersFirebaseRepo.getAll();
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (fetchedUsers) => _onGetAllUsersSuccess(fetchedUsers),
     );
   }
@@ -215,15 +221,21 @@ class UserManagementController extends GetxController
     final result = await _usersFirebaseRepo.getById(userId);
 
     result.fold(
-      (failure) => _handleUserFetchFailure(failure,),
-      (user) => _handleUserFetchSuccess(user  ,),
+      (failure) => _handleUserFetchFailure(
+        failure,
+      ),
+      (user) => _handleUserFetchSuccess(
+        user,
+      ),
     );
   }
 
 // Handle failure when fetching the user
   void _handleUserFetchFailure(Failure failure) {
     offAll(AppRoutes.loginScreen);
-    AppUIUtils.onFailure(failure.message, );
+    AppUIUtils.onFailure(
+      failure.message,
+    );
   }
 
   void updatePasswordVisibility() {
@@ -240,7 +252,9 @@ class UserManagementController extends GetxController
 // Check if the user is active
   bool _isUserActive(UserModel userModel) {
     if (userModel.userActiveStatus == UserActiveStatus.inactive) {
-      AppUIUtils.onFailure('حسابك غير نشط الان من فضلك حاول حقا!', );
+      AppUIUtils.onFailure(
+        'حسابك غير نشط الان من فضلك حاول حقا!',
+      );
       return false;
     }
     return true;
@@ -257,12 +271,16 @@ class UserManagementController extends GetxController
     final loginPassword = loginPasswordController.text.trim();
 
     if (loginName.isEmpty || loginPassword.isEmpty) {
-      AppUIUtils.onFailure('من فضلك قم بادخال اسم الحساب و الرقم السري!', );
+      AppUIUtils.onFailure(
+        'من فضلك قم بادخال اسم الحساب و الرقم السري!',
+      );
       return;
     }
 
     if (loginPassword.length < 6) {
-      AppUIUtils.onFailure('من فضلك أدخل كلمة مرور مكونة من 6 أرقام على الأقل!', );
+      AppUIUtils.onFailure(
+        'من فضلك أدخل كلمة مرور مكونة من 6 أرقام على الأقل!',
+      );
       return;
     }
 
@@ -278,8 +296,12 @@ class UserManagementController extends GetxController
       ],
     );
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
-      (fetchedUsers) => _handleGetUserPinSuccess(fetchedUsers,),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
+      (fetchedUsers) => _handleGetUserPinSuccess(
+        fetchedUsers,
+      ),
     );
   }
 
@@ -293,7 +315,9 @@ class UserManagementController extends GetxController
     );
 
     if (firstFetchedUser == null) {
-      AppUIUtils.onFailure('أسم المستخدم غير صحيح!', );
+      AppUIUtils.onFailure(
+        'أسم المستخدم غير صحيح!',
+      );
       return;
     }
 
@@ -338,14 +362,17 @@ class UserManagementController extends GetxController
     if (!isCurrentRoute(AppRoutes.loginScreen)) {
       userNavigator.navigateToLogin();
     } else {
-      AppUIUtils.onFailure('لا يوجد تطابق!', );
+      AppUIUtils.onFailure(
+        'لا يوجد تطابق!',
+      );
     }
 
     loginNameController.clear();
     loginPasswordController.clear();
   }
 
-  Future<void> saveOrUpdateRole({RoleModel? existingRoleModel, required BuildContext context}) async {
+  Future<void> saveOrUpdateRole(
+      {RoleModel? existingRoleModel, required BuildContext context}) async {
     // Validate the form first
     if (!roleFormHandler.validate()) return;
 
@@ -358,16 +385,22 @@ class UserManagementController extends GetxController
 
     // Handle null role model
     if (updatedRoleModel == null) {
-      AppUIUtils.onFailure('من فضلك قم بادخال الصلاحيات!', );
+      AppUIUtils.onFailure(
+        'من فضلك قم بادخال الصلاحيات!',
+      );
       return;
     }
 
     final result = await _rolesFirebaseRepo.save(updatedRoleModel);
 
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (success) {
-        AppUIUtils.onSuccess('تم حفظ او تعديل الدور بنجاح',);
+        AppUIUtils.onSuccess(
+          'تم حفظ او تعديل الدور بنجاح',
+        );
         getAllRoles();
       },
     );
@@ -388,7 +421,9 @@ class UserManagementController extends GetxController
   refreshLoggedInUser() async {
     final result = await _usersFirebaseRepo.getById(loggedInUserModel!.userId!);
     result.fold(
-      (failure) => AppUIUtils.onFailure(failure.message, ),
+      (failure) => AppUIUtils.onFailure(
+        failure.message,
+      ),
       (fetchedUser) => loggedInUserModel = fetchedUser,
     );
   }
@@ -460,7 +495,7 @@ class UserManagementController extends GetxController
   XFile? image;
   final ImagePicker _picker = ImagePicker();
 
-  bool  visiblePassword = false;
+  bool visiblePassword = false;
 
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -539,5 +574,284 @@ class UserManagementController extends GetxController
     return allUsers.firstWhereOrNull((user) => user.userSellerId == sellerId);
   }
 
+  List<Map<String, dynamic>> buildMonthlyRowsForUsers(
+    List<UserModel> users, {
+    required int month,
+    required int year,
+  }) {
+    final List<Map<String, dynamic>> rows = [];
 
+    final now = DateTime.now();
+
+    final lastDay = (month == now.month && year == now.year)
+        ? now.day
+        : DateTime(year, month + 1, 0).day;
+
+    for (final user in users) {
+      /// 🔹 نحول العطل لكل مستخدم
+      final holidaysSet = (user.userHolidays ?? []).map((e) {
+        final date = DateTime.parse(e);
+        return "${date.month}-${date.day}";
+      }).toSet();
+
+      for (int day = 1; day <= lastDay; day++) {
+        final date = DateTime(year, month, day);
+        final dateKey =
+            "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+
+        final isHoliday = holidaysSet.contains("${date.month}-${date.day}");
+
+        final model = user.userTimeModel?[dateKey];
+
+        final shiftsText = user.userWorkingHours?.values
+                .map((e) => "${e.enterTime ?? '-'}-${e.outTime ?? '-'}")
+                .join(" / ") ??
+            '';
+
+        if (model == null || (model.logInDateList?.isEmpty ?? true)) {
+          rows.add({
+            "اسم الموظف": user.userName ?? '',
+            "التاريخ": dateKey,
+            "الشفتات الرسمية": shiftsText,
+            "تسجيل الدخول": isHoliday ? "-" : "لا يوجد تسجيل",
+            "تسجيل الخروج": isHoliday ? "-" : "لا يوجد تسجيل",
+            "مدة الجلسة": "",
+            "تأخير الدخول": "",
+            "الخروج المبكر": "",
+            "الوقت الإضافي": "",
+            "حالة اليوم": isHoliday ? "عطلة" : "غياب",
+          });
+
+          continue;
+        }
+
+        final logInList = model.logInDateList ?? [];
+        final logOutList = model.logOutDateList ?? [];
+
+        final delayText = _formatMinutes(model.totalLogInDelay);
+        final earlyText = _formatMinutes(model.totalOutEarlier);
+        final extraText = _formatMinutes(model.totalExtraMinutes);
+
+        for (int i = 0; i < logInList.length; i++) {
+          final logIn = logInList[i];
+          final logOut = i < logOutList.length ? logOutList[i] : null;
+
+          rows.add({
+            "اسم الموظف": i == 0 ? user.userName ?? '' : '',
+            "التاريخ": i == 0 ? dateKey : '',
+            "الشفتات الرسمية": i == 0 ? shiftsText : '',
+            "تسجيل الدخول": _formatTime(logIn),
+            "تسجيل الخروج":
+                logOut != null ? _formatTime(logOut) : "لم يخرج بعد",
+            "مدة الجلسة":
+                logOut != null ? _calculateDuration(logIn, logOut) : "",
+            "تأخير الدخول": i == 0 ? delayText : '',
+            "الخروج المبكر": i == 0 ? earlyText : '',
+            "الوقت الإضافي": i == 0 ? extraText : '',
+            "حالة اليوم": i == 0 ? (isHoliday ? "عطلة" : "دوام") : '',
+          });
+        }
+      }
+
+      /// 🔥 سطر فارغ بين كل موظف وموظف
+      rows.add(_emptyRow());
+    }
+
+    return rows;
+  }
+
+  List<Map<String, dynamic>> buildRowsFromToForUsers(
+    List<UserModel> users, {
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final List<Map<String, dynamic>> rows = [];
+
+    for (final user in users) {
+      /// 🔹 نحول العطل لكل مستخدم (month-day فقط)
+      final holidaysSet = (user.userHolidays ?? []).map((e) {
+        final date = DateTime.parse(e);
+        return "${date.month}-${date.day}";
+      }).toSet();
+
+      DateTime current = startDate;
+
+      /// 🔹 تجهيز الإجازات المقبولة
+      final leaveMap = <String, LeaveType>{};
+
+      for (final UserLeaveRequestModel leave in user.userLeaveRequests ?? []) {
+        if (leave.status != LeaveStatus.approved) continue;
+
+        DateTime start = DateTime.parse(leave.startDate);
+        DateTime end = DateTime.parse(leave.endDate);
+
+        DateTime temp = start;
+
+        while (!temp.isAfter(end)) {
+          final key =
+              "${temp.year}-${temp.month.toString().padLeft(2, '0')}-${temp.day.toString().padLeft(2, '0')}";
+
+          leaveMap[key] = leave.leaveType;
+
+          temp = temp.add(const Duration(days: 1));
+        }
+      }
+
+      while (!current.isAfter(endDate)) {
+        final dateKey =
+            "${current.year}-${current.month.toString().padLeft(2, '0')}-${current.day.toString().padLeft(2, '0')}";
+
+        final leaveType = leaveMap[dateKey];
+        final isLeave = leaveType != null;
+        final isHoliday =
+            holidaysSet.contains("${current.month}-${current.day}") || isLeave;
+
+        final model = user.userTimeModel?[dateKey];
+
+        final shiftsText = user.userWorkingHours?.values
+                .map((e) => "${e.enterTime ?? '-'}-${e.outTime ?? '-'}")
+                .join(" / ") ??
+            '';
+
+        if (model == null || (model.logInDateList?.isEmpty ?? true)) {
+          rows.add({
+            "اسم الموظف": user.userName ?? '',
+            "التاريخ": dateKey,
+            "الشفتات الرسمية": shiftsText,
+            "تسجيل الدخول": isHoliday ? "-" : "لا يوجد تسجيل",
+            "تسجيل الخروج": isHoliday ? "-" : "لا يوجد تسجيل",
+            "مدة الجلسة": "",
+            "تأخير الدخول": "",
+            "الخروج المبكر": "",
+            "الوقت الإضافي": "",
+            "حالة اليوم": isLeave
+                ? "إجازة ${leaveType == LeaveType.sick ? "مرضية" : leaveType == LeaveType.paid ? "مدفوعة" : "غير مدفوعة"}"
+                : (isHoliday ? "عطلة" : "غياب"),
+          });
+
+          current = current.add(const Duration(days: 1));
+          continue;
+        }
+
+        final logInList = model.logInDateList ?? [];
+        final logOutList = model.logOutDateList ?? [];
+
+        final delayText = _formatMinutes(model.totalLogInDelay);
+        final earlyText = _formatMinutes(model.totalOutEarlier);
+        final extraText = _formatMinutes(model.totalExtraMinutes);
+
+        for (int i = 0; i < logInList.length; i++) {
+          final logIn = logInList[i];
+          final logOut = i < logOutList.length ? logOutList[i] : null;
+
+          rows.add({
+            "اسم الموظف": i == 0 ? user.userName ?? '' : '',
+            "التاريخ": i == 0 ? dateKey : '',
+            "الشفتات الرسمية": i == 0 ? shiftsText : '',
+            "تسجيل الدخول": _formatTime(logIn),
+            "تسجيل الخروج":
+                logOut != null ? _formatTime(logOut) : "لم يخرج بعد",
+            "مدة الجلسة":
+                logOut != null ? _calculateDuration(logIn, logOut) : "",
+            "تأخير الدخول": i == 0 ? delayText : '',
+            "الخروج المبكر": i == 0 ? earlyText : '',
+            "الوقت الإضافي": i == 0 ? extraText : '',
+            "حالة اليوم": i == 0
+                ? (isLeave
+                    ? "إجازة ${leaveType == LeaveType.sick ? "مرضية" : leaveType == LeaveType.paid ? "مدفوعة" : "غير مدفوعة"}"
+                    : (isHoliday ? "عطلة" : "دوام"))
+                : '',
+          });
+        }
+
+        current = current.add(const Duration(days: 1));
+      }
+
+      /// 🔥 سطر فارغ بين كل موظف وموظف
+      rows.add(_emptyRow());
+    }
+
+    return rows;
+  }
+
+  Map<String, dynamic> _emptyRow() {
+    return {
+      "اسم الموظف": "",
+      "التاريخ": "",
+      "الشفتات الرسمية": "",
+      "تسجيل الدخول": "",
+      "تسجيل الخروج": "",
+      "مدة الجلسة": "",
+      "تأخير الدخول": "",
+      "الخروج المبكر": "",
+      "الوقت الإضافي": "",
+      "حالة اليوم": "",
+    };
+  }
+
+  String _formatTime(DateTime time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+  }
+
+  String _calculateDuration(DateTime start, DateTime end) {
+    // إذا الخروج قبل الدخول → معناها قطع منتصف الليل
+    if (end.isBefore(start)) {
+      end = end.add(const Duration(days: 1));
+    }
+
+    final diff = end.difference(start);
+
+    final h = diff.inHours;
+    final m = diff.inMinutes.remainder(60);
+
+    return "$h س $m د";
+  }
+
+  String _formatMinutes(int? minutes) {
+    if (minutes == null || minutes == 0) return "0د";
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    if (h > 0) {
+      return "$h س $m د";
+    }
+    return "$m د";
+  }
+
+  Future<void> exportUsersMonthToExcel(
+    List<UserModel> users, {
+    required int month,
+    required int year,
+  }) async {
+    final rows = buildMonthlyRowsForUsers(
+      users,
+      month: month,
+      year: year,
+    );
+
+    if (rows.isEmpty) {
+      AppUIUtils.onFailure("لا يوجد دوام لهذا الشهر");
+      return;
+    }
+
+    await exportJsonToExcel(rows);
+  }
+
+  Future<void> exportUsersRangeToExcel(
+    List<UserModel> users, {
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final rows = buildRowsFromToForUsers(
+      users,
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    if (rows.isEmpty) {
+      AppUIUtils.onFailure("لا يوجد دوام في هذه الفترة");
+      return;
+    }
+
+    await exportJsonToExcel(rows);
+  }
 }

@@ -1,5 +1,7 @@
 import 'package:ba3_bs/core/helper/extensions/date_time/time_extensions.dart';
+import 'package:ba3_bs/core/services/export_excl/excel_export.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
+import 'package:ba3_bs/features/user_time/data/models/leave_requests_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/target_model.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
@@ -36,12 +38,14 @@ class UserDetailsController extends GetxController {
 
   int get holidaysLength => holidays.length;
 
-  UserManagementController get allUserController => read<UserManagementController>();
+  UserManagementController get allUserController =>
+      read<UserManagementController>();
 
   // UserModel? get selectedUserModel => allUserController.selectedUserModel;
   UserModel? selectedUserModel;
 
-  UserModel getUserById(String userId) => selectedUserModel = allUserController.allUsers.firstWhere((user) => user.userId == userId);
+  UserModel getUserById(String userId) => selectedUserModel =
+      allUserController.allUsers.firstWhere((user) => user.userId == userId);
 
   @override
   void onInit() {
@@ -69,8 +73,10 @@ class UserDetailsController extends GetxController {
   }
 
   void addWorkingHour() {
-    workingHours[workingHoursLength.toString()] =
-        UserWorkingHours(id: workingHoursLength.toString(), enterTime: "AM 12:00", outTime: "AM 12:00");
+    workingHours[workingHoursLength.toString()] = UserWorkingHours(
+        id: workingHoursLength.toString(),
+        enterTime: "AM 12:00",
+        outTime: "AM 12:00");
     update();
   }
 
@@ -88,7 +94,8 @@ class UserDetailsController extends GetxController {
           Get.back();
         },
         onTimeSelect: (dateRangePickerSelectionChangedArgs) {
-          final selectedDateList = dateRangePickerSelectionChangedArgs.value as List<DateTime>;
+          final selectedDateList =
+              dateRangePickerSelectionChangedArgs.value as List<DateTime>;
           holidays.addAll(
             selectedDateList.map((e) => e.toIso8601String().split("T")[0]),
           );
@@ -138,7 +145,8 @@ class UserDetailsController extends GetxController {
     );
   }
 
-  void _handleFailure(Failure failure, BuildContext context) => AppUIUtils.onFailure(
+  void _handleFailure(Failure failure, BuildContext context) =>
+      AppUIUtils.onFailure(
         failure.message,
       );
 
@@ -157,7 +165,8 @@ class UserDetailsController extends GetxController {
   }
 
   // Call the ChangesController to create the document
-  Future<void> _createChangeDocument(String userId, BuildContext context) async =>
+  Future<void> _createChangeDocument(
+          String userId, BuildContext context) async =>
       await read<ChangesController>().createChangeDocument(userId, context);
 
   void initUserFormHandler(UserModel? user) {
@@ -167,13 +176,62 @@ class UserDetailsController extends GetxController {
   String userDelay(String dayName) {
     UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
     if (userTimeModel == null) return "";
-    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalLogInDelay ?? 0);
+    return AppServiceUtils.convertMinutesAndFormat(
+        userTimeModel.totalLogInDelay ?? 0);
+  }
+
+  LeaveType? getLeaveTypeForDate(
+    String dayName,
+  ) {
+    List<UserLeaveRequestModel>? leaves = selectedUserModel?.userLeaveRequests;
+
+    if (leaves == null || leaves.isEmpty) return null;
+
+    final targetDate = DateTime.parse(dayName);
+
+    for (final leave in leaves) {
+      if (leave.status != LeaveStatus.approved) continue;
+
+      final start = DateTime.parse(leave.startDate);
+      final end = DateTime.parse(leave.endDate);
+
+      if (!targetDate.isBefore(start) && !targetDate.isAfter(end)) {
+        return leave.leaveType;
+      }
+    }
+
+    return null;
+  }
+
+  bool isHoliday(String dateKey) {
+    final holidays = selectedUserModel?.userHolidays ?? [];
+
+    if (holidays.isEmpty) return false;
+
+    final monthDay = dateKey.substring(5); // 2026-03-01 -> 03-01
+
+    final holidaysSet = holidays.map((e) {
+      final d = DateTime.parse(e);
+      return "${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}";
+    }).toSet();
+
+    final result = holidaysSet.contains(monthDay);
+
+    return result;
   }
 
   String userEarlier(String dayName) {
     UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
     if (userTimeModel == null) return "";
-    return AppServiceUtils.convertMinutesAndFormat(userTimeModel.totalOutEarlier ?? 0);
+    return AppServiceUtils.convertMinutesAndFormat(
+        userTimeModel.totalOutEarlier ?? 0);
+  }
+
+  String userOverTime(String dayName) {
+    UserTimeModel? userTimeModel = selectedUserModel?.userTimeModel?[dayName];
+    if (userTimeModel == null) return "";
+    return AppServiceUtils.convertMinutesAndFormat(
+        userTimeModel.totalExtraMinutes ?? 0);
   }
 
   void resetDelay(BuildContext context) async {
@@ -182,7 +240,6 @@ class UserDetailsController extends GetxController {
       value.totalLogInDelay = 0;
       value.totalOutEarlier = 0;
     });
-    // log((selectedUserModel?.userTimeModel?.values.map((e) => e.totalOutEarlier,).toList().toString()).toString());
     if (selectedUserModel != null) {
       final result = await _usersFirebaseRepo.save(selectedUserModel!);
       result.fold(
@@ -192,5 +249,157 @@ class UserDetailsController extends GetxController {
     }
 
     update();
+  }
+
+  List<Map<String, dynamic>> buildRowsFromTo(
+    UserModel user, {
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final List<Map<String, dynamic>> rows = [];
+
+    /// 🔹 نحول العطل إلى Set (month-day)
+    final holidaysSet = (user.userHolidays ?? []).map((e) {
+      final date = DateTime.parse(e);
+      return "${date.month}-${date.day}";
+    }).toSet();
+
+    DateTime current = startDate;
+
+    /// 🔹 تجهيز الإجازات المقبولة
+    final leaveMap = <String, LeaveType>{};
+
+    for (final UserLeaveRequestModel leave in user.userLeaveRequests ?? []) {
+      if (leave.status != LeaveStatus.approved) continue;
+
+      DateTime start = DateTime.parse(leave.startDate);
+      DateTime end = DateTime.parse(leave.endDate);
+
+      DateTime temp = start;
+
+      while (!temp.isAfter(end)) {
+        final key =
+            "${temp.year}-${temp.month.toString().padLeft(2, '0')}-${temp.day.toString().padLeft(2, '0')}";
+
+        leaveMap[key] = leave.leaveType;
+
+        temp = temp.add(const Duration(days: 1));
+      }
+    }
+
+    while (!current.isAfter(endDate)) {
+      final dateKey =
+          "${current.year}-${current.month.toString().padLeft(2, '0')}-${current.day.toString().padLeft(2, '0')}";
+      final leaveType = leaveMap[dateKey];
+      final isLeave = leaveType != null;
+      final isHoliday =
+          holidaysSet.contains("${current.month}-${current.day}") || isLeave;
+      final model = user.userTimeModel?[dateKey];
+
+      final shiftsText = user.userWorkingHours?.values
+              .map((e) => "${e.enterTime ?? '-'}-${e.outTime ?? '-'}")
+              .join(" / ") ??
+          '';
+
+      if (model == null || (model.logInDateList?.isEmpty ?? true)) {
+        rows.add({
+          "اسم الموظف": user.userName ?? '',
+          "التاريخ": dateKey,
+          "الشفتات الرسمية": shiftsText,
+          "تسجيل الدخول": isHoliday ? "-" : "لا يوجد تسجيل",
+          "تسجيل الخروج": isHoliday ? "-" : "لا يوجد تسجيل",
+          "مدة الجلسة": "",
+          "تأخير الدخول": "",
+          "الخروج المبكر": "",
+          "الوقت الإضافي": "",
+          "حالة اليوم": isLeave
+              ? "إجازة ${leaveType == LeaveType.sick ? "مرضية" : leaveType == LeaveType.paid ? "مدفوعة" : "غير مدفوعة"}"
+              : (isHoliday ? "عطلة" : "غياب"),
+        });
+
+        current = current.add(const Duration(days: 1));
+        continue;
+      }
+
+      final logInList = model.logInDateList ?? [];
+      final logOutList = model.logOutDateList ?? [];
+
+      final delayText = _formatMinutes(model.totalLogInDelay);
+      final earlyText = _formatMinutes(model.totalOutEarlier);
+      final extraText = _formatMinutes(model.totalExtraMinutes);
+
+      for (int i = 0; i < logInList.length; i++) {
+        final logIn = logInList[i];
+        final logOut = i < logOutList.length ? logOutList[i] : null;
+
+        rows.add({
+          "اسم الموظف": i == 0 ? user.userName ?? '' : '',
+          "التاريخ": i == 0 ? dateKey : '',
+          "الشفتات الرسمية": i == 0 ? shiftsText : '',
+          "تسجيل الدخول": _formatTime(logIn),
+          "تسجيل الخروج": logOut != null ? _formatTime(logOut) : "لم يخرج بعد",
+          "مدة الجلسة": logOut != null ? _calculateDuration(logIn, logOut) : "",
+          "تأخير الدخول": i == 0 ? delayText : '',
+          "الخروج المبكر": i == 0 ? earlyText : '',
+          "الوقت الإضافي": i == 0 ? extraText : '',
+          "حالة اليوم": i == 0
+              ? (isLeave
+                  ? "إجازة ${leaveType == LeaveType.sick ? "مرضية" : leaveType == LeaveType.paid ? "مدفوعة" : "غير مدفوعة"}"
+                  : (isHoliday ? "عطلة" : "دوام"))
+              : '',
+        });
+      }
+
+      current = current.add(const Duration(days: 1));
+    }
+
+    return rows;
+  }
+
+  String _formatTime(DateTime time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+  }
+
+  String _calculateDuration(DateTime start, DateTime end) {
+    // إذا الخروج قبل الدخول → معناها قطع منتصف الليل
+    if (end.isBefore(start)) {
+      end = end.add(const Duration(days: 1));
+    }
+
+    final diff = end.difference(start);
+
+    final h = diff.inHours;
+    final m = diff.inMinutes.remainder(60);
+
+    return "$h س $m د";
+  }
+
+  String _formatMinutes(int? minutes) {
+    if (minutes == null || minutes == 0) return "0د";
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    if (h > 0) {
+      return "$h س $m د";
+    }
+    return "$m د";
+  }
+
+  Future<void> exportUserRangeToExcel(
+    UserModel user, {
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final rows = buildRowsFromTo(
+      user,
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    if (rows.isEmpty) {
+      AppUIUtils.onFailure("لا يوجد دوام في هذه الفترة");
+      return;
+    }
+
+    await exportJsonToExcel(rows);
   }
 }

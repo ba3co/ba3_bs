@@ -2,6 +2,9 @@ import 'dart:developer';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/helper/mixin/floating_launcher.dart';
+import 'package:ba3_bs/features/user_loan_requests/ui/loan_requests_screen.dart';
+import 'package:ba3_bs/features/user_time/ui/screens/leave_requests_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +13,7 @@ import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/app_menu_item.dart';
 import '../../data/models/role_model.dart';
 
-class UserManagementLayout extends StatelessWidget {
+class UserManagementLayout extends StatelessWidget with FloatingLauncher {
   const UserManagementLayout({super.key});
 
   @override
@@ -64,6 +67,22 @@ class UserManagementLayout extends StatelessWidget {
                 onTap: () {
                   userManagementController.userNavigator
                       .lunchAllTaskScreen(context);
+                },
+              ),
+              buildAppMenuItem(
+                icon: Icons.access_time_filled,
+                title: "طلبات الإجازة",
+                onTap: () {
+                  launchFloatingWindow(
+                      context: context, floatingScreen: LeavePage());
+                },
+              ),
+              buildAppMenuItem(
+                icon: Icons.attach_money_rounded,
+                title: "طلبات السلفة",
+                onTap: () {
+                  launchFloatingWindow(
+                      context: context, floatingScreen: LoanRequestsPage());
                 },
               ),
             ],
