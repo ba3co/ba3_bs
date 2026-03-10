@@ -37,37 +37,35 @@ class InvoiceRecordModel {
   List<String>? invRecProductSerialNumbers;
   String? invRecMaterialBarcode;
 
-
-  InvoiceRecordModel({
-    this.invRecId,
-    this.invRecProduct,
-    this.invRecQuantity,
-    this.invRecSubTotal,
-    this.invRecTotal,
-    this.invRecVat,
-    this.prodChoosePriceMethod,
-    this.invRecIsLocal,
-    this.invRecGift,
-    this.invRecGiftTotal,
-    this.invRecProductSoldSerial,
-    this.invRecProductSerialNumbers,
-    this.invRecProductCode,
-    this.invRecMaterialBarcode
-  });
+  InvoiceRecordModel(
+      {this.invRecId,
+      this.invRecProduct,
+      this.invRecQuantity,
+      this.invRecSubTotal,
+      this.invRecTotal,
+      this.invRecVat,
+      this.prodChoosePriceMethod,
+      this.invRecIsLocal,
+      this.invRecGift,
+      this.invRecGiftTotal,
+      this.invRecProductSoldSerial,
+      this.invRecProductSerialNumbers,
+      this.invRecProductCode,
+      this.invRecMaterialBarcode});
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
   factory InvoiceRecordModel.fromBillItem(BillItem billItem) {
-
-    final MaterialModel? material = read<MaterialController>().getMaterialByIdWithNull(billItem.itemGuid);
-    if(material == null) {
+    final MaterialModel? material =
+        read<MaterialController>().getMaterialByIdWithNull(billItem.itemGuid);
+    if (material == null) {
       AppUIUtils.onFailure('بعض المواد غير موجودة '
           '\n (${billItem.itemGuid} - ${billItem.itemName})');
       return InvoiceRecordModel();
     }
     return InvoiceRecordModel(
         invRecId: billItem.itemGuid,
-        invRecProduct:material.matName,
-      invRecProductCode:material.matCode.toString() ,
+        invRecProduct: material.matName,
+        invRecProductCode: material.matCode.toString(),
         invRecQuantity: billItem.itemQuantity,
         invRecSubTotal: billItem.itemSubTotalPrice,
         invRecTotal: double.tryParse(billItem.itemTotalPrice),
@@ -76,25 +74,24 @@ class InvoiceRecordModel {
         invRecGiftTotal: billItem.itemGiftsPrice,
         invRecProductSoldSerial: billItem.soldSerialNumber,
         invRecProductSerialNumbers: billItem.itemSerialNumbers,
-        invRecMaterialBarcode: material.matBarCode
-      );
+        invRecMaterialBarcode: material.matBarCode);
   }
 
   factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) =>
       InvoiceRecordModel(
-        invRecId: map[AppConstants.invRecId],
-        invRecProduct: map[AppConstants.invRecProduct],
-        invRecQuantity:
-            int.tryParse(map[AppConstants.invRecQuantity].toString()),
-        invRecSubTotal:
-            double.tryParse(map[AppConstants.invRecSubTotal].toString()),
-        invRecTotal: double.tryParse(map[AppConstants.invRecTotal].toString()),
-        invRecVat: double.tryParse((map[AppConstants.invRecVat]).toString()),
-        invRecIsLocal: map[AppConstants.invRecIsLocal],
-        invRecGift: int.tryParse(map[AppConstants.invRecGift].toString()),
-        invRecGiftTotal: (map[AppConstants.invRecGiftTotal] ?? 0) * 1.0,
-        invRecMaterialBarcode: map[AppStrings.materialBarcode]
-      );
+          invRecId: map[AppConstants.invRecId],
+          invRecProduct: map[AppConstants.invRecProduct],
+          invRecQuantity:
+              int.tryParse(map[AppConstants.invRecQuantity].toString()),
+          invRecSubTotal:
+              double.tryParse(map[AppConstants.invRecSubTotal].toString()),
+          invRecTotal:
+              double.tryParse(map[AppConstants.invRecTotal].toString()),
+          invRecVat: double.tryParse((map[AppConstants.invRecVat]).toString()),
+          invRecIsLocal: map[AppConstants.invRecIsLocal],
+          invRecGift: int.tryParse(map[AppConstants.invRecGift].toString()),
+          invRecGiftTotal: (map[AppConstants.invRecGiftTotal] ?? 0) * 1.0,
+          invRecMaterialBarcode: map[AppStrings.materialBarcode]);
 
   Map<String, dynamic> toJson() => {
         AppConstants.invRecId: invRecId,
@@ -127,7 +124,6 @@ class InvoiceRecordModel {
 
     final String? materialBarcode = map[AppStrings.materialBarcode];
 
-
     if (raw.isNotEmpty) {
       try {
         dynamic decoded;
@@ -137,7 +133,7 @@ class InvoiceRecordModel {
         } catch (_) {
           final fixedRaw = raw.replaceAllMapped(
             RegExp(r'(?<=\[|\s|,)([^,\]\[]+)(?=,|\s|\])'),
-                (match) {
+            (match) {
               final item = match.group(1)!.trim();
               return RegExp(r'^\d+$').hasMatch(item) ? item : '"$item"';
             },
@@ -166,19 +162,18 @@ class InvoiceRecordModel {
         : null;
 
     return InvoiceRecordModel(
-      invRecId: matId,
-      invRecProduct: prodName,
-      invRecQuantity: quantity,
-      invRecSubTotal: AppServiceUtils.toFixedDouble(subTotal),
-      invRecTotal: total,
-      invRecVat: AppServiceUtils.toFixedDouble(vat),
-      invRecIsLocal: map[AppConstants.invRecIsLocal],
-      invRecGift: giftsNumber,
-      invRecGiftTotal: giftTotal,
-      invRecProductSoldSerial: productSoldSerial,
-      invRecProductSerialNumbers: productSerialNumbers,
-      invRecMaterialBarcode: materialBarcode
-    );
+        invRecId: matId,
+        invRecProduct: prodName,
+        invRecQuantity: quantity,
+        invRecSubTotal: AppServiceUtils.toFixedDouble(subTotal),
+        invRecTotal: total,
+        invRecVat: AppServiceUtils.toFixedDouble(vat),
+        invRecIsLocal: map[AppConstants.invRecIsLocal],
+        invRecGift: giftsNumber,
+        invRecGiftTotal: giftTotal,
+        invRecProductSoldSerial: productSoldSerial,
+        invRecProductSerialNumbers: productSerialNumbers,
+        invRecMaterialBarcode: materialBarcode);
   }
 
   // Helper method to parse integers, handling Arabic numerals
@@ -287,14 +282,13 @@ class InvoiceRecordModel {
         hasContextMenu: false,
       ): invRecMaterialBarcode,
 
-
       buildPlutoColumn(
         title: AppStrings.materialCode.tr,
         field: AppStrings.materialCode,
         type: PlutoColumnType.text(),
         width: 100,
         hasContextMenu: false,
-         isFullyHidden: !RoleItemType.viewBill.hasAdminPermission,
+        isFullyHidden: !RoleItemType.viewBill.hasAdminPermission,
       ): invRecProductCode,
       // Product Name Column
       buildPlutoColumn(
@@ -304,7 +298,6 @@ class InvoiceRecordModel {
         width: 300,
         hasContextMenu: false,
       ): invRecProduct,
-
 
       // Quantity Column
       buildPlutoColumn(
@@ -450,7 +443,7 @@ class InvoiceRecordModel {
     List<String> serialNumbers = [];
     final hasSerials = t('SNFlag') == '1' || t('SNReadFlag') == '1';
     if (hasSerials) {
-      serialNumbers = <String>[];  // You can add logic for serials if needed
+      serialNumbers = <String>[]; // You can add logic for serials if needed
     }
 
     return InvoiceRecordModel(
@@ -463,11 +456,11 @@ class InvoiceRecordModel {
       invRecTotal: total,
       invRecVat: vat,
       invRecGift: giftQty?.toInt(),
-      invRecGiftTotal: (giftQty != null && giftQty > 0) ? (unitPrice! * giftQty) : null,
+      invRecGiftTotal:
+          (giftQty != null && giftQty > 0) ? (unitPrice * giftQty) : null,
       invRecProductSerialNumbers: serialNumbers,
     );
   }
-
 }
 
 class AdditionsDiscountsRecordModel {

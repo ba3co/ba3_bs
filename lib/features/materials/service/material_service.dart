@@ -10,6 +10,7 @@ class MaterialService {
     required String matName,
     String? matCompositionLatinName,
     required String matBarCode,
+    List<String>? extraBarcodes,
     required String wholesalePrice,
     required String endUserPrice,
     required String retailPrice,
@@ -18,6 +19,10 @@ class MaterialService {
     required String matVatGuid,
     double? matCurrencyVal,
   }) {
+    final List<MatExtraBarcodeModel> extraBarcodeModels =
+        extraBarcodes?.map((e) => MatExtraBarcodeModel(barcode: e)).toList() ??
+            [];
+
     if (materialModel == null) {
       return MaterialModel(
         id: generateId(RecordType.material),
@@ -34,7 +39,7 @@ class MaterialService {
         matPrevQty: "0",
         matLastPriceCurVal: 0.0,
         matCreateDate: Timestamp.now().toDate(),
-        matExtraBarcode: [],
+        matExtraBarcode: extraBarcodeModels, // 👈 هنا
         matPictureGuid: '',
       );
     } else {
@@ -48,6 +53,7 @@ class MaterialService {
         matGroupGuid: matGroupGuid,
         matVatGuid: matVatGuid,
         matCurrencyVal: matCurrencyVal,
+        matExtraBarcode: extraBarcodeModels, // 👈 وهنا
       );
     }
   }

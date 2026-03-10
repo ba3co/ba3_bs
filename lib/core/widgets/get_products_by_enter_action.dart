@@ -27,6 +27,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
+    print('GetProductByEnterAction');
     await getProduct(stateManager, plutoController);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {
@@ -74,8 +75,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
 
   Future<void> getProduct(PlutoGridStateManager stateManager,
       IPlutoController plutoController) async {
-    if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
-
+    // if (stateManager.currentColumn?.field != AppConstants.invRecProduct) return;
     // Initialize variables
     final productText = stateManager.currentCell?.value ?? '';
 
@@ -101,7 +101,9 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
       );
     } else if (searchedMaterials.isEmpty) {
       // No matches
-      AppUIUtils.onFailure('هذه المادة غير موجودة', );
+      AppUIUtils.onFailure(
+        'هذه المادة غير موجودة',
+      );
 
       updateWithSelectedMaterial(
           inputSearch: productText,
@@ -139,7 +141,9 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           final materialId =
               onSelectedEvent.row?.cells[AppConstants.materialIdFiled]?.value;
           final selectedMaterial = materialId != null
-              ? materialController.getMaterialById(materialId,)
+              ? materialController.getMaterialById(
+                  materialId,
+                )
               : null;
           updateWithSelectedMaterial(
               inputSearch: inputSearch,
@@ -216,15 +220,13 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     updateCellValue(
         stateManager, AppConstants.invRecSubTotal, materialModel.endUserPrice);
 
-    if(stateManager.currentRow!.cells[AppConstants.invRecQuantity]!.value>1)
-      {
-        updateCellValue(stateManager, AppConstants.invRecQuantity, stateManager.currentRow!.cells[AppConstants.invRecQuantity]!.value);
-      }
-    else
-      {
-        updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
-
-      }
+    if (stateManager.currentRow!.cells[AppConstants.invRecQuantity]!.value >
+        1) {
+      updateCellValue(stateManager, AppConstants.invRecQuantity,
+          stateManager.currentRow!.cells[AppConstants.invRecQuantity]!.value);
+    } else {
+      updateCellValue(stateManager, AppConstants.invRecQuantity, 1);
+    }
   }
 
   bool _isExpandableCell(PlutoGridStateManager stateManager) {
@@ -255,7 +257,6 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     if (enterKeyAction.isEditingAndMoveDown ||
         enterKeyAction.isEditingAndMoveRight) {
       if (HardwareKeyboard.instance.isShiftPressed) {
-
         // الانتقال للأعلى إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
           PlutoMoveDirection.up,
@@ -263,8 +264,6 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       } else if (isLastCellInRow && !isLastRow) {
-
-
         // إذا كانت الخلية الأخيرة في السطر الحالي، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
           stateManager.rows[stateManager.currentRowIdx! + 1]
@@ -273,8 +272,6 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       } else if (keyEvent.event.physicalKey.usbHidUsage == 0x00070058) {
-
-
         // إذا لم تكن في آخر خلية، انتقل إلى الخلية التالية
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
@@ -283,11 +280,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
         );
       }
     } else if (enterKeyAction.isEditingAndMoveRight || isFirstCellInRow) {
-
-
       if (HardwareKeyboard.instance.isShiftPressed) {
-
-
         // الانتقال لليمين إذا كان Shift مضغوط
         stateManager.moveCurrentCell(
           PlutoMoveDirection.right,
@@ -295,8 +288,6 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: false,
         );
       } else if (isLastCellInRow && !isLastRow) {
-
-
         // إذا كانت الخلية الأخيرة في السطر، انتقل إلى بداية السطر التالي
         stateManager.setCurrentCell(
           stateManager.rows[stateManager.currentRowIdx! + 1]
@@ -305,8 +296,6 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
           notify: true,
         );
       } else {
-
-
         stateManager.setCurrentCell(
           stateManager.rows[stateManager.currentRowIdx! + 1]
               .cells[stateManager.columns.first.field],

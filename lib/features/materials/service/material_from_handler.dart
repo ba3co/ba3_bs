@@ -25,10 +25,15 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
   TextEditingController retailPriceController = TextEditingController();
   TextEditingController minPriceController = TextEditingController();
   TextEditingController barcodeController = TextEditingController();
+  List<TextEditingController> extraBarcodeControllers = [];
 
   VatEnums _taxModel = VatEnums.withVat;
   late MaterialGroupModel? parentModel;
 
+  List<String> get extraBarcodes => extraBarcodeControllers
+      .map((e) => e.text)
+      .where((e) => e.isNotEmpty)
+      .toList();
   void init(MaterialModel? material) {
     if (material != null) {
       materialController.selectedMaterial = material;
@@ -45,6 +50,15 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
           .selectedMaterial!.matLastPriceCurVal!
           .toFixedString();
       barcodeController.text = materialController.selectedMaterial!.matBarCode!;
+      extraBarcodeControllers.clear();
+
+      final extraBarcodes =
+          materialController.selectedMaterial!.matExtraBarcode ?? [];
+
+      for (var barcode in extraBarcodes) {
+        extraBarcodeControllers
+            .add(TextEditingController(text: barcode.barcode ?? ""));
+      }
       latinNameController.text =
           materialController.selectedMaterial!.matCompositionLatinName ?? '';
       parentModel = read<MaterialGroupController>().getMaterialGroupById(
@@ -59,6 +73,17 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     }
   }
 
+  void addExtraBarcodeField() {
+    extraBarcodeControllers.add(TextEditingController());
+    materialController.update();
+  }
+
+  void removeExtraBarcodeField(int index) {
+    extraBarcodeControllers[index].dispose();
+    extraBarcodeControllers.removeAt(index);
+    materialController.update();
+  }
+
   void clear() {
     nameController.clear();
     codeController.clear();
@@ -69,6 +94,11 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     barcodeController.clear();
     latinNameController.clear();
     parentController.clear();
+
+    for (var c in extraBarcodeControllers) {
+      c.dispose();
+    }
+    extraBarcodeControllers.clear();
   }
 
   bool validate() => formKey.currentState?.validate() ?? true;
@@ -83,6 +113,10 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     barcodeController.dispose();
     latinNameController.dispose();
     parentController.dispose();
+
+    for (var c in extraBarcodeControllers) {
+      c.dispose();
+    }
   }
 
   String? defaultValidator(String? value, String fieldName) =>

@@ -34,12 +34,13 @@ class AddMaterialScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            spacing: 20,
+          child: ListView(
+            // spacing: 20,
             children: [
               AddMaterialForm(
                 controller: controller,
               ),
+              SizedBox(height: 20),
               FormFieldRow(
                 firstItem: TaxDropdown(
                     taxSelectionHandler: controller.materialFromHandler),
@@ -55,6 +56,7 @@ class AddMaterialScreen extends StatelessWidget {
                   },
                 ),
               ),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -78,8 +80,7 @@ class AddMaterialScreen extends StatelessWidget {
                   }),
                   AppButton(
                     title: AppStrings.newS.tr,
-                    onPressed: (){
-
+                    onPressed: () {
                       controller.clearMaterialForm();
                     },
                     iconData: FontAwesomeIcons.filePen,
@@ -91,7 +92,8 @@ class AddMaterialScreen extends StatelessWidget {
                           RequestState.loading,
                       title: AppStrings.delete.tr,
                       onPressed: () async {
-                        if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                        if (await AppUIUtils.confirmOverlay(context,
+                            canPop: true)) {
                           if (!context.mounted) return;
                           controller.deleteMaterial(context, true);
                         }
@@ -105,12 +107,16 @@ class AddMaterialScreen extends StatelessWidget {
                       isLoading: controller.deleteMaterialRequestState.value ==
                           RequestState.loading,
                       title: AppStrings.repair.tr,
-                      onPressed: ()async {
-                        if( controller.deleteMaterialRequestState.value != RequestState.loading)
-                        {
-                          controller.deleteMaterialRequestState.value = RequestState.loading;
-                          await read<MaterialsStatementController>().setupOneMaterials(controller.selectedMaterial!.id!);
-                          controller.deleteMaterialRequestState.value = RequestState.success;
+                      onPressed: () async {
+                        if (controller.deleteMaterialRequestState.value !=
+                            RequestState.loading) {
+                          controller.deleteMaterialRequestState.value =
+                              RequestState.loading;
+                          await read<MaterialsStatementController>()
+                              .setupOneMaterials(
+                                  controller.selectedMaterial!.id!);
+                          controller.deleteMaterialRequestState.value =
+                              RequestState.success;
                         }
                       },
                       iconData: Icons.home_repair_service_outlined,
@@ -119,7 +125,6 @@ class AddMaterialScreen extends StatelessWidget {
                   }),
                 ],
               ),
-
             ],
           ),
         ),
