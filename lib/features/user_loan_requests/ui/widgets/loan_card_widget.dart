@@ -1,6 +1,8 @@
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/floating_window/managers/overlay_entry_with_priority_manager.dart';
 import 'package:ba3_bs/features/user_loan_requests/controller/loan_request_controller.dart';
 import 'package:ba3_bs/features/user_loan_requests/data/model/loan_request_model.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -196,7 +198,8 @@ class LoanCardWidget extends StatelessWidget {
                 ),
               ],
             ),
-            ...[
+
+            if (RoleItemType.administrator.hasAdminPermission) ...[
               if (loan.status == LoanStatus.approved ||
                   loan.status == LoanStatus.pending)
                 const Divider(height: 24),

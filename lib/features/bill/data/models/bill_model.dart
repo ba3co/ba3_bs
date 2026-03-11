@@ -9,6 +9,7 @@ import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,9 @@ part 'bill_model.g.dart';
 
 @HiveType(typeId: 3)
 // ignore: must_be_immutable
-class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable {
+class BillModel extends HiveObject
+    with EquatableMixin
+    implements PlutoAdaptable {
   @HiveField(0)
   final String? billId;
 
@@ -46,6 +49,15 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
   @HiveField(5)
   final Status status;
 
+  @HiveField(6)
+  final bool? isAudited;
+
+  @HiveField(7)
+  final String? auditedBy;
+
+  @HiveField(8)
+  final DateTime? auditedAt;
+
   BillModel({
     this.billId,
     required this.billTypeModel,
@@ -53,6 +65,9 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
     required this.billDetails,
     required this.status,
     required this.freeBill,
+    this.isAudited,
+    this.auditedBy,
+    this.auditedAt,
   });
 
   factory BillModel.fromJson(Map<String, dynamic> json) => BillModel(
@@ -62,9 +77,18 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         billDetails: BillDetails.fromJson(json['billDetails']),
         items: BillItems.fromJson(json['items']),
         status: Status.byValue(json['status']),
+        isAudited: json['isAudited'],
+        auditedBy: json['auditedBy'],
+        auditedAt: json['auditedAt'] != null
+            ? DateTime.parse(json['auditedAt'])
+            : null,
       );
 
-  factory BillModel.empty({required BillTypeModel billTypeModel, int lastBillNumber = 0, int? previousBillNumber}) => BillModel(
+  factory BillModel.empty(
+          {required BillTypeModel billTypeModel,
+          int lastBillNumber = 0,
+          int? previousBillNumber}) =>
+      BillModel(
         billTypeModel: billTypeModel,
         status: Status.pending,
         freeBill: false,
@@ -72,7 +96,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         billDetails: BillDetails(
           billPayType: InvPayType.cash.index,
           billDate: DateTime.now(),
-          previous: previousBillNumber ?? (lastBillNumber == 0 ? null : lastBillNumber),
+          previous: previousBillNumber ??
+              (lastBillNumber == 0 ? null : lastBillNumber),
           billNumber: lastBillNumber + 1,
         ),
       );
@@ -137,7 +162,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
           );
   }
 
-  factory BillModel.fromImportedJsonFile(Map<String, dynamic> billData, bool freeBill) {
+  factory BillModel.fromImportedJsonFile(
+      Map<String, dynamic> billData, bool freeBill) {
     DateFormat dateFormat = DateFormat('yyyy-M-d');
     double billTotal = 0;
     double billVatTotal = 0;
@@ -153,7 +179,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
                 /*       int vatRatio =  5;
                 double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first)/ 1.05;*/
                 int vatRatio = int.parse(item['VatRatio']);
-                double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first);
+                double itemSubTotal =
+                    double.parse(item['PriceDescExtra'].split(',').first);
 
                 int itemQuantity = int.parse(item['QtyBonus'].split(',').first);
                 int itemGiftsNumber = int.parse(item['QtyBonus'].split(',')[1]);
@@ -207,10 +234,13 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
                   /*            int vatRatio =  5;
                   double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first)/ 1.05;*/
                   int vatRatio = int.parse(item['VatRatio']);
-                  double itemSubTotal = double.parse(item['PriceDescExtra'].split(',').first);
+                  double itemSubTotal =
+                      double.parse(item['PriceDescExtra'].split(',').first);
 
-                  int itemQuantity = int.parse(item['QtyBonus'].split(',').first);
-                  int itemGiftsNumber = int.parse(item['QtyBonus'].split(',')[1]);
+                  int itemQuantity =
+                      int.parse(item['QtyBonus'].split(',').first);
+                  int itemGiftsNumber =
+                      int.parse(item['QtyBonus'].split(',')[1]);
                   billTotal += AppServiceUtils.calcTotal(
                     itemQuantity,
                     itemSubTotal,
@@ -245,7 +275,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
                       itemSubTotal,
                     ),
                     itemGiftsNumber: itemGiftsNumber,
-                    itemName: read<MaterialController>().getMaterialNameById(item['MatPtr'].toString()),
+                    itemName: read<MaterialController>()
+                        .getMaterialNameById(item['MatPtr'].toString()),
                     itemVatPrice: AppServiceUtils.calcVat(
                       vatRatio,
                       itemSubTotal,
@@ -259,7 +290,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         billGuid: billData['B']['BillGuid'],
         billPayType: int.parse(billData['B']['BillPayType']),
         billNumber: (billData['B']['BillNumber']),
-        billDate: dateFormat.parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
+        billDate: dateFormat
+            .parse(billData['B']['BillDate'].toString().toYearMonthDayFormat()),
         billCustomerId: billData['B']['BillCustPtr'],
         billAccountId: billData['B']['BillCustAcc'],
         billSellerId: billData['B']['BillCostGuid'],
@@ -276,22 +308,34 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
       billTypeModel: BillTypeModel(
           billTypeLabel: _billTypeByGuid(billData['B']['BillTypeGuid']).label,
           discountAdditionAccounts: {
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasDiscountsAccount)
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasDiscountsAccount)
               BillAccounts.discounts: [
                 DiscountAdditionAccountModel(
-                  accName: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!.accName!,
+                  accName: _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.discounts]!
+                      .accName!,
                   percentage: 0,
                   amount: 0,
-                  id: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!.id!,
+                  id: _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.discounts]!
+                      .id!,
                 ),
               ],
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasAdditionsAccount)
               BillAccounts.additions: [
                 DiscountAdditionAccountModel(
-                  accName: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!.accName!,
+                  accName: _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.additions]!
+                      .accName!,
                   percentage: 0,
                   amount: 0,
-                  id: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!.id!,
+                  id: _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.additions]!
+                      .id!,
                 ),
               ],
           },
@@ -300,17 +344,38 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
               id: billData['B']['BillCustAccId'],
               accName: billData['B']['BillCustAccName'],
             ),
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasMaterialAccount)
-              BillAccounts.materials: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.materials]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
-              BillAccounts.gifts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.gifts]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasGiftsAccount)
-              BillAccounts.exchangeForGifts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.exchangeForGifts]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasDiscountsAccount)
-              BillAccounts.discounts: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.discounts]!,
-            if (_billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType.hasAdditionsAccount)
-              BillAccounts.additions: _billTypeByGuid(billData['B']['BillTypeGuid']).accounts[BillAccounts.additions]!,
-            BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57')
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasMaterialAccount)
+              BillAccounts.materials:
+                  _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.materials]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasGiftsAccount)
+              BillAccounts.gifts: _billTypeByGuid(billData['B']['BillTypeGuid'])
+                  .accounts[BillAccounts.gifts]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasGiftsAccount)
+              BillAccounts.exchangeForGifts:
+                  _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.exchangeForGifts]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasDiscountsAccount)
+              BillAccounts.discounts:
+                  _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.discounts]!,
+            if (_billTypeByGuid(billData['B']['BillTypeGuid'])
+                .billPatternType
+                .hasAdditionsAccount)
+              BillAccounts.additions:
+                  _billTypeByGuid(billData['B']['BillTypeGuid'])
+                      .accounts[BillAccounts.additions]!,
+            BillAccounts.store: AccountModel(
+                accName: "المستودع الرئيسي",
+                id: '6d9836d1-fccd-4006-804f-81709eecde57')
             /*AccountModel(
                 id: billData['B']['BillStoreGuid'], accName: read<AccountsController>().getAccountNameById(billData['B']['BillStoreGuid'])),*/
           },
@@ -321,7 +386,8 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
           shortName: _billTypeByGuid(billData['B']['BillTypeGuid']).value,
           billTypeId: billData['B']['BillTypeGuid'],
           color: _billTypeByGuid(billData['B']['BillTypeGuid']).color,
-          billPatternType: _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),
+          billPatternType:
+              _billTypeByGuid(billData['B']['BillTypeGuid']).billPatternType),
     );
   }
 
@@ -332,6 +398,9 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         'items': items.toJson(),
         'status': status.value,
         'freeBill': freeBill,
+        'isAudited': isAudited,
+        'auditedBy': auditedBy,
+        'auditedAt': auditedAt?.toIso8601String(),
       };
 
   BillModel copyWith({
@@ -341,6 +410,9 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
     final BillDetails? billDetails,
     final Status? status,
     final bool? freeBill,
+    final bool? isAudited,
+    final String? auditedBy,
+    final DateTime? auditedAt,
   }) =>
       BillModel(
         billId: billId ?? this.billId,
@@ -349,60 +421,152 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         billDetails: billDetails ?? this.billDetails,
         status: status ?? this.status,
         freeBill: freeBill ?? this.freeBill,
+        isAudited: isAudited ?? this.isAudited,
+        auditedBy: auditedBy ?? this.auditedBy,
+        auditedAt: auditedAt ?? this.auditedAt,
       );
 
   @override
   Map<PlutoColumn, dynamic> toPlutoGridFormat([void type]) => {
-        PlutoColumn(title: 'billId', field: AppConstants.billIdFiled, type: PlutoColumnType.text(), hide: true): billId ?? '',
+        PlutoColumn(
+            title: 'billId',
+            field: AppConstants.billIdFiled,
+            type: PlutoColumnType.text(),
+            hide: true): billId ?? '',
         createAutoIdColumn(): '#',
-    createCheckColumn(): '',
+        createCheckColumn(): '',
         // PlutoColumn(title: AppStrings.billStatus.tr, field: 'حالة الفاتورة', type: PlutoColumnType.text()):
         //     status.value,
-        PlutoColumn(title: AppStrings.billNumber.tr, field: 'رقم الفاتورة', type: PlutoColumnType.number()): billDetails.billNumber ?? 0,
-        PlutoColumn(title: AppStrings.date.tr, field: 'التاريخ', type: PlutoColumnType.date()): (billDetails.billDate?.dayMonthYear ?? ''),
-        PlutoColumn(title: AppStrings.taxTotal.tr, field: 'مجموع الضريبة', type: PlutoColumnType.text()):
-        billDetails.billVatTotal!.toDouble().toStringAsFixed(2),
-        PlutoColumn(title: AppStrings.totalBeforeTax.tr, field: 'المجموع قبل الضريبة', type: PlutoColumnType.text()):
-        billDetails.billBeforeVatTotal!.toDouble().toStringAsFixed(2),
-        PlutoColumn(title: AppStrings.total.tr, field: 'المجموع الكلي', type: PlutoColumnType.number()):
+        PlutoColumn(
+            title: AppStrings.billNumber.tr,
+            field: 'رقم الفاتورة',
+            type: PlutoColumnType.number()): billDetails.billNumber ?? 0,
+        PlutoColumn(
+                title: AppStrings.date.tr,
+                field: 'التاريخ',
+                type: PlutoColumnType.date()):
+            (billDetails.billDate?.dayMonthYear ?? ''),
+        PlutoColumn(
+                title: AppStrings.taxTotal.tr,
+                field: 'مجموع الضريبة',
+                type: PlutoColumnType.text()):
+            billDetails.billVatTotal!.toDouble().toStringAsFixed(2),
+        PlutoColumn(
+                title: AppStrings.totalBeforeTax.tr,
+                field: 'المجموع قبل الضريبة',
+                type: PlutoColumnType.text()):
+            billDetails.billBeforeVatTotal!.toDouble().toStringAsFixed(2),
+        PlutoColumn(
+                title: AppStrings.total.tr,
+                field: 'المجموع الكلي',
+                type: PlutoColumnType.number()):
             AppServiceUtils.toFixedDouble(billDetails.billTotal),
-        PlutoColumn(title: AppStrings.payType.tr, field: 'نوع الدفع', type: PlutoColumnType.text()):
+        PlutoColumn(
+                title: AppStrings.payType.tr,
+                field: 'نوع الدفع',
+                type: PlutoColumnType.text()):
             InvPayType.fromIndex(billDetails.billPayType ?? 0).label,
-        PlutoColumn(title: AppStrings.customerAccount.tr, field: 'حساب العميل', type: PlutoColumnType.text()):
+        PlutoColumn(
+                title: AppStrings.customerAccount.tr,
+                field: 'حساب العميل',
+                type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.caches]?.accName ?? '',
-        PlutoColumn(title: '${AppStrings.account.tr} ${AppStrings.seller.tr}', field: 'حساب البائع', type: PlutoColumnType.text()):
-            read<SellersController>().getSellerNameById(billDetails.billSellerId),
-        PlutoColumn(title: AppStrings.store.tr, field: 'المستودع', type: PlutoColumnType.text()):
+        PlutoColumn(
+                title: '${AppStrings.account.tr} ${AppStrings.seller.tr}',
+                field: 'حساب البائع',
+                type: PlutoColumnType.text()):
+            read<SellersController>()
+                .getSellerNameById(billDetails.billSellerId),
+        PlutoColumn(
+                title: AppStrings.store.tr,
+                field: 'المستودع',
+                type: PlutoColumnType.text()):
             billTypeModel.accounts?[BillAccounts.store]?.accName ?? '',
-        PlutoColumn(title: AppStrings.illustration.tr, field: 'البيان', type: PlutoColumnType.text()): billDetails.billNote ?? '',
+        PlutoColumn(
+            title: AppStrings.illustration.tr,
+            field: 'البيان',
+            type: PlutoColumnType.text()): billDetails.billNote ?? '',
         // PlutoColumn(title: AppStrings.discountTotal.tr, field: 'مجموع الحسم', type: PlutoColumnType.number()):
         // AppServiceUtils.toFixedDouble(billDetails.billDiscountsTotal),
         // PlutoColumn(title: AppStrings.additionsTotal.tr, field: 'مجموع الاضافات', type: PlutoColumnType.number()):
         // AppServiceUtils.toFixedDouble(billDetails.billAdditionsTotal),
-        PlutoColumn(title: AppStrings.giftsTotal.tr, field: 'مجموع الهدايا', type: PlutoColumnType.text()):
-            billDetails.billGiftsTotal ?? 0,
-        PlutoColumn(title: AppStrings.firstPay.tr, field: 'الدفع الاولى', type: PlutoColumnType.number()): billDetails.billFirstPay ?? 0,
-        PlutoColumn(title: AppStrings.vatName.tr, field: 'الضريبة', type: PlutoColumnType.text()): freeBill == true
-            ? AppConstants.taxFreeAccountName.replaceAll('ضريبة القيمة المضافة', '')
-            : AppConstants.taxLocalAccountName.replaceAll('ضريبة القيمة المضافة', ''),
-    PlutoColumn(title: AppStrings.materials.tr, field: 'المواد', type: PlutoColumnType.text()): items.itemList.map((e) =>"(${e.itemName})",).toList(),
-    PlutoColumn(title: AppStrings.requiredRequestNumber.tr, field: 'ads', type: PlutoColumnType.text()):billDetails.orderNumber,
-    PlutoColumn(title: 'nested', field: '_isNested', type: PlutoColumnType.text(), hide: true): AppStrings.materials.tr, // <-- points to the nested column
-  };
+        PlutoColumn(
+            title: AppStrings.giftsTotal.tr,
+            field: 'مجموع الهدايا',
+            type: PlutoColumnType.text()): billDetails.billGiftsTotal ?? 0,
+        PlutoColumn(
+            title: AppStrings.firstPay.tr,
+            field: 'الدفع الاولى',
+            type: PlutoColumnType.number()): billDetails.billFirstPay ?? 0,
+        PlutoColumn(
+                title: AppStrings.vatName.tr,
+                field: 'الضريبة',
+                type: PlutoColumnType.text()):
+            freeBill == true
+                ? AppConstants.taxFreeAccountName
+                    .replaceAll('ضريبة القيمة المضافة', '')
+                : AppConstants.taxLocalAccountName
+                    .replaceAll('ضريبة القيمة المضافة', ''),
+        PlutoColumn(
+                title: AppStrings.materials.tr, field: 'المواد', type: PlutoColumnType.text()):
+            items.itemList
+                .map(
+                  (e) => "(${e.itemName})",
+                )
+                .toList(),
+        PlutoColumn(
+            title: AppStrings.requiredRequestNumber.tr,
+            field: 'ads',
+            type: PlutoColumnType.text()): billDetails.orderNumber,
+        PlutoColumn(
+                title: 'nested',
+                field: '_isNested',
+                type: PlutoColumnType.text(),
+                hide: true):
+            AppStrings.materials.tr, // <-- points to the nested column
+        PlutoColumn(
+          title: 'مدقق؟',
+          field: 'isAudited',
+          type: PlutoColumnType.text(),
+          width: 90,
+          renderer: (rendererContext) {
+            final bool? audited = rendererContext.row.cells['isAudited']?.value;
+            return Center(
+              child: Icon(
+                audited == true ? Icons.verified : Icons.pending_actions,
+                color: audited == true ? Colors.green : Colors.orange,
+                size: 20,
+              ),
+            );
+          },
+        ): isAudited ?? false,
 
-  List<Map<String, String>> get getAdditionsDiscountsRecords => _additionsDiscountsRecords;
+        // اختياري: من دقق
+        PlutoColumn(
+          title: 'مدقق بواسطة',
+          field: 'auditedBy',
+          type: PlutoColumnType.text(),
+          hide: true,
+        ): auditedBy ?? '',
+      };
+
+  List<Map<String, String>> get getAdditionsDiscountsRecords =>
+      _additionsDiscountsRecords;
 
   List<Map<String, String>> get _additionsDiscountsRecords {
     final partialTotal = _partialTotal;
 
-    final discountTotal = AppServiceUtils.zeroToEmpty(billDetails.billDiscountsTotal);
-    final additionTotal = AppServiceUtils.zeroToEmpty(billDetails.billAdditionsTotal);
+    final discountTotal =
+        AppServiceUtils.zeroToEmpty(billDetails.billDiscountsTotal);
+    final additionTotal =
+        AppServiceUtils.zeroToEmpty(billDetails.billAdditionsTotal);
 
     return [
       _createRecordRow(
         account: billTypeModel.accounts?[BillAccounts.discounts]?.accName ?? '',
         discountValue: discountTotal,
-        discountRatio: _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
+        discountRatio:
+            _calculateRatio(billDetails.billDiscountsTotal ?? 0, partialTotal),
         additionValue: '',
         additionRatio: '',
       ),
@@ -411,12 +575,14 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         discountValue: '',
         discountRatio: '',
         additionValue: additionTotal,
-        additionRatio: _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
+        additionRatio:
+            _calculateRatio(billDetails.billAdditionsTotal ?? 0, partialTotal),
       ),
     ];
   }
 
-  static BillType _billTypeByGuid(String typeGuide) => BillType.byTypeGuide(typeGuide);
+  static BillType _billTypeByGuid(String typeGuide) =>
+      BillType.byTypeGuide(typeGuide);
 
   Map<String, String> _createRecordRow({
     required String account,
@@ -435,11 +601,10 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
 
   /// the rounding error problem was here but now it is fixed
   String _calculateRatio(double value, double total) =>
-      total > 0 && value > 0
-          ? ((value / total) * 100).toStringAsFixed(2)
-          : '';
+      total > 0 && value > 0 ? ((value / total) * 100).toStringAsFixed(2) : '';
 
-  double get _partialTotal => (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
+  double get _partialTotal =>
+      (billDetails.billVatTotal ?? 0) + (billDetails.billBeforeVatTotal ?? 0);
 
   @override
   List<Object?> get props => [
@@ -449,5 +614,4 @@ class BillModel extends HiveObject with EquatableMixin implements PlutoAdaptable
         billDetails,
         status,
       ];
-
 }

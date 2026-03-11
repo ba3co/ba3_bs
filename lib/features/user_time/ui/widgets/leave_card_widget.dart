@@ -1,6 +1,8 @@
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/features/floating_window/managers/overlay_entry_with_priority_manager.dart';
 import 'package:ba3_bs/features/user_time/controller/leave_requests_controller.dart';
 import 'package:ba3_bs/features/user_time/data/models/leave_requests_model.dart';
+import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
 
 class LeaveCardWidget extends StatelessWidget {
@@ -238,12 +240,7 @@ class LeaveCardWidget extends StatelessWidget {
                     : SizedBox()
               ],
             ),
-            // أزرار الإجراءات (للمدير فقط)
-            // if (userManagementController
-            //         .getRoleById(controller.userModel.userRoleId ?? "")
-            //         ?.roleName ==
-            //     'Admin')
-            ...[
+            if (RoleItemType.administrator.hasAdminPermission) ...[
               const Divider(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
