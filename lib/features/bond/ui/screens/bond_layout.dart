@@ -46,7 +46,8 @@ class BondLayout extends StatelessWidget {
                           Align(
                             child: Text(
                               AppStrings.bonds.tr,
-                              style: AppTextStyles.headLineStyle2.copyWith(color: AppColors.blueColor),
+                              style: AppTextStyles.headLineStyle2
+                                  .copyWith(color: AppColors.blueColor),
                             ),
                           ),
                           Spacer(),
@@ -60,43 +61,45 @@ class BondLayout extends StatelessWidget {
                           ),
                         ],
                       ),
-                      bodyWidget: bondTypeController.getBondsTypesRequestState.value == RequestState.loading
+                      bodyWidget: bondTypeController
+                                  .getBondsTypesRequestState.value ==
+                              RequestState.loading
                           ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            children: List.generate(
-                              10,
-                                  (index) => Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: const BodyBondLayoutShimmerWidget(),
-                              ),
-                            ),
-                          ),
-
-                          VerticalSpace(),
-
-                          Center(
-                            child: Opacity(
-                              opacity: 0.5, // Looks shimmer-like
-                              child: Container(
-                                width: max(45.w, 140),
-                                height: 35.h,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(12),
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  children: List.generate(
+                                    10,
+                                    (index) => Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child:
+                                          const BodyBondLayoutShimmerWidget(),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
+                                VerticalSpace(),
+                                Center(
+                                  child: Opacity(
+                                    opacity: 0.5, // Looks shimmer-like
+                                    child: Container(
+                                      width: max(45.w, 140),
+                                      height: 35.h,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
                           : Column(
                               // padding: const EdgeInsets.all(15.0),
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Wrap(
-                                  children: bondTypeController.bondTypes.toList().map(
+                                  children:
+                                      bondTypeController.bondTypes.toList().map(
                                     (bondType) {
                                       return Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -104,7 +107,8 @@ class BondLayout extends StatelessWidget {
                                           bondsController: controller,
                                           onTap: () {
                                             /// this is the most important line in the whole thing
-                                            controller.openFloatingBondDetails(context, bondType);
+                                            controller.openFloatingBondDetails(
+                                                context, bondType);
                                           },
                                           bondTypeModel: bondType,
                                         ),
@@ -119,7 +123,9 @@ class BondLayout extends StatelessWidget {
                                     fontSize: 13.sp,
                                     color: AppColors.grayColor,
                                     onPressed: () {
-                                      bondTypeController.navigateToAddBondTypeScreen(context: context);
+                                      bondTypeController
+                                          .navigateToAddBondTypeScreen(
+                                              context: context);
                                     },
                                     iconData: Icons.view_list_outlined,
                                     width: max(45.w, 140),
@@ -135,8 +141,11 @@ class BondLayout extends StatelessWidget {
             );
           }),
           LoadingDialog(
-            isLoading: read<AllBondsController>().saveAllBondsRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr}',
+            isLoading:
+                read<AllBondsController>().saveAllBondsRequestState.value ==
+                    RequestState.loading,
+            message:
+                '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr}',
             fontSize: 14.sp,
           )
         ],

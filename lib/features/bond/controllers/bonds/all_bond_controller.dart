@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/models/date_filter.dart';
+import 'package:ba3_bs/core/services/export_excl/excel_export.dart';
 import 'package:ba3_bs/features/bond/service/bond/floating_bond_details_launcher.dart';
 import 'package:ba3_bs/features/bond/ui/screens/bond_details_screen.dart';
 import 'package:ba3_bs/features/bond/use_cases/get_bond_types_models_use_case.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/helper/enums/enums.dart';
 import '../../../../core/helper/mixin/floating_launcher.dart';
@@ -33,8 +35,13 @@ import 'bond_details_controller.dart';
 import 'bond_search_controller.dart';
 
 class AllBondsController extends FloatingBondDetailsLauncher
-    with EntryBondsGenerator, FirestoreSequentialNumbers, FloatingLauncher, AppNavigator {
-  final CompoundDatasourceRepository<BondModel, BondTypeModel> _bondsFirebaseRepo;
+    with
+        EntryBondsGenerator,
+        FirestoreSequentialNumbers,
+        FloatingLauncher,
+        AppNavigator {
+  final CompoundDatasourceRepository<BondModel, BondTypeModel>
+      _bondsFirebaseRepo;
   final ImportExportRepository<BondModel> _jsonImportExportRepo;
 
   late final BondTypeService _bondTypeService;
@@ -64,10 +71,9 @@ class AllBondsController extends FloatingBondDetailsLauncher
     _bondLocalStorageService = BondLocalStorageService();
 
     _bondTypeService = Get.find<BondTypeService>();
-   // await _bondTypeService.initializeBondTypes();
+    // await _bondTypeService.initializeBondTypes();
 
     await fetchAllBondsCountsByTypes(_bondTypeService.getBondTypes());
-
   }
 
   Future<void> fetchAllNestedBonds() async {
@@ -79,28 +85,30 @@ class AllBondsController extends FloatingBondDetailsLauncher
       final result = await getAllBondTypesUseCase();
 
       await result.fold(
-            (failure) {
+        (failure) {
           AppUIUtils.onFailure(failure.message);
         },
-            (bondTypeModels) async {
-          final nestedResult = await _bondsFirebaseRepo.fetchAllNested(bondTypeModels);
+        (bondTypeModels) async {
+          final nestedResult =
+              await _bondsFirebaseRepo.fetchAllNested(bondTypeModels);
 
           nestedResult.fold(
-                (failure) => AppUIUtils.onFailure(failure.message),
-                (fetchedNestedBonds) {
+            (failure) => AppUIUtils.onFailure(failure.message),
+            (fetchedNestedBonds) {
               // Assign all to reactive maps
               nestedBonds.assignAll(fetchedNestedBonds);
 
               // Create a map keyed by typeGuide for easier lookups
               bondsByTypeGuid.assignAll(
                 nestedBonds.map(
-                      (bondType, bonds) => MapEntry(bondType.typeGuide, bonds),
+                  (bondType, bonds) => MapEntry(bondType.typeGuide, bonds),
                 ),
               );
 
               // Logging & flattening
               nestedBonds.forEach(
-                    (type, bonds) => log('Bond Type: ${type.label} has ${bonds.length} bonds'),
+                (type, bonds) =>
+                    log('Bond Type: ${type.label} has ${bonds.length} bonds'),
               );
 
               allNestedBonds.assignAll(
@@ -119,7 +127,6 @@ class AllBondsController extends FloatingBondDetailsLauncher
     // getAllNestedBondsRequestState.value = RequestState.success;
   }
 
-
   @override
   void onInit() {
     super.onInit();
@@ -136,7 +143,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
     }
   }
 
-  BondModel getBondById(String bondId) => bonds.firstWhere((bond) => bond.payGuid == bondId);
+  BondModel getBondById(String bondId) =>
+      bonds.firstWhere((bond) => bond.payGuid == bondId);
 
   Future<void> fetchAllBondsByType(
     BondTypeModel itemTypeModel,
@@ -176,7 +184,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
             saveAllBondsRequestState.value = RequestState.loading;
 
-            await _bondsFirebaseRepo.saveAllNested(items: bonds, itemIdentifiers: _bondTypeService.getBondTypes());
+            await _bondsFirebaseRepo.saveAllNested(
+                items: bonds, itemIdentifiers: _bondTypeService.getBondTypes());
             if (!context.mounted) return;
 
             await createAndStoreEntryBonds(
@@ -210,11 +219,13 @@ class AllBondsController extends FloatingBondDetailsLauncher
       entityType: bondType.label,
     );
 
-    return _bondUtils.appendEmptyBondModelNew(bondType.typeGuide, bondsCountByType);
+    return _bondUtils.appendEmptyBondModelNew(
+        bondType.typeGuide, bondsCountByType);
   }
 
-  Future<void> openFloatingBondDetails(BuildContext context, BondTypeModel bondType, {BondModel? currentBondModel}) async {
-
+  Future<void> openFloatingBondDetails(
+      BuildContext context, BondTypeModel bondType,
+      {BondModel? currentBondModel}) async {
     final bonds = await bondsCountByType(bondType);
 
     if (!context.mounted) return;
@@ -227,7 +238,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
     );
   }
 
-  void openBondDetailsById(String bondId, BuildContext context, BondTypeModel itemTypeModel) async {
+  void openBondDetailsById(
+      String bondId, BuildContext context, BondTypeModel itemTypeModel) async {
     final BondModel bondModel = await fetchBondsById(
       bondId,
       itemTypeModel,
@@ -238,11 +250,11 @@ class AllBondsController extends FloatingBondDetailsLauncher
     final result = await getBondTypeByGuideUseCase(bondModel.payTypeGuid!);
 
     result.fold(
-          (failure) {
+      (failure) {
         // Handle error gracefully
         Get.snackbar('Error', failure.message);
       },
-          (bondTypeModel) {
+      (bondTypeModel) {
         // Pass the resolved bondTypeModel to openFloatingBondDetails
         openFloatingBondDetails(
           context,
@@ -255,10 +267,12 @@ class AllBondsController extends FloatingBondDetailsLauncher
     //openFloatingBondDetails(context, BondType.byTypeGuide(bondModel.payTypeGuid!), currentBondModel: bondModel);
   }
 
-  Future<BondModel> fetchBondsById(String bondId, BondTypeModel itemTypeModel) async {
+  Future<BondModel> fetchBondsById(
+      String bondId, BondTypeModel itemTypeModel) async {
     late BondModel bondModel;
 
-    final result = await _bondsFirebaseRepo.getById(id: bondId, itemIdentifier: itemTypeModel);
+    final result = await _bondsFirebaseRepo.getById(
+        id: bondId, itemIdentifier: itemTypeModel);
 
     result.fold(
       (failure) => AppUIUtils.onFailure(
@@ -269,13 +283,13 @@ class AllBondsController extends FloatingBondDetailsLauncher
     return bondModel;
   }
 
-  Future<Either<Failure, List<BondModel>>> fetchBondByNumber({required BondTypeModel bondType, required int bondNumber}) async {
+  Future<Either<Failure, List<BondModel>>> fetchBondByNumber(
+      {required BondTypeModel bondType, required int bondNumber}) async {
     final result = await _bondsFirebaseRepo.fetchWhere(
       itemIdentifier: bondType,
       field: ApiConstants.bondNumber,
       value: bondNumber,
     );
-
     return result;
   }
 
@@ -286,7 +300,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
     required BondModel currentBond,
     required int lastBondNumber,
   }) {
-    final String controllerTag = AppServiceUtils.generateUniqueTag('BondController');
+    final String controllerTag =
+        AppServiceUtils.generateUniqueTag('BondController');
 
     final Map<String, GetxController> controllers = setupControllers(
       params: {
@@ -298,9 +313,12 @@ class AllBondsController extends FloatingBondDetailsLauncher
       },
     );
 
-    final bondDetailsController = controllers['bondDetailsController'] as BondDetailsController;
-    final bondDetailsPlutoController = controllers['bondDetailsPlutoController'] as BondDetailsPlutoController;
-    final bondSearchController = controllers['bondSearchController'] as BondSearchController;
+    final bondDetailsController =
+        controllers['bondDetailsController'] as BondDetailsController;
+    final bondDetailsPlutoController =
+        controllers['bondDetailsPlutoController'] as BondDetailsPlutoController;
+    final bondSearchController =
+        controllers['bondSearchController'] as BondSearchController;
 
     initializeBondSearch(
       currentBond: currentBond,
@@ -346,7 +364,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
     return allBondsCountsByType[bondTypeModel] ?? 0;
   }
 
-  Future<void> fetchAllBondsCountsByTypes(List<BondTypeModel> fetchedBondTypes) async {
+  Future<void> fetchAllBondsCountsByTypes(
+      List<BondTypeModel> fetchedBondTypes) async {
     allBondsRequestState.value = RequestState.loading;
     final List<Future<void>> fetchTasks = [];
     final errors = <String>[]; // Collect error messages.
@@ -355,7 +374,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
       fetchTasks.add(
         _bondsFirebaseRepo.count(itemIdentifier: bondTypeModel).then((result) {
           result.fold(
-            (failure) => errors.add('Failed to fetch count for ${bondTypeModel.label}: ${failure.message}'),
+            (failure) => errors.add(
+                'Failed to fetch count for ${bondTypeModel.label}: ${failure.message}'),
             (count) {
               allBondsCountsByType[bondTypeModel] = count;
             },
@@ -378,7 +398,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
 
   void navigateToAllBondScreen() => to(AppRoutes.allBondsScreen);
 
-  Future<void> fetchAllBondByType(BondTypeModel bondType, BuildContext context) async {
+  Future<void> fetchAllBondByType(
+      BondTypeModel bondType, BuildContext context) async {
     isBondsLoading = true;
     update();
 
@@ -420,7 +441,8 @@ class AllBondsController extends FloatingBondDetailsLauncher
     }
   }
 
-  Future<List<BondModel>> fetchBondsByDate(BondTypeModel bondType, DateFilter dateFilter) async {
+  Future<List<BondModel>> fetchBondsByDate(
+      BondTypeModel bondType, DateFilter dateFilter) async {
     List<BondModel> allBonds = [];
     //
     // allBills.addAll(
@@ -431,37 +453,161 @@ class AllBondsController extends FloatingBondDetailsLauncher
     //     },
     //   ),
     // );
-    final result = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-28');
-    final result2 = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-29');
-    final result3 = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-30');
-    final result4 = await _bondsFirebaseRepo.fetchWhere(itemIdentifier: bondType,field: ApiConstants.bondDate,value: '2025-05-31');
+    final result = await _bondsFirebaseRepo.fetchWhere(
+        itemIdentifier: bondType,
+        field: ApiConstants.bondDate,
+        value: '2025-05-28');
+    final result2 = await _bondsFirebaseRepo.fetchWhere(
+        itemIdentifier: bondType,
+        field: ApiConstants.bondDate,
+        value: '2025-05-29');
+    final result3 = await _bondsFirebaseRepo.fetchWhere(
+        itemIdentifier: bondType,
+        field: ApiConstants.bondDate,
+        value: '2025-05-30');
+    final result4 = await _bondsFirebaseRepo.fetchWhere(
+        itemIdentifier: bondType,
+        field: ApiConstants.bondDate,
+        value: '2025-05-31');
 
     result.fold(
       // (failure) => AppUIUtils.onFailure(
       //   'لا يوجد فواتير في ${bondType.label} خلال الفترة: ${dateFilter.range.start} - ${dateFilter.range.end}',
       // ),
-          (failure) => (),
-      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+      (failure) => (),
+      (fetchedBonds) => allBonds.addAll(fetchedBonds),
     );
     result4.fold(
-          (failure) => (),
-      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+      (failure) => (),
+      (fetchedBonds) => allBonds.addAll(fetchedBonds),
     );
     result3.fold(
-          (failure) => (),
-      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+      (failure) => (),
+      (fetchedBonds) => allBonds.addAll(fetchedBonds),
     );
     result2.fold(
       (failure) => (),
-      (fetchedBonds) => allBonds .addAll(fetchedBonds) ,
+      (fetchedBonds) => allBonds.addAll(fetchedBonds),
     );
 
     return allBonds;
   }
 
-  refreshController(){
+  refreshController() {
     _initializeServices();
     saveAllBondIfConnected();
   }
 
+  List<Map<String, dynamic>> buildBondRowsBetweenDates(
+    List<BondModel> bonds, {
+    required DateTime startDate,
+    required DateTime endDate,
+    required BondTypeModel bondType,
+  }) {
+    final List<Map<String, dynamic>> rows = [];
+
+    for (final bond in bonds) {
+      if (bond.payDate == null) continue;
+
+      final bondDate = DateTime.parse(bond.payDate!);
+
+      /// فلترة التاريخ
+      if (bondDate.isBefore(startDate) || bondDate.isAfter(endDate)) {
+        continue;
+      }
+      String firstAccount = '';
+      if (bondType.type == BondType.receiptVoucher ||
+          bondType.type == BondType.paymentVoucher) {
+        firstAccount =
+            AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!
+                .accName!;
+      }
+      final length = ((bondType.type == BondType.receiptVoucher ||
+              bondType.type == BondType.paymentVoucher)
+          ? (bond.payItems.itemList.length / 2)
+          : (bond.payItems.itemList.length));
+      for (int i = 0; i < length; i++) {
+        final item = bond.payItems.itemList[i];
+
+        rows.add({
+          "رقم السند": i == 0 ? bond.payNumber : "",
+          "تاريخ السند": i == 0 ? bond.payDate : "",
+          if (bondType.type == BondType.receiptVoucher ||
+              bondType.type == BondType.paymentVoucher)
+            "الحساب الأول": firstAccount,
+          if (bondType.type == BondType.receiptVoucher ||
+              bondType.type == BondType.paymentVoucher)
+            "الحساب الثاني": item.entryAccountName ?? '',
+          if (bondType.type == BondType.openingEntry ||
+              bondType.type == BondType.journalVoucher)
+            "الحساب": item.entryAccountName ?? '',
+          if (bondType.type != BondType.receiptVoucher)
+            "مدين": item.entryDebit ?? 0,
+          if (bondType.type != BondType.paymentVoucher)
+            "دائن": item.entryCredit ?? 0,
+          "البيان": item.entryNote ?? '',
+        });
+      }
+
+      rows.add({
+        "رقم السند": "",
+        "تاريخ السند": "",
+        "الحساب الأول": "",
+        "الحساب الثاني": '',
+        if (bondType.type != BondType.receiptVoucher) "مدين": '',
+        if (bondType.type != BondType.paymentVoucher) "دائن": '',
+        "البيان": '',
+      });
+    }
+
+    return rows;
+  }
+
+  Future<void> exportBondsBetweenDates({
+    required BondTypeModel bondType,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final res = await _bondsFirebaseRepo.getAll(bondType);
+
+    res.fold(
+      (failure) {
+        AppUIUtils.onFailure(failure.message);
+      },
+      (fetchedBonds) async {
+        if (fetchedBonds.isEmpty) {
+          AppUIUtils.onFailure("لا يوجد سندات");
+          return;
+        }
+
+        await exportBondRangeToExcel(
+          fetchedBonds,
+          startDate: startDate,
+          endDate: endDate,
+          bondType: bondType,
+        );
+      },
+    );
+  }
+
+  Future<void> exportBondRangeToExcel(
+    List<BondModel> bonds, {
+    required DateTime startDate,
+    required DateTime endDate,
+    required BondTypeModel bondType,
+  }) async {
+    final rows = buildBondRowsBetweenDates(
+      bonds,
+      startDate: startDate,
+      endDate: endDate,
+      bondType: bondType,
+    );
+
+    if (rows.isEmpty) {
+      AppUIUtils.onFailure("لا يوجد سندات ضمن هذه الفترة");
+      return;
+    }
+
+    await exportJsonToExcel(rows);
+  }
 }

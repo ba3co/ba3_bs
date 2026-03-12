@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,8 @@ class BondDetailsButtons extends StatelessWidget {
         children: [
           Obx(() {
             return AppButton(
-              isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
+              isLoading: bondDetailsController.saveBondRequestState.value ==
+                  RequestState.loading,
               title: bondDetailsController.isBondSaved.value
                   ? AppStrings.newS.tr
                   : AppStrings.add.tr,
@@ -48,16 +48,17 @@ class BondDetailsButtons extends StatelessWidget {
                   ? Colors.green
                   : Colors.blue.shade700,
               onPressed: () async {
-                final getBondTypeByGuideUseCase = Get.find<GetBondTypeByGuideUseCase>();
-                final result = await getBondTypeByGuideUseCase(bondModel.payTypeGuid!);
+                final getBondTypeByGuideUseCase =
+                    Get.find<GetBondTypeByGuideUseCase>();
+                final result =
+                    await getBondTypeByGuideUseCase(bondModel.payTypeGuid!);
 
                 result.fold(
-                      (failure) {
+                  (failure) {
                     // Handle failure gracefully
                     Get.snackbar('Error', failure.message);
                   },
-                      (bondTypeModel) async {
-
+                  (bondTypeModel) async {
                     if (bondDetailsController.isBondSaved.value) {
                       // When bond is already saved → append new bill
                       // bondDetailsController.appendNewBill(
@@ -67,7 +68,8 @@ class BondDetailsButtons extends StatelessWidget {
                     } else {
                       // When bond is new → save bond
 
-                      await bondDetailsController.saveBond(bondTypeModel, context);
+                      await bondDetailsController.saveBond(
+                          bondTypeModel, context);
                     }
                   },
                 );
@@ -86,7 +88,8 @@ class BondDetailsButtons extends StatelessWidget {
             ),
             Obx(() {
               return AppButton(
-                isLoading: bondDetailsController.saveBondRequestState.value == RequestState.loading,
+                isLoading: bondDetailsController.saveBondRequestState.value ==
+                    RequestState.loading,
                 title: AppStrings.edit.tr,
                 height: 20,
                 onPressed: () async {
@@ -104,13 +107,15 @@ class BondDetailsButtons extends StatelessWidget {
                 title: AppStrings.pdfEmail.tr,
                 height: 20,
                 onPressed: () {
-                  bondDetailsController.generateAndSendBondPdf(bondModel,context);
+                  bondDetailsController.generateAndSendBondPdf(
+                      bondModel, context);
                 },
                 iconData: Icons.link,
               ),
             Obx(() {
               return AppButton(
-                isLoading: bondDetailsController.deleteBondRequestState.value == RequestState.loading,
+                isLoading: bondDetailsController.deleteBondRequestState.value ==
+                    RequestState.loading,
                 iconData: Icons.delete_outline,
                 height: 20,
                 color: Colors.red,
@@ -118,10 +123,10 @@ class BondDetailsButtons extends StatelessWidget {
                 onPressed: () async {
                   if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
                     if (!context.mounted) return;
-                    bondDetailsController.deleteBond(bondModel,context, fromBondById: fromBondById);
+                    bondDetailsController.deleteBond(bondModel, context,
+                        fromBondById: fromBondById);
                   }
                 },
-
               );
             }),
           ]

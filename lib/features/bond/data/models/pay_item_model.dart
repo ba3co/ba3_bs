@@ -12,8 +12,9 @@ import '../../../../core/helper/enums/enums.dart';
 import '../../../pluto/data/models/pluto_adaptable.dart';
 
 part 'pay_item_model.g.dart';
+
 @HiveType(typeId: 14)
-class PayItems extends HiveObject{
+class PayItems extends HiveObject {
   @HiveField(0)
   final List<PayItem> itemList;
 
@@ -51,6 +52,7 @@ class PayItems extends HiveObject{
     return PayItems(itemList: itemList);
   }
 }
+
 @HiveType(typeId: 15)
 class PayItem extends PlutoAdaptable<BondType> {
   @HiveField(0)
