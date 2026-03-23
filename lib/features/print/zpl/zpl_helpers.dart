@@ -10,9 +10,9 @@ String _zplSanitize(String s) {
   return out;
 }
 
-bool _isAllDigits(String s) => RegExp(r'^\d+$').hasMatch(s);
+/*bool _isAllDigits(String s) => RegExp(r'^\d+$').hasMatch(s);
 bool _looksLikeEan13(String s) =>
-    _isAllDigits(s) && (s.length == 12 || s.length == 13);
+    _isAllDigits(s) && (s.length == 12 || s.length == 13);*/
 
 /// ليبل: "اسم (سطرين) ثم سعر ثم باركود ممتد بعرض اللصاقة مع هوامش هادئة"
 /// - يمدد EAN-13 على كامل عرض منطقة الطباعة (مع ترك quiet zones).
@@ -108,14 +108,14 @@ String buildTitlePriceBarcodeFullWidthZpl({
   }
 
   // ---- الباركود بعرض اللصاقة بالكامل مع هوامش هادئة
-  final isEan = false;
+  // final isEan = false;
   // منطقة الباركود الأفقية المتاحة = innerWidth - 2*Q
   final availBarcodeWidth = innerWidth - 2 * Q;
 
   buf.writeln(
       '^BY2,2,$barcodeHeight'); // الافتراضي، سنعدل الموديول لاحقًا حسب النوع
 
-  if (isEan) {
+ /* if (isEan) {
     // EAN-13 ثابت 95 وحدة (بدون احتساب الهدوء الذي نتركه نحن)
     const eanModules = 95;
     int module = (availBarcodeWidth / eanModules).floor();
@@ -136,7 +136,7 @@ String buildTitlePriceBarcodeFullWidthZpl({
     buf
       ..writeln('^BY$module,2,$barcodeHeight')
       ..writeln('^FO$barcodeX,$y^BEN,$barcodeHeight,N^FD$d^FS');
-  } else {
+  } else */{
     // Code128 — عرضه يعتمد على المحتوى، نحاول قدر الإمكان ونعطي هدوء
     // تقدير موديول بحيث لا يتجاوز المساحة المتاحة (تقريبي)
     // نبدأ من 2 ونرفع حتى 3 إذا أمكن حسب طول الداتا
