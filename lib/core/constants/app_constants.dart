@@ -450,7 +450,7 @@ abstract class AppConstants {
   ];
 
   // @preserve: ali-dev-only getter
-  static String get getDatabaseAppName => defaultFirebaseAppName;
+  static String get getDatabaseAppName => testDataBaseAppName;
 }
 
 ///https://shreyanspos.com/kp307/
