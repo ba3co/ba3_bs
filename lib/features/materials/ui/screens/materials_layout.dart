@@ -88,9 +88,9 @@ class MaterialLayout extends StatelessWidget {
                     buildAppMenuItem(
                       icon: FontAwesomeIcons.boxesStacked,
                       title: AppStrings.deadStock.tr,
-                      onTap: () {
-                        read<MaterialController>().showDeadStockFilterDialog(context: context);
-
+                      onTap: () async{
+                        // read<MaterialController>().showDeadStockFilterDialog(context: context);
+                        await read<MaterialController>().syncMaterialsFromFirebaseWithDebugProgress();
                       },
                     ),
                   ],

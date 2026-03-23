@@ -3,6 +3,7 @@ import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -307,7 +308,9 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice: json['calcMinPrice'] ?? 0.0,
       serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
-      lastTransactions: json['lastTransactions']
+      lastTransactions: (json['lastTransactions'] as List<dynamic>?)
+          ?.map((e) => (e as Timestamp).toDate())
+          .toList(),
     );
   }
 

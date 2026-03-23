@@ -297,6 +297,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     deadStockMaterialsForShow = filtered;
     navigateToDeadStockScreen(context: context);
   }
+
+
   showDeadStockFilterDialog({required BuildContext context}) {
     launchFloatingWindow(
         context: context,
@@ -824,6 +826,75 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     deleteMaterialRequestState.value = RequestState.initial;
 
     update(); // Refresh UI
+  }
+
+  Future<void> syncMaterialsFromFirebaseWithDebugProgress() async {
+    try {
+      debugPrint("🔄 Starting Firebase → Hive materials sync");
+
+      // 1️⃣ Fetch materials from Firebase
+      final remoteResult =
+      await _materialRemoteRepo.fetchWhere(queryFilters: []);
+
+      await remoteResult.fold(
+            (failure) async {
+          debugPrint("❌ Firebase fetch failed: ${failure.message}");
+        },
+            (remoteMaterials) async {
+          debugPrint("📦 Remote materials fetched: ${remoteMaterials.length}");
+
+          if (remoteMaterials.isEmpty) {
+            debugPrint("ℹ️ No materials found on Firebase");
+            return;
+          }
+
+          // 2️⃣ Get local materials
+          final localResult = await _materialsHiveRepo.getAll();
+
+          await localResult.fold(
+                (failure) async {
+              debugPrint("❌ Failed to load local materials: ${failure.message}");
+            },
+                (localMaterials) async {
+              debugPrint("💾 Local materials count: ${localMaterials.length}");
+
+              // 3️⃣ Find new materials
+              final newMaterials =
+              remoteMaterials.subtract(localMaterials, (m) => m.id);
+
+              debugPrint("🆕 New materials to insert: ${newMaterials.length}");
+
+              if (newMaterials.isEmpty) {
+                debugPrint("✅ Hive already up to date");
+                return;
+              }
+
+              // 4️⃣ Insert with progress prints
+              int total = newMaterials.length;
+              int current = 0;
+
+              for (final material in newMaterials) {
+                current++;
+
+                double progress = (current / total) * 100;
+
+                debugPrint(
+                    "⬆️ Sync progress: $current/$total (${progress.toStringAsFixed(2)}%)");
+
+                await _materialsHiveRepo.save(material);
+              }
+
+              debugPrint("✅ Firebase → Hive sync completed");
+
+              await reloadMaterials();
+            },
+          );
+        },
+      );
+    } catch (e, stackTrace) {
+      debugPrint("🔥 Sync error: $e");
+      debugPrintStack(stackTrace: stackTrace);
+    }
   }
 
 
