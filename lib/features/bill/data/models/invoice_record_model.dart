@@ -2,11 +2,8 @@ import 'dart:convert';
 
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/bill/bill_pattern_type_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
-import 'package:ba3_bs/core/utils/app_ui_utils.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
-import 'package:ba3_bs/features/materials/controllers/material_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:ba3_bs/features/patterns/data/models/bill_type_model.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
@@ -56,18 +53,15 @@ class InvoiceRecordModel {
   });
 
   /// Factory method to create an InvoiceRecordModel from a BillItem.
-  factory InvoiceRecordModel.fromBillItem(BillItem billItem) {
-
-    final MaterialModel? material = read<MaterialController>().getMaterialByIdWithNull(billItem.itemGuid);
-    if(material == null) {
-      AppUIUtils.onFailure('بعض المواد غير موجودة '
-          '\n (${billItem.itemGuid} - ${billItem.itemName})');
-      return InvoiceRecordModel();
-    }
+  factory InvoiceRecordModel.fromBillItem(
+      BillItem billItem, {
+        required MaterialModel material,
+      }) {
     return InvoiceRecordModel(
+//
         invRecId: billItem.itemGuid,
-        invRecProduct:material.matName,
-      invRecProductCode:material.matCode.toString() ,
+        invRecProduct: material.matName,
+        invRecProductCode: material.matCode.toString(),
         invRecQuantity: billItem.itemQuantity,
         invRecSubTotal: billItem.itemSubTotalPrice,
         invRecTotal: double.tryParse(billItem.itemTotalPrice),
@@ -77,9 +71,24 @@ class InvoiceRecordModel {
         invRecProductSoldSerial: billItem.soldSerialNumber,
         invRecProductSerialNumbers: billItem.itemSerialNumbers,
         invRecMaterialBarcode: material.matBarCode
-      );
+    );
   }
-
+/*
+      invRecId: billItem.itemGuid,
+      invRecProduct: material.matName,
+      invRecProductCode: material.matCode?.toString(),
+      invRecQuantity: billItem.itemQuantity,
+      invRecSubTotal: billItem.itemSubTotalPrice,
+      invRecTotal: double.tryParse(billItem.itemTotalPrice),
+      invRecVat: billItem.itemVatPrice,
+      invRecGift: billItem.itemGiftsNumber,
+      invRecGiftTotal: billItem.itemGiftsPrice,
+      invRecProductSoldSerial: billItem.soldSerialNumber,
+      invRecProductSerialNumbers: billItem.itemSerialNumbers,
+    );
+/
+  }
+*/
   factory InvoiceRecordModel.fromJson(Map<dynamic, dynamic> map) =>
       InvoiceRecordModel(
         invRecId: map[AppConstants.invRecId],

@@ -80,7 +80,7 @@ class CustomerItemWidget extends StatelessWidget {
                   border: Border.all(color: Colors.grey, width: 2)),
               child: Center(
                 child: Text(
-                  VatEnums.byGuid(customerModel.cusVatGuid!).taxName ?? '',
+                  VatEnums.byGuid(customerModel.cusVatGuid!).taxName ,
                   style: AppTextStyles.headLineStyle3,
                   overflow: TextOverflow.ellipsis,
                 ),

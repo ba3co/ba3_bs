@@ -26,12 +26,10 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
         children: [
           Divider(),
           SizedBox(height: 2 * PdfPageFormat.mm),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            buildSimpleText(title: '', value: 'Thank You To Visit:'),
-            SizedBox(width: 1 * PdfPageFormat.mm),
-            buildSimpleText(
-                title: 'Burj ALArab', value: PrinterConstants.contactNumber),
-          ])
+          buildSimpleText(title: 'Thank You To Visit: ', value: 'Burj ALArab Mobile Phones'),
+          buildSimpleText(
+              title: 'Phone: ', value: PrinterConstants.contactNumber),
+
         ],
       ));
 
@@ -116,20 +114,47 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
         String? logoSrc,
         String? fontSrc,
       }) async {
-    final Uint8List? logoUint8List;
-    final Font? arabicFont;
+    final bytes = await _buildPdfBytes(
+      itemModel,
+      fileName,
+      logoSrc: logoSrc,
+      fontSrc: fontSrc,
+    );
 
-    // Load logo
+    // نافذة "حفظ باسم…"
+    final String? path = await getSaveLocation(
+      suggestedName: '${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf',
+      acceptedTypeGroups: [
+        XTypeGroup(label: 'PDF', extensions: ['pdf']),
+      ],
+    ).then((value) => value?.path);
 
-      ByteData logoByteData = await rootBundle.load(AppAssets.printLogo);
-      logoUint8List = logoByteData.buffer.asUint8List();
+    if (path == null) {
+      // المستخدم أغلق الحوار -> لا نحفظ
+      return 'false';
+    }
 
+    final file = File(path);
+    await file.writeAsBytes(bytes, flush: true);
+    return file.path;
+  }
 
-    // Load font
-    if (fontSrc == null) {
-      arabicFont = null;
-    } else {
-      ByteData fontByteData = await rootBundle.load(fontSrc);
+  Future<Uint8List> _buildPdfBytes(
+      T itemModel,
+      String fileName, {
+        String? logoSrc,
+        String? fontSrc,
+      }) async {
+    // Load logo (استبدلت AppAssets.printLogo إذا عندك logoSrc)
+    Uint8List? logoUint8List;
+    final String logoPath = logoSrc ?? AppAssets.printLogo;
+    final ByteData logoByteData = await rootBundle.load(logoPath);
+    logoUint8List = logoByteData.buffer.asUint8List();
+
+    // Load font (اختياري)
+    Font? arabicFont;
+    if (fontSrc != null) {
+      final ByteData fontByteData = await rootBundle.load(fontSrc);
       arabicFont = Font.ttf(fontByteData);
     }
 
@@ -140,37 +165,21 @@ abstract class PdfGeneratorBase<T> implements IPdfGenerator<T> {
       boldItalic: arabicFont,
     );
 
-    final Document pdfDocument = Document(theme: pdfTheme);
+    final doc = Document(theme: pdfTheme);
 
-    pdfDocument.addPage(
+    doc.addPage(
       MultiPage(
-        pageFormat: PdfPageFormat.a6,
-        header: (context) => context.pageNumber == 1
-            ? buildHeader(itemModel, fileName,
-            logoUint8List: logoUint8List, font: arabicFont)
+        // ⚠️ لا نحدد pageFormat هنا (يظل الافتراضي مثل دالتك الأولى)
+        header: (context) =>
+        context.pageNumber == 1
+            ? buildHeader(itemModel, fileName, logoUint8List: logoUint8List, font: arabicFont)
             : SizedBox.shrink(),
-        build: (context) => buildBody(itemModel, font: arabicFont,logoUint8List:logoUint8List ),
-        footer: (context) => context.pageNumber == context.pagesCount
-            ? buildFooter()
-            : SizedBox.shrink(),
+        build: (context) => buildBody(itemModel, font: arabicFont),
+        footer: (context) =>
+        context.pageNumber == context.pagesCount ? buildFooter() : SizedBox.shrink(),
       ),
     );
 
-    // 🔽 نافذة اختيار مكان الحفظ
-    final String? path = await getSaveLocation(
-      suggestedName: '$fileName.pdf',
-      acceptedTypeGroups: [
-        XTypeGroup(label: 'PDF', extensions: ['pdf']),
-      ],
-    ).then((value) => value?.path);
-
-    if (path == null) {
-      // المستخدم أغلق النافذة بدون اختيار مكان
-      return 'false';
-    }
-
-    final file = File(path);
-    await file.writeAsBytes(await pdfDocument.save());
-    return file.path;
+    return await doc.save();
   }
 }

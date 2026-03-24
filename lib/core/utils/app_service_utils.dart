@@ -464,4 +464,11 @@ class AppServiceUtils {
     // في Dart: 5 = Friday
     return DateTime.now().weekday == DateTime.friday;
   }
+
+  static double toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
 }

@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/helper/extensions/hive_extensions.dart';
 import 'package:ba3_bs/features/bill/services/bill/bills_count_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -30,10 +31,12 @@ import '../../services/firebase/implementations/repos/compound_datasource_repo.d
 import '../../services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import '../../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../../services/firebase/implementations/services/compound_firestore_service.dart';
+import '../../services/firebase/implementations/services/firebase_storage_service.dart';
 import '../../services/firebase/implementations/services/firestore_service.dart';
 import '../../services/firebase/implementations/services/remote_config_service.dart';
 import '../../services/firebase/interfaces/i_compound_database_service.dart';
 import '../../services/firebase/interfaces/i_remote_database_service.dart';
+import '../../services/firebase/interfaces/i_remote_storage_service.dart';
 import '../../services/get_x/shared_preferences_service.dart';
 import '../../services/local_database/implementations/services/hive_database_service.dart';
 import '../../services/translation/translation_controller.dart';
@@ -49,7 +52,7 @@ Future<void> initializeAppServices() async {
   };
   //   await initializeWindowSettings();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,name: AppConstants.testDataBaseAppName);
 
 
   await Hive.initializeApp();
@@ -93,7 +96,7 @@ Future<void> initializeAppLocalization({required String boxName}) async {
 }
 
 void setupDatabaseServices() {
-  // final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
+  final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
   final firebaseApp = Firebase.app();
   FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
@@ -106,6 +109,7 @@ void setupDatabaseServices() {
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);
+  final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
 
   final compoundDatabaseService = createCompoundDatabaseService(firestoreInstance);
 
@@ -116,6 +120,7 @@ void setupDatabaseServices() {
   lazyPut(remoteDatabaseService);
 
   lazyPut(compoundDatabaseService);
+  lazyPut(remoteStorageService);
 
 }
 
@@ -158,7 +163,7 @@ ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(
         FirebaseFirestore instance) =>
     CompoundFireStoreService(instance);
 
-//IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
+IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
 
 CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>

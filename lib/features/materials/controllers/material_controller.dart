@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:ba3_bs/core/dialogs/search_material_group_text_dialog.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/string_extension.dart';
-import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/helper/mixin/app_navigator.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
@@ -21,25 +20,33 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
+import '../../../core/constants/app_strings.dart';
 import '../../../core/helper/enums/enums.dart';
 import '../../../core/helper/mixin/floating_launcher.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../../../core/services/firebase/implementations/repos/queryable_savable_repo.dart';
+import '../../../core/services/translation/implementations/translation_repo.dart';
 import '../../../core/utils/app_service_utils.dart';
 import '../../../core/utils/app_ui_utils.dart';
 import '../../logs/controllers/log_controller.dart';
+import '../../print/controller/print_controller.dart';
 import '../data/models/materials/material_model.dart';
 import '../ui/screens/add_material_screen.dart';
+import '../ui/widgets/add_material/copies_dialog.dart';
+import '../ui/widgets/add_material/label_settings_dialog.dart';
+import 'mats_statement_controller.dart';
 
 class MaterialController extends GetxController with AppNavigator, FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
+  final TranslationRepository _translationRepository;
 
   final QueryableSavableRepository<MaterialModel> _materialRemoteRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo);
+  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo,
+      this._translationRepository);
 
   List<MaterialModel> materials = [];
   List<MaterialModel> materialsForShow = [];
@@ -49,6 +56,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   MaterialModel? selectedMaterial;
 
+  bool get hasId => selectedMaterial?.id != null;
   late MaterialFromHandler materialFromHandler;
   late MaterialService _materialService;
 
@@ -76,6 +84,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   bool isLoading = false;
 
   Rx<RequestState> saveAllMaterialsRequestState = RequestState.initial.obs;
+  Rx<RequestState> loadingMaterialsRequestState = RequestState.initial.obs;
 
   Future<void> fetchMaterials() async {
     final result = await _materialsHiveRepo.getAll();
@@ -101,8 +110,31 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> reloadMaterials() async {
+    saveAllMaterialsRequestState.value = RequestState.loading;
     await fetchMaterials();
     await fetchMaterialsGroup();
+    saveAllMaterialsRequestState.value = RequestState.success;
+  }
+
+  Future<void> saveMaterialOnLocal(String materialsToSaveId) async {
+    final getResult = await _materialsHiveRepo.getById(materialsToSaveId);
+    getResult.fold(
+      (failer) {},
+      (materialsToSave) async {
+        final result = await _materialsHiveRepo.save(materialsToSave!);
+
+        result.fold(
+            (failure) => AppUIUtils.onFailure(
+                  failure.message,
+                ), (savedMaterials) {
+          log('materials length before add item: ${materials.length}');
+
+          reloadMaterials();
+
+          log('materials length after add item: ${materials.length}');
+        });
+      },
+    );
   }
 
   Future<void> saveAllMaterialOnLocal(List<MaterialModel> materialsToSave, bool isWithDialog) async {
@@ -241,12 +273,26 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context}) async {
+  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context, bool? onlyNegativeMaterial}) async {
+    List<MaterialModel>? materialList;
+    loadingMaterialsRequestState.value = RequestState.loading;
+
+    if (onlyNegativeMaterial != null) {
+      materialList = materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
+
+      for (var element in materialList) {
+        await read<MaterialsStatementController>().setupOneMaterials(element.id!);
+      }
+      await reloadMaterials();
+      materialList = materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
+    }
     // reloadMaterials();
     fetchMaterialsGroup(groupGuid: groupGuid);
     await reloadMaterials();
+    loadingMaterialsRequestState.value = RequestState.success;
     if (!context.mounted) return;
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen());
+    launchFloatingWindow(
+        context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen(materialList: materialList));
 
     // to(AppRoutes.showAllMaterialsScreen);
   }
@@ -336,11 +382,17 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     return materials.firstWhereOrNull((material) => material.id == id) ?? materials.first;
   }
 
-  MaterialModel? getMaterialByIdWithNull(
+  Future<MaterialModel?> getMaterialByIdWithNull(
     String id,
-  ) {
+  ) async {
+    MaterialModel? currentMat;
     reloadMaterials();
-    return materials.firstWhereOrNull((material) => material.id == id);
+    currentMat = materials.firstWhereOrNull((material) => material.id == id);
+    if (currentMat == null) {
+      await saveMaterialOnLocal(id);
+      return await getMaterialByIdWithNull(id);
+    }
+    return currentMat;
   }
 
   double getMaterialMinPriceById(String id) {
@@ -374,10 +426,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       // }).map((e) => e.matName!).toString());
 
       return materials
-          .where((element) => (element.matName! == name.encodeProblematic().encodeProblematic() ||
-              element.matName! == name ||
-              element.matName!.encodeProblematic().decodeProblematic() == name ||
-              element.matName!.removeAllWhitespace == name.removeAllWhitespace))
+          .where((element) =>
+              (/*element.matName! == name.encodeProblematic().encodeProblematic()||
+          element.matName! == name ||
+          element.matName!.encodeProblematic().decodeProblematic() == name ||*/
+                  element.matName!.removeAllWhitespace == name.removeAllWhitespace))
           .firstOrNull;
     }
     return null;
@@ -452,7 +505,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   MaterialModel? _createMaterialModel() => _materialService.createMaterialModel(
-        matVatGuid: materialFromHandler.selectedTax.value.taxGuid!,
+        matVatGuid: materialFromHandler.selectedTax.value.taxGuid,
         matGroupGuid: materialFromHandler.parentModel?.matGroupGuid ?? '',
         wholesalePrice: materialFromHandler.wholePriceController.text,
         retailPrice: materialFromHandler.retailPriceController.text,
@@ -604,7 +657,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     await updateMaterial(
       updateFn(materialModel),
     );
-    await  reloadMaterials();
+    await reloadMaterials();
     // await saveOrUpdateMaterial();
   }
 
@@ -735,7 +788,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     int i = 0;
     log('material length ${materials.length}');
     for (var mat in materials) {
-      materialFromHandler.init(mat.copyWith(matName: mat.matName!.encodeProblematic()));
+      materialFromHandler.init(mat.copyWith(matName: mat.matName!/*.encodeProblematic()*/));
       await saveOrUpdateMaterial();
       log('mat number ${++i}');
     }
@@ -756,5 +809,51 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
 
+  void creatMultiCopiesMatBarcode({required MaterialModel material, required BuildContext context}) async {
+    if (selectedMaterial!.matBarCode!.isEmpty) {
+      AppUIUtils.onFailure(AppStrings.barcodeIsRequired.tr);
+      return;
+    }
 
+    // واجهة إعدادات اللصاقة أولاً (اسم، باركود، سعر، نسبة البطارية)
+    final labelData = await showLabelSettingsDialog(context, material: material);
+    if (labelData == null) return;
+
+    // ثم اسأل عن عدد النسخ
+    final copies = await pickCopiesDialog(context, initial: 1, min: 1, max: 500);
+    if (copies == null) return;
+
+    await printMaterialBarcodeWithLabelData(labelData: labelData, copies: copies);
+  }
+
+  /// طباعة اللصاقة باستخدام بيانات إعدادات اللصاقة (بدون ترجمة).
+  Future<void> printMaterialBarcodeWithLabelData({
+    required LabelSettingsResult labelData,
+    required int copies,
+  }) async {
+    final title = labelData.name.length >= 193 ? labelData.name.substring(0, 193) : labelData.name;
+    await read<PrintingController>().printTitlePriceBarcodeFullWidth(
+      barcodeData: labelData.barcode,
+      copies: copies,
+      title: title,
+      priceText: labelData.priceText,
+      batteryText: labelData.batteryPercent,
+    );
+  }
+
+  printMaterialBarcode({int copies = 1, required MaterialModel material}) async {
+    if (material.matBarCode!.isEmpty) {
+      return;
+    }
+    final matName = (material.matName ?? '').length >= 193 ? (material.matName ?? '').substring(0, 193) : material.matName;
+
+    final materialTranslatedName = await _translationRepository.translateText(matName!);
+    await read<PrintingController>().printTitlePriceBarcodeFullWidth(
+      barcodeData: material.matBarCode!,
+      copies: copies,
+      title: materialTranslatedName,
+      priceText:
+          material.endUserPrice != null && material.endUserPrice!.trim().isNotEmpty ? 'AED ${material.endUserPrice!}.00' : 'AED 0.00',
+    );
+  }
 }

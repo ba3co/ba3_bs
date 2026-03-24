@@ -85,7 +85,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     AppUIUtils.onSuccess('تم حذف السند رقم ${bondModel.payNumber} بنجاح!', );
 
     read<EntryBondController>().deleteEntryBondModel(
-        entryId: bondModel.payGuid!, sourceNumber: bondModel.payNumber!,);
+        entryId: bondModel.payGuid!, /*sourceNumber: bondModel.payNumber!,*/);
   }
 
   Future<void> handleSaveOrUpdateSuccess({

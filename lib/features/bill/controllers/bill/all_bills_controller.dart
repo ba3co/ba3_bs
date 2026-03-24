@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
@@ -22,6 +23,7 @@ import 'package:ba3_bs/features/materials/controllers/material_group_controller.
 import 'package:ba3_bs/features/materials/service/mat_statement_generator.dart';
 import 'package:ba3_bs/features/materials/ui/screens/serials_statement_screen.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -288,6 +290,25 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
     }
   }
 
+  Future<void> runFixDuplicates() async {
+    try {
+      final functions = FirebaseFunctions.instanceFor(/*region: "europe-west6"*/);
+
+      final callable = functions.httpsCallable('fixDuplicatesByTypeGuide');
+
+      final result = await callable.call({
+        'typeGuide': '6ed3786c-08c6-453b-afeb-a0e9075dd26d', // مثلاً sales
+        'limit': 200, // اختياري
+      });
+
+      log("✅ Fix result: ${result.data}");
+    } on FirebaseFunctionsException catch (e) {
+      log("⚠️ Error from Cloud Function: ${e.code} - ${e.message}");
+    } catch (e) {
+      log("❌ Unexpected error: $e");
+    }
+  }
+
   void _onFetchBillsFromLocalSuccess(List<BillModel> fetchedBills, BuildContext context) async {
     log("fetchedBills length ${fetchedBills.length}");
 
@@ -430,7 +451,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
     required BuildContext context,
     required BillTypeModel billTypeModel,
   }) async {
-    BillModel? searchResults;
+    List<BillModel> searchResults = [];
 
     final result = await _billsFirebaseRepo.fetchWhere(
       itemIdentifier: billTypeModel,
@@ -440,17 +461,18 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
 
     result.fold(
       (failure) {},
-      (bills) => searchResults = (bills.firstOrNull),
+      (bills) => searchResults = (bills),
     );
 
-    if (searchResults == null) {
+    if (searchResults.isEmpty) {
       // Show a message if no results found
       if (!context.mounted) return;
 
       AppUIUtils.onFailure('لا يوجد نتائج للبحث');
     } else {
       if (!context.mounted) return;
-      openFloatingBillDetails(context, billTypeModel, currentBill: searchResults);
+      lunchBillsScreen(searchResults, context);
+      // openFloatingBillDetails(context, billTypeModel, currentBill: searchResults);
       isBillsLoading = false;
     }
   }
@@ -616,6 +638,7 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
   }
 
   Future<void> openFloatingBillDetails(BuildContext context, BillTypeModel billTypeModel, {BillModel? currentBill}) async {
+
     final bills = await billsLastNumberByType(billTypeModel);
 
     if (!context.mounted) return;
@@ -655,6 +678,10 @@ class AllBillsController extends FloatingBillDetailsLauncher with AppNavigator, 
     );
 
     if (!context.mounted) return;
+
+    if (currentBill.billTypeModel.id == AppConstants.jetourSalesId) {
+      log(currentBill.billTypeModel.toJson().toString()+"-"*30);
+    }
 
     launchFloatingWindow(
       context: context,

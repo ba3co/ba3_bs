@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
-import 'package:ba3_bs/core/helper/extensions/encode_decode_text.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
 import 'package:ba3_bs/features/accounts/controllers/accounts_controller.dart';
@@ -119,7 +118,7 @@ class BillImport extends ImportServiceBase<BillModel>
     for (var mat in materialXml) {
       String matGuid = mat.findElements('mptr').first.text;
       String matName = mat.findElements('MatName').first.text;
-      matNameWithId[matGuid] = matName.encodeProblematic();
+      matNameWithId[matGuid] = matName/*.encodeProblematic()*/;
     }
     for (var acc in accountXml) {
       String accId = acc.findElements('AccPtr').first.text;

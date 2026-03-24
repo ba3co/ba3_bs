@@ -79,7 +79,7 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
     });
   }
 
-  void init(BillTypeModel? billType) {
+  void init({BillTypeModel? billType}) {
     if (billType != null) {
       // Determine the bill pattern type from the label
       final billPatternType = BillPatternType.byValue(billType.billTypeLabel!);
@@ -95,6 +95,11 @@ class PatternFormHandler with AppValidator implements IStoreSelectionHandler {
 
       selectedBillTypeModel = billType;
       selectedColorValue = billType.color!;
+
+      shortNameController.text=billType.shortName??'';
+      fullNameController.text=billType.fullName??'';
+      latinShortNameController.text=billType.latinShortName??'';
+      latinFullNameController.text=billType.latinFullName??'';
     } else {
       // Clear all controllers and reset the state
       clear();

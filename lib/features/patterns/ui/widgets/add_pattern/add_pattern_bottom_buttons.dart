@@ -17,8 +17,19 @@ class AddPatternBottomButtons extends StatelessWidget {
       children: [
         AppButton(
           title: patternController.patternFormHandler.selectedBillPatternType.value == null ? AppStrings.add.tr : AppStrings.edit.tr,
+
           onPressed: () {
             patternController.addNewPattern(context);
+          },
+          iconData: Icons.add,
+        ),
+        if(patternController
+            .patternFormHandler.selectedBillTypeModel !=
+            null)
+        AppButton(
+          title: AppStrings.delete.tr,
+          onPressed: () {
+            patternController.deletePattern(context);
           },
           iconData: Icons.add,
         ),

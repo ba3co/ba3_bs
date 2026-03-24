@@ -12,15 +12,17 @@ import '../../controllers/material_controller.dart';
 import '../../controllers/mats_statement_controller.dart';
 
 class AllMaterialsScreen extends StatelessWidget {
-  const AllMaterialsScreen({super.key});
+  const AllMaterialsScreen({super.key, this.materialList});
+
+  final List<MaterialModel>? materialList;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<MaterialController>(builder: (controller) {
       return PlutoGridWithAppBar(
-        title: AppStrings.allMaterials.tr,
+        title:materialList!=null?AppStrings.allNegativeMaterials.tr: AppStrings.allMaterials.tr,
         isLoading: controller.isLoading,
-        tableSourceModels: controller.materialsForShow,
+        tableSourceModels: materialList??controller.materialsForShow,
         onLoaded: (event) {},
         onRowSecondaryTap: (selectedRow) {
           MaterialModel materialModel = controller.getMaterialById(

@@ -1,10 +1,13 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
 import '../../../../../core/utils/app_ui_utils.dart';
 import '../../../../../core/widgets/app_button.dart';
+import '../../../../users_management/data/models/role_model.dart';
 import '../../../controllers/accounts_controller.dart';
 
 class AddAccountButtonsWidget extends StatelessWidget {
@@ -18,18 +21,26 @@ class AddAccountButtonsWidget extends StatelessWidget {
       spacing: 20,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Obx(() {
-          return AppButton(
-            isLoading: controller.saveAccountRequestState.value ==
-                RequestState.loading,
-            title: controller.isEditAccount
-                ? AppStrings.edit.tr
-                : AppStrings.add.tr,
-            onPressed: () {
-              controller.saveOrUpdateAccount(context);
-            },
-          );
-        }),
+        if (!controller.isEditAccount)
+          Obx(() {
+            return AppButton(
+              isLoading: controller.saveAccountRequestState.value == RequestState.loading,
+              title: AppStrings.add.tr,
+              onPressed: () {
+                controller.saveOrUpdateAccount(context);
+              },
+            );
+          })
+        else if (RoleItemType.viewAccount.hasAdminPermission)
+          Obx(() {
+            return AppButton(
+              isLoading: controller.saveAccountRequestState.value == RequestState.loading,
+              title: AppStrings.edit.tr,
+              onPressed: () {
+                controller.saveOrUpdateAccount(context);
+              },
+            );
+          }),
         if (controller.isEditAccount)
           Obx(() {
             return AppButton(

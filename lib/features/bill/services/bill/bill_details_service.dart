@@ -96,10 +96,10 @@ class BillDetailsService with PdfBase, EntryBondsGenerator, MatsStatementsGenera
     )) {
       return;
     }
-    EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
-      entryId: billModel.billId!,
-    );
-    // final entryBondModel = createSimulatedVatEntryBond(billModel);
+    // EntryBondModel entryBondModel = await read<EntryBondController>().getEntryBondById(
+    //   entryId: billModel.billId!,
+    // );
+    final entryBondModel = createSimulatedVatEntryBond(billModel);
     if (!context.mounted) return;
     launchFloatingWindow(
       context: context,
@@ -372,7 +372,7 @@ log(matchingItems.length.toString());
     if (billModel.billTypeModel.billPatternType!.hasMaterialAccount) {
       read<EntryBondController>().deleteEntryBondModel(
         entryId: billModel.billId!,
-        sourceNumber: billModel.billDetails.billNumber!,
+        // sourceNumber: billModel.billDetails.billNumber!,
       );
     } else {
       read<LogController>().addLog(
@@ -520,7 +520,7 @@ log(matchingItems.length.toString());
       if (modifiedBillTypeAccounts.isNotEmpty) {
         await read<EntryBondController>().deleteEntryBondModel(
           entryId: previousBill.billId!,
-          sourceNumber: previousBill.billDetails.billNumber!,
+          // sourceNumber: previousBill.billDetails.billNumber!,
 
         );
        await Future.delayed(
@@ -759,7 +759,8 @@ log(matchingItems.length.toString());
 
     OverlayService.showDialog(
       context: context,
-      title: 'Invoice QR Code',
+      color: AppColors.backGroundColor,
+      height: 400,
       content: EInvoiceDialogContent(
         billDetailsController: billDetailsController,
         billId: billModel.billId!,

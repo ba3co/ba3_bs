@@ -64,7 +64,8 @@ class BillDetailsController extends IBillController
 implements IStoreSelectionHandler {
   // Repositories
 
-  final CompoundDatasourceRepository<BillModel, BillTypeModel> _billsFirebaseRepo;
+  final CompoundDatasourceRepository<BillModel, BillTypeModel>
+      _billsFirebaseRepo;
 
   final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
@@ -88,7 +89,8 @@ implements IStoreSelectionHandler {
   final TextEditingController billNumberController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController storeController = TextEditingController();
-  final TextEditingController customerAccountController = TextEditingController();
+  final TextEditingController customerAccountController =
+      TextEditingController();
   final TextEditingController billAccountController = TextEditingController();
   final TextEditingController sellerAccountController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
@@ -105,7 +107,8 @@ implements IStoreSelectionHandler {
   AccountModel? selectedBillAccount;
   SellerModel? selectedSellerAccount;
 
-  Rx<bool> get isAccountReadOnly => (selectedPayType.value == InvPayType.cash).obs;
+  Rx<bool> get isAccountReadOnly =>
+      (selectedPayType.value == InvPayType.cash).obs;
 
   Rx<DateTime> billDate = DateTime.now().obs;
 
@@ -133,11 +136,13 @@ implements IStoreSelectionHandler {
   }
 
   // @override
-  void updateCustomerAccount(CustomerModel? newAccount, BillTypeModel billTypeModel) {
+  void updateCustomerAccount(
+      CustomerModel? newAccount, BillTypeModel billTypeModel) {
     if (newAccount != null) {
       selectedCustomerAccount = newAccount;
       customerAccountController.text = newAccount.name!;
-      if (billTypeModel.isPurchaseRelated && newAccount.customerHasVat != true) {
+      if (billTypeModel.isPurchaseRelated &&
+          newAccount.customerHasVat != true) {
         billDetailsPlutoController.clearVat();
       } else {
         billDetailsPlutoController.returnVat();
@@ -204,11 +209,14 @@ implements IStoreSelectionHandler {
     return validate;
   }
 
-  bool get requiredRequestNumber => selectedBillAccount?.requiredRequestNumber ?? false;
+  bool get requiredRequestNumber =>
+      selectedBillAccount?.requiredRequestNumber ?? false;
 
-  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
-  void updateBillType(String billTypeLabel) => billType = BillType.byLabel(billTypeLabel);
+  void updateBillType(String billTypeLabel) =>
+      billType = BillType.byLabel(billTypeLabel);
 
   set setBillDate(DateTime newDate) {
     billDate.value = newDate;
@@ -219,7 +227,8 @@ implements IStoreSelectionHandler {
     if (payType != null) {
       selectedPayType.value = payType;
       if (payType == InvPayType.cash) {
-        final primaryCashAccount = read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId);
+        final primaryCashAccount = read<AccountsController>()
+            .getAccountModelById(AppConstants.primaryCashAccountId);
         updateBillAccount(primaryCashAccount);
       }
       log('onPayTypeChanged');
@@ -227,18 +236,25 @@ implements IStoreSelectionHandler {
   }
 
   Future<void> printBill(
-      {required BuildContext context, required BillModel billModel, required List<InvoiceRecordModel> invRecords}) async {
+      {required BuildContext context,
+      required BillModel billModel,
+      required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
-    await read<PrintingController>().startPrinting(
-      context: context,
-      invRecords: invRecords,
+    await read<PrintingController>().printReceipt80(
+      date: billDate.value.dayMonthYear,
+      items: invRecords,
+      seller: selectedSellerAccount?.costName ?? '',
       billNumber: billModel.billDetails.billNumber!,
-      invDate: billDate.value.dayMonthYear,
+      customer: billModel.billDetails.customerPhone!,
+      nots: billModel.billDetails.billNote ?? '',
+      buyer: read<AccountsController>().getAccountNameById(
+          billModel.billTypeModel.accounts?[BillAccounts.caches]?.id),
     );
   }
 
-  void launchFloatingEntryBondDetailsScreen(BillModel billModel, BuildContext context) async {
+  void launchFloatingEntryBondDetailsScreen(
+      BillModel billModel, BuildContext context) async {
     if (!await validateForm(context)) return;
     if (!context.mounted) return;
     _billService.launchFloatingEntryBondDetailsScreen(
@@ -247,18 +263,22 @@ implements IStoreSelectionHandler {
     );
   }
 
-  void updateBillStatus(BillModel billModel, newStatus, BuildContext context) async {
+  void updateBillStatus(
+      BillModel billModel, newStatus, BuildContext context) async {
     if (AppConstants.forcePending) {
       final success = await AppUIUtils.askForPassword(context);
       if (!success) return;
     }
-    if (billModel.items.itemList.map((e) => e.itemName).contains('الباركود خطأ')) {
+    if (billModel.items.itemList
+        .map((e) => e.itemName)
+        .contains('الباركود خطأ')) {
       AppUIUtils.onFailure(
         'لا يمكن تغيير حالة الفاتورة بسبب وجود باركود خطأ',
       );
       return;
     } else {
-      final result = await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
+      final result =
+          await _billsFirebaseRepo.save(billModel.copyWith(status: newStatus));
 
       result.fold(
         (failure) => AppUIUtils.onFailure(
@@ -307,7 +327,8 @@ implements IStoreSelectionHandler {
 
   /// Checks if deleting the bill would affect sold serial numbers.
   /// Returns `true` if deletion should be stopped.
-  Future<bool> _hasSoldSerialNumbers(BillModel billModel, BuildContext context) async {
+  Future<bool> _hasSoldSerialNumbers(
+      BillModel billModel, BuildContext context) async {
     final materialController = read<MaterialController>();
 
     for (BillItem item in billModel.items.itemList) {
@@ -343,7 +364,10 @@ implements IStoreSelectionHandler {
     return result.fold(
       (failure) => null, // Return null on failure
       (SerialNumberModel serialsModel) => serialsModel.transactions.isNotEmpty
-          ? serialsModel.transactions.where((transaction) => transaction.sold ?? false).last.sellBillNumber
+          ? serialsModel.transactions
+              .where((transaction) => transaction.sold ?? false)
+              .last
+              .sellBillNumber
           : null,
     );
   }
@@ -365,8 +389,10 @@ implements IStoreSelectionHandler {
         },
         (SerialNumberModel serialsModel) async {
           // Filter out transactions related to the deleted bill
-          final updatedTransactions =
-              serialsModel.transactions.where((transaction) => transaction.sellBillId != billToDelete.billId).toList();
+          final updatedTransactions = serialsModel.transactions
+              .where((transaction) =>
+                  transaction.sellBillId != billToDelete.billId)
+              .toList();
 
           if (updatedTransactions.length == serialsModel.transactions.length) {
             log('🔍 No transactions to delete for serial [$soldSerialNumber].');
@@ -374,21 +400,26 @@ implements IStoreSelectionHandler {
           }
 
           // Update the serial number model with filtered transactions
-          final updatedSerialModel = serialsModel.copyWith(transactions: updatedTransactions);
+          final updatedSerialModel =
+              serialsModel.copyWith(transactions: updatedTransactions);
 
           // Update Firestore or local database with new transaction list
-          final updateResult = await _serialNumbersRepo.save(updatedSerialModel);
+          final updateResult =
+              await _serialNumbersRepo.save(updatedSerialModel);
 
           updateResult.fold(
-            (failure) => log('❌ Failed to update transactions for serial [$soldSerialNumber]: ${failure.message}'),
-            (success) => log('✅ Successfully removed transactions linked to bill [${billToDelete.billId}] for serial [$soldSerialNumber].'),
+            (failure) => log(
+                '❌ Failed to update transactions for serial [$soldSerialNumber]: ${failure.message}'),
+            (success) => log(
+                '✅ Successfully removed transactions linked to bill [${billToDelete.billId}] for serial [$soldSerialNumber].'),
           );
         },
       );
     }
   }
 
-  Future<void> deleteBuySerialTransactions(BillModel billToDelete, BuildContext context) async {
+  Future<void> deleteBuySerialTransactions(
+      BillModel billToDelete, BuildContext context) async {
     final materialController = read<MaterialController>();
 
     for (final billItem in billToDelete.items.itemList) {
@@ -401,10 +432,12 @@ implements IStoreSelectionHandler {
         continue; // Skip if material or serial numbers are missing
       }
 
-      final updatedSerialNumbers = Map<String, bool>.from(materialModel.serialNumbers!);
+      final updatedSerialNumbers =
+          Map<String, bool>.from(materialModel.serialNumbers!);
 
       for (final serialNumber in purchaseSerialNumbers) {
-        await _processSerialTransaction(billToDelete, materialModel, serialNumber, updatedSerialNumbers);
+        await _processSerialTransaction(
+            billToDelete, materialModel, serialNumber, updatedSerialNumbers);
       }
       if (!context.mounted) return;
       // Apply the updated serial numbers to the material model
@@ -429,7 +462,10 @@ implements IStoreSelectionHandler {
         log('❌ Failed to retrieve serial number [$serialNumber]: ${failure.message}');
       },
       (SerialNumberModel serialsModel) async {
-        final updatedTransactions = serialsModel.transactions.where((transaction) => transaction.buyBillId != billToDelete.billId).toList();
+        final updatedTransactions = serialsModel.transactions
+            .where(
+                (transaction) => transaction.buyBillId != billToDelete.billId)
+            .toList();
 
         if (updatedTransactions.length == serialsModel.transactions.length) {
           log('🔍 No purchase transactions to delete for serial [$serialNumber].');
@@ -438,11 +474,14 @@ implements IStoreSelectionHandler {
 
         if (updatedTransactions.isEmpty) {
           // No transactions remain, so delete the serial document
-          await _deleteSerialDocument(serialNumber, materialModel, updatedSerialNumbers);
+          await _deleteSerialDocument(
+              serialNumber, materialModel, updatedSerialNumbers);
         } else {
           // Update Firestore with filtered transactions
-          final updatedSerialModel = serialsModel.copyWith(transactions: updatedTransactions);
-          final updateResult = await _serialNumbersRepo.save(updatedSerialModel);
+          final updatedSerialModel =
+              serialsModel.copyWith(transactions: updatedTransactions);
+          final updateResult =
+              await _serialNumbersRepo.save(updatedSerialModel);
 
           await updateResult.fold(
             (failure) async {
@@ -450,7 +489,8 @@ implements IStoreSelectionHandler {
             },
             (success) async {
               log('✅ Successfully removed purchase transactions linked to bill [${billToDelete.billId}] for serial [$serialNumber].');
-              _updateSerialNumberStatus(materialModel, serialNumber, updatedSerialNumbers, updatedTransactions);
+              _updateSerialNumberStatus(materialModel, serialNumber,
+                  updatedSerialNumbers, updatedTransactions);
             },
           );
         }
@@ -493,32 +533,46 @@ implements IStoreSelectionHandler {
     }
   }
 
-  Future<void> saveBill(BillTypeModel billTypeModel, {required BuildContext context, required bool withPrint}) async {
+  Future<void> saveBill(BillTypeModel billTypeModel,
+      {required BuildContext context, required bool withPrint}) async {
     if (saveBillRequestState.value == RequestState.loading) return;
     saveBillRequestState.value = RequestState.loading;
-    await _saveOrUpdateBill(billTypeModel: billTypeModel, context: context, withPrint: withPrint);
+
+    await _saveOrUpdateBill(
+        billTypeModel: billTypeModel, context: context, withPrint: withPrint);
   }
 
   Future<void> updateBill(
-      {required BillTypeModel billTypeModel, required BillModel billModel, required BuildContext context, required withPrint}) async {
+      {required BillTypeModel billTypeModel,
+      required BillModel billModel,
+      required BuildContext context,
+      required withPrint}) async {
     if (saveBillRequestState.value == RequestState.loading) return;
 
     saveBillRequestState.value = RequestState.loading;
     if (RoleItemType.viewBill.hasUpdatePermission) {
-      await _saveOrUpdateBill(billTypeModel: billTypeModel, existingBill: billModel, context: context, withPrint: withPrint);
+      await _saveOrUpdateBill(
+          billTypeModel: billTypeModel,
+          existingBill: billModel,
+          context: context,
+          withPrint: withPrint);
     } else {
       AppUIUtils.onFailure('You do not have permission to update this bill.');
     }
   }
 
   Future<void> _saveOrUpdateBill(
-      {required BuildContext context, required BillTypeModel billTypeModel, BillModel? existingBill, required bool withPrint}) async {
+      {required BuildContext context,
+      required BillTypeModel billTypeModel,
+      BillModel? existingBill,
+      required bool withPrint}) async {
     // Validate the form first
 
     if (!await validateForm(context)) return;
     if (!context.mounted) return;
     // 2. Create the bill model or handle failure and exit
-    final updatedBillModel = await _buildBillModelOrNotifyFailure(billTypeModel, existingBill, context);
+    final updatedBillModel = await _buildBillModelOrNotifyFailure(
+        billTypeModel, existingBill, context);
 
     if (updatedBillModel == null) {
       saveBillRequestState.value = RequestState.error;
@@ -539,7 +593,8 @@ implements IStoreSelectionHandler {
     }
     if (!context.mounted) return;
 
-    await _saveBillAndHandleResult(context, updatedBillModel, existingBill, withPrint);
+    await _saveBillAndHandleResult(
+        context, updatedBillModel, existingBill, withPrint);
   }
 
   /// Checks if there's actually no change from the existing bill.
@@ -551,7 +606,8 @@ implements IStoreSelectionHandler {
   }
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
-  Future<void> _saveBillAndHandleResult(BuildContext context, BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
+  Future<void> _saveBillAndHandleResult(BuildContext context,
+      BillModel updatedBill, BillModel? existingBill, bool withPrint) async {
     final result = await _billsFirebaseRepo.save(updatedBill);
 
     BillLocalStorageService().saveSingleBill(updatedBill);
@@ -596,7 +652,8 @@ implements IStoreSelectionHandler {
           // If the text is not empty, create a SerialNumberModel.
           if (serialText.isNotEmpty) {
             final SerialNumberModel serialNumberModel =
-                SerialNumberModelFactory.getModel(serialText, billModel: billModel, material: material);
+                SerialNumberModelFactory.getModel(serialText,
+                    billModel: billModel, material: material);
             items.add(serialNumberModel);
           }
         }
@@ -612,7 +669,8 @@ implements IStoreSelectionHandler {
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (List<SerialNumberModel> savedSerialsModels) => onSaveSerialsSuccess(serialControllers, savedSerialsModels),
+      (List<SerialNumberModel> savedSerialsModels) =>
+          onSaveSerialsSuccess(serialControllers, savedSerialsModels),
     );
   }
 
@@ -620,7 +678,8 @@ implements IStoreSelectionHandler {
     Map<MaterialModel, List<TextEditingController>> serialControllers,
     List<SerialNumberModel> savedSerialsModels,
   ) {
-    serialControllers.forEach((MaterialModel material, List<TextEditingController> serials) {
+    serialControllers
+        .forEach((MaterialModel material, List<TextEditingController> serials) {
       final materialModel = read<MaterialController>().getMaterialById(
         material.id!,
       );
@@ -632,8 +691,11 @@ implements IStoreSelectionHandler {
       // Ensure non-null keys and values
       final Map<String, bool> updatedSerialNumbers = {
         ...?materialModel.serialNumbers, // Preserve existing serials
-        for (final serial in savedSerialsModels.where((s) => s.matId == material.id))
-          if (serial.serialNumber != null && serial.transactions.last.sold != null) serial.serialNumber!: serial.transactions.last.sold!,
+        for (final serial
+            in savedSerialsModels.where((s) => s.matId == material.id))
+          if (serial.serialNumber != null &&
+              serial.transactions.last.sold != null)
+            serial.serialNumber!: serial.transactions.last.sold!,
       };
 
       // Update the material model with new serial numbers
@@ -649,9 +711,14 @@ implements IStoreSelectionHandler {
     return result;
   }
 
-  appendNewBill({required BillTypeModel billTypeModel, required int lastBillNumber, int? previousBillNumber}) {
-    BillModel newBill =
-        BillModel.empty(billTypeModel: billTypeModel, lastBillNumber: lastBillNumber, previousBillNumber: previousBillNumber);
+  appendNewBill(
+      {required BillTypeModel billTypeModel,
+      required int lastBillNumber,
+      int? previousBillNumber}) {
+    BillModel newBill = BillModel.empty(
+        billTypeModel: billTypeModel,
+        lastBillNumber: lastBillNumber,
+        previousBillNumber: previousBillNumber);
 
     billSearchController.insertLastAndUpdate(newBill);
   }
@@ -663,9 +730,19 @@ implements IStoreSelectionHandler {
     BillModel? existingBill,
     BuildContext context,
   ) async {
-    final updatedBillModel = _createBillModelFromBillData(billTypeModel, existingBill);
+    final updatedBillModel =
+        _createBillModelFromBillData(billTypeModel, existingBill);
 
     if (updatedBillModel == null) return null;
+    if (existingBill != null) {
+      if ((DateTime.now().difference(existingBill.billDetails.billDate!)) >
+              Duration(days: 2) &&
+          !(RoleItemType.viewBill.hasAdminPermission)) {
+        if (await AppUIUtils.askForPassword(context) == false) {
+          return null;
+        }
+      }
+    }
 
     for (BillItem item in updatedBillModel.items.itemList) {
       if (item.itemTotalPrice.toDouble > 99999999) {
@@ -700,35 +777,49 @@ implements IStoreSelectionHandler {
         );
         return null;
       }
-      if (!billTypeModel.isPurchaseRelated) {
-        final currentMat = read<MaterialController>().getMaterialById(item.itemGuid);
+      /*if (!billTypeModel.isPurchaseRelated) {
+        final currentMat =
+            read<MaterialController>().getMaterialById(item.itemGuid);
         log((currentMat.matQuantity).toString(), name: 'matQuantity');
         log((item.itemQuantity).toString(), name: 'itemQuantity');
-        log((currentMat.matQuantity! - item.itemQuantity).toString(), name: 'currentMat.matQuantity! - item.itemQuantity');
-        if (existingBill == null && currentMat.matQuantity! - item.itemQuantity < 0) {
+        log((currentMat.matQuantity! - item.itemQuantity).toString(),
+            name: 'currentMat.matQuantity! - item.itemQuantity');
+        if (existingBill == null &&
+            currentMat.matQuantity! - item.itemQuantity < 0) {
           AppUIUtils.onFailure(
             'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
           );
           if (await AppUIUtils.askForPassword(context) == false) {
             return null;
           }
-        } else {
-          // int existingQuantity = existingBill!.items.itemList.elementAt(existingBill.items.itemList.indexOf(item)).itemQuantity;
-          // int quantity = item.itemQuantity - existingQuantity;
-          // if (currentMat.matQuantity! - quantity < 0) {
-          //   AppUIUtils.onFailure(
-          //     'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
-          //   );
-          //   return null;
-          // }
+        } else if(existingBill != null){
+          final oldItem = existingBill.items.itemList.firstWhere(
+            (e) => e.itemGuid == item.itemGuid,
+          );
+          int existingQuantity = oldItem.itemQuantity;
+          int quantity = item.itemQuantity - existingQuantity;
+          if (currentMat.matQuantity! - quantity < 0) {
+            AppUIUtils.onFailure(
+              'لا يمكن بيع المادة ${currentMat.matName} (${currentMat.matQuantity}) كميتها الحالية ',
+            );
+            return null;
+          }
         }
-      }
+      }*/
     }
 
     if (requiredRequestNumber &&
-        (updatedBillModel.billDetails.orderNumber == null || updatedBillModel.billDetails.orderNumber!.length < 3)) {
+        (updatedBillModel.billDetails.orderNumber == null ||
+            updatedBillModel.billDetails.orderNumber!.length < 3)) {
       AppUIUtils.onFailure(
         'من فضلك ادخل رقم الطلب',
+      );
+      return null;
+    }
+    if (!(updatedBillModel.billTypeModel.isPurchaseRelated) &&
+        ((updatedBillModel.billDetails.customerPhone?.isEmpty) ?? false)) {
+      AppUIUtils.onFailure(
+        'من فضلك ادخل رقم الزبون',
       );
       return null;
     }
@@ -736,9 +827,11 @@ implements IStoreSelectionHandler {
     return updatedBillModel;
   }
 
-  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel, [BillModel? billModel]) {
+  BillModel? _createBillModelFromBillData(BillTypeModel billTypeModel,
+      [BillModel? billModel]) {
     // Validate customer and seller accounts
-    if (billTypeModel.billPatternType!.hasCashesAccount || billTypeModel.billPatternType!.hasMaterialAccount) {
+    if (billTypeModel.billPatternType!.hasCashesAccount ||
+        billTypeModel.billPatternType!.hasMaterialAccount) {
       if (!_billUtils.validateBillAccount(
         selectedBillAccount,
       )) {
@@ -748,7 +841,8 @@ implements IStoreSelectionHandler {
         return null;
       }
     }
-    if (selectedBillAccount!.id == AppConstants.primaryCashAccountId && selectedPayType.value == InvPayType.due) {
+    if (selectedBillAccount!.id == AppConstants.primaryCashAccountId &&
+        selectedPayType.value == InvPayType.due) {
       AppUIUtils.onFailure('لايمكن البيع الاجل للصندوق');
       return null;
     }
@@ -777,8 +871,10 @@ implements IStoreSelectionHandler {
       billTypeModel: updatedBillTypeModel,
       billDate: billDate.value,
       billFirstPay: firstPayController.text.toDouble,
-      billCustomerId: selectedCustomerAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
-      billAccountId: selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      billCustomerId: selectedCustomerAccount?.id! ??
+          "00000000-0000-0000-0000-000000000000",
+      billAccountId:
+          selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       billSellerId: selectedSellerAccount?.costGuid ?? '',
       billPayType: selectedPayType.value.index,
     );
@@ -793,13 +889,16 @@ implements IStoreSelectionHandler {
     return billsCountByType;
   }
 
-  prepareBillRecords(BillItems billItems, BillDetailsPlutoController billDetailsPlutoController) =>
+  prepareBillRecords(BillItems billItems,
+          BillDetailsPlutoController billDetailsPlutoController) async =>
       billDetailsPlutoController.prepareBillMaterialsRows(
-        billItems.getMaterialRecords,
+        await billItems.getMaterialRecords,
       );
 
-  prepareAdditionsDiscountsRecords(BillModel billModel, BillDetailsPlutoController billDetailsPlutoController) =>
-      billDetailsPlutoController.prepareAdditionsDiscountsRows(billModel.getAdditionsDiscountsRecords);
+  prepareAdditionsDiscountsRecords(BillModel billModel,
+          BillDetailsPlutoController billDetailsPlutoController) =>
+      billDetailsPlutoController.prepareAdditionsDiscountsRows(
+          billModel.getAdditionsDiscountsRecords);
 
   initCustomerAccount(CustomerModel? account) {
     if (account != null) {
@@ -823,7 +922,8 @@ implements IStoreSelectionHandler {
     }
   }
 
-  void updateBillDetailsOnScreen(BillModel bill, BillDetailsPlutoController billPlutoController) async {
+  void updateBillDetailsOnScreen(
+      BillModel bill, BillDetailsPlutoController billPlutoController) async {
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
 
     setBillDate = bill.billDetails.billDate!;
@@ -834,17 +934,21 @@ implements IStoreSelectionHandler {
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
 
     initBillNumberController(bill.billDetails.billNumber);
-    initCustomerAccount(read<CustomersController>().getCustomerById(bill.billDetails.billCustomerId));
+    initCustomerAccount(read<CustomersController>()
+        .getCustomerById(bill.billDetails.billCustomerId));
     // initBillAccount(read<AccountsController>().getAccountModelById(AppConstants.primaryCashAccountId));
-    initBillAccount(
-        bill.billDetails.billAccountId != null ? read<AccountsController>().getAccountModelById(bill.billDetails.billAccountId!) : null);
+    initBillAccount(bill.billDetails.billAccountId != null
+        ? await read<AccountsController>()
+            .getAccountModelByIdAsync(bill.billDetails.billAccountId!)
+        : null);
     initFreeLocalSwitcher(bill.freeBill);
     log(bill.freeBill.toString(), name: 'initFreeLocalSwitcher');
     initSellerAccount(sellerId: bill.billDetails.billSellerId);
 
-    prepareBillRecords(bill.items, billPlutoController);
+    await prepareBillRecords(bill.items, billPlutoController);
     prepareAdditionsDiscountsRecords(bill, billPlutoController);
-    productsWithTax.assignAll(await _billService.getMaterialsWithTax(billModel: bill));
+    productsWithTax
+        .assignAll(await _billService.getMaterialsWithTax(billModel: bill));
 
     billPlutoController.update();
   }
@@ -852,14 +956,16 @@ implements IStoreSelectionHandler {
   void initSellerAccount({
     required String? sellerId,
   }) {
-    final String? billSellerId = sellerId ?? read<UserManagementController>().loggedInUserModel?.userSellerId;
+    final String? billSellerId = sellerId ??
+        read<UserManagementController>().loggedInUserModel?.userSellerId;
 
     if (billSellerId == null) {
       selectedSellerAccount = null;
 
       sellerAccountController.text = '';
     } else {
-      final SellerModel sellerAccount = read<SellersController>().getSellerById(billSellerId);
+      final SellerModel sellerAccount =
+          read<SellersController>().getSellerById(billSellerId);
 
       updateSellerAccount(sellerAccount);
 
@@ -874,7 +980,8 @@ implements IStoreSelectionHandler {
     }
   }
 
-  void generateAndSendBillPdfToEmail(BillModel billModel, BuildContext context, {String? recipientEmail}) {
+  void generateAndSendBillPdfToEmail(BillModel billModel, BuildContext context,
+      {String? recipientEmail}) {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
@@ -886,7 +993,8 @@ implements IStoreSelectionHandler {
     );
   }
 
-  void generateAndSaveBillLabel(BillModel billModel, BuildContext context, {String? recipientEmail}) async {
+  void generateAndSaveBillLabel(BillModel billModel, BuildContext context,
+      {String? recipientEmail}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
@@ -898,11 +1006,25 @@ implements IStoreSelectionHandler {
       fileName: AppStrings.existedBill.tr,
       itemModel: DeliveryModel(
           orderDate: billModel.billDetails.billDate!,
-          recipientName: billModel.billTypeModel.accounts![BillAccounts.caches]!.accName! + billModel.billDetails.orderNumber.toString(),
+          recipientName:
+              billModel.billTypeModel.accounts![BillAccounts.caches]!.accName! +
+                  billModel.billDetails.orderNumber.toString(),
           phone: billModel.billDetails.customerPhone!,
           address: address,
           orderId: billModel.billDetails.billNumber.toString(),
           items: billModel.items.itemList.toDeliveryItems()),
+    );
+  }
+
+  Future<void> generateAndSaveBillPdf(BillModel billModel, BuildContext context,
+      {String? recipientEmail}) async {
+    if (!_billService.hasModelId(billModel.billId)) return;
+
+    if (!_billService.hasModelItems(billModel.items.itemList)) return;
+
+    await _billService.generatePdfAndSaveInLocation(
+      fileName: AppStrings.existedBill.tr,
+      itemModel: billModel,
     );
   }
 
@@ -913,10 +1035,14 @@ implements IStoreSelectionHandler {
 
     if (!_billService.hasModelItems(billModel.items.itemList)) return;
 
-    WhatsappService.instance.sendBillToWhatsApp(itemModel: billModel, recipientPhoneNumber: customerPhoneController.text, context: context);
+    WhatsappService.instance.sendBillToWhatsApp(
+        itemModel: billModel,
+        recipientPhoneNumber: customerPhoneController.text,
+        context: context);
   }
 
-  showEInvoiceDialog(BillModel billModel, BuildContext context) => _billService.showEInvoiceDialog(billModel, context);
+  showEInvoiceDialog(BillModel billModel, BuildContext context) =>
+      _billService.showEInvoiceDialog(billModel, context);
 
   changeBillPlutoView(BillModel billModel, BuildContext context) async {
     if (!await validateForm(context)) return;
@@ -929,7 +1055,8 @@ implements IStoreSelectionHandler {
     update();
   }
 
-  void openFirstPayDialog(BuildContext context) => _billService.showFirstPayDialog(context, firstPayController);
+  void openFirstPayDialog(BuildContext context) =>
+      _billService.showFirstPayDialog(context, firstPayController);
 
   // Initialize the AdvancedSwitchController with a default value.
   final advancedSwitchController = ValueNotifier(false);
@@ -1138,6 +1265,45 @@ implements IStoreSelectionHandler {
 
 
 /// this for mobile
+  Future<void> printMaterialLabel(BillModel billModel) async {
+    final materialController = read<MaterialController>();
+
+    for (final materialRecord in billModel.items.itemList) {
+      // 1) جيب المادة
+      final MaterialModel? currentModel = await materialController
+          .getMaterialByIdWithNull(materialRecord.itemGuid);
+/*
+      if (currentModel == null) {
+        // عدم وجود المادّة: بلّغ وتخطّى هذا السطر
+        AppUIUtils.onFailure(
+          'بعض المواد غير موجودة \n(${materialRecord.itemGuid} - ${materialRecord.itemName})',
+        );
+        continue;
+      }*/
+
+      final dynamic qtyRaw = materialRecord.itemQuantity;
+      int copies;
+
+      if (qtyRaw is int) {
+        copies = qtyRaw;
+      } else if (qtyRaw is double) {
+        copies = qtyRaw.round();
+      } else {
+        copies = int.tryParse('$qtyRaw') ?? 1;
+      }
+
+      // ضمان المجال (على سبيل المثال 1..500)
+      copies = copies.clamp(1, 500);
+
+      // 3) اطبع
+      await materialController.printMaterialBarcode(
+        material: currentModel!,
+        copies: copies,
+      );
+    }
+  }
+
+  /// this for mobile
 /*showBarCodeScanner(BuildContext context, BillTypeModel billTypeModel) => _billService.showBarCodeScanner(
       context: context,
       stateManager: billDetailsPlutoController.recordsTableStateManager,

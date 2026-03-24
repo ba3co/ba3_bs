@@ -44,6 +44,7 @@ import 'package:ba3_bs/features/materials/service/materials_groups_import.dart';
 import 'package:ba3_bs/features/migration/data/datasources/remote/migration_data_source.dart';
 import 'package:ba3_bs/features/migration/data/models/migration_model.dart';
 import 'package:ba3_bs/features/print/controller/print_controller.dart';
+import 'package:ba3_bs/features/print/service/translation_service.dart';
 import 'package:ba3_bs/features/sellers/controllers/add_seller_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/seller_sales_controller.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -96,6 +97,7 @@ import '../../features/patterns/data/datasources/patterns_data_source.dart';
 import '../../features/patterns/data/models/bill_type_model.dart';
 import '../../features/pluto/controllers/pluto_controller.dart';
 import '../../features/pluto/controllers/pluto_dual_table_controller.dart';
+import '../../features/print/service/printer_manager.dart';
 import '../../features/sellers/service/seller_import.dart';
 import '../../features/user_task/controller/all_task_controller.dart';
 import '../../features/user_task/data/datasources/user_task_data_source.dart';
@@ -111,6 +113,7 @@ import '../services/firebase/implementations/repos/listen_datasource_repo.dart';
 import '../services/firebase/implementations/repos/remote_datasource_repo.dart';
 import '../services/firebase/implementations/repos/uploader_storage_queryable_repo.dart';
 import '../services/firebase/interfaces/i_compound_database_service.dart';
+import '../services/firebase/interfaces/i_remote_storage_service.dart';
 import '../services/json_file_operations/interfaces/export/i_export_service.dart';
 import '../services/json_file_operations/interfaces/import/i_import_service.dart';
 import '../services/local_database/implementations/repos/local_datasource_repo.dart';
@@ -132,7 +135,7 @@ class AppBindings extends Bindings {
     final ICompoundDatabaseService<Map<String, dynamic>> compoundFireStoreService =
         read<ICompoundDatabaseService<Map<String, dynamic>>>();
 
-    // final IRemoteStorageService<String> remoteStorageService = read<IRemoteStorageService<String>>();
+    final IRemoteStorageService<String> remoteStorageService = read<IRemoteStorageService<String>>();
 
     // final rolesRepo = RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService));
     //
@@ -183,7 +186,7 @@ class AppBindings extends Bindings {
     final repositories = _initializeRepositories(
       remoteDatabaseService: fireStoreService,
       remoteCompoundDataBaseService: compoundFireStoreService,
-      //  remoteStorageService: remoteStorageService,
+       remoteStorageService: remoteStorageService,
       translationService: translationService,
       billImportService: billImport,
       billExportService: billExport,
@@ -235,7 +238,7 @@ class AppBindings extends Bindings {
   _Repositories _initializeRepositories({
     required IRemoteDatabaseService<Map<String, dynamic>> remoteDatabaseService,
     required ICompoundDatabaseService<Map<String, dynamic>> remoteCompoundDataBaseService,
-    // required IRemoteStorageService<String> remoteStorageService,
+    required IRemoteStorageService<String> remoteStorageService,
     required ITranslationService translationService,
     required IImportService<BillModel> billImportService,
     required IExportService<BillModel> billExportService,
@@ -300,7 +303,7 @@ class AppBindings extends Bindings {
       //   UserTaskDataSource(databaseService: remoteDatabaseService, databaseStorageService: remoteStorageService),
       // ),
 
-      tasksRepo: UploaderStorageQueryableRepo(UserTaskDataSource(databaseService: remoteDatabaseService)),
+      tasksRepo: UploaderStorageQueryableRepo(UserTaskDataSource(databaseService: remoteDatabaseService, databaseStorageService: remoteStorageService)),
 
       logsRepo: FilterableDataSourceRepository(LogDataSource(databaseService: remoteDatabaseService)),
     );
@@ -343,6 +346,7 @@ class AppBindings extends Bindings {
         repositories.materialsLocalDatasourceRepo,
         repositories.listenableDatasourceRepo,
         repositories.materialsRemoteDatasourceRepo,
+        repositories.translationRepo
       ),
     );
 
@@ -363,7 +367,7 @@ class AppBindings extends Bindings {
 
     lazyPut(AccountsController(repositories.accountImportExportRepo, repositories.accountsRep));
 
-    lazyPut(PrintingController(repositories.translationRepo));
+    lazyPut(PrintingController( PrinterManager(ts: TranslationService(repositories.translationRepo))/*repositories.translationRepo*/));
 
     lazyPut(AccountStatementController(repositories.accountsStatementsRepo));
 

@@ -291,6 +291,7 @@ enum BondType {
     label: "OpeningEntry",
     value: "القيد الافتتاحي",
     typeGuide: "ea69ba80-662d-4fa4-90ee-4d2e1988a8ea",
+
     from: 1,
     to: 1,
     taxType: 0,
@@ -714,10 +715,10 @@ enum VatEnums {
       taxRatio: 0,
       taxAccountGuid: 'a5c04527-63e8-4373-92e8-68d8f88bdb16');
 
-  final String? taxGuid;
-  final String? taxName;
-  final String? taxAccountGuid;
-  final double? taxRatio;
+  final String taxGuid;
+  final String taxName;
+  final String taxAccountGuid;
+  final double taxRatio;
 
   const VatEnums({
     required this.taxGuid,

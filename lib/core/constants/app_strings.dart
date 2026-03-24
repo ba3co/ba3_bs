@@ -462,4 +462,26 @@ class AppStrings {
   static const String min = "الأدنى";
 
   static const String max = "الأعلى";
+  static var allNegativeMaterials='المواد المخرجة بالسالب';
+
+  static var viewNegativeMaterial='عرض المواد المخرجة بالسالب';
+
+  static var barcodeIsRequired='يجب ادخال باركود للمادة';
+
+  static var printLabel='طباعة اللصاقات';
+
+  static const printerCalibration='معايرة الطباعة';
+
+  static String send='ارسال';
+
+  static String copyInvoiceNumber='نسخ رقم الفاتورة';
+
+  static String sendViaEmail='ارسال عبر البريد الالكتروني';
+
+  static String savePdfLocal='حفظ PDF على الجهاز';
+
+  static String weWillSavePdfLocal= 'سيتم إنشاء ملف PDF للفاتورة وحفظه محليًا.';
+
+  static String savePdf='Save PDF';
+
 }

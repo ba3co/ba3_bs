@@ -25,17 +25,19 @@ class BillComparisonPdfGenerator extends PdfGeneratorBase<List<BillModel>>
     final afterUpdate = itemModel[1];
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        _buildHeaderText(fileName, afterUpdate, font),
         if (logoUint8List != null) buildLogo(logoUint8List),
+        Spacer(),
+        _buildHeaderText(fileName, afterUpdate, font),
+
       ],
     );
   }
 
   Widget _buildHeaderText(String fileName, BillModel afterUpdate, Font? font) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         buildTitleText(
           fileName,

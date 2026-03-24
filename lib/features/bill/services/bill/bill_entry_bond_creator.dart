@@ -53,6 +53,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       originName: "${model.billTypeModel.shortName} : ${model.billDetails.billNumber}",
       isFree: model.freeBill ?? false,
       billTypeModel: model.billTypeModel,
+      isSimulated: isSimulatedVat??false,
     );
 
     if (model.billTypeModel.billPatternType!.hasDiscountsAccount&&model.billTypeModel.discountAdditionAccounts!=null) {
@@ -80,6 +81,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required String date,
     required BillTypeModel billTypeModel,
     required bool isFree,
+    required bool isSimulated,
   }) =>
       billItems
           .expand((item) => [
@@ -105,6 +107,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
                 ..._createOptionalBonds(
                     billId: billId,
                     accounts: accounts,
+                    isSimulated: isSimulated,
                     item: item,
                     date: date,
                     billTypeModel: billTypeModel,
@@ -121,6 +124,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required String originName,
     required BillTypeModel billTypeModel,
     required bool isFree,
+    required bool isSimulated,
   }) {
     final giftCount = item.itemGiftsNumber;
     final giftPrice = item.itemGiftsPrice;
@@ -130,6 +134,7 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
       if (vat > 0 && billTypeModel.billPatternType!.hasVat)
         _createVatBond(
             billId: billId,
+            isSimulated: isSimulated,
             originName: originName,
             vat: vat,
             item: read<MaterialController>().getMaterialById(
@@ -229,19 +234,20 @@ class BillEntryBondCreator extends BaseEntryBondCreator<BillModel> {
     required String date,
     required BillTypeModel billTypeModel,
     required bool isFree,
+    required bool isSimulated,
   }) {
     final bondType = billTypeModel.isSellRelated ? BondItemType.creditor : BondItemType.debtor;
 
     MaterialModel materialModel = read<MaterialController>().getMaterialById(
       item.id!,
     );
-    final accountId = item.matVatGuid == null
+    final accountId =isSimulated? VatEnums.withVat.taxAccountGuid: item.matVatGuid == null
         ? VatEnums.withVat.taxAccountGuid
         : billTypeModel.isPurchaseRelated
             ? _getRefundVatAccountId(materialModel, isFree)
             : _getVatAccountId(materialModel);
     final note = 'ضريبة ${billTypeModel.shortName} عدد $quantity من ${item.matName}';
-    final String accountName = billTypeModel.isPurchaseRelated
+    final String accountName = isSimulated? VatEnums.withVat.taxName:billTypeModel.isPurchaseRelated
         ? _getRefundVatAccountName(materialModel, isFree)
         : _getVatAccountName(
             materialModel,

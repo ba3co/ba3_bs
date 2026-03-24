@@ -10,7 +10,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../features/floating_window/services/overlay_service.dart';
 import '../constants/app_constants.dart';
-import '../utils/app_ui_utils.dart';
+
 
 class DatePicker extends StatelessWidget {
   final Function(DateTime) onDateSelected;
@@ -27,13 +27,13 @@ class DatePicker extends StatelessWidget {
       height: AppConstants.constHeightTextField,
       child: GestureDetector(
         onTap: () async{
-          if(!canEditeDate) {
-            if(!(await AppUIUtils.askForPassword(context))){
-              AppUIUtils.onFailure('لايمكنك تغيير التاريغ');
-             return;
-            }
-
-          }
+          // if(!canEditeDate) {
+          //   if(!(await AppUIUtils.askForPassword(context))){
+          //     AppUIUtils.onFailure('لايمكنك تغيير التاريغ');
+          //    return;
+          //   }
+          //
+          // }
           if(!context.mounted)return;
             OverlayService.showDialog(
               context: context,

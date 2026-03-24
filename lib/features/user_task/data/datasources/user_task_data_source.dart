@@ -8,9 +8,9 @@ import '../model/user_task_model.dart';
 
 class UserTaskDataSource
     extends UploaderStorageQueryableDatasource<UserTaskModel> {
-  // UserTaskDataSource({required super.databaseService, required super.databaseStorageService});
+  UserTaskDataSource({required super.databaseService, required super.databaseStorageService});
 
-  UserTaskDataSource({required super.databaseService});
+  // UserTaskDataSource({required super.databaseService});
 
   @override
   String get path => ApiConstants.userTask; // Collection name in Firestore
@@ -56,11 +56,9 @@ class UserTaskDataSource
   }
 
   @override
-  Future<String> uploadImage(String imagePath) async {
-    // final data = await databaseStorageService.uploadImage(imagePath: imagePath, path: path);
-    //
-    // return data;
+  Future<String> uploadImage(String imagePath, String imageName) async {
+    final data = await databaseStorageService.uploadImage(imagePath: imagePath, path: imageName);
 
-    return '';
+    return data;
   }
 }

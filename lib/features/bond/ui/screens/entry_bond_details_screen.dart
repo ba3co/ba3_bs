@@ -1,4 +1,5 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
+import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bond/controllers/entry_bond/entry_bond_controller.dart';
@@ -9,6 +10,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
 import '../../../../core/widgets/grid_column_item.dart';
+import '../../../users_management/data/models/role_model.dart';
 import '../../data/models/entry_bond_model.dart';
 import '../widgets/entry_bond_details/bond_record_data_source.dart';
 
@@ -67,17 +69,45 @@ class EntryBondDetailsScreen extends StatelessWidget {
               ),
             ],
           )),
-          AppButton(
-            title: AppStrings.viewOrigin.tr,
-            onPressed: () {
+          // AppButton(
+          //   title: AppStrings.viewOrigin.tr,
+          //   onPressed: () {
+          //
+          //     entryBondModel.printDetails();
+          //
+          //     read<EntryBondController>()
+          //         .openEntryBondOrigin(entryBondModel, context);
+          //   },
+          //   iconData: Icons.keyboard_return,
+    // )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AppButton(
+                title: AppStrings.viewOrigin.tr,
+                onPressed: () {
+                  read<EntryBondController>()
+                      .openEntryBondOrigin(entryBondModel, context);
+                },
+                iconData: Icons.keyboard_return,
+              ),
+              HorizontalSpace(),
+              if(RoleItemType.viewBill.hasAdminPermission)
+                AppButton(
+                  title: AppStrings.delete.tr,
+                  color: Colors.red,
+                  onPressed: () {
 
-              entryBondModel.printDetails();
+                    read<EntryBondController>()
+                        .deleteEntryBondModel(entryId: entryBondModel.origin!.originId!,  );
 
-              read<EntryBondController>()
-                  .openEntryBondOrigin(entryBondModel, context);
-            },
-            iconData: Icons.keyboard_return,
+                  },
+                  iconData: Icons.close,
+                ),
+            ],
           ),
+
+
           const VerticalSpace()
         ],
       ),

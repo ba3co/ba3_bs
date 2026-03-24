@@ -23,9 +23,9 @@ class ChequesStrategyBondFactory {
       case ChequesStrategyType.refundStrategy:
         return [_refundStrategy];
       case ChequesStrategyType.payChequesStrategy:
-        return [_chequesStrategy, _payStrategy];
+        return [/*_chequesStrategy,*/ _payStrategy];
       case ChequesStrategyType.refundChequesStrategy:
-        return [_chequesStrategy, _refundStrategy];
+        return [/*_chequesStrategy,*/ _refundStrategy];
     }
   }
 

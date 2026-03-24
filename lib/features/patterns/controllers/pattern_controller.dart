@@ -121,7 +121,7 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
   }
 
   void navigateToAddPatternScreen({BillTypeModel? billType, required BuildContext context}) {
-    patternFormHandler.init(billType);
+    patternFormHandler.init(billType: billType);
 
     launchFloatingWindow(
         context: context, minimizedTitle: ApiConstants.patterns.tr, floatingScreen: AddPatternScreen());
@@ -142,6 +142,8 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
     } else {
       billsTypes.assignAll(allBillTypeModels);
     }
+    update();
+
     return billsTypes;
   }
 
@@ -163,9 +165,18 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (success) => AppUIUtils.onSuccess(
+
+      (savedBillPattern) {
+
+
+
+
+         AppUIUtils.onSuccess(
         'تم حفظ النموذج بنجاح!',
-      ),
+      );
+         getAllBillTypes(true);
+         patternFormHandler.init(billType: savedBillPattern);
+      },
     );
   }
 
@@ -201,6 +212,22 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );
+    }
+  }
+
+  void deletePattern(BuildContext context) async{
+    if(patternFormHandler.selectedBillTypeModel!=null) {
+      final result = await _repository.delete(patternFormHandler.selectedBillTypeModel!.id!);
+      result.fold((failer){
+        AppUIUtils.onFailure(failer.message);
+
+      }, (success) {
+
+        patternFormHandler.init();
+        AppUIUtils.onSuccess("تم حذف النمط بنجاح");
+
+        getAllBillTypes(true);
+      },);
     }
   }
 }

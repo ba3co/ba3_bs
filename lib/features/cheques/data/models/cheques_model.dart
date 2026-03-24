@@ -417,7 +417,8 @@ class ChequesModel extends HiveObject implements PlutoAdaptable {
       PlutoColumn(
           title: "رقم الشيك",
           field: AppConstants.chequesNum,
-          type: PlutoColumnType.number()): chequesNumber,
+
+          type: PlutoColumnType.text()): chequesNum,
       PlutoColumn(
           title: "قيمة الشيك",
           field: AppConstants.chequesVal,
