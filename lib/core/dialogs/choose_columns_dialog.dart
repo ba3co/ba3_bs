@@ -7,10 +7,9 @@ import 'package:get/get.dart';
 import '../constants/app_strings.dart';
 import '../styling/app_colors.dart';
 import '../widgets/custom_checklist.dart';
-
 class MaterialAttributesDialog extends StatefulWidget {
-  BillDetailsPlutoController billDetailsPlutoController;
-  MaterialAttributesDialog({super.key, required this.billDetailsPlutoController});
+ final BillDetailsPlutoController billDetailsPlutoController;
+ const MaterialAttributesDialog({super.key, required this.billDetailsPlutoController});
 
   @override
   State<MaterialAttributesDialog> createState() => _MaterialAttributesDialogState();

@@ -1,7 +1,6 @@
 import 'package:ba3_bs/features/user_loan_requests/data/model/loan_request_model.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../../core/styling/app_text_style.dart';
 import '../../../../../core/widgets/organized_widget.dart';

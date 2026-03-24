@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../../../../core/helper/enums/enums.dart';
 
 @HiveType(typeId: 0)
+// ignore: must_be_immutable
 class BondTypeModel extends HiveObject with EquatableMixin {
   @HiveField(1)
   final String label;

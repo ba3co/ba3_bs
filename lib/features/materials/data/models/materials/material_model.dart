@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
@@ -245,6 +247,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
 
   // Factory constructor to create an instance from JSON
   factory MaterialModel.fromJson(Map<String, dynamic> json) {
+    log(json['matExtraBarcode'].toString());
     return MaterialModel(
       id: json['docId']?.toString(),
       matCode: json['MatCode'],
@@ -299,7 +302,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       retailPrice: json['retail2']?.toString(),
       endUserPrice: json['EndUser2']?.toString(),
       matVatGuid: json['matVatGuid']?.toString(),
-      matExtraBarcode: List.from(json['matExtraBarcode'] ?? []),
+      matExtraBarcode:/* List.from(json['matExtraBarcode'] ?? [])*/[],
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice:AppServiceUtils.toDouble(json['calcMinPrice'])  ,
       serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
@@ -508,6 +511,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     final int? matFreeQuantity,
     final double? calcMinPrice,
     final Map<String, bool>? serialNumbers,
+    final List<MatExtraBarcodeModel>? matExtraBarcode,
   }) {
     return MaterialModel(
       id: id ?? this.id,
@@ -566,6 +570,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       serialNumbers: serialNumbers ?? this.serialNumbers,
       matLocalQuantity: matLocalQuantity ?? this.matLocalQuantity,
       matFreeQuantity: matFreeQuantity ?? this.matFreeQuantity,
+      matExtraBarcode: matExtraBarcode ?? this.matExtraBarcode,
     );
   }
 

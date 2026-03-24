@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 
 
 @HiveType(typeId: 1) // Use a different typeId than BondTypeModel
+// ignore: must_be_immutable
 class ChequeType extends HiveObject with EquatableMixin {
   @HiveField(1)
   final int from;

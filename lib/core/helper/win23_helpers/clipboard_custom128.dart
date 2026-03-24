@@ -8,7 +8,7 @@ void setClipboardCustom128(Uint8List data) {
   if (openClipboard(0) == 0) throw Exception('Cannot open clipboard');
 
   try {
-    final hGlobal = globalAlloc(GMEM_MOVEABLE, data.length);
+    final hGlobal = globalAlloc(gmemMOVEABLE, data.length);
     if (hGlobal == 0) throw Exception('GlobalAlloc failed');
 
     final ptr = globalLock(hGlobal);
@@ -21,7 +21,7 @@ void setClipboardCustom128(Uint8List data) {
 
     globalUnlock(hGlobal);
 
-    if (setClipboardData(CF_CUSTOM_128, hGlobal) == 0) {
+    if (setClipboardData(cfCustom128, hGlobal) == 0) {
       throw Exception('SetClipboardData failed');
     }
 

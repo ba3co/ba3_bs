@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 
 import '../../../../apps/app.dart';
 import '../models/custom_alert_anim_type.dart';
@@ -47,11 +46,48 @@ class CustomAlertDialog {
   }) async {
     Timer? timer;
 
-    final validContext = context ?? Get.overlayContext!;
-    final overlay = navigatorKey.currentState?.overlay;
+    OverlayState? overlay = navigatorKey.currentState?.overlay;
+
+    overlay ??= Overlay.maybeOf(
+      context ?? navigatorKey.currentContext!,
+      rootOverlay: true,
+    );
 
     if (overlay == null) {
-      throw Exception('No overlay found');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        show(
+          context: context,
+          type: type,
+          title: title,
+          text: text,
+          titleAlignment: titleAlignment,
+          textAlignment: textAlignment,
+          widget: widget,
+          animType: animType,
+          barrierDismissible: barrierDismissible,
+          onConfirmBtnTap: onConfirmBtnTap,
+          onCancelBtnTap: onCancelBtnTap,
+          confirmBtnText: confirmBtnText,
+          cancelBtnText: cancelBtnText,
+          confirmBtnColor: confirmBtnColor,
+          cancelBtnColor: cancelBtnColor,
+          confirmBtnTextStyle: confirmBtnTextStyle,
+          cancelBtnTextStyle: cancelBtnTextStyle,
+          backgroundColor: backgroundColor,
+          headerBackgroundColor: headerBackgroundColor,
+          titleColor: titleColor,
+          textColor: textColor,
+          barrierColor: barrierColor,
+          showCancelBtn: showCancelBtn,
+          showConfirmBtn: showConfirmBtn,
+          borderRadius: borderRadius,
+          customAsset: customAsset,
+          width: width,
+          autoCloseDuration: autoCloseDuration,
+          disableBackBtn: disableBackBtn,
+        );
+      });
+      return;
     }
 
     if (autoCloseDuration != null) {
@@ -108,7 +144,8 @@ class CustomAlertDialog {
         focusNode: FocusNode(),
         autofocus: true,
         onKey: (event) {
-          if (event is RawKeyUpEvent && event.logicalKey == LogicalKeyboardKey.enter) {
+          if (event is RawKeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.enter) {
             hide();
             onConfirmBtnTap?.call();
           }
@@ -124,10 +161,13 @@ class CustomAlertDialog {
           if (barrierDismissible) hide();
         },
         child: Center(
-          child: CustomAlertAnimate.getByType(
-            animType,
-            child: alert,
-            animation: const AlwaysStoppedAnimation(1.0),
+          child: GestureDetector(
+            onTap: () {},
+            child: CustomAlertAnimate.getByType(
+              animType,
+              child: alert,
+              animation: const AlwaysStoppedAnimation(1.0),
+            ),
           ),
         ),
       ),

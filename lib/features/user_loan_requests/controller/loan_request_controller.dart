@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/services/firebase/implementations/repos/filterable_datasource_repo.dart';
 import 'package:ba3_bs/features/user_loan_requests/data/model/loan_request_model.dart';
 import 'package:ba3_bs/features/user_loan_requests/data/model/user_loan_request_model.dart';
@@ -85,12 +87,12 @@ class LoanController extends GetxController {
               amount: loan.amount,
               status: newStatus,
             );
-            print(user.userLoanRequests);
+            log(user.userLoanRequests.toString());
 
             List<UserLoanRequestModel>? updatedLoans = user.userLoanRequests
                 ?.map((e) => (e.id == loanId ? updatedLoan : e))
                 .toList();
-            print(updatedLoans);
+            log(updatedLoans.toString());
             UserModel updatedUser =
                 user.copyWith(userLoanRequests: updatedLoans);
 

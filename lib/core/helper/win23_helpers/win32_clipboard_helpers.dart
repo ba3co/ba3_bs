@@ -24,5 +24,5 @@ kernel32.lookupFunction<Pointer<Void> Function(IntPtr), Pointer<Void> Function(i
 final int Function(int) globalUnlock =
 kernel32.lookupFunction<Int32 Function(IntPtr), int Function(int)>('GlobalUnlock');
 
-const int GMEM_MOVEABLE = 0x0002;
-const int CF_CUSTOM_128 = 128;
+const int gmemMOVEABLE = 0x0002;
+const int cfCustom128 = 128;

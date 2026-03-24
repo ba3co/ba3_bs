@@ -1,4 +1,3 @@
-import 'package:ba3_bs/features/user_time/ui/screens/leave_requests_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -27,6 +26,7 @@ class MyApp extends StatelessWidget {
         fontSizeResolver: FontSizeResolvers.height,
         child: GetMaterialApp(
           navigatorKey: navigatorKey,
+
           // initialBinding: AppBindings(),
           debugShowCheckedModeBanner: false,
           scrollBehavior: AppScrollBehavior(),

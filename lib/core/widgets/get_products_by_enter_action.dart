@@ -27,7 +27,7 @@ class GetProductByEnterAction extends PlutoGridShortcutAction {
     required PlutoKeyManagerEvent keyEvent,
     required PlutoGridStateManager stateManager,
   }) async {
-    print('GetProductByEnterAction');
+    log('GetProductByEnterAction');
     await getProduct(stateManager, plutoController);
     // In SelectRow mode, the current Row is passed to the onSelected callback.
     if (stateManager.mode.isSelectMode && stateManager.onSelected != null) {

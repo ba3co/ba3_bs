@@ -8,7 +8,6 @@ import 'package:ba3_bs/features/user_time/data/models/leave_requests_model.dart'
 import 'package:ba3_bs/features/users_management/data/models/target_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -251,7 +250,7 @@ class UserModel implements PlutoAdaptable {
       );
     }
 
-    String formatUserLogs(UserTimeModel? userTimeModel) {
+/*    String formatUserLogs(UserTimeModel? userTimeModel) {
       if (userTimeModel == null) {
         return "لا يوجد بيانات";
       }
@@ -294,7 +293,7 @@ class UserModel implements PlutoAdaptable {
       buffer.writeln("");
 
       return buffer.toString();
-    }
+    }*/
 
     bool hasHolidayToday() {
       return userHolidays?.contains(currentDate) ?? false;

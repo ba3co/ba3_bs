@@ -4,7 +4,6 @@ import 'package:ba3_bs/core/dialogs/custom_alert_dialog/widgets/custom_alert_dia
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/pluto/controllers/pluto_controller.dart';
-import 'package:ba3_bs/features/users_management/controllers/user_details_controller.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +49,7 @@ class UserTimeListScreen extends StatelessWidget {
             );
 
             if (exportType == null) return;
-
+            if (!context.mounted) return;
             final range = await showDateRangePicker(
               context: context,
               firstDate: DateTime(2020),

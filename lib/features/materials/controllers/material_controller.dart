@@ -819,6 +819,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     final labelData = await showLabelSettingsDialog(context, material: material);
     if (labelData == null) return;
 
+    if(!context.mounted)return;
     // ثم اسأل عن عدد النسخ
     final copies = await pickCopiesDialog(context, initial: 1, min: 1, max: 500);
     if (copies == null) return;

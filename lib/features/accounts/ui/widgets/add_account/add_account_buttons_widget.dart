@@ -1,7 +1,6 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/helper/enums/enums.dart';
