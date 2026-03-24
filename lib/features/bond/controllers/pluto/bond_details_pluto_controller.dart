@@ -18,7 +18,7 @@ class BondDetailsPlutoController extends IRecodesPlutoController<PayItem> {
       PayItem().toPlutoGridFormat(bondType.type).keys.toList();
 
   List<PlutoRow> recordsTableRows = [];
-
+ 
   final BondTypeModel bondType;
 
   String accountGuid = '';

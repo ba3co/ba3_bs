@@ -4,6 +4,8 @@ import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/styling/app_text_style.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/all_holidays_widget.dart';
+import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/all_leaves_widget.dart';
+import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/all_loan_widget.dart';
 import 'package:ba3_bs/features/user_time/ui/widgets/user_details_widgets/user_total_delay_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -36,10 +38,33 @@ class UserDetails extends StatelessWidget {
             ),
             Spacer(),
             AppButton(
+              title: 'تصدير ملف الحضور',
+              iconData: FontAwesomeIcons.fileExcel,
+              onPressed: () async {
+                final range = await showDateRangePicker(
+                  context: context,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime.now(),
+                );
+
+                if (range == null) return;
+
+                read<UserDetailsController>().exportUserRangeToExcel(
+                  userModel,
+                  startDate: range.start,
+                  endDate: range.end,
+                );
+              },
+            ),
+            SizedBox(
+              width: 30,
+            ),
+            AppButton(
               title: AppStrings.clearDelay,
               iconData: FontAwesomeIcons.refresh,
-              onPressed: ()=>read<UserDetailsController>().resetDelay(context),
-            )
+              onPressed: () =>
+                  read<UserDetailsController>().resetDelay(context),
+            ),
           ],
         ),
         centerTitle: true,
@@ -68,6 +93,12 @@ class UserDetails extends StatelessWidget {
                   //isFullBorder: true,
                 ),
                 AllHolidaysWidget(
+                  userDetailsController: userDetailsController,
+                ),
+                AllLeavesWidget(
+                  userDetailsController: userDetailsController,
+                ),
+                AllLoansWidget(
                   userDetailsController: userDetailsController,
                 ),
                 UserDailyTimeWidget(

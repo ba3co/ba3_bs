@@ -37,7 +37,6 @@ class BondSearchController extends GetxController {
       element.printBondModelDetails();
     }
 
-
     currentBond = bonds[currentBondIndex];
     this.bondDetailsController = bondDetailsController;
     this.bondDetailsPlutoController = bondDetailsPlutoController;
@@ -81,7 +80,9 @@ class BondSearchController extends GetxController {
   }
 
   /// Displays an error message for invalid Bond numbers.
-  void _showInvalidBondNumberError(int? bondNumber,) {
+  void _showInvalidBondNumberError(
+    int? bondNumber,
+  ) {
     final firstBondNumber = bonds.first.payNumber ?? 1;
     final lastBondNumber = bonds.last.payNumber!;
     final message = bondNumber == null
@@ -89,7 +90,9 @@ class BondSearchController extends GetxController {
         : bondNumber < firstBondNumber
             ? 'رقم الفاتورة غير متوفر. رقم أول فاتورة هو $firstBondNumber'
             : 'رقم الفاتورة غير متوفر. رقم أخر فاتورة هو $lastBondNumber';
-    _displayErrorMessage(message,);
+    _displayErrorMessage(
+      message,
+    );
   }
 
   /// Retrieves the index of a Bond by its number.
@@ -121,37 +124,53 @@ class BondSearchController extends GetxController {
     if (currentBondIndex < bonds.length) {
       _setCurrentBond(currentBondIndex);
     } else {
-      _displayErrorMessage('لا يوجد bond أخرى',);
+      _displayErrorMessage(
+        'لا يوجد bond أخرى',
+      );
     }
   }
 
   /// Navigates to a Bond by its number.
-  Future<void> goToBondByNumber(int? bondNumber) async =>
-      await _navigateToBond(bondNumber!, NavigationDirection.specific,);
+  Future<void> goToBondByNumber(int? bondNumber) async => await _navigateToBond(
+        bondNumber!,
+        NavigationDirection.specific,
+      );
 
   /// Moves to the next Bond if possible.
   Future<void> next() async => await _navigateToBond(
-      currentBond.payNumber! + 1, NavigationDirection.next,);
+        currentBond.payNumber! + 1,
+        NavigationDirection.next,
+      );
 
   /// Moves to the previous Bond if possible.
   Future<void> previous() async => await _navigateToBond(
-      currentBond.payNumber! - 1, NavigationDirection.previous,);
+        currentBond.payNumber! - 1,
+        NavigationDirection.previous,
+      );
 
   /// Moves to the next Bond if possible.
   Future<void> jumpTenForward() async => await _navigateToBond(
-      currentBond.payNumber! + 10, NavigationDirection.next,);
+        currentBond.payNumber! + 10,
+        NavigationDirection.next,
+      );
 
   /// Moves to the previous Bond if possible.
   Future<void> jumpTenBackward() async => await _navigateToBond(
-      currentBond.payNumber! - 10, NavigationDirection.previous,);
+        currentBond.payNumber! - 10,
+        NavigationDirection.previous,
+      );
 
   /// Moves to the next Bond if possible.
-  Future<void> first() async =>
-      await _navigateToBond(1, NavigationDirection.next,);
+  Future<void> first() async => await _navigateToBond(
+        1,
+        NavigationDirection.next,
+      );
 
   /// Moves to the previous Bond if possible.
   Future<void> last() async => await _navigateToBond(
-      bonds.last.payNumber!, NavigationDirection.previous,);
+        bonds.last.payNumber!,
+        NavigationDirection.previous,
+      );
 
   /// Helper method to fetch or navigate to a specific Bond.
   Future<void> _navigateToBond(
@@ -163,7 +182,9 @@ class BondSearchController extends GetxController {
     await _fetchAndNavigateToBond(bondNumber, source);
   }
 
-  bool _validateAndHandleBondNumber(int bondNumber,) {
+  bool _validateAndHandleBondNumber(
+    int bondNumber,
+  ) {
     if (!_isValidBondNumber(bondNumber)) {
       _showInvalidBondNumberError(bondNumber);
       return false;
@@ -188,36 +209,60 @@ class BondSearchController extends GetxController {
   /// Fetches the Bond by number and handles success or failure.
   Future<void> _fetchAndNavigateToBond(
       int bondNumber, NavigationDirection source) async {
-    final bondTypeModel = Get.find<BondTypeService>().getBondTypeByGuide(currentBond.payTypeGuid!);
+    final bondTypeModel = Get.find<BondTypeService>()
+        .getBondTypeByGuide(currentBond.payTypeGuid!);
     final result = await read<AllBondsController>().fetchBondByNumber(
       bondType: bondTypeModel,
       bondNumber: bondNumber,
     );
 
     result.fold(
-      (failure) => _handleFetchFailure(failure, bondNumber, source,),
-      (fetchedBonds) => _handleFetchSuccess(fetchedBonds, bondNumber,),
+      (failure) => _handleFetchFailure(
+        failure,
+        bondNumber,
+        source,
+      ),
+      (fetchedBonds) => _handleFetchSuccess(
+        fetchedBonds,
+        bondNumber,
+      ),
     );
   }
 
   /// Handles a failed Bond fetch and triggers navigation for adjacent bonds if necessary.
   void _handleFetchFailure(
-      Failure failure, int bondNumber, NavigationDirection source, ) {
+    Failure failure,
+    int bondNumber,
+    NavigationDirection source,
+  ) {
     log('Fetching Bond from source: $source');
 
     if (source == NavigationDirection.next) {
-      _navigateToBond(bondNumber + 1, source,);
+      _navigateToBond(
+        bondNumber + 1,
+        source,
+      );
     } else if (source == NavigationDirection.previous) {
-      _navigateToBond(bondNumber - 1, source,);
+      _navigateToBond(
+        bondNumber - 1,
+        source,
+      );
     } else {
-      _displayErrorMessage('لا يوجد فاتورة ${failure.message}',);
+      _displayErrorMessage(
+        'لا يوجد فاتورة ${failure.message}',
+      );
     }
   }
 
   /// Handles a successful Bond fetch and updates the list.
-  void _handleFetchSuccess(List<BondModel> fetchedBonds, int bondNumber,) {
+  void _handleFetchSuccess(
+    List<BondModel> fetchedBonds,
+    int bondNumber,
+  ) {
     if (fetchedBonds.isEmpty) {
-      _displayErrorMessage('No bonds returned from the fetch operation.',);
+      _displayErrorMessage(
+        'No bonds returned from the fetch operation.',
+      );
       return;
     }
 
@@ -253,7 +298,9 @@ class BondSearchController extends GetxController {
   bool get isNew => currentBond.payGuid == null;
 
   /// Displays an error message
-  void _displayErrorMessage(String message) => AppUIUtils.onFailure(message,);
+  void _displayErrorMessage(String message) => AppUIUtils.onFailure(
+        message,
+      );
 
   void insertLastAndUpdate(BondModel newBond) {
     bonds.add(newBond);

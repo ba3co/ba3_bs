@@ -63,6 +63,62 @@ class AddMaterialForm extends StatelessWidget {
                               textEditingController: controller
                                   .materialFromHandler.barcodeController)),
                     ),
+                    FormFieldRow(
+                        firstItem: Column(
+                          children: [
+                            /// الباركودات الإضافية
+                            Column(
+                              children: List.generate(
+                                controller.materialFromHandler
+                                    .extraBarcodeControllers.length,
+                                (index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 6),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextAndExpandedChildField(
+                                            label: "باركود إضافي ${index + 1}",
+                                            child: CustomTextFieldWithoutIcon(
+                                              filedColor:
+                                                  AppColors.backGroundColor,
+                                              suffixIcon: Text("باركود إضافي"),
+                                              textEditingController: controller
+                                                      .materialFromHandler
+                                                      .extraBarcodeControllers[
+                                                  index],
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.remove_circle,
+                                              color: Colors.red),
+                                          onPressed: () {
+                                            controller.materialFromHandler
+                                                .removeExtraBarcodeField(index);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        secondItem: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton.icon(
+                              icon: const Icon(Icons.add),
+                              label: const Text("إضافة باركود"),
+                              onPressed: () {
+                                controller.materialFromHandler
+                                    .addExtraBarcodeField();
+                              },
+                            ),
+                          ],
+                        ))
                   ],
                 )),
             OrganizedWidget(

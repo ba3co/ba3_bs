@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import '../../../../core/helper/enums/enums.dart';
+
 @HiveType(typeId: 0)
 class BondTypeModel extends HiveObject with EquatableMixin {
   @HiveField(1)
@@ -66,17 +67,16 @@ class BondTypeModel extends HiveObject with EquatableMixin {
 
   @override
   List<Object?> get props => [
-    label,
-    value,
-    typeGuide,
-    from,
-    to,
-    taxType,
-    color,
-    type,
-  ];
+        label,
+        value,
+        typeGuide,
+        from,
+        to,
+        taxType,
+        color,
+        type,
+      ];
 }
-
 
 //
 // class BondType {

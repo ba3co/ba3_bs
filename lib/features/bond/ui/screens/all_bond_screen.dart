@@ -20,8 +20,9 @@ class AllBondScreen extends StatelessWidget {
         onLoaded: (e) {},
         onSelected: (event) {
           String bondId = event.row?.cells[AppConstants.bondIdFiled]?.value;
-          final bondType = Get.find<BondTypeService>().getBondTypeByGuide(event.row?.cells['type']?.value);
-         // BondType bondType = BondType.byTypeGuide(event.row?.cells['type']?.value);
+          final bondType = Get.find<BondTypeService>()
+              .getBondTypeByGuide(event.row?.cells['type']?.value);
+          // BondType bondType = BondType.byTypeGuide(event.row?.cells['type']?.value);
           log('bondId : $bondId');
           controller.openBondDetailsById(bondId, context, bondType);
         },

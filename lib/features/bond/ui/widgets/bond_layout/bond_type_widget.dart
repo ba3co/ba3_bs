@@ -7,6 +7,7 @@ import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart'
 import 'package:ba3_bs/features/bond/ui/widgets/bond_layout/body_bond_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../../../data/models/bond_type.dart';
@@ -14,9 +15,9 @@ import '../../../data/models/bond_type.dart';
 class BondTypeWidget extends StatelessWidget {
   const BondTypeWidget(
       {super.key,
-        required this.onTap,
-        required this.bondTypeModel,
-        required this.bondsController});
+      required this.onTap,
+      required this.bondTypeModel,
+      required this.bondsController});
 
   final VoidCallback onTap;
   final BondTypeModel bondTypeModel;
@@ -49,12 +50,33 @@ class BondTypeWidget extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                   ),
                 ),
-                Image.asset(
-                  bondTypeModel.type.icon,
-                  width: 0.035.sw,
-                  height: 0.035.sh,
-                  color: AppUIUtils.parseColor(bondTypeModel.color),
-                ),
+                // Image.asset(
+                //   bondTypeModel.type.icon,
+                //   width: 0.035.sw,
+                //   height: 0.035.sh,
+                //   color: AppUIUtils.parseColor(bondTypeModel.color),
+                // ),
+                IconButton(
+                    tooltip: "تصدير ملف اكسل",
+                    onPressed: () async {
+                      final range = await showDateRangePicker(
+                        context: context,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+
+                      if (range == null) return;
+
+                      bondsController.exportBondsBetweenDates(
+                        bondType: bondTypeModel,
+                        startDate: range.start,
+                        endDate: range.end,
+                      );
+                    },
+                    icon: Icon(
+                      FontAwesomeIcons.fileExport,
+                      color: AppUIUtils.parseColor(bondTypeModel.color),
+                    ))
               ],
             ),
             Spacer(),
@@ -65,14 +87,15 @@ class BondTypeWidget extends StatelessWidget {
                 //     .fetchAllBondByType(bondTypeModel.type, context);
               },
               child: BodyBondLayoutWidget(
-                // firstText: "${AppStrings.from.tr}  ${bondTypeModel.from}",
+                  // firstText: "${AppStrings.from.tr}  ${bondTypeModel.from}",
                   firstText: "${AppStrings.number.tr} ${AppStrings.bonds.tr}",
                   secondText:
-                  "${bondsController.allBondsCounts(bondTypeModel)}"),
+                      "${bondsController.allBondsCounts(bondTypeModel)}"),
             ),
 
             // BodyBondLayoutWidget(firstText: "العدد الكلي :", secondText: ((bondType.to-bondType.from)+1).toString()),
             Spacer(),
+
             AppButton(
               title: AppStrings.newS.tr,
               onPressed: onTap,
