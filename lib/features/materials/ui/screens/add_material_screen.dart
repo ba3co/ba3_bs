@@ -227,22 +227,23 @@ class AddMaterialScreen extends StatelessWidget {
                           );
                         }),
                         const SizedBox(width: 8),
+                        Obx(() {
+                          return AppButton(
+                            isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
+                            title: AppStrings.delete.tr,
+                            onPressed: () async {
+                              if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                                if (!context.mounted) return;
+                                controller.deleteMaterial(context, true);
+                              }
+                            },
+                            iconData: Icons.delete,
+                            color: Colors.red,
+                          );
+                        }),
+                        const SizedBox(width: 8),
                       ],
-                      Obx(() {
-                        return AppButton(
-                          isLoading: controller.deleteMaterialRequestState.value == RequestState.loading,
-                          title: AppStrings.delete.tr,
-                          onPressed: () async {
-                            if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
-                              if (!context.mounted) return;
-                              controller.deleteMaterial(context, true);
-                            }
-                          },
-                          iconData: Icons.delete,
-                          color: Colors.red,
-                        );
-                      }),
-                      const SizedBox(width: 8),
+
                       AppButton(
                         title: AppStrings.newS.tr,
                         onPressed: () {

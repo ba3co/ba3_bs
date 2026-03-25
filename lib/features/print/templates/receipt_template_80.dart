@@ -1,5 +1,6 @@
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import '../core/print_job.dart';
+import '../core/receipt_print_brand.dart';
 import '../escpos/escpos_generator.dart';
 import '../escpos/logo_helper.dart';
 import '../service/translation_service.dart';
@@ -26,8 +27,12 @@ class ReceiptTemplate80 implements BaseTemplate {
         )));
     b.addAll(g.empty());
 
+    final brand = job.receiptPrintBrand;
     // // LOGO small - left side
-    final logo = await LogoHelper.generateLogo(paperSize);
+    final logo = await LogoHelper.generateLogo(
+      paperSize,
+      assetPath: brand.logoAsset,
+    );
     if (logo.isNotEmpty) {
 /*      b.addAll([0x1B, 0x61, 0x00]); // ESC a 0 = Align Left*/
 
@@ -35,7 +40,7 @@ class ReceiptTemplate80 implements BaseTemplate {
       b.addAll(g.text('', styles: const PosStyles(align: PosAlign.left)));
     }
     b.addAll(g.reset());
-    b.addAll(g.text('Burj Al Arab Mobile Phones',
+    b.addAll(g.text(brand.businessName,
         styles: const PosStyles(align: PosAlign.left, bold: true)));
 
     b.addAll(g.text('Ras Al Khaimah, UAE',
@@ -47,7 +52,7 @@ class ReceiptTemplate80 implements BaseTemplate {
     b.addAll(g.text('Tel: +971 56 866 6411',
         styles: const PosStyles(align: PosAlign.left)));
 
-    b.addAll(g.text('TRN: 100369311400003',
+    b.addAll(g.text('TRN: ${brand.trn}',
         styles: const PosStyles(align: PosAlign.left, bold: true)));
 
     // Invoice Info
@@ -207,7 +212,7 @@ class ReceiptTemplate80 implements BaseTemplate {
     // Footer (Apple like)
     b.addAll(g.text('Thank you for your purchase!',
         styles: const PosStyles(align: PosAlign.left)));
-    b.addAll(g.text('Powered by: Burj Al Arab Mobile Phones',
+    b.addAll(g.text('Powered by: ${brand.poweredByLine}',
         styles: const PosStyles(align: PosAlign.center)));
 
     b.addAll(g.empty());

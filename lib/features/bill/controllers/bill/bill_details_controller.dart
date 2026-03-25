@@ -48,6 +48,7 @@ import '../../../materials/data/models/materials/material_model.dart';
 import '../../../materials/service/serial_number_model_factory.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 import '../../../print/controller/print_controller.dart';
+import '../../../print/dialogs/receipt_print_brand_dialog.dart';
 import '../../../sellers/data/models/seller_model.dart';
 import '../../../users_management/controllers/user_management_controller.dart';
 import '../../../users_management/data/models/role_model.dart';
@@ -241,6 +242,10 @@ implements IStoreSelectionHandler {
       required List<InvoiceRecordModel> invRecords}) async {
     if (!_billService.hasModelId(billModel.billId)) return;
 
+    if (!context.mounted) return;
+    final brand = await ReceiptPrintBrandDialog.show();
+    if (brand == null || !context.mounted) return;
+
     await read<PrintingController>().printReceipt80(
       date: billDate.value.dayMonthYear,
       items: invRecords,
@@ -250,6 +255,7 @@ implements IStoreSelectionHandler {
       nots: billModel.billDetails.billNote ?? '',
       buyer: read<AccountsController>().getAccountNameById(
           billModel.billTypeModel.accounts?[BillAccounts.caches]?.id),
+      receiptPrintBrand: brand,
     );
   }
 

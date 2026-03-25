@@ -8,7 +8,7 @@ import '../interfaces/i_mailer_messaging_service.dart';
 
 class GmailMessagingService implements IMailerMessagingService {
   final String _username = 'ba3rak.ae@gmail.com';
-  final String _password = 'ebksvoecwtapczgg';
+  final String _password = 'jgdsbwvctowmyvzd';
 
   SmtpServer get _smtpServer => gmail(_username, _password);
 

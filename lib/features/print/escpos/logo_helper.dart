@@ -9,15 +9,18 @@ import '../../../core/constants/app_assets.dart';
 
 
 /// مساعد طباعة اللوغو بشكل آمن وقابل لإعادة الاستخدام.
-class LogoHelper{
-  static Future<List<int>> generateLogo(PaperSize paperSize) async {
+class LogoHelper {
+  static Future<List<int>> generateLogo(
+    PaperSize paperSize, {
+    String assetPath = AppAssets.ba3Logo,
+  }) async {
     final profile = await CapabilityProfile.load();
     final generator = Generator(paperSize, profile);
 
     final int logoWidthPx = paperSize == PaperSize.mm58 ? 150 : 200;
     try {
       // 1) حمّل الصورة وفكّ ترميزها
-      final data = await rootBundle.load(AppAssets.ba3Logo);
+      final data = await rootBundle.load(assetPath);
       final img.Image? decoded =
       img.decodeImage(Uint8List.fromList(data.buffer.asUint8List()));
       if (decoded == null) {

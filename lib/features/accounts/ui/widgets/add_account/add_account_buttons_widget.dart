@@ -30,7 +30,7 @@ class AddAccountButtonsWidget extends StatelessWidget {
               },
             );
           })
-        else if (RoleItemType.viewAccount.hasAdminPermission)
+        else if (RoleItemType.viewAccount.hasAdminPermission)...[
           Obx(() {
             return AppButton(
               isLoading: controller.saveAccountRequestState.value == RequestState.loading,
@@ -40,21 +40,23 @@ class AddAccountButtonsWidget extends StatelessWidget {
               },
             );
           }),
-        if (controller.isEditAccount)
-          Obx(() {
-            return AppButton(
-              isLoading: controller.deleteAccountRequestState.value ==
-                  RequestState.loading,
-              color: Colors.red,
-              title: AppStrings.delete.tr,
-              onPressed: () async {
-                if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
-                  if (!context.mounted) return;
-                  controller.deleteAccount(context);
-                }
-              },
-            );
-          }),
+          if (controller.isEditAccount)
+            Obx(() {
+              return AppButton(
+                isLoading: controller.deleteAccountRequestState.value ==
+                    RequestState.loading,
+                color: Colors.red,
+                title: AppStrings.delete.tr,
+                onPressed: () async {
+                  if (await AppUIUtils.confirmOverlay(context, canPop: true)) {
+                    if (!context.mounted) return;
+                    controller.deleteAccount(context);
+                  }
+                },
+              );
+            }),
+        ],
+
       ],
     );
   }

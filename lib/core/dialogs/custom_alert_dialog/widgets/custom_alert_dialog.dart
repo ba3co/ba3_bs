@@ -10,6 +10,65 @@ import '../models/custom_alert_type.dart';
 import '../utils/custom_alert_animate.dart';
 import 'custom_alert_container.dart';
 
+/// Captures Enter (and optionally Space) for the default confirm action even when
+/// no button is focused; requests focus after the first frame.
+class _AlertKeyboardScope extends StatefulWidget {
+  const _AlertKeyboardScope({
+    required this.child,
+    required this.onActivateConfirm,
+    required this.confirmOnSpace,
+  });
+
+  final Widget child;
+  final VoidCallback onActivateConfirm;
+  final bool confirmOnSpace;
+
+  @override
+  State<_AlertKeyboardScope> createState() => _AlertKeyboardScopeState();
+}
+
+class _AlertKeyboardScopeState extends State<_AlertKeyboardScope> {
+  late final FocusNode _node = FocusNode(debugLabel: 'CustomAlertDialog.keys');
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _node.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _node.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      focusNode: _node,
+      autofocus: true,
+      skipTraversal: true,
+      canRequestFocus: true,
+      onKeyEvent: (node, event) {
+        if (event is! KeyDownEvent) return KeyEventResult.ignored;
+        final key = event.logicalKey;
+        final activate = key == LogicalKeyboardKey.enter ||
+            (widget.confirmOnSpace && key == LogicalKeyboardKey.space);
+        if (activate) {
+          widget.onActivateConfirm();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: widget.child,
+    );
+  }
+}
+
 class CustomAlertDialog {
   static final List<OverlayEntry> _overlays = [];
 
@@ -43,6 +102,8 @@ class CustomAlertDialog {
     double? width,
     Duration? autoCloseDuration,
     bool disableBackBtn = false,
+    /// When true, [LogicalKeyboardKey.space] acts like Enter (confirm).
+    bool confirmOnSpace = false,
   }) async {
     Timer? timer;
 
@@ -85,6 +146,7 @@ class CustomAlertDialog {
           width: width,
           autoCloseDuration: autoCloseDuration,
           disableBackBtn: disableBackBtn,
+          confirmOnSpace: confirmOnSpace,
         );
       });
       return;
@@ -139,16 +201,13 @@ class CustomAlertDialog {
       content: CustomAlertContainer(options: options),
     );
 
-    if (type != CustomAlertType.loading) {
-      alert = RawKeyboardListener(
-        focusNode: FocusNode(),
-        autofocus: true,
-        onKey: (event) {
-          if (event is RawKeyUpEvent &&
-              event.logicalKey == LogicalKeyboardKey.enter) {
-            hide();
-            onConfirmBtnTap?.call();
-          }
+    // Skip `custom` so embedded fields (e.g. phone input) keep focus.
+    if (type != CustomAlertType.loading && type != CustomAlertType.custom) {
+      alert = _AlertKeyboardScope(
+        confirmOnSpace: confirmOnSpace,
+        onActivateConfirm: () {
+          hide();
+          onConfirmBtnTap?.call();
         },
         child: alert,
       );

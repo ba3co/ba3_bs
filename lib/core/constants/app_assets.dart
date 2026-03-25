@@ -7,6 +7,8 @@ const _baseFlagsPath = '$_baseAssetsPath/flags';
 
 class AppAssets {
   static const ba3Logo = '$_baseImagesPath/ba3_logo.jpg';
+  /// Car accessories branch receipt logo (replace file under assets/images/).
+  static const ba3CarLogo = '$_baseImagesPath/ba3_car_logo.jpg';
   static const logo = '$_baseImagesPath/logo.png';
   static const printLogo = '$_baseImagesPath/ba3_logo.png';
 

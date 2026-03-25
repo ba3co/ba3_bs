@@ -5,6 +5,7 @@ import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:get/get.dart';
 
 import '../core/print_job.dart';
+import '../core/receipt_print_brand.dart';
 import '../core/printer_device.dart';
 import '../core/print_result.dart';
 import '../service/printer_manager.dart';
@@ -36,6 +37,7 @@ class PrintingController extends GetxController {
     required String customer,
     required String nots,
     required String buyer,
+    ReceiptPrintBrand receiptPrintBrand = ReceiptPrintBrand.mobilePhones,
   }) async {
     final job = PrintJob(
       billNumber: billNumber,
@@ -45,6 +47,7 @@ class PrintingController extends GetxController {
       nots: nots,
       items: items,
       buyer: buyer,
+      receiptPrintBrand: receiptPrintBrand,
     );
     final device = PrinterDevice(
       name: AppConstants.recitePrinter58Name,
@@ -62,6 +65,7 @@ class PrintingController extends GetxController {
     required String customer,
     required String nots,
     required String buyer,
+    ReceiptPrintBrand receiptPrintBrand = ReceiptPrintBrand.mobilePhones,
   }) async {
     final job = PrintJob(
       billNumber: billNumber,
@@ -71,6 +75,7 @@ class PrintingController extends GetxController {
       nots: nots,
       items: items,
       buyer: buyer,
+      receiptPrintBrand: receiptPrintBrand,
     );
     final device = PrinterDevice(
       name: AppConstants.recitePrinter80Name,

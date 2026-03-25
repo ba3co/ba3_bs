@@ -1,6 +1,5 @@
-
-
 import '../../bill/data/models/invoice_record_model.dart';
+import 'receipt_print_brand.dart';
 
 class PrintJob {
   final int billNumber;
@@ -10,7 +9,7 @@ class PrintJob {
   final String nots;
   final String buyer;
   final List<InvoiceRecordModel> items;
-
+  final ReceiptPrintBrand receiptPrintBrand;
 
   const PrintJob({
     required this.billNumber,
@@ -20,5 +19,6 @@ class PrintJob {
     required this.items,
     required this.nots,
     required this.buyer,
+    this.receiptPrintBrand = ReceiptPrintBrand.mobilePhones,
   });
 }
