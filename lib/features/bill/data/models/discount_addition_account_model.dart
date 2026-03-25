@@ -6,11 +6,11 @@ part 'discount_addition_account_model.g.dart';
 
 @HiveType(typeId: 11)
 class DiscountAdditionAccountModel extends AccountModel {
-  @HiveField(26)
-  double amount; // Add amount for discount/addition
-
   @HiveField(27)
-  double percentage; // Add percentage for discount/addition
+  double amount;
+
+  @HiveField(28)
+  double percentage;
 
   DiscountAdditionAccountModel({
     required String accName,

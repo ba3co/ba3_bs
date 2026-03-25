@@ -20,18 +20,18 @@ class DiscountAdditionAccountModelAdapter
     return DiscountAdditionAccountModel(
       accName: fields[1] as String,
       id: fields[0] as String,
-      amount: fields[26] as double,
-      percentage: fields[27] as double,
+      amount: fields[27] as double,
+      percentage: fields[28] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, DiscountAdditionAccountModel obj) {
     writer
-      ..writeByte(28)
-      ..writeByte(26)
-      ..write(obj.amount)
+      ..writeByte(29)
       ..writeByte(27)
+      ..write(obj.amount)
+      ..writeByte(28)
       ..write(obj.percentage)
       ..writeByte(0)
       ..write(obj.id)
@@ -84,7 +84,9 @@ class DiscountAdditionAccountModelAdapter
       ..writeByte(24)
       ..write(obj.accBranchMask)
       ..writeByte(25)
-      ..write(obj.accCustomer);
+      ..write(obj.accCustomer)
+      ..writeByte(26)
+      ..write(obj.requiredRequestNumber);
   }
 
   @override

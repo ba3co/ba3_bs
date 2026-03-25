@@ -61,6 +61,8 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
       }
       latinNameController.text =
           materialController.selectedMaterial!.matCompositionLatinName ?? '';
+      materialController.materialImageUrl.value =
+          materialController.selectedMaterial!.imageUrl;
       parentModel = read<MaterialGroupController>().getMaterialGroupById(
           materialController.selectedMaterial!.matGroupGuid);
       parentController.text = parentModel?.groupName ??
@@ -68,6 +70,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
     } else {
       materialController.selectedMaterial = null;
       parentModel = null;
+      materialController.materialImageUrl.value = null;
 
       clear();
     }
@@ -99,6 +102,7 @@ class MaterialFromHandler with AppValidator implements ITexSelectionHandler {
       c.dispose();
     }
     extraBarcodeControllers.clear();
+    materialController.materialImageUrl.value = null;
   }
 
   bool validate() => formKey.currentState?.validate() ?? true;

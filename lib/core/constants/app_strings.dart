@@ -257,6 +257,12 @@ class AppStrings {
   static const viewCheques = 'عرض الشيكات';
   static const viewMaterial = 'عرض المواد';
   static const viewMaterialGroups = 'عرض مجموعات المواد';
+  static const isCarGroup = 'مجموعة سيارات';
+  static const addMaterialGroup = 'إضافة مجموعة';
+  static const editMaterialGroup = 'تعديل مجموعة';
+  static const viewGroupChildren = 'عرض الأولاد';
+  static const materialGroupSaved = 'تم حفظ المجموعة';
+  static const parentGroupGuid = 'معرّف المجموعة الأب';
   static const downloadBonds = 'تحميل السندات';
   static const downloadBills = 'تحميل الفواتير';
   static const downloadCheques = 'تحميل الشيكات';
@@ -371,6 +377,21 @@ class AppStrings {
   static var tasksFailed = 'مهام فشلت';
 
   static var uploadImage = 'تحميل صورة';
+
+  static var uploadMaterialImage = 'رفع صورة المادة';
+
+  static var materialImageSheetTitle = 'صورة المادة';
+
+  static var changeMaterialImage = 'تغيير الصورة';
+
+  static var pickImageFromGallery = 'اختيار من المعرض';
+
+  static var noMaterialImageYet = 'لا توجد صورة بعد';
+
+  static var saveMaterialBeforeImageUpload =
+      'احفظ المادة أولاً أو افتح مادة محفوظة لرفع الصورة (بمعرّف المادة)';
+
+  static var materialImageUploaded = 'تم رفع صورة المادة';
 
   static var close = 'اغلاق';
 

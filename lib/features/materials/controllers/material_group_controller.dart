@@ -1,10 +1,13 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/repos/remote_datasource_repo.dart';
 import 'package:ba3_bs/core/services/json_file_operations/interfaces/import/i_import_repository.dart';
+import 'package:ba3_bs/features/floating_window/services/overlay_service.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_group_screen.dart';
+import 'package:ba3_bs/features/materials/ui/widgets/material_group_editor_content.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -28,13 +31,42 @@ class MaterialGroupController extends GetxController
 
   bool isLoading = false;
 
-  getAllGroups() async {
+  Future<void> getAllGroups() async {
     final result = await _dataSourceRepository.getAll();
 
     result.fold(
       (failure) => AppUIUtils.onFailure(failure.message, ),
-      (fetchedMaterialGroupGroup) =>
-          materialGroups.assignAll(fetchedMaterialGroupGroup),
+      (fetchedMaterialGroupGroup) {
+        materialGroups.assignAll(fetchedMaterialGroupGroup);
+        update();
+      },
+    );
+  }
+
+  Future<bool> saveMaterialGroup(MaterialGroupModel model) async {
+    final result = await _dataSourceRepository.save(model);
+    return result.fold<Future<bool>>(
+      (failure) async {
+        AppUIUtils.onFailure(failure.message);
+        return false;
+      },
+      (_) async {
+        await getAllGroups();
+        AppUIUtils.onSuccess(AppStrings.materialGroupSaved.tr);
+        return true;
+      },
+    );
+  }
+
+  void openMaterialGroupEditor(BuildContext context, {MaterialGroupModel? existing}) {
+    final size = MediaQuery.sizeOf(context);
+    OverlayService.showDialog(
+      context: context,
+      title: (existing == null ? AppStrings.addMaterialGroup : AppStrings.editMaterialGroup).tr,
+      dialogAlignment: Alignment.center,
+      width: (size.width * 0.9).clamp(360.0, 480.0),
+      height: (size.height * 0.72).clamp(420.0, 640.0),
+      content: MaterialGroupEditorContent(existing: existing),
     );
   }
 
@@ -52,7 +84,7 @@ class MaterialGroupController extends GetxController
     log('MaterialGroupController onInit');
   }
 
-  void navigateToAllMaterialScreen({required BuildContext context}) {
+  void navigateToAllMaterialGroupScreen({required BuildContext context}) {
     launchFloatingWindow(
         context: context,
         minimizedTitle: ApiConstants.materials.tr,
@@ -160,6 +192,7 @@ class MaterialGroupController extends GetxController
             groupType: 0,
             groupVat: 0,
             groupNumber: 0,
-            groupBranchMask: 0);
+            groupBranchMask: 0,
+            isCarGroup: false);
   }
 }

@@ -12,12 +12,14 @@ import 'package:ba3_bs/features/changes/data/model/changes_model.dart';
 import 'package:ba3_bs/features/materials/controllers/material_group_controller.dart';
 import 'package:ba3_bs/features/materials/data/models/materials/material_group.dart';
 import 'package:ba3_bs/features/materials/service/material_from_handler.dart';
+import 'package:ba3_bs/features/materials/service/material_image_upload_service.dart';
 import 'package:ba3_bs/features/materials/service/material_service.dart';
 import 'package:ba3_bs/features/materials/ui/screens/all_materials_screen.dart';
 import 'package:ba3_bs/features/users_management/controllers/user_management_controller.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 
 import '../../../core/constants/app_strings.dart';
@@ -67,6 +69,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   Rx<RequestState> deleteMaterialRequestState = RequestState.initial.obs;
 
+  final Rxn<String> materialImageUrl = Rxn<String>();
+
+  Rx<RequestState> materialImageUploadState = RequestState.initial.obs;
+
   @override
   onInit() {
     super.onInit();
@@ -102,11 +108,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   Future<void> fetchMaterialsGroup({String? groupGuid}) async {
-    if (groupGuid != null) {
-      materialsForShow.assignAll(productsGrouped[groupGuid]!);
+    if (groupGuid != null && groupGuid.isNotEmpty) {
+      final list = productsGrouped[groupGuid];
+      materialsForShow.assignAll(list ?? []);
     } else {
       materialsForShow.assignAll(materials);
     }
+    update();
   }
 
   Future<void> reloadMaterials() async {
@@ -286,9 +294,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       await reloadMaterials();
       materialList = materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
     }
-    // reloadMaterials();
-    fetchMaterialsGroup(groupGuid: groupGuid);
+    // reloadMaterials() يستدعي fetchMaterialsGroup() بدون فلتر فيفرّغ فلتر المجموعة؛
+    // لذلك نحدّث البيانات أولاً ثم نطبّق فلتر المجموعة آخر شيء.
     await reloadMaterials();
+    fetchMaterialsGroup(groupGuid: groupGuid);
     loadingMaterialsRequestState.value = RequestState.success;
     if (!context.mounted) return;
     launchFloatingWindow(
@@ -474,7 +483,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       },
       (savedMaterial) {
         saveMaterialRequestState.value = RequestState.success;
-        _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add, withPrint: true);
+        final changeType =
+            selectedMaterial?.id == null ? ChangeType.add : ChangeType.update;
+        selectedMaterial = savedMaterial;
+        _onSaveSuccess(savedMaterial, changeType: changeType, withPrint: true);
       },
     );
   }
@@ -514,7 +526,35 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         matBarCode: materialFromHandler.barcodeController.text,
         endUserPrice: materialFromHandler.customerPriceController.text,
         materialModel: selectedMaterial,
+        imageUrl: materialImageUrl.value,
       );
+
+  Future<void> pickAndUploadMaterialImage() async {
+    final materialId = selectedMaterial?.id?.trim();
+    if (materialId == null || materialId.isEmpty) {
+      AppUIUtils.onFailure(AppStrings.saveMaterialBeforeImageUpload.tr);
+      return;
+    }
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+
+    materialImageUploadState.value = RequestState.loading;
+    update();
+    try {
+      final url = await read<MaterialImageUploadService>().uploadMaterialImage(
+        imagePath: picked.path,
+        materialId: materialId,
+      );
+      materialImageUrl.value = url;
+      AppUIUtils.onSuccess(AppStrings.materialImageUploaded.tr);
+    } catch (e, st) {
+      log('$e', stackTrace: st);
+      AppUIUtils.onFailure(e.toString());
+    } finally {
+      materialImageUploadState.value = RequestState.initial;
+      update();
+    }
+  }
 
   List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
       .nonLoggedInUsers
@@ -581,10 +621,16 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (_) {
         if (withPrint) {
           AppUIUtils.onSuccess(
-            selectedMaterial?.id == null ? 'تم حفظ المادة ${materialModel.matName} بنجاح' : 'تم التعديل بنجاح',
+            changeType == ChangeType.add
+                ? 'تم حفظ المادة ${materialModel.matName} بنجاح'
+                : 'تم التعديل بنجاح',
           );
         }
-        read<LogController>().addLog(item: materialModel, eventType: selectedMaterial?.id == null ? LogEventType.add : LogEventType.update);
+        read<LogController>().addLog(
+          item: materialModel,
+          eventType:
+              changeType == ChangeType.add ? LogEventType.add : LogEventType.update,
+        );
       },
     );
   }

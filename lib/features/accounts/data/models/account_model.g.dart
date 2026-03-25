@@ -43,13 +43,14 @@ class AccountModelAdapter extends TypeAdapter<AccountModel> {
       accBranchMask: fields[24] as int?,
       accParentName: fields[7] as String?,
       accCustomer: (fields[25] as List?)?.cast<String>(),
+      requiredRequestNumber: fields[26] as bool?,
     );
   }
 
   @override
   void write(BinaryWriter writer, AccountModel obj) {
     writer
-      ..writeByte(26)
+      ..writeByte(27)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -101,7 +102,9 @@ class AccountModelAdapter extends TypeAdapter<AccountModel> {
       ..writeByte(24)
       ..write(obj.accBranchMask)
       ..writeByte(25)
-      ..write(obj.accCustomer);
+      ..write(obj.accCustomer)
+      ..writeByte(26)
+      ..write(obj.requiredRequestNumber);
   }
 
   @override

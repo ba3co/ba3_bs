@@ -68,7 +68,7 @@ class MaterialLayout extends StatelessWidget {
                       icon: Icons.category,
                       title: AppStrings.viewMaterialGroups.tr,
                       onTap: () {
-                        read<MaterialGroupController>().navigateToAllMaterialScreen(context: context);
+                        read<MaterialGroupController>().navigateToAllMaterialGroupScreen(context: context);
                       },
                     ),
                     if (RoleItemType.viewProduct.hasWritePermission)

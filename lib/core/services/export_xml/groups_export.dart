@@ -41,6 +41,7 @@ class GroupsExport {
               XmlHelpers.element('GroupNumber', g.groupNumber.toString()),
               XmlHelpers.element(
                   'GroupBranchMask', g.groupBranchMask.toString()),
+              XmlHelpers.element('IsCarGroup', g.isCarGroup ? '1' : '0'),
             ],
           )),
     ];

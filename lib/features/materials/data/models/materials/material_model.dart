@@ -185,6 +185,10 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
   final int? matLocalQuantity;
   @HiveField(56)
   final int? matFreeQuantity;
+
+  @HiveField(57)
+  final String? imageUrl;
+
   MaterialModel({
     this.id,
     this.matLocalQuantity,
@@ -243,6 +247,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     this.matQuantity,
     this.calcMinPrice,
     this.serialNumbers,
+    this.imageUrl,
   });
 
   // Factory constructor to create an instance from JSON
@@ -306,6 +311,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matQuantity: json['MatQuantity'] ?? 0,
       calcMinPrice:AppServiceUtils.toDouble(json['calcMinPrice'])  ,
       serialNumbers: (json['serialNumbers'] is Map) ? Map<String, bool>.from(json['serialNumbers'] as Map) : {},
+      imageUrl: json['imageUrl']?.toString(),
     );
   }
 
@@ -332,6 +338,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
         'matLocalQuantity': matLocalQuantity,
         'matFreeQuantity': matFreeQuantity,
         'serialNumbers': serialNumbers,
+        'imageUrl': imageUrl,
         'MatUnity': matUnity,
         'MatPriceType': matPriceType,
         'MatBonus': matBonus,
@@ -512,6 +519,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
     final double? calcMinPrice,
     final Map<String, bool>? serialNumbers,
     final List<MatExtraBarcodeModel>? matExtraBarcode,
+    final String? imageUrl,
   }) {
     return MaterialModel(
       id: id ?? this.id,
@@ -571,6 +579,7 @@ class MaterialModel extends HiveObject implements PlutoAdaptable {
       matLocalQuantity: matLocalQuantity ?? this.matLocalQuantity,
       matFreeQuantity: matFreeQuantity ?? this.matFreeQuantity,
       matExtraBarcode: matExtraBarcode ?? this.matExtraBarcode,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 

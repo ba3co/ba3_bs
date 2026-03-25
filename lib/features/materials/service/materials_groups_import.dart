@@ -42,6 +42,7 @@ class MaterialGroupImport extends ImportServiceBase<MaterialGroupModel> {
         groupType: getInt('GroupType'),
         groupVat: getDouble('GroupVat') ?? 0.0,
         parentGuid: getText('ParentGuid') ?? '',
+        isCarGroup: getText('IsCarGroup') == '1' || getText('IsCarGroup') == 'true',
       );
     }).toList();
 

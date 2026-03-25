@@ -20,6 +20,7 @@ class MaterialGroupModel implements PlutoAdaptable {
   final double groupVat;
   final int groupNumber;
   final int groupBranchMask;
+  final bool isCarGroup;
 
   MaterialGroupModel({
     required this.matGroupGuid,
@@ -33,6 +34,7 @@ class MaterialGroupModel implements PlutoAdaptable {
     required this.groupVat,
     required this.groupNumber,
     required this.groupBranchMask,
+    this.isCarGroup = false,
   });
 
   // تحويل من JSON إلى كائن Dart
@@ -49,6 +51,7 @@ class MaterialGroupModel implements PlutoAdaptable {
       groupVat: (json['GroupVat'] ?? 0.0).toDouble(),
       groupNumber: json['GroupNumber'] ?? 0,
       groupBranchMask: json['GroupBranchMask'] ?? 0,
+      isCarGroup: json['isCarGroup'] == true || json['isCarGroup'] == 1,
     );
   }
 
@@ -65,6 +68,7 @@ class MaterialGroupModel implements PlutoAdaptable {
       'GroupVat': groupVat,
       'GroupNumber': groupNumber,
       'GroupBranchMask': groupBranchMask,
+      'isCarGroup': isCarGroup,
     };
   }
 
@@ -81,6 +85,7 @@ class MaterialGroupModel implements PlutoAdaptable {
     double? groupVat,
     int? groupNumber,
     int? groupBranchMask,
+    bool? isCarGroup,
   }) {
     return MaterialGroupModel(
       matGroupGuid: matGroupGuid ?? this.matGroupGuid,
@@ -94,6 +99,7 @@ class MaterialGroupModel implements PlutoAdaptable {
       groupVat: groupVat ?? this.groupVat,
       groupNumber: groupNumber ?? this.groupNumber,
       groupBranchMask: groupBranchMask ?? this.groupBranchMask,
+      isCarGroup: isCarGroup ?? this.isCarGroup,
     );
   }
 
@@ -133,6 +139,11 @@ class MaterialGroupModel implements PlutoAdaptable {
               field: AppStrings.children,
               type: PlutoColumnType.text()):
           read<MaterialController>().productsGrouped[matGroupGuid]?.length ?? 0,
+      PlutoColumn(
+          title: AppStrings.isCarGroup.tr,
+          field: 'isCarGroup',
+          type: PlutoColumnType.text(),
+          width: 100): isCarGroup ? AppStrings.yes.tr : AppStrings.no.tr,
     };
   }
 }

@@ -12,12 +12,18 @@ class FirebaseStorageService extends IRemoteStorageService<String> {
   FirebaseStorageService(FirebaseStorage instance) : _firebaseStorageInstance = instance;
 
   @override
-  Future<String> uploadImage({required String imagePath, required String path}) async {
+  Future<String> uploadImage({
+    required String imagePath,
+    required String path,
+    String? storageFileName,
+  }) async {
     File imageFile = File(imagePath);
 
-    String fileName = "$path/${DateTime.now().millisecondsSinceEpoch}.jpg";
+    final String objectPath = storageFileName != null
+        ? '$path/$storageFileName'
+        : '$path/${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    Reference storageRef = _firebaseStorageInstance.ref().child(fileName);
+    Reference storageRef = _firebaseStorageInstance.ref().child(objectPath);
 
     UploadTask uploadTask = storageRef.putFile(imageFile);
 

@@ -74,13 +74,14 @@ class MaterialModelAdapter extends TypeAdapter<MaterialModel> {
       matQuantity: fields[52] as int?,
       calcMinPrice: fields[53] as double?,
       serialNumbers: (fields[54] as Map?)?.cast<String, bool>(),
+      imageUrl: fields[57] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MaterialModel obj) {
     writer
-      ..writeByte(57)
+      ..writeByte(58)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -194,7 +195,9 @@ class MaterialModelAdapter extends TypeAdapter<MaterialModel> {
       ..writeByte(55)
       ..write(obj.matLocalQuantity)
       ..writeByte(56)
-      ..write(obj.matFreeQuantity);
+      ..write(obj.matFreeQuantity)
+      ..writeByte(57)
+      ..write(obj.imageUrl);
   }
 
   @override

@@ -91,6 +91,7 @@ import '../../features/materials/data/datasources/local/material_local_data_sour
 import '../../features/materials/data/datasources/remote/materials_groups_data_source.dart';
 import '../../features/materials/data/datasources/remote/materials_statements_data_source.dart';
 import '../../features/materials/data/models/mat_statement/mat_statement_model.dart';
+import '../../features/materials/service/material_image_upload_service.dart';
 import '../../features/materials/service/material_import.dart';
 import '../../features/patterns/controllers/pattern_controller.dart';
 import '../../features/patterns/data/datasources/patterns_data_source.dart';
@@ -136,6 +137,8 @@ class AppBindings extends Bindings {
         read<ICompoundDatabaseService<Map<String, dynamic>>>();
 
     final IRemoteStorageService<String> remoteStorageService = read<IRemoteStorageService<String>>();
+
+    lazyPut(MaterialImageUploadService(remoteStorageService));
 
     // final rolesRepo = RemoteDataSourceRepository(RolesDatasource(databaseService: fireStoreService));
     //

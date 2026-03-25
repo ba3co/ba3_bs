@@ -18,6 +18,7 @@ class MaterialService {
     required String matGroupGuid,
     required String matVatGuid,
     double? matCurrencyVal,
+    String? imageUrl,
   }) {
     final List<MatExtraBarcodeModel> extraBarcodeModels =
         extraBarcodes?.map((e) => MatExtraBarcodeModel(barcode: e)).toList() ??
@@ -41,6 +42,7 @@ class MaterialService {
         matCreateDate: Timestamp.now().toDate(),
         matExtraBarcode: extraBarcodeModels, // 👈 هنا
         matPictureGuid: '',
+        imageUrl: imageUrl,
       );
     } else {
       return materialModel.copyWith(
@@ -54,6 +56,7 @@ class MaterialService {
         matVatGuid: matVatGuid,
         matCurrencyVal: matCurrencyVal,
         matExtraBarcode: extraBarcodeModels, // 👈 وهنا
+        imageUrl: imageUrl,
       );
     }
   }
