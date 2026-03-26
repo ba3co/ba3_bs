@@ -39,7 +39,8 @@ import '../ui/widgets/add_material/copies_dialog.dart';
 import '../ui/widgets/add_material/label_settings_dialog.dart';
 import 'mats_statement_controller.dart';
 
-class MaterialController extends GetxController with AppNavigator, FloatingLauncher {
+class MaterialController extends GetxController
+    with AppNavigator, FloatingLauncher {
   final ImportExportRepository<MaterialModel> _jsonImportExportRepo;
   final LocalDatasourceRepository<MaterialModel> _materialsHiveRepo;
   final TranslationRepository _translationRepository;
@@ -47,7 +48,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   final QueryableSavableRepository<MaterialModel> _materialRemoteRepo;
   final ListenDataSourceRepository<ChangesModel> _listenDataSourceRepository;
 
-  MaterialController(this._jsonImportExportRepo, this._materialsHiveRepo, this._listenDataSourceRepository, this._materialRemoteRepo,
+  MaterialController(
+      this._jsonImportExportRepo,
+      this._materialsHiveRepo,
+      this._listenDataSourceRepository,
+      this._materialRemoteRepo,
       this._translationRepository);
 
   List<MaterialModel> materials = [];
@@ -101,7 +106,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       ),
       (fetchedMaterial) {
         materials.assignAll(fetchedMaterial);
-        productsGrouped = fetchedMaterial.groupBy((product) => product.matGroupGuid!);
+        productsGrouped =
+            fetchedMaterial.groupBy((product) => product.matGroupGuid!);
         update();
       },
     );
@@ -145,7 +151,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  Future<void> saveAllMaterialOnLocal(List<MaterialModel> materialsToSave, bool isWithDialog) async {
+  Future<void> saveAllMaterialOnLocal(
+      List<MaterialModel> materialsToSave, bool isWithDialog) async {
     final result = await _materialsHiveRepo.saveAll(materialsToSave);
 
     result.fold(
@@ -165,7 +172,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     });
   }
 
-  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave, {required bool withPrint}) async {
+  Future<void> updateAllMaterial(List<MaterialModel> materialsToSave,
+      {required bool withPrint}) async {
     final result = await _materialsHiveRepo.updateAll(materialsToSave);
 
     result.fold(
@@ -187,7 +195,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     List<MaterialModel> materialsToDelete,
   ) async {
     // Filter materials that match the IDs in materialsToDelete
-    final copiedMaterials = materials.where((material) => materialsToDelete.any((e) => e.id == material.id)).toList();
+    final copiedMaterials = materials
+        .where((material) => materialsToDelete.any((e) => e.id == material.id))
+        .toList();
 
     // Attempt to delete all matched materials
     final result = await _materialsHiveRepo.deleteAll(copiedMaterials);
@@ -209,7 +219,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         (failure) => AppUIUtils.onFailure(
           failure.message,
         ),
-        (fetchedMaterial) => _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
+        (fetchedMaterial) =>
+            _handelFetchAllMaterialFromLocalSuccess(fetchedMaterial),
       );
     }
   }
@@ -242,13 +253,15 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     log("fetchedMaterial length ${fetchedMaterial.length}");
     log('current Materials length is ${materials.length}');
 
-    final newMaterials = fetchedMaterial.subtract(materials, (mat) => mat.matName);
+    final newMaterials =
+        fetchedMaterial.subtract(materials, (mat) => mat.matName);
     log('newMaterials length is ${newMaterials.length}');
 
     int progress = 0;
     if (newMaterials.isNotEmpty) {
       for (var mat in newMaterials) {
-        uploadProgress.value = progress / newMaterials.length; // Update progress
+        uploadProgress.value =
+            progress / newMaterials.length; // Update progress
         log('Progress: ${(progress * 100).toStringAsFixed(2)}%');
         progress++;
         materialFromHandler.init(mat);
@@ -281,18 +294,24 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     materials.assignAll(fetchedMaterial);
   }
 
-  void navigateToAllMaterialScreen({String? groupGuid, required BuildContext context, bool? onlyNegativeMaterial}) async {
+  void navigateToAllMaterialScreen(
+      {String? groupGuid,
+      required BuildContext context,
+      bool? onlyNegativeMaterial}) async {
     List<MaterialModel>? materialList;
     loadingMaterialsRequestState.value = RequestState.loading;
 
     if (onlyNegativeMaterial != null) {
-      materialList = materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
+      materialList =
+          materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
 
       for (var element in materialList) {
-        await read<MaterialsStatementController>().setupOneMaterials(element.id!);
+        await read<MaterialsStatementController>()
+            .setupOneMaterials(element.id!);
       }
       await reloadMaterials();
-      materialList = materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
+      materialList =
+          materials.where((element) => (element.matQuantity ?? 0) < 0).toList();
     }
     // reloadMaterials() يستدعي fetchMaterialsGroup() بدون فلتر فيفرّغ فلتر المجموعة؛
     // لذلك نحدّث البيانات أولاً ثم نطبّق فلتر المجموعة آخر شيء.
@@ -301,7 +320,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     loadingMaterialsRequestState.value = RequestState.success;
     if (!context.mounted) return;
     launchFloatingWindow(
-        context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AllMaterialsScreen(materialList: materialList));
+        context: context,
+        minimizedTitle: ApiConstants.materials.tr,
+        floatingScreen: AllMaterialsScreen(materialList: materialList));
 
     // to(AppRoutes.showAllMaterialsScreen);
   }
@@ -320,11 +341,15 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     var exactMatch = materials.where(
       (item) =>
           item.matName!.toLowerCase() == lowerQuery ||
-          item.matCode!.toString().toLowerCase() == lowerQuery ||
-          (item.matBarCode != null && item.matBarCode!.toLowerCase() == lowerQuery) ||
+          (item.matBarCode != null &&
+              item.matBarCode!.toLowerCase() == lowerQuery) ||
+          (item.matExtraBarcode != null &&
+              item.matExtraBarcode!
+                  .any((b) => b.barcode?.toLowerCase() == lowerQuery)) ||
           (item.serialNumbers != null &&
-              item.serialNumbers!.entries
-                  .any((entry) => entry.key.toLowerCase() == lowerQuery && entry.value == false)), // Only allow unsold serials
+              item.serialNumbers!.entries.any((entry) =>
+                  entry.key.toLowerCase() == lowerQuery &&
+                  entry.value == false)), // Only allow unsold serials
     );
 
     if (exactMatch.length == 1) {
@@ -337,14 +362,25 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     var startsWithMatches = materials
         .where(
           (item) =>
-              searchParts.every((part) => item.matName!.toLowerCase().startsWith(part)) ||
-              searchParts.every((part) => item.matCode.toString().toLowerCase().startsWith(part)) ||
-              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().startsWith(part))) ||
+              searchParts.every(
+                  (part) => item.matName!.toLowerCase().startsWith(part)) ||
+              searchParts.every(
+                  (part) => item.matName!.toLowerCase().startsWith(part)) ||
+              searchParts.every((part) =>
+                  item.matCode.toString().toLowerCase().startsWith(part)) ||
+              (item.matBarCode != null &&
+                  searchParts.every((part) =>
+                      item.matBarCode!.toLowerCase().startsWith(part))) ||
+              (item.matExtraBarcode != null &&
+                  searchParts.every((part) => item.matExtraBarcode!.any((b) =>
+                      b.barcode?.toLowerCase().startsWith(part) ?? false))) ||
               (item.serialNumbers != null &&
                   searchParts.every(
                     (part) => item.serialNumbers!.entries.any(
                       // Only allow unsold serials
-                      (entry) => entry.key.toLowerCase().startsWith(part) && entry.value == false,
+                      (entry) =>
+                          entry.key.toLowerCase().startsWith(part) &&
+                          entry.value == false,
                     ),
                   )),
         )
@@ -358,12 +394,23 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     return materials
         .where(
           (item) =>
-              searchParts.every((part) => item.matName.toString().toLowerCase().contains(part)) ||
-              searchParts.every((part) => item.matCode.toString().toLowerCase().contains(part)) ||
-              (item.matBarCode != null && searchParts.every((part) => item.matBarCode!.toLowerCase().contains(part))) ||
+              searchParts.every((part) =>
+                  item.matName.toString().toLowerCase().contains(part)) ||
+              searchParts.every((part) =>
+                  item.matName.toString().toLowerCase().contains(part)) ||
+              searchParts.every((part) =>
+                  item.matCode.toString().toLowerCase().contains(part)) ||
+              (item.matBarCode != null &&
+                  searchParts.every((part) =>
+                      item.matBarCode!.toLowerCase().startsWith(part))) ||
+              (item.matExtraBarcode != null &&
+                  searchParts.every((part) => item.matExtraBarcode!.any((b) =>
+                      b.barcode?.toLowerCase().startsWith(part) ?? false))) ||
               (item.serialNumbers != null &&
                   searchParts.every(
-                    (part) => item.serialNumbers!.entries.any((entry) => entry.key.toLowerCase().contains(part) && entry.value == false),
+                    (part) => item.serialNumbers!.entries.any((entry) =>
+                        entry.key.toLowerCase().contains(part) &&
+                        entry.value == false),
                   )), // Only allow unsold serials
         )
         .toList();
@@ -371,7 +418,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   String? getMaterialNameById(String? id) {
     if (id == null || id.isEmpty) return '';
-    return materials.firstWhereOrNull((material) => material.id == id)?.matName ?? "not fond this material";
+    return materials
+            .firstWhereOrNull((material) => material.id == id)
+            ?.matName ??
+        "not fond this material";
   }
 
   String getMaterialBarcodeById(String? id) {
@@ -379,7 +429,11 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
     reloadMaterials();
 
-    final String matBarCode = materials.firstWhere((material) => material.id == id, orElse: () => MaterialModel()).matBarCode ?? '0';
+    final String matBarCode = materials
+            .firstWhere((material) => material.id == id,
+                orElse: () => MaterialModel())
+            .matBarCode ??
+        '0';
 
     return matBarCode;
   }
@@ -388,7 +442,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     String id,
   ) {
     reloadMaterials();
-    return materials.firstWhereOrNull((material) => material.id == id) ?? materials.first;
+    return materials.firstWhereOrNull((material) => material.id == id) ??
+        materials.first;
   }
 
   Future<MaterialModel?> getMaterialByIdWithNull(
@@ -405,7 +460,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   double getMaterialMinPriceById(String id) {
-    double price = materials.firstWhereOrNull((material) => material.id == id)?.calcMinPrice ?? 0.0;
+    double price = materials
+            .firstWhereOrNull((material) => material.id == id)
+            ?.calcMinPrice ??
+        0.0;
 
     return price.isNaN || price.isInfinite ? 0.0 : price;
   }
@@ -414,13 +472,16 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     log('materialName $materialName');
     if (materialName == null) return false;
 
-    return materials.any((material) => material.matName?.trim() == materialName.trim());
+    return materials
+        .any((material) => material.matName?.trim() == materialName.trim());
   }
 
   MaterialModel? getMaterialByName(name) {
     // log(materials.where((element) => (element.matName!.toLowerCase().contains(name.toLowerCase()))).firstOrNull.toString());
     if (name != null && name != " " && name != "") {
-      return materials.where((element) => (element.matName == name)).firstOrNull;
+      return materials
+          .where((element) => (element.matName == name))
+          .firstOrNull;
     }
     return null;
   }
@@ -439,13 +500,15 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
               (/*element.matName! == name.encodeProblematic().encodeProblematic()||
           element.matName! == name ||
           element.matName!.encodeProblematic().decodeProblematic() == name ||*/
-                  element.matName!.removeAllWhitespace == name.removeAllWhitespace))
+                  element.matName!.removeAllWhitespace ==
+                      name.removeAllWhitespace))
           .firstOrNull;
     }
     return null;
   }
 
-  Future<void> saveMaterialsOnRemote(List<MaterialModel> materials, BuildContext context) async {
+  Future<void> saveMaterialsOnRemote(
+      List<MaterialModel> materials, BuildContext context) async {
     final result = await _materialRemoteRepo.saveAll(materials);
 
     result.fold(
@@ -471,8 +534,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     }
     saveMaterialRequestState.value = RequestState.loading;
 
-    final hiveResult =
-        materialModel.id != null ? await _materialsHiveRepo.update(materialModel) : await _materialsHiveRepo.save(materialModel);
+    final hiveResult = materialModel.id != null
+        ? await _materialsHiveRepo.update(materialModel)
+        : await _materialsHiveRepo.save(materialModel);
 
     hiveResult.fold(
       (failure) {
@@ -495,12 +559,14 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     if (selectedMaterial == null) return;
 
     // Prepare user change queue for delete
-    final userChangeQueue = _prepareUserChangeQueue(selectedMaterial!, ChangeType.remove);
+    final userChangeQueue =
+        _prepareUserChangeQueue(selectedMaterial!, ChangeType.remove);
 
     deleteMaterialRequestState.value = RequestState.loading;
     log('userChangeQueue length on deleteMaterial: ${userChangeQueue.length}');
     // Save changes and handle results
-    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+    final changesResult =
+        await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
       (failure) {
@@ -527,6 +593,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         endUserPrice: materialFromHandler.customerPriceController.text,
         materialModel: selectedMaterial,
         imageUrl: materialImageUrl.value,
+        extraBarcodes: materialFromHandler.extraBarcodes,
       );
 
   Future<void> pickAndUploadMaterialImage() async {
@@ -556,25 +623,27 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     }
   }
 
-  List<ChangesModel> _prepareUserChangeQueue(MaterialModel materialModel, ChangeType changeType) => read<UserManagementController>()
-      .nonLoggedInUsers
-      .map(
-        (user) => ChangesModel(
-          targetUserId: user.userId!,
-          changeItems: {
-            ChangeCollection.materials: [
-              ChangeItem(
-                target: ChangeTarget(
-                  targetCollection: ChangeCollection.materials,
-                  changeType: changeType,
-                ),
-                change: materialModel.toJson(),
-              )
-            ]
-          },
-        ),
-      )
-      .toList();
+  List<ChangesModel> _prepareUserChangeQueue(
+          MaterialModel materialModel, ChangeType changeType) =>
+      read<UserManagementController>()
+          .nonLoggedInUsers
+          .map(
+            (user) => ChangesModel(
+              targetUserId: user.userId!,
+              changeItems: {
+                ChangeCollection.materials: [
+                  ChangeItem(
+                    target: ChangeTarget(
+                      targetCollection: ChangeCollection.materials,
+                      changeType: changeType,
+                    ),
+                    change: materialModel.toJson(),
+                  )
+                ]
+              },
+            ),
+          )
+          .toList();
 
   Future<void> updateMaterialWithChanges(
     MaterialModel updatedMaterialModel,
@@ -585,7 +654,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-      (savedMaterial) => _onSaveSuccess(updatedMaterialModel, changeType: ChangeType.update, withPrint: false),
+      (savedMaterial) => _onSaveSuccess(updatedMaterialModel,
+          changeType: ChangeType.update, withPrint: false),
     );
   }
 
@@ -605,14 +675,17 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   }
 
   void _onSaveSuccess(MaterialModel materialModel,
-      {required ChangeType changeType, bool withReloadMaterial = true, required bool withPrint}) async {
+      {required ChangeType changeType,
+      bool withReloadMaterial = true,
+      required bool withPrint}) async {
     if (withReloadMaterial) reloadMaterials();
 
     // Prepare user change queue for saving
     final userChangeQueue = _prepareUserChangeQueue(materialModel, changeType);
 
     // Save changes and handle  results
-    final changesResult = await _listenDataSourceRepository.saveAll(userChangeQueue);
+    final changesResult =
+        await _listenDataSourceRepository.saveAll(userChangeQueue);
 
     changesResult.fold(
       (failure) => AppUIUtils.onFailure(
@@ -628,8 +701,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         }
         read<LogController>().addLog(
           item: materialModel,
-          eventType:
-              changeType == ChangeType.add ? LogEventType.add : LogEventType.update,
+          eventType: changeType == ChangeType.add
+              ? LogEventType.add
+              : LogEventType.update,
         );
       },
     );
@@ -639,14 +713,16 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     final MaterialModel materialModel = selectedMaterial!;
 
     // Persist the data in Hive upon successful save
-    final hiveResult = await _materialsHiveRepo.delete(materialModel, materialModel.id!);
+    final hiveResult =
+        await _materialsHiveRepo.delete(materialModel, materialModel.id!);
 
     hiveResult.fold(
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
       (_) {
-        read<LogController>().addLog(item: materialModel, eventType: LogEventType.delete);
+        read<LogController>()
+            .addLog(item: materialModel, eventType: LogEventType.delete);
 
         log('materials length before add item: ${materials.length}');
         if (withPrint) {
@@ -664,7 +740,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  void navigateToAddOrUpdateMaterialScreen({String? matId, required BuildContext context}) {
+  void navigateToAddOrUpdateMaterialScreen(
+      {String? matId, required BuildContext context}) {
     selectedMaterial = null;
     if (matId != null) {
       selectedMaterial = getMaterialById(
@@ -673,7 +750,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     }
 
     materialFromHandler.init(selectedMaterial);
-    launchFloatingWindow(context: context, minimizedTitle: ApiConstants.materials.tr, floatingScreen: AddMaterialScreen());
+    launchFloatingWindow(
+        context: context,
+        minimizedTitle: ApiConstants.materials.tr,
+        floatingScreen: AddMaterialScreen());
     // to(AppRoutes.addMaterialScreen);
   }
 
@@ -681,11 +761,13 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     required String query,
     required BuildContext context,
   }) async {
-    MaterialGroupModel? searchedMaterial = await searchProductGroupTextDialog(query, context);
+    MaterialGroupModel? searchedMaterial =
+        await searchProductGroupTextDialog(query, context);
 
     if (searchedMaterial != null) {
       materialFromHandler.parentModel = searchedMaterial;
-      materialFromHandler.parentController.text = searchedMaterial.groupName.toString();
+      materialFromHandler.parentController.text =
+          searchedMaterial.groupName.toString();
     } else {
       AppUIUtils.onFailure(
         'لم يتم العثور على المجموعة',
@@ -697,8 +779,10 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
   /// Updates a material's data using a provided update function.
   /// This function finds the material by `matId`, applies `updateFn` to modify it,
   /// and then saves the updated material.
-  Future<void> updateAndSaveMaterial(String matId, MaterialModel Function(MaterialModel) updateFn) async {
-    final materialModel = materials.firstWhere((material) => material.id == matId);
+  Future<void> updateAndSaveMaterial(
+      String matId, MaterialModel Function(MaterialModel) updateFn) async {
+    final materialModel =
+        materials.firstWhere((material) => material.id == matId);
     // materialFromHandler.init();
     await updateMaterial(
       updateFn(materialModel),
@@ -707,7 +791,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     // await saveOrUpdateMaterial();
   }
 
-  Future<void> updateMaterialByModel(MaterialModel materialModel, MaterialModel Function(MaterialModel) updateFn) async {
+  Future<void> updateMaterialByModel(MaterialModel materialModel,
+      MaterialModel Function(MaterialModel) updateFn) async {
     await updateMaterial(
       updateFn(materialModel),
     );
@@ -719,7 +804,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     )) {
       await updateMaterialByModel(
         material,
-        (materialUpdate) => materialUpdate.copyWith(matQuantity: 0, matLocalQuantity: 0, matFreeQuantity: 0),
+        (materialUpdate) => materialUpdate.copyWith(
+            matQuantity: 0, matLocalQuantity: 0, matFreeQuantity: 0),
       );
     }
     log("Finished");
@@ -727,7 +813,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   /// Increases the quantity of a material by a given amount.
   /// Uses `updateMaterial` to modify `matQuantity`.
-  Future<void> updateMaterialQuantity(String matId, int quantity, bool? freeBill) async {
+  Future<void> updateMaterialQuantity(
+      String matId, int quantity, bool? freeBill) async {
     int? matFreeQuantity;
     int? matLocalQuantity;
     await updateAndSaveMaterial(
@@ -749,7 +836,8 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
 
   /// Sets the quantity of a material to a specific value.
   /// Unlike `updateMaterialQuantity`, this function replaces the quantity instead of adding to it.
-  Future<void> setMaterialQuantity(String matId, int quantity, int matFreeQuantity, int matLocalQuantity) async {
+  Future<void> setMaterialQuantity(String matId, int quantity,
+      int matFreeQuantity, int matLocalQuantity) async {
     await updateAndSaveMaterial(
         matId,
         (material) => material.copyWith(
@@ -827,14 +915,20 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     required int quantityInStatement,
   }) {
     int totalQuantity = oldQuantity + quantityInStatement;
-    return totalQuantity > 0 ? ((oldMinPrice * oldQuantity) + (priceInStatement * quantityInStatement)) / totalQuantity : 0.0;
+    return totalQuantity > 0
+        ? ((oldMinPrice * oldQuantity) +
+                (priceInStatement * quantityInStatement)) /
+            totalQuantity
+        : 0.0;
   }
 
-  Future<void> updateAllMaterialWithDecodeProblematic(BuildContext context) async {
+  Future<void> updateAllMaterialWithDecodeProblematic(
+      BuildContext context) async {
     int i = 0;
     log('material length ${materials.length}');
     for (var mat in materials) {
-      materialFromHandler.init(mat.copyWith(matName: mat.matName!/*.encodeProblematic()*/));
+      materialFromHandler
+          .init(mat.copyWith(matName: mat.matName! /*.encodeProblematic()*/));
       await saveOrUpdateMaterial();
       log('mat number ${++i}');
     }
@@ -854,23 +948,26 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     update(); // Refresh UI
   }
 
-
-  void creatMultiCopiesMatBarcode({required MaterialModel material, required BuildContext context}) async {
+  void creatMultiCopiesMatBarcode(
+      {required MaterialModel material, required BuildContext context}) async {
     if (selectedMaterial!.matBarCode!.isEmpty) {
       AppUIUtils.onFailure(AppStrings.barcodeIsRequired.tr);
       return;
     }
 
     // واجهة إعدادات اللصاقة أولاً (اسم، باركود، سعر، نسبة البطارية)
-    final labelData = await showLabelSettingsDialog(context, material: material);
+    final labelData =
+        await showLabelSettingsDialog(context, material: material);
     if (labelData == null) return;
 
-    if(!context.mounted)return;
+    if (!context.mounted) return;
     // ثم اسأل عن عدد النسخ
-    final copies = await pickCopiesDialog(context, initial: 1, min: 1, max: 500);
+    final copies =
+        await pickCopiesDialog(context, initial: 1, min: 1, max: 500);
     if (copies == null) return;
 
-    await printMaterialBarcodeWithLabelData(labelData: labelData, copies: copies);
+    await printMaterialBarcodeWithLabelData(
+        labelData: labelData, copies: copies);
   }
 
   /// طباعة اللصاقة باستخدام بيانات إعدادات اللصاقة (بدون ترجمة).
@@ -878,7 +975,9 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     required LabelSettingsResult labelData,
     required int copies,
   }) async {
-    final title = labelData.name.length >= 193 ? labelData.name.substring(0, 193) : labelData.name;
+    final title = labelData.name.length >= 193
+        ? labelData.name.substring(0, 193)
+        : labelData.name;
     await read<PrintingController>().printTitlePriceBarcodeFullWidth(
       barcodeData: labelData.barcode,
       copies: copies,
@@ -888,19 +987,25 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
     );
   }
 
-  printMaterialBarcode({int copies = 1, required MaterialModel material}) async {
+  printMaterialBarcode(
+      {int copies = 1, required MaterialModel material}) async {
     if (material.matBarCode!.isEmpty) {
       return;
     }
-    final matName = (material.matName ?? '').length >= 193 ? (material.matName ?? '').substring(0, 193) : material.matName;
+    final matName = (material.matName ?? '').length >= 193
+        ? (material.matName ?? '').substring(0, 193)
+        : material.matName;
 
-    final materialTranslatedName = await _translationRepository.translateText(matName!);
+    final materialTranslatedName =
+        await _translationRepository.translateText(matName!);
     await read<PrintingController>().printTitlePriceBarcodeFullWidth(
       barcodeData: material.matBarCode!,
       copies: copies,
       title: materialTranslatedName,
-      priceText:
-          material.endUserPrice != null && material.endUserPrice!.trim().isNotEmpty ? 'AED ${material.endUserPrice!}.00' : 'AED 0.00',
+      priceText: material.endUserPrice != null &&
+              material.endUserPrice!.trim().isNotEmpty
+          ? 'AED ${material.endUserPrice!}.00'
+          : 'AED 0.00',
     );
   }
 }

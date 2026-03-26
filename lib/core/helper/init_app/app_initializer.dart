@@ -52,7 +52,9 @@ Future<void> initializeAppServices() async {
   };
   //   await initializeWindowSettings();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,name: AppConstants.testDataBaseAppName);
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+      name: AppConstants.testDataBaseAppName);
 
   await Hive.initializeApp();
 
@@ -98,16 +100,18 @@ void setupDatabaseServices() {
   final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
   final firebaseApp = Firebase.app();
-  FirebaseFirestore firestoreInstance =
-      FirebaseFirestore.instanceFor(app: firebaseApp, databaseId: "test-eu");
-  // databaseId:
-  //     AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
-  //         ? null
-  //         : AppConstants.getDatabaseAppName);
+  FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
+      app: firebaseApp,
+      //  databaseId: "test-eu");
+      databaseId:
+          AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+              ? null
+              : AppConstants.getDatabaseAppName);
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);
-  final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
+  final remoteStorageService =
+      createRemoteStorageService(firebaseStorageInstance);
 
   final compoundDatabaseService =
       createCompoundDatabaseService(firestoreInstance);
@@ -119,8 +123,6 @@ void setupDatabaseServices() {
 
   lazyPut(compoundDatabaseService);
   lazyPut(remoteStorageService);
-
-
 }
 
 void setupMigrationDependencies() {
@@ -162,7 +164,9 @@ ICompoundDatabaseService<Map<String, dynamic>> createCompoundDatabaseService(
         FirebaseFirestore instance) =>
     CompoundFireStoreService(instance);
 
-IRemoteStorageService<String> createRemoteStorageService(FirebaseStorage instance) => FirebaseStorageService(instance);
+IRemoteStorageService<String> createRemoteStorageService(
+        FirebaseStorage instance) =>
+    FirebaseStorageService(instance);
 
 CompoundDatasourceRepository<BillModel, BillTypeModel> createBillsRepository(
         ICompoundDatabaseService<Map<String, dynamic>> service) =>
