@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -21,6 +22,7 @@ import 'package:ba3_bs/features/bill/data/models/delivery_item_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_local_storage_service.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
+import 'package:ba3_bs/features/floating_window/managers/overlay_entry_with_priority_manager.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -61,8 +63,12 @@ import '../../../../core/dialogs/choose_columns_dialog.dart';
 import '../pluto/bill_details_pluto_controller.dart';
 
 class BillDetailsController extends IBillController
-    with AppValidator, AppNavigator, FirestoreSequentialNumbers ,FloatingLauncher
-implements IStoreSelectionHandler {
+    with
+        AppValidator,
+        AppNavigator,
+        FirestoreSequentialNumbers,
+        FloatingLauncher
+    implements IStoreSelectionHandler {
   // Repositories
 
   final CompoundDatasourceRepository<BillModel, BillTypeModel>
@@ -297,6 +303,129 @@ implements IStoreSelectionHandler {
         ),
       );
     }
+  }
+
+  Future<void> markAsAudited(
+    BillModel bill,
+    BuildContext context,
+    bool targetAuditedState, // true = تدقيق، false = إلغاء التدقيق
+  ) async {
+    // إذا كانت الحالة الحالية نفس الحالة المطلوبة → لا نفعل شيء
+    if (bill.isAudited == targetAuditedState) {
+      return;
+    }
+
+    final String confirmMessage = targetAuditedState
+        ? "هل أنت متأكد من أنك تريد تدقيق هذه الفاتورة؟"
+        : "هل أنت متأكد من أنك تريد إلغاء تدقيق هذه الفاتورة؟";
+
+    final bool? confirmed = await showAuditConfirmationOverlay(
+      context,
+      targetAuditedState,
+      confirmMessage,
+    );
+
+    // إذا لم يؤكد المستخدم → نخرج
+    if (confirmed != true) {
+      return;
+    }
+
+    final currentUser = read<UserManagementController>().loggedInUserModel;
+    if (currentUser == null) {
+      AppUIUtils.onFailure("لا يمكن تحديد هوية المستخدم الحالي");
+      return;
+    }
+
+    final updatedBill = bill.copyWith(
+      isAudited: targetAuditedState,
+      auditedBy: targetAuditedState ? (currentUser.userName) : null,
+      auditedAt: targetAuditedState ? DateTime.now() : null,
+    );
+
+    final result = await _billsFirebaseRepo.save(updatedBill);
+
+    result.fold(
+      (failure) {
+        AppUIUtils.onFailure("فشل في حفظ حالة التدقيق: ${failure.message}");
+      },
+      (savedBill) async {
+        final successMsg = targetAuditedState
+            ? "تم تدقيق الفاتورة بنجاح بواسطة ${savedBill.auditedBy}"
+            : "تم إلغاء تدقيق الفاتورة بنجاح";
+        // تحديث قائمة الفواتير
+        billSearchController.updateBill(savedBill, successMsg);
+        // رسالة نجاح مختلفة حسب الاتجاه
+
+        AppUIUtils.onSuccess(successMsg);
+
+        // تحديث تفاصيل الفاتورة على الشاشة
+        updateBillDetailsOnScreen(savedBill, billDetailsPlutoController);
+      },
+    );
+  }
+
+  Future<bool?> showAuditConfirmationOverlay(
+    BuildContext context,
+    bool targetAuditedState,
+    String confirmMessage,
+  ) {
+    final completer = Completer<bool?>();
+
+    final overlay = Overlay.of(context);
+
+    OverlayEntryWithPriorityManager.instance.displayOverlay(
+      overlay: overlay,
+      title: targetAuditedState ? "تأكيد التدقيق" : "تأكيد إلغاء التدقيق",
+      width: 420,
+      height: 230,
+      priority: 0,
+      content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            confirmMessage,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  OverlayEntryWithPriorityManager.instance.dispose();
+                  completer.complete(false);
+                },
+                child: const Text(
+                  "إلغاء",
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                onPressed: () {
+                  OverlayEntryWithPriorityManager.instance.dispose();
+                  completer.complete(true);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: targetAuditedState
+                      ? Colors.green.shade700
+                      : Colors.red.shade700,
+                ),
+                child: Text(
+                  targetAuditedState
+                      ? "نعم، دقق الفاتورة"
+                      : "نعم، ألغِ التدقيق",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    return completer.future;
   }
 
   Future<void> deleteBill(BillModel billModel, BuildContext context) async {
@@ -1082,8 +1211,10 @@ implements IStoreSelectionHandler {
   Future<void> copyFilledRowsJson() async {
     final filledRows = billDetailsPlutoController.recordsTableRows
         .where((row) =>
-    (row.cells["invRecProduct"]?.value?.toString().trim() ?? "").isNotEmpty &&
-        (row.cells["invRecQuantity"]?.value?.toString().trim() ?? "").isNotEmpty)
+            (row.cells["invRecProduct"]?.value?.toString().trim() ?? "")
+                .isNotEmpty &&
+            (row.cells["invRecQuantity"]?.value?.toString().trim() ?? "")
+                .isNotEmpty)
         .toList();
 
     Get.find<CopyPasteJsonUseCase>().copy(filledRows);
@@ -1093,10 +1224,13 @@ implements IStoreSelectionHandler {
   Future<void> pasteRowsFromClipboardJson() async {
     try {
       final clipboardData = await Clipboard.getData('text/plain');
-      if (clipboardData == null || clipboardData.text == null || clipboardData.text!.isEmpty) return;
+      if (clipboardData == null ||
+          clipboardData.text == null ||
+          clipboardData.text!.isEmpty) return;
 
       final jsonData = jsonDecode(clipboardData.text!);
-      final List<Map<String, dynamic>> rowsData = List<Map<String, dynamic>>.from(jsonData['data']);
+      final List<Map<String, dynamic>> rowsData =
+          List<Map<String, dynamic>>.from(jsonData['data']);
 
       debugPrint(rowsData.toString());
 
@@ -1137,17 +1271,16 @@ implements IStoreSelectionHandler {
     }
   }
 
-
   // Copy only filled rows (product + quantity) to clipboard as XML
   Future<void> copyFilledRows() async {
     final controller = billDetailsPlutoController;
 
     final materialController = read<MaterialController>();
 
-
     // Filter rows that have both product and quantity
     final filledRows = controller.recordsTableRows.where((row) {
-      final product = row.cells["invRecProduct"]?.value?.toString().trim() ?? "";
+      final product =
+          row.cells["invRecProduct"]?.value?.toString().trim() ?? "";
       final qty = row.cells["invRecQuantity"]?.value?.toString().trim() ?? "";
       return product.isNotEmpty && qty.isNotEmpty;
     }).toList();
@@ -1156,22 +1289,21 @@ implements IStoreSelectionHandler {
 
     // Convert PlutoRow → MaterialModel
     final matList = filledRows.map((row) {
-
       final vat = double.tryParse(
         row.cells["invRecVat"]?.value?.toString() ?? '0',
       );
 
-       MaterialModel material = materialController.getMaterialByName(row.cells["invRecProduct"]?.value?.toString())!;
+      MaterialModel material = materialController
+          .getMaterialByName(row.cells["invRecProduct"]?.value?.toString())!;
 
-       var materialName = material.matName!.replaceAll('\u2063', '');
-       material = material.copyWith(
-         matQuantity: int.tryParse(row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
-         matVAT: vat,
-           matName: materialName
+      var materialName = material.matName!.replaceAll('\u2063', '');
+      material = material.copyWith(
+          matQuantity: int.tryParse(
+              row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
+          matVAT: vat,
+          matName: materialName);
 
-       );
-
-       return material;
+      return material;
       // return MaterialModel(
       //   matName: row.cells["invRecProduct"]?.value?.toString(),
       //   matQuantity: int.tryParse(row.cells["invRecQuantity"]?.value?.toString() ?? '0'),
@@ -1187,39 +1319,35 @@ implements IStoreSelectionHandler {
   // Paste rows from XML clipboard into Pluto table
   Future<void> pasteRowsFromClipboard() async {
     try {
-      final invoiceRecords =
-      await Get.find<ClipboardXmlService>().paste();
+      final invoiceRecords = await Get.find<ClipboardXmlService>().paste();
 
       if (invoiceRecords == null || invoiceRecords.isEmpty) {
         debugPrint("No valid records found");
         return;
       }
 
-      final validRecords = invoiceRecords.where(
+      final validRecords = invoiceRecords
+          .where(
             (e) =>
-        (e.invRecProduct?.trim() ?? '').isNotEmpty &&
-            (e.invRecQuantity ?? 0) > 0,
-      ).toList();
+                (e.invRecProduct?.trim() ?? '').isNotEmpty &&
+                (e.invRecQuantity ?? 0) > 0,
+          )
+          .toList();
 
       if (validRecords.isEmpty) return;
 
-      final stateManager =
-          billDetailsPlutoController.recordsTableStateManager;
-      final billTypeModel =
-          billDetailsPlutoController.billTypeModel;
+      final stateManager = billDetailsPlutoController.recordsTableStateManager;
+      final billTypeModel = billDetailsPlutoController.billTypeModel;
 
       final newRows = validRecords.map((invoice) {
-        final cells = invoice
-            .toEditedMap(billTypeModel)
-            .map(
+        final cells = invoice.toEditedMap(billTypeModel).map(
               (col, val) => MapEntry(col.field, PlutoCell(value: val)),
-        );
+            );
 
         return PlutoRow(cells: cells);
       }).toList();
 
-      final insertIndex =
-      billDetailsPlutoController.getLastFilledRowIndex();
+      final insertIndex = billDetailsPlutoController.getLastFilledRowIndex();
 
       stateManager.insertRows(insertIndex, newRows);
       billDetailsPlutoController.update();
@@ -1227,11 +1355,6 @@ implements IStoreSelectionHandler {
       debugPrint('Failed to paste XML rows: $e\n$st');
     }
   }
-
-
-
-
-
 
   InvoiceRecordModel materialToInvoice(MaterialModel mat) {
     final int quantity = mat.matQuantity ?? 0;
@@ -1256,21 +1379,18 @@ implements IStoreSelectionHandler {
     );
   }
 
-
-
-
-
   showColumnsFilterDialog({required BuildContext context}) {
     launchFloatingWindow(
         context: context,
         minimizedTitle: AppStrings.options,
-        floatingScreen: MaterialAttributesDialog(billDetailsPlutoController: billDetailsPlutoController,),
+        floatingScreen: MaterialAttributesDialog(
+          billDetailsPlutoController: billDetailsPlutoController,
+        ),
         defaultHeight: 100,
         defaultWidth: 300);
   }
 
-
-/// this for mobile
+  /// this for mobile
   Future<void> printMaterialLabel(BillModel billModel) async {
     final materialController = read<MaterialController>();
 
