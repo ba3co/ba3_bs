@@ -54,7 +54,6 @@ Future<void> initializeAppServices() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,name: AppConstants.testDataBaseAppName);
 
-
   await Hive.initializeApp();
 
   await initializeAppLocalization(boxName: AppConstants.appLocalLangBox);
@@ -99,20 +98,19 @@ void setupDatabaseServices() {
   final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
   final firebaseApp = Firebase.app();
-  FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
-      app: firebaseApp,
-      databaseId: "test-eu");
-  // databaseId: AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
-  //      ? null
-  //      : AppConstants.getDatabaseAppName);
-
+  FirebaseFirestore firestoreInstance =
+      FirebaseFirestore.instanceFor(app: firebaseApp, databaseId: "test-eu");
+  // databaseId:
+  //     AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+  //         ? null
+  //         : AppConstants.getDatabaseAppName);
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);
   final remoteStorageService = createRemoteStorageService(firebaseStorageInstance);
 
-  final compoundDatabaseService = createCompoundDatabaseService(firestoreInstance);
-
+  final compoundDatabaseService =
+      createCompoundDatabaseService(firestoreInstance);
 
   // Register dependencies using lazyPut
   lazyPut(firestoreInstance);
@@ -121,6 +119,7 @@ void setupDatabaseServices() {
 
   lazyPut(compoundDatabaseService);
   lazyPut(remoteStorageService);
+
 
 }
 

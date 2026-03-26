@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 part 'bill_details.g.dart'; // Generated file from Hive
 
 class _CopyWithSentinel {}
+
 @HiveType(typeId: 7)
 // ignore: must_be_immutable
 class BillDetails extends HiveObject with EquatableMixin {
@@ -86,27 +87,35 @@ class BillDetails extends HiveObject with EquatableMixin {
     this.billFirstPay,
   });
 
-  factory BillDetails.fromJson(Map<String, dynamic> json) => BillDetails(
-        billGuid: json['billGuid'],
-        billPayType: json['billPayType'],
-        billNumber: json['billNumber'],
-        previous: json['previous'],
-        next: json['next'],
-        billDate: (json['billDate'] as Timestamp).toDate(),
-        billNote: json['billNote'],
-        orderNumber: json.containsKey('orderNumber') ? json['orderNumber'] as String? : null,
-        customerPhone: json.containsKey('customerPhone') ? json['customerPhone'] as String? : null,
-        billCustomerId: json['billCustomerId'],
-        billAccountId: json['billAccountId'],
-        billSellerId: json['billSellerId'],
-        billTotal: json['billTotal'],
-        billVatTotal: json['billVatTotal'],
-        billBeforeVatTotal: json['billWithoutVatTotal'],
-        billGiftsTotal: json['billGiftsTotal'],
-        billDiscountsTotal: json['billDiscountsTotal'],
-        billAdditionsTotal: json['billAdditionsTotal'],
-        billFirstPay: json['billFirstPay'],
-      );
+  factory BillDetails.fromJson(Map<String, dynamic> json) {
+    print((json['billDate'] as Timestamp).toDate());
+    print('=======================');
+    return BillDetails(
+      billGuid: json['billGuid'],
+      billPayType: json['billPayType'],
+      billNumber: json['billNumber'],
+      previous: json['previous'],
+      next: json['next'],
+      billDate: (json['billDate'] as Timestamp).toDate(),
+      billNote: json['billNote'],
+      orderNumber: json.containsKey('orderNumber')
+          ? json['orderNumber'] as String?
+          : null,
+      customerPhone: json.containsKey('customerPhone')
+          ? json['customerPhone'] as String?
+          : null,
+      billCustomerId: json['billCustomerId'],
+      billAccountId: json['billAccountId'],
+      billSellerId: json['billSellerId'],
+      billTotal: json['billTotal'],
+      billVatTotal: json['billVatTotal'],
+      billBeforeVatTotal: json['billWithoutVatTotal'],
+      billGiftsTotal: json['billGiftsTotal'],
+      billDiscountsTotal: json['billDiscountsTotal'],
+      billAdditionsTotal: json['billAdditionsTotal'],
+      billFirstPay: json['billFirstPay'],
+    );
+  }
 
   factory BillDetails.fromBillData({
     BillDetails? existingDetails,
@@ -148,27 +157,30 @@ class BillDetails extends HiveObject with EquatableMixin {
         billAdditionsTotal: billAdditionsTotal,
       );
 
-  Map<String, dynamic> toJson() => {
-        'billGuid': billGuid,
-        'billPayType': billPayType,
-        'billNumber': billNumber,
-        'previous': previous,
-        'next': next,
-        'billDate': Timestamp.fromDate(billDate!),
-        'billNote': billNote,
-        'orderNumber': orderNumber,
-        'customerPhone': customerPhone,
-        'billCustomerId': billCustomerId,
-        'billAccountId': billAccountId,
-        'billTotal': billTotal,
-        'billWithoutVatTotal': billBeforeVatTotal,
-        'billVatTotal': billVatTotal,
-        'billSellerId': billSellerId,
-        'billGiftsTotal': billGiftsTotal,
-        'billDiscountsTotal': billDiscountsTotal,
-        'billAdditionsTotal': billAdditionsTotal,
-        'billFirstPay': billFirstPay,
-      };
+  Map<String, dynamic> toJson() {
+    print(billDate);
+    return {
+      'billGuid': billGuid,
+      'billPayType': billPayType,
+      'billNumber': billNumber,
+      'previous': previous,
+      'next': next,
+      'billDate': Timestamp.fromDate(billDate!),
+      'billNote': billNote,
+      'orderNumber': orderNumber,
+      'customerPhone': customerPhone,
+      'billCustomerId': billCustomerId,
+      'billAccountId': billAccountId,
+      'billTotal': billTotal,
+      'billWithoutVatTotal': billBeforeVatTotal,
+      'billVatTotal': billVatTotal,
+      'billSellerId': billSellerId,
+      'billGiftsTotal': billGiftsTotal,
+      'billDiscountsTotal': billDiscountsTotal,
+      'billAdditionsTotal': billAdditionsTotal,
+      'billFirstPay': billFirstPay,
+    };
+  }
 
   // The magic: each field is an Object? that defaults to _CopyWithSentinel,
   // so we know whether the user passed a new value, or not.
@@ -194,29 +206,58 @@ class BillDetails extends HiveObject with EquatableMixin {
     Object? billFirstPay = _CopyWithSentinel,
   }) {
     return BillDetails(
-      billGuid: billGuid == _CopyWithSentinel ? this.billGuid : billGuid as String?,
-      billPayType: billPayType == _CopyWithSentinel ? this.billPayType : billPayType as int?,
-      billNumber: billNumber == _CopyWithSentinel ? this.billNumber : billNumber as int?,
-      previous: previous == _CopyWithSentinel ? this.previous : previous as int?,
+      billGuid:
+          billGuid == _CopyWithSentinel ? this.billGuid : billGuid as String?,
+      billPayType: billPayType == _CopyWithSentinel
+          ? this.billPayType
+          : billPayType as int?,
+      billNumber: billNumber == _CopyWithSentinel
+          ? this.billNumber
+          : billNumber as int?,
+      previous:
+          previous == _CopyWithSentinel ? this.previous : previous as int?,
       next: next == _CopyWithSentinel ? this.next : next as int?,
       // Now if next is passed as null, it will become null
-      billDate: billDate == _CopyWithSentinel ? this.billDate : billDate as DateTime?,
-      billNote: billNote == _CopyWithSentinel ? this.billNote : billNote as String?,
-      orderNumber: orderNumber == _CopyWithSentinel ? this.orderNumber : orderNumber as String?,
-      customerPhone: customerPhone == _CopyWithSentinel ? this.customerPhone : customerPhone as String?,
-      billSellerId: billSellerId == _CopyWithSentinel ? this.billSellerId : billSellerId as String?,
-      billCustomerId: billCustomerId == _CopyWithSentinel ? this.billCustomerId : billCustomerId as String?,
-      billAccountId: billAccountId == _CopyWithSentinel ? this.billAccountId : billAccountId as String?,
-      billTotal: billTotal == _CopyWithSentinel ? this.billTotal : billTotal as double?,
-      billVatTotal: billVatTotal == _CopyWithSentinel ? this.billVatTotal : billVatTotal as double?,
-      billBeforeVatTotal:
-          billBeforeVatTotal == _CopyWithSentinel ? this.billBeforeVatTotal : billBeforeVatTotal as double?,
-      billGiftsTotal: billGiftsTotal == _CopyWithSentinel ? this.billGiftsTotal : billGiftsTotal as double?,
-      billDiscountsTotal:
-          billDiscountsTotal == _CopyWithSentinel ? this.billDiscountsTotal : billDiscountsTotal as double?,
-      billAdditionsTotal:
-          billAdditionsTotal == _CopyWithSentinel ? this.billAdditionsTotal : billAdditionsTotal as double?,
-      billFirstPay: billFirstPay == _CopyWithSentinel ? this.billFirstPay : billFirstPay as double?,
+      billDate:
+          billDate == _CopyWithSentinel ? this.billDate : billDate as DateTime?,
+      billNote:
+          billNote == _CopyWithSentinel ? this.billNote : billNote as String?,
+      orderNumber: orderNumber == _CopyWithSentinel
+          ? this.orderNumber
+          : orderNumber as String?,
+      customerPhone: customerPhone == _CopyWithSentinel
+          ? this.customerPhone
+          : customerPhone as String?,
+      billSellerId: billSellerId == _CopyWithSentinel
+          ? this.billSellerId
+          : billSellerId as String?,
+      billCustomerId: billCustomerId == _CopyWithSentinel
+          ? this.billCustomerId
+          : billCustomerId as String?,
+      billAccountId: billAccountId == _CopyWithSentinel
+          ? this.billAccountId
+          : billAccountId as String?,
+      billTotal: billTotal == _CopyWithSentinel
+          ? this.billTotal
+          : billTotal as double?,
+      billVatTotal: billVatTotal == _CopyWithSentinel
+          ? this.billVatTotal
+          : billVatTotal as double?,
+      billBeforeVatTotal: billBeforeVatTotal == _CopyWithSentinel
+          ? this.billBeforeVatTotal
+          : billBeforeVatTotal as double?,
+      billGiftsTotal: billGiftsTotal == _CopyWithSentinel
+          ? this.billGiftsTotal
+          : billGiftsTotal as double?,
+      billDiscountsTotal: billDiscountsTotal == _CopyWithSentinel
+          ? this.billDiscountsTotal
+          : billDiscountsTotal as double?,
+      billAdditionsTotal: billAdditionsTotal == _CopyWithSentinel
+          ? this.billAdditionsTotal
+          : billAdditionsTotal as double?,
+      billFirstPay: billFirstPay == _CopyWithSentinel
+          ? this.billFirstPay
+          : billFirstPay as double?,
     );
   }
 

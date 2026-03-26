@@ -109,8 +109,11 @@ class TimeWidget extends StatelessWidget {
                                   .copyWith(color: Colors.red)),
                           Text(userDetailsController.userEarlier(dayName),
                               style: AppTextStyles.headLineStyle4),
-                          if (userDetailsController.userOverTime(dayName) ==
-                              "0") ...[
+                          if (userDetailsController
+                                  .selectedUserModel
+                                  ?.userTimeModel?[dayName]
+                                  ?.totalExtraMinutes !=
+                              0) ...[
                             VerticalDivider(),
                             Text("الوقت الاضافي  :",
                                 style: AppTextStyles.headLineStyle4
