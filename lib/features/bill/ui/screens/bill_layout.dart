@@ -1,4 +1,3 @@
-
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
@@ -27,7 +26,7 @@ class BillLayout extends StatelessWidget {
             appBar: AppBar(
               leadingWidth: 300,
               actions: [
-      /*    if (RoleItemType.administrator.hasAdminPermission)
+                /*    if (RoleItemType.administrator.hasAdminPermission)
                  Padding(
                     padding: EdgeInsets.all(8),
                     child: AppButton(
@@ -54,29 +53,33 @@ class BillLayout extends StatelessWidget {
             ),
             floatingActionButton: RoleItemType.administrator.hasAdminPermission
                 ? FloatingActionButton(
-              backgroundColor: Colors.blue,
-              onPressed: () {
-                // allBillsController.fetchAllNestedBills();
-                // allBillsController.saveXmlToFile();
-                // read< MaterialsStatementController>().setupAllMaterials();
-                // read<MaterialsStatementController>().setupOneMaterials("e7103aec-14c5-4123-893d-9a4851d0d478");
-                // read<MaterialController>().updateAllMaterialWithDecodeProblematic();
-              },
-              child: Icon(
-                Icons.ac_unit_rounded,
-                color: Colors.white,
-              ),
-            )
+                    backgroundColor: Colors.blue,
+                    onPressed: () {
+                      // allBillsController.fetchAllNestedBills();
+                      // allBillsController.saveXmlToFile();
+                      // read< MaterialsStatementController>().setupAllMaterials();
+                      // read<MaterialsStatementController>().setupOneMaterials("e7103aec-14c5-4123-893d-9a4851d0d478");
+                      // read<MaterialController>().updateAllMaterialWithDecodeProblematic();
+                    },
+                    child: Icon(
+                      Icons.ac_unit_rounded,
+                      color: Colors.white,
+                    ),
+                  )
                 : null,
           ),
           LoadingDialog(
-            isLoading: allBillsController.saveAllBillsRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bills.tr}',
+            isLoading: allBillsController.saveAllBillsRequestState.value ==
+                RequestState.loading,
+            message:
+                '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bills.tr}',
             fontSize: 14.sp,
           ),
           LoadingDialog(
-            isLoading: allBillsController.saveAllBillsBondRequestState.value == RequestState.loading,
-            message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr} ${AppStrings.bills.tr}',
+            isLoading: allBillsController.saveAllBillsBondRequestState.value ==
+                RequestState.loading,
+            message:
+                '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.bonds.tr} ${AppStrings.bills.tr}',
             fontSize: 14.sp,
           ),
         ],

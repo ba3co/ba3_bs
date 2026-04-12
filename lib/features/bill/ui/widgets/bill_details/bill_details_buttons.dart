@@ -171,7 +171,9 @@ class BillDetailsButtons extends StatelessWidget {
   // }
 
   Widget _buildApprovalOrBondButton(BuildContext context) {
-    final isPending = billSearchController.isPending;
+    final isPending = false;
+    // final isPending = billSearchController.isPending;
+
     return _buildActionButton(
       title: isPending ? AppStrings.approve.tr : AppStrings.bond.tr,
       icon: FontAwesomeIcons.check,
@@ -186,20 +188,20 @@ class BillDetailsButtons extends StatelessWidget {
 
   List<Widget> _buildEditDeletePdfButtons(BuildContext context) {
     return [
-      if (!billSearchController.isPending)
-        Obx(() {
-          return _buildActionButton(
-            isLoading: billDetailsController.saveBillRequestState.value ==
-                RequestState.loading,
-            title: AppStrings.edit.tr,
-            icon: FontAwesomeIcons.solidPenToSquare,
-            onPressed: () => billDetailsController.updateBill(
-                context: context,
-                billModel: billModel,
-                billTypeModel: billModel.billTypeModel,
-                withPrint: false),
-          );
-        }),
+      // if (!billSearchController.isPending)
+      Obx(() {
+        return _buildActionButton(
+          isLoading: billDetailsController.saveBillRequestState.value ==
+              RequestState.loading,
+          title: AppStrings.edit.tr,
+          icon: FontAwesomeIcons.solidPenToSquare,
+          onPressed: () => billDetailsController.updateBill(
+              context: context,
+              billModel: billModel,
+              billTypeModel: billModel.billTypeModel,
+              withPrint: false),
+        );
+      }),
 /*      if (!billSearchController.isPending)
         _buildActionButton(
           title: AppStrings.pdfEmail.tr,

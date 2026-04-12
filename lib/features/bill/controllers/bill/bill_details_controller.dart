@@ -21,6 +21,11 @@ import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
 import 'package:ba3_bs/features/bill/data/models/delivery_item_model.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_local_storage_service.dart';
 import 'package:ba3_bs/features/bill/services/bill/bill_utils.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/all_bond_controller.dart';
+import 'package:ba3_bs/features/bond/controllers/bonds/bond_details_controller.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type.dart';
+import 'package:ba3_bs/features/bond/data/models/bond_type_model.dart';
+import 'package:ba3_bs/features/bond/data/models/pay_item_model.dart';
 import 'package:ba3_bs/features/customer/controllers/customers_controller.dart';
 import 'package:ba3_bs/features/floating_window/managers/overlay_entry_with_priority_manager.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
@@ -77,12 +82,14 @@ class BillDetailsController extends IBillController
   final QueryableSavableRepository<SerialNumberModel> _serialNumbersRepo;
   final BillDetailsPlutoController billDetailsPlutoController;
   final BillSearchController billSearchController;
+  final BondDetailsController bondDetailsController;
   final List<ProductWithTaxModel> productsWithTax = [];
   bool viewBillItemWithTax = false;
 
   BillDetailsController(
     this._billsFirebaseRepo,
     this._serialNumbersRepo, {
+    required this.bondDetailsController,
     required this.billDetailsPlutoController,
     required this.billSearchController,
   });
@@ -109,10 +116,20 @@ class BillDetailsController extends IBillController
   final TextEditingController invReturnDateController = TextEditingController();
   final TextEditingController invReturnCodeController = TextEditingController();
   final TextEditingController invFirstPayController = TextEditingController();
+  final TextEditingController amount1Controller = TextEditingController();
+  final TextEditingController amount2Controller = TextEditingController();
+  final TextEditingController fromAccountController = TextEditingController();
+  final TextEditingController toAccount1Controller = TextEditingController();
+  final TextEditingController toAccount2Controller = TextEditingController();
 
+  Rxn<AccountModel> fromAccount = Rxn<AccountModel>();
+  Rxn<AccountModel> toAccount1 = Rxn<AccountModel>();
+  Rxn<AccountModel> toAccount2 = Rxn<AccountModel>();
   CustomerModel? selectedCustomerAccount;
   AccountModel? selectedBillAccount;
   SellerModel? selectedSellerAccount;
+
+  Rx<Status> selectedStatus = Status.pending.obs;
 
   Rx<bool> get isAccountReadOnly =>
       (selectedPayType.value == InvPayType.cash).obs;
@@ -134,6 +151,18 @@ class BillDetailsController extends IBillController
   Rx<RequestState> saveBillRequestState = RequestState.initial.obs;
 
   Rx<RequestState> deleteBillRequestState = RequestState.initial.obs;
+  Rx<VoucherScenario> scenario = VoucherScenario.none.obs;
+  BondTypeModel bondTypeModel = BondTypeModel.fromJson({
+    'label': BondType.paymentVoucher.label,
+    'value': BondType.paymentVoucher.value,
+    'typeGuide': BondType.paymentVoucher.typeGuide,
+    'from': BondType.paymentVoucher.from,
+    'to': BondType.paymentVoucher.to,
+    'taxType': BondType.paymentVoucher.taxType,
+    'color': BondType.paymentVoucher.color,
+    'type': BondType.paymentVoucher.label,
+  });
+  late BondModel bondModel;
 
   @override
   void onSelectedStoreChanged(StoreAccount? newStore) {
@@ -155,6 +184,124 @@ class BillDetailsController extends IBillController
         billDetailsPlutoController.returnVat();
       }
     }
+  }
+
+  void updateStatus(Status newStatus, BuildContext context) async {
+    if (selectedStatus.value.value != newStatus.value) {
+      selectedStatus.value = newStatus;
+      fromAccount.value = null;
+      toAccount1.value = null;
+      toAccount2.value = null;
+      toAccount1Controller.text = '';
+      toAccount2Controller.text = '';
+      amount1Controller.text = '';
+      amount2Controller.text = '';
+    }
+
+    scenario.value = _getScenario(newStatus, selectedPayType.value);
+  }
+
+  Future<void> createPaymentVoucher(
+      BillModel billModel, BuildContext context) async {
+    if (fromAccount.value == null ||
+        toAccount1.value == null ||
+        (toAccount2.value == null &&
+            scenario.value == VoucherScenario.approvedDueDelivery)) {
+      return;
+    }
+
+    bondDetailsController.setAccount(fromAccount.value!);
+
+    final pluto = bondDetailsController.bondDetailsPlutoController;
+    pluto.recordsTableStateManager.removeAllRows();
+
+    pluto.recordsTableStateManager.appendRows([
+      PlutoRow(cells: {
+        'EntryDebit': PlutoCell(value: amount1Controller.text),
+        'EntryCredit': PlutoCell(value: '0'),
+        'EntryAccountGuid': PlutoCell(value: toAccount1.value!.accName),
+        'EntryNote': PlutoCell(
+            value: 'فاتورة توصيل رقم ${billModel.billDetails.billNumber}'),
+      }),
+      if (scenario.value == VoucherScenario.approvedDueDelivery)
+        PlutoRow(cells: {
+          'EntryDebit': PlutoCell(value: amount2Controller.text),
+          'EntryCredit': PlutoCell(value: '0'),
+          'EntryAccountGuid': PlutoCell(value: toAccount2.value!.accName),
+          'EntryNote': PlutoCell(
+              value: 'فاتورة توصيل رقم ${billModel.billDetails.billNumber}'),
+        }),
+    ]);
+
+    await bondDetailsController.saveBond(bondTypeModel, context);
+    bondModel = bondDetailsController.bondModel;
+    await addBondIdToBill(billModel, context);
+  }
+
+  Future<void> updatePaymentVoucher(
+      BillModel billModel, BuildContext context) async {
+    if (fromAccount.value == null ||
+        toAccount1.value == null ||
+        (toAccount2.value == null &&
+            scenario.value == VoucherScenario.approvedDueDelivery)) {
+      return;
+    }
+
+    AllBondsController allBondsController = read<AllBondsController>();
+    bondDetailsController.setAccount(fromAccount.value!);
+
+    final pluto = bondDetailsController.bondDetailsPlutoController;
+    pluto.recordsTableStateManager.removeAllRows();
+
+    pluto.recordsTableStateManager.appendRows([
+      PlutoRow(cells: {
+        'EntryDebit': PlutoCell(value: amount1Controller.text),
+        'EntryCredit': PlutoCell(value: '0'),
+        'EntryAccountGuid': PlutoCell(value: toAccount1.value!.accName),
+        'EntryNote': PlutoCell(
+            value: 'فاتورة توصيل رقم ${billModel.billDetails.billNumber}'),
+      }),
+      if (scenario.value == VoucherScenario.approvedDueDelivery)
+        PlutoRow(cells: {
+          'EntryDebit': PlutoCell(value: amount2Controller.text),
+          'EntryCredit': PlutoCell(value: '0'),
+          'EntryAccountGuid': PlutoCell(value: toAccount2.value!.accName),
+          'EntryNote': PlutoCell(
+              value: 'فاتورة توصيل رقم ${billModel.billDetails.billNumber}'),
+        }),
+    ]);
+
+    BondModel currentBond = await allBondsController.fetchBondsById(
+        billModel.paymentsVoucher!.last.bondId!, bondTypeModel);
+    await bondDetailsController.updateBond(
+        bondType: bondTypeModel,
+        bondModel: BondModel.fromBondData(
+          bondModel: currentBond,
+          bondTypeModel: bondTypeModel,
+          note: '',
+          payAccountGuid: fromAccount.value!.id,
+          payDate: bondDetailsController.bondDate.value,
+          bondRecordsItems: pluto.generateRecords,
+        ),
+        context: context);
+  }
+
+  VoucherScenario _getScenario(Status status, InvPayType payType) {
+    if (status == Status.approved && payType == InvPayType.dueDelivery) {
+      return VoucherScenario.approvedDueDelivery;
+    }
+
+    if (status == Status.pending &&
+        payType == InvPayType.bankTransferDelivery) {
+      return VoucherScenario.pendingBankTransferDelivery;
+    }
+
+    if (status == Status.approved &&
+        payType == InvPayType.bankTransferDelivery) {
+      return VoucherScenario.approvedBankTransferDelivery;
+    }
+
+    return VoucherScenario.none;
   }
 
   void updateBillAccount(AccountModel? newAccount) {
@@ -213,6 +360,7 @@ class BillDetailsController extends IBillController
         text: AppStrings.areYouSureContinueWithoutSeller.tr,
       );
     }
+
     return validate;
   }
 
@@ -233,6 +381,9 @@ class BillDetailsController extends IBillController
   void onPayTypeChanged(InvPayType? payType) {
     if (payType != null) {
       selectedPayType.value = payType;
+      scenario.value =
+          _getScenario(selectedStatus.value, selectedPayType.value);
+
       if (payType == InvPayType.cash) {
         final primaryCashAccount = read<AccountsController>()
             .getAccountModelById(AppConstants.primaryCashAccountId);
@@ -364,6 +515,36 @@ class BillDetailsController extends IBillController
     );
   }
 
+  addBondIdToBill(BillModel billModel, BuildContext context) async {
+    List<PaymentVoucherModel> paymentsVoucher = [];
+    for (var i = 0; i < (billModel.paymentsVoucher?.length ?? 0); i++) {
+      if (i + 1 == (billModel.paymentsVoucher?.length ?? 0)) {
+        paymentsVoucher.add(billModel.paymentsVoucher![i].copyWith(
+          bondId: bondModel.payGuid,
+        ));
+      } else {
+        paymentsVoucher.add(billModel.paymentsVoucher![i]);
+      }
+    }
+
+    final updatedBill = billModel.copyWith(
+      paymentsVoucher: paymentsVoucher,
+    );
+
+    final result = await _billsFirebaseRepo.save(updatedBill);
+
+    result.fold(
+      (failure) {
+        AppUIUtils.onFailure("فشل في حفظ سند الدفع : ${failure.message}");
+      },
+      (savedBill) async {
+        billSearchController.updateBill(savedBill, '');
+
+        updateBillDetailsOnScreen(savedBill, billDetailsPlutoController);
+      },
+    );
+  }
+
   Future<bool?> showAuditConfirmationOverlay(
     BuildContext context,
     bool targetAuditedState,
@@ -455,6 +636,15 @@ class BillDetailsController extends IBillController
           billSearchController: billSearchController,
           context: context,
         );
+        for (var e
+            in (billModel.paymentsVoucher ?? [] as List<PaymentVoucherModel>)) {
+          bondDetailsController.deleteBond(
+              BondModel(
+                  payGuid: e.bondId,
+                  payTypeGuid: bondTypeModel.typeGuide,
+                  payItems: PayItems(itemList: [])),
+              context);
+        }
         deleteBillRequestState.value = RequestState.success;
       },
     );
@@ -721,11 +911,11 @@ class BillDetailsController extends IBillController
       return;
     }
 
-    if (_isNoUpdate(existingBill, updatedBillModel)) {
-      saveBillRequestState.value = RequestState.error;
+    // if (_isNoUpdate(existingBill, updatedBillModel)) {
+    //   saveBillRequestState.value = RequestState.error;
 
-      return;
-    }
+    //   return;
+    // }
     if (!context.mounted) return;
 
     await _saveBillAndHandleResult(
@@ -733,12 +923,12 @@ class BillDetailsController extends IBillController
   }
 
   /// Checks if there's actually no change from the existing bill.
-  bool _isNoUpdate(BillModel? existingBill, BillModel updatedBill) {
-    final isNoUpdate = existingBill != null && updatedBill == existingBill;
+  // bool _isNoUpdate(BillModel? existingBill, BillModel updatedBill) {
+  //   final isNoUpdate = existingBill != null && updatedBill == existingBill;
 
-    if (isNoUpdate) AppUIUtils.onFailure('لم يتم تحديث اي شئ في الفاتورة');
-    return isNoUpdate;
-  }
+  //   if (isNoUpdate) AppUIUtils.onFailure('لم يتم تحديث اي شئ في الفاتورة');
+  //   return isNoUpdate;
+  // }
 
   /// Saves the [updatedBill] and handles success/failure UI feedback.
   Future<void> _saveBillAndHandleResult(BuildContext context,
@@ -764,6 +954,21 @@ class BillDetailsController extends IBillController
           isSave: existingBill == null,
           withPrint: withPrint,
         );
+        if ((scenario.value != VoucherScenario.none && existingBill == null) ||
+            existingBill != null &&
+                existingBill.status.value != selectedStatus.value.value &&
+                scenario.value != VoucherScenario.none) {
+          await createPaymentVoucher(savedBill, context);
+        } else if (existingBill != null &&
+            existingBill.billTypeModel.latinShortName == 'Sales Delivery' &&
+            existingBill.paymentsVoucher?.isNotEmpty == true &&
+            (selectedStatus.value == Status.pending ||
+                selectedStatus.value == Status.approved) &&
+            scenario.value != VoucherScenario.none &&
+            existingBill.status == selectedStatus.value) {
+          updatePaymentVoucher(savedBill, context);
+        }
+
         billNumberController.text = savedBill.billDetails.billNumber.toString();
         saveBillRequestState.value = RequestState.success;
       },
@@ -912,6 +1117,7 @@ class BillDetailsController extends IBillController
         );
         return null;
       }
+
       /*if (!billTypeModel.isPurchaseRelated) {
         final currentMat =
             read<MaterialController>().getMaterialById(item.itemGuid);
@@ -989,6 +1195,43 @@ class BillDetailsController extends IBillController
       return null;
     }
 
+    if (billTypeModel.latinShortName == 'Sales Delivery' &&
+        scenario.value != VoucherScenario.none) {
+      if (fromAccount.value == null) {
+        AppUIUtils.onFailure(
+          'يجب تحديد حساب الدائن',
+        );
+        return null;
+      }
+      if (toAccount1.value == null) {
+        AppUIUtils.onFailure(
+          'يجب تحديد حساب المدين الاول',
+        );
+        return null;
+      }
+      if (amount1Controller.value.text.trim().isEmpty) {
+        AppUIUtils.onFailure(
+          'يجب تحديد المبلغ للمدين الاول',
+        );
+        return null;
+      }
+
+      if (scenario.value == VoucherScenario.approvedDueDelivery) {
+        if (toAccount2.value == null) {
+          AppUIUtils.onFailure(
+            'يجب تحديد حساب المدين الثاني',
+          );
+          return null;
+        }
+        if (amount2Controller.value.text.trim().isEmpty) {
+          AppUIUtils.onFailure(
+            'يجب تحديد المبلغ للمدين الثاني',
+          );
+          return null;
+        }
+      }
+    }
+
     final updatedBillTypeModel = _accountHandler.updateBillTypeAccounts(
           billTypeModel,
           billDetailsPlutoController.generateDiscountsAndAdditions,
@@ -996,23 +1239,73 @@ class BillDetailsController extends IBillController
           selectedStore.value,
         ) ??
         billTypeModel;
+    List<PaymentVoucherModel> paymentVoucherModel =
+        billModel?.paymentsVoucher ?? [];
+    if (scenario.value != VoucherScenario.none) {
+      if (paymentVoucherModel.isEmpty ||
+          (paymentVoucherModel.length == 1 &&
+              scenario.value == VoucherScenario.approvedBankTransferDelivery)) {
+        paymentVoucherModel.add(PaymentVoucherModel(
+            fromAccount: AccountTransferData(
+              accountId: fromAccount.value?.id ?? "",
+              accountName: fromAccount.value?.accName ?? "",
+            ),
+            toAccounts: [
+              AccountTransferData(
+                  accountId: toAccount1.value?.id ?? "",
+                  accountName: toAccount1.value?.accName ?? "",
+                  amount: int.parse(amount1Controller.text)),
+              if (scenario.value == VoucherScenario.approvedDueDelivery)
+                AccountTransferData(
+                    accountId: toAccount2.value?.id ?? "",
+                    accountName: toAccount2.value?.accName ?? "",
+                    amount: int.parse(amount2Controller.text)),
+            ]));
+      } else {
+        if (scenario.value != VoucherScenario.none) {
+          paymentVoucherModel[paymentVoucherModel.length - 1] =
+              paymentVoucherModel.last.copyWith(
+                  fromAccount: AccountTransferData(
+                    accountId: fromAccount.value?.id ?? "",
+                    accountName: fromAccount.value?.accName ?? "",
+                  ),
+                  toAccounts: [
+                AccountTransferData(
+                    accountId: toAccount1.value?.id ?? "",
+                    accountName: toAccount1.value?.accName ?? "",
+                    amount: int.parse(amount1Controller.text)),
+                if (scenario.value == VoucherScenario.approvedDueDelivery)
+                  AccountTransferData(
+                      accountId: toAccount2.value?.id ?? "",
+                      accountName: toAccount2.value?.accName ?? "",
+                      amount: int.parse(amount2Controller.text)),
+              ]);
+        }
+      }
+    }
+
     // Create and return the bill model
     return _billService.createBillModel(
-      billModel: billModel,
-      freeBill: advancedSwitchController.value,
-      billNote: noteController.text,
-      orderNumber: orderNumberController.text,
-      customerPhone: customerPhoneController.text,
-      billTypeModel: updatedBillTypeModel,
-      billDate: billDate.value,
-      billFirstPay: firstPayController.text.toDouble,
-      billCustomerId: selectedCustomerAccount?.id! ??
-          "00000000-0000-0000-0000-000000000000",
-      billAccountId:
-          selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
-      billSellerId: selectedSellerAccount?.costGuid ?? '',
-      billPayType: selectedPayType.value.index,
-    );
+        billModel: billModel,
+        freeBill: advancedSwitchController.value,
+        billNote: noteController.text,
+        orderNumber: orderNumberController.text,
+        customerPhone: customerPhoneController.text,
+        billTypeModel: updatedBillTypeModel,
+        billDate: billDate.value,
+        status: billTypeModel.latinShortName == 'Sales Delivery'
+            ? selectedStatus.value
+            : RoleItemType.viewBill.status,
+        billFirstPay: firstPayController.text.toDouble,
+        billCustomerId: selectedCustomerAccount?.id! ??
+            "00000000-0000-0000-0000-000000000000",
+        billAccountId:
+            selectedBillAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+        billSellerId: selectedSellerAccount?.costGuid ?? '',
+        billPayType: selectedPayType.value.index,
+        paymentsVoucherModel: scenario.value == VoucherScenario.none
+            ? null
+            : paymentVoucherModel);
   }
 
   Future<int> getLastBillNumberForType(BillTypeModel billTypeModel) async {
@@ -1059,14 +1352,51 @@ class BillDetailsController extends IBillController
 
   void updateBillDetailsOnScreen(
       BillModel bill, BillDetailsPlutoController billPlutoController) async {
+    fromAccount.value = null;
+    toAccount1.value = null;
+    toAccount2.value = null;
+    toAccount1Controller.text = '';
+    toAccount2Controller.text = '';
+    amount1Controller.text = '';
+    amount2Controller.text = '';
+    selectedStatus.value = bill.status;
+    print(bill.billDetails.billPayType);
+    print('======---=======');
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
-
     setBillDate = bill.billDetails.billDate!;
     isBillSaved.value = bill.billId != null;
     noteController.text = bill.billDetails.billNote ?? '';
     orderNumberController.text = bill.billDetails.orderNumber ?? '';
     customerPhoneController.text = bill.billDetails.customerPhone ?? '';
     firstPayController.text = (bill.billDetails.billFirstPay ?? 0.0).toString();
+
+    if (bill.billTypeModel.latinShortName == 'Sales Delivery' &&
+        bill.paymentsVoucher?.isNotEmpty == true) {
+      if (scenario.value != VoucherScenario.none) {
+        amount1Controller.text =
+            bill.paymentsVoucher!.last.toAccounts[0].amount.toString();
+        AccountModel? fromAccountModel = read<AccountsController>()
+            .getAccounts(bill.paymentsVoucher!.last.fromAccount.accountName)
+            .first;
+        fromAccount.value = fromAccountModel;
+        AccountModel? toAccountModel = read<AccountsController>()
+            .getAccounts(bill.paymentsVoucher!.last.toAccounts[0].accountName)
+            .first;
+        fromAccount.value = fromAccountModel;
+        toAccount1.value = toAccountModel;
+      }
+
+      if (bill.paymentsVoucher?.isNotEmpty == true &&
+          bill.paymentsVoucher![0].toAccounts.length > 1 &&
+          scenario.value == VoucherScenario.approvedDueDelivery) {
+        amount2Controller.text =
+            bill.paymentsVoucher![0].toAccounts[1].amount.toString();
+        AccountModel? toAccountModel = read<AccountsController>()
+            .getAccounts(bill.paymentsVoucher![0].toAccounts[1].accountName)
+            .first;
+        toAccount2.value = toAccountModel;
+      }
+    }
 
     initBillNumberController(bill.billDetails.billNumber);
     initCustomerAccount(read<CustomersController>()
@@ -1435,4 +1765,172 @@ class BillDetailsController extends IBillController
       stateManager: billDetailsPlutoController.recordsTableStateManager,
       plutoController: billDetailsPlutoController,
       billTypeModel: billTypeModel);*/
+}
+
+enum VoucherScenario {
+  approvedDueDelivery,
+  pendingBankTransferDelivery,
+  approvedBankTransferDelivery,
+  none,
+}
+
+class VoucherPreview {
+  final String fromAccount;
+  final String toAccount;
+  final double amount;
+  final String description;
+
+  VoucherPreview({
+    required this.fromAccount,
+    required this.toAccount,
+    required this.amount,
+    required this.description,
+  });
+}
+
+class AccountTransferItem {
+  AccountModel? account;
+  TextEditingController amountController = TextEditingController();
+
+  double get amount => double.tryParse(amountController.text) ?? 0.0;
+}
+
+class MultiTransferPreview {
+  final AccountModel? fromAccount;
+  final List<AccountTransferItem> toAccounts;
+
+  MultiTransferPreview({
+    required this.fromAccount,
+    required this.toAccounts,
+  });
+
+  double get total => toAccounts.fold(0.0, (sum, e) => sum + e.amount);
+}
+
+Future<bool?> showMultiTransferDialog(
+  BuildContext context,
+  MultiTransferPreview preview,
+) {
+  final completer = Completer<bool?>();
+
+  final overlay = Overlay.of(context);
+
+  OverlayEntryWithPriorityManager.instance.displayOverlay(
+    overlay: overlay,
+    title: "تحويل مبلغ",
+    width: 500,
+    height: 400,
+    priority: 0,
+    content: StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          children: [
+            Text("من الحساب: ${preview.fromAccount?.accName ?? ''}"),
+
+            const SizedBox(height: 10),
+
+            /// 🔽 قائمة الحسابات
+            Expanded(
+              child: ListView.builder(
+                itemCount: preview.toAccounts.length,
+                itemBuilder: (_, index) {
+                  final item = preview.toAccounts[index];
+
+                  return Row(
+                    children: [
+                      /// اختيار الحساب
+                      Expanded(
+                        child: DropdownButton<AccountModel>(
+                          value: item.account,
+                          hint: const Text("اختر حساب"),
+                          isExpanded: true,
+                          items: Get.find<AccountsController>()
+                              .accounts
+                              .map((acc) => DropdownMenuItem(
+                                    value: acc,
+                                    child: Text(acc.accName!),
+                                  ))
+                              .toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              item.account = val;
+                            });
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      /// إدخال المبلغ
+                      SizedBox(
+                        width: 100,
+                        child: TextField(
+                          controller: item.amountController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            hintText: "مبلغ",
+                          ),
+                          onChanged: (_) => setState(() {}),
+                        ),
+                      ),
+
+                      /// حذف
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            preview.toAccounts.removeAt(index);
+                          });
+                        },
+                      )
+                    ],
+                  );
+                },
+              ),
+            ),
+
+            /// زر إضافة حساب
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  preview.toAccounts.add(AccountTransferItem());
+                });
+              },
+              child: const Text("➕ إضافة حساب"),
+            ),
+
+            const SizedBox(height: 10),
+
+            /// المجموع
+            Text("المجموع: ${preview.total}"),
+
+            const SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    OverlayEntryWithPriorityManager.instance.dispose();
+                    completer.complete(false);
+                  },
+                  child: const Text("إلغاء"),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    OverlayEntryWithPriorityManager.instance.dispose();
+                    completer.complete(true);
+                  },
+                  child: const Text("تأكيد"),
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    ),
+  );
+
+  return completer.future;
 }

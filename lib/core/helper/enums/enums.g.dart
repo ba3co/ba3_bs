@@ -33,6 +33,8 @@ class BillPatternTypeAdapter extends TypeAdapter<BillPatternType> {
         return BillPatternType.salesService;
       case 9:
         return BillPatternType.transferIn;
+      case 10:
+        return BillPatternType.salesDelivery;
       default:
         return BillPatternType.purchase;
     }
@@ -70,6 +72,9 @@ class BillPatternTypeAdapter extends TypeAdapter<BillPatternType> {
         break;
       case BillPatternType.transferIn:
         writer.writeByte(9);
+        break;
+      case BillPatternType.salesDelivery:
+        writer.writeByte(10);
         break;
     }
   }
@@ -115,6 +120,16 @@ class StatusAdapter extends TypeAdapter<Status> {
       case Status.pending:
         writer.writeByte(2);
         break;
+
+      case Status.deliveredToCourier:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case Status.deliveredToCustomer:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case Status.returnedToStore:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 

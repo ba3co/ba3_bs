@@ -100,13 +100,12 @@ void setupDatabaseServices() {
   final FirebaseStorage firebaseStorageInstance = FirebaseStorage.instance;
 
   final firebaseApp = Firebase.app();
-  FirebaseFirestore firestoreInstance = FirebaseFirestore.instanceFor(
-      app: firebaseApp,
-      //  databaseId: "test-eu");
-      databaseId:
-          AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
-              ? null
-              : AppConstants.getDatabaseAppName);
+  FirebaseFirestore firestoreInstance =
+      FirebaseFirestore.instanceFor(app: firebaseApp, databaseId: "test-eu");
+  // databaseId:
+  //     AppConstants.getDatabaseAppName == AppConstants.defaultFirebaseAppName
+  //         ? null
+  //         : AppConstants.getDatabaseAppName);
 
   // Initialize Firestore services
   final remoteDatabaseService = createRemoteDatabaseService(firestoreInstance);

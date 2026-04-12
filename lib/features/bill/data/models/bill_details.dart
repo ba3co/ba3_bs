@@ -88,8 +88,6 @@ class BillDetails extends HiveObject with EquatableMixin {
   });
 
   factory BillDetails.fromJson(Map<String, dynamic> json) {
-    print((json['billDate'] as Timestamp).toDate());
-    print('=======================');
     return BillDetails(
       billGuid: json['billGuid'],
       billPayType: json['billPayType'],
@@ -158,7 +156,6 @@ class BillDetails extends HiveObject with EquatableMixin {
       );
 
   Map<String, dynamic> toJson() {
-    print(billDate);
     return {
       'billGuid': billGuid,
       'billPayType': billPayType,

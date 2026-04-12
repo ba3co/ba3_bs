@@ -20,6 +20,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
     this.textStyle,
     this.maxLength,
     this.filedColor,
+    this.hint,
   });
 
   final TextEditingController textEditingController;
@@ -32,6 +33,7 @@ class CustomTextFieldWithoutIcon extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final double? height;
   final Widget? suffixIcon;
+  final Widget? hint;
   final TextStyle? textStyle;
   final int? maxLine;
   final int? maxLength;
@@ -96,6 +98,7 @@ class _CustomTextFieldWithoutIconState
         inputFormatters: widget.inputFormatters,
         style: widget.textStyle ?? const TextStyle(fontSize: 12),
         decoration: InputDecoration(
+            hint: widget.hint,
             fillColor: widget.filedColor ?? Colors.white,
             filled: true,
             isDense: true,

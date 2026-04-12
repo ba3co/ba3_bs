@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 
 import '../../../../features/accounts/data/models/account_model.dart';
@@ -11,13 +10,11 @@ import '../../../helper/extensions/getx_controller_extensions.dart';
 import 'entry_bond_creator_factory.dart';
 
 mixin EntryBondsGenerator {
-  Future<void> createAndStoreEntryBonds<T>({
-    required List<T> sourceModels,
-    required List<int> sourceNumbers,
-    void Function(double progress)? onProgress,
-    required BuildContext context
-  }) async {
-
+  Future<void> createAndStoreEntryBonds<T>(
+      {required List<T> sourceModels,
+      required List<int> sourceNumbers,
+      void Function(double progress)? onProgress,
+      required BuildContext context}) async {
     final entryBondModels = _mapModelsToEntryBonds(sourceModels);
     await read<EntryBondController>().saveAllEntryBondModels(
       entryBonds: entryBondModels,
@@ -34,6 +31,7 @@ mixin EntryBondsGenerator {
     Map<String, AccountModel> modifiedAccounts = const {},
     void Function(double progress)? onProgress,
   }) async {
+    print("createAndStoreEntryBond----------------------");
     final entryBondController = read<EntryBondController>();
 
     final entryBondModels = _mapModelToEntryBonds(model);
@@ -43,7 +41,6 @@ mixin EntryBondsGenerator {
         entryBondModel: entryBondModels.first,
         sourceNumber: sourceNumbers.first,
         isSave: isSave,
-
         modifiedAccounts: modifiedAccounts,
       );
     } else {
@@ -52,7 +49,6 @@ mixin EntryBondsGenerator {
         sourceNumbers: sourceNumbers,
         isSave: isSave,
         onProgress: onProgress,
-
       );
     }
   }
@@ -65,7 +61,7 @@ mixin EntryBondsGenerator {
     return EntryBondCreatorFactory.resolveEntryBondCreators(model)
         .map(
           (creator) => creator.createEntryBond(
-            entryBondDate:EntryBondCreatorFactory.resolveOriginDate(model) ,
+            entryBondDate: EntryBondCreatorFactory.resolveOriginDate(model),
             originType: EntryBondCreatorFactory.resolveOriginType(model),
             model: model,
           ),
@@ -78,27 +74,23 @@ mixin EntryBondsGenerator {
     final creators = ChequesStrategyBondFactory.determineStrategy(model,
         type: chequesStrategyType);
     return creators.first.createEntryBond(
-      entryBondDate:EntryBondCreatorFactory.resolveOriginDate(model) ,
-
+      entryBondDate: EntryBondCreatorFactory.resolveOriginDate(model),
       model: model,
       originType: EntryBondCreatorFactory.resolveOriginType(model),
     );
   }
 
-  Future<void> createAndStoreChequeEntryBondByStrategy(
-    ChequesModel model, {
-    required ChequesStrategyType chequesStrategyType,
-    required int sourceNumber,
-    required bool isSave,
-        required BuildContext context
-  }) async {
+  Future<void> createAndStoreChequeEntryBondByStrategy(ChequesModel model,
+      {required ChequesStrategyType chequesStrategyType,
+      required int sourceNumber,
+      required bool isSave,
+      required BuildContext context}) async {
     final entryBondModel = createChequeEntryBondByStrategy(model,
         chequesStrategyType: chequesStrategyType);
     await read<EntryBondController>().saveEntryBondModel(
       entryBondModel: entryBondModel,
       sourceNumber: sourceNumber,
       isSave: isSave,
-
     );
   }
 
@@ -110,8 +102,7 @@ mixin EntryBondsGenerator {
   EntryBondModel _createEntryBondInstance<T>(T model, {bool? isSimulatedVat}) {
     return EntryBondCreatorFactory.resolveEntryBondCreator(model)
         .createEntryBond(
-      entryBondDate:EntryBondCreatorFactory.resolveOriginDate(model) ,
-
+      entryBondDate: EntryBondCreatorFactory.resolveOriginDate(model),
       isSimulatedVat: isSimulatedVat,
       originType: EntryBondCreatorFactory.resolveOriginType(model),
       model: model,

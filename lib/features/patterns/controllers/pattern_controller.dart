@@ -14,21 +14,25 @@ import '../../accounts/data/models/account_model.dart';
 import '../data/models/bill_type_model.dart';
 import '../services/pattern_form_handler.dart';
 
-class PatternController extends GetxController with AppNavigator, FloatingLauncher {
+class PatternController extends GetxController
+    with AppNavigator, FloatingLauncher {
   final RemoteDataSourceRepository<BillTypeModel> _repository;
 
   PatternController(this._repository);
 
   final List<BillTypeModel> billsTypes = [];
 
-  final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap = {};
+  final Map<TextEditingController, BillAccounts> controllerToBillAccountsMap =
+      {};
 
   // Form Handlers
   late final PatternFormHandler patternFormHandler;
 
-  BillPatternType? get selectedBillPatternType => patternFormHandler.selectedBillPatternType.value;
+  BillPatternType? get selectedBillPatternType =>
+      patternFormHandler.selectedBillPatternType.value;
 
-  BillTypeModel get billsTypeSales => billsTypes.firstWhere((billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
+  BillTypeModel get billsTypeSales => billsTypes.firstWhere(
+      (billTypeModel) => billTypeModel.billTypeId == BillType.sales.typeGuide);
 
   @override
   void onInit() {
@@ -45,22 +49,41 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
     switch (newType) {
       case BillPatternType.sales:
         fillControllers(
-            shortName: 'مبيعات', fullName: 'فاتورة مبيعات', latinShortName: 'Sales', latinFullName: 'Sales Invoice');
+            shortName: 'مبيعات',
+            fullName: 'فاتورة مبيعات',
+            latinShortName: 'Sales',
+            latinFullName: 'Sales Invoice');
+        break;
+      case BillPatternType.salesDelivery:
+        fillControllers(
+            shortName: 'مبيعات توصيل',
+            fullName: 'فاتورة مبيعات توصيل',
+            latinShortName: 'Sales Delivery',
+            latinFullName: 'Sales Invoice');
         break;
 
       case BillPatternType.purchase:
         fillControllers(
-            shortName: 'شراء', fullName: 'فاتورة مشتريات', latinShortName: 'Buy', latinFullName: 'Purchase Invoice');
+            shortName: 'شراء',
+            fullName: 'فاتورة مشتريات',
+            latinShortName: 'Buy',
+            latinFullName: 'Purchase Invoice');
         break;
 
       case BillPatternType.add:
         fillControllers(
-            shortName: 'إضافة', fullName: 'فاتورة إضافة', latinShortName: 'Add', latinFullName: 'Addition Invoice');
+            shortName: 'إضافة',
+            fullName: 'فاتورة إضافة',
+            latinShortName: 'Add',
+            latinFullName: 'Addition Invoice');
         break;
 
       case BillPatternType.remove:
         fillControllers(
-            shortName: 'سحب', fullName: 'فاتورة سحب', latinShortName: 'Remove', latinFullName: 'Removal Invoice');
+            shortName: 'سحب',
+            fullName: 'فاتورة سحب',
+            latinShortName: 'Remove',
+            latinFullName: 'Removal Invoice');
         break;
 
       case BillPatternType.buyReturn:
@@ -101,7 +124,10 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
 
       case BillPatternType.salesService:
         fillControllers(
-            shortName: 'مبيعات', fullName: 'فاتورة مبيعات', latinShortName: 'Sales', latinFullName: 'Sales Invoice');
+            shortName: 'مبيعات',
+            fullName: 'فاتورة مبيعات',
+            latinShortName: 'Sales',
+            latinFullName: 'Sales Invoice');
         break;
     }
   }
@@ -120,11 +146,14 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
     update();
   }
 
-  void navigateToAddPatternScreen({BillTypeModel? billType, required BuildContext context}) {
+  void navigateToAddPatternScreen(
+      {BillTypeModel? billType, required BuildContext context}) {
     patternFormHandler.init(billType: billType);
 
     launchFloatingWindow(
-        context: context, minimizedTitle: ApiConstants.patterns.tr, floatingScreen: AddPatternScreen());
+        context: context,
+        minimizedTitle: ApiConstants.patterns.tr,
+        floatingScreen: AddPatternScreen());
 
     // to(AppRoutes.addPatternsScreen);
   }
@@ -165,26 +194,21 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
       (failure) => AppUIUtils.onFailure(
         failure.message,
       ),
-
       (savedBillPattern) {
-
-
-
-
-         AppUIUtils.onSuccess(
-        'تم حفظ النموذج بنجاح!',
-      );
-         getAllBillTypes(true);
-         patternFormHandler.init(billType: savedBillPattern);
+        AppUIUtils.onSuccess(
+          'تم حفظ النموذج بنجاح!',
+        );
+        getAllBillTypes(true);
+        patternFormHandler.init(billType: savedBillPattern);
       },
     );
   }
 
   BillTypeModel _createBillTypeModel() {
-
     Map<Account, AccountModel> accounts = patternFormHandler.selectedAccounts;
 
-    accounts[BillAccounts.store] = patternFormHandler.selectedStore.value.toStoreAccountModel;
+    accounts[BillAccounts.store] =
+        patternFormHandler.selectedStore.value.toStoreAccountModel;
 
     final selectedBillTypeModel = patternFormHandler.selectedBillTypeModel;
 
@@ -197,7 +221,9 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
         fullName: patternFormHandler.fullNameController.text,
         latinFullName: patternFormHandler.latinFullNameController.text,
         billTypeLabel: patternFormHandler.selectedBillPatternType.value!.value,
-        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType.value!.value).typeGuide,
+        billTypeId: BillType.byLabel(
+                patternFormHandler.selectedBillPatternType.value!.value)
+            .typeGuide,
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );
@@ -208,26 +234,30 @@ class PatternController extends GetxController with AppNavigator, FloatingLaunch
         fullName: patternFormHandler.fullNameController.text,
         latinFullName: patternFormHandler.latinFullNameController.text,
         billTypeLabel: patternFormHandler.selectedBillPatternType.value!.value,
-        billTypeId: BillType.byLabel(patternFormHandler.selectedBillPatternType.value!.value).typeGuide,
+        billTypeId: BillType.byLabel(
+                patternFormHandler.selectedBillPatternType.value!.value)
+            .typeGuide,
         accounts: accounts,
         color: patternFormHandler.selectedColorValue,
       );
     }
   }
 
-  void deletePattern(BuildContext context) async{
-    if(patternFormHandler.selectedBillTypeModel!=null) {
-      final result = await _repository.delete(patternFormHandler.selectedBillTypeModel!.id!);
-      result.fold((failer){
-        AppUIUtils.onFailure(failer.message);
+  void deletePattern(BuildContext context) async {
+    if (patternFormHandler.selectedBillTypeModel != null) {
+      final result = await _repository
+          .delete(patternFormHandler.selectedBillTypeModel!.id!);
+      result.fold(
+        (failer) {
+          AppUIUtils.onFailure(failer.message);
+        },
+        (success) {
+          patternFormHandler.init();
+          AppUIUtils.onSuccess("تم حذف النمط بنجاح");
 
-      }, (success) {
-
-        patternFormHandler.init();
-        AppUIUtils.onSuccess("تم حذف النمط بنجاح");
-
-        getAllBillTypes(true);
-      },);
+          getAllBillTypes(true);
+        },
+      );
     }
   }
 }

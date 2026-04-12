@@ -10,7 +10,6 @@ import 'package:ba3_bs/features/pluto/data/models/pluto_adaptable.dart';
 import 'package:ba3_bs/features/sellers/controllers/sellers_controller.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +23,7 @@ import '../../../patterns/data/models/bill_type_model.dart';
 import 'bill_details.dart';
 import 'bill_items.dart';
 import 'invoice_record_model.dart';
-
+import 'package:collection/collection.dart';
 part 'bill_model.g.dart';
 
 @HiveType(typeId: 3)
@@ -57,6 +56,8 @@ class BillModel extends HiveObject
 
   @HiveField(8)
   final DateTime? auditedAt;
+  @HiveField(9)
+  final List<PaymentVoucherModel>? paymentsVoucher;
 
   BillModel({
     this.billId,
@@ -68,21 +69,26 @@ class BillModel extends HiveObject
     this.isAudited,
     this.auditedBy,
     this.auditedAt,
+    this.paymentsVoucher,
   });
 
   factory BillModel.fromJson(Map<String, dynamic> json) => BillModel(
-        billId: json['docId'],
-        freeBill: json['freeBill'],
-        billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
-        billDetails: BillDetails.fromJson(json['billDetails']),
-        items: BillItems.fromJson(json['items']),
-        status: Status.byValue(json['status']),
-        isAudited: json['isAudited'],
-        auditedBy: json['auditedBy'],
-        auditedAt: json['auditedAt'] != null
-            ? DateTime.parse(json['auditedAt'])
-            : null,
-      );
+      billId: json['docId'],
+      freeBill: json['freeBill'],
+      billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
+      billDetails: BillDetails.fromJson(json['billDetails']),
+      items: BillItems.fromJson(json['items']),
+      status: Status.byValue(json['status']),
+      isAudited: json['isAudited'],
+      auditedBy: json['auditedBy'],
+      auditedAt:
+          json['auditedAt'] != null ? DateTime.parse(json['auditedAt']) : null,
+      paymentsVoucher: json['paymentVoucher'] != null
+          ? List<PaymentVoucherModel>.from(
+              json['paymentVoucher']
+                  .map((x) => PaymentVoucherModel.fromJson(x)),
+            )
+          : null);
 
   factory BillModel.empty(
           {required BillTypeModel billTypeModel,
@@ -94,7 +100,9 @@ class BillModel extends HiveObject
         freeBill: false,
         items: BillItems(itemList: []),
         billDetails: BillDetails(
-          billPayType: InvPayType.cash.index,
+          billPayType: billTypeModel.latinShortName == 'Sales Delivery'
+              ? InvPayType.dueDelivery.index
+              : InvPayType.cash.index,
           billDate: DateTime.now(),
           previous: previousBillNumber ??
               (lastBillNumber == 0 ? null : lastBillNumber),
@@ -108,6 +116,7 @@ class BillModel extends HiveObject
     String? orderNumber,
     String? customerPhone,
     String? billCustomerId,
+    List<PaymentVoucherModel>? paymentsVoucherModel,
     required String billAccountId,
     required Status status,
     required String billSellerId,
@@ -152,6 +161,7 @@ class BillModel extends HiveObject
             items: items,
             status: status,
             freeBill: freeBill,
+            paymentsVoucher: paymentsVoucherModel,
           )
         : billModel.copyWith(
             billTypeModel: billTypeModel,
@@ -159,6 +169,7 @@ class BillModel extends HiveObject
             items: items,
             status: status,
             freeBill: freeBill,
+            paymentsVoucher: paymentsVoucherModel,
           );
   }
 
@@ -401,6 +412,8 @@ class BillModel extends HiveObject
         'isAudited': isAudited,
         'auditedBy': auditedBy,
         'auditedAt': auditedAt?.toIso8601String(),
+        if (paymentsVoucher != null)
+          'paymentVoucher': paymentsVoucher!.map((e) => e.toJson()).toList(),
       };
 
   BillModel copyWith({
@@ -413,6 +426,7 @@ class BillModel extends HiveObject
     final bool? isAudited,
     final String? auditedBy,
     final DateTime? auditedAt,
+    final List<PaymentVoucherModel>? paymentsVoucher,
   }) =>
       BillModel(
         billId: billId ?? this.billId,
@@ -424,6 +438,7 @@ class BillModel extends HiveObject
         isAudited: isAudited ?? this.isAudited,
         auditedBy: auditedBy ?? this.auditedBy,
         auditedAt: auditedAt ?? this.auditedAt,
+        paymentsVoucher: paymentsVoucher ?? this.paymentsVoucher,
       );
 
   @override
@@ -616,5 +631,101 @@ class BillModel extends HiveObject
         items,
         billDetails,
         status,
+        isAudited,
+        auditedBy,
+        auditedAt,
+        const DeepCollectionEquality().hash(paymentsVoucher),
+      ];
+}
+
+@HiveType(typeId: 50)
+class PaymentVoucherModel extends Equatable {
+  @HiveField(0)
+  final String? bondId;
+
+  @HiveField(1)
+  final AccountTransferData fromAccount;
+
+  @HiveField(2)
+  final List<AccountTransferData> toAccounts;
+
+  const PaymentVoucherModel({
+    this.bondId,
+    required this.fromAccount,
+    required this.toAccounts,
+  });
+
+  PaymentVoucherModel copyWith({
+    String? bondId,
+    AccountTransferData? fromAccount,
+    List<AccountTransferData>? toAccounts,
+  }) {
+    return PaymentVoucherModel(
+      bondId: bondId ?? this.bondId,
+      fromAccount: fromAccount ?? this.fromAccount,
+      toAccounts: toAccounts ?? this.toAccounts,
+    );
+  }
+
+  factory PaymentVoucherModel.fromJson(Map<String, dynamic> json) {
+    return PaymentVoucherModel(
+      bondId: json['bondId'],
+      fromAccount: AccountTransferData.fromJson(json['fromAccount']),
+      toAccounts: (json['toAccounts'] as List)
+          .map((e) => AccountTransferData.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'bondId': bondId,
+        'fromAccount': fromAccount.toJson(),
+        'toAccounts': toAccounts.map((e) => e.toJson()).toList(),
+      };
+
+  @override
+  List<Object?> get props => [
+        bondId,
+        fromAccount,
+        const DeepCollectionEquality().hash(toAccounts),
+      ];
+}
+
+@HiveType(typeId: 51)
+class AccountTransferData extends Equatable {
+  @HiveField(0)
+  final String accountId;
+
+  @HiveField(1)
+  final String accountName;
+
+  @HiveField(2)
+  final int? amount;
+
+  const AccountTransferData({
+    required this.accountId,
+    required this.accountName,
+    this.amount,
+  });
+
+  factory AccountTransferData.fromJson(Map<String, dynamic> json) {
+    return AccountTransferData(
+      accountId: json['accountId'],
+      accountName: json['accountName'],
+      amount: json['amount'] == null ? null : (json['amount'] as num).toInt(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'accountId': accountId,
+        'accountName': accountName,
+        if (amount != null) 'amount': amount,
+      };
+
+  @override
+  List<Object?> get props => [
+        accountId,
+        accountName,
+        amount,
       ];
 }

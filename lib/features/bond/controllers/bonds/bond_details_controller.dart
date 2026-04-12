@@ -32,7 +32,8 @@ class BondDetailsController extends GetxController with AppValidator {
 
   // Repositories
 
-  final CompoundDatasourceRepository<BondModel, BondTypeModel> _bondsFirebaseRepo;
+  final CompoundDatasourceRepository<BondModel, BondTypeModel>
+      _bondsFirebaseRepo;
   final BondDetailsPlutoController bondDetailsPlutoController;
   final BondSearchController bondSearchController;
 
@@ -53,6 +54,7 @@ class BondDetailsController extends GetxController with AppValidator {
   RxBool isBondSaved = false.obs;
 
   late BondTypeModel bondType;
+  late BondModel bondModel;
 
   late bool isDebitOrCredit;
 
@@ -75,7 +77,8 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   void setIsDebitOrCredit() {
-    if (bondType.type == BondType.journalVoucher || bondType.type == BondType.openingEntry) {
+    if (bondType.type == BondType.journalVoucher ||
+        bondType.type == BondType.openingEntry) {
       isDebitOrCredit = false;
     } else {
       isDebitOrCredit = true;
@@ -90,14 +93,16 @@ class BondDetailsController extends GetxController with AppValidator {
 
   bool validateForm() => formKey.currentState?.validate() ?? false;
 
-  String? validator(String? value, String fieldName) => isFieldValid(value, fieldName);
+  String? validator(String? value, String fieldName) =>
+      isFieldValid(value, fieldName);
 
   void setBondDate(DateTime newDate) {
     bondDate.value = newDate.dayMonthYear;
     update();
   }
 
-  Future<void> deleteBond(BondModel bondModel, BuildContext context, {bool fromBondById = false}) async {
+  Future<void> deleteBond(BondModel bondModel, BuildContext context,
+      {bool fromBondById = false}) async {
     if (!RoleItemType.viewBond.hasDeletePermission) {
       AppUIUtils.onFailure("no permissions");
       return;
@@ -114,7 +119,8 @@ class BondDetailsController extends GetxController with AppValidator {
         );
       },
       (success) async {
-        await _bondService.handleDeleteSuccess(bondModel, bondSearchController, context, fromBondById);
+        await _bondService.handleDeleteSuccess(
+            bondModel, bondSearchController, context, fromBondById);
         deleteBondRequestState.value = RequestState.success;
       },
     );
@@ -124,17 +130,25 @@ class BondDetailsController extends GetxController with AppValidator {
     await _saveOrUpdateBond(bondType: bondType, context: context);
   }
 
-  Future<void> updateBond({required BondTypeModel bondType, required BondModel bondModel, required BuildContext context}) async {
+  Future<void> updateBond(
+      {required BondTypeModel bondType,
+      required BondModel bondModel,
+      required BuildContext context}) async {
     if (RoleItemType.viewBond.hasUpdatePermission) {
-      await _saveOrUpdateBond(bondType: bondType, existingBondModel: bondModel, context: context);
+      await _saveOrUpdateBond(
+          bondType: bondType, existingBondModel: bondModel, context: context);
     } else {
       AppUIUtils.onFailure('no permissions');
     }
   }
 
-  Future<void> _saveOrUpdateBond({required BondTypeModel bondType, BondModel? existingBondModel, required BuildContext context}) async {
+  Future<void> _saveOrUpdateBond(
+      {required BondTypeModel bondType,
+      BondModel? existingBondModel,
+      required BuildContext context}) async {
     // Validate the form first
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
+    // print('saveOrUpdateBond');
 
     if (!bondDetailsPlutoController.checkIfBalancedBond()) {
       AppUIUtils.onFailure(
@@ -143,7 +157,8 @@ class BondDetailsController extends GetxController with AppValidator {
       return;
     }
     // Create the bond model from the provided data
-    final updatedBondModel = _createBondModelFromBondData(bondType, existingBondModel);
+    final updatedBondModel =
+        _createBondModelFromBondData(bondType, existingBondModel);
 
     // Handle null bond model
     if (updatedBondModel == null) {
@@ -185,6 +200,7 @@ class BondDetailsController extends GetxController with AppValidator {
           bondDetailsController: this,
           context: context,
         );
+        bondModel = savedBondModel;
         bondNumberController.text = savedBondModel.payNumber.toString();
         saveBondRequestState.value = RequestState.success;
       },
@@ -204,7 +220,8 @@ class BondDetailsController extends GetxController with AppValidator {
     isBondSaved.value = newValue;
   }
 
-  BondModel? _createBondModelFromBondData(BondTypeModel bondType, [BondModel? bondModel]) {
+  BondModel? _createBondModelFromBondData(BondTypeModel bondType,
+      [BondModel? bondModel]) {
     // Validate customer accounts
     if (bondSearchController.bondDetailsController.isDebitOrCredit) {
       if (!_bondService.validateAccount(
@@ -218,12 +235,14 @@ class BondDetailsController extends GetxController with AppValidator {
       bondModel: bondModel,
       bondType: bondType,
       payDate: bondDate.value,
-      payAccountGuid: selectedAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
+      payAccountGuid:
+          selectedAccount?.id! ?? "00000000-0000-0000-0000-000000000000",
       note: noteController.text,
     );
   }
 
-  prepareBondRecords(PayItems bondItems, BondDetailsPlutoController bondDetailsPlutoController) =>
+  prepareBondRecords(PayItems bondItems,
+          BondDetailsPlutoController bondDetailsPlutoController) =>
       bondDetailsPlutoController.prepareBondRows(bondItems.itemList);
 
   initBondNumberController(int? bondNumber) {
@@ -234,15 +253,19 @@ class BondDetailsController extends GetxController with AppValidator {
     }
   }
 
-  void updateBondDetailsOnScreen(BondModel bond, BondDetailsPlutoController bondPlutoController) {
+  void updateBondDetailsOnScreen(
+      BondModel bond, BondDetailsPlutoController bondPlutoController) {
     setBondDate(bond.payDate!.toDate);
     isBondSaved.value = bond.payGuid != null;
     initBondNumberController(bond.payNumber);
     initBondNote(bond.payNote);
 
     if (AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid) != null) {
-      setAccount(AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!);
-      accountController.text = AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!.accName!;
+      setAccount(
+          AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!);
+      accountController.text =
+          AppServiceUtils.getAccountModelFromLabel(bond.payAccountGuid)!
+              .accName!;
     }
 
     prepareBondRecords(bond.payItems, bondPlutoController);
@@ -262,7 +285,8 @@ class BondDetailsController extends GetxController with AppValidator {
   }
 
   appendNewBill({required String typeGuide, required int lastBondNumber}) {
-    BondModel newBond = BondModel.empty(typeGuide: typeGuide, lastBondNumber: lastBondNumber);
+    BondModel newBond =
+        BondModel.empty(typeGuide: typeGuide, lastBondNumber: lastBondNumber);
 
     bondSearchController.insertLastAndUpdate(newBond);
   }

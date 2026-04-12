@@ -398,8 +398,12 @@ class AppBindings extends Bindings {
 
     lazyPut(MaterialsStatementController(repositories.matStatementsRepo));
 
-    lazyPut(AllBillsController(repositories.billsRepo,
-        repositories.serialNumbersRepo, repositories.billImportExportRepo));
+    lazyPut(AllBillsController(
+      repositories.billsRepo,
+      repositories.serialNumbersRepo,
+      repositories.billImportExportRepo,
+      repositories.bondsRepo,
+    ));
 
     lazyPut(AllBondsController(
       repositories.bondsRepo,

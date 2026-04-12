@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/bill_search_controller.dart';
 import 'package:ba3_bs/features/bill/data/models/bill_model.dart';
@@ -34,6 +35,8 @@ class BillDetailsScreen extends StatelessWidget {
         tag: tag,
         builder: (_) {
           final BillModel currentBill = billSearchController.getCurrentBill;
+          print(currentBill.billId);
+          print('=========');
           log('${currentBill.billDetails.previous} <=> (CurrentBill ${currentBill.billDetails.billNumber}) <=> ${currentBill.billDetails.next}');
 
           return GetBuilder<BillDetailsController>(
@@ -62,7 +65,7 @@ class BillDetailsScreen extends StatelessWidget {
                         const VerticalSpace(10),
                         BillDetailsCalculations(
                           billTypeModel: currentBill.billTypeModel,
-                          currentBill:billSearchController.currentBill ,
+                          currentBill: billSearchController.currentBill,
                           billDetailsPlutoController:
                               billDetailsPlutoController,
                           tag: tag,

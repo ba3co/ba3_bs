@@ -17,7 +17,6 @@ import 'bond_type.dart';
 
 part 'bond_model.g.dart';
 
-
 @HiveType(typeId: 13)
 class BondModel extends HiveObject implements PlutoAdaptable {
   @HiveField(0)
@@ -89,23 +88,22 @@ class BondModel extends HiveObject implements PlutoAdaptable {
 
   factory BondModel.fromJson(Map<String, dynamic> json) {
     return BondModel(
-      payTypeGuid: json['PayTypeGuid'],
-      payNumber: json['PayNumber'],
-      payGuid: json['docId'],
-      payBranchGuid: json['PayBranchGuid'],
-      payDate: json['PayDate'],
-      entryPostDate: json['EntryPostDate'],
-      payNote: json['PayNote'],
-      payCurrencyGuid: json['PayCurrencyGuid'],
-      payCurVal: (json['PayCurVal'] as num).toDouble(),
-      payAccountGuid: json['PayAccountGuid'],
-      paySecurity: json['PaySecurity'],
-      paySkip: json['PaySkip'],
-      erParentType: json['ErParentType'],
-      payItems: PayItems.fromJson(json['PayItems'] ?? {}),
-      e: json['E'],
-      bondTypeLabel: json["BondTypeLabel"]
-    );
+        payTypeGuid: json['PayTypeGuid'],
+        payNumber: json['PayNumber'],
+        payGuid: json['docId'],
+        payBranchGuid: json['PayBranchGuid'],
+        payDate: json['PayDate'],
+        entryPostDate: json['EntryPostDate'],
+        payNote: json['PayNote'],
+        payCurrencyGuid: json['PayCurrencyGuid'],
+        payCurVal: (json['PayCurVal'] as num).toDouble(),
+        payAccountGuid: json['PayAccountGuid'],
+        paySecurity: json['PaySecurity'],
+        paySkip: json['PaySkip'],
+        erParentType: json['ErParentType'],
+        payItems: PayItems.fromJson(json['PayItems'] ?? {}),
+        e: json['E'],
+        bondTypeLabel: json["BondTypeLabel"]);
   }
 
   factory BondModel.fromBondData({
@@ -125,41 +123,44 @@ class BondModel extends HiveObject implements PlutoAdaptable {
 
     BondModel createdBondModel = bondModel == null
         ? BondModel(
-      payItems: items,
-      e: "E=2",
-      erParentType: 4,
-      payCurrencyGuid: "00000000-0000-0000-0000-000000000000",
-      payBranchGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
-      entryPostDate: Timestamp.now().toDate().toString(),
-      paySecurity: 1,
-      paySkip: 0,
-      payCurVal: 1,
-      payAccountGuid: payAccountGuid,
-      payTypeGuid: bondTypeModel.typeGuide,
-      bondTypeLabel: bondTypeModel.label, // <-- set label here
-      payDate: payDate,
-      payNote: note,
-    )
+            payItems: items,
+            e: "E=2",
+            erParentType: 4,
+            payCurrencyGuid: "00000000-0000-0000-0000-000000000000",
+            payBranchGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
+            entryPostDate: Timestamp.now().toDate().toString(),
+            paySecurity: 1,
+            paySkip: 0,
+            payCurVal: 1,
+            payAccountGuid: payAccountGuid,
+            payTypeGuid: bondTypeModel.typeGuide,
+            bondTypeLabel: bondTypeModel.label, // <-- set label here
+            payDate: payDate,
+            payNote: note,
+          )
         : bondModel.copyWith(
-      e: "E=2",
-      erParentType: 4,
-      payBranchGuid: "00000000-0000-0000-0000-000000000000",
-      payCurrencyGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
-      entryPostDate: Timestamp.now().toDate().toString(),
-      paySecurity: 1,
-      paySkip: 0,
-      payCurVal: 1,
-      payAccountGuid: payAccountGuid,
-      payTypeGuid: bondTypeModel.typeGuide,
-      bondTypeLabel: bondTypeModel.label, // <-- set label here
-      payItems: items,
-      payDate: payDate,
-      payNote: note,
-    );
+            e: "E=2",
+            erParentType: 4,
+            payBranchGuid: "00000000-0000-0000-0000-000000000000",
+            payCurrencyGuid: "884edcde-c172-490d-a2f2-f10a0b90326a",
+            entryPostDate: Timestamp.now().toDate().toString(),
+            paySecurity: 1,
+            paySkip: 0,
+            payCurVal: 1,
+            payAccountGuid: payAccountGuid,
+            payTypeGuid: bondTypeModel.typeGuide,
+            bondTypeLabel: bondTypeModel.label, // <-- set label here
+            payItems: items,
+            payDate: payDate,
+            payNote: note,
+          );
     return createdBondModel;
   }
 
-  factory BondModel.empty({required String typeGuide, String? bondTypeLabel, int lastBondNumber = 0}) {
+  factory BondModel.empty(
+      {required String typeGuide,
+      String? bondTypeLabel,
+      int lastBondNumber = 0}) {
     return BondModel(
       payAccountGuid: '',
       payItems: PayItems(itemList: []),
@@ -243,7 +244,9 @@ class BondModel extends HiveObject implements PlutoAdaptable {
       payNumber: payJson["PayNumber"],
       payGuid: payJson["PayGuid"],
       payBranchGuid: payJson["PayBranchGuid"],
-      payDate: dateFormat.parse(payJson["PayDate"].toString().toYearMonthDayFormat()).dayMonthYear,
+      payDate: dateFormat
+          .parse(payJson["PayDate"].toString().toYearMonthDayFormat())
+          .dayMonthYear,
       entryPostDate: payJson["EntryPostDate"],
       payNote: payJson["PayNote"].toString(),
       payCurrencyGuid: payJson["PayCurrencyGuid"],
@@ -283,13 +286,17 @@ class BondModel extends HiveObject implements PlutoAdaptable {
         title: 'المبلغ',
         field: 'المبلغ',
         type: PlutoColumnType.number(),
-      ): payItems.itemList.fold(0.0, (previousValue, element) => previousValue + element.entryDebit!),
+      ): payItems.itemList.fold(
+          0.0, (previousValue, element) => previousValue + element.entryDebit!),
       PlutoColumn(
         title: 'الحسابات المتأثرة',
         field: 'الحسابات',
         type: PlutoColumnType.text(),
         width: 0.6.sw,
-      ): payItems.itemList.map((item) => item.entryAccountName).toList().join(', '),
+      ): payItems.itemList
+          .map((item) => item.entryAccountName)
+          .toList()
+          .join(', '),
       PlutoColumn(
         title: 'type',
         field: 'type',

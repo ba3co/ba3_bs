@@ -57,6 +57,7 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
   }) {
     log("generateRecords ${plutoController.generateRecords.length}",
         name: "createBondModel");
+
     return BondModel.fromBondData(
       bondModel: bondModel,
       bondTypeModel: bondType,
@@ -67,25 +68,30 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     );
   }
 
-  Future<void> handleDeleteSuccess(
-      BondModel bondModel, BondSearchController bondSearchController,BuildContext context,
+  Future<void> handleDeleteSuccess(BondModel bondModel,
+      BondSearchController bondSearchController, BuildContext context,
       [fromBondById]) async {
     // Only fetchBonds if open bond details by bond id from AllBondsScreen
     if (fromBondById) {
-      final bondType = Get.find<BondTypeService>().getBondTypeByGuide(bondModel.payTypeGuid!);
+      final bondType = Get.find<BondTypeService>()
+          .getBondTypeByGuide(bondModel.payTypeGuid!);
 
-      await read<AllBondsController>()
-          .fetchAllBondsByType(bondType,);
+      await read<AllBondsController>().fetchAllBondsByType(
+        bondType,
+      );
       // await read<AllBondsController>().fetchAllBondsLocal();
       Get.back();
     } else {
       bondSearchController.removeBond(bondModel);
     }
-    if(!context.mounted) return;
-    AppUIUtils.onSuccess('تم حذف السند رقم ${bondModel.payNumber} بنجاح!', );
+    if (!context.mounted) return;
+    AppUIUtils.onSuccess(
+      'تم حذف السند رقم ${bondModel.payNumber} بنجاح!',
+    );
 
     read<EntryBondController>().deleteEntryBondModel(
-        entryId: bondModel.payGuid!, /*sourceNumber: bondModel.payNumber!,*/);
+      entryId: bondModel.payGuid!, /*sourceNumber: bondModel.payNumber!,*/
+    );
   }
 
   Future<void> handleSaveOrUpdateSuccess({
@@ -97,20 +103,22 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     required BuildContext context,
     required String oldBillNumberFromUi,
   }) async {
-    _showSuccessMessage(isSave, context,oldBillNumberFromUi,currentBond);
+    _showSuccessMessage(isSave, context, oldBillNumberFromUi, currentBond);
 
-
-    log("handleSaveOrUpdateSuccess :  ${currentBond.bondTypeLabel??"no label"}");
+    log("handleSaveOrUpdateSuccess :  ${currentBond.bondTypeLabel ?? "no label"}");
     Map<String, AccountModel> modifiedBondTypeAccounts = {};
     if (isSave) {
       bondDetailsController.updateIsBondSaved(true);
 
-      if (hasModelId(currentBond.payGuid,) &&
-          hasModelItems(currentBond.payItems.itemList,)) {
+      if (hasModelId(
+            currentBond.payGuid,
+          ) &&
+          hasModelItems(
+            currentBond.payItems.itemList,
+          )) {
         generatePdfAndSendToEmail(
           fileName: AppStrings.newBond.tr,
           itemModel: currentBond,
-
         );
       }
     } else {
@@ -118,27 +126,33 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
         previousBond: previousBond!,
         currentBond: currentBond,
       );
-      if (hasModelId(currentBond.payGuid,) &&
-          hasModelItems(currentBond.payItems.itemList,) &&
-          hasModelId(previousBond.payGuid,) &&
-          hasModelItems(previousBond.payItems.itemList,)) {
+      if (hasModelId(
+            currentBond.payGuid,
+          ) &&
+          hasModelItems(
+            currentBond.payItems.itemList,
+          ) &&
+          hasModelId(
+            previousBond.payGuid,
+          ) &&
+          hasModelItems(
+            previousBond.payItems.itemList,
+          )) {
         generatePdfAndSendToEmail(
           fileName: AppStrings.updatedBond.tr,
           itemModel: [previousBond, currentBond],
-
         );
       }
     }
     bondSearchController.updateBond(currentBond);
 
-
-    debugPrint("inside handleSaveOrUpdateSuccess the value of bond model label is :  ${currentBond.bondTypeLabel??"no id"}");
+    debugPrint(
+        "inside handleSaveOrUpdateSuccess the value of bond model label is :  ${currentBond.bondTypeLabel ?? "no id"}");
     createAndStoreEntryBond(
       model: currentBond,
       sourceNumbers: [currentBond.payNumber!],
       modifiedAccounts: modifiedBondTypeAccounts,
       isSave: isSave,
-
     );
 
     // final creator = EntryBondCreatorFactory.resolveEntryBondCreator(currentBond);
@@ -151,26 +165,33 @@ class BondDetailsService with PdfBase, EntryBondsGenerator, FloatingLauncher {
     //   ),
     // );
   }
-  void _showSuccessMessage(bool isSave, BuildContext context, String oldBondNumberFromUi, BondModel currentBond) {
 
-    final bool changedBondNumber= oldBondNumberFromUi.toInt != currentBond.payNumber;
+  void _showSuccessMessage(bool isSave, BuildContext context,
+      String oldBondNumberFromUi, BondModel currentBond) {
+    final bool changedBondNumber =
+        oldBondNumberFromUi.toInt != currentBond.payNumber;
 
-    if (changedBondNumber){
+    if (changedBondNumber) {
       AppUIUtils.onInfo(
-        '${currentBond.payNumber} \nهو الرقم الجديد','تغيير رقم السند',
+        '${currentBond.payNumber} \nهو الرقم الجديد',
+        'تغيير رقم السند',
       );
-    }else{ final message = isSave ? 'تم حفظ الفاتورة رقم ${currentBond.payNumber} بنجاح!' : 'تم تعديل الفاتورة رقم ${currentBond.payNumber} بنجاح!';
-    AppUIUtils.onSuccess(
-      message,
-    );}
+    } else {
+      final message = isSave
+          ? 'تم حفظ الفاتورة رقم ${currentBond.payNumber} بنجاح!'
+          : 'تم تعديل الفاتورة رقم ${currentBond.payNumber} بنجاح!';
+      AppUIUtils.onSuccess(
+        message,
+      );
+    }
     log("changedBondNumber");
-
-
   }
 
   bool validateAccount(AccountModel? customerAccount) {
     if (customerAccount == null) {
-      AppUIUtils.onFailure('من فضلك أدخل اسم الحساب!', );
+      AppUIUtils.onFailure(
+        'من فضلك أدخل اسم الحساب!',
+      );
       return false;
     }
     return true;

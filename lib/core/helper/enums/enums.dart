@@ -39,28 +39,48 @@ enum BillType {
     typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
     color: 4282339765,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.additions: AccountModel(accName: "ايرادات مختلفة", id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
-      BillAccounts.discounts: AccountModel(accName: "الحسم الممنوح", id: "e903d658-f30f-46c8-82c0-fee86256a511"),
-      BillAccounts.materials: AccountModel(accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
-      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
-      BillAccounts.gifts: AccountModel(accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
-      BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.additions: AccountModel(
+          accName: "ايرادات مختلفة",
+          id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
+      BillAccounts.discounts: AccountModel(
+          accName: "الحسم الممنوح", id: "e903d658-f30f-46c8-82c0-fee86256a511"),
+      BillAccounts.materials: AccountModel(
+          accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
+      BillAccounts.caches: AccountModel(
+          accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.gifts: AccountModel(
+          accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
+      BillAccounts.exchangeForGifts: AccountModel(
+          accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
     },
   ),
+
   purchase(
     label: 'purchase',
     value: 'فاتورة مشتريات',
     typeGuide: "eb10653a-a43f-44e5-889d-41ce68c43ec4",
     color: 4284513675,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.additions: AccountModel(accName: "مصاريف نقل المشتريات", id: "c5cdd2bc-85c2-4f7c-a4c8-13c847794211"),
-      BillAccounts.discounts: AccountModel(accName: "الحسم المكتسب", id: "7102c69a-50f6-4489-a3e5-811bef04f26d"),
-      BillAccounts.materials: AccountModel(accName: "المشتريات", id: "4fd556cc-6408-4fe7-809a-0d35bc399c11"),
-      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
-      BillAccounts.gifts: AccountModel(accName: "إكراميات وهدايا", id: "220e1101-08a3-45a8-bd66-b244a1674d36"),
-      BillAccounts.exchangeForGifts: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.additions: AccountModel(
+          accName: "مصاريف نقل المشتريات",
+          id: "c5cdd2bc-85c2-4f7c-a4c8-13c847794211"),
+      BillAccounts.discounts: AccountModel(
+          accName: "الحسم المكتسب", id: "7102c69a-50f6-4489-a3e5-811bef04f26d"),
+      BillAccounts.materials: AccountModel(
+          accName: "المشتريات", id: "4fd556cc-6408-4fe7-809a-0d35bc399c11"),
+      BillAccounts.caches: AccountModel(
+          accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.gifts: AccountModel(
+          accName: "إكراميات وهدايا",
+          id: "220e1101-08a3-45a8-bd66-b244a1674d36"),
+      BillAccounts.exchangeForGifts: AccountModel(
+          accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
     },
   ),
   salesReturn(
@@ -69,9 +89,14 @@ enum BillType {
     typeGuide: "2373523c-9f23-4ce7-a6a2-6277757fc381",
     color: 4282339765,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
-      BillAccounts.materials: AccountModel(accName: "مردود المبيعات", id: "3c360b04-9a62-449c-929d-806b06810bcc"),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.caches: AccountModel(
+          accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.materials: AccountModel(
+          accName: "مردود المبيعات",
+          id: "3c360b04-9a62-449c-929d-806b06810bcc"),
     },
   ),
   purchaseReturn(
@@ -80,9 +105,14 @@ enum BillType {
     typeGuide: "507f9e7d-e44e-4c4e-9761-bb3cd4fc1e0d",
     color: 4278228616,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.materials: AccountModel(accName: 'مردود المشتريات', id: "ee4e9396-56cd-41bd-af14-f5f588b21dd9"),
-      BillAccounts.caches: AccountModel(accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.materials: AccountModel(
+          accName: 'مردود المشتريات',
+          id: "ee4e9396-56cd-41bd-af14-f5f588b21dd9"),
+      BillAccounts.caches: AccountModel(
+          accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
     },
   ),
   adjustmentEntry(
@@ -91,9 +121,13 @@ enum BillType {
     typeGuide: "06f0e6ea-3493-480c-9e0c-573baf049605",
     color: 4286141768,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.caches: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
-      BillAccounts.materials: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.caches: AccountModel(
+          accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+      BillAccounts.materials: AccountModel(
+          accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
     },
   ),
   outputAdjustment(
@@ -102,9 +136,13 @@ enum BillType {
     typeGuide: "563af9aa-5d7e-470b-8c3c-fee784da810a",
     color: 4294924066,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
-      BillAccounts.materials: AccountModel(accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
-      BillAccounts.caches: AccountModel(accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.materials: AccountModel(
+          accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
+      BillAccounts.caches: AccountModel(
+          accName: "تسوية جردية", id: "60106f64-7148-468a-b38d-626e35c4043e"),
     },
   ),
   firstPeriodInventory(
@@ -113,7 +151,9 @@ enum BillType {
     typeGuide: "5a9e7782-cde5-41db-886a-ac89732feda7",
     color: 4287349578,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
     },
   ),
   transferIn(
@@ -122,7 +162,9 @@ enum BillType {
     typeGuide: "494fa945-3fe5-4fc3-86d6-7a9999b6c9e8",
     color: 4278228616,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
     },
   ),
   transferOut(
@@ -131,7 +173,33 @@ enum BillType {
     typeGuide: "35c75331-1917-451e-84de-d26861134cd4",
     color: 4278228616,
     accounts: {
-      BillAccounts.store: AccountModel(accName: "المستودع الرئيسي", id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+    },
+  ),
+  salesDelivery(
+    label: 'salesDelivery',
+    value: 'فاتورة مبيعات توصيل',
+    typeGuide: "6ed3786c-08c6-453b-afeb-a0e9075dd26d",
+    color: 4282339765,
+    accounts: {
+      BillAccounts.store: AccountModel(
+          accName: "المستودع الرئيسي",
+          id: '6d9836d1-fccd-4006-804f-81709eecde57'),
+      BillAccounts.additions: AccountModel(
+          accName: "ايرادات مختلفة",
+          id: "1a1416bb-426b-4348-98cf-f1b026cc6c7d"),
+      BillAccounts.discounts: AccountModel(
+          accName: "الحسم الممنوح", id: "e903d658-f30f-46c8-82c0-fee86256a511"),
+      BillAccounts.materials: AccountModel(
+          accName: "المبيعات", id: "b1e9e80b-0d23-414d-b3be-bd0aec386002"),
+      BillAccounts.caches: AccountModel(
+          accName: "الصندوق", id: "5b36c82d-9105-4177-a5c3-0f90e5857e3c"),
+      BillAccounts.gifts: AccountModel(
+          accName: "هدايا البيع", id: "9d04d1f1-23f3-466e-8edb-5c16074e44ad"),
+      BillAccounts.exchangeForGifts: AccountModel(
+          accName: "تسويات", id: "201046d2-7ca0-4ac4-a55d-b1dbf4e54dde"),
     },
   );
 
@@ -155,21 +223,24 @@ enum BillType {
   factory BillType.byLabel(String label) {
     return BillType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching BillType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching BillType for label: $label'),
     );
   }
 
   factory BillType.byTypeGuide(String typeGuide) {
     return BillType.values.firstWhere(
       (type) => type.typeGuide == typeGuide,
-      orElse: () => throw ArgumentError('No matching BillType for guide: $typeGuide'),
+      orElse: () =>
+          throw ArgumentError('No matching BillType for guide: $typeGuide'),
     );
   }
 
   factory BillType.byValue(String value) {
     return BillType.values.firstWhere(
       (type) => type.value == value,
-      orElse: () => throw ArgumentError('No matching BillType for guide: $value'),
+      orElse: () =>
+          throw ArgumentError('No matching BillType for guide: $value'),
     );
   }
 
@@ -189,7 +260,8 @@ enum BillType {
   BillPatternType get billPatternType => BillPatternType.byValue(label);
 }
 
-List<BillTypeModel> get allBillTypeModels => BillType.values.map((billType) => billType.billTypeModel).toList();
+List<BillTypeModel> get allBillTypeModels =>
+    BillType.values.map((billType) => billType.billTypeModel).toList();
 
 @HiveType(typeId: 8) // Use a unique typeId
 enum BillPatternType {
@@ -221,19 +293,23 @@ enum BillPatternType {
   salesService(label: 'مبيع خدمة', value: 'sales service'),
 
   @HiveField(9)
-  transferIn(label: 'تسوية الزيادة', value: 'transferIn');
+  transferIn(label: 'تسوية الزيادة', value: 'transferIn'),
+  @HiveField(10)
+  salesDelivery(label: 'مبيعات توصيل', value: 'salesDelivery');
 
   final String label;
   final String value;
 
   const BillPatternType({required this.label, required this.value});
 
-  factory BillPatternType.byValue(String value) => BillPatternType.values.firstWhere(
+  factory BillPatternType.byValue(String value) =>
+      BillPatternType.values.firstWhere(
         (e) => e.value == value,
         orElse: () => throw ArgumentError('No matching value: $value'),
       );
 
-  factory BillPatternType.byLabel(String label) => BillPatternType.values.firstWhere(
+  factory BillPatternType.byLabel(String label) =>
+      BillPatternType.values.firstWhere(
         (e) => e.label == label,
         orElse: () => throw ArgumentError('No matching label: $label'),
       );
@@ -245,7 +321,9 @@ enum NotificationStatus { success, error, info }
 
 enum InvPayType {
   cash('نقدي'),
-  due('اجل');
+  due('اجل'),
+  dueDelivery('آجل توصيل'),
+  bankTransferDelivery('تحويل بنكي توصيل');
 
   // Custom value for each enum case
   final String label;
@@ -255,25 +333,28 @@ enum InvPayType {
   factory InvPayType.fromIndex(int index) {
     return InvPayType.values.firstWhere(
       (type) => type.index == index,
-      orElse: () => throw ArgumentError('No matching BillType for label: $index'),
+      orElse: () =>
+          throw ArgumentError('No matching BillType for label: $index'),
     );
   }
 }
 
 @HiveType(typeId: 9)
 enum Status {
-  @HiveField(0)
-  approved('approved'),
-  @HiveField(1)
-  canceled('canceled'),
-  @HiveField(2)
-  pending('pending');
+  pending('pending'), // قيد المعالجة
+
+  deliveredToCourier('delivered_to_courier'), // تم تسليم لشركة التوصيل
+
+  deliveredToCustomer('delivered_to_customer'), // تم التسليم للعميل
+  canceled('canceled'), // تم رفض الطلب
+
+  returnedToStore('returned_to_store'), // تم التسليم للمحل
+
+  approved('approved'); // منتهية
 
   final String value;
-
   const Status(this.value);
 
-  // Factory constructor to handle conversion from string to BillStatus
   factory Status.byValue(String value) {
     return Status.values.firstWhere(
       (status) => status.value == value,
@@ -282,10 +363,29 @@ enum Status {
   }
 }
 
+// enum Status {
+//   @HiveField(0)
+//   approved('approved'),
+//   @HiveField(1)
+//   canceled('canceled'),
+//   @HiveField(2)
+//   pending('pending');
+
+//   final String value;
+
+//   const Status(this.value);
+
+//   // Factory constructor to handle conversion from string to BillStatus
+//   factory Status.byValue(String value) {
+//     return Status.values.firstWhere(
+//       (status) => status.value == value,
+//       orElse: () => throw ArgumentError('No matching Status for value: $value'),
+//     );
+//   }
+// }
 
 @HiveType(typeId: 16)
 enum BondType {
-
   @HiveField(0)
   openingEntry(
     label: "OpeningEntry",
@@ -356,10 +456,11 @@ enum BondType {
     required this.color,
   });
 
-
   factory BondType.byName(String name) {
     return BondType.values.firstWhere(
-          (type) => type.name.toLowerCase() == name.toLowerCase(),
+      (type) {
+        return type.name.toLowerCase() == name.toLowerCase();
+      },
       orElse: () => throw ArgumentError('No matching BondType for name: $name'),
     );
   }
@@ -368,21 +469,24 @@ enum BondType {
   factory BondType.byLabel(String label) {
     return BondType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching BondType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching BondType for label: $label'),
     );
   }
 
   factory BondType.byTypeGuide(String typeGuide) {
     return BondType.values.firstWhere(
       (type) => type.typeGuide == typeGuide,
-      orElse: () => throw ArgumentError('No matching BondType for guide: $typeGuide'),
+      orElse: () =>
+          throw ArgumentError('No matching BondType for guide: $typeGuide'),
     );
   }
 
   factory BondType.byValue(String value) {
     return BondType.values.firstWhere(
       (type) => type.value == value,
-      orElse: () => throw ArgumentError('No matching BondType for guide: $value'),
+      orElse: () =>
+          throw ArgumentError('No matching BondType for guide: $value'),
     );
   }
 }
@@ -423,21 +527,24 @@ enum ChequesType {
   factory ChequesType.byLabel(String label) {
     return ChequesType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching ChequesType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching ChequesType for label: $label'),
     );
   }
 
   factory ChequesType.byTypeGuide(String typeGuide) {
     return ChequesType.values.firstWhere(
       (type) => type.typeGuide == typeGuide,
-      orElse: () => throw ArgumentError('No matching ChequesType for guide: $typeGuide'),
+      orElse: () =>
+          throw ArgumentError('No matching ChequesType for guide: $typeGuide'),
     );
   }
 
   factory ChequesType.byValue(String value) {
     return ChequesType.values.firstWhere(
       (type) => type.value == value,
-      orElse: () => throw ArgumentError('No matching ChequesType for guide: $value'),
+      orElse: () =>
+          throw ArgumentError('No matching ChequesType for guide: $value'),
     );
   }
 }
@@ -455,7 +562,8 @@ enum EntryBondType {
   factory EntryBondType.byLabel(String label) {
     return EntryBondType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching EntryBondType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching EntryBondType for label: $label'),
     );
   }
 }
@@ -471,7 +579,8 @@ enum MatOriginType {
   factory MatOriginType.byLabel(String label) {
     return MatOriginType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching MatOriginType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching MatOriginType for label: $label'),
     );
   }
 }
@@ -488,7 +597,8 @@ enum BondItemType {
   factory BondItemType.byLabel(String label) {
     return BondItemType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching BondItemType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching BondItemType for label: $label'),
     );
   }
 }
@@ -505,7 +615,8 @@ enum ChequesStatus {
   factory ChequesStatus.byLabel(String label) {
     return ChequesStatus.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching ChequesStatus for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching ChequesStatus for label: $label'),
     );
   }
 }
@@ -540,7 +651,8 @@ enum BillAccounts implements Account {
   factory BillAccounts.byLabel(String label) {
     return BillAccounts.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching BillType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching BillType for label: $label'),
     );
   }
 }
@@ -610,7 +722,8 @@ enum UserWorkStatus {
   factory UserWorkStatus.byLabel(String label) {
     return UserWorkStatus.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching TimeType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching TimeType for label: $label'),
     );
   }
 }
@@ -627,7 +740,8 @@ enum UserActiveStatus {
   factory UserActiveStatus.byLabel(String label) {
     return UserActiveStatus.values.firstWhere(
       (status) => status.label == label,
-      orElse: () => throw ArgumentError('No matching ActiveStatus for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching ActiveStatus for label: $label'),
     );
   }
 }
@@ -655,14 +769,16 @@ enum StoreAccount {
   factory StoreAccount.byLabel(String label) {
     return StoreAccount.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching StoreAccount for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching StoreAccount for label: $label'),
     );
   }
 
   factory StoreAccount.byTypeGuide(String typeGuide) {
     return StoreAccount.values.firstWhere(
       (type) => type.typeGuide == typeGuide,
-      orElse: () => throw ArgumentError('No matching StoreAccount for guide: $typeGuide'),
+      orElse: () =>
+          throw ArgumentError('No matching StoreAccount for guide: $typeGuide'),
     );
   }
 
@@ -684,7 +800,8 @@ enum AccountType {
   factory AccountType.byTitle(String title) {
     return AccountType.values.firstWhere(
       (type) => type.title == title,
-      orElse: () => throw ArgumentError('No matching AccountType for title: $title'),
+      orElse: () =>
+          throw ArgumentError('No matching AccountType for title: $title'),
     );
   }
 
@@ -812,7 +929,8 @@ enum LogEventType {
   factory LogEventType.byLabel(String label) {
     return LogEventType.values.firstWhere(
       (type) => type.label == label,
-      orElse: () => throw ArgumentError('No matching LogEventType for label: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching LogEventType for label: $label'),
     );
   }
 }
@@ -830,7 +948,8 @@ enum TaskType {
   factory TaskType.byValue(String label) {
     return TaskType.values.firstWhere(
       (status) => status.label == label,
-      orElse: () => throw ArgumentError('No matching TaskType for byValue: $label'),
+      orElse: () =>
+          throw ArgumentError('No matching TaskType for byValue: $label'),
     );
   }
 }
@@ -850,11 +969,12 @@ enum TaskStatus {
   factory TaskStatus.byValue(String value) {
     return TaskStatus.values.firstWhere(
       (status) => status.value == value,
-      orElse: () => throw ArgumentError('No matching StatusTask for value: $value'),
+      orElse: () =>
+          throw ArgumentError('No matching StatusTask for value: $value'),
     );
   }
-
 }
+
 enum ExportFilterOption {
   all,
   checked,

@@ -89,8 +89,7 @@ class EntryBondController extends GetxController with FloatingLauncher {
   }) async {
 
 
-    final result = await _entryBondsFirebaseRepo.save(entryBondModel);
-
+    final result = await _entryBondsFirebaseRepo.save(entryBondModel);  
     result.fold(
       (failure) => AppUIUtils.onFailure(
         failure.message,

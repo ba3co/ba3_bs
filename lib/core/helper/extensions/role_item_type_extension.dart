@@ -9,8 +9,7 @@ import 'getx_controller_extensions.dart';
 extension RoleItemTypeExtension on RoleItemType {
   /// Returns the [Status] based on the current [RoleItemType].
   Status get status {
-
-    if(AppConstants.forcePending){
+    if (AppConstants.forcePending) {
       return Status.pending;
     }
     final hasPermission = hasWritePermission;

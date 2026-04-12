@@ -20,8 +20,8 @@ class BondCompoundDatasource
       ApiConstants.bonds; // Collection name in Firestore
 
   @override
-
-  Future<List<BondModel>> fetchAll({required BondTypeModel itemIdentifier}) async {
+  Future<List<BondModel>> fetchAll(
+      {required BondTypeModel itemIdentifier}) async {
     final rootDocumentId = getRootDocumentId(itemIdentifier);
     final subCollectionPath = getSubCollectionPath(itemIdentifier);
 
@@ -79,9 +79,8 @@ class BondCompoundDatasource
 
   @override
   Future<void> delete({required BondModel item}) async {
-
-
-    final bondType = Get.find<BondTypeService>().getBondTypeByGuide(item.payTypeGuid!);
+    final bondType =
+        Get.find<BondTypeService>().getBondTypeByGuide(item.payTypeGuid!);
 
     //BondType bondType = BondType.byTypeGuide(item.payTypeGuid!);
     final rootDocumentId = getRootDocumentId(bondType);
@@ -97,7 +96,6 @@ class BondCompoundDatasource
 
   @override
   Future<BondModel> save({required BondModel item}) async {
-
     late final String rootDocumentId;
     late final String subCollectionPath;
 
@@ -105,11 +103,11 @@ class BondCompoundDatasource
       rootDocumentId = item.payTypeGuid!;
       subCollectionPath = item.bondTypeLabel!;
     } else {
-      final bondType = Get.find<BondTypeService>().getBondTypeByGuide(item.payTypeGuid!);
+      final bondType =
+          Get.find<BondTypeService>().getBondTypeByGuide(item.payTypeGuid!);
       rootDocumentId = getRootDocumentId(bondType);
       subCollectionPath = getSubCollectionPath(bondType);
     }
-
 
     final updatedBond =
         item.payGuid == null ? await _assignBondNumber(item) : item;
@@ -126,7 +124,11 @@ class BondCompoundDatasource
 
   Future<BondModel> _assignBondNumber(BondModel bond) async {
     final newBondNumber = await fetchAndIncrementEntityNumber(
-        rootCollectionPath, bond.bondTypeLabel??Get.find<BondTypeService>().getBondTypeByGuide(bond.payTypeGuid!).label);
+        rootCollectionPath,
+        bond.bondTypeLabel ??
+            Get.find<BondTypeService>()
+                .getBondTypeByGuide(bond.payTypeGuid!)
+                .label);
     return bond.copyWith(payNumber: newBondNumber.nextNumber);
   }
 
