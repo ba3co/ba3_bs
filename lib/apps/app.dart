@@ -17,26 +17,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TranslationController translationController =
-        read<TranslationController>();
+    final TranslationController translationController = read<TranslationController>();
 
     return ScreenUtilInit(
-        designSize: const Size(390, 852),
-        splitScreenMode: true,
-        fontSizeResolver: FontSizeResolvers.height,
-        child: GetMaterialApp(
-          navigatorKey: navigatorKey,
-
-          // initialBinding: AppBindings(),
-          debugShowCheckedModeBanner: false,
-          scrollBehavior: AppScrollBehavior(),
-          locale: Locale(translationController.localLangCode),
-          translations: AppTranslations(),
-          fallbackLocale: Locale('en', 'US'),
-          title: AppStrings.appTitle.tr,
-          theme: AppThemes.defaultTheme,
-          getPages: appRouter,
-          // home: LeavePage(),
-        ));
+      designSize: const Size(390, 852),
+      splitScreenMode: true,
+      fontSizeResolver: FontSizeResolvers.height,
+      child: GetMaterialApp(
+        navigatorKey: Get.key,
+        // initialBinding: AppBindings(),
+        debugShowCheckedModeBanner: false,
+        scrollBehavior: AppScrollBehavior(),
+        locale: Locale(translationController.localLangCode),
+        translations: AppTranslations(),
+        fallbackLocale: Locale('en', 'US'),
+        title: AppStrings.appTitle.tr,
+        theme: AppThemes.defaultTheme,
+        getPages: appRouter,
+      ),
+    );
   }
 }

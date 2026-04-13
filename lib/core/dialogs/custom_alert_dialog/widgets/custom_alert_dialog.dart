@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import '../../../../apps/app.dart';
+import 'package:get/get.dart';
 import '../models/custom_alert_anim_type.dart';
 import '../models/custom_alert_options.dart';
 import '../models/custom_alert_type.dart';
@@ -70,7 +69,9 @@ class _AlertKeyboardScopeState extends State<_AlertKeyboardScope> {
 }
 
 class CustomAlertDialog {
-  static final List<OverlayEntry> _overlays = [];
+  static OverlayEntry? _currentEntry;
+  static Timer? _timer;
+  static bool _isShowing = false;
 
   static Future<void> show({
     BuildContext? context,
@@ -105,17 +106,18 @@ class CustomAlertDialog {
     /// When true, [LogicalKeyboardKey.space] acts like Enter (confirm).
     bool confirmOnSpace = false,
   }) async {
-    Timer? timer;
+    hide();
 
-    OverlayState? overlay = navigatorKey.currentState?.overlay;
-
-    overlay ??= Overlay.maybeOf(
-      context ?? navigatorKey.currentContext!,
-      rootOverlay: true,
-    );
+    final OverlayState? overlay = _resolveOverlay(context);
 
     if (overlay == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        final retryOverlay = _resolveOverlay(context);
+        if (retryOverlay == null) {
+          debugPrint('CustomAlertDialog: No Overlay found.');
+          return;
+        }
+
         show(
           context: context,
           type: type,
@@ -146,20 +148,13 @@ class CustomAlertDialog {
           width: width,
           autoCloseDuration: autoCloseDuration,
           disableBackBtn: disableBackBtn,
-          confirmOnSpace: confirmOnSpace,
         );
       });
       return;
     }
 
-    if (autoCloseDuration != null) {
-      timer = Timer(autoCloseDuration, () {
-        hide();
-      });
-    }
-
     final options = CustomAlertOptions(
-      timer: timer,
+      timer: null,
       title: title,
       text: text,
       titleAlignment: titleAlignment,
@@ -198,58 +193,115 @@ class CustomAlertDialog {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
       ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       content: CustomAlertContainer(options: options),
     );
 
-    // Skip `custom` so embedded fields (e.g. phone input) keep focus.
-    if (type != CustomAlertType.loading && type != CustomAlertType.custom) {
-      alert = _AlertKeyboardScope(
-        confirmOnSpace: confirmOnSpace,
-        onActivateConfirm: () {
-          hide();
-          onConfirmBtnTap?.call();
+    if (type != CustomAlertType.loading) {
+      final focusNode = FocusNode();
+
+      alert = RawKeyboardListener(
+        focusNode: focusNode,
+        autofocus: true,
+        onKey: (event) {
+          if (event is RawKeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.enter) {
+            hide();
+            onConfirmBtnTap?.call();
+          }
+
+          if (!disableBackBtn &&
+              event is RawKeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.escape) {
+            hide();
+          }
         },
         child: alert,
       );
     }
 
-    Widget dialog = Material(
-      color: barrierColor ?? Colors.black.withOpacity(0.5),
-      child: GestureDetector(
-        onTap: () {
-          if (barrierDismissible) hide();
-        },
-        child: Center(
-          child: GestureDetector(
-            onTap: () {},
-            child: CustomAlertAnimate.getByType(
-              animType,
-              child: alert,
-              animation: const AlwaysStoppedAnimation(1.0),
-            ),
+    final entry = OverlayEntry(
+      builder: (_) {
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () {
+                    if (barrierDismissible) hide();
+                  },
+                  child: Container(
+                    color: barrierColor ?? Colors.black.withOpacity(0.5),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  child: Center(
+                    child: PopScope(
+                      canPop: !disableBackBtn,
+                      onPopInvoked: (didPop) {
+                        if (!didPop && !disableBackBtn) {
+                          hide();
+                        }
+                      },
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: CustomAlertAnimate.getByType(
+                          animType,
+                          child: alert,
+                          animation: const AlwaysStoppedAnimation(1.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
 
-    final entry = OverlayEntry(builder: (_) => dialog);
+    _currentEntry = entry;
+    _isShowing = true;
     overlay.insert(entry);
-    _overlays.add(entry);
+
+    if (autoCloseDuration != null) {
+      _timer?.cancel();
+      _timer = Timer(autoCloseDuration, () {
+        hide();
+      });
+      options.timer = _timer;
+    }
   }
 
-  /// يغلق آخر تنبيه مفتوح
+  static OverlayState? _resolveOverlay(BuildContext? context) {
+    final navigatorOverlay = Get.key.currentState?.overlay;
+    if (navigatorOverlay != null) return navigatorOverlay;
+
+    final validContext = context ?? Get.overlayContext ?? Get.context;
+    if (validContext == null) return null;
+
+    return Overlay.maybeOf(validContext, rootOverlay: true);
+  }
+
   static void hide() {
-    if (_overlays.isNotEmpty) {
-      final last = _overlays.removeLast();
-      last.remove();
+    _timer?.cancel();
+    _timer = null;
+
+    if (_currentEntry != null) {
+      _currentEntry!.remove();
+      _currentEntry = null;
     }
+
+    _isShowing = false;
   }
 
-  /// يغلق جميع التنبيهات المفتوحة
   static void hideAll() {
-    for (final entry in _overlays) {
-      entry.remove();
-    }
-    _overlays.clear();
+    hide();
   }
+
+  static bool get isShowing => _isShowing;
 }

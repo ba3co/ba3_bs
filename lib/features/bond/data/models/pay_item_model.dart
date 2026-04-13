@@ -201,15 +201,15 @@ class PayItem extends PlutoAdaptable<BondType> {
         },
       ): entryNumber,
       PlutoColumn(
-          title: AppStrings.creditor.tr,
-          field: AppConstants.entryCredit,
-          type: PlutoColumnType.text(),
-          hide: type == BondType.paymentVoucher): entryCredit,
-      PlutoColumn(
           title: AppStrings.debtor.tr,
           field: AppConstants.entryDebit,
           type: PlutoColumnType.text(),
           hide: type == BondType.receiptVoucher): entryDebit,
+      PlutoColumn(
+          title: AppStrings.creditor.tr,
+          field: AppConstants.entryCredit,
+          type: PlutoColumnType.text(),
+          hide: type == BondType.paymentVoucher): entryCredit,
       PlutoColumn(
           title: AppStrings.account.tr,
           field: AppConstants.entryAccountGuid,
