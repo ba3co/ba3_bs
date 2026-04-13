@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       fontSizeResolver: FontSizeResolvers.height,
       child: GetMaterialApp(
         navigatorKey: Get.key,
+
         // initialBinding: AppBindings(),
         debugShowCheckedModeBanner: false,
         scrollBehavior: AppScrollBehavior(),
