@@ -11,7 +11,9 @@ import '../utils/custom_alert_animate.dart';
 import 'custom_alert_container.dart';
 
 class CustomAlertDialog {
-  static final List<OverlayEntry> _overlays = [];
+  static OverlayEntry? _currentEntry;
+  static Timer? _timer;
+  static bool _isShowing = false;
 
   static Future<void> show({
     BuildContext? context,
@@ -25,7 +27,7 @@ class CustomAlertDialog {
     bool barrierDismissible = true,
     VoidCallback? onConfirmBtnTap,
     VoidCallback? onCancelBtnTap,
-    String? confirmBtnText ,
+    String? confirmBtnText,
     String? cancelBtnText,
     Color confirmBtnColor = Colors.blue,
     Color cancelBtnColor = Colors.redAccent,
@@ -44,19 +46,55 @@ class CustomAlertDialog {
     Duration? autoCloseDuration,
     bool disableBackBtn = false,
   }) async {
-    Timer? timer;
+    hide();
 
-    final validContext = context ?? Get.overlayContext!;
-    final overlay = Overlay.of(validContext, rootOverlay: true);
+    final OverlayState? overlay = _resolveOverlay(context);
 
-    if (autoCloseDuration != null) {
-      timer = Timer(autoCloseDuration, () {
-        hide();
+    if (overlay == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final retryOverlay = _resolveOverlay(context);
+        if (retryOverlay == null) {
+          debugPrint('CustomAlertDialog: No Overlay found.');
+          return;
+        }
+
+        show(
+          context: context,
+          type: type,
+          title: title,
+          text: text,
+          titleAlignment: titleAlignment,
+          textAlignment: textAlignment,
+          widget: widget,
+          animType: animType,
+          barrierDismissible: barrierDismissible,
+          onConfirmBtnTap: onConfirmBtnTap,
+          onCancelBtnTap: onCancelBtnTap,
+          confirmBtnText: confirmBtnText,
+          cancelBtnText: cancelBtnText,
+          confirmBtnColor: confirmBtnColor,
+          cancelBtnColor: cancelBtnColor,
+          confirmBtnTextStyle: confirmBtnTextStyle,
+          cancelBtnTextStyle: cancelBtnTextStyle,
+          backgroundColor: backgroundColor,
+          headerBackgroundColor: headerBackgroundColor,
+          titleColor: titleColor,
+          textColor: textColor,
+          barrierColor: barrierColor,
+          showCancelBtn: showCancelBtn,
+          showConfirmBtn: showConfirmBtn,
+          borderRadius: borderRadius,
+          customAsset: customAsset,
+          width: width,
+          autoCloseDuration: autoCloseDuration,
+          disableBackBtn: disableBackBtn,
+        );
       });
+      return;
     }
 
     final options = CustomAlertOptions(
-      timer: timer,
+      timer: null,
       title: title,
       text: text,
       titleAlignment: titleAlignment,
@@ -73,8 +111,8 @@ class CustomAlertDialog {
         hide();
         onCancelBtnTap?.call();
       },
-      confirmBtnText: confirmBtnText??AppStrings.done,
-      cancelBtnText: cancelBtnText??AppStrings.cancel,
+      confirmBtnText: confirmBtnText ?? AppStrings.done,
+      cancelBtnText: cancelBtnText ?? AppStrings.cancel,
       confirmBtnColor: confirmBtnColor,
       cancelBtnColor: cancelBtnColor,
       confirmBtnTextStyle: confirmBtnTextStyle,
@@ -95,12 +133,15 @@ class CustomAlertDialog {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(borderRadius),
       ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       content: CustomAlertContainer(options: options),
     );
 
     if (type != CustomAlertType.loading) {
+      final focusNode = FocusNode();
+
       alert = RawKeyboardListener(
-        focusNode: FocusNode(),
+        focusNode: focusNode,
         autofocus: true,
         onKey: (event) {
           if (event is RawKeyUpEvent &&
@@ -108,45 +149,99 @@ class CustomAlertDialog {
             hide();
             onConfirmBtnTap?.call();
           }
+
+          if (!disableBackBtn &&
+              event is RawKeyUpEvent &&
+              event.logicalKey == LogicalKeyboardKey.escape) {
+            hide();
+          }
         },
         child: alert,
       );
     }
 
-    Widget dialog = Material(
-      color: barrierColor ?? Colors.black.withOpacity(0.5),
-      child: GestureDetector(
-        onTap: () {
-          if (barrierDismissible) hide();
-        },
-        child: Center(
-          child: CustomAlertAnimate.getByType(
-            animType,
-            child: alert,
-            animation: const AlwaysStoppedAnimation(1.0),
+    final entry = OverlayEntry(
+      builder: (_) {
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: () {
+                    if (barrierDismissible) hide();
+                  },
+                  child: Container(
+                    color: barrierColor ?? Colors.black.withOpacity(0.5),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  child: Center(
+                    child: PopScope(
+                      canPop: !disableBackBtn,
+                      onPopInvoked: (didPop) {
+                        if (!didPop && !disableBackBtn) {
+                          hide();
+                        }
+                      },
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: CustomAlertAnimate.getByType(
+                          animType,
+                          child: alert,
+                          animation: const AlwaysStoppedAnimation(1.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
 
-    final entry = OverlayEntry(builder: (_) => dialog);
+    _currentEntry = entry;
+    _isShowing = true;
     overlay.insert(entry);
-    _overlays.add(entry);
+
+    if (autoCloseDuration != null) {
+      _timer?.cancel();
+      _timer = Timer(autoCloseDuration, () {
+        hide();
+      });
+      options.timer = _timer;
+    }
   }
 
-  /// يغلق آخر تنبيه مفتوح
+  static OverlayState? _resolveOverlay(BuildContext? context) {
+    final navigatorOverlay = Get.key.currentState?.overlay;
+    if (navigatorOverlay != null) return navigatorOverlay;
+
+    final validContext = context ?? Get.overlayContext ?? Get.context;
+    if (validContext == null) return null;
+
+    return Overlay.maybeOf(validContext, rootOverlay: true);
+  }
+
   static void hide() {
-    if (_overlays.isNotEmpty) {
-      final last = _overlays.removeLast();
-      last.remove();
+    _timer?.cancel();
+    _timer = null;
+
+    if (_currentEntry != null) {
+      _currentEntry!.remove();
+      _currentEntry = null;
     }
+
+    _isShowing = false;
   }
 
-  /// يغلق جميع التنبيهات المفتوحة
   static void hideAll() {
-    for (final entry in _overlays) {
-      entry.remove();
-    }
-    _overlays.clear();
+    hide();
   }
+
+  static bool get isShowing => _isShowing;
 }
