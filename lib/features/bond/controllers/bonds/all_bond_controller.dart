@@ -526,36 +526,59 @@ class AllBondsController extends FloatingBondDetailsLauncher
               bondType.type == BondType.paymentVoucher)
           ? (bond.payItems.itemList.length / 2)
           : (bond.payItems.itemList.length));
+      final Map<String, Map<String, dynamic>> grouped = {};
       for (int i = 0; i < length; i++) {
         final item = bond.payItems.itemList[i];
 
-        rows.add({
-          "رقم السند": i == 0 ? bond.payNumber : "",
-          "تاريخ السند": i == 0 ? bond.payDate : "",
-          if (bondType.type == BondType.receiptVoucher ||
-              bondType.type == BondType.paymentVoucher)
-            "الحساب الأول": firstAccount,
-          if (bondType.type == BondType.receiptVoucher ||
-              bondType.type == BondType.paymentVoucher)
-            "الحساب الثاني": item.entryAccountName ?? '',
-          if (bondType.type == BondType.openingEntry ||
-              bondType.type == BondType.journalVoucher)
-            "الحساب": item.entryAccountName ?? '',
-          if (bondType.type != BondType.receiptVoucher)
-            "مدين": item.entryDebit ?? 0,
-          if (bondType.type != BondType.paymentVoucher)
-            "دائن": item.entryCredit ?? 0,
-          "البيان": item.entryNote ?? '',
-        });
+        final secondAccount = item.entryAccountName ?? '';
+
+        final key = "$firstAccount-$secondAccount";
+
+        if (!grouped.containsKey(key)) {
+          grouped[key] = {
+            "رقم السند": bond.payNumber,
+            "تاريخ السند": bond.payDate,
+            if (bondType.type == BondType.paymentVoucher)
+              "الحساب الدائن": firstAccount,
+            if (bondType.type == BondType.paymentVoucher)
+              "الحساب المدين": secondAccount,
+            if (bondType.type == BondType.receiptVoucher)
+              "الحساب المدين": firstAccount,
+            if (bondType.type == BondType.receiptVoucher)
+              "الحساب الدائن": secondAccount,
+            if (bondType.type == BondType.openingEntry ||
+                bondType.type == BondType.journalVoucher)
+              "الحساب": secondAccount,
+            "مدين": 0.0,
+            "دائن": 0.0,
+            "البيان": item.entryNote ?? '',
+          };
+        }
+
+        grouped[key]!["مدين"] += (item.entryDebit ?? 0);
+        grouped[key]!["دائن"] += (item.entryCredit ?? 0);
       }
 
+      bool firstRow = true;
+
+      for (final row in grouped.values) {
+        rows.add({
+          ...row,
+          "رقم السند": firstRow ? row["رقم السند"] : "",
+          "تاريخ السند": firstRow ? row["تاريخ السند"] : "",
+        });
+
+        firstRow = false;
+      }
       rows.add({
         "رقم السند": "",
         "تاريخ السند": "",
-        "الحساب الأول": "",
-        "الحساب الثاني": '',
-        if (bondType.type != BondType.receiptVoucher) "مدين": '',
-        if (bondType.type != BondType.paymentVoucher) "دائن": '',
+        if (bondType.type == BondType.paymentVoucher) "الحساب الدائن": '',
+        if (bondType.type == BondType.paymentVoucher) "الحساب المدين": '',
+        if (bondType.type == BondType.receiptVoucher) "الحساب الدائن": '',
+        if (bondType.type == BondType.receiptVoucher) "الحساب المدين": '',
+        "مدين": '',
+        "دائن": '',
         "البيان": '',
       });
     }

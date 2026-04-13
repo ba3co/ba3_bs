@@ -910,7 +910,6 @@ class BillDetailsController extends IBillController
 
       return;
     }
-
     // if (_isNoUpdate(existingBill, updatedBillModel)) {
     //   saveBillRequestState.value = RequestState.error;
 
