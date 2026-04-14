@@ -72,23 +72,25 @@ class BillModel extends HiveObject
     this.paymentsVoucher,
   });
 
-  factory BillModel.fromJson(Map<String, dynamic> json) => BillModel(
-      billId: json['docId'],
-      freeBill: json['freeBill'],
-      billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
-      billDetails: BillDetails.fromJson(json['billDetails']),
-      items: BillItems.fromJson(json['items']),
-      status: Status.byValue(json['status']),
-      isAudited: json['isAudited'],
-      auditedBy: json['auditedBy'],
-      auditedAt:
-          json['auditedAt'] != null ? DateTime.parse(json['auditedAt']) : null,
-      paymentsVoucher: json['paymentVoucher'] != null
-          ? List<PaymentVoucherModel>.from(
-              json['paymentVoucher']
-                  .map((x) => PaymentVoucherModel.fromJson(x)),
-            )
-          : null);
+  factory BillModel.fromJson(Map<String, dynamic> json) {
+    return BillModel(
+        billId: json['docId'],
+        freeBill: json['freeBill'],
+        billTypeModel: BillTypeModel.fromJson(json['billTypeModel']),
+        billDetails: BillDetails.fromJson(json['billDetails']),
+        items: BillItems.fromJson(json['items']),
+        status: Status.byValue(json['status']),
+        isAudited: json['isAudited'],
+        auditedBy: json['auditedBy'],
+        auditedAt: json['auditedAt'] != null
+            ? DateTime.parse(json['auditedAt'])
+            : null,
+        paymentsVoucher: json['paymentVoucher'] != null
+            ? (json['paymentVoucher'] as List)
+                .map((x) => PaymentVoucherModel.fromJson(x))
+                .toList()
+            : null);
+  }
 
   factory BillModel.empty(
           {required BillTypeModel billTypeModel,
@@ -109,7 +111,6 @@ class BillModel extends HiveObject
           billNumber: lastBillNumber + 1,
         ),
       );
-
   factory BillModel.fromBillData({
     BillModel? billModel,
     String? note,

@@ -1,6 +1,7 @@
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/enums/enums.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
+import 'package:ba3_bs/core/widgets/app_button.dart';
 import 'package:ba3_bs/features/bill/controllers/bill/all_bills_controller.dart';
 import 'package:ba3_bs/features/users_management/data/models/role_model.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,16 @@ class BillLayout extends StatelessWidget {
                       },
                     ),
                   ),*/
+
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: AppButton(
+                    title: "تقرير الفواتير",
+                    onPressed: () {
+                      allBillsController.showBillsFilterDialog(context);
+                    },
+                  ),
+                ),
               ],
             ),
             body: Padding(

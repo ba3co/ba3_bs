@@ -12,25 +12,28 @@ import '../../../../core/widgets/pluto_grid_with_app_bar_.dart';
 import '../../../patterns/data/models/bill_type_model.dart';
 
 class AllBillsScreen extends StatelessWidget {
-  const AllBillsScreen({super.key, required this.bills, required this.billTypeModel});
+  const AllBillsScreen(
+      {super.key, required this.bills, required this.billTypeModel});
 
   final List<BillModel> bills;
-  final BillTypeModel billTypeModel ;
+  final BillTypeModel billTypeModel;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AllBillsController>(builder: (controller) {
       return PlutoGridWithAppBar(
         title: AppStrings.allBills.tr,
+        // onLeadingIconPressed: () {
+        //   print('click');
+        // },
+        // leadingIcon: Icons.receipt_outlined,
         onLoaded: (e) {},
         onSelected: (event) {
           String billId = event.row?.cells[AppConstants.billIdFiled]?.value;
           log('billId : $billId');
 
           controller.openFloatingBillDetailsById(
-              billId: billId,
-              context: context,
-              bilTypeModel:billTypeModel);
+              billId: billId, context: context, bilTypeModel: billTypeModel);
         },
         isLoading: controller.isBillsLoading,
         tableSourceModels: controller.pendingBills.isEmpty

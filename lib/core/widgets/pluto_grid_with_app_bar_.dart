@@ -139,7 +139,10 @@ class PlutoGridWithAppBar<T> extends StatelessWidget {
       leading: leadingIcon != null
           ? IconButton(
               onPressed: onLeadingIconPressed,
-              icon: Icon(leadingIcon),
+              icon: Icon(
+                leadingIcon,
+                color: Colors.blue,
+              ),
             )
           : null,
       title: Text(title ?? AppStrings.dataTable.tr),

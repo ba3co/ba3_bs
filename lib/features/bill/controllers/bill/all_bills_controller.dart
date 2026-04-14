@@ -6,6 +6,7 @@ import 'package:ba3_bs/core/helper/extensions/basic/list_extensions.dart';
 import 'package:ba3_bs/core/helper/extensions/getx_controller_extensions.dart';
 import 'package:ba3_bs/core/models/query_filter.dart';
 import 'package:ba3_bs/core/network/api_constants.dart';
+import 'package:ba3_bs/core/services/export_excl/excel_export.dart';
 import 'package:ba3_bs/core/services/firebase/implementations/services/firestore_sequential_numbers.dart';
 import 'package:ba3_bs/core/services/json_file_operations/implementations/import_export_repo.dart';
 import 'package:ba3_bs/core/utils/app_service_utils.dart';
@@ -101,6 +102,8 @@ class AllBillsController extends FloatingBillDetailsLauncher
   final Rx<RequestState> getBillsTypesRequestState = RequestState.initial.obs;
 
   final Rx<RequestState> getAllNestedBillsRequestState =
+      RequestState.initial.obs;
+  final Rx<RequestState> getAllBillsFilterRequestState =
       RequestState.initial.obs;
 
   final Rx<RequestState> saveAllBillsRequestState = RequestState.initial.obs;
@@ -296,6 +299,257 @@ class AllBillsController extends FloatingBillDetailsLauncher
 
     );*/
     getAllNestedBillsRequestState.value = RequestState.success;
+  }
+
+  Future<List<BillModel>> fetchAllBillsWithFilter({
+    required List<BillTypeModel> billTypes,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    log('fetchAllBillsWithFilter');
+
+    getAllBillsFilterRequestState.value = RequestState.loading;
+
+    List<BillModel> allBills = [];
+
+    final List<Future<void>> tasks = [];
+
+    for (final type in billTypes) {
+      tasks.add(
+        _billsFirebaseRepo
+            .fetchWhere(
+          itemIdentifier: type,
+          dateFilter: DateFilter(
+            dateFieldName: ApiConstants.billDate,
+            range: DateTimeRange(start: startDate, end: endDate),
+          ),
+        )
+            .then((result) {
+          result.fold(
+            (failure) => log("❌ ${failure.message}"),
+            (bills) => allBills.addAll(bills.where((bill) =>
+                bill.billTypeModel.latinShortName == type.latinShortName)),
+          );
+        }),
+      );
+    }
+
+    await Future.wait(tasks);
+
+    getAllBillsFilterRequestState.value = RequestState.success;
+
+    return allBills;
+  }
+
+  List<Map<String, dynamic>> buildBillRowsBetweenDates(
+    List<BillModel> bills, {
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final List<Map<String, dynamic>> rows = [];
+    AccountsController accountsController = read<AccountsController>();
+
+    for (final bill in bills) {
+      final date = bill.billDetails.billDate;
+      if (date == null) continue;
+
+      if (date.isBefore(startDate) || date.isAfter(endDate)) continue;
+
+      for (final item in bill.items.itemList) {
+        rows.add({
+          /// 🔹 بيانات الفاتورة (مرة وحدة فقط)
+          "الفاتورة":
+              "${bill.billTypeModel.shortName ?? ''}: ${bill.billDetails.billNumber ?? ''}",
+          "التاريخ": "${date.day}-${date.month}-${date.year}",
+          "اسم الحساب": accountsController.getAccountNameById(
+              bill.billTypeModel.accounts?[BillAccounts.caches]?.id),
+
+          /// 🔹 إجمالي الفاتورة
+          "إجمالي الكمية": _getTotalQty(bill),
+          "قيمة الفاتورة": bill.billDetails.billTotal ?? 0,
+          "القيمة المضافة": bill.billDetails.billVatTotal ?? 0,
+
+          /// 🔹 تفاصيل المادة
+          "رمز المادة": _getMatCode(item.itemGuid),
+          "اسم المادة": item.itemName ?? '',
+          "الكمية": item.itemQuantity,
+          "السعر": item.itemSubTotalPrice ?? 0,
+          "القيمة": item.itemTotalPrice,
+          "القيمة المضافة (مادة)": item.itemVatPrice ?? 0,
+
+          /// 🔹 إضافات
+          "رمز الباركود": _getMatBarcode(item.itemGuid),
+          "مركز الكلفة": _getSellerName(bill),
+
+          // /// 🔹 المجموعة
+          // "رمز المجموعة": _getGroupId(item.itemGuid),
+          // "اسم المجموعة": _getGroupName(item.itemGuid),
+        });
+      }
+      // if (bill.items.itemList.isNotEmpty) {
+      //   /// 🔹 سطر فاصل
+      //   rows.add({
+      //     "الفاتورة": '',
+      //     "التاريخ": '',
+      //     "اسم الزبون": '',
+      //     "إجمالي الكمية": '',
+      //     "قيمة الفاتورة": '',
+      //     "القيمة المضافة": '',
+      //     "رمز المادة": '',
+      //     "اسم المادة": '',
+      //     "الكمية": '',
+      //     "السعر": '',
+      //     "القيمة": '',
+      //     "القيمة المضافة (مادة)": '',
+      //     "رمز الباركود": '',
+      //     "مركز الكلفة": '',
+      //     // "رمز المجموعة": '',
+      //     // "اسم المجموعة": '',
+      //   });
+      // }
+    }
+
+    return rows;
+  }
+
+  int _getTotalQty(BillModel bill) {
+    return bill.items.itemList.fold(
+      0,
+      (sum, item) => sum + item.itemQuantity,
+    );
+  }
+
+  String _getSellerName(BillModel bill) {
+    final sellerId = bill.billDetails.billSellerId;
+
+    final seller = read<SellersController>()
+        .sellers
+        .firstWhereOrNull((s) => s.costGuid == sellerId);
+
+    return seller?.costName ?? '';
+  }
+
+  String _getMatBarcode(String matId) {
+    final mat = read<MaterialController>()
+        .materials
+        .firstWhereOrNull((m) => m.id == matId);
+
+    return mat?.matBarCode ?? '';
+  }
+
+  String _getMatCode(String matId) {
+    final mat = read<MaterialController>()
+        .materials
+        .firstWhereOrNull((m) => m.id == matId);
+
+    return mat?.matCode.toString() ?? '';
+  }
+
+  Future<void> exportBillsBetweenDates({
+    required List<BillTypeModel> billTypes,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    final bills = await fetchAllBillsWithFilter(
+      billTypes: billTypes,
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    if (bills.isEmpty) {
+      AppUIUtils.onFailure("لا يوجد فواتير");
+      return;
+    }
+
+    final rows = buildBillRowsBetweenDates(
+      bills,
+      startDate: startDate,
+      endDate: endDate,
+    );
+
+    if (rows.isEmpty) {
+      AppUIUtils.onFailure("لا يوجد بيانات ضمن هذه الفترة");
+      return;
+    }
+
+    await exportJsonToExcel(rows);
+  }
+
+  void showBillsFilterDialog(BuildContext context) {
+    DateTimeRange? selectedRange;
+    List<BillTypeModel> selectedTypes = [];
+
+    final allTypes = read<PatternController>().billsTypes;
+
+    Get.dialog(
+      AlertDialog(
+        title: Text("تقرير الفواتير"),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// اختيار التاريخ
+                ElevatedButton(
+                  onPressed: () async {
+                    final range = await showDateRangePicker(
+                      context: context,
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime.now(),
+                    );
+
+                    if (range != null) {
+                      setState(() => selectedRange = range);
+                    }
+                  },
+                  child: Text("اختيار التاريخ"),
+                ),
+
+                /// اختيار أنواع الفواتير
+                ...allTypes.map((type) {
+                  return CheckboxListTile(
+                    value: selectedTypes.contains(type),
+                    title: Text(type.shortName ?? ''),
+                    onChanged: (val) {
+                      setState(() {
+                        if (val == true) {
+                          selectedTypes.add(type);
+                        } else {
+                          selectedTypes.remove(type);
+                        }
+                      });
+                    },
+                  );
+                }),
+              ],
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text("إلغاء"),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (selectedRange == null || selectedTypes.isEmpty) {
+                AppUIUtils.onFailure("اختر التاريخ والأنواع");
+                return;
+              }
+
+              Get.back();
+
+              await exportBillsBetweenDates(
+                billTypes: selectedTypes,
+                startDate: selectedRange!.start,
+                endDate: selectedRange!.end,
+              );
+            },
+            child: Text("تصدير"),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> saveAllBillsIfConnected() async {
