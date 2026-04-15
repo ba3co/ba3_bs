@@ -112,24 +112,31 @@ class BillDetailsHeader extends StatelessWidget {
               ),
             if (billModel.billTypeModel.latinShortName != 'Sales Delivery')
               Obx(() {
-                return SearchableAccountField(
-                  label: AppStrings.account.tr,
-                  readOnly: billDetailsController.isAccountReadOnly.value,
-                  textEditingController:
-                      billDetailsController.billAccountController,
-                  validator: (value) => billDetailsController.validator(
-                      value, AppStrings.account.tr),
-                  onSubmitted: (text) async {
-                    AccountModel? accountModel =
-                        await read<AccountsController>()
-                            .openAccountSelectionDialog(
-                      query: text,
-                      context: context,
-                    );
-                    if (accountModel != null) {
-                      billDetailsController.updateBillAccount(accountModel);
-                    }
-                  },
+                return Row(
+                  children: [
+                    Expanded(
+                      child: SearchableAccountField(
+                        label: AppStrings.account.tr,
+                        readOnly: billDetailsController.isAccountReadOnly.value,
+                        textEditingController:
+                            billDetailsController.billAccountController,
+                        validator: (value) => billDetailsController.validator(
+                            value, AppStrings.account.tr),
+                        onSubmitted: (text) async {
+                          AccountModel? accountModel =
+                              await read<AccountsController>()
+                                  .openAccountSelectionDialog(
+                            query: text,
+                            context: context,
+                          );
+                          if (accountModel != null) {
+                            billDetailsController
+                                .updateBillAccount(accountModel);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 );
               }),
             FormFieldRow(
