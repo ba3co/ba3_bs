@@ -353,7 +353,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
       final date = bill.billDetails.billDate;
       if (date == null) continue;
 
-      if (date.isBefore(startDate) || date.isAfter(endDate)) continue;
+      // if (date.isBefore(startDate) || date.isAfter(endDate)) continue;
 
       for (final item in bill.items.itemList) {
         rows.add({
@@ -527,7 +527,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => Navigator.pop(context),
             child: Text("إلغاء"),
           ),
           TextButton(
@@ -537,7 +537,7 @@ class AllBillsController extends FloatingBillDetailsLauncher
                 return;
               }
 
-              Get.back();
+              Navigator.pop(context);
 
               await exportBillsBetweenDates(
                 billTypes: selectedTypes,
