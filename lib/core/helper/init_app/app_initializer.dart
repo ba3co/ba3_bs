@@ -54,7 +54,7 @@ Future<void> initializeAppServices() async {
 
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
-      name: AppConstants.testDataBaseAppName);
+      name: AppConstants.getDatabaseAppName);
 
   await Hive.initializeApp();
 
