@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../core/dialogs/loading_dialog.dart';
 import '../../../../core/helper/extensions/getx_controller_extensions.dart';
+import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_spacer.dart';
 import '../widgets/bill_layout/bills_info_widget.dart';
 
@@ -27,16 +28,16 @@ class BillLayout extends StatelessWidget {
             appBar: AppBar(
               leadingWidth: 300,
               actions: [
-      /*    if (RoleItemType.administrator.hasAdminPermission)
+          // if (RoleItemType.administrator.hasAdminPermission)
                  Padding(
                     padding: EdgeInsets.all(8),
                     child: AppButton(
                       title: "asd",
                       onPressed: () {
-                        allBillsController.runFixDuplicates();
+                        allBillsController.fetchAllBillsFromLocal(context);
                       },
                     ),
-                  ),*/
+                  ),
               ],
             ),
             body: Padding(

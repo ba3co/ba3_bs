@@ -222,6 +222,11 @@ final Map<String, String> deDE = {
   AppStrings.downloadBonds: 'Bonds herunterladen',
   AppStrings.downloadBills: 'Rechnungen herunterladen',
   AppStrings.downloadCheques: 'Schecks herunterladen',
+  AppStrings.verifyChequesSequentialNumbers: 'Sequenz prüfen',
+  AppStrings.chequesSequentialNumbersVerified:
+      'Schecknummern stimmen für alle Typen mit den Daten überein.',
+  AppStrings.verifyChequesSequentialRunning:
+      'Scheck-Sequenz wird geprüft...',
   AppStrings.downloadMaterials: 'Materialien herunterladen',
   AppStrings.downloadGroups: 'Gruppen herunterladen',
   AppStrings.downloadSellers: 'Verkäufer herunterladen',

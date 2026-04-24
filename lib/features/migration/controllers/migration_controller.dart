@@ -384,7 +384,7 @@ class MigrationController extends FloatingBondDetailsLauncher
   Future<void> handleSaveBillSuccess(BillModel bill) async {}
 
   Future<List<ChequesModel>> fetchCheques() async {
-    final result = await _chequesFirebaseRepo.getAll(ChequesType.paidChecks);
+    final result = await _chequesFirebaseRepo.getAll(ChequesType.paidSupplierChecks);
 
     // Handle the result (success or failure)
 

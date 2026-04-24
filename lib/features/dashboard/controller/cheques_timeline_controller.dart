@@ -81,8 +81,13 @@ class ChequesTimelineController extends GetxController with FloatingLauncher {
     chequesChartRequestState.value = RequestState.loading;
     barGroups = [];
     groupedData.clear();
-    allCheques = await read<AllChequesController>()
-        .fetchChequesByType(ChequesType.paidChecks,);
+    final chequesController = read<AllChequesController>();
+    await chequesController.fetchAllNestedCheques();
+    allCheques = chequesController.nestedCheques.values
+        .expand((list) => list)
+        .toList();
+    chequesController.chequesList = List<ChequesModel>.from(allCheques);
+    chequesController.update();
     List<DateTime> dueDates = allCheques
         .where((cheque) =>
             cheque.isPayed != true &&

@@ -248,6 +248,11 @@ final Map<String, String> urPK = {
   AppStrings.viewMaterialGroups: 'مواد کے گروپس دیکھیں',
   AppStrings.downloadBonds: 'بانڈز ڈاؤن لوڈ کریں',
   AppStrings.downloadCheques: 'چیکس ڈاؤن لوڈ کریں',
+  AppStrings.verifyChequesSequentialNumbers: 'ترتیب کی تصدیق',
+  AppStrings.chequesSequentialNumbersVerified:
+      'تمام اقسام کے لیے چیک نمبرز کا سلسلہ ڈیٹا سے میل کھاتا ہے۔',
+  AppStrings.verifyChequesSequentialRunning:
+      'چیک نمبروں کی ترتیب کی تصدیق ہو رہی ہے...',
   AppStrings.downloadMaterials: 'مواد ڈاؤن لوڈ کریں',
   AppStrings.downloadGroups: 'گروپس ڈاؤن لوڈ کریں',
   AppStrings.downloadSellers: 'بیچنے والے ڈاؤن لوڈ کریں',

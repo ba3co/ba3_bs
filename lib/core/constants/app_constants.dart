@@ -426,7 +426,7 @@ abstract class AppConstants {
   /// when we import bills from local we must to make this false
   /// and we import bills from free we must to make this true
   /// In normal work we should make this null.
-  static bool? forceFree;
+  static bool? forceFree=false;
 
   /// 🔹 To connect to a test Firebase project, use:
   static const String testDataBaseAppName = 'test';
@@ -450,7 +450,7 @@ abstract class AppConstants {
   ];
 
   // @preserve: ali-dev-only getter
-  static String get getDatabaseAppName => testDataBaseAppName;
+  static String get getDatabaseAppName => defaultFirebaseAppName;
 }
 
 ///https://shreyanspos.com/kp307/

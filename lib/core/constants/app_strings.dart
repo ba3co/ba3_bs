@@ -260,6 +260,11 @@ class AppStrings {
   static const downloadBonds = 'تحميل السندات';
   static const downloadBills = 'تحميل الفواتير';
   static const downloadCheques = 'تحميل الشيكات';
+  static const verifyChequesSequentialNumbers = 'التحقق من التسلسل';
+  static const chequesSequentialNumbersVerified =
+      'تسلسل أرقام الشيكات متطابق مع البيانات لجميع الأنماط.';
+  static const verifyChequesSequentialRunning =
+      'جاري التحقق من تسلسل أرقام الشيكات...';
   static const downloadMaterials = 'تحميل المواد';
   static const downloadGroups = 'تحميل المجموعات';
   static const downloadSellers = 'تحميل البائعين';

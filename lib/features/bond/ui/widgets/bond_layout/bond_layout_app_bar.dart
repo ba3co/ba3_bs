@@ -9,7 +9,7 @@ import '../../../../users_management/data/models/role_model.dart';
 
 AppBar bondLayoutAppBar(AllBondsController controller,BuildContext context) {
   return AppBar(actions: [
-    if (RoleItemType.administrator.hasAdminPermission)
+    // if (RoleItemType.administrator.hasAdminPermission)
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: AppButton(

@@ -11,7 +11,15 @@ import '../../../controllers/cheques/all_cheques_controller.dart';
 AppBar chequesLayoutAppBar(BuildContext context) {
   return AppBar(
     actions: [
-      if (RoleItemType.administrator.hasReadPermission)
+      if (RoleItemType.administrator.hasReadPermission) ...[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AppButton(
+            title: AppStrings.verifyChequesSequentialNumbers.tr,
+            onPressed: () => read<AllChequesController>()
+                .verifyChequesSequentialNumbers(context),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: AppButton(
@@ -20,6 +28,7 @@ AppBar chequesLayoutAppBar(BuildContext context) {
                 read<AllChequesController>().fetchAllChequesLocal(context),
           ),
         ),
+      ],
     ],
   );
 }

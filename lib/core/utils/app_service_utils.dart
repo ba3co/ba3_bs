@@ -471,4 +471,15 @@ class AppServiceUtils {
     if (value is String) return double.tryParse(value) ?? 0.0;
     return 0.0;
   }
+
+  static DateTime parseFlexibleDate(String input) {
+    final parts = input.split('-');
+    if (parts.length == 3) {
+      final y = parts[0];
+      final m = parts[1].padLeft(2, '0');
+      final d = parts[2].padLeft(2, '0');
+      return DateTime.parse('$y-$m-$d');
+    }
+    return DateTime.parse(input);
+  }
 }

@@ -248,6 +248,11 @@ final Map<String, String> enUS = {
   AppStrings.viewMaterialGroups: 'View Material Groups',
   AppStrings.downloadBonds: 'Download Bonds',
   AppStrings.downloadCheques: 'Download Cheques',
+  AppStrings.verifyChequesSequentialNumbers: 'Verify sequence',
+  AppStrings.chequesSequentialNumbersVerified:
+      'Cheque sequence numbers match stored data for all types.',
+  AppStrings.verifyChequesSequentialRunning:
+      'Verifying cheque sequence numbers...',
   AppStrings.downloadMaterials: 'Download Materials',
   AppStrings.downloadGroups: 'Download Groups',
   AppStrings.downloadSellers: 'Download Sellers',

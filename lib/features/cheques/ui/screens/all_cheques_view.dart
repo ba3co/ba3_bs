@@ -18,11 +18,20 @@ class AllCheques extends StatelessWidget {
         body: PlutoGridWithAppBar(
           onLoaded: (p0) {},
           onSelected: (event) {
-            String chequesId =
-                event.row?.cells[AppConstants.chequesGuid]?.value;
-
+            final chequesId =
+                event.row?.cells[AppConstants.chequesGuid]?.value as String?;
+            if (chequesId == null) return;
+            final matches =
+                logic.chequesList.where((c) => c.chequesGuid == chequesId);
+            if (matches.isEmpty) return;
+            final model = matches.first;
+            final typeGuid = model.chequesTypeGuid;
+            if (typeGuid == null) return;
             logic.openChequesDetailsById(
-                chequesId, context, ChequesType.paidChecks);
+              chequesId,
+              context,
+              ChequesType.byTypeGuide(typeGuid),
+            );
           },
           isLoading: logic.isLoading,
           title:

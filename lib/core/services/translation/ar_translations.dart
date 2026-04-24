@@ -249,6 +249,11 @@ final Map<String, String> arAR = {
   AppStrings.viewMaterialGroups: 'عرض مجموعات المواد',
   AppStrings.downloadBonds: 'تحميل السندات',
   AppStrings.downloadCheques: 'تحميل الشيكات',
+  AppStrings.verifyChequesSequentialNumbers: 'التحقق من التسلسل',
+  AppStrings.chequesSequentialNumbersVerified:
+      'تسلسل أرقام الشيكات متطابق مع البيانات لجميع الأنماط.',
+  AppStrings.verifyChequesSequentialRunning:
+      'جاري التحقق من تسلسل أرقام الشيكات...',
   AppStrings.downloadMaterials: 'تحميل المواد',
   AppStrings.downloadGroups: 'تحميل المجموعات',
   AppStrings.downloadSellers: 'تحميل البائعين',

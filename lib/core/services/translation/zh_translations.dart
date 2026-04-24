@@ -221,6 +221,10 @@ final Map<String, String> zhCN = {
   AppStrings.downloadBonds: '下载票据',
   AppStrings.downloadBills: '下载账单',
   AppStrings.downloadCheques: '下载支票',
+  AppStrings.verifyChequesSequentialNumbers: '校验序号',
+  AppStrings.chequesSequentialNumbersVerified:
+      '所有类型的支票序号与数据一致。',
+  AppStrings.verifyChequesSequentialRunning: '正在校验支票序号...',
   AppStrings.downloadMaterials: '下载材料',
   AppStrings.downloadGroups: '下载组',
   AppStrings.downloadSellers: '下载卖家',

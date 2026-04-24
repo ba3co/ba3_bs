@@ -380,19 +380,44 @@ enum BondType  {
 }
 
 enum ChequesType {
-  paidChecks(
+  paidSupplierChecks(
     label: "Paid_checks",
-    value: "شيكات مدفوعة",
+    value: "شيكات مدفوعة موردين",
     typeGuide: "fc3fe7b6-dbb4-4007-b8a4-fc3533dccd18",
     from: 1,
-    to: 277,
+    to: 12,
+    icon: AppAssets.paymentVoucherIcon,
+    color: "C26D6D",
   ),
-  insuranceChecks(
-    label: "Insurance_checks",
-    value: "شيكات تأمين",
-    typeGuide: 'c27c5972-2b40-47df-8e3e-6ee29c4d5838',
-    from: 2,
-    to: 3,
+
+  partnerWithdrawChecks(
+    label: "Paid_partner_withdraw_checks",
+    value: "شيكات مدفوعة مسحوبات شركاء",
+    typeGuide: "6ae8552e-a292-4aa9-953a-e2075ca01113",
+    from: 1,
+    to: 1,
+    icon: AppAssets.receiptVoucherIcon,
+    color: "6DC289",
+  ),
+
+  loanCreditorChecks(
+    label: "Paid_loan_creditor_checks",
+    value: "شيكات مدفوعة دائنون - قروض",
+    typeGuide: "a5f0d333-f7d1-4e21-bfa1-758a23b61e9a",
+    from: 1,
+    to: 5,
+    icon: AppAssets.journalVoucherIcon,
+    color: "6D7DC2",
+  ),
+
+  expenseChecks(
+    label: "Paid_expense_checks",
+    value: "شيكات مدفوعة مصاريف",
+    typeGuide: "072b295d-cd31-40f0-9e94-a6b5a7d9ce5a",
+    from: 1,
+    to: 19,
+    icon: AppAssets.chequesIcon,
+    color: "8B7355",
   );
 
   final int from, to;
@@ -403,12 +428,18 @@ enum ChequesType {
 
   final String typeGuide;
 
+  final String icon;
+
+  final String color;
+
   const ChequesType({
     required this.label,
     required this.value,
     required this.typeGuide,
     required this.from,
     required this.to,
+    required this.icon,
+    required this.color,
   });
 
   // Factory constructor with error handling for unmatched labels

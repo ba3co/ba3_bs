@@ -222,6 +222,11 @@ final Map<String, String> frFR = {
   AppStrings.downloadBonds: 'Télécharger les bons',
   AppStrings.downloadBills: 'Télécharger les factures',
   AppStrings.downloadCheques: 'Télécharger les chèques',
+  AppStrings.verifyChequesSequentialNumbers: 'Vérifier la séquence',
+  AppStrings.chequesSequentialNumbersVerified:
+      'Les numéros de séquence des chèques correspondent aux données pour tous les types.',
+  AppStrings.verifyChequesSequentialRunning:
+      'Vérification des numéros de séquence des chèques...',
   AppStrings.downloadMaterials: 'Télécharger les matériaux',
   AppStrings.downloadGroups: 'Télécharger les groupes',
   AppStrings.downloadSellers: 'Télécharger les vendeurs',

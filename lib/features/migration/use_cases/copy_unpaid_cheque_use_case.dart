@@ -41,7 +41,7 @@ class CopyUnpaidChequesUseCase {
 
     if (migrationGuard(currentYear)) return;
 
-    await saveAllCheques(unpaidCheques, ChequesType.paidChecks);
+    await saveAllCheques(unpaidCheques, ChequesType.paidSupplierChecks);
 
     log("\uD83D\uDCCC تم نقل الشيكات الغير المقبوضة والغير المدفوعة.",
         name: "CopyUnpaidChequesUseCase");
