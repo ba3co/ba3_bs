@@ -9,6 +9,7 @@ import '../../../controllers/bonds/bond_details_controller.dart';
 import '../../../controllers/bonds/bond_search_controller.dart';
 import '../../../controllers/pluto/bond_details_pluto_controller.dart';
 import '../../../data/models/bond_type_model.dart';
+import '../../../service/bond/get_bond_types_models_service.dart';
 import '../../../use_cases/get_bond_type_by_guide_usecase.dart';
 
 class BondDetailsButtons extends StatelessWidget {
@@ -93,11 +94,12 @@ class BondDetailsButtons extends StatelessWidget {
                 title: AppStrings.edit.tr,
                 height: 20,
                 onPressed: () async {
-                  // bondDetailsController.updateBond(
-                  //   bondType: BondType.byTypeGuide(bondModel.payTypeGuid!),
-                  //   bondModel: bondModel,
-                  //   context: context
-                  // );
+                  bondDetailsController.updateBond(
+                    bondType: Get.find<BondTypeService>()
+                        .getBondTypeByGuide(bondModel.payTypeGuid!),
+                    bondModel: bondModel,
+                    context: context
+                  );
                 },
                 iconData: Icons.edit_outlined,
               );

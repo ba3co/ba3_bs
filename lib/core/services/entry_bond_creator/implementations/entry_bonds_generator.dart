@@ -31,7 +31,7 @@ mixin EntryBondsGenerator {
     Map<String, AccountModel> modifiedAccounts = const {},
     void Function(double progress)? onProgress,
   }) async {
-    print("createAndStoreEntryBond----------------------");
+    debugPrint("createAndStoreEntryBond----------------------");
     final entryBondController = read<EntryBondController>();
 
     final entryBondModels = _mapModelToEntryBonds(model);

@@ -31,7 +31,7 @@ class AllMaterialsScreen extends StatelessWidget {
 
           read<MaterialsStatementController>()
               .fetchMatStatements(materialModel, context: context);
-          print(materialModel.toJson());
+          debugPrint(materialModel.toJson().toString());
         },
         onSelected: (selectedRow) {
           String? matId =

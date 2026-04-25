@@ -1359,8 +1359,8 @@ class BillDetailsController extends IBillController
     amount1Controller.text = '';
     amount2Controller.text = '';
     selectedStatus.value = bill.status;
-    print(bill.billDetails.billPayType);
-    print('======---=======');
+    debugPrint(bill.billDetails.billPayType.toString());
+    debugPrint('======---=======');
     onPayTypeChanged(InvPayType.fromIndex(bill.billDetails.billPayType!));
     setBillDate = bill.billDetails.billDate!;
     isBillSaved.value = bill.billId != null;
@@ -1555,7 +1555,9 @@ class BillDetailsController extends IBillController
       final clipboardData = await Clipboard.getData('text/plain');
       if (clipboardData == null ||
           clipboardData.text == null ||
-          clipboardData.text!.isEmpty) return;
+          clipboardData.text!.isEmpty) {
+        return;
+      }
 
       final jsonData = jsonDecode(clipboardData.text!);
       final List<Map<String, dynamic>> rowsData =
