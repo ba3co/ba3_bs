@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ba3_bs/core/constants/app_constants.dart';
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/widgets/app_spacer.dart';
@@ -21,6 +23,7 @@ class AccountStatementScreen extends StatelessWidget {
           title: controller.screenTitle.tr,
           onLoaded: (e) {},
           onSelected: (event) {
+            log((event.row?.cells[AppConstants.entryBonIdFiled]?.value).toString());
             String originId =
                 event.row?.cells[AppConstants.entryBonIdFiled]?.value;
             controller.launchBondEntryBondScreen(

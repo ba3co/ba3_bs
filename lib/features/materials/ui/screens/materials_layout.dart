@@ -42,7 +42,7 @@ class MaterialLayout extends StatelessWidget {
 
                           },);*/
                           read<MaterialController>().deleteAllMaterialFromLocal();
-                          read<MaterialController>().reloadMaterials();
+                          // read<MaterialController>().reloadMaterials();
                         }),
                         _buildAdminButton(AppStrings.downloadGroups.tr, () {
                           read<MaterialGroupController>().fetchAllMaterialGroupFromLocal();
@@ -120,7 +120,7 @@ class MaterialLayout extends StatelessWidget {
                       ),
                     )
                   : null,
-            ),
+            ),if(progress > 0)
             LoadingDialog(
               isLoading: read<MaterialController>().saveAllMaterialsRequestState.value == RequestState.loading,
               message: '${(progress * 100).toStringAsFixed(2)}% ${AppStrings.from.tr} ${AppStrings.materials.tr}',

@@ -28,7 +28,7 @@ Future<int?> pickCopiesDialog(
 
   await OverlayService.showDialog(
     context: context,
-    height: .4.sh,
+    height: .5.sh,
     width: .44.sw,
     content: StatefulBuilder(
       builder: (ctx, setState) {

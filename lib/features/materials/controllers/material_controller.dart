@@ -472,7 +472,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
       },
       (savedMaterial) {
         saveMaterialRequestState.value = RequestState.success;
-        // _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add, withPrint: true);
+        _onSaveSuccess(savedMaterial, changeType: selectedMaterial != null ? ChangeType.update : ChangeType.add, withPrint: true);
       },
     );
   }
@@ -557,7 +557,7 @@ class MaterialController extends GetxController with AppNavigator, FloatingLaunc
         failure.message,
       ),
       (savedMaterial) => {
-        /*reloadMaterials()*/
+        reloadMaterials()
       },
     );
   }

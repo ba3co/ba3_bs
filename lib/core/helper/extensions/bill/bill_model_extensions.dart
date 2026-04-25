@@ -50,6 +50,7 @@ extension BillTypeModelExtensions on BillTypeModel {
       BillType.purchaseReturn,
       BillType.outputAdjustment,
       BillType.transferOut,
+      BillType.firstPeriodInventory,
     }.contains(billType);
   }
 }

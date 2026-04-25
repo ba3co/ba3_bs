@@ -1,4 +1,8 @@
 
+import 'dart:developer';
+
+import 'package:ba3_bs/core/utils/app_ui_utils.dart';
+import 'package:ba3_bs/features/materials/data/models/materials/material_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 
@@ -63,11 +67,19 @@ class BillItems extends HiveObject with EquatableMixin {
   Future<List<InvoiceRecordModel>> get _materialRecords async {
     final records = await Future.wait(
       itemList.map((item) async {
-        final material = await read<MaterialController>()
+        MaterialModel? material = await read<MaterialController>()
             .getMaterialByIdWithNull(item.itemGuid);
 
         if (material == null) {
-          return null;
+          material =  read<MaterialController>()
+              .searchMaterialByName(item.itemName);
+
+           if (material == null) {
+             AppUIUtils.onFailure('material is null with name ${item.itemName}');
+             log('material is null with name ${item.itemName}');
+            return null;
+          }
+          // return null;
         }
         return InvoiceRecordModel.fromBillItem(item, material: material);
       }),

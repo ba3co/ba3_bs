@@ -37,8 +37,18 @@ class ChequesLocalStorageService {
     final chequesTypeId = cheques.chequesPayGuid??'';
     final box = await Hive.openBox<List<ChequesModel>>(ChequesLocalStorageService._nestedBoxName);
 
-    final currentList = List<ChequesModel>.from(box.get(chequesTypeId, defaultValue: []) ?? []);
+    final raw = box.get(chequesTypeId, defaultValue: <ChequesModel>[]) as List;
 
+    final currentList = raw.map<ChequesModel>((e) {
+      if (e is ChequesModel) return e;
+
+      // إذا مخزّن كـ Map (JSON)
+      if (e is Map) {
+        return ChequesModel.fromJson(Map<String, dynamic>.from(e));
+      }
+
+      throw Exception('Unsupported cheque item type: ${e.runtimeType}');
+    }).toList();
     final index = currentList.indexWhere((b) => b.chequesGuid == cheques.chequesGuid);
 
     if (index != -1) {

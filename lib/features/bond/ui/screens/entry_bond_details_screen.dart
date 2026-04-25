@@ -1,3 +1,4 @@
+
 import 'package:ba3_bs/core/constants/app_strings.dart';
 import 'package:ba3_bs/core/helper/extensions/role_item_type_extension.dart';
 import 'package:ba3_bs/core/widgets/app_button.dart';
@@ -75,6 +76,7 @@ class EntryBondDetailsScreen extends StatelessWidget {
               AppButton(
                 title: AppStrings.viewOrigin.tr,
                 onPressed: () {
+
                   read<EntryBondController>()
                       .openEntryBondOrigin(entryBondModel, context);
                 },
@@ -88,7 +90,7 @@ class EntryBondDetailsScreen extends StatelessWidget {
                   onPressed: () {
 
                     read<EntryBondController>()
-                        .deleteEntryBondModel(entryId: entryBondModel.origin!.originId!,  );
+                        .deleteEntryBondModel(entryId: entryBondModel.origin!.docId!,  );
 
                   },
                   iconData: Icons.close,
